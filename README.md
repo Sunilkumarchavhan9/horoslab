@@ -1,36 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MemoryOS Backend
 
-## Getting Started
+MemoryOS is a developer memory intelligence layer built on top of Mem0.
 
-First, run the development server:
+This backend focuses on long-term memory behavior for developer workflows:
+- extracting memory candidates from user messages
+- scoring and filtering useful memories
+- merging overlapping memories
+- evolving memories when stronger evidence appears
+- reranking retrieved memories for relevance
+- tracking timeline and revision history
+
+## What It Does
+
+The current backend supports:
+- `POST /api/memory/process`
+- `POST /api/memory/retrieve`
+- `GET /api/memory/timeline`
+- `GET /api/memory/revisions`
+
+Core memory flow:
+
+```text
+message -> extract -> score -> merge/evolve -> save -> retrieve -> timeline/revisions
+```
+
+## Architecture
+
+The codebase is split into four layers:
+
+- `app/api`
+  HTTP routes for process, retrieve, timeline, and revisions
+- `lib/memory`
+  Memory intelligence logic such as extraction, scoring, merge, evolve, ranking, timeline, revisions, and recent memory persistence
+- `lib/integrations`
+  External service adapter for Mem0
+- `lib/workflows`
+  End-to-end ingestion orchestration
+
+## Current Features
+
+### Memory Processing
+- rule-based developer memory extraction
+- memory importance scoring
+- merge detection for overlapping memories
+- evolve detection for stronger follow-up evidence
+- recent-memory persistence for immediate consistency
+
+### Retrieval
+- Mem0 search candidate fetch
+- local recent-memory fallback
+- reranking by:
+  - semantic score
+  - type relevance
+  - importance
+  - recency
+
+### Transparency
+- timeline events:
+  - `memory_created`
+  - `memory_merged`
+  - `memory_evolved`
+- revision history with field-level diffs
+
+## Example
+
+Input messages:
+
+```text
+I am learning transformers
+I trained a transformer model
+```
+
+Behavior:
+- first message creates a learning memory
+- second message evolves the existing memory
+- timeline records `memory_created` and `memory_evolved`
+- revisions record the changed fields:
+  - `content`
+  - `summary`
+  - `evidenceCount`
+
+## Project Structure
+
+```text
+app/
+  api/
+    memory/
+      process/
+      retrieve/
+      timeline/
+      revisions/
+
+lib/
+  integrations/
+    mem0.ts
+  memory/
+    extractMemory.ts
+    scoreMemory.ts
+    mergeMemory.ts
+    evolveMemory.ts
+    retrieveRelevantMemory.ts
+    timelineMemory.ts
+    revisionMemory.ts
+    recentMemoryStore.ts
+    types.ts
+  workflows/
+    ingestGraph.ts
+
+tests/
+  memorye2e.test.ts
+```
+
+## Local Development
+
+Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+bun install
+```
+
+Run the development server:
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run lint:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run tests:
 
-## Learn More
+```bash
+bun run test
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Environment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create `.env` with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+MEM0_API_KEY=your_mem0_api_key
+```
 
-## Deploy on Vercel
+## Current Status
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Implemented:
+- backend memory processing flow
+- retrieval flow
+- timeline persistence
+- revision persistence
+- automated end-to-end workflow test
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Not yet implemented:
+- LangGraph-based workflow orchestration
+- richer developer-specific memory taxonomy
+- production-grade persistent database layer
+
+## Test Coverage
+
+Current automated test verifies:
+- memory creation
+- memory evolution
+- retrieval
+- timeline event creation
+- revision diff recording
