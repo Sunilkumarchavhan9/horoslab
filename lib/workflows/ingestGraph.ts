@@ -7,6 +7,7 @@ import { buildRepetitionMap, filterAcceptedMemories, scoreMemory, type ScoredMem
 import { recordMemoryCreatedEvent, recordMemoryEvolvedEvent, recordMemoryMergedEvent } from "../memory/timelineMemory";
 import type { Memory, MemorySource, MemoryStatus, MemoryType, TimelineEvent } from "../memory/types";
 import { getRecentMemories, upsertRecentMemory } from "../memory/recentMemoryStore";
+import { recordRevisionEvent } from "../memory/revisionMemory";
 
 
 export interface IngestInput {
@@ -209,18 +210,31 @@ export async function runIngestFlow(input: IngestInput): Promise<IngestResult> {
         : `passed score threshold ${threshold.toFixed(2)}`;
 
     await saveMemoryToMem0({ memory: memoryToPersist });
+      if (bestMerge?.baseMemory) {
+        recordRevisionEvent({
+          before: bestMerge.baseMemory,
+          after: memoryToPersist,
+          reason: timelineReason,
+        });
+      } else if (bestEvolve?.baseMemory) {
+        recordRevisionEvent({
+          before: bestEvolve.baseMemory,
+          after: memoryToPersist,
+          reason: timelineReason,
+        });
+      }
+        acceptedMemories.push(memoryToPersist);
+        upsertRecentMemory(memoryToPersist);
 
-    acceptedMemories.push(memoryToPersist);
-    upsertRecentMemory(memoryToPersist);
 
+      const timelineEvent = bestMerge
+      ? recordMemoryMergedEvent(memoryToPersist, timelineReason)
+      : bestEvolve
+        ? recordMemoryEvolvedEvent(memoryToPersist, timelineReason)
+        : recordMemoryCreatedEvent(memoryToPersist, timelineReason);
 
-  const timelineEvent = bestMerge
-    ? recordMemoryMergedEvent(memoryToPersist, timelineReason)
-    : bestEvolve
-      ? recordMemoryEvolvedEvent(memoryToPersist, timelineReason)
-      : recordMemoryCreatedEvent(memoryToPersist, timelineReason);
-
-  timelineEvents.push(timelineEvent);
+      timelineEvents.push(timelineEvent);
+  
 
   }
 

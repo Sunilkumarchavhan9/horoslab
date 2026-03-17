@@ -1,5 +1,6 @@
 import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem0";
-import type { MemoryType } from "./types";
+import { getRecentMemories } from "./recentMemoryStore";
+import type { Memory, MemoryType } from "./types";
 
 export interface RetrieveRelevantMemoryInput {
   userId: string;
@@ -145,6 +146,56 @@ function normalizeSemanticScore(rawScore?: number): number {
   return rawScore;
 }
 
+function tokenize(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, " ")
+      .split(/\s+/)
+      .map((token) => token.trim())
+      .filter(Boolean),
+  );
+}
+
+function computeLexicalSimilarity(a: string, b: string): number {
+  const aTokens = tokenize(a);
+  const bTokens = tokenize(b);
+
+  if (aTokens.size === 0 || bTokens.size === 0) {
+    return 0.5;
+  }
+
+  let intersection = 0;
+  for (const token of aTokens) {
+    if (bTokens.has(token)) {
+      intersection += 1;
+    }
+  }
+
+  const union = new Set([...aTokens, ...bTokens]).size;
+  return union === 0 ? 0.5 : intersection / union;
+}
+
+function memoryToSearchResult(memory: Memory, question: string): Mem0SearchResult {
+  return {
+    id: memory.id,
+    memory: memory.content,
+    score: computeLexicalSimilarity(question, memory.content),
+    metadata: {
+      memoryId: memory.id,
+      type: memory.type,
+      summary: memory.summary,
+      importanceScore: String(memory.importanceScore),
+      confidence: String(memory.confidence),
+      source: memory.source,
+      status: memory.status,
+      createdAt: memory.createdAt,
+      updatedAt: memory.updatedAt,
+      evidenceCount: String(memory.evidenceCount),
+    },
+  };
+}
+
 // TODO: compute recency score from updatedAt.
 // Suggested simple rule:
 // - missing date => 0.5
@@ -216,12 +267,22 @@ function computeFinalScore(input: {
 
 
 export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput ): Promise<RetrieveRelevantMemoryResult> {
-  // TODO: call Mem0 search first (candidate fetch only).
-  const candidates = await searchMemoryFromMem0({
+  const mem0Candidates = await searchMemoryFromMem0({
     userId: input.userId,
     query: input.question,
     topK: Math.max(input.topK ?? 10, 10), // fetch wider candidate set first
   });
+  const recentCandidates = getRecentMemories(input.userId).map((memory) =>
+    memoryToSearchResult(memory, input.question),
+  );
+  const candidates = Array.from(
+    new Map(
+      [...recentCandidates, ...mem0Candidates].map((item) => [
+        item.metadata?.memoryId ?? item.id,
+        item,
+      ]),
+    ).values(),
+  );
 
   const preferredTypes = inferPreferredTypes(input.question);
 

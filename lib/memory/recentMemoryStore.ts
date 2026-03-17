@@ -1,41 +1,69 @@
- import type { Memory } from "./types";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import path from "path";
+import type { Memory } from "./types";
 
-const recentMemoryStore = new Map<string, Memory[]>();
+const DATA_DIR = path.join(process.cwd(), "data");
+const RECENT_MEMORY_STORE_PATH = path.join(DATA_DIR, "recent-memories.json");
 const MAX_RECENT_MEMORIES_PER_USER = 20;
 
+function ensureRecentMemoryStore(): void {
+  if (!existsSync(DATA_DIR)) {
+    mkdirSync(DATA_DIR, { recursive: true });
+  }
+
+  if (!existsSync(RECENT_MEMORY_STORE_PATH)) {
+    writeFileSync(RECENT_MEMORY_STORE_PATH, "{}", "utf8");
+  }
+}
+
+function readRecentMemoryStore(): Record<string, Memory[]> {
+  ensureRecentMemoryStore();
+
+  try {
+    const raw = readFileSync(RECENT_MEMORY_STORE_PATH, "utf8");
+    const parsed = JSON.parse(raw);
+
+    return parsed && typeof parsed === "object"
+      ? (parsed as Record<string, Memory[]>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeRecentMemoryStore(store: Record<string, Memory[]>): void {
+  ensureRecentMemoryStore();
+  writeFileSync(
+    RECENT_MEMORY_STORE_PATH,
+    JSON.stringify(store, null, 2),
+    "utf8",
+  );
+}
+
 export function getRecentMemories(userId: string): Memory[] {
-  // TODO:
-  // return that user's memories or []
-  return recentMemoryStore.get(userId) ?? [];
+  const store = readRecentMemoryStore();
+  return store[userId] ?? [];
 }
 
 export function upsertRecentMemory(memory: Memory): void {
-  // TODO:
-  // 1. get current list
-  // 2. find same id
-  // 3. replace if found
-  // 4. append if not found
-  // 5. keep last MAX_RECENT_MEMORIES_PER_USER
-  // 6. save back to map
+  const store = readRecentMemoryStore();
+  const current = store[memory.userId] ?? [];
+  const existingIndex = current.findIndex((item) => item.id === memory.id);
 
-  const current = recentMemoryStore.get(memory.userId) ?? [];
-  const existingIndex = current.findIndex((item) =>  item.id === memory.id)
-  
   let next: Memory[];
 
-  if(existingIndex !== -1){
+  if (existingIndex !== -1) {
     next = [...current];
     next[existingIndex] = memory;
-  }else{
+  } else {
     next = [...current, memory];
   }
-  const trimmed = next.slice(-MAX_RECENT_MEMORIES_PER_USER);
-  recentMemoryStore.set(memory.userId, trimmed);
+
+  store[memory.userId] = next.slice(-MAX_RECENT_MEMORIES_PER_USER);
+  writeRecentMemoryStore(store);
 }
 
-
 export function listRecentMemories(): Memory[] {
-  // TODO:
-  // flatten all map values
- return Array.from(recentMemoryStore.values()).flat();
+  const store = readRecentMemoryStore();
+  return Object.values(store).flat();
 }

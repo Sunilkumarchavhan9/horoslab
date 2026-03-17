@@ -5,6 +5,7 @@ export interface MergeResult {
   similarity: number;
   reason: string;
   mergedMemory?: Memory;
+  baseMemory?:Memory;
 }
 
 const MERGE_SIMILARITY_THRESHOLD = 0.55;
@@ -107,5 +108,6 @@ export function mergeMemory(existing: Memory, incoming: Memory): MergeResult {
       ? "one memory contains the other"
       : "same type with high similarity",
     mergedMemory,
+    baseMemory: existing,
   };
 }

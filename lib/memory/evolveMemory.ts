@@ -4,19 +4,22 @@ export interface EvolveResult {
   shouldEvolve: boolean;
   reason: string;
   evolvedMemory?: Memory;
+  baseMemory?: Memory;
 }
 
 const STRONGER_SIGNAL_REGEX =
   /\b(built|trained|solved|shipped|implemented|completed|deployed)\b/i;
 
 function normalize(text: string): string {
-  // TODO:
+ 
+  
   // lowercase, remove extra spaces
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 function hasStrongerSignal(text: string): boolean {
-  // TODO:
+ 
+  
   // return regex test on normalized text
   return STRONGER_SIGNAL_REGEX.test(normalize(text));
 }
@@ -92,5 +95,6 @@ export function evolveMemory(existing: Memory, incoming: Memory): EvolveResult {
     shouldEvolve: true,
     reason: "incoming memory contains stronger evidence",
     evolvedMemory,
+    baseMemory: existing,
   };
 }
