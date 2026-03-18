@@ -2,6 +2,7 @@ import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem
 import { getRecentMemories } from "./recentMemoryStore";
 import type { Memory, MemoryType } from "./types";
 
+
 export interface RetrieveRelevantMemoryInput {
   userId: string;
   question: string;
@@ -61,10 +62,13 @@ function inferPreferredTypes(question: string): MemoryType[] {
 
   if (q.includes("build") || q.includes("next") || q.includes("project")) {
     intent = "build_next";
+
   } else if (q.includes("stack") || q.includes("language") || q.includes("tech")) {
     intent = "stack_fit";
+
   } else if (q.includes("learn") || q.includes("study")) {
     intent = "learning_path";
+    
   }
 
   return intent ? [...INTENT_MEMORY_TYPES[intent]] : DEFAULT_MEMORY_TYPES;
@@ -92,58 +96,6 @@ function parseNumericMetadataValue(value: unknown, fallback: number): number {
   }
 
   return fallback;
-}
-
-function parseMetadata(result: Mem0SearchResult): {
-  memoryType?: MemoryType;
-  importanceScore: number;
-  updatedAt?: string;
-} {
-  const metadata = result?.metadata;
-
-  let memoryType: MemoryType | undefined = undefined;
-  let importanceScore = 0.5;
-  let updatedAt: string | undefined = undefined;
-
-  if (!metadata || typeof metadata !== "object") {
-    return {
-      memoryType,
-      importanceScore,
-      updatedAt,
-    };
-  }
-
-  if (
-    typeof metadata.type === "string" &&
-    VALID_MEMORY_TYPES.includes(metadata.type as MemoryType)
-  ) {
-    memoryType = metadata.type as MemoryType;
-  }
-
-  importanceScore = parseNumericMetadataValue(metadata.importanceScore, 0.5);
-
-  if (typeof metadata.updatedAt === "string") {
-    updatedAt = metadata.updatedAt;
-  }
-
-  return {
-    memoryType,
-    importanceScore,
-    updatedAt,
-  };
-}
-
-// TODO: normalize Mem0 semantic score to 0..1.
-// If missing, fallback to neutral value (e.g., 0.5).
-function normalizeSemanticScore(rawScore?: number): number {
-  if (typeof rawScore !== "number" || Number.isNaN(rawScore)) {
-    return 0.5;
-  }
-
-  if (rawScore < 0) return 0;
-  if (rawScore > 1) return 1;
-
-  return rawScore;
 }
 
 function tokenize(text: string): Set<string> {
@@ -194,6 +146,62 @@ function memoryToSearchResult(memory: Memory, question: string): Mem0SearchResul
       evidenceCount: String(memory.evidenceCount),
     },
   };
+}
+
+function parseMetadata(result: Mem0SearchResult): {
+  memoryType?: MemoryType;
+  importanceScore: number;
+  updatedAt?: string;
+} {
+  const metadata = result?.metadata;
+
+  let memoryType: MemoryType | undefined = undefined;
+  let importanceScore = 0.5;
+  let updatedAt: string | undefined = undefined;
+
+  if (!metadata || typeof metadata !== "object") {
+    return {
+      memoryType,
+      importanceScore,
+      updatedAt,
+    };
+  }
+
+  if (
+    typeof metadata.type === "string" &&
+    VALID_MEMORY_TYPES.includes(metadata.type as MemoryType)
+  ) {
+    memoryType = metadata.type as MemoryType;
+  }
+
+  if (
+    "importanceScore" in metadata
+  ) {
+    importanceScore = parseNumericMetadataValue(metadata.importanceScore, 0.5);
+  }
+
+  if (typeof metadata.updatedAt === "string") {
+    updatedAt = metadata.updatedAt;
+  }
+
+  return {
+    memoryType,
+    importanceScore,
+    updatedAt,
+  };
+}
+
+// TODO: normalize Mem0 semantic score to 0..1.
+// If missing, fallback to neutral value (e.g., 0.5).
+function normalizeSemanticScore(rawScore?: number): number {
+  if (typeof rawScore !== "number" || Number.isNaN(rawScore)) {
+    return 0.5;
+  }
+
+  if (rawScore < 0) return 0;
+  if (rawScore > 1) return 1;
+
+  return rawScore;
 }
 
 // TODO: compute recency score from updatedAt.

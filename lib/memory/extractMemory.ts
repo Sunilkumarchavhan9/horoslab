@@ -18,6 +18,12 @@ const GREETING_REGEX = /^(hi|hello|hey|thanks|ok|okay|good morning|good night)[!
 const RULES: Rule[] = [
   {
     type: "preference",
+    regex: /\bI\s+use\s+(.+?)\s+with\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User uses ${m[1].trim()} with ${m[2].trim()}`,
+    toSummary: (m) => `Uses ${m[1].trim()} with ${m[2].trim()}`,
+  },
+  {
+    type: "preference",
     regex: /\bI\s+prefer\s+(.+?)\s+over\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User prefers ${m[1].trim()} over ${m[2].trim()}`,
     toSummary: (m) => `Prefers ${m[1].trim()} over ${m[2].trim()}`,
@@ -47,6 +53,18 @@ const RULES: Rule[] = [
     toSummary: (m) => `Building ${m[1].trim()}`,
   },
   {
+    type: "project",
+    regex: /\bI\s+shipped\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User shipped ${m[1].trim()}`,
+    toSummary: (m) => `Shipped ${m[1].trim()}`,
+  },
+  {
+    type: "project",
+    regex: /\bI\s+deployed\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User deployed ${m[1].trim()}`,
+    toSummary: (m) => `Deployed ${m[1].trim()}`,
+  },
+  {
     type: "profile",
     regex: /\bMy\s+goal\s+is\s+to\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User goal is to ${m[1].trim()}`,
@@ -54,7 +72,13 @@ const RULES: Rule[] = [
   },
   {
     type: "profile",
-    regex: /\bI\s+want\s+to\s+(.+?)(?:[.!?]|$)/gi,
+    regex: /\bI\s+want\s+to\s+work\s+on\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User wants to work on ${m[1].trim()}`,
+    toSummary: (m) => `Wants to work on ${m[1].trim()}`,
+  },
+  {
+    type: "profile",
+    regex: /\bI\s+want\s+to\s+(?!work\s+on)(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User wants to ${m[1].trim()}`,
     toSummary: (m) => `Wants to ${m[1].trim()}`,
   },
@@ -72,7 +96,7 @@ function cleanText(text: string): string {
 
 function splitIntoClauses(message: string): string[] {
   return message
-    .split(/[.!?]/)
+    .split(/(?:[!?]+|[.](?=\s|$))/)
     .flatMap((segment) => segment.split(/\band\b/i))
     .map(cleanText)
     .filter(Boolean);

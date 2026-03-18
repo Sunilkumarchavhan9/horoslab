@@ -53,7 +53,7 @@ function parseNumericMetadataValue(value: unknown, fallback: number): number {
   return fallback;
 }
 
-function toMemory(candidate: ScoredMemoryCandidate): Memory {
+export function toMemory(candidate: ScoredMemoryCandidate): Memory {
   const now = new Date().toISOString();
 
   return {
@@ -72,7 +72,7 @@ function toMemory(candidate: ScoredMemoryCandidate): Memory {
   };
 }
 
-function toInternalMemory(
+export function toInternalMemory(
   result: Mem0SearchResult,
   userId: string,
 ): Memory | null {

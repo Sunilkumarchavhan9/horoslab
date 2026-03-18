@@ -18,10 +18,47 @@ function tokenize(text: string): Set<string> {
   return new Set(
     normalize(text)
       .split(" ")
-      .map((token) => token.trim())
+      .map((token) => {
+        const normalizeToken = token.trim();
+        if (normalizeToken.length > 4 && normalizeToken.endsWith("s")) {
+          return normalizeToken.slice(0, -1);
+        }
+        return normalizeToken;
+      })
       .filter(Boolean),
   );
 }
+function shareStrongKeyword(a: string, b: string): boolean{
+  const STOP_WORD = new Set([
+    "user",
+    "is",
+    "a",
+    "an",
+    "the",
+    "to",
+    "on",
+    "with",
+    "and",
+    "of",
+    "learning",
+    "building",
+    "working",
+    "shipped",
+    "deployed",
+    "trained",
+    "solved",
+    "wants",
+    "prefer",
+    "prefers",
+    "uses",
+  ]);
+
+  const aToken = [...tokenize(a)].filter((token) =>  !STOP_WORD.has(token));
+  const bToken = [...tokenize(b)].filter((token) =>  !STOP_WORD.has(token));
+
+  return aToken.some((token) => bToken.includes(token));
+};
+
 
 function jaccardSimilarity(a: string, b: string): number {
   const aTokens = tokenize(a);
@@ -78,15 +115,17 @@ export function mergeMemory(existing: Memory, incoming: Memory): MergeResult {
   const existingNormalized = normalize(existing.content);
   const incomingNormalized = normalize(incoming.content);
 
-  const containsRelation =
-    existingNormalized.includes(incomingNormalized) ||
-    incomingNormalized.includes(existingNormalized);
+  const containsRelation = existingNormalized.includes(incomingNormalized) || incomingNormalized.includes(existingNormalized);
+  const strongKeywordOverlap = shareStrongKeyword(
+    existing.content,
+    incoming.content,
+  )
 
-  if (similarity < MERGE_SIMILARITY_THRESHOLD && !containsRelation) {
+  if ((similarity < MERGE_SIMILARITY_THRESHOLD && !containsRelation) || !strongKeywordOverlap) {
     return {
       shouldMerge: false,
       similarity,
-      reason: "similarity below merge threshold",
+      reason: !strongKeywordOverlap ? "no strong keyword overlap" : "similarity below merge threshold",
     };
   }
 

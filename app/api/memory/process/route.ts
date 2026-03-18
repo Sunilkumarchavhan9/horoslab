@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { runIngestFlow } from "@/lib/workflows/ingestGraph";
+import { runIngestFlowLangGraph } from "@/lib/workflows/ingestGraphLangGraph";
 
 export const runtime = "nodejs";
 
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await runIngestFlow(parsed.data);
+    const result = await runIngestFlowLangGraph(parsed.data);
 
     return NextResponse.json(
       {

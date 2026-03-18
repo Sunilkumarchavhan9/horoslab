@@ -18,10 +18,16 @@ const TYPE_BASE_WEIGHT: Record<MemoryCandidate["type"], number> = {
 
 const HIGH_SIGNAL_PATTERNS = [
   { regex: /\b(goal|want to|plan to)\b/i, reason: "goal-intent", weight: 0.22 },
+  { regex: /\bwant(s)?\s+to\s+work\s+on\b/i, reason: "career-direction-signal", weight: 0.22 },
+  { regex: /\bwant(s)?\s+to\s+learn\b/i, reason: "learning-goal-signal", weight: 0.2 },
   { regex: /\b(prefer|prefers|like|likes|dislike|dislikes)\b/i, reason: "preference-signal", weight: 0.2 },
+  { regex: /\b(prefer|prefers).+\bover\b/i, reason: "technical-preference-comparison", weight: 0.08 },
+  { regex: /\buses\b.+\bwith\b/i, reason: "stack-usage-signal", weight: 0.16 },
   { regex: /\b(learning|studying|practicing|trained)\b/i, reason: "learning-signal", weight: 0.2 },
   { regex: /\b(building|working on|shipping|built|implemented|deployed)\b/i, reason: "project-signal", weight: 0.24 },
   { regex: /\b(solved|fixed|debugged|shipped|completed)\b/i, reason: "milestone-signal", weight: 0.22 },
+  { regex: /\b(solved|fixed|debugged)\b.+\b(bug|issue|error|latency|locking|crash)\b/i, reason: "bug-solving-signal", weight: 0.1 },
+  { regex: /\b(shipped|deployed)\b/i, reason: "delivery-signal", weight: 0.1 },
 ] as const;
 
 const LOW_VALUE_PATTERNS = [

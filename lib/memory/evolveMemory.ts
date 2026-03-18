@@ -11,16 +11,58 @@ const STRONGER_SIGNAL_REGEX =
   /\b(built|trained|solved|shipped|implemented|completed|deployed)\b/i;
 
 function normalize(text: string): string {
- 
-  
-  // lowercase, remove extra spaces
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+function tokenize(text: string): Set<string> {
+  return new Set(
+    normalize(text)
+      .replace(/[^\w\s]/g, " ")
+      .split(" ")
+     .map((token) => {
+        const normalizedToken = token.trim();
+        if (normalizedToken.length > 4 && normalizedToken.endsWith("s")) {
+          return normalizedToken.slice(0, -1);
+        }
+        return normalizedToken;
+      })
+
+      .filter(Boolean),
+  );
+}
+
+function shareStrongKeyword(a: string, b: string): boolean {
+  const STOP_WORDS = new Set([
+    "user",
+    "is",
+    "a",
+    "an",
+    "the",
+    "to",
+    "on",
+    "with",
+    "and",
+    "of",
+    "learning",
+    "building",
+    "working",
+    "shipped",
+    "deployed",
+    "trained",
+    "solved",
+    "wants",
+    "prefer",
+    "prefers",
+    "uses",
+  ]);
+
+  const aTokens = [...tokenize(a)].filter((token) => !STOP_WORDS.has(token));
+  const bTokens = [...tokenize(b)].filter((token) => !STOP_WORDS.has(token));
+
+  return aTokens.some((token) => bTokens.includes(token));
+}
+
 function hasStrongerSignal(text: string): boolean {
- 
-  
-  // return regex test on normalized text
   return STRONGER_SIGNAL_REGEX.test(normalize(text));
 }
 
@@ -52,6 +94,18 @@ export function evolveMemory(existing: Memory, incoming: Memory): EvolveResult {
     return {
       shouldEvolve: false,
       reason: "different memory types",
+    };
+  }
+
+  const strongKeywordOverlap = shareStrongKeyword(
+    existing.content,
+    incoming.content,
+  );
+
+  if (!strongKeywordOverlap) {
+    return {
+      shouldEvolve: false,
+      reason: "no strong keyword overlap",
     };
   }
 
