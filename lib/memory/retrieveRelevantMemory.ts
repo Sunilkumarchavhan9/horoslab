@@ -2,6 +2,14 @@ import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem
 import { getRecentMemories } from "./recentMemoryStore";
 import type { Memory, MemoryType } from "./types";
 
+type RetrievalIntent =
+  | "build_next"
+  | "stack_fit"
+  | "study_next"
+  | "resume_project"
+  | "bug_recall"
+  | "backend_fit"
+  | "general";
 
 export interface RetrieveRelevantMemoryInput {
   userId: string;
@@ -15,6 +23,7 @@ export interface RankedMemory extends Mem0SearchResult {
   recencyScore: number; // 0..1
   typeRelevanceScore: number; // 0..1
   semanticScore: number; // 0..1 (from Mem0 score)
+  continuityBoost: number;
   finalScore: number; // weighted score
   updatedAt?: string;
 }
@@ -27,11 +36,12 @@ export interface RetrieveRelevantMemoryResult {
     typeRelevanceScore: number;
     importanceScore: number;
     recencyScore: number;
+    continuityBoost: number;
+    intent: RetrievalIntent;
     finalScore: number;
   }>;
 }
 
-// TODO: keep these as constants so tuning is easy later.
 const WEIGHTS = {
   semantic: 0.4,
   typeRelevance: 0.25,
@@ -39,7 +49,6 @@ const WEIGHTS = {
   recency: 0.15,
 } as const;
 
-// TODO: define question-intent -> preferred memory types.
 const DEFAULT_MEMORY_TYPES: MemoryType[] = [
   "project",
   "learning",
@@ -49,31 +58,70 @@ const DEFAULT_MEMORY_TYPES: MemoryType[] = [
 ];
 
 const INTENT_MEMORY_TYPES = {
-  build_next: ["project", "learning", "profile"],
-  stack_fit: ["preference", "project", "learning"],
-  learning_path: ["learning", "project", "profile"],
+  build_next: ["project", "learning", "profile", "preference", "episodic"],
+  stack_fit: ["preference", "project", "learning", "profile", "episodic"],
+  study_next: ["learning", "project", "profile", "preference", "episodic"],
+  resume_project: ["project", "episodic", "profile", "learning", "preference"],
+  bug_recall: ["episodic", "project", "preference", "learning", "profile"],
+  backend_fit: ["episodic", "project", "preference", "learning", "profile"],
+  general: DEFAULT_MEMORY_TYPES,
 } as const satisfies Record<string, readonly MemoryType[]>;
 
-
-function inferPreferredTypes(question: string): MemoryType[] {
+function detectQuestionIntent(question: string): RetrievalIntent {
   const q = question.toLowerCase();
 
-  let intent: keyof typeof INTENT_MEMORY_TYPES | null = null;
-
-  if (q.includes("build") || q.includes("next") || q.includes("project")) {
-    intent = "build_next";
-
-  } else if (q.includes("stack") || q.includes("language") || q.includes("tech")) {
-    intent = "stack_fit";
-
-  } else if (q.includes("learn") || q.includes("study")) {
-    intent = "learning_path";
-    
+  if (
+    q.includes("resume") ||
+    q.includes("left off") ||
+    q.includes("pick up")
+  ) {
+    return "resume_project";
   }
 
-  return intent ? [...INTENT_MEMORY_TYPES[intent]] : DEFAULT_MEMORY_TYPES;
+  if (
+    (q.includes("solved") && q.includes("before")) ||
+    q.includes("similar bug") ||
+    q.includes("similar issue") ||
+    q.includes("like this bug")
+  ) {
+    return "bug_recall";
+  }
+
+  if (
+    q.includes("backend work") ||
+    q.includes("backend role") ||
+    q.includes("kind of backend")
+  ) {
+    return "backend_fit";
+  }
+
+  if (q.includes("stack") || q.includes("language") || q.includes("tech")) {
+    return "stack_fit";
+  }
+
+  if (
+    q.includes("study") ||
+    q.includes("learn this week") ||
+    q.includes("learn next")
+  ) {
+    return "study_next";
+  }
+
+  if (
+    q.includes("build next") ||
+    q.includes("what should i build") ||
+    (q.includes("build") && q.includes("next")) ||
+    q.includes("next project")
+  ) {
+    return "build_next";
+  }
+
+  return "general";
 }
 
+function inferPreferredTypes(intent: RetrievalIntent): MemoryType[] {
+  return [...INTENT_MEMORY_TYPES[intent]];
+}
 
 const VALID_MEMORY_TYPES: MemoryType[] = [
   "project",
@@ -152,18 +200,21 @@ function parseMetadata(result: Mem0SearchResult): {
   memoryType?: MemoryType;
   importanceScore: number;
   updatedAt?: string;
+  evidenceCount: number;
 } {
   const metadata = result?.metadata;
 
   let memoryType: MemoryType | undefined = undefined;
   let importanceScore = 0.5;
   let updatedAt: string | undefined = undefined;
+  let evidenceCount = 1;
 
   if (!metadata || typeof metadata !== "object") {
     return {
       memoryType,
       importanceScore,
       updatedAt,
+      evidenceCount,
     };
   }
 
@@ -184,15 +235,21 @@ function parseMetadata(result: Mem0SearchResult): {
     updatedAt = metadata.updatedAt;
   }
 
+  if ("evidenceCount" in metadata) {
+    evidenceCount = Math.max(
+      1,
+      Math.round(parseNumericMetadataValue(metadata.evidenceCount, 1)),
+    );
+  }
+
   return {
     memoryType,
     importanceScore,
     updatedAt,
+    evidenceCount,
   };
 }
 
-// TODO: normalize Mem0 semantic score to 0..1.
-// If missing, fallback to neutral value (e.g., 0.5).
 function normalizeSemanticScore(rawScore?: number): number {
   if (typeof rawScore !== "number" || Number.isNaN(rawScore)) {
     return 0.5;
@@ -203,14 +260,6 @@ function normalizeSemanticScore(rawScore?: number): number {
 
   return rawScore;
 }
-
-// TODO: compute recency score from updatedAt.
-// Suggested simple rule:
-// - missing date => 0.5
-// - <=7 days => 1.0
-// - <=30 days => 0.8
-// - <=90 days => 0.6
-// - older => 0.4
 
 function getRecencyScore(updatedAt?: string): number {
   if (!updatedAt) {
@@ -233,12 +282,6 @@ function getRecencyScore(updatedAt?: string): number {
   return 0.4;
 }
 
-// TODO: score type relevance based on preferred ordering.
-// Suggested:
-// - first preferred type => 1.0
-// - second => 0.8
-// - third => 0.6
-// - other => 0.4
 function getTypeRelevanceScore(
   memoryType: MemoryType | undefined,
   preferredTypes: MemoryType[],
@@ -257,21 +300,82 @@ function getTypeRelevanceScore(
   return 0.4;
 }
 
-// TODO: compute weighted final score.
+function getIntentTypeBoost(
+  intent: RetrievalIntent,
+  memoryType: MemoryType | undefined,
+): number {
+  if (!memoryType) {
+    return 0;
+  }
+
+  if (intent === "build_next") {
+    if (memoryType === "project") return 0.18;
+    if (memoryType === "learning") return 0.1;
+    if (memoryType === "profile") return 0.06;
+  }
+
+  if (intent === "stack_fit") {
+    if (memoryType === "preference") return 0.2;
+    if (memoryType === "project") return 0.08;
+    if (memoryType === "learning") return 0.05;
+  }
+
+  if (intent === "study_next") {
+    if (memoryType === "learning") return 0.18;
+    if (memoryType === "project") return 0.08;
+    if (memoryType === "profile") return 0.05;
+  }
+
+  if (intent === "resume_project") {
+    if (memoryType === "project") return 0.2;
+    if (memoryType === "episodic") return 0.1;
+  }
+
+  if (intent === "bug_recall") {
+    if (memoryType === "episodic") return 0.2;
+    if (memoryType === "project") return 0.1;
+    if (memoryType === "preference") return 0.06;
+  }
+
+  if (intent === "backend_fit") {
+    if (memoryType === "episodic") return 0.16;
+    if (memoryType === "project") return 0.12;
+    if (memoryType === "preference") return 0.08;
+  }
+
+  return 0;
+}
+
+function getContinuityBoost(input: {
+  intent: RetrievalIntent;
+  memoryType: MemoryType | undefined;
+  evidenceCount: number;
+  recencyScore: number;
+}): number {
+  const intentTypeBoost = getIntentTypeBoost(input.intent, input.memoryType);
+  const evidenceBoost = Math.min(0.08, Math.max(0, input.evidenceCount - 1) * 0.02);
+  const freshnessBoost = input.recencyScore >= 0.8 ? 0.02 : 0;
+  const resumeBoost =
+    input.intent === "resume_project" && input.memoryType === "project" ? 0.05 : 0;
+
+  return intentTypeBoost + evidenceBoost + freshnessBoost + resumeBoost;
+}
+
 function computeFinalScore(input: {
   semanticScore: number;
   typeRelevanceScore: number;
   importanceScore: number;
   recencyScore: number;
+  continuityBoost: number;
 }): number {
   return (
     input.semanticScore * WEIGHTS.semantic +
     input.typeRelevanceScore * WEIGHTS.typeRelevance +
     input.importanceScore * WEIGHTS.importance +
-    input.recencyScore * WEIGHTS.recency
+    input.recencyScore * WEIGHTS.recency +
+    input.continuityBoost
   );
 }
-
 
 
 export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput ): Promise<RetrieveRelevantMemoryResult> {
@@ -292,7 +396,8 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
     ).values(),
   );
 
-  const preferredTypes = inferPreferredTypes(input.question);
+  const intent = detectQuestionIntent(input.question);
+  const preferredTypes = inferPreferredTypes(intent);
 
   const ranked: RankedMemory[] = candidates.map((item) => {
     const meta = parseMetadata(item);
@@ -303,12 +408,19 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       preferredTypes,
     );
     const recencyScore = getRecencyScore(meta.updatedAt);
+    const continuityBoost = getContinuityBoost({
+      intent,
+      memoryType: meta.memoryType,
+      evidenceCount: meta.evidenceCount,
+      recencyScore,
+    });
 
     const finalScore = computeFinalScore({
       semanticScore,
       typeRelevanceScore,
       importanceScore: meta.importanceScore,
       recencyScore,
+      continuityBoost,
     });
 
     return {
@@ -318,15 +430,14 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       recencyScore,
       typeRelevanceScore,
       semanticScore,
+      continuityBoost,
       finalScore,
       updatedAt: meta.updatedAt,
     };
   });
 
-  // TODO: sort by finalScore descending.
   ranked.sort((a, b) => b.finalScore - a.finalScore);
 
-  // TODO: return only requested topK (default 5).
   const finalTopK = input.topK ?? 5;
   const top = ranked.slice(0, finalTopK);
 
@@ -338,6 +449,8 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       typeRelevanceScore: m.typeRelevanceScore,
       importanceScore: m.importanceScore,
       recencyScore: m.recencyScore,
+      continuityBoost: m.continuityBoost,
+      intent,
       finalScore: m.finalScore,
     })),
   };

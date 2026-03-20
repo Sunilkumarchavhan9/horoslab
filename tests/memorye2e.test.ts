@@ -157,6 +157,7 @@ it("retrieves project, learning, and preference memories for build-next question
   expect(memoryTypes.has("project")).toBe(true);
   expect(memoryTypes.has("learning")).toBe(true);
   expect(memoryTypes.has("preference")).toBe(true);
+  expect(retrieved.memories[0]?.memoryType).toBe("project");
 });
 
 
@@ -332,6 +333,7 @@ it("retrieves startup-building context for build-next planning", async () => {
   expect(memoryTypes.has("project")).toBe(true);
   expect(memoryTypes.has("preference")).toBe(true);
   expect(memoryTypes.has("profile")).toBe(true);
+  expect(retrieved.memories[0]?.memoryType).toBe("project");
 });
 
 
@@ -368,5 +370,6 @@ it("retrieves bug-solving and backend context for technical-fit questions", asyn
   expect(memoryTypes.has("episodic")).toBe(true);
   expect(memoryTypes.has("preference")).toBe(true);
   expect(memoryTypes.has("project")).toBe(true);
+  expect(retrieved.memories[0]?.memoryType).toBe("episodic");
 });
 
