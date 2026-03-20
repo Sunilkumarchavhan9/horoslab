@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { runIngestFlowLangGraph } from "@/lib/workflows/ingestGraphLangGraph";
+import { ensureMemoryStoreIntegrity } from "@/lib/memory/startupIntegrity";
 
 export const runtime = "nodejs";
+ensureMemoryStoreIntegrity();
 
 const ProcessMemorySchema = z.object({
   userId: z.string().min(1, "userId is required"),

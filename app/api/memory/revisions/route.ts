@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { listRevisionEvents } from "@/lib/memory/revisionMemory";
+import { ensureMemoryStoreIntegrity } from "@/lib/memory/startupIntegrity";
 
 export const runtime = "nodejs";
+ensureMemoryStoreIntegrity();
 
 export async function GET(req: Request) {
   try {

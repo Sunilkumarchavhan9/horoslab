@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { listTimelineEvents } from "@/lib/memory/timelineMemory";
+import { ensureMemoryStoreIntegrity } from "@/lib/memory/startupIntegrity";
 
 export const runtime = "nodejs";
+ensureMemoryStoreIntegrity();
 
 export async function GET(req: Request) {
   try {
