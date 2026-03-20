@@ -1,4 +1,5 @@
 import type { MemoryCandidate } from "./types";
+import { MEMORY_RULES } from "../config/memoryRules";
 
 export interface ScoredMemoryCandidate extends MemoryCandidate {
   importanceScore: number;
@@ -6,15 +7,7 @@ export interface ScoredMemoryCandidate extends MemoryCandidate {
   scoreReasons: string[];
 }
 
-export const MVP_ACCEPT_THRESHOLD = 0.65;
-
-const TYPE_BASE_WEIGHT: Record<MemoryCandidate["type"], number> = {
-  profile: 0.45,
-  preference: 0.55,
-  learning: 0.58,
-  project: 0.6,
-  episodic: 0.5,
-};
+export const MVP_ACCEPT_THRESHOLD = MEMORY_RULES.scoring.acceptThreshold;
 
 const HIGH_SIGNAL_PATTERNS = [
   { regex: /\b(goal|want to|plan to)\b/i, reason: "goal-intent", weight: 0.22 },
@@ -62,7 +55,7 @@ export function scoreMemory(
   const text = candidate.content.toLowerCase();
   const scoreReasons: string[] = [];
 
-  let score = TYPE_BASE_WEIGHT[candidate.type];
+  let score = MEMORY_RULES.scoring.typeBaseWeight[candidate.type];
   scoreReasons.push(`base:${candidate.type}`);
 
   for (const signal of HIGH_SIGNAL_PATTERNS) {
@@ -74,8 +67,10 @@ export function scoreMemory(
 
   for (const lowValue of LOW_VALUE_PATTERNS) {
     if (lowValue.test(text)) {
-      score -= 0.25;
-      scoreReasons.push("-0.25:low-value-noise");
+      score -= MEMORY_RULES.scoring.lowValuePenalty;
+      scoreReasons.push(
+        `-${MEMORY_RULES.scoring.lowValuePenalty.toFixed(2)}:low-value-noise`,
+      );
       break;
     }
   }
@@ -83,13 +78,19 @@ export function scoreMemory(
   const repetitionKey = `${candidate.type}:${text}`;
   const repeats = repetitionMap?.get(repetitionKey) ?? 0;
   if (repeats > 1) {
-    const bump = Math.min(0.12, 0.04 * (repeats - 1));
+    const bump = Math.min(
+      MEMORY_RULES.scoring.repetitionBumpMax,
+      MEMORY_RULES.scoring.repetitionBumpPerRepeat * (repeats - 1),
+    );
     score += bump;
     scoreReasons.push(`+${bump.toFixed(2)}:repetition(${repeats})`);
   }
 
   const importanceScore = clamp01(score);
-  const confidence = clamp01(0.55 + importanceScore * 0.4);
+  const confidence = clamp01(
+    MEMORY_RULES.scoring.confidenceBase +
+      importanceScore * MEMORY_RULES.scoring.confidenceMultiplier,
+  );
 
   return {
     ...candidate,

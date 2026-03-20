@@ -1,15 +1,7 @@
 import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem0";
 import { getRecentMemories } from "./recentMemoryStore";
 import type { Memory, MemoryType } from "./types";
-
-type RetrievalIntent =
-  | "build_next"
-  | "stack_fit"
-  | "study_next"
-  | "resume_project"
-  | "bug_recall"
-  | "backend_fit"
-  | "general";
+import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
 
 export interface RetrieveRelevantMemoryInput {
   userId: string;
@@ -41,13 +33,6 @@ export interface RetrieveRelevantMemoryResult {
     finalScore: number;
   }>;
 }
-
-const WEIGHTS = {
-  semantic: 0.4,
-  typeRelevance: 0.25,
-  importance: 0.2,
-  recency: 0.15,
-} as const;
 
 const DEFAULT_MEMORY_TYPES: MemoryType[] = [
   "project",
@@ -308,42 +293,7 @@ function getIntentTypeBoost(
     return 0;
   }
 
-  if (intent === "build_next") {
-    if (memoryType === "project") return 0.18;
-    if (memoryType === "learning") return 0.1;
-    if (memoryType === "profile") return 0.06;
-  }
-
-  if (intent === "stack_fit") {
-    if (memoryType === "preference") return 0.2;
-    if (memoryType === "project") return 0.08;
-    if (memoryType === "learning") return 0.05;
-  }
-
-  if (intent === "study_next") {
-    if (memoryType === "learning") return 0.18;
-    if (memoryType === "project") return 0.08;
-    if (memoryType === "profile") return 0.05;
-  }
-
-  if (intent === "resume_project") {
-    if (memoryType === "project") return 0.2;
-    if (memoryType === "episodic") return 0.1;
-  }
-
-  if (intent === "bug_recall") {
-    if (memoryType === "episodic") return 0.2;
-    if (memoryType === "project") return 0.1;
-    if (memoryType === "preference") return 0.06;
-  }
-
-  if (intent === "backend_fit") {
-    if (memoryType === "episodic") return 0.16;
-    if (memoryType === "project") return 0.12;
-    if (memoryType === "preference") return 0.08;
-  }
-
-  return 0;
+  return MEMORY_RULES.retrieval.intentTypeBoosts[intent][memoryType] ?? 0;
 }
 
 function getContinuityBoost(input: {
@@ -353,10 +303,19 @@ function getContinuityBoost(input: {
   recencyScore: number;
 }): number {
   const intentTypeBoost = getIntentTypeBoost(input.intent, input.memoryType);
-  const evidenceBoost = Math.min(0.08, Math.max(0, input.evidenceCount - 1) * 0.02);
-  const freshnessBoost = input.recencyScore >= 0.8 ? 0.02 : 0;
+  const evidenceBoost = Math.min(
+    MEMORY_RULES.retrieval.evidenceBoostMax,
+    Math.max(0, input.evidenceCount - 1) *
+      MEMORY_RULES.retrieval.evidenceBoostPerHit,
+  );
+  const freshnessBoost =
+    input.recencyScore >= MEMORY_RULES.retrieval.freshnessBoostThreshold
+      ? MEMORY_RULES.retrieval.freshnessBoostValue
+      : 0;
   const resumeBoost =
-    input.intent === "resume_project" && input.memoryType === "project" ? 0.05 : 0;
+    input.intent === "resume_project" && input.memoryType === "project"
+      ? MEMORY_RULES.retrieval.resumeProjectBoost
+      : 0;
 
   return intentTypeBoost + evidenceBoost + freshnessBoost + resumeBoost;
 }
@@ -368,11 +327,12 @@ function computeFinalScore(input: {
   recencyScore: number;
   continuityBoost: number;
 }): number {
+  const weights = MEMORY_RULES.retrieval.weights;
   return (
-    input.semanticScore * WEIGHTS.semantic +
-    input.typeRelevanceScore * WEIGHTS.typeRelevance +
-    input.importanceScore * WEIGHTS.importance +
-    input.recencyScore * WEIGHTS.recency +
+    input.semanticScore * weights.semantic +
+    input.typeRelevanceScore * weights.typeRelevance +
+    input.importanceScore * weights.importance +
+    input.recencyScore * weights.recency +
     input.continuityBoost
   );
 }

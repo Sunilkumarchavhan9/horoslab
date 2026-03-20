@@ -1,4 +1,5 @@
 import type { Memory } from "./types";
+import { MEMORY_RULES } from "../config/memoryRules";
 
 export interface MergeResult {
   shouldMerge: boolean;
@@ -7,8 +8,6 @@ export interface MergeResult {
   mergedMemory?: Memory;
   baseMemory?:Memory;
 }
-
-const MERGE_SIMILARITY_THRESHOLD = 0.55;
 
 function normalize(text: string): string {
   return text.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
@@ -121,7 +120,10 @@ export function mergeMemory(existing: Memory, incoming: Memory): MergeResult {
     incoming.content,
   )
 
-  if ((similarity < MERGE_SIMILARITY_THRESHOLD && !containsRelation) || !strongKeywordOverlap) {
+  if (
+    (similarity < MEMORY_RULES.merge.similarityThreshold && !containsRelation) ||
+    !strongKeywordOverlap
+  ) {
     return {
       shouldMerge: false,
       similarity,

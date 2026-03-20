@@ -1,4 +1,5 @@
 import type { Memory } from "./types";
+import { MEMORY_RULES } from "../config/memoryRules";
 
 export interface EvolveResult {
   shouldEvolve: boolean;
@@ -110,10 +111,12 @@ export function evolveMemory(existing: Memory, incoming: Memory): EvolveResult {
   }
 
   const strongerByImportance =
-    incoming.importanceScore > existing.importanceScore;
+    incoming.importanceScore - existing.importanceScore >=
+    MEMORY_RULES.evolve.minImportanceDelta;
 
   const strongerByConfidence =
-    incoming.confidence > existing.confidence;
+    incoming.confidence - existing.confidence >=
+    MEMORY_RULES.evolve.minConfidenceDelta;
 
   const strongerBySignal =
     hasStrongerSignal(incoming.content) && !hasStrongerSignal(existing.content);
