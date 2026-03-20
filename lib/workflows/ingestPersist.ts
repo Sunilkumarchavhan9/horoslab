@@ -39,7 +39,7 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
     let bestEvolve: EvolveResult | null = null;
 
     for (const existing of uniqueExistingMemories) {
-      // TODO: merge/evolve selection logic
+    
 
       const mergeResult = mergeMemory(existing, memory);
 
@@ -88,7 +88,7 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
 
     await saveMemoryToMem0({ memory: memoryToPersist });
 
-    // TODO: revision event recording
+    
     if (bestMerge?.baseMemory) {
         await recordRevisionEvent({
             before: bestMerge.baseMemory,
