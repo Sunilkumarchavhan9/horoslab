@@ -255,3 +255,118 @@ it("matches the existing ingest flow for a basic learning memory", async () => {
   expect(classic.timelineEvents[0]?.eventType).toBe("memory_created");
   expect(langgraph.timelineEvents[0]?.eventType).toBe("memory_created");
 });
+
+
+it("matches the existing ingest flow for a learning evolve sequence", async () => {
+  const classicFirst = await runIngestFlow({
+    userId: "u_test_langgraph_evolve_classic",
+    threadId: "t1",
+    message: "I am learning transformers",
+  });
+
+  const classicSecond = await runIngestFlow({
+    userId: "u_test_langgraph_evolve_classic",
+    threadId: "t2",
+    message: "I trained a transformer model",
+  });
+
+  const langgraphFirst = await runIngestFlowLangGraph({
+    userId: "u_test_langgraph_evolve_graph",
+    threadId: "t1",
+    message: "I am learning transformers",
+  });
+
+  const langgraphSecond = await runIngestFlowLangGraph({
+    userId: "u_test_langgraph_evolve_graph",
+    threadId: "t2",
+    message: "I trained a transformer model",
+  });
+
+  expect(classicFirst.acceptedMemories).toHaveLength(1);
+  expect(langgraphFirst.acceptedMemories).toHaveLength(1);
+
+  expect(classicSecond.acceptedMemories).toHaveLength(1);
+  expect(langgraphSecond.acceptedMemories).toHaveLength(1);
+
+  expect(classicSecond.acceptedMemories[0]?.evidenceCount).toBe(2);
+  expect(langgraphSecond.acceptedMemories[0]?.evidenceCount).toBe(2);
+
+  expect(classicSecond.timelineEvents[0]?.eventType).toBe("memory_evolved");
+  expect(langgraphSecond.timelineEvents[0]?.eventType).toBe("memory_evolved");
+
+  expect(classicSecond.acceptedMemories[0]?.type).toBe("learning");
+  expect(langgraphSecond.acceptedMemories[0]?.type).toBe("learning");
+});
+
+
+it("retrieves startup-building context for build-next planning", async () => {
+  await runIngestFlowLangGraph({
+    userId: "u_test_startup_context",
+    threadId: "t1",
+    message: "I am building MemoryOS",
+  });
+
+  await runIngestFlowLangGraph({
+    userId: "u_test_startup_context",
+    threadId: "t2",
+    message: "I prefer TypeScript",
+  });
+
+  await runIngestFlowLangGraph({
+    userId: "u_test_startup_context",
+    threadId: "t3",
+    message: "I want to work on AI infra",
+  });
+
+  const retrieved = await retrieveRelevantMemory({
+    userId: "u_test_startup_context",
+    question: "what should I build next?",
+  });
+
+  expect(retrieved.memories.length).toBeGreaterThan(0);
+
+  const memoryTypes = new Set(
+    retrieved.memories.map((memory) => memory.memoryType),
+  );
+
+  expect(memoryTypes.has("project")).toBe(true);
+  expect(memoryTypes.has("preference")).toBe(true);
+  expect(memoryTypes.has("profile")).toBe(true);
+});
+
+
+it("retrieves bug-solving and backend context for technical-fit questions", async () => {
+  await runIngestFlowLangGraph({
+    userId: "u_test_bug_history",
+    threadId: "t1",
+    message: "I solved a Redis locking bug",
+  });
+
+  await runIngestFlowLangGraph({
+    userId: "u_test_bug_history",
+    threadId: "t2",
+    message: "I use Next.js with TypeScript",
+  });
+
+  await runIngestFlowLangGraph({
+    userId: "u_test_bug_history",
+    threadId: "t3",
+    message: "I deployed my backend",
+  });
+
+  const retrieved = await retrieveRelevantMemory({
+    userId: "u_test_bug_history",
+    question: "what kind of backend work suits me?",
+  });
+
+  expect(retrieved.memories.length).toBeGreaterThan(0);
+
+  const memoryTypes = new Set(
+    retrieved.memories.map((memory) => memory.memoryType),
+  );
+
+  expect(memoryTypes.has("episodic")).toBe(true);
+  expect(memoryTypes.has("preference")).toBe(true);
+  expect(memoryTypes.has("project")).toBe(true);
+});
+
