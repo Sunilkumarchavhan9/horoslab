@@ -18,9 +18,10 @@ vi.mock("@/lib/memory/revisionMemory", () => ({
   listRevisionEvents: mocks.listRevisionEvents,
 }));
 
-import { POST as processRoutePost } from "../app/api/memory/process/route";
-import { POST as retrieveRoutePost } from "../app/api/memory/retrieve/route";
-import { GET as revisionsRouteGet } from "../app/api/memory/revisions/route";
+import {
+  GET as memoryRouteGet,
+  POST as memoryRoutePost,
+} from "../app/api/memory/[...slug]/route";
 
 describe("Memory API Route Contracts", () => {
   beforeEach(() => {
@@ -36,7 +37,7 @@ describe("Memory API Route Contracts", () => {
       body: JSON.stringify({ userId: "", message: "" }),
     });
 
-    const res = await processRoutePost(req);
+    const res = await memoryRoutePost(req);
     const body = await res.json();
 
     expect(res.status).toBe(400);
@@ -61,7 +62,7 @@ describe("Memory API Route Contracts", () => {
       }),
     });
 
-    const res = await processRoutePost(req);
+    const res = await memoryRoutePost(req);
     const body = await res.json();
 
     expect(res.status).toBe(200);
@@ -82,7 +83,7 @@ describe("Memory API Route Contracts", () => {
       body: JSON.stringify({ userId: "u1", question: "" }),
     });
 
-    const res = await retrieveRoutePost(req);
+    const res = await memoryRoutePost(req);
     const body = await res.json();
 
     expect(res.status).toBe(400);
@@ -106,7 +107,7 @@ describe("Memory API Route Contracts", () => {
       }),
     });
 
-    const res = await retrieveRoutePost(req);
+    const res = await memoryRoutePost(req);
     const body = await res.json();
 
     expect(res.status).toBe(200);
@@ -138,7 +139,7 @@ describe("Memory API Route Contracts", () => {
       { method: "GET" },
     );
 
-    const res = await revisionsRouteGet(req);
+    const res = await memoryRouteGet(req);
     const body = await res.json();
 
     expect(res.status).toBe(200);
@@ -158,7 +159,7 @@ describe("Memory API Route Contracts", () => {
       { method: "GET" },
     );
 
-    const res = await revisionsRouteGet(req);
+    const res = await memoryRouteGet(req);
     const body = await res.json();
 
     expect(res.status).toBe(200);
