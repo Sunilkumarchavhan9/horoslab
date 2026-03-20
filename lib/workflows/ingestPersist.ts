@@ -90,13 +90,13 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
 
     // TODO: revision event recording
     if (bestMerge?.baseMemory) {
-        recordRevisionEvent({
+        await recordRevisionEvent({
             before: bestMerge.baseMemory,
             after: memoryToPersist,
             reason: timelineReason,
         });
     } else if (bestEvolve?.baseMemory) {
-        recordRevisionEvent({
+        await recordRevisionEvent({
             before: bestEvolve.baseMemory,
             after: memoryToPersist,
             reason: timelineReason,
@@ -105,13 +105,13 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
 
 
     acceptedMemories.push(memoryToPersist);
-    upsertRecentMemory(memoryToPersist);
+    await upsertRecentMemory(memoryToPersist);
 
-    const timelineEvent = bestMerge
+    const timelineEvent =  await (bestMerge
       ? recordMemoryMergedEvent(memoryToPersist, timelineReason)
       : bestEvolve
         ? recordMemoryEvolvedEvent(memoryToPersist, timelineReason)
-        : recordMemoryCreatedEvent(memoryToPersist, timelineReason);
+        : recordMemoryCreatedEvent(memoryToPersist, timelineReason));
 
     timelineEvents.push(timelineEvent);
   }

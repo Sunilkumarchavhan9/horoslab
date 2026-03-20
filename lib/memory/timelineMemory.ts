@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory, TimelineEvent } from "./types";
+import { withFileLock } from "./jsonStoreLock";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const TIMELINE_STORE_PATH = path.join(DATA_DIR, "timeline-events.json");
@@ -34,41 +35,44 @@ function writeTimelineStore(events: TimelineEvent[]): void {
   writeFileSync(TIMELINE_STORE_PATH, JSON.stringify(events, null, 2), "utf8");
 }
 
-function createTimelineEvent(
+async function createTimelineEvent(
   memory: Memory,
   eventType: TimelineEvent["eventType"],
   reason: string,
-): TimelineEvent {
-  const event: TimelineEvent = {
-    id: randomUUID(),
-    userId: memory.userId,
-    memoryId: memory.id,
-    eventType,
-    reason,
-    timestamp: new Date().toISOString(),
-    metadata: {
-      type: memory.type,
-      importanceScore: memory.importanceScore,
-      confidence: memory.confidence,
-    },
-  };
+): Promise<TimelineEvent> {
+  return withFileLock(TIMELINE_STORE_PATH, async() => {
+    const event: TimelineEvent = {
+      id: randomUUID(),
+      userId: memory.userId,
+      memoryId: memory.id,
+      eventType,
+      reason,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        type: memory.type,
+        importanceScore: memory.importanceScore,
+        confidence: memory.confidence,
+      },
+    };
 
-  const timelineStore = readTimelineStore();
-  timelineStore.push(event);
-  writeTimelineStore(timelineStore);
+    const timelineStore = readTimelineStore();
+    timelineStore.push(event);
+    writeTimelineStore(timelineStore);
 
-  return event;
+    return event;
+
+  });
 }
 
-export function recordMemoryCreatedEvent( memory: Memory, reason: string ): TimelineEvent {
+export function recordMemoryCreatedEvent( memory: Memory, reason: string ): Promise<TimelineEvent> {
   return createTimelineEvent(memory, "memory_created", reason);
 }
 
-export function recordMemoryMergedEvent( memory: Memory, reason: string ): TimelineEvent {
+export function recordMemoryMergedEvent( memory: Memory, reason: string ): Promise<TimelineEvent> {
   return createTimelineEvent(memory, "memory_merged", reason);
 }
 
-export function recordMemoryEvolvedEvent( memory: Memory, reason: string ): TimelineEvent {
+export function recordMemoryEvolvedEvent( memory: Memory, reason: string ): Promise<TimelineEvent> {
   return createTimelineEvent(memory, "memory_evolved", reason);
 }
 

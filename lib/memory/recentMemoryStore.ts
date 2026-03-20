@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory } from "./types";
+import { withFileLock } from "./jsonStoreLock";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const RECENT_MEMORY_STORE_PATH = path.join(DATA_DIR, "recent-memories.json");
@@ -45,22 +46,25 @@ export function getRecentMemories(userId: string): Memory[] {
   return store[userId] ?? [];
 }
 
-export function upsertRecentMemory(memory: Memory): void {
-  const store = readRecentMemoryStore();
-  const current = store[memory.userId] ?? [];
-  const existingIndex = current.findIndex((item) => item.id === memory.id);
+export async  function upsertRecentMemory(memory: Memory): Promise<void> {
+  await withFileLock(RECENT_MEMORY_STORE_PATH, async () => {
+    const store = readRecentMemoryStore();
+    const current = store[memory.userId] ?? [];
+    const existingIndex = current.findIndex((item) => item.id === memory.id);
 
-  let next: Memory[];
+    let next: Memory[];
 
-  if (existingIndex !== -1) {
-    next = [...current];
-    next[existingIndex] = memory;
-  } else {
-    next = [...current, memory];
-  }
+    if (existingIndex !== -1) {
+      next = [...current];
+      next[existingIndex] = memory;
+    } else {
+      next = [...current, memory];
+    }
 
-  store[memory.userId] = next.slice(-MAX_RECENT_MEMORIES_PER_USER);
-  writeRecentMemoryStore(store);
+    store[memory.userId] = next.slice(-MAX_RECENT_MEMORIES_PER_USER);
+    writeRecentMemoryStore(store);
+  });
+  
 }
 
 export function listRecentMemories(): Memory[] {

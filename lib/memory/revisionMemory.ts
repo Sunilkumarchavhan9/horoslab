@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory, RevisionChange, RevisionEvent } from "./types";
+import { withFileLock } from "./jsonStoreLock";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const REVISION_STORE_PATH = path.join(DATA_DIR, "revision-events.json");
@@ -93,13 +94,14 @@ function buildRevisionChanges(
   return changes;
 }
 
-export function recordRevisionEvent(input: {
+export async function recordRevisionEvent(input: {
   before: Memory;
   after: Memory;
   reason: string;
   changedBy?: "system" | "user";
-}): RevisionEvent | null {
-  const changes = buildRevisionChanges(input.before, input.after);
+}): Promise<RevisionEvent | null> {
+  return withFileLock(REVISION_STORE_PATH, async() => {
+      const changes = buildRevisionChanges(input.before, input.after);
 
   if (changes.length === 0) {
     return null;
@@ -125,6 +127,7 @@ export function recordRevisionEvent(input: {
   writeRevisionStore(currentEvents);
 
   return event;
+  })
 }
 
 
