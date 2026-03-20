@@ -6,7 +6,7 @@ import { recordRevisionEvent } from "../memory/revisionMemory";
 import { recordMemoryCreatedEvent, recordMemoryEvolvedEvent, recordMemoryMergedEvent } from "../memory/timelineMemory";
 import type { Memory, TimelineEvent } from "../memory/types";
 import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
-import { toInternalMemory, toMemory } from "./ingestGraph";
+import { toInternalMemory, toMemory } from "./ingestShared";
 
 export interface PersistAcceptedResult {
   acceptedMemories: Memory[];
