@@ -130,6 +130,7 @@ export async function saveMemoryToMem0(input: SaveMemoryInput): Promise<{ id: st
       createdAt: input.memory.createdAt,
       updatedAt: input.memory.updatedAt,
       evidenceCount: input.memory.evidenceCount,
+      developerSignals: input.memory.developerSignals,
     },
   };
   const res = await client.add(payload);

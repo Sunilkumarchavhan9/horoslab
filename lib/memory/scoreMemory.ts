@@ -29,10 +29,67 @@ const LOW_VALUE_PATTERNS = [
   /\bjust checking\b/i,
 ];
 
+const DEVELOPER_SIGNAL_WEIGHTS = {
+  stack: 0.04,
+  framework: 0.04,
+  projectArea: 0.05,
+  goal: 0.08,
+  bugType: 0.1,
+} as const;
+
 function clamp01(value: number): number {
   if (value < 0) return 0;
   if (value > 1) return 1;
   return value;
+}
+
+function applyDeveloperSignalBoost(
+  candidate: MemoryCandidate,
+  scoreReasons: string[],
+): number {
+  const signals = candidate.developerSignals;
+  if (!signals) {
+    return 0;
+  }
+
+  let boost = 0;
+
+  if ((signals.stack?.length ?? 0) > 0) {
+    boost += DEVELOPER_SIGNAL_WEIGHTS.stack;
+    scoreReasons.push(
+      `+${DEVELOPER_SIGNAL_WEIGHTS.stack.toFixed(2)}:developer-stack-signal`,
+    );
+  }
+
+  if ((signals.framework?.length ?? 0) > 0) {
+    boost += DEVELOPER_SIGNAL_WEIGHTS.framework;
+    scoreReasons.push(
+      `+${DEVELOPER_SIGNAL_WEIGHTS.framework.toFixed(2)}:developer-framework-signal`,
+    );
+  }
+
+  if ((signals.projectArea?.length ?? 0) > 0) {
+    boost += DEVELOPER_SIGNAL_WEIGHTS.projectArea;
+    scoreReasons.push(
+      `+${DEVELOPER_SIGNAL_WEIGHTS.projectArea.toFixed(2)}:developer-project-area-signal`,
+    );
+  }
+
+  if ((signals.goal?.length ?? 0) > 0) {
+    boost += DEVELOPER_SIGNAL_WEIGHTS.goal;
+    scoreReasons.push(
+      `+${DEVELOPER_SIGNAL_WEIGHTS.goal.toFixed(2)}:developer-goal-signal`,
+    );
+  }
+
+  if ((signals.bugType?.length ?? 0) > 0) {
+    boost += DEVELOPER_SIGNAL_WEIGHTS.bugType;
+    scoreReasons.push(
+      `+${DEVELOPER_SIGNAL_WEIGHTS.bugType.toFixed(2)}:developer-bug-signal`,
+    );
+  }
+
+  return boost;
 }
 
 export function buildRepetitionMap(
@@ -64,6 +121,8 @@ export function scoreMemory(
       scoreReasons.push(`+${signal.weight.toFixed(2)}:${signal.reason}`);
     }
   }
+
+  score += applyDeveloperSignalBoost(candidate, scoreReasons);
 
   for (const lowValue of LOW_VALUE_PATTERNS) {
     if (lowValue.test(text)) {

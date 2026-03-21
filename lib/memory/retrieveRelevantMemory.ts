@@ -1,6 +1,6 @@
 import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem0";
 import { getRecentMemories } from "./recentMemoryStore";
-import type { Memory, MemoryType } from "./types";
+import type { DeveloperSignals, Memory, MemoryType } from "./types";
 import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
 
 export interface RetrieveRelevantMemoryInput {
@@ -30,6 +30,12 @@ export interface RetrieveRelevantMemoryResult {
     recencyScore: number;
     continuityBoost: number;
     intent: RetrievalIntent;
+    weightsUsed: {
+      semantic: number;
+      typeRelevance: number;
+      importance: number;
+      recency: number;
+    };
     finalScore: number;
   }>;
 }
@@ -64,7 +70,8 @@ function detectQuestionIntent(question: string): RetrievalIntent {
   }
 
   if (
-    (q.includes("solved") && q.includes("before")) ||
+    ((q.includes("solved") || q.includes("solve") || q.includes("fixed")) &&
+      q.includes("before")) ||
     q.includes("similar bug") ||
     q.includes("similar issue") ||
     q.includes("like this bug")
@@ -177,6 +184,7 @@ function memoryToSearchResult(memory: Memory, question: string): Mem0SearchResul
       createdAt: memory.createdAt,
       updatedAt: memory.updatedAt,
       evidenceCount: String(memory.evidenceCount),
+      developerSignals: memory.developerSignals,
     },
   };
 }
@@ -186,6 +194,7 @@ function parseMetadata(result: Mem0SearchResult): {
   importanceScore: number;
   updatedAt?: string;
   evidenceCount: number;
+  developerSignals?: DeveloperSignals;
 } {
   const metadata = result?.metadata;
 
@@ -193,6 +202,7 @@ function parseMetadata(result: Mem0SearchResult): {
   let importanceScore = 0.5;
   let updatedAt: string | undefined = undefined;
   let evidenceCount = 1;
+  let developerSignals: DeveloperSignals | undefined = undefined;
 
   if (!metadata || typeof metadata !== "object") {
     return {
@@ -200,6 +210,7 @@ function parseMetadata(result: Mem0SearchResult): {
       importanceScore,
       updatedAt,
       evidenceCount,
+      developerSignals,
     };
   }
 
@@ -227,12 +238,61 @@ function parseMetadata(result: Mem0SearchResult): {
     );
   }
 
+  developerSignals = parseDeveloperSignals(metadata.developerSignals);
+
   return {
     memoryType,
     importanceScore,
     updatedAt,
     evidenceCount,
+    developerSignals,
   };
+}
+
+function toStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+}
+
+function parseDeveloperSignals(value: unknown): DeveloperSignals | undefined {
+  let raw = value;
+
+  if (typeof raw === "string") {
+    try {
+      raw = JSON.parse(raw) as unknown;
+    } catch {
+      return undefined;
+    }
+  }
+
+  if (!raw || typeof raw !== "object") {
+    return undefined;
+  }
+
+  const record = raw as Record<string, unknown>;
+
+  const signals: DeveloperSignals = {
+    stack: toStringArray(record.stack),
+    framework: toStringArray(record.framework),
+    bugType: toStringArray(record.bugType),
+    goal: toStringArray(record.goal),
+    projectArea: toStringArray(record.projectArea),
+  };
+
+  const hasAny =
+    (signals.stack?.length ?? 0) > 0 ||
+    (signals.framework?.length ?? 0) > 0 ||
+    (signals.bugType?.length ?? 0) > 0 ||
+    (signals.goal?.length ?? 0) > 0 ||
+    (signals.projectArea?.length ?? 0) > 0;
+
+  return hasAny ? signals : undefined;
 }
 
 function normalizeSemanticScore(rawScore?: number): number {
@@ -298,9 +358,11 @@ function getIntentTypeBoost(
 
 function getContinuityBoost(input: {
   intent: RetrievalIntent;
+  question: string;
   memoryType: MemoryType | undefined;
   evidenceCount: number;
   recencyScore: number;
+  developerSignals?: DeveloperSignals;
 }): number {
   const intentTypeBoost = getIntentTypeBoost(input.intent, input.memoryType);
   const evidenceBoost = Math.min(
@@ -316,26 +378,104 @@ function getContinuityBoost(input: {
     input.intent === "resume_project" && input.memoryType === "project"
       ? MEMORY_RULES.retrieval.resumeProjectBoost
       : 0;
+  const developerSignalBoost = getDeveloperSignalBoost({
+    intent: input.intent,
+    question: input.question,
+    developerSignals: input.developerSignals,
+  });
 
-  return intentTypeBoost + evidenceBoost + freshnessBoost + resumeBoost;
+  return (
+    intentTypeBoost +
+    evidenceBoost +
+    freshnessBoost +
+    resumeBoost +
+    developerSignalBoost
+  );
 }
 
+function getDeveloperSignalBoost(input: {
+  intent: RetrievalIntent;
+  question: string;
+  developerSignals?: DeveloperSignals;
+}): number {
+  const signals = input.developerSignals;
+  if (!signals) {
+    return 0;
+  }
+
+  let boost = 0;
+
+  if (
+    input.intent === "stack_fit" &&
+    ((signals.stack?.length ?? 0) > 0 || (signals.framework?.length ?? 0) > 0)
+  ) {
+    boost += 0.08;
+  }
+
+  if (
+    input.intent === "build_next" &&
+    ((signals.projectArea?.length ?? 0) > 0 || (signals.goal?.length ?? 0) > 0)
+  ) {
+    boost += 0.06;
+  }
+
+  if (
+    (input.intent === "bug_recall" || input.intent === "backend_fit") &&
+    (signals.bugType?.length ?? 0) > 0
+  ) {
+    boost += 0.1;
+  }
+
+  const questionTokens = tokenize(input.question);
+  const signalTokens = new Set<string>();
+
+  for (const value of [
+    ...(signals.stack ?? []),
+    ...(signals.framework ?? []),
+    ...(signals.bugType ?? []),
+    ...(signals.goal ?? []),
+    ...(signals.projectArea ?? []),
+  ]) {
+    for (const token of tokenize(value)) {
+      signalTokens.add(token);
+    }
+  }
+
+  let overlap = 0;
+  for (const token of questionTokens) {
+    if (signalTokens.has(token)) {
+      overlap += 1;
+    }
+  }
+
+  boost += Math.min(0.08, overlap * 0.02);
+
+  return boost;
+}
+
+// 2) computeFinalScore should accept weights
 function computeFinalScore(input: {
   semanticScore: number;
   typeRelevanceScore: number;
   importanceScore: number;
   recencyScore: number;
   continuityBoost: number;
+  weights: {
+    semantic: number;
+    typeRelevance: number;
+    importance: number;
+    recency: number;
+  };
 }): number {
-  const weights = MEMORY_RULES.retrieval.weights;
   return (
-    input.semanticScore * weights.semantic +
-    input.typeRelevanceScore * weights.typeRelevance +
-    input.importanceScore * weights.importance +
-    input.recencyScore * weights.recency +
+    input.semanticScore * input.weights.semantic +
+    input.typeRelevanceScore * input.weights.typeRelevance +
+    input.importanceScore * input.weights.importance +
+    input.recencyScore * input.weights.recency +
     input.continuityBoost
   );
 }
+
 
 
 export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput ): Promise<RetrieveRelevantMemoryResult> {
@@ -358,6 +498,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
 
   const intent = detectQuestionIntent(input.question);
   const preferredTypes = inferPreferredTypes(intent);
+  const weightsUsed = { ...MEMORY_RULES.retrieval.weights };
 
   const ranked: RankedMemory[] = candidates.map((item) => {
     const meta = parseMetadata(item);
@@ -370,17 +511,19 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
     const recencyScore = getRecencyScore(meta.updatedAt);
     const continuityBoost = getContinuityBoost({
       intent,
+      question: input.question,
       memoryType: meta.memoryType,
       evidenceCount: meta.evidenceCount,
       recencyScore,
+      developerSignals: meta.developerSignals,
     });
-
     const finalScore = computeFinalScore({
       semanticScore,
       typeRelevanceScore,
       importanceScore: meta.importanceScore,
       recencyScore,
       continuityBoost,
+      weights: weightsUsed,
     });
 
     return {
@@ -403,6 +546,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
 
   return {
     memories: top,
+    // 4) in debug response
     debug: top.map((m) => ({
       id: m.id,
       semanticScore: m.semanticScore,
@@ -411,7 +555,9 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       recencyScore: m.recencyScore,
       continuityBoost: m.continuityBoost,
       intent,
+      weightsUsed,
       finalScore: m.finalScore,
     })),
+
   };
 }

@@ -153,4 +153,88 @@ describe("Memory rule boundaries", () => {
     });
     expect(weighted.memories[0]?.id).toBe("imp-high");
   });
+
+  it("favors project over preference for build-next intent when semantic scores are close", async () => {
+    const now = new Date().toISOString();
+    mocks.getRecentMemories.mockReturnValue([]);
+    mocks.searchMemoryFromMem0.mockResolvedValue([
+      {
+        id: "pref-close",
+        memory: "User prefers TypeScript",
+        score: 0.83,
+        metadata: {
+          memoryId: "pref-close",
+          type: "preference",
+          summary: "Prefers TypeScript",
+          importanceScore: "0.7",
+          updatedAt: now,
+          evidenceCount: "1",
+        },
+      },
+      {
+        id: "proj-close",
+        memory: "User is building MemoryOS backend",
+        score: 0.82,
+        metadata: {
+          memoryId: "proj-close",
+          type: "project",
+          summary: "Building MemoryOS backend",
+          importanceScore: "0.7",
+          updatedAt: now,
+          evidenceCount: "1",
+        },
+      },
+    ]);
+
+    const result = await retrieveRelevantMemory({
+      userId: "u_intent_build_next",
+      question: "what should I build next?",
+      topK: 2,
+    });
+
+    expect(result.memories[0]?.id).toBe("proj-close");
+    expect(result.debug[0]?.intent).toBe("build_next");
+  });
+
+  it("favors preference over project for stack-fit intent when semantic scores are close", async () => {
+    const now = new Date().toISOString();
+    mocks.getRecentMemories.mockReturnValue([]);
+    mocks.searchMemoryFromMem0.mockResolvedValue([
+      {
+        id: "proj-close",
+        memory: "User is building MemoryOS backend",
+        score: 0.83,
+        metadata: {
+          memoryId: "proj-close",
+          type: "project",
+          summary: "Building MemoryOS backend",
+          importanceScore: "0.7",
+          updatedAt: now,
+          evidenceCount: "1",
+        },
+      },
+      {
+        id: "pref-close",
+        memory: "User prefers TypeScript",
+        score: 0.82,
+        metadata: {
+          memoryId: "pref-close",
+          type: "preference",
+          summary: "Prefers TypeScript",
+          importanceScore: "0.7",
+          updatedAt: now,
+          evidenceCount: "1",
+        },
+      },
+    ]);
+
+    const result = await retrieveRelevantMemory({
+      userId: "u_intent_stack_fit",
+      question: "what stack fits me best?",
+      topK: 2,
+    });
+
+    expect(result.memories[0]?.id).toBe("pref-close");
+    expect(result.debug[0]?.intent).toBe("stack_fit");
+  });
 });

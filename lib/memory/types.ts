@@ -17,6 +17,14 @@ export type MemorySource = (typeof MEMORY_SOURCE)[number];
 
 export type IsoDateString = string;
 
+export interface DeveloperSignals {
+  stack?: string[];
+  framework?: string[];
+  bugType?: string[];
+  goal?: string[];
+  projectArea?: string[];
+}
+
 export interface Memory {
     id: string;
     userId: string;
@@ -29,7 +37,8 @@ export interface Memory {
     status: MemoryStatus;
     createdAt: IsoDateString;
     updatedAt: IsoDateString;
-    evidenceCount: number
+    evidenceCount: number;
+    developerSignals?: DeveloperSignals;
 
 }
 
@@ -41,6 +50,7 @@ export interface MemoryCandidate {
   summary: string;
   source: MemorySource;
   threadId?: string;
+  developerSignals?: DeveloperSignals;
 }
 
 

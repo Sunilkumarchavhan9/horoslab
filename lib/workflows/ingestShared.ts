@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import type { Mem0SearchResult } from "../integrations/mem0";
 import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
 import type {
+  DeveloperSignals,
   Memory,
   MemorySource,
   MemoryStatus,
@@ -34,6 +35,52 @@ export function  parseNumericMetadataValue(value:unknown, fallback:number): numb
   return fallback;
 }
 
+function toStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+}
+
+function parseDeveloperSignals(value: unknown): DeveloperSignals | undefined {
+  let raw = value;
+
+  if (typeof raw === "string") {
+    try {
+      raw = JSON.parse(raw) as unknown;
+    } catch {
+      return undefined;
+    }
+  }
+
+  if (!raw || typeof raw !== "object") {
+    return undefined;
+  }
+
+  const record = raw as Record<string, unknown>;
+
+  const signals: DeveloperSignals = {
+    stack: toStringArray(record.stack),
+    framework: toStringArray(record.framework),
+    bugType: toStringArray(record.bugType),
+    goal: toStringArray(record.goal),
+    projectArea: toStringArray(record.projectArea),
+  };
+
+  const hasAny =
+    (signals.stack?.length ?? 0) > 0 ||
+    (signals.framework?.length ?? 0) > 0 ||
+    (signals.bugType?.length ?? 0) > 0 ||
+    (signals.goal?.length ?? 0) > 0 ||
+    (signals.projectArea?.length ?? 0) > 0;
+
+  return hasAny ? signals : undefined;
+}
+
 
 export function toMemory(candidate: ScoredMemoryCandidate): Memory{
     const now  =  new Date().toISOString();
@@ -51,6 +98,7 @@ export function toMemory(candidate: ScoredMemoryCandidate): Memory{
         createdAt: now,
         updatedAt: now,
         evidenceCount: 1,
+        developerSignals: candidate.developerSignals,
     }
 }
 
@@ -99,6 +147,7 @@ export function toInternalMemory( result: Mem0SearchResult, userId: string ): Me
   );
   const confidence = parseNumericMetadataValue(metadata.confidence, 0.5);
   const evidenceCount = Math.max( 1, Math.round(parseNumericMetadataValue(metadata.evidenceCount, 1)),);
+  const developerSignals = parseDeveloperSignals(metadata.developerSignals);
 
   return {
     id: result.id,
@@ -113,5 +162,6 @@ export function toInternalMemory( result: Mem0SearchResult, userId: string ): Me
     createdAt,
     updatedAt,
     evidenceCount,
+    developerSignals,
   };
 }
