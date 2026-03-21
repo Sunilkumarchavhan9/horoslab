@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "tsx server/index.ts",
     "start:next": "next start",
+    "token": "tsx scripts/make-token.ts",
     "lint": "eslint",
     "test": "vitest run"
   },
