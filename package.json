@@ -3,18 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint",
-  "test": "vitest run"
-},
+    "dev": "tsx server/index.ts",
+    "dev:next": "next dev",
+    "build": "next build",
+    "start": "tsx server/index.ts",
+    "start:next": "next start",
+    "lint": "eslint",
+    "test": "vitest run"
+  },
   "dependencies": {
     "@langchain/core": "^1.1.32",
     "@langchain/langgraph": "^1.2.2",
     "@langchain/openai": "^1.2.13",
     "dayjs": "^1.11.19",
     "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jose": "^6.2.2",
     "mem0ai": "^2.3.0",
     "next": "16.1.6",
     "react": "19.2.3",
@@ -23,12 +27,16 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/express": "^5.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/supertest": "^7.2.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "supertest": "^7.2.2",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.0"
   }

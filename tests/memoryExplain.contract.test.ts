@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import request from "supertest";
 
 const mocks = vi.hoisted(() => ({
   explainMemory: vi.fn(),
@@ -8,55 +9,45 @@ vi.mock("@/lib/memory/explainMemory", () => ({
   explainMemory: mocks.explainMemory,
 }));
 
-import { GET as memoryRouteGet } from "../app/api/memory/[...slug]/route";
+import { createMemoryOsApp } from "../server/app";
 
 describe("Memory Explain Route Contract", () => {
+  const app = createMemoryOsApp();
+  const authUserId = "u_auth_explain";
+
   beforeEach(() => {
     mocks.explainMemory.mockReset();
   });
 
   it("returns 401 when auth header is missing", async () => {
-    const req = new Request("http://localhost/api/memory/explain?memoryId=m1", {
-      method: "GET",
-    });
-
-    const res = await memoryRouteGet(req);
-    const body = await res.json();
+    const res = await request(app).get("/api/memory/explain?memoryId=m1");
 
     expect(res.status).toBe(401);
-    expect(body).toHaveProperty("error", "Unauthorized");
+    expect(res.body).toHaveProperty("error", "Unauthorized");
   });
 
   it("returns 400 when memoryId is missing", async () => {
-    const req = new Request("http://localhost/api/memory/explain", {
-      method: "GET",
-      headers: { "x-user-id": "u_auth_explain" },
-    });
-
-    const res = await memoryRouteGet(req);
-    const body = await res.json();
+    const res = await request(app)
+      .get("/api/memory/explain")
+      .set("x-user-id", authUserId);
 
     expect(res.status).toBe(400);
-    expect(body).toHaveProperty("error", "memoryId is required");
+    expect(res.body).toHaveProperty("error", "memoryId is required");
     expect(mocks.explainMemory).not.toHaveBeenCalled();
   });
 
   it("returns 404 when memory is not found", async () => {
     mocks.explainMemory.mockResolvedValue(null);
 
-    const req = new Request("http://localhost/api/memory/explain?memoryId=missing-1", {
-      method: "GET",
-      headers: { "x-user-id": "u_auth_explain" },
-    });
-
-    const res = await memoryRouteGet(req);
-    const body = await res.json();
+    const res = await request(app)
+      .get("/api/memory/explain?memoryId=missing-1")
+      .set("x-user-id", authUserId);
 
     expect(res.status).toBe(404);
-    expect(body).toHaveProperty("error", "Memory not found");
+    expect(res.body).toHaveProperty("error", "Memory not found");
     expect(mocks.explainMemory).toHaveBeenCalledWith({
       memoryId: "missing-1",
-      userId: "u_auth_explain",
+      userId: authUserId,
     });
   });
 
@@ -87,25 +78,18 @@ describe("Memory Explain Route Contract", () => {
       },
     });
 
-    const req = new Request(
-      "http://localhost/api/memory/explain?memoryId=m1&userId=u1",
-      {
-        method: "GET",
-        headers: { "x-user-id": "u_auth_explain" },
-      },
-    );
-
-    const res = await memoryRouteGet(req);
-    const body = await res.json();
+    const res = await request(app)
+      .get("/api/memory/explain?memoryId=m1&userId=u1")
+      .set("x-user-id", authUserId);
 
     expect(res.status).toBe(200);
-    expect(body).toHaveProperty("memory");
-    expect(body).toHaveProperty("latestRevision");
-    expect(body).toHaveProperty("timeline");
-    expect(body).toHaveProperty("explanation");
+    expect(res.body).toHaveProperty("memory");
+    expect(res.body).toHaveProperty("latestRevision");
+    expect(res.body).toHaveProperty("timeline");
+    expect(res.body).toHaveProperty("explanation");
     expect(mocks.explainMemory).toHaveBeenCalledWith({
       memoryId: "m1",
-      userId: "u_auth_explain",
+      userId: authUserId,
     });
   });
 });
