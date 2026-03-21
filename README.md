@@ -122,7 +122,7 @@ bun install
 Run the development server:
 
 ```bash
-bun dev
+bun run dev
 ```
 
 Run lint:
@@ -135,6 +135,83 @@ Run tests:
 
 ```bash
 bun run test
+```
+
+## Express API Run and cURL Examples
+
+Start the Express API:
+
+```bash
+bun run dev
+```
+
+Default base URL:
+
+```bash
+http://localhost:3001
+```
+
+All memory endpoints require auth header:
+
+```bash
+-H "x-user-id: u_demo_1"
+```
+
+Health check:
+
+```bash
+curl -X GET "http://localhost:3001/api/health"
+```
+
+Process memory:
+
+```bash
+curl -X POST "http://localhost:3001/api/memory/process" \
+  -H "Content-Type: application/json" \
+  -H "x-user-id: u_demo_1" \
+  -d '{
+    "threadId": "t1",
+    "message": "I am learning transformers"
+  }'
+```
+
+Retrieve memory:
+
+```bash
+curl -X POST "http://localhost:3001/api/memory/retrieve" \
+  -H "Content-Type: application/json" \
+  -H "x-user-id: u_demo_1" \
+  -d '{
+    "question": "what should I build next?"
+  }'
+```
+
+Get timeline:
+
+```bash
+curl -X GET "http://localhost:3001/api/memory/timeline" \
+  -H "x-user-id: u_demo_1"
+```
+
+Get revisions (all for user):
+
+```bash
+curl -X GET "http://localhost:3001/api/memory/revisions" \
+  -H "x-user-id: u_demo_1"
+```
+
+Get revisions by memory ID:
+
+```bash
+curl -X GET "http://localhost:3001/api/memory/revisions?memoryId=<MEMORY_ID>" \
+  -H "x-user-id: u_demo_1"
+```
+
+Explain one memory:
+
+```bash
+curl -X GET "http://localhost:3001/api/memory/explain?memoryId=<MEMORY_ID>" \
+  -H "x-user-id: u_demo_1"
 ```
 
 ## Environment
