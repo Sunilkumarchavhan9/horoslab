@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createMemoryOsApp } from "./app";
 
 const port = Number(process.env.PORT ?? 3001);

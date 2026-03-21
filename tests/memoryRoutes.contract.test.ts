@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import request from "supertest";
+import { makeToken } from "./helpers/authToken";
 
 const mocks = vi.hoisted(() => ({
   runIngestFlowLangGraph: vi.fn(),
@@ -26,11 +27,13 @@ import {
 describe("Memory API Route Contracts", () => {
   const app = createMemoryOsApp();
   const authUserId = "u_auth_contract";
+  let authHeader = "";
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mocks.runIngestFlowLangGraph.mockReset();
     mocks.retrieveRelevantMemory.mockReset();
     mocks.listRevisionEvents.mockReset();
+    authHeader = `Bearer ${await makeToken(authUserId)}`;
   });
 
   it("returns 401 when auth header is missing", async () => {
@@ -45,7 +48,7 @@ describe("Memory API Route Contracts", () => {
   it("returns 400 for invalid process payload", async () => {
     const res = await request(app)
       .post("/api/memory/process")
-      .set("x-user-id", authUserId)
+      .set("authorization", authHeader)
       .send({ message: "" });
 
     expect(res.status).toBe(400);
@@ -62,7 +65,7 @@ describe("Memory API Route Contracts", () => {
 
     const res = await request(app)
       .post("/api/memory/process")
-      .set("x-user-id", authUserId)
+      .set("authorization", authHeader)
       .send({
         userId: "fake_user_from_body",
         threadId: "t1",
@@ -83,7 +86,7 @@ describe("Memory API Route Contracts", () => {
   it("returns 400 for invalid retrieve payload", async () => {
     const res = await request(app)
       .post("/api/memory/retrieve")
-      .set("x-user-id", authUserId)
+      .set("authorization", authHeader)
       .send({ question: "" });
 
     expect(res.status).toBe(400);
@@ -99,7 +102,7 @@ describe("Memory API Route Contracts", () => {
 
     const res = await request(app)
       .post("/api/memory/retrieve")
-      .set("x-user-id", authUserId)
+      .set("authorization", authHeader)
       .send({
         userId: "fake_user_from_body",
         question: "what should I build next?",
@@ -132,7 +135,7 @@ describe("Memory API Route Contracts", () => {
 
     const res = await request(app)
       .get("/api/memory/revisions?userId=u1")
-      .set("x-user-id", authUserId);
+      .set("authorization", authHeader);
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("revisions");
@@ -145,7 +148,7 @@ describe("Memory API Route Contracts", () => {
 
     const res = await request(app)
       .get("/api/memory/revisions?memoryId=memory-123")
-      .set("x-user-id", authUserId);
+      .set("authorization", authHeader);
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("revisions");

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import request from "supertest";
+import { makeToken } from "./helpers/authToken";
 
 const mocks = vi.hoisted(() => ({
   explainMemory: vi.fn(),
@@ -14,9 +15,11 @@ import { createMemoryOsApp } from "../server/app";
 describe("Memory Explain Route Contract", () => {
   const app = createMemoryOsApp();
   const authUserId = "u_auth_explain";
+  let authHeader = "";
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mocks.explainMemory.mockReset();
+    authHeader = `Bearer ${await makeToken(authUserId)}`;
   });
 
   it("returns 401 when auth header is missing", async () => {
@@ -29,7 +32,7 @@ describe("Memory Explain Route Contract", () => {
   it("returns 400 when memoryId is missing", async () => {
     const res = await request(app)
       .get("/api/memory/explain")
-      .set("x-user-id", authUserId);
+      .set("authorization", authHeader);
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error", "memoryId is required");
@@ -41,7 +44,7 @@ describe("Memory Explain Route Contract", () => {
 
     const res = await request(app)
       .get("/api/memory/explain?memoryId=missing-1")
-      .set("x-user-id", authUserId);
+      .set("authorization", authHeader);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("error", "Memory not found");
@@ -80,7 +83,7 @@ describe("Memory Explain Route Contract", () => {
 
     const res = await request(app)
       .get("/api/memory/explain?memoryId=m1&userId=u1")
-      .set("x-user-id", authUserId);
+      .set("authorization", authHeader);
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("memory");

@@ -154,7 +154,7 @@ http://localhost:3001
 All memory endpoints require auth header:
 
 ```bash
--H "x-user-id: u_demo_1"
+-H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
 Health check:
@@ -168,7 +168,7 @@ Process memory:
 ```bash
 curl -X POST "http://localhost:3001/api/memory/process" \
   -H "Content-Type: application/json" \
-  -H "x-user-id: u_demo_1" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
   -d '{
     "threadId": "t1",
     "message": "I am learning transformers"
@@ -180,7 +180,7 @@ Retrieve memory:
 ```bash
 curl -X POST "http://localhost:3001/api/memory/retrieve" \
   -H "Content-Type: application/json" \
-  -H "x-user-id: u_demo_1" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
   -d '{
     "question": "what should I build next?"
   }'
@@ -190,28 +190,28 @@ Get timeline:
 
 ```bash
 curl -X GET "http://localhost:3001/api/memory/timeline" \
-  -H "x-user-id: u_demo_1"
+  -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
 Get revisions (all for user):
 
 ```bash
 curl -X GET "http://localhost:3001/api/memory/revisions" \
-  -H "x-user-id: u_demo_1"
+  -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
 Get revisions by memory ID:
 
 ```bash
 curl -X GET "http://localhost:3001/api/memory/revisions?memoryId=<MEMORY_ID>" \
-  -H "x-user-id: u_demo_1"
+  -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
 Explain one memory:
 
 ```bash
 curl -X GET "http://localhost:3001/api/memory/explain?memoryId=<MEMORY_ID>" \
-  -H "x-user-id: u_demo_1"
+  -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
 ## Environment
@@ -220,6 +220,9 @@ Create `.env` with:
 
 ```env
 MEM0_API_KEY=your_mem0_api_key
+JWT_SECRET=your_long_random_secret
+JWT_ISSUER=memoryos
+JWT_AUDIENCE=memoryos-api
 ```
 
 ## Current Status

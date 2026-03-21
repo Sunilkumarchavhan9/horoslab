@@ -1,16 +1,17 @@
 import type { NextFunction, Request, Response } from "express";
+import { verifyAuthorizationHeader } from "../../lib/auth/verifyToken";
 
-export function requireAuth(
+export async function requireAuth(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  const userId = req.header("x-user-id")?.trim();
-  if (!userId) {
+): Promise<void> {
+  const verified = await verifyAuthorizationHeader(req.header("authorization"));
+  if (!verified) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
 
-  req.authUserId = userId;
+  req.authUserId = verified.userId;
   next();
 }

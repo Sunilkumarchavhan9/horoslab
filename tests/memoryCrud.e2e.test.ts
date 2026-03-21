@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, rmSync } from "fs";
 import path from "path";
 import request from "supertest";
 import { createMemoryOsApp } from "../server/app";
+import { makeToken } from "./helpers/authToken";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -70,12 +71,12 @@ beforeEach(() => {
 describe("Memory CRUD catch-all E2E", () => {
   const app = createMemoryOsApp();
 
-  const headersFor = (userId: string) => ({
+  const headersFor = async (userId: string) => ({
     "content-type": "application/json",
-    "x-user-id": userId,
+    authorization: `Bearer ${await makeToken(userId)}`,
   });
 
-  it("returns 401 when x-user-id header is missing", async () => {
+  it("returns 401 when auth header is missing", async () => {
     const res = await request(app)
       .post("/api/memory/process")
       .send({ message: "I am learning transformers" });
@@ -87,7 +88,7 @@ describe("Memory CRUD catch-all E2E", () => {
   it("POST /api/memory/process works", async () => {
     const res = await request(app)
       .post("/api/memory/process")
-      .set(headersFor("u_crud_e2e"))
+      .set(await headersFor("u_crud_e2e"))
       .send({
         userId: "fake_body_user",
         threadId: "t1",
@@ -105,7 +106,7 @@ describe("Memory CRUD catch-all E2E", () => {
     // seed one memory first
     await request(app)
       .post("/api/memory/process")
-      .set(headersFor("u_crud_e2e_retrieve"))
+      .set(await headersFor("u_crud_e2e_retrieve"))
       .send({
           userId: "fake_body_user",
           threadId: "t1",
@@ -114,7 +115,7 @@ describe("Memory CRUD catch-all E2E", () => {
 
     const res = await request(app)
       .post("/api/memory/retrieve")
-      .set(headersFor("u_crud_e2e_retrieve"))
+      .set(await headersFor("u_crud_e2e_retrieve"))
       .send({
         userId: "fake_body_user",
         question: "what should I build next?",
@@ -128,7 +129,7 @@ describe("Memory CRUD catch-all E2E", () => {
   it("GET /api/memory/revisions and /timeline work", async () => {
     const first = await request(app)
       .post("/api/memory/process")
-      .set(headersFor("u_crud_e2e_rev"))
+      .set(await headersFor("u_crud_e2e_rev"))
       .send({
           userId: "fake_body_user",
           threadId: "t1",
@@ -138,7 +139,7 @@ describe("Memory CRUD catch-all E2E", () => {
 
     await request(app)
       .post("/api/memory/process")
-      .set(headersFor("u_crud_e2e_rev"))
+      .set(await headersFor("u_crud_e2e_rev"))
       .send({
           userId: "fake_body_user",
           threadId: "t2",
@@ -147,7 +148,7 @@ describe("Memory CRUD catch-all E2E", () => {
 
     const revisionsRes = await request(app)
       .get(`/api/memory/revisions?memoryId=${memoryId}`)
-      .set("x-user-id", "u_crud_e2e_rev");
+      .set(await headersFor("u_crud_e2e_rev"));
 
     expect(revisionsRes.status).toBe(200);
     expect(revisionsRes.body).toHaveProperty("revisions");
@@ -156,7 +157,7 @@ describe("Memory CRUD catch-all E2E", () => {
 
     const timelineRes = await request(app)
       .get("/api/memory/timeline?userId=u_crud_e2e_rev")
-      .set("x-user-id", "u_crud_e2e_rev");
+      .set(await headersFor("u_crud_e2e_rev"));
 
     expect(timelineRes.status).toBe(200);
     expect(timelineRes.body).toHaveProperty("events");
@@ -167,7 +168,7 @@ describe("Memory CRUD catch-all E2E", () => {
   it("GET /api/memory/explain without memoryId returns 400", async () => {
     const res = await request(app)
       .get("/api/memory/explain")
-      .set("x-user-id", "u_crud_e2e_explain");
+      .set(await headersFor("u_crud_e2e_explain"));
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error", "memoryId is required");
@@ -176,7 +177,7 @@ describe("Memory CRUD catch-all E2E", () => {
   it("GET /api/memory/explain returns memory + latestRevision + timeline + explanation", async () => {
     const first = await request(app)
       .post("/api/memory/process")
-      .set(headersFor("u_crud_e2e_explain"))
+      .set(await headersFor("u_crud_e2e_explain"))
       .send({
           userId: "fake_body_user",
           threadId: "t1",
@@ -186,7 +187,7 @@ describe("Memory CRUD catch-all E2E", () => {
 
     await request(app)
       .post("/api/memory/process")
-      .set(headersFor("u_crud_e2e_explain"))
+      .set(await headersFor("u_crud_e2e_explain"))
       .send({
           userId: "fake_body_user",
           threadId: "t2",
@@ -195,7 +196,7 @@ describe("Memory CRUD catch-all E2E", () => {
 
     const res = await request(app)
       .get(`/api/memory/explain?memoryId=${memoryId}&userId=u_crud_e2e_explain`)
-      .set("x-user-id", "u_crud_e2e_explain");
+      .set(await headersFor("u_crud_e2e_explain"));
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("memory");
@@ -207,7 +208,7 @@ describe("Memory CRUD catch-all E2E", () => {
   it("unknown path returns 404", async () => {
     const res = await request(app)
       .post("/api/memory/not-supported")
-      .set(headersFor("u_crud_unknown"))
+      .set(await headersFor("u_crud_unknown"))
       .send({});
 
     expect(res.status).toBe(404);
