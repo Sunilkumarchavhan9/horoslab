@@ -24,17 +24,36 @@ import {
 } from "../app/api/memory/[...slug]/route";
 
 describe("Memory API Route Contracts", () => {
+  const authHeaders = {
+    "content-type": "application/json",
+    "x-user-id": "u_auth_contract",
+  };
+
   beforeEach(() => {
     mocks.runIngestFlowLangGraph.mockReset();
     mocks.retrieveRelevantMemory.mockReset();
     mocks.listRevisionEvents.mockReset();
   });
 
-  it("returns 400 for invalid process payload", async () => {
+  it("returns 401 when auth header is missing", async () => {
     const req = new Request("http://localhost/api/memory/process", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ userId: "", message: "" }),
+      body: JSON.stringify({ message: "I am learning transformers" }),
+    });
+
+    const res = await memoryRoutePost(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(body).toHaveProperty("error", "Unauthorized");
+  });
+
+  it("returns 400 for invalid process payload", async () => {
+    const req = new Request("http://localhost/api/memory/process", {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({ message: "" }),
     });
 
     const res = await memoryRoutePost(req);
@@ -54,9 +73,9 @@ describe("Memory API Route Contracts", () => {
 
     const req = new Request("http://localhost/api/memory/process", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: authHeaders,
       body: JSON.stringify({
-        userId: "u_route_contract",
+        userId: "fake_user_from_body",
         threadId: "t1",
         message: "I am learning transformers",
       }),
@@ -70,7 +89,7 @@ describe("Memory API Route Contracts", () => {
     expect(body).toHaveProperty("rejectedMemories");
     expect(body).toHaveProperty("timelineEvents");
     expect(mocks.runIngestFlowLangGraph).toHaveBeenCalledWith({
-      userId: "u_route_contract",
+      userId: "u_auth_contract",
       threadId: "t1",
       message: "I am learning transformers",
     });
@@ -79,8 +98,8 @@ describe("Memory API Route Contracts", () => {
   it("returns 400 for invalid retrieve payload", async () => {
     const req = new Request("http://localhost/api/memory/retrieve", {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ userId: "u1", question: "" }),
+      headers: authHeaders,
+      body: JSON.stringify({ question: "" }),
     });
 
     const res = await memoryRoutePost(req);
@@ -99,9 +118,9 @@ describe("Memory API Route Contracts", () => {
 
     const req = new Request("http://localhost/api/memory/retrieve", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: authHeaders,
       body: JSON.stringify({
-        userId: "u_route_contract",
+        userId: "fake_user_from_body",
         question: "what should I build next?",
         topK: 5,
       }),
@@ -114,7 +133,7 @@ describe("Memory API Route Contracts", () => {
     expect(body).toHaveProperty("memories");
     expect(body).toHaveProperty("debug");
     expect(mocks.retrieveRelevantMemory).toHaveBeenCalledWith({
-      userId: "u_route_contract",
+      userId: "u_auth_contract",
       question: "what should I build next?",
       topK: 5,
     });
@@ -124,7 +143,7 @@ describe("Memory API Route Contracts", () => {
     mocks.listRevisionEvents.mockReturnValue([
       {
         id: "r1",
-        userId: "u1",
+        userId: "u_auth_contract",
         memoryId: "m1",
         version: 1,
         changedAt: new Date().toISOString(),
@@ -136,7 +155,10 @@ describe("Memory API Route Contracts", () => {
 
     const req = new Request(
       "http://localhost/api/memory/revisions?userId=u1",
-      { method: "GET" },
+      {
+        method: "GET",
+        headers: { "x-user-id": "u_auth_contract" },
+      },
     );
 
     const res = await memoryRouteGet(req);
@@ -145,10 +167,7 @@ describe("Memory API Route Contracts", () => {
     expect(res.status).toBe(200);
     expect(body).toHaveProperty("revisions");
     expect(body).toHaveProperty("count", 1);
-    expect(mocks.listRevisionEvents).toHaveBeenCalledWith({
-      userId: "u1",
-      memoryId: undefined,
-    });
+    expect(mocks.listRevisionEvents).toHaveBeenCalledWith({ userId: "u_auth_contract" });
   });
 
   it("applies memoryId revision filter", async () => {
@@ -156,7 +175,10 @@ describe("Memory API Route Contracts", () => {
 
     const req = new Request(
       "http://localhost/api/memory/revisions?memoryId=memory-123",
-      { method: "GET" },
+      {
+        method: "GET",
+        headers: { "x-user-id": "u_auth_contract" },
+      },
     );
 
     const res = await memoryRouteGet(req);
@@ -166,7 +188,6 @@ describe("Memory API Route Contracts", () => {
     expect(body).toHaveProperty("revisions");
     expect(body).toHaveProperty("count", 0);
     expect(mocks.listRevisionEvents).toHaveBeenCalledWith({
-      userId: undefined,
       memoryId: "memory-123",
     });
   });

@@ -70,12 +70,33 @@ beforeEach(() => {
 });
 
 describe("Memory CRUD catch-all E2E", () => {
-  it("POST /api/memory/process works", async () => {
+  const headersFor = (userId: string) => ({
+    "content-type": "application/json",
+    "x-user-id": userId,
+  });
+
+  it("returns 401 when x-user-id header is missing", async () => {
     const req = new Request("http://localhost/api/memory/process", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        userId: "u_crud_e2e",
+        message: "I am learning transformers",
+      }),
+    });
+
+    const res = await memoryRoutePost(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(body).toHaveProperty("error", "Unauthorized");
+  });
+
+  it("POST /api/memory/process works", async () => {
+    const req = new Request("http://localhost/api/memory/process", {
+      method: "POST",
+      headers: headersFor("u_crud_e2e"),
+      body: JSON.stringify({
+        userId: "fake_body_user",
         threadId: "t1",
         message: "I am learning transformers",
       }),
@@ -96,9 +117,9 @@ describe("Memory CRUD catch-all E2E", () => {
     await memoryRoutePost(
       new Request("http://localhost/api/memory/process", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: headersFor("u_crud_e2e_retrieve"),
         body: JSON.stringify({
-          userId: "u_crud_e2e_retrieve",
+          userId: "fake_body_user",
           threadId: "t1",
           message: "I am building MemoryOS",
         }),
@@ -107,9 +128,9 @@ describe("Memory CRUD catch-all E2E", () => {
 
     const req = new Request("http://localhost/api/memory/retrieve", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: headersFor("u_crud_e2e_retrieve"),
       body: JSON.stringify({
-        userId: "u_crud_e2e_retrieve",
+        userId: "fake_body_user",
         question: "what should I build next?",
       }),
     });
@@ -126,9 +147,9 @@ describe("Memory CRUD catch-all E2E", () => {
     const first = await memoryRoutePost(
       new Request("http://localhost/api/memory/process", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: headersFor("u_crud_e2e_rev"),
         body: JSON.stringify({
-          userId: "u_crud_e2e_rev",
+          userId: "fake_body_user",
           threadId: "t1",
           message: "I am learning transformers",
         }),
@@ -140,9 +161,9 @@ describe("Memory CRUD catch-all E2E", () => {
     await memoryRoutePost(
       new Request("http://localhost/api/memory/process", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: headersFor("u_crud_e2e_rev"),
         body: JSON.stringify({
-          userId: "u_crud_e2e_rev",
+          userId: "fake_body_user",
           threadId: "t2",
           message: "I trained a transformer model",
         }),
@@ -152,7 +173,10 @@ describe("Memory CRUD catch-all E2E", () => {
     const revisionsRes = await memoryRouteGet(
       new Request(
         `http://localhost/api/memory/revisions?memoryId=${memoryId}`,
-        { method: "GET" },
+        {
+          method: "GET",
+          headers: { "x-user-id": "u_crud_e2e_rev" },
+        },
       ),
     );
     const revisionsBody = await revisionsRes.json();
@@ -165,6 +189,7 @@ describe("Memory CRUD catch-all E2E", () => {
     const timelineRes = await memoryRouteGet(
       new Request("http://localhost/api/memory/timeline?userId=u_crud_e2e_rev", {
         method: "GET",
+        headers: { "x-user-id": "u_crud_e2e_rev" },
       }),
     );
     const timelineBody = await timelineRes.json();
@@ -179,6 +204,7 @@ describe("Memory CRUD catch-all E2E", () => {
     const res = await memoryRouteGet(
       new Request("http://localhost/api/memory/explain", {
         method: "GET",
+        headers: { "x-user-id": "u_crud_e2e_explain" },
       }),
     );
     const body = await res.json();
@@ -191,9 +217,9 @@ describe("Memory CRUD catch-all E2E", () => {
     const first = await memoryRoutePost(
       new Request("http://localhost/api/memory/process", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: headersFor("u_crud_e2e_explain"),
         body: JSON.stringify({
-          userId: "u_crud_e2e_explain",
+          userId: "fake_body_user",
           threadId: "t1",
           message: "I am learning transformers",
         }),
@@ -205,9 +231,9 @@ describe("Memory CRUD catch-all E2E", () => {
     await memoryRoutePost(
       new Request("http://localhost/api/memory/process", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: headersFor("u_crud_e2e_explain"),
         body: JSON.stringify({
-          userId: "u_crud_e2e_explain",
+          userId: "fake_body_user",
           threadId: "t2",
           message: "I trained a transformer model",
         }),
@@ -217,7 +243,10 @@ describe("Memory CRUD catch-all E2E", () => {
     const res = await memoryRouteGet(
       new Request(
         `http://localhost/api/memory/explain?memoryId=${memoryId}&userId=u_crud_e2e_explain`,
-        { method: "GET" },
+        {
+          method: "GET",
+          headers: { "x-user-id": "u_crud_e2e_explain" },
+        },
       ),
     );
     const body = await res.json();
@@ -232,7 +261,7 @@ describe("Memory CRUD catch-all E2E", () => {
   it("unknown path returns 404", async () => {
     const req = new Request("http://localhost/api/memory/not-supported", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: headersFor("u_crud_unknown"),
       body: JSON.stringify({}),
     });
 

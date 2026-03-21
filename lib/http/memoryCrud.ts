@@ -7,13 +7,13 @@ import { listTimelineEvents } from "@/lib/memory/timelineMemory";
 import { explainMemory } from "@/lib/memory/explainMemory";
 
 const ProcessMemorySchema = z.object({
-  userId: z.string().min(1, "userId is required"),
+  userId: z.string().min(1).optional(),
   threadId: z.string().min(1).optional(),
   message: z.string().min(1, "message is required"),
 });
 
 const RetrieveMemorySchema = z.object({
-  userId: z.string().min(1, "userId is required"),
+  userId: z.string().min(1).optional(),
   question: z.string().min(1, "question is required"),
   topK: z.number().int().positive().max(20).optional(),
 });
@@ -61,13 +61,22 @@ function internalServerError(error: unknown, message: string): NextResponse {
   );
 }
 
-async function handleProcess(req: Request): Promise<NextResponse> {
+function getAuthUserId(req: Request): string | null {
+  const userId = req.headers.get("x-user-id")?.trim();
+  return userId ? userId : null;
+}
+
+async function handleProcess(req: Request, authUserId: string): Promise<NextResponse> {
   const parsed = await parseAndValidateJsonBody(req, ProcessMemorySchema);
   if (!parsed.success) {
     return parsed.response;
   }
 
-  const result = await runIngestFlowLangGraph(parsed.data);
+  const result = await runIngestFlowLangGraph({
+    userId: authUserId,
+    threadId: parsed.data.threadId,
+    message: parsed.data.message,
+  });
   return NextResponse.json(
     {
       acceptedMemories: result.acceptedMemories,
@@ -78,21 +87,26 @@ async function handleProcess(req: Request): Promise<NextResponse> {
   );
 }
 
-async function handleRetrieve(req: Request): Promise<NextResponse> {
+async function handleRetrieve(req: Request, authUserId: string): Promise<NextResponse> {
   const parsed = await parseAndValidateJsonBody(req, RetrieveMemorySchema);
   if (!parsed.success) {
     return parsed.response;
   }
 
-  const result = await retrieveRelevantMemory(parsed.data);
+  const result = await retrieveRelevantMemory({
+    userId: authUserId,
+    question: parsed.data.question,
+    topK: parsed.data.topK,
+  });
   return NextResponse.json(result, { status: 200 });
 }
 
-function handleRevisions(req: Request): NextResponse {
+function handleRevisions(req: Request, authUserId: string): NextResponse {
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId") ?? undefined;
   const memoryId = searchParams.get("memoryId") ?? undefined;
-  const revisions = listRevisionEvents({ userId, memoryId });
+  const revisions = listRevisionEvents(
+    memoryId ? { memoryId } : { userId: authUserId },
+  ).filter((event) => event.userId === authUserId);
 
   return NextResponse.json(
     {
@@ -103,10 +117,8 @@ function handleRevisions(req: Request): NextResponse {
   );
 }
 
-function handleTimeline(req: Request): NextResponse {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId") ?? undefined;
-  const events = listTimelineEvents(userId);
+function handleTimeline(authUserId: string): NextResponse {
+  const events = listTimelineEvents(authUserId);
 
   return NextResponse.json(
     {
@@ -117,17 +129,19 @@ function handleTimeline(req: Request): NextResponse {
   );
 }
 
-async function handleExplain(req: Request): Promise<NextResponse> {
+async function handleExplain(req: Request, authUserId: string): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
   const memoryId = searchParams.get("memoryId");
-  const userId = searchParams.get("userId") ?? undefined;
 
   if (!memoryId) {
     return NextResponse.json({ error: "memoryId is required" }, { status: 400 });
   }
 
-  const result = await explainMemory({ memoryId, userId });
+  const result = await explainMemory({ memoryId, userId: authUserId });
   if (!result) {
+    return NextResponse.json({ error: "Memory not found" }, { status: 404 });
+  }
+  if (result.memory.rawMetadata.userId !== authUserId) {
     return NextResponse.json({ error: "Memory not found" }, { status: 404 });
   }
 
@@ -138,25 +152,30 @@ export async function handleMemoryCrud(req: Request): Promise<NextResponse> {
   try {
     const action = getAction(req);
     const method = req.method.toUpperCase();
+    const authUserId = getAuthUserId(req);
+
+    if (!authUserId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (action === "process" && method === "POST") {
-      return handleProcess(req);
+      return handleProcess(req, authUserId);
     }
 
     if (action === "retrieve" && method === "POST") {
-      return handleRetrieve(req);
+      return handleRetrieve(req, authUserId);
     }
 
     if (action === "revisions" && method === "GET") {
-      return handleRevisions(req);
+      return handleRevisions(req, authUserId);
     }
 
     if (action === "timeline" && method === "GET") {
-      return handleTimeline(req);
+      return handleTimeline(authUserId);
     }
 
     if (action === "explain" && method === "GET") {
-      return handleExplain(req);
+      return handleExplain(req, authUserId);
     }
 
     return NextResponse.json(

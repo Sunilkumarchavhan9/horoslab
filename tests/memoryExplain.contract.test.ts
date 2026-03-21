@@ -15,9 +15,22 @@ describe("Memory Explain Route Contract", () => {
     mocks.explainMemory.mockReset();
   });
 
+  it("returns 401 when auth header is missing", async () => {
+    const req = new Request("http://localhost/api/memory/explain?memoryId=m1", {
+      method: "GET",
+    });
+
+    const res = await memoryRouteGet(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(body).toHaveProperty("error", "Unauthorized");
+  });
+
   it("returns 400 when memoryId is missing", async () => {
     const req = new Request("http://localhost/api/memory/explain", {
       method: "GET",
+      headers: { "x-user-id": "u_auth_explain" },
     });
 
     const res = await memoryRouteGet(req);
@@ -33,6 +46,7 @@ describe("Memory Explain Route Contract", () => {
 
     const req = new Request("http://localhost/api/memory/explain?memoryId=missing-1", {
       method: "GET",
+      headers: { "x-user-id": "u_auth_explain" },
     });
 
     const res = await memoryRouteGet(req);
@@ -42,7 +56,7 @@ describe("Memory Explain Route Contract", () => {
     expect(body).toHaveProperty("error", "Memory not found");
     expect(mocks.explainMemory).toHaveBeenCalledWith({
       memoryId: "missing-1",
-      userId: undefined,
+      userId: "u_auth_explain",
     });
   });
 
@@ -60,7 +74,7 @@ describe("Memory Explain Route Contract", () => {
         evidenceCount: 2,
         createdAt: "2026-03-20T10:00:00.000Z",
         updatedAt: "2026-03-20T11:00:00.000Z",
-        rawMetadata: {},
+        rawMetadata: { userId: "u_auth_explain" },
       },
       latestRevision: null,
       timeline: [],
@@ -75,7 +89,10 @@ describe("Memory Explain Route Contract", () => {
 
     const req = new Request(
       "http://localhost/api/memory/explain?memoryId=m1&userId=u1",
-      { method: "GET" },
+      {
+        method: "GET",
+        headers: { "x-user-id": "u_auth_explain" },
+      },
     );
 
     const res = await memoryRouteGet(req);
@@ -88,7 +105,7 @@ describe("Memory Explain Route Contract", () => {
     expect(body).toHaveProperty("explanation");
     expect(mocks.explainMemory).toHaveBeenCalledWith({
       memoryId: "m1",
-      userId: "u1",
+      userId: "u_auth_explain",
     });
   });
 });
