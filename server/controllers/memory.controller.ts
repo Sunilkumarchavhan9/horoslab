@@ -6,6 +6,8 @@ import { listTimelineEvents } from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
 import { archiveMemory, unarchiveMemory } from "../../lib/memory/archiveMemory";
 import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
+import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
+import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import {
   ProcessMemorySchema,
   RetrievalWeightsSchema,
@@ -209,4 +211,84 @@ export function patchRetrievalWeights(req: Request, res: Response): void {
   res.status(200).json({
     weights: getRetrievalWeights(),
   });
+}
+
+export async function listMemoryApi(req: Request, res: Response): Promise<void> {
+  const status =
+    typeof req.query.status === "string" && req.query.status.length > 0
+      ? req.query.status
+      : undefined;
+  const type =
+    typeof req.query.type === "string" && req.query.type.length > 0
+      ? req.query.type
+      : undefined;
+  const limitRaw =
+    typeof req.query.limit === "string" && req.query.limit.length > 0
+      ? req.query.limit
+      : undefined;
+
+  if (status && !MEMORY_STATUS.includes(status as MemoryStatus)) {
+    res.status(400).json({
+      error: "Invalid query",
+      details: { status: `status must be one of: ${MEMORY_STATUS.join(", ")}` },
+    });
+    return;
+  }
+
+  if (type && !MEMORY_TYPES.includes(type as MemoryType)) {
+    res.status(400).json({
+      error: "Invalid query",
+      details: { type: `type must be one of: ${MEMORY_TYPES.join(", ")}` },
+    });
+    return;
+  }
+
+  let limit: number | undefined;
+  if (limitRaw !== undefined) {
+    const parsed = Number.parseInt(limitRaw, 10);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      res.status(400).json({
+        error: "Invalid query",
+        details: { limit: "limit must be a positive integer" },
+      });
+      return;
+    }
+    limit = parsed;
+  }
+
+  const result = await listMemories({
+    userId: req.authUserId,
+    ...(status ? { status: status as MemoryStatus } : {}),
+    ...(type ? { type: type as MemoryType } : {}),
+    ...(limit !== undefined ? { limit } : {}),
+  });
+
+  res.status(200).json({
+    memories: result.memories,
+    count: result.count,
+  });
+}
+
+export async function getMemoryByIdApi(req: Request, res: Response): Promise<void> {
+  const memoryId =
+    typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
+      ? req.params.memoryId
+      : undefined;
+
+  if (!memoryId) {
+    res.status(400).json({ error: "memoryId is required" });
+    return;
+  }
+
+  const memory = await getMemoryForUser({
+    memoryId,
+    userId: req.authUserId,
+  });
+
+  if (!memory) {
+    res.status(404).json({ error: "Memory not found" });
+    return;
+  }
+
+  res.status(200).json({ memory });
 }

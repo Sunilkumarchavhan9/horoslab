@@ -126,6 +126,63 @@ describe("Memory CRUD catch-all E2E", () => {
     expect(res.body).toHaveProperty("debug");
   });
 
+  it("GET /api/memory/list returns filtered memories for current user", async () => {
+    await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_list"))
+      .send({
+        threadId: "t1",
+        message: "I am learning transformers",
+      });
+
+    await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_list"))
+      .send({
+        threadId: "t2",
+        message: "I am building MemoryOS",
+      });
+
+    const res = await request(app)
+      .get("/api/memory/list?type=learning&status=active&limit=10")
+      .set(await headersFor("u_crud_e2e_list"));
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("memories");
+    expect(res.body).toHaveProperty("count");
+    expect(res.body.count).toBeGreaterThanOrEqual(1);
+    for (const memory of res.body.memories as Array<{ type: string; status: string }>) {
+      expect(memory.type).toBe("learning");
+      expect(memory.status).toBe("active");
+    }
+  });
+
+  it("GET /api/memory/:memoryId returns owner memory and hides others", async () => {
+    const created = await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_get_by_id_owner"))
+      .send({
+        threadId: "t1",
+        message: "I prefer TypeScript",
+      });
+
+    const memoryId = created.body.acceptedMemories[0]?.id as string;
+    expect(memoryId).toBeTruthy();
+
+    const ownerRes = await request(app)
+      .get(`/api/memory/${memoryId}`)
+      .set(await headersFor("u_crud_e2e_get_by_id_owner"));
+    expect(ownerRes.status).toBe(200);
+    expect(ownerRes.body).toHaveProperty("memory");
+    expect(ownerRes.body.memory).toHaveProperty("id", memoryId);
+
+    const otherUserRes = await request(app)
+      .get(`/api/memory/${memoryId}`)
+      .set(await headersFor("u_crud_e2e_get_by_id_other"));
+    expect(otherUserRes.status).toBe(404);
+    expect(otherUserRes.body).toHaveProperty("error", "Memory not found");
+  });
+
   it("GET /api/memory/revisions and /timeline work", async () => {
     const first = await request(app)
       .post("/api/memory/process")

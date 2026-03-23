@@ -2,7 +2,9 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
   archiveMemoryById,
+  getMemoryByIdApi,
   getExplain,
+  listMemoryApi,
   getRevisions,
   getTimeline,
   patchRetrievalWeights,
@@ -21,6 +23,8 @@ memoryRouter.patch("/:memoryId/unarchive", asyncHandler(unarchiveMemoryById));
 memoryRouter.get("/revisions", getRevisions);
 memoryRouter.get("/timeline", getTimeline);
 memoryRouter.get("/explain", asyncHandler(getExplain));
+memoryRouter.get("/list", asyncHandler(listMemoryApi));
+memoryRouter.get("/:memoryId", asyncHandler(getMemoryByIdApi));
 
 memoryRouter.all("/*splat", (_req, res) => {
   res.status(404).json({ error: "Route not found" });
