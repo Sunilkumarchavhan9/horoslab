@@ -1,12 +1,13 @@
 import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem0";
 import { getRecentMemories } from "./recentMemoryStore";
-import type { DeveloperSignals, Memory, MemoryType } from "./types";
+import type { DeveloperSignals, Memory, MemoryStatus, MemoryType } from "./types";
 import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
 
 export interface RetrieveRelevantMemoryInput {
   userId: string;
   question: string;
   topK?: number; // how many final memories to return
+  includeArchived?: boolean;
 }
 
 export interface RankedMemory extends Mem0SearchResult {
@@ -123,6 +124,8 @@ const VALID_MEMORY_TYPES: MemoryType[] = [
   "episodic",
 ];
 
+const VALID_MEMORY_STATUSES: MemoryStatus[] = ["active", "archived", "merged"];
+
 function parseNumericMetadataValue(value: unknown, fallback: number): number {
   if (typeof value === "number" && !Number.isNaN(value)) {
     return value;
@@ -191,6 +194,7 @@ function memoryToSearchResult(memory: Memory, question: string): Mem0SearchResul
 
 function parseMetadata(result: Mem0SearchResult): {
   memoryType?: MemoryType;
+  status?: MemoryStatus;
   importanceScore: number;
   updatedAt?: string;
   evidenceCount: number;
@@ -199,6 +203,7 @@ function parseMetadata(result: Mem0SearchResult): {
   const metadata = result?.metadata;
 
   let memoryType: MemoryType | undefined = undefined;
+  let status: MemoryStatus | undefined = undefined;
   let importanceScore = 0.5;
   let updatedAt: string | undefined = undefined;
   let evidenceCount = 1;
@@ -207,6 +212,7 @@ function parseMetadata(result: Mem0SearchResult): {
   if (!metadata || typeof metadata !== "object") {
     return {
       memoryType,
+      status,
       importanceScore,
       updatedAt,
       evidenceCount,
@@ -219,6 +225,13 @@ function parseMetadata(result: Mem0SearchResult): {
     VALID_MEMORY_TYPES.includes(metadata.type as MemoryType)
   ) {
     memoryType = metadata.type as MemoryType;
+  }
+
+  if (
+    typeof metadata.status === "string" &&
+    VALID_MEMORY_STATUSES.includes(metadata.status as MemoryStatus)
+  ) {
+    status = metadata.status as MemoryStatus;
   }
 
   if (
@@ -242,6 +255,7 @@ function parseMetadata(result: Mem0SearchResult): {
 
   return {
     memoryType,
+    status,
     importanceScore,
     updatedAt,
     evidenceCount,
@@ -499,9 +513,13 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
   const intent = detectQuestionIntent(input.question);
   const preferredTypes = inferPreferredTypes(intent);
   const weightsUsed = { ...MEMORY_RULES.retrieval.weights };
+  const includeArchived = input.includeArchived === true;
 
-  const ranked: RankedMemory[] = candidates.map((item) => {
+  const ranked: RankedMemory[] = candidates.flatMap((item) => {
     const meta = parseMetadata(item);
+    if (!includeArchived && meta.status === "archived") {
+      return [];
+    }
 
     const semanticScore = normalizeSemanticScore(item.score);
     const typeRelevanceScore = getTypeRelevanceScore(
@@ -526,7 +544,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       weights: weightsUsed,
     });
 
-    return {
+    return [{
       ...item,
       memoryType: meta.memoryType,
       importanceScore: meta.importanceScore,
@@ -536,7 +554,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       continuityBoost,
       finalScore,
       updatedAt: meta.updatedAt,
-    };
+    }];
   });
 
   ranked.sort((a, b) => b.finalScore - a.finalScore);

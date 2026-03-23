@@ -78,6 +78,11 @@ describe("Memory Explain Route Contract", () => {
         confidence: 0.86,
         evidenceCount: 2,
         lastUpdatedAt: "2026-03-20T11:00:00.000Z",
+        status: "active",
+        timelineCount: 1,
+        revisionCount: 0,
+        stalenessDays: 2,
+        stalenessBucket: "fresh",
       },
     });
 
@@ -90,6 +95,11 @@ describe("Memory Explain Route Contract", () => {
     expect(res.body).toHaveProperty("latestRevision");
     expect(res.body).toHaveProperty("timeline");
     expect(res.body).toHaveProperty("explanation");
+    expect(res.body.explanation).toHaveProperty("status");
+    expect(res.body.explanation).toHaveProperty("timelineCount");
+    expect(res.body.explanation).toHaveProperty("revisionCount");
+    expect(res.body.explanation).toHaveProperty("stalenessDays");
+    expect(res.body.explanation).toHaveProperty("stalenessBucket");
     expect(mocks.explainMemory).toHaveBeenCalledWith({
       memoryId: "m1",
       userId: authUserId,

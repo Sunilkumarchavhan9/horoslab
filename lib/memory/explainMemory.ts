@@ -1,7 +1,13 @@
 import { getMemoryById } from "../integrations/mem0";
 import { listRevisionEvents } from "./revisionMemory";
 import { listTimelineEvents } from "./timelineMemory";
-import type { MemorySource, MemoryStatus, MemoryType, RevisionEvent, TimelineEvent } from "./types";
+import type {
+  MemorySource,
+  MemoryStatus,
+  MemoryType,
+  RevisionEvent,
+  TimelineEvent,
+} from "./types";
 
 const ALLOWED_TYPES: MemoryType[] = [
   "profile",
@@ -41,6 +47,11 @@ export interface ExplainMemoryResult {
     confidence: number;
     evidenceCount: number;
     lastUpdatedAt: string;
+    status: MemoryStatus | "unknown";
+    timelineCount: number;
+    revisionCount: number;
+    stalenessDays: number;
+    stalenessBucket: "fresh" | "aging" | "stale";
   };
 }
 
@@ -92,6 +103,27 @@ function getLatestRevision(revisions: RevisionEvent[]): RevisionEvent | null {
   })[0] ?? null;
 }
 
+function computeStalenessDays(updatedAtIso?: string): number {
+  if (!updatedAtIso) {
+    return 0;
+  }
+
+  const updated = new Date(updatedAtIso).getTime();
+  if (Number.isNaN(updated)) {
+    return 0;
+  }
+
+  const now = Date.now();
+  const diffMs = Math.max(0, now - updated);
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+function getStalenessBucket(days: number): "fresh" | "aging" | "stale" {
+  if (days <= 7) return "fresh";
+  if (days <= 30) return "aging";
+  return "stale";
+}
+
 export async function explainMemory(
   input: ExplainMemoryInput,
 ): Promise<ExplainMemoryResult | null> {
@@ -125,7 +157,10 @@ export async function explainMemory(
   const createdAt = safeIsoDate(metadata.createdAt);
   const updatedAt = safeIsoDate(metadata.updatedAt);
 
-  const importanceScore = parseNumericMetadataValue(metadata.importanceScore, 0.5);
+  const importanceScore = parseNumericMetadataValue(
+    metadata.importanceScore,
+    0.5,
+  );
   const confidence = parseNumericMetadataValue(metadata.confidence, 0.5);
   const evidenceCount = Math.max(
     1,
@@ -136,13 +171,21 @@ export async function explainMemory(
   const latestRevision = getLatestRevision(revisions);
 
   const timeline = sortByTimestampAsc(
-    listTimelineEvents(input.userId).filter((event) => event.memoryId === input.memoryId),
+    listTimelineEvents(input.userId).filter(
+      (event) => event.memoryId === input.memoryId,
+    ),
   );
 
   const whySaved =
     latestRevision?.reason ??
     timeline[timeline.length - 1]?.reason ??
     "Memory exists in store; no revision reason available yet";
+
+  const timelineCount = timeline.length;
+  const revisionCount = revisions.length;
+  const stalenessDays = computeStalenessDays(updatedAt);
+  const stalenessBucket = getStalenessBucket(stalenessDays);
+  const safeStatus: MemoryStatus | "unknown" = status ?? "unknown";
 
   return {
     memory: {
@@ -167,6 +210,11 @@ export async function explainMemory(
       confidence,
       evidenceCount,
       lastUpdatedAt: updatedAt ?? new Date().toISOString(),
+      status: safeStatus,
+      timelineCount,
+      revisionCount,
+      stalenessDays,
+      stalenessBucket,
     },
   };
 }

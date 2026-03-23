@@ -4,6 +4,7 @@ import { retrieveRelevantMemory } from "../../lib/memory/retrieveRelevantMemory"
 import { listRevisionEvents } from "../../lib/memory/revisionMemory";
 import { listTimelineEvents } from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
+import { archiveMemory, unarchiveMemory } from "../../lib/memory/archiveMemory";
 import { ProcessMemorySchema, RetrieveMemorySchema } from "../schemas/memory.schema";
 
 export async function processMemory(req: Request, res: Response): Promise<void> {
@@ -43,6 +44,9 @@ export async function retrieveMemory(req: Request, res: Response): Promise<void>
     userId: req.authUserId,
     question: parsed.data.question,
     topK: parsed.data.topK,
+    ...(parsed.data.includeArchived !== undefined
+      ? { includeArchived: parsed.data.includeArchived }
+      : {}),
   });
 
   res.status(200).json(result);
@@ -108,4 +112,70 @@ export async function getExplain(req: Request, res: Response): Promise<void> {
   }
 
   res.status(200).json(result);
+}
+
+export async function archiveMemoryById(req: Request, res: Response): Promise<void> {
+  const memoryId =
+    typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
+      ? req.params.memoryId
+      : undefined;
+
+  if (!memoryId) {
+    res.status(400).json({ error: "memoryId is required" });
+    return;
+  }
+
+  const result = await archiveMemory({
+    memoryId,
+    userId: req.authUserId,
+  });
+
+  if (result.status === "not_found") {
+    res.status(404).json({ error: "Memory not found" });
+    return;
+  }
+
+  if (result.status === "already_archived") {
+    res.status(400).json({ error: "Memory is already archived" });
+    return;
+  }
+
+  res.status(200).json({
+    memory: result.memory,
+    revisionEvent: result.revisionEvent ?? null,
+    timelineEvent: result.timelineEvent,
+  });
+}
+
+export async function unarchiveMemoryById(req: Request, res: Response): Promise<void> {
+  const memoryId =
+    typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
+      ? req.params.memoryId
+      : undefined;
+
+  if (!memoryId) {
+    res.status(400).json({ error: "memoryId is required" });
+    return;
+  }
+
+  const result = await unarchiveMemory({
+    memoryId,
+    userId: req.authUserId,
+  });
+
+  if (result.status === "not_found") {
+    res.status(404).json({ error: "Memory not found" });
+    return;
+  }
+
+  if (result.status === "already_active") {
+    res.status(400).json({ error: "Memory is already active" });
+    return;
+  }
+
+  res.status(200).json({
+    memory: result.memory,
+    revisionEvent: result.revisionEvent ?? null,
+    timelineEvent: result.timelineEvent,
+  });
 }

@@ -205,6 +205,131 @@ describe("Memory CRUD catch-all E2E", () => {
     expect(res.body).toHaveProperty("explanation");
   });
 
+  it("PATCH /api/memory/:memoryId/archive archives memory and blocks duplicate archive", async () => {
+    const first = await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_archive"))
+      .send({
+        userId: "fake_body_user",
+        threadId: "t1",
+        message: "I am building MemoryOS backend",
+      });
+
+    const memoryId = first.body.acceptedMemories[0]?.id as string;
+    expect(memoryId).toBeTruthy();
+
+    const archiveRes = await request(app)
+      .patch(`/api/memory/${memoryId}/archive`)
+      .set(await headersFor("u_crud_e2e_archive"))
+      .send({});
+
+    expect(archiveRes.status).toBe(200);
+    expect(archiveRes.body).toHaveProperty("memory");
+    expect(archiveRes.body.memory).toHaveProperty("status", "archived");
+    expect(archiveRes.body).toHaveProperty("timelineEvent");
+    expect(archiveRes.body.timelineEvent).toHaveProperty("eventType", "memory_archived");
+
+    const archiveAgainRes = await request(app)
+      .patch(`/api/memory/${memoryId}/archive`)
+      .set(await headersFor("u_crud_e2e_archive"))
+      .send({});
+
+    expect(archiveAgainRes.status).toBe(400);
+    expect(archiveAgainRes.body).toHaveProperty("error", "Memory is already archived");
+  });
+
+  it("PATCH /api/memory/:memoryId/unarchive restores archived memory and blocks duplicate unarchive", async () => {
+    const first = await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_unarchive"))
+      .send({
+        userId: "fake_body_user",
+        threadId: "t1",
+        message: "I am building MemoryOS backend",
+      });
+
+    const memoryId = first.body.acceptedMemories[0]?.id as string;
+    expect(memoryId).toBeTruthy();
+
+    const archiveRes = await request(app)
+      .patch(`/api/memory/${memoryId}/archive`)
+      .set(await headersFor("u_crud_e2e_unarchive"))
+      .send({});
+
+    expect(archiveRes.status).toBe(200);
+    expect(archiveRes.body.memory).toHaveProperty("status", "archived");
+
+    const unarchiveRes = await request(app)
+      .patch(`/api/memory/${memoryId}/unarchive`)
+      .set(await headersFor("u_crud_e2e_unarchive"))
+      .send({});
+
+    expect(unarchiveRes.status).toBe(200);
+    expect(unarchiveRes.body).toHaveProperty("memory");
+    expect(unarchiveRes.body.memory).toHaveProperty("status", "active");
+    expect(unarchiveRes.body).toHaveProperty("timelineEvent");
+    expect(unarchiveRes.body.timelineEvent).toHaveProperty("eventType", "memory_updated");
+
+    const unarchiveAgainRes = await request(app)
+      .patch(`/api/memory/${memoryId}/unarchive`)
+      .set(await headersFor("u_crud_e2e_unarchive"))
+      .send({});
+
+    expect(unarchiveAgainRes.status).toBe(400);
+    expect(unarchiveAgainRes.body).toHaveProperty("error", "Memory is already active");
+  });
+
+  it("POST /api/memory/retrieve excludes archived by default and includes with includeArchived=true", async () => {
+    const first = await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_retrieve_archived"))
+      .send({
+        userId: "fake_body_user",
+        threadId: "t1",
+        message: "I am building MemoryOS archive retrieval test",
+      });
+
+    const memoryId = first.body.acceptedMemories[0]?.id as string;
+    expect(memoryId).toBeTruthy();
+
+    const archiveRes = await request(app)
+      .patch(`/api/memory/${memoryId}/archive`)
+      .set(await headersFor("u_crud_e2e_retrieve_archived"))
+      .send({});
+
+    expect(archiveRes.status).toBe(200);
+    expect(archiveRes.body.memory).toHaveProperty("status", "archived");
+
+    const defaultRetrieve = await request(app)
+      .post("/api/memory/retrieve")
+      .set(await headersFor("u_crud_e2e_retrieve_archived"))
+      .send({
+        question: "what should I build next?",
+        topK: 10,
+      });
+
+    expect(defaultRetrieve.status).toBe(200);
+    const defaultIds = new Set(
+      (defaultRetrieve.body.memories ?? []).map((memory: { id: string }) => memory.id),
+    );
+    expect(defaultIds.has(memoryId)).toBe(false);
+
+    const includeArchivedRetrieve = await request(app)
+      .post("/api/memory/retrieve")
+      .set(await headersFor("u_crud_e2e_retrieve_archived"))
+      .send({
+        question: "what should I build next?",
+        topK: 10,
+        includeArchived: true,
+      });
+
+    expect(includeArchivedRetrieve.status).toBe(200);
+    const includeArchivedIds = new Set(
+      (includeArchivedRetrieve.body.memories ?? []).map((memory: { id: string }) => memory.id),
+    );
+    expect(includeArchivedIds.has(memoryId)).toBe(true);
+  });
+
   it("unknown path returns 404", async () => {
     const res = await request(app)
       .post("/api/memory/not-supported")

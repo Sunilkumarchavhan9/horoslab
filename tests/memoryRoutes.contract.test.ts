@@ -119,6 +119,29 @@ describe("Memory API Route Contracts", () => {
     });
   });
 
+  it("forwards includeArchived flag in retrieve request", async () => {
+    mocks.retrieveRelevantMemory.mockResolvedValue({
+      memories: [],
+      debug: [],
+    });
+
+    const res = await request(app)
+      .post("/api/memory/retrieve")
+      .set("authorization", authHeader)
+      .send({
+        question: "what should I build next?",
+        includeArchived: true,
+      });
+
+    expect(res.status).toBe(200);
+    expect(mocks.retrieveRelevantMemory).toHaveBeenCalledWith({
+      userId: authUserId,
+      question: "what should I build next?",
+      topK: undefined,
+      includeArchived: true,
+    });
+  });
+
   it("applies userId revision filter", async () => {
     mocks.listRevisionEvents.mockReturnValue([
       {

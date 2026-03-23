@@ -10,4 +10,5 @@ export const RetrieveMemorySchema = z.object({
   userId: z.string().min(1).optional(),
   question: z.string().min(1, "question is required"),
   topK: z.number().int().positive().max(20).optional(),
+  includeArchived: z.boolean().optional(),
 });
