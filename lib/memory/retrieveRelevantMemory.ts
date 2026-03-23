@@ -2,6 +2,7 @@ import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem
 import { getRecentMemories } from "./recentMemoryStore";
 import type { DeveloperSignals, Memory, MemoryStatus, MemoryType } from "./types";
 import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
+import { getRetrievalWeights } from "../config/retrievalWeights";
 
 export interface RetrieveRelevantMemoryInput {
   userId: string;
@@ -512,7 +513,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
 
   const intent = detectQuestionIntent(input.question);
   const preferredTypes = inferPreferredTypes(intent);
-  const weightsUsed = { ...MEMORY_RULES.retrieval.weights };
+  const weightsUsed = getRetrievalWeights();
   const includeArchived = input.includeArchived === true;
 
   const ranked: RankedMemory[] = candidates.flatMap((item) => {

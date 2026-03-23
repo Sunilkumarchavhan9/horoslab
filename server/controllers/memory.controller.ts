@@ -5,7 +5,12 @@ import { listRevisionEvents } from "../../lib/memory/revisionMemory";
 import { listTimelineEvents } from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
 import { archiveMemory, unarchiveMemory } from "../../lib/memory/archiveMemory";
-import { ProcessMemorySchema, RetrieveMemorySchema } from "../schemas/memory.schema";
+import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
+import {
+  ProcessMemorySchema,
+  RetrievalWeightsSchema,
+  RetrieveMemorySchema,
+} from "../schemas/memory.schema";
 
 export async function processMemory(req: Request, res: Response): Promise<void> {
   const parsed = ProcessMemorySchema.safeParse(req.body ?? {});
@@ -177,5 +182,31 @@ export async function unarchiveMemoryById(req: Request, res: Response): Promise<
     memory: result.memory,
     revisionEvent: result.revisionEvent ?? null,
     timelineEvent: result.timelineEvent,
+  });
+}
+
+export function patchRetrievalWeights(req: Request, res: Response): void {
+  if (process.env.NODE_ENV === "production") {
+    res.status(403).json({ error: "Retrieval weight config is disabled in production" });
+    return;
+  }
+
+  const parsed = RetrievalWeightsSchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
+    });
+    return;
+  }
+
+  const result = setRetrievalWeights(parsed.data);
+  if (!result.ok) {
+    res.status(400).json({ error: result.error });
+    return;
+  }
+
+  res.status(200).json({
+    weights: getRetrievalWeights(),
   });
 }

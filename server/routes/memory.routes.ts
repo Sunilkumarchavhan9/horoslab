@@ -5,6 +5,7 @@ import {
   getExplain,
   getRevisions,
   getTimeline,
+  patchRetrievalWeights,
   processMemory,
   retrieveMemory,
   unarchiveMemoryById,
@@ -14,6 +15,7 @@ export const memoryRouter = Router();
 
 memoryRouter.post("/process", asyncHandler(processMemory));
 memoryRouter.post("/retrieve", asyncHandler(retrieveMemory));
+memoryRouter.patch("/config/retrieval-weights", patchRetrievalWeights);
 memoryRouter.patch("/:memoryId/archive", asyncHandler(archiveMemoryById));
 memoryRouter.patch("/:memoryId/unarchive", asyncHandler(unarchiveMemoryById));
 memoryRouter.get("/revisions", getRevisions);

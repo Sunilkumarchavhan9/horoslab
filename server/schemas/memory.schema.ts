@@ -12,3 +12,10 @@ export const RetrieveMemorySchema = z.object({
   topK: z.number().int().positive().max(20).optional(),
   includeArchived: z.boolean().optional(),
 });
+
+export const RetrievalWeightsSchema = z.object({
+  semantic: z.number().min(0).max(1),
+  typeRelevance: z.number().min(0).max(1),
+  importance: z.number().min(0).max(1),
+  recency: z.number().min(0).max(1),
+});

@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MEMORY_RULES } from "../lib/config/memoryRules";
+import {
+  resetRetrievalWeights,
+  setRetrievalWeights,
+} from "../lib/config/retrievalWeights";
 import { filterAcceptedMemories, type ScoredMemoryCandidate } from "../lib/memory/scoreMemory";
 import { mergeMemory } from "../lib/memory/mergeMemory";
 import type { Memory } from "../lib/memory/types";
@@ -18,8 +22,6 @@ vi.mock("../lib/memory/recentMemoryStore", () => ({
 }));
 
 import { retrieveRelevantMemory } from "../lib/memory/retrieveRelevantMemory";
-
-const defaultRetrievalWeights = { ...MEMORY_RULES.retrieval.weights };
 
 function makeScoredCandidate(score: number, content: string): ScoredMemoryCandidate {
   return {
@@ -59,7 +61,7 @@ function makeMemory(input: {
 }
 
 afterEach(() => {
-  Object.assign(MEMORY_RULES.retrieval.weights, defaultRetrievalWeights);
+  resetRetrievalWeights();
   mocks.searchMemoryFromMem0.mockReset();
   mocks.getRecentMemories.mockReset();
 });
@@ -141,10 +143,13 @@ describe("Memory rule boundaries", () => {
     });
     expect(baseline.memories[0]?.id).toBe("sem-high");
 
-    MEMORY_RULES.retrieval.weights.semantic = 0.1;
-    MEMORY_RULES.retrieval.weights.typeRelevance = 0.15;
-    MEMORY_RULES.retrieval.weights.importance = 0.6;
-    MEMORY_RULES.retrieval.weights.recency = 0.15;
+    const setResult = setRetrievalWeights({
+      semantic: 0.1,
+      typeRelevance: 0.15,
+      importance: 0.6,
+      recency: 0.15,
+    });
+    expect(setResult.ok).toBe(true);
 
     const weighted = await retrieveRelevantMemory({
       userId: "u_retrieval_boundary",
