@@ -2,6 +2,7 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
   archiveMemoryById,
+  continueWithMemory,
   getMemoryByIdApi,
   getExplain,
   listMemoryApi,
@@ -17,6 +18,7 @@ export const memoryRouter = Router();
 
 memoryRouter.post("/process", asyncHandler(processMemory));
 memoryRouter.post("/retrieve", asyncHandler(retrieveMemory));
+memoryRouter.post("/continue", asyncHandler(continueWithMemory));
 memoryRouter.patch("/config/retrieval-weights", patchRetrievalWeights);
 memoryRouter.patch("/:memoryId/archive", asyncHandler(archiveMemoryById));
 memoryRouter.patch("/:memoryId/unarchive", asyncHandler(unarchiveMemoryById));

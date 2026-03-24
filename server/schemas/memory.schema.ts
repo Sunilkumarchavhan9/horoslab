@@ -13,6 +13,13 @@ export const RetrieveMemorySchema = z.object({
   includeArchived: z.boolean().optional(),
 });
 
+export const ContinueMemorySchema = z.object({
+  question: z.string().min(1, "question is required"),
+  mode: z.enum(["build_next", "debug_next", "learn_next"]).optional(),
+  topK: z.number().int().positive().max(20).optional(),
+  includeArchived: z.boolean().optional(),
+});
+
 export const RetrievalWeightsSchema = z.object({
   semantic: z.number().min(0).max(1),
   typeRelevance: z.number().min(0).max(1),

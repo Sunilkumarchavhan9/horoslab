@@ -7,8 +7,10 @@ import { explainMemory } from "../../lib/memory/explainMemory";
 import { archiveMemory, unarchiveMemory } from "../../lib/memory/archiveMemory";
 import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
 import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
+import { planContinuity } from "../../lib/memory/continuityPlanner";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import {
+  ContinueMemorySchema,
   ProcessMemorySchema,
   RetrievalWeightsSchema,
   RetrieveMemorySchema,
@@ -54,6 +56,27 @@ export async function retrieveMemory(req: Request, res: Response): Promise<void>
     ...(parsed.data.includeArchived !== undefined
       ? { includeArchived: parsed.data.includeArchived }
       : {}),
+  });
+
+  res.status(200).json(result);
+}
+
+export async function continueWithMemory(req: Request, res: Response): Promise<void> {
+  const parsed = ContinueMemorySchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
+    });
+    return;
+  }
+
+  const result = await planContinuity({
+    userId: req.authUserId,
+    question: parsed.data.question,
+    mode: parsed.data.mode,
+    topK: parsed.data.topK,
+    includeArchived: parsed.data.includeArchived,
   });
 
   res.status(200).json(result);
