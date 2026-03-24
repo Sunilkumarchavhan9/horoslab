@@ -186,5 +186,39 @@ describe("Memory Continue E2E", () => {
       ),
     ).toBe(true);
   });
-});
 
+  it("dedupes same logical memory id in continue output", async () => {
+    await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_continue_dedupe"))
+      .send({
+        threadId: "t1",
+        message: "I am building MemoryOS",
+      });
+
+    await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_continue_dedupe"))
+      .send({
+        threadId: "t2",
+        message: "I am building MemoryOS backend",
+      });
+
+    const res = await request(app)
+      .post("/api/memory/continue")
+      .set(await headersFor("u_continue_dedupe"))
+      .send({
+        question: "where did I leave off on MemoryOS?",
+        mode: "build_next",
+        topK: 10,
+      });
+
+    expect(res.status).toBe(200);
+
+    const ids = (res.body.usedMemories as Array<{ id: string }>).map(
+      (memory) => memory.id,
+    );
+    const uniqueCount = new Set(ids).size;
+    expect(uniqueCount).toBe(ids.length);
+  });
+});

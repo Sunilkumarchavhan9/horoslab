@@ -142,6 +142,23 @@ function parseNumericMetadataValue(value: unknown, fallback: number): number {
   return fallback;
 }
 
+function getLogicalMemoryKey(result: Mem0SearchResult): string {
+  const metadata = result.metadata;
+  if (metadata && typeof metadata === "object") {
+    const memoryId = (metadata as Record<string, unknown>).memoryId;
+    if (typeof memoryId === "string" && memoryId.length > 0) {
+      return memoryId;
+    }
+
+    const memoryIdSnake = (metadata as Record<string, unknown>).memory_id;
+    if (typeof memoryIdSnake === "string" && memoryIdSnake.length > 0) {
+      return memoryIdSnake;
+    }
+  }
+
+  return result.id;
+}
+
 function tokenize(text: string): Set<string> {
   return new Set(
     text
@@ -505,7 +522,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
   const candidates = Array.from(
     new Map(
       [...recentCandidates, ...mem0Candidates].map((item) => [
-        item.metadata?.memoryId ?? item.id,
+        getLogicalMemoryKey(item),
         item,
       ]),
     ).values(),
@@ -558,10 +575,22 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
     }];
   });
 
-  ranked.sort((a, b) => b.finalScore - a.finalScore);
+  ranked.sort((a, b) => {
+    if (b.finalScore !== a.finalScore) {
+      return b.finalScore - a.finalScore;
+    }
+
+    return new Date(b.updatedAt ?? 0).getTime() - new Date(a.updatedAt ?? 0).getTime();
+  });
+
+  const uniqueRanked = Array.from(
+    new Map(
+      ranked.map((item) => [getLogicalMemoryKey(item), item]),
+    ).values(),
+  );
 
   const finalTopK = input.topK ?? 5;
-  const top = ranked.slice(0, finalTopK);
+  const top = uniqueRanked.slice(0, finalTopK);
 
   return {
     memories: top,
