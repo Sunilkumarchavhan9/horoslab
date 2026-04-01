@@ -20,6 +20,13 @@ export const ContinueMemorySchema = z.object({
   includeArchived: z.boolean().optional(),
 });
 
+export const ResumeMemorySchema = z.object({
+  project: z.string().min(1, "project is required"),
+  question: z.string().min(1, "question is required"),
+  topK: z.number().int().positive().max(20).optional(),
+  includeArchived: z.boolean().optional(),
+});
+
 export const RetrievalWeightsSchema = z.object({
   semantic: z.number().min(0).max(1),
   typeRelevance: z.number().min(0).max(1),

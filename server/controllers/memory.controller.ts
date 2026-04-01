@@ -8,10 +8,12 @@ import { archiveMemory, unarchiveMemory } from "../../lib/memory/archiveMemory";
 import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
 import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
 import { planContinuity } from "../../lib/memory/continuityPlanner";
+import { planResume } from "../../lib/memory/resumePlanner";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import {
   ContinueMemorySchema,
   ProcessMemorySchema,
+  ResumeMemorySchema,
   RetrievalWeightsSchema,
   RetrieveMemorySchema,
 } from "../schemas/memory.schema";
@@ -75,6 +77,27 @@ export async function continueWithMemory(req: Request, res: Response): Promise<v
     userId: req.authUserId,
     question: parsed.data.question,
     mode: parsed.data.mode,
+    topK: parsed.data.topK,
+    includeArchived: parsed.data.includeArchived,
+  });
+
+  res.status(200).json(result);
+}
+
+export async function resumeWithMemory(req: Request, res: Response): Promise<void> {
+  const parsed = ResumeMemorySchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
+    });
+    return;
+  }
+
+  const result = await planResume({
+    userId: req.authUserId,
+    project: parsed.data.project,
+    question: parsed.data.question,
     topK: parsed.data.topK,
     includeArchived: parsed.data.includeArchived,
   });

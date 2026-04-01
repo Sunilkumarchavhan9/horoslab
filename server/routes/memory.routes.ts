@@ -10,6 +10,7 @@ import {
   getTimeline,
   patchRetrievalWeights,
   processMemory,
+  resumeWithMemory,
   retrieveMemory,
   unarchiveMemoryById,
 } from "../controllers/memory.controller";
@@ -19,6 +20,7 @@ export const memoryRouter = Router();
 memoryRouter.post("/process", asyncHandler(processMemory));
 memoryRouter.post("/retrieve", asyncHandler(retrieveMemory));
 memoryRouter.post("/continue", asyncHandler(continueWithMemory));
+memoryRouter.post("/resume", asyncHandler(resumeWithMemory));
 memoryRouter.patch("/config/retrieval-weights", patchRetrievalWeights);
 memoryRouter.patch("/:memoryId/archive", asyncHandler(archiveMemoryById));
 memoryRouter.patch("/:memoryId/unarchive", asyncHandler(unarchiveMemoryById));
