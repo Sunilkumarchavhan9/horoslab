@@ -130,5 +130,107 @@
     "query": "which backend problem areas should I focus on next?",
     "expectedTypes": ["episodic", "project", "learning"],
     "topK": 5
+  },
+  {
+    "id": "conflicting-pref-1",
+    "seedMessages": [
+      "I prefer TypeScript over Python",
+      "I prefer Python for data pipelines",
+      "I am building backend APIs"
+    ],
+    "query": "what stack fits me now?",
+    "expectedTypes": ["preference", "project"],
+    "topK": 5
+  },
+  {
+    "id": "conflicting-pref-2",
+    "seedMessages": [
+      "I use Next.js with TypeScript",
+      "I prefer Go for backend services",
+      "I am building a websocket gateway"
+    ],
+    "query": "which language and stack should I use for backend work?",
+    "expectedTypes": ["preference", "project"],
+    "topK": 5
+  },
+  {
+    "id": "archive-exclude-project-1",
+    "seedMessages": [
+      "I am building a legacy monolith",
+      "I prefer TypeScript for backend"
+    ],
+    "query": "what should I build next?",
+    "expectedTypes": ["preference"],
+    "forbiddenTypes": ["project"],
+    "archiveAcceptedIndices": [0],
+    "topK": 5
+  },
+  {
+    "id": "archive-include-project-1",
+    "seedMessages": [
+      "I am building a legacy monolith",
+      "I prefer TypeScript for backend"
+    ],
+    "query": "what should I build next?",
+    "expectedTypes": ["project", "preference"],
+    "includeArchived": true,
+    "archiveAcceptedIndices": [0],
+    "topK": 5
+  },
+  {
+    "id": "freshness-project-1",
+    "seedMessages": [
+      "I am building old analytics dashboard",
+      "I am building MemoryOS v2"
+    ],
+    "query": "what should I build next for MemoryOS?",
+    "expectedTypes": ["project"],
+    "ageAccepted": [
+      {
+        "acceptedIndex": 0,
+        "daysAgo": 45
+      }
+    ],
+    "expectedTopContains": "memoryos v2",
+    "topK": 5
+  },
+  {
+    "id": "freshness-learning-1",
+    "seedMessages": [
+      "I am learning Rust",
+      "I am learning transformers"
+    ],
+    "query": "what should I learn this week for transformers?",
+    "expectedTypes": ["learning"],
+    "ageAccepted": [
+      {
+        "acceptedIndex": 0,
+        "daysAgo": 60
+      }
+    ],
+    "expectedTopContains": "transformers",
+    "topK": 5
+  },
+  {
+    "id": "resume-phrasing-1",
+    "seedMessages": [
+      "I am building an AI API",
+      "I shipped auth system"
+    ],
+    "query": "where did I leave off?",
+    "expectedTypes": ["project", "episodic"],
+    "topK": 5
+  },
+  {
+    "id": "archive-exclude-episodic-1",
+    "seedMessages": [
+      "I solved websocket timeout issue",
+      "I am building realtime gateway"
+    ],
+    "query": "did I solve something similar before?",
+    "expectedTypes": ["project"],
+    "forbiddenTypes": ["episodic"],
+    "archiveAcceptedIndices": [0],
+    "topK": 5
   }
 ]
