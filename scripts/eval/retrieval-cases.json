@@ -1,0 +1,134 @@
+[
+  {
+    "id": "build-next-1",
+    "seedMessages": [
+      "I am building MemoryOS",
+      "I am learning transformers",
+      "I prefer TypeScript"
+    ],
+    "query": "what should I build next?",
+    "expectedTypes": ["project", "learning", "preference"],
+    "topK": 5
+  },
+  {
+    "id": "build-next-2",
+    "seedMessages": [
+      "I am building an AI memory startup",
+      "I want to work on AI infra",
+      "I am learning distributed systems"
+    ],
+    "query": "what should I build next for my startup?",
+    "expectedTypes": ["project", "profile", "learning"],
+    "topK": 5
+  },
+  {
+    "id": "stack-fit-1",
+    "seedMessages": [
+      "I prefer TypeScript over Python",
+      "I use Next.js with TypeScript",
+      "I deployed backend APIs"
+    ],
+    "query": "what stack fits me best?",
+    "expectedTypes": ["preference", "project"],
+    "topK": 5
+  },
+  {
+    "id": "stack-fit-2",
+    "seedMessages": [
+      "I prefer Go for backend systems",
+      "I solved a Redis locking bug",
+      "I am building a real-time market service"
+    ],
+    "query": "which language and stack should I use next?",
+    "expectedTypes": ["preference", "project", "episodic"],
+    "topK": 5
+  },
+  {
+    "id": "study-next-1",
+    "seedMessages": [
+      "I am learning transformers",
+      "I am building MemoryOS",
+      "I want to work on AI infra"
+    ],
+    "query": "what should I learn this week?",
+    "expectedTypes": ["learning", "project", "profile"],
+    "topK": 5
+  },
+  {
+    "id": "study-next-2",
+    "seedMessages": [
+      "I am learning Rust",
+      "I am building backend services",
+      "I prefer strongly typed languages"
+    ],
+    "query": "what should I learn next to improve backend skills?",
+    "expectedTypes": ["learning", "project", "preference"],
+    "topK": 5
+  },
+  {
+    "id": "resume-project-1",
+    "seedMessages": [
+      "I am building MemoryOS",
+      "I shipped JWT auth",
+      "I added continuity API"
+    ],
+    "query": "where did I leave off in MemoryOS?",
+    "expectedTypes": ["project", "episodic"],
+    "topK": 5
+  },
+  {
+    "id": "resume-project-2",
+    "seedMessages": [
+      "I am building a websocket gateway",
+      "I fixed high latency in websocket handler",
+      "I prefer TypeScript for backend"
+    ],
+    "query": "help me resume this project from where I left off",
+    "expectedTypes": ["project", "episodic", "preference"],
+    "topK": 5
+  },
+  {
+    "id": "bug-recall-1",
+    "seedMessages": [
+      "I solved a Redis locking bug",
+      "I deployed backend APIs",
+      "I use Next.js with TypeScript"
+    ],
+    "query": "did I solve a similar bug before?",
+    "expectedTypes": ["episodic", "project"],
+    "topK": 5
+  },
+  {
+    "id": "bug-recall-2",
+    "seedMessages": [
+      "I fixed websocket reconnection failures",
+      "I am building realtime backend services",
+      "I prefer Go for backend systems"
+    ],
+    "query": "have I fixed something like this issue before?",
+    "expectedTypes": ["episodic", "project"],
+    "topK": 5
+  },
+  {
+    "id": "backend-fit-1",
+    "seedMessages": [
+      "I solved a database deadlock issue",
+      "I deployed backend services",
+      "I prefer TypeScript over Python"
+    ],
+    "query": "what kind of backend work suits me?",
+    "expectedTypes": ["episodic", "project", "preference"],
+    "topK": 5
+  },
+  {
+    "id": "backend-fit-2",
+    "seedMessages": [
+      "I solved a queue processing bug",
+      "I am building scalable backend APIs",
+      "I am learning distributed systems"
+    ],
+    "query": "which backend problem areas should I focus on next?",
+    "expectedTypes": ["episodic", "project", "learning"],
+    "topK": 5
+  }
+]

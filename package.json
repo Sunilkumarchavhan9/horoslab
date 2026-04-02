@@ -9,6 +9,7 @@
     "start": "tsx server/index.ts",
     "start:next": "next start",
     "token": "tsx scripts/make-token.ts",
+    "eval:retrieval": "tsx scripts/eval-retrieval.ts",
     "lint": "eslint",
     "test": "vitest run"
   },
