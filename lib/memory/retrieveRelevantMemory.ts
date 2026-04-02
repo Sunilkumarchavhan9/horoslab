@@ -66,6 +66,7 @@ function detectQuestionIntent(question: string): RetrievalIntent {
   if (
     q.includes("resume") ||
     q.includes("left off") ||
+    q.includes("leave off") ||
     q.includes("pick up")
   ) {
     return "resume_project";
@@ -126,6 +127,8 @@ const VALID_MEMORY_TYPES: MemoryType[] = [
 ];
 
 const VALID_MEMORY_STATUSES: MemoryStatus[] = ["active", "archived", "merged"];
+const PROJECT_MILESTONE_REGEX =
+  /\b(shipped|deployed|implemented|completed|added)\b/i;
 
 function parseNumericMetadataValue(value: unknown, fallback: number): number {
   if (typeof value === "number" && !Number.isNaN(value)) {
@@ -388,6 +391,26 @@ function getIntentTypeBoost(
   return MEMORY_RULES.retrieval.intentTypeBoosts[intent][memoryType] ?? 0;
 }
 
+function resolveEffectiveMemoryType(input: {
+  baseType: MemoryType | undefined;
+  memoryText: string | undefined;
+  intent: RetrievalIntent;
+}): MemoryType | undefined {
+  if (input.baseType !== "project") {
+    return input.baseType;
+  }
+
+  if (!input.memoryText || !PROJECT_MILESTONE_REGEX.test(input.memoryText)) {
+    return input.baseType;
+  }
+
+  if (input.intent === "resume_project") {
+    return "episodic";
+  }
+
+  return input.baseType;
+}
+
 function getContinuityBoost(input: {
   intent: RetrievalIntent;
   question: string;
@@ -539,16 +562,22 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       return [];
     }
 
+    const effectiveMemoryType = resolveEffectiveMemoryType({
+      baseType: meta.memoryType,
+      memoryText: item.memory,
+      intent,
+    });
+
     const semanticScore = normalizeSemanticScore(item.score);
     const typeRelevanceScore = getTypeRelevanceScore(
-      meta.memoryType,
+      effectiveMemoryType,
       preferredTypes,
     );
     const recencyScore = getRecencyScore(meta.updatedAt);
     const continuityBoost = getContinuityBoost({
       intent,
       question: input.question,
-      memoryType: meta.memoryType,
+      memoryType: effectiveMemoryType,
       evidenceCount: meta.evidenceCount,
       recencyScore,
       developerSignals: meta.developerSignals,
@@ -564,7 +593,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
 
     return [{
       ...item,
-      memoryType: meta.memoryType,
+      memoryType: effectiveMemoryType,
       importanceScore: meta.importanceScore,
       recencyScore,
       typeRelevanceScore,

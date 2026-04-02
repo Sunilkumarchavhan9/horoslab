@@ -69,7 +69,7 @@ beforeEach(() => {
 });
 
 describe("Memory retrieval quality guardrails", () => {
-  it("resume-project-1 regression: keeps project as top result and keeps episodic check soft", async () => {
+  it("resume-project-1 regression: keeps project as top result and includes episodic context", async () => {
     await runIngestFlowLangGraph({
       userId: "u_quality_resume_1",
       threadId: "t1",
@@ -101,9 +101,7 @@ describe("Memory retrieval quality guardrails", () => {
       retrieved.memories.map((memory) => memory.memoryType),
     );
 
-    // Soft/non-blocking episodic expectation for now.
-    // We only log by assertion message context if episodic is missing.
     expect(memoryTypes.has("project")).toBe(true);
+    expect(memoryTypes.has("episodic")).toBe(true);
   });
 });
-

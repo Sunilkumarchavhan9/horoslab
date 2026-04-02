@@ -157,7 +157,8 @@ function evaluateTypes(
 async function runCase(testCase: EvalCase): Promise<EvalResult> {
   resetDataDir();
 
-  const userId = `u_eval_${testCase.id}`;
+  const runId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const userId = `u_eval_${testCase.id}_${runId}`;
   await seedCaseMemories(userId, testCase.seedMessages);
 
   const retrieval = await retrieveRelevantMemory({
