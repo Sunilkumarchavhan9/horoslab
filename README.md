@@ -10,13 +10,27 @@ This backend focuses on long-term memory behavior for developer workflows:
 - reranking retrieved memories for relevance
 - tracking timeline and revision history
 
+## API Docs
+
+- Full API reference: [docs/memory-api.md](./docs/memory-api.md)
+- Postman collection: [docs/postman/MemoryOS.postman_collection.json](./docs/postman/MemoryOS.postman_collection.json)
+
 ## What It Does
 
 The current backend supports:
 - `POST /api/memory/process`
 - `POST /api/memory/retrieve`
+- `POST /api/memory/continue`
+- `POST /api/memory/resume`
+- `GET /api/memory/explain`
+- `GET /api/memory/list`
+- `GET /api/memory/:memoryId`
+- `PATCH /api/memory/:memoryId/status`
+- `PATCH /api/memory/:memoryId/archive`
+- `PATCH /api/memory/:memoryId/unarchive`
 - `GET /api/memory/timeline`
 - `GET /api/memory/revisions`
+- `PATCH /api/memory/config/retrieval-weights`
 
 Core memory flow:
 
@@ -28,8 +42,8 @@ message -> extract -> score -> merge/evolve -> save -> retrieve -> timeline/revi
 
 The codebase is split into four layers:
 
-- `app/api`
-  HTTP routes for process, retrieve, timeline, and revisions
+- `server/routes`, `server/controllers`, `server/schemas`
+  Express routing + controllers + request validation
 - `lib/memory`
   Memory intelligence logic such as extraction, scoring, merge, evolve, ranking, timeline, revisions, and recent memory persistence
 - `lib/integrations`
@@ -83,13 +97,12 @@ Behavior:
 ## Project Structure
 
 ```text
-app/
-  api/
-    memory/
-      process/
-      retrieve/
-      timeline/
-      revisions/
+server/
+  app.ts
+  index.ts
+  routes/
+  controllers/
+  schemas/
 
 lib/
   integrations/
@@ -109,6 +122,59 @@ lib/
 
 tests/
   memorye2e.test.ts
+```
+
+## Quickstart (Express + JWT)
+
+1. Install and start:
+
+```bash
+bun install
+bun run dev
+```
+
+2. Generate token:
+
+```bash
+bun run token -- u_demo_1
+```
+
+3. Seed memory:
+
+```bash
+curl -X POST "http://localhost:3001/api/memory/process" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+    "threadId": "t1",
+    "message": "I am building MemoryOS"
+  }'
+```
+
+4. Continue planning:
+
+```bash
+curl -X POST "http://localhost:3001/api/memory/continue" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+    "question": "what should I do next on MemoryOS?",
+    "mode": "build_next",
+    "topK": 5
+  }'
+```
+
+5. Resume planning:
+
+```bash
+curl -X POST "http://localhost:3001/api/memory/resume" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+    "project": "MemoryOS",
+    "question": "where did I leave off?",
+    "topK": 5
+  }'
 ```
 
 ## Local Development
