@@ -22,7 +22,7 @@ export async function withFileLock<T>(
   // 5) always release current promise in finally
     release();
 
-    // 6) cleanup map entry if current is still latest
+    // 6) cleanup map entry if queued is still latest
     if(fileQueues.get(filePath) === queued){
         fileQueues.delete(filePath);
     }

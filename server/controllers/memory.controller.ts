@@ -4,7 +4,11 @@ import { retrieveRelevantMemory } from "../../lib/memory/retrieveRelevantMemory"
 import { listRevisionEvents } from "../../lib/memory/revisionMemory";
 import { listTimelineEvents } from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
-import { archiveMemory, unarchiveMemory } from "../../lib/memory/archiveMemory";
+import {
+  archiveMemory,
+  unarchiveMemory,
+  updateMemoryStatus,
+} from "../../lib/memory/archiveMemory";
 import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
 import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
 import { planContinuity } from "../../lib/memory/continuityPlanner";
@@ -14,6 +18,7 @@ import {
   ContinueMemorySchema,
   ProcessMemorySchema,
   ResumeMemorySchema,
+  MemoryStatusPatchSchema,
   RetrievalWeightsSchema,
   RetrieveMemorySchema,
 } from "../schemas/memory.schema";
@@ -230,6 +235,54 @@ export async function unarchiveMemoryById(req: Request, res: Response): Promise<
     memory: result.memory,
     revisionEvent: result.revisionEvent ?? null,
     timelineEvent: result.timelineEvent,
+  });
+}
+
+export async function patchMemoryStatusById(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const memoryId =
+    typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
+      ? req.params.memoryId
+      : undefined;
+
+  if (!memoryId) {
+    res.status(400).json({ error: "memoryId is required" });
+    return;
+  }
+
+  const parsed = MemoryStatusPatchSchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
+    });
+    return;
+  }
+
+  const result = await updateMemoryStatus({
+    memoryId,
+    userId: req.authUserId,
+    status: parsed.data.status,
+  });
+
+  if (result.status === "not_found") {
+    res.status(404).json({ error: "Memory not found" });
+    return;
+  }
+
+  if (result.status === "already_in_status") {
+    res.status(400).json({
+      error: `Memory is already ${parsed.data.status}`,
+    });
+    return;
+  }
+
+  res.status(200).json({
+    memory: result.memory,
+    revisionEvent: result.revisionEvent ?? null,
+    timelineEvent: result.timelineEvent ?? null,
   });
 }
 

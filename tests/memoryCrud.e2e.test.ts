@@ -336,6 +336,28 @@ describe("Memory CRUD catch-all E2E", () => {
     expect(unarchiveAgainRes.body).toHaveProperty("error", "Memory is already active");
   });
 
+  it("PATCH /api/memory/:memoryId/status updates status", async () => {
+    const first = await request(app)
+      .post("/api/memory/process")
+      .set(await headersFor("u_crud_e2e_status"))
+      .send({
+        threadId: "t1",
+        message: "I am building MemoryOS status route test",
+      });
+
+    const memoryId = first.body.acceptedMemories[0]?.id as string;
+    expect(memoryId).toBeTruthy();
+
+    const statusRes = await request(app)
+      .patch(`/api/memory/${memoryId}/status`)
+      .set(await headersFor("u_crud_e2e_status"))
+      .send({ status: "archived" });
+
+    expect(statusRes.status).toBe(200);
+    expect(statusRes.body).toHaveProperty("memory");
+    expect(statusRes.body.memory).toHaveProperty("status", "archived");
+  });
+
   it("POST /api/memory/retrieve excludes archived by default and includes with includeArchived=true", async () => {
     const first = await request(app)
       .post("/api/memory/process")

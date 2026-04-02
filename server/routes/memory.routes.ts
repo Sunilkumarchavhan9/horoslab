@@ -9,6 +9,7 @@ import {
   getRevisions,
   getTimeline,
   patchRetrievalWeights,
+  patchMemoryStatusById,
   processMemory,
   resumeWithMemory,
   retrieveMemory,
@@ -24,6 +25,7 @@ memoryRouter.post("/resume", asyncHandler(resumeWithMemory));
 memoryRouter.patch("/config/retrieval-weights", patchRetrievalWeights);
 memoryRouter.patch("/:memoryId/archive", asyncHandler(archiveMemoryById));
 memoryRouter.patch("/:memoryId/unarchive", asyncHandler(unarchiveMemoryById));
+memoryRouter.patch("/:memoryId/status", asyncHandler(patchMemoryStatusById));
 memoryRouter.get("/revisions", getRevisions);
 memoryRouter.get("/timeline", getTimeline);
 memoryRouter.get("/explain", asyncHandler(getExplain));

@@ -27,6 +27,10 @@ export const ResumeMemorySchema = z.object({
   includeArchived: z.boolean().optional(),
 });
 
+export const MemoryStatusPatchSchema = z.object({
+  status: z.enum(["active", "archived", "merged"]),
+});
+
 export const RetrievalWeightsSchema = z.object({
   semantic: z.number().min(0).max(1),
   typeRelevance: z.number().min(0).max(1),

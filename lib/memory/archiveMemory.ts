@@ -2,8 +2,12 @@ import { getMemoryById, saveMemoryToMem0 } from "../integrations/mem0";
 import { toInternalMemory } from "../workflows/ingestShared";
 import { upsertRecentMemory } from "./recentMemoryStore";
 import { recordRevisionEvent } from "./revisionMemory";
-import { recordMemoryArchivedEvent, recordMemoryUpdatedEvent } from "./timelineMemory";
-import type { Memory, RevisionEvent, TimelineEvent } from "./types";
+import {
+  recordMemoryArchivedEvent,
+  recordMemoryMergedEvent,
+  recordMemoryUpdatedEvent,
+} from "./timelineMemory";
+import type { Memory, MemoryStatus, RevisionEvent, TimelineEvent } from "./types";
 
 export type ArchiveMemoryStatus = "not_found" | "already_archived" | "archived";
 export type UnarchiveMemoryStatus = "not_found" | "already_active" | "unarchived";
@@ -17,6 +21,18 @@ export interface ArchiveMemoryResult {
 
 export interface UnarchiveMemoryResult {
   status: UnarchiveMemoryStatus;
+  memory?: Memory;
+  revisionEvent?: RevisionEvent | null;
+  timelineEvent?: TimelineEvent;
+}
+
+export type UpdateMemoryStatusResultStatus =
+  | "not_found"
+  | "already_in_status"
+  | "updated";
+
+export interface UpdateMemoryStatusResult {
+  status: UpdateMemoryStatusResultStatus;
   memory?: Memory;
   revisionEvent?: RevisionEvent | null;
   timelineEvent?: TimelineEvent;
@@ -36,6 +52,10 @@ async function loadOwnedMemory(input: {
     typeof raw.metadata === "object" &&
     typeof raw.metadata.userId === "string"
       ? raw.metadata.userId
+      : raw.metadata &&
+          typeof raw.metadata === "object" &&
+          typeof raw.metadata.user_id === "string"
+        ? raw.metadata.user_id
       : undefined;
 
   if (owner && owner !== input.userId) {
@@ -43,6 +63,22 @@ async function loadOwnedMemory(input: {
   }
 
   return toInternalMemory(raw, input.userId);
+}
+
+async function createStatusTimelineEvent(input: {
+  memory: Memory;
+  reason: string;
+  nextStatus: MemoryStatus;
+}): Promise<TimelineEvent> {
+  if (input.nextStatus === "archived") {
+    return recordMemoryArchivedEvent(input.memory, input.reason);
+  }
+
+  if (input.nextStatus === "merged") {
+    return recordMemoryMergedEvent(input.memory, input.reason);
+  }
+
+  return recordMemoryUpdatedEvent(input.memory, input.reason);
 }
 
 export async function archiveMemory(input: {
@@ -124,6 +160,53 @@ export async function unarchiveMemory(input: {
   return {
     status: "unarchived",
     memory: activeMemory,
+    revisionEvent,
+    timelineEvent,
+  };
+}
+
+export async function updateMemoryStatus(input: {
+  memoryId: string;
+  userId: string;
+  status: MemoryStatus;
+}): Promise<UpdateMemoryStatusResult> {
+  const current = await loadOwnedMemory(input);
+  if (!current) {
+    return { status: "not_found" };
+  }
+
+  if (current.status === input.status) {
+    return {
+      status: "already_in_status",
+      memory: current,
+    };
+  }
+
+  const nextMemory: Memory = {
+    ...current,
+    status: input.status,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await saveMemoryToMem0({ memory: nextMemory });
+  await upsertRecentMemory(nextMemory);
+
+  const reason = `memory status updated to ${input.status} by user`;
+  const revisionEvent = await recordRevisionEvent({
+    before: current,
+    after: nextMemory,
+    reason,
+    changedBy: "user",
+  });
+  const timelineEvent = await createStatusTimelineEvent({
+    memory: nextMemory,
+    reason,
+    nextStatus: input.status,
+  });
+
+  return {
+    status: "updated",
+    memory: nextMemory,
     revisionEvent,
     timelineEvent,
   };
