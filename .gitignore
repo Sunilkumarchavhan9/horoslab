@@ -24,6 +24,11 @@
 .DS_Store
 *.pem
 /data
+!/data
+/data/*
+!/data/eval
+/data/eval/*
+!/data/eval/best-config.json
 
 # debug
 npm-debug.log*

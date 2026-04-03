@@ -1,0 +1,12 @@
+{
+  "name": "default@0.65",
+  "threshold": 0.65,
+  "weights": {
+    "semantic": 0.4,
+    "typeRelevance": 0.25,
+    "importance": 0.2,
+    "recency": 0.15
+  },
+  "score": 100,
+  "updatedAt": "2026-04-03T00:00:00.000Z"
+}
