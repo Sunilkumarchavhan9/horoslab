@@ -10,6 +10,7 @@
     "start:next": "next start",
     "token": "tsx scripts/make-token.ts",
     "eval:retrieval": "tsx scripts/eval-retrieval.ts",
+    "tune:retrieval": "tsx scripts/tune-retrieval.ts",
     "lint": "eslint",
     "test": "vitest run"
   },
