@@ -1,0 +1,40 @@
+name: quality
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
+      JWT_SECRET: ci-test-secret
+      JWT_ISSUER: memoryos-ci
+      JWT_AUDIENCE: memoryos-api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit and E2E Tests
+        run: bun run test
+
+      - name: Retrieval Eval Gate
+        run: bun run eval:retrieval

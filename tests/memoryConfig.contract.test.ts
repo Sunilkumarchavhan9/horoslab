@@ -1,12 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { existsSync, mkdirSync, rmSync } from "fs";
-import path from "path";
 import request from "supertest";
 import { createMemoryOsApp } from "../server/app";
 import { makeToken } from "./helpers/authToken";
 import { resetRetrievalWeights } from "../lib/config/retrievalWeights";
-
-const DATA_DIR = path.join(process.cwd(), "data");
+import { resetRuntimeDataStores } from "./helpers/resetDataDir";
 
 const mem0Store: Array<{
   id: string;
@@ -31,11 +28,7 @@ describe("Memory retrieval weight config contract", () => {
   beforeEach(() => {
     mem0Store.length = 0;
     resetRetrievalWeights();
-
-    if (existsSync(DATA_DIR)) {
-      rmSync(DATA_DIR, { recursive: true, force: true });
-    }
-    mkdirSync(DATA_DIR, { recursive: true });
+    resetRuntimeDataStores();
   });
 
   it("returns 400 for invalid retrieval weight payload", async () => {

@@ -1,12 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { existsSync, mkdirSync, rmSync } from "fs";
-import path from "path";
 import { getRecentMemories, upsertRecentMemory } from "../lib/memory/recentMemoryStore";
 import { listTimelineEvents, recordMemoryCreatedEvent } from "../lib/memory/timelineMemory";
 import { listRevisionEvents, recordRevisionEvent } from "../lib/memory/revisionMemory";
 import type { Memory } from "../lib/memory/types";
-
-const DATA_DIR = path.join(process.cwd(), "data");
+import { resetRuntimeDataStores } from "./helpers/resetDataDir";
 
 function makeMemory(
   userId: string,
@@ -33,10 +30,7 @@ function makeMemory(
 }
 
 beforeEach(() => {
-  if (existsSync(DATA_DIR)) {
-    rmSync(DATA_DIR, { recursive: true, force: true });
-  }
-  mkdirSync(DATA_DIR, { recursive: true });
+  resetRuntimeDataStores();
 });
 
 describe("JSON store concurrency safety", () => {
