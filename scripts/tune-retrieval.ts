@@ -1,15 +1,20 @@
 import "dotenv/config";
+import path from "path";
+import { fileURLToPath } from "url";
 import { MEMORY_RULES, type RetrievalWeights } from "../lib/config/memoryRules";
-import { getRetrievalWeights, setRetrievalWeights} from "../lib/config/retrievalWeights";
+import {
+  getRetrievalWeights,
+  setRetrievalWeights,
+} from "../lib/config/retrievalWeights";
 import { runAllCases } from "./eval/harness";
 
-type TuneConfig = {
+export type TuneConfig = {
   threshold: number;
   weights: RetrievalWeights;
   name: string;
 };
 
-type TuneResult = {
+export type TuneResult = {
   config: TuneConfig;
   passed: number;
   total: number;
@@ -17,24 +22,44 @@ type TuneResult = {
   error?: string;
 };
 
-const THRESHOLDS = [0.6, 0.65, 0.7];
+export const THRESHOLDS = [0.6, 0.65, 0.7];
 
-const WEIGHT_SETS: Array<{ name: string; weights: RetrievalWeights }> = [
+export const WEIGHT_SETS: Array<{ name: string; weights: RetrievalWeights }> = [
   {
     name: "default",
-    weights: { semantic: 0.4, typeRelevance: 0.25, importance: 0.2, recency: 0.15 },
+    weights: {
+      semantic: 0.4,
+      typeRelevance: 0.25,
+      importance: 0.2,
+      recency: 0.15,
+    },
   },
   {
     name: "type-heavy",
-    weights: { semantic: 0.32, typeRelevance: 0.33, importance: 0.2, recency: 0.15 },
+    weights: {
+      semantic: 0.32,
+      typeRelevance: 0.33,
+      importance: 0.2,
+      recency: 0.15,
+    },
   },
   {
     name: "semantic-heavy",
-    weights: { semantic: 0.5, typeRelevance: 0.2, importance: 0.18, recency: 0.12 },
+    weights: {
+      semantic: 0.5,
+      typeRelevance: 0.2,
+      importance: 0.18,
+      recency: 0.12,
+    },
   },
   {
     name: "importance-heavy",
-    weights: { semantic: 0.34, typeRelevance: 0.22, importance: 0.3, recency: 0.14 },
+    weights: {
+      semantic: 0.34,
+      typeRelevance: 0.22,
+      importance: 0.3,
+      recency: 0.14,
+    },
   },
 ];
 
@@ -72,7 +97,7 @@ function validateWeights(weights: RetrievalWeights): string | null {
   return null;
 }
 
-function buildConfigs(): TuneConfig[] {
+export function buildConfigs(): TuneConfig[] {
   const configs: TuneConfig[] = [];
 
   for (const threshold of THRESHOLDS) {
@@ -88,7 +113,7 @@ function buildConfigs(): TuneConfig[] {
   return configs;
 }
 
-async function runConfig(config: TuneConfig): Promise<TuneResult> {
+export async function runConfig(config: TuneConfig): Promise<TuneResult> {
   const thresholdError = validateThreshold(config.threshold);
   if (thresholdError) {
     return { config, passed: 0, total: 0, score: 0, error: thresholdError };
@@ -126,18 +151,24 @@ async function runConfig(config: TuneConfig): Promise<TuneResult> {
   }
 }
 
-async function main(): Promise<void> {
-  const configs = buildConfigs();
+export async function findBestRetrievalConfig(options?: {
+  configs?: TuneConfig[];
+  logRuns?: boolean;
+  printTop?: boolean;
+}): Promise<{ results: TuneResult[]; best: TuneResult }> {
+  const configs = options?.configs ?? buildConfigs();
   const results: TuneResult[] = [];
 
   for (const config of configs) {
     const result = await runConfig(config);
     results.push(result);
 
+    if (options?.logRuns === false) {
+      continue;
+    }
+
     if (result.error) {
-      console.log(
-        `[SKIP] ${config.name} -> ${result.error}`,
-      );
+      console.log(`[SKIP] ${config.name} -> ${result.error}`);
       continue;
     }
 
@@ -157,19 +188,37 @@ async function main(): Promise<void> {
     return a.config.name.localeCompare(b.config.name);
   });
 
-  console.log("\nTop 5 configs:");
-  for (const item of valid.slice(0, 5)) {
-    console.log(
-      `- ${item.config.name} -> ${item.passed}/${item.total} (${item.score.toFixed(1)}%)`,
-    );
+  if (options?.printTop !== false) {
+    console.log("\nTop 5 configs:");
+    for (const item of valid.slice(0, 5)) {
+      console.log(
+        `- ${item.config.name} -> ${item.passed}/${item.total} (${item.score.toFixed(1)}%)`,
+      );
+    }
   }
 
-  const best = valid[0];
+  return {
+    results,
+    best: valid[0],
+  };
+}
+
+export async function main(): Promise<void> {
+  const { best } = await findBestRetrievalConfig({
+    logRuns: true,
+    printTop: true,
+  });
+
   console.log("\nBest config by score:");
   console.log(JSON.stringify(best, null, 2));
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+const currentFilePath = fileURLToPath(import.meta.url);
+const entryFilePath = process.argv[1] ? path.resolve(process.argv[1]) : "";
+
+if (entryFilePath === currentFilePath) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

@@ -11,6 +11,7 @@
     "token": "tsx scripts/make-token.ts",
     "eval:retrieval": "tsx scripts/eval-retrieval.ts",
     "tune:retrieval": "tsx scripts/tune-retrieval.ts",
+    "tune:apply": "tsx scripts/write-best-config.ts",
     "lint": "eslint",
     "test": "vitest run"
   },
