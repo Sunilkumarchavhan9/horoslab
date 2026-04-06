@@ -6,6 +6,12 @@ Base URL:
 http://localhost:3001
 ```
 
+Versioned base (recommended):
+
+```text
+http://localhost:3001/api/v1
+```
+
 Auth:
 - All `/api/memory/*` endpoints require:
   - `Authorization: Bearer <JWT_TOKEN>`
@@ -28,6 +34,25 @@ Response `200`:
   "status": "ok"
 }
 ```
+
+### `GET /api/v1/health`
+
+Same response as `/api/health`.
+
+### `GET /api/metrics`
+
+Prometheus metrics endpoint.
+
+Response `200` (text/plain):
+
+```text
+# HELP memoryos_http_requests_total Total number of HTTP requests handled by MemoryOS API
+# TYPE memoryos_http_requests_total counter
+```
+
+If `METRICS_TOKEN` is set, send either:
+- `Authorization: Bearer <METRICS_TOKEN>`
+- `x-metrics-token: <METRICS_TOKEN>`
 
 ## Memory Ingest
 
@@ -457,3 +482,9 @@ Route not found `404`:
   "error": "Route not found"
 }
 ```
+
+## Backward Compatibility
+
+- Prefer `/api/v1/memory/*` moving forward.
+- Legacy `/api/memory/*` remains available for compatibility.
+- Responses include `x-api-version: 1`.

@@ -17,6 +17,8 @@ import { planContinuity } from "../../lib/memory/continuityPlanner";
 import { planResume } from "../../lib/memory/resumePlanner";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
+import { isSqliteRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
+import { isRuntimeStoreDbHealthy } from "../../lib/storage/runtimeStoreDb";
 import {
   ContinueMemorySchema,
   ProcessMemorySchema,
@@ -64,6 +66,10 @@ function hasValidJsonFile(
 }
 
 function hasValidStores(): boolean {
+  if (isSqliteRuntimeStore()) {
+    return isRuntimeStoreDbHealthy();
+  }
+
   const recentOk = hasValidJsonFile(RECENT_MEMORY_STORE_PATH, (value) => {
     if (!isObjectRecord(value)) {
       return false;

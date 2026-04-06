@@ -31,6 +31,14 @@ The current backend supports:
 - `GET /api/memory/timeline`
 - `GET /api/memory/revisions`
 - `PATCH /api/memory/config/retrieval-weights`
+- `GET /api/memory/system/health`
+- `GET /api/memory/mvp/status`
+- `GET /api/memory/retrieve/explain`
+- `GET /api/metrics`
+
+Versioned compatibility endpoints are also available under:
+- `/api/v1/health`
+- `/api/v1/memory/*`
 
 Core memory flow:
 
@@ -299,10 +307,12 @@ Implemented:
 - revision persistence
 - automated end-to-end workflow test
 
-Not yet implemented:
-- LangGraph-based workflow orchestration
-- richer developer-specific memory taxonomy
-- production-grade persistent database layer
+Production hardening included:
+- runtime store backend switch (`MEMORY_STORE_BACKEND=json|sqlite`)
+- Prometheus metrics endpoint (`/api/metrics`)
+- env validation at startup
+- release workflow (`.github/workflows/release.yml`)
+- perf smoke script (`bun run perf:smoke`)
 
 ## Test Coverage
 

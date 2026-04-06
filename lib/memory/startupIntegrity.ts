@@ -1,5 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
+import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import { ensureRuntimeStoreDb } from "../storage/runtimeStoreDb";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const RECENT_MEMORY_STORE_PATH = path.join(DATA_DIR, "recent-memories.json");
@@ -49,6 +51,11 @@ function ensureJsonFile(
 export function ensureMemoryStoreIntegrity(): void {
   if (!existsSync(DATA_DIR)) {
     mkdirSync(DATA_DIR, { recursive: true });
+  }
+
+  if (isSqliteRuntimeStore()) {
+    ensureRuntimeStoreDb();
+    return;
   }
 
   ensureJsonFile(RECENT_MEMORY_STORE_PATH, {}, isRecentStoreShape);

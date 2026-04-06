@@ -2,6 +2,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory } from "./types";
 import { withFileLock } from "./jsonStoreLock";
+import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import {
+  listRecentMemoriesFromDb,
+  upsertRecentMemoryInDb,
+} from "../storage/runtimeStoreDb";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const RECENT_MEMORY_STORE_PATH = path.join(DATA_DIR, "recent-memories.json");
@@ -42,11 +47,20 @@ function writeRecentMemoryStore(store: Record<string, Memory[]>): void {
 }
 
 export function getRecentMemories(userId: string): Memory[] {
+  if (isSqliteRuntimeStore()) {
+    return listRecentMemoriesFromDb(userId);
+  }
+
   const store = readRecentMemoryStore();
   return store[userId] ?? [];
 }
 
 export async  function upsertRecentMemory(memory: Memory): Promise<void> {
+  if (isSqliteRuntimeStore()) {
+    upsertRecentMemoryInDb(memory, MAX_RECENT_MEMORIES_PER_USER);
+    return;
+  }
+
   await withFileLock(RECENT_MEMORY_STORE_PATH, async () => {
     const store = readRecentMemoryStore();
     const current = store[memory.userId] ?? [];
@@ -68,6 +82,10 @@ export async  function upsertRecentMemory(memory: Memory): Promise<void> {
 }
 
 export function listRecentMemories(): Memory[] {
+  if (isSqliteRuntimeStore()) {
+    return listRecentMemoriesFromDb();
+  }
+
   const store = readRecentMemoryStore();
   return Object.values(store).flat();
 }

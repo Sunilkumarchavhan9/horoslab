@@ -3,6 +3,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory, TimelineEvent } from "./types";
 import { withFileLock } from "./jsonStoreLock";
+import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import {
+  insertTimelineEventInDb,
+  listTimelineEventsFromDb,
+} from "../storage/runtimeStoreDb";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const TIMELINE_STORE_PATH = path.join(DATA_DIR, "timeline-events.json");
@@ -40,6 +45,25 @@ async function createTimelineEvent(
   eventType: TimelineEvent["eventType"],
   reason: string,
 ): Promise<TimelineEvent> {
+  if (isSqliteRuntimeStore()) {
+    const event: TimelineEvent = {
+      id: randomUUID(),
+      userId: memory.userId,
+      memoryId: memory.id,
+      eventType,
+      reason,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        type: memory.type,
+        importanceScore: memory.importanceScore,
+        confidence: memory.confidence,
+      },
+    };
+
+    insertTimelineEventInDb(event);
+    return event;
+  }
+
   return withFileLock(TIMELINE_STORE_PATH, async() => {
     const event: TimelineEvent = {
       id: randomUUID(),
@@ -91,6 +115,10 @@ export function recordMemoryUpdatedEvent(
 }
 
 export function listTimelineEvents(userId?: string): TimelineEvent[] {
+  if (isSqliteRuntimeStore()) {
+    return listTimelineEventsFromDb(userId);
+  }
+
   const timelineStore = readTimelineStore();
 
   if (!userId) {

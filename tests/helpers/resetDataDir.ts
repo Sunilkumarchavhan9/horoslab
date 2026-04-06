@@ -6,6 +6,9 @@ const RUNTIME_STORE_FILES = [
   "recent-memories.json",
   "timeline-events.json",
   "revision-events.json",
+  "memoryos.db",
+  "memoryos.db-shm",
+  "memoryos.db-wal",
 ];
 
 export function resetRuntimeDataStores(): void {
