@@ -223,9 +223,7 @@ memoryRouter.patch(
   }),
 );
 
-memoryRouter.patch(
-  "/:memoryId/status",
-  asyncHandler(async (req, res) => {
+memoryRouter.patch("/:memoryId/status", asyncHandler(async (req, res) => {
     const memoryId =
       typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
         ? req.params.memoryId
@@ -422,8 +420,7 @@ memoryRouter.get(
     return;
   }),
 );
-memoryRouter.get( "/list",
-  asyncHandler(async (req, res) => {
+memoryRouter.get("/list", asyncHandler(async (req, res) => {
     const status =
       typeof req.query.status === "string" && req.query.status.length > 0
         ? req.query.status
@@ -504,6 +501,39 @@ memoryRouter.get(
     }
 
     res.status(200).json({ memory });
+  }),
+);
+memoryRouter.post( "/retrieve/debug", asyncHandler(async (req, res) => {
+    const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const requestedTopK = parsed.data.topK ?? 5;
+    const debugTopK = 100;
+
+    const result = await retrieveRelevantMemory({
+      userId: req.authUserId,
+      question: parsed.data.question,
+      topK: debugTopK,
+      ...(parsed.data.includeArchived !== undefined
+        ? { includeArchived: parsed.data.includeArchived }
+        : {}),
+    });
+
+    res.status(200).json({
+      memories: result.memories,
+      debug: result.debug,
+      meta: {
+        requestedTopK,
+        debugTopK,
+        returnedCount: result.memories.length,
+      },
+    });
   }),
 );
 
