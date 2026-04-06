@@ -36,6 +36,12 @@ const REVISION_STORE_PATH = path.join(DATA_DIR, "revision-events.json");
 const BEST_CONFIG_PATH = path.join(DATA_DIR, "eval", "best-config.json");
 const BASELINE_REPORT_PATH = path.join(DATA_DIR, "eval", "baseline-report.json");
 
+type BaselineReport = {
+  passRate: number;
+  totalCases: number;
+  updatedAt?: string;
+};
+
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -140,6 +146,53 @@ function hasValidBaselineReport(): boolean {
       totalCases > 0
     );
   });
+}
+
+function readBaselineReport(): BaselineReport | null {
+  if (!existsSync(BASELINE_REPORT_PATH)) {
+    return null;
+  }
+
+  try {
+    const raw = readFileSync(BASELINE_REPORT_PATH, "utf8");
+    const parsed = JSON.parse(raw);
+    if (!isObjectRecord(parsed)) {
+      return null;
+    }
+
+    const passRate = parsed.passRate;
+    const totalCases = parsed.totalCases;
+    const updatedAt = parsed.updatedAt;
+
+    if (
+      typeof passRate !== "number" ||
+      Number.isNaN(passRate) ||
+      passRate < 0 ||
+      passRate > 100
+    ) {
+      return null;
+    }
+
+    if (
+      typeof totalCases !== "number" ||
+      !Number.isInteger(totalCases) ||
+      totalCases <= 0
+    ) {
+      return null;
+    }
+
+    if (updatedAt !== undefined && typeof updatedAt !== "string") {
+      return null;
+    }
+
+    return {
+      passRate,
+      totalCases,
+      ...(typeof updatedAt === "string" ? { updatedAt } : {}),
+    };
+  } catch {
+    return null;
+  }
 }
 
 function parseQueryTopK(raw: unknown): number | undefined {
@@ -544,6 +597,65 @@ memoryRouter.get("/system/health", (_req, res) => {
       retrievalConfigLoaded,
       baselineReportPresent,
     },
+  });
+});
+
+memoryRouter.get("/mvp/status", (_req, res) => {
+  ensureMemoryStoreIntegrity();
+
+  const storesIntegrity = hasValidStores();
+  const retrievalConfigLoaded = hasValidBestConfig();
+  const baselineReport = readBaselineReport();
+  const baselineReportPresent = baselineReport !== null;
+  const evalPassRate = baselineReport?.passRate ?? null;
+  const totalEvalCases = baselineReport?.totalCases ?? null;
+  const evalPassRateAtLeast90 =
+    typeof evalPassRate === "number" && evalPassRate >= 90;
+
+  const completed: string[] = [];
+  const pending: string[] = [];
+
+  if (storesIntegrity) {
+    completed.push("Runtime memory stores are valid JSON.");
+  } else {
+    pending.push("Fix runtime memory store integrity.");
+  }
+
+  if (retrievalConfigLoaded) {
+    completed.push("Best retrieval config is present and valid.");
+  } else {
+    pending.push("Generate and save a valid best retrieval config.");
+  }
+
+  if (baselineReportPresent) {
+    completed.push("Retrieval baseline report is present.");
+  } else {
+    pending.push("Create retrieval baseline report.");
+  }
+
+  if (evalPassRateAtLeast90) {
+    completed.push("Retrieval eval pass rate is at least 90%.");
+  } else {
+    pending.push("Improve retrieval quality to at least 90% pass rate.");
+  }
+
+  const status = pending.length === 0 ? "on_track" : "at_risk";
+
+  res.status(200).json({
+    status,
+    checkedAt: new Date().toISOString(),
+    checks: {
+      storesIntegrity,
+      retrievalConfigLoaded,
+      baselineReportPresent,
+      evalPassRateAtLeast90,
+    },
+    metrics: {
+      evalPassRate,
+      totalEvalCases,
+    },
+    completed,
+    pending,
   });
 });
 

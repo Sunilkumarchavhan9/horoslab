@@ -384,6 +384,34 @@ Filter by memory id:
 GET /api/memory/revisions?memoryId=<MEMORY_ID>
 ```
 
+## MVP Readiness
+
+### `GET /api/memory/mvp/status`
+
+Response `200`:
+
+```json
+{
+  "status": "on_track",
+  "checkedAt": "2026-04-06T00:00:00.000Z",
+  "checks": {
+    "storesIntegrity": true,
+    "retrievalConfigLoaded": true,
+    "baselineReportPresent": true,
+    "evalPassRateAtLeast90": true
+  },
+  "metrics": {
+    "evalPassRate": 100,
+    "totalEvalCases": 20
+  },
+  "completed": [
+    "Runtime memory stores are valid JSON.",
+    "Best retrieval config is present and valid."
+  ],
+  "pending": []
+}
+```
+
 ## Retrieval Weights (Dev)
 
 ### `PATCH /api/memory/config/retrieval-weights`
