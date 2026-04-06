@@ -29,6 +29,7 @@
 !/data/eval
 /data/eval/*
 !/data/eval/best-config.json
+!/data/eval/baseline-report.json
 
 # debug
 npm-debug.log*

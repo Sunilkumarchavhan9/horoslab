@@ -39,3 +39,6 @@ jobs:
 
       - name: Retrieval Eval Gate
         run: bun run eval:retrieval
+
+      - name: Retrieval Baseline Compare
+        run: bun run eval:compare
