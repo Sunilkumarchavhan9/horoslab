@@ -190,6 +190,32 @@ Error `404`:
 }
 ```
 
+## Insights
+
+### `GET /api/memory/insights`
+
+Response `200`:
+
+```json
+{
+  "totalsByType": {
+    "profile": 0,
+    "preference": 1,
+    "learning": 1,
+    "project": 1,
+    "episodic": 0
+  },
+  "totalsByStatus": {
+    "active": 3,
+    "archived": 0,
+    "merged": 0
+  },
+  "topSkills": ["typescript", "transformers", "memoryos"],
+  "activeProjects": ["Building MemoryOS"],
+  "recentMilestones": ["memory_created: passed score threshold 0.65"]
+}
+```
+
 ## Memory Management
 
 ### `GET /api/memory/list?status=active&type=project&limit=20`
@@ -357,4 +383,3 @@ Route not found `404`:
   "error": "Route not found"
 }
 ```
-

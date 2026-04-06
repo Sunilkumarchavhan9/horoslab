@@ -150,6 +150,23 @@
           }
         },
         {
+          "name": "GET /api/memory/insights",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/memory/insights",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "memory", "insights"]
+            }
+          }
+        },
+        {
           "name": "GET /api/memory/list",
           "request": {
             "method": "GET",
