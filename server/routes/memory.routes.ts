@@ -142,6 +142,52 @@ function hasValidBaselineReport(): boolean {
   });
 }
 
+function parseQueryTopK(raw: unknown): number | undefined {
+  if (typeof raw !== "string" || raw.trim().length === 0) {
+    return undefined;
+  }
+
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0 || parsed > 20) {
+    return undefined;
+  }
+
+  return parsed;
+}
+
+function parseQueryIncludeArchived(raw: unknown): boolean | undefined {
+  if (typeof raw !== "string") {
+    return undefined;
+  }
+
+  const lowered = raw.toLowerCase();
+  if (lowered === "true") {
+    return true;
+  }
+
+  if (lowered === "false") {
+    return false;
+  }
+
+  return undefined;
+}
+
+function buildWhyTop1(top?: {
+  memoryType?: string;
+  finalScore: number;
+  semanticScore: number;
+  typeRelevanceScore: number;
+  importanceScore: number;
+  recencyScore: number;
+  continuityBoost: number;
+}): string {
+  if (!top) {
+    return "No ranked memories found for this question.";
+  }
+
+  return `Top memory ranked highest because it matched intent/type (${top.memoryType ?? "unknown"}), had strong semantic relevance (${top.semanticScore.toFixed(2)}), and reached final score ${top.finalScore.toFixed(2)} with continuity boost ${top.continuityBoost.toFixed(2)}.`;
+}
+
 memoryRouter.post(
   "/process",
   asyncHandler(async (req, res) => {
@@ -190,6 +236,74 @@ memoryRouter.post(
     });
 
     res.status(200).json(result);
+  }),
+);
+
+memoryRouter.get(
+  "/retrieve/explain",
+  asyncHandler(async (req, res) => {
+    const question =
+      typeof req.query.question === "string" && req.query.question.trim().length > 0
+        ? req.query.question
+        : undefined;
+
+    if (!question) {
+      res.status(400).json({
+        error: "question is required",
+      });
+      return;
+    }
+
+    const topK = parseQueryTopK(req.query.topK);
+    if (req.query.topK !== undefined && topK === undefined) {
+      res.status(400).json({
+        error: "topK must be a positive integer <= 20",
+      });
+      return;
+    }
+
+    const includeArchived = parseQueryIncludeArchived(req.query.includeArchived);
+    if (req.query.includeArchived !== undefined && includeArchived === undefined) {
+      res.status(400).json({
+        error: "includeArchived must be true or false",
+      });
+      return;
+    }
+
+    const result = await retrieveRelevantMemory({
+      userId: req.authUserId,
+      question,
+      ...(topK !== undefined ? { topK } : {}),
+      ...(includeArchived !== undefined ? { includeArchived } : {}),
+    });
+
+    const debugById = new Map(result.debug.map((item) => [item.id, item]));
+    const ranked = result.memories.map((memory) => {
+      const debug = debugById.get(memory.id);
+      return {
+        id: memory.id,
+        memory: memory.memory,
+        memoryType: memory.memoryType,
+        finalScore: memory.finalScore,
+        semanticScore: memory.semanticScore,
+        typeRelevanceScore: memory.typeRelevanceScore,
+        importanceScore: memory.importanceScore,
+        recencyScore: memory.recencyScore,
+        continuityBoost: memory.continuityBoost,
+        updatedAt: memory.updatedAt,
+        intent: debug?.intent,
+        weightsUsed: debug?.weightsUsed,
+      };
+    });
+
+    const firstDebug = result.debug[0];
+
+    res.status(200).json({
+      intent: firstDebug?.intent ?? "general",
+      weightsUsed: firstDebug?.weightsUsed ?? getRetrievalWeights(),
+      ranked,
+      whyTop1: buildWhyTop1(ranked[0]),
+    });
   }),
 );
 

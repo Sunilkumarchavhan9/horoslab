@@ -84,6 +84,52 @@ Response `200`:
 }
 ```
 
+### `GET /api/memory/retrieve/explain?question=<QUESTION>&topK=5`
+
+Response `200`:
+
+```json
+{
+  "intent": "build_next",
+  "weightsUsed": {
+    "semantic": 0.4,
+    "typeRelevance": 0.25,
+    "importance": 0.2,
+    "recency": 0.15
+  },
+  "ranked": [
+    {
+      "id": "memory-id",
+      "memory": "User is building MemoryOS",
+      "memoryType": "project",
+      "finalScore": 0.95,
+      "semanticScore": 0.9,
+      "typeRelevanceScore": 1,
+      "importanceScore": 0.84,
+      "recencyScore": 1,
+      "continuityBoost": 0.12,
+      "updatedAt": "2026-04-06T00:00:00.000Z",
+      "intent": "build_next",
+      "weightsUsed": {
+        "semantic": 0.4,
+        "typeRelevance": 0.25,
+        "importance": 0.2,
+        "recency": 0.15
+      }
+    }
+  ],
+  "whyTop1": "Top memory ranked highest because it matched intent/type..."
+}
+```
+
+Error `400` (missing question):
+
+```json
+{
+  "error": "question is required"
+}
+```
+
 ## Continuity Planning
 
 ### `POST /api/memory/continue`

@@ -77,6 +77,33 @@
           }
         },
         {
+          "name": "GET /api/memory/retrieve/explain",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/memory/retrieve/explain?question=what%20should%20I%20build%20next&topK=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "memory", "retrieve", "explain"],
+              "query": [
+                {
+                  "key": "question",
+                  "value": "what should I build next"
+                },
+                {
+                  "key": "topK",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
           "name": "POST /api/memory/continue",
           "request": {
             "method": "POST",
