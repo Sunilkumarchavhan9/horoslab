@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { existsSync, readFileSync } from "fs";
+import path from "path";
 import { runIngestFlowLangGraph } from "../../lib/workflows/ingestGraphLangGraph";
 import { retrieveRelevantMemory } from "../../lib/memory/retrieveRelevantMemory";
 import { listRevisionEvents } from "../../lib/memory/revisionMemory";
@@ -14,6 +16,7 @@ import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
 import { planContinuity } from "../../lib/memory/continuityPlanner";
 import { planResume } from "../../lib/memory/resumePlanner";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
+import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
 import {
   ContinueMemorySchema,
   ProcessMemorySchema,
@@ -25,6 +28,119 @@ import {
 import { asyncHandler } from "../middleware/asyncHandler";
 
 export const memoryRouter = Router();
+
+const DATA_DIR = path.join(process.cwd(), "data");
+const RECENT_MEMORY_STORE_PATH = path.join(DATA_DIR, "recent-memories.json");
+const TIMELINE_STORE_PATH = path.join(DATA_DIR, "timeline-events.json");
+const REVISION_STORE_PATH = path.join(DATA_DIR, "revision-events.json");
+const BEST_CONFIG_PATH = path.join(DATA_DIR, "eval", "best-config.json");
+const BASELINE_REPORT_PATH = path.join(DATA_DIR, "eval", "baseline-report.json");
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function hasValidJsonFile(
+  filePath: string,
+  isValid: (value: unknown) => boolean,
+): boolean {
+  if (!existsSync(filePath)) {
+    return false;
+  }
+
+  try {
+    const raw = readFileSync(filePath, "utf8");
+    const parsed = JSON.parse(raw);
+    return isValid(parsed);
+  } catch {
+    return false;
+  }
+}
+
+function hasValidStores(): boolean {
+  const recentOk = hasValidJsonFile(RECENT_MEMORY_STORE_PATH, (value) => {
+    if (!isObjectRecord(value)) {
+      return false;
+    }
+    return Object.values(value).every((entry) => Array.isArray(entry));
+  });
+
+  const timelineOk = hasValidJsonFile(TIMELINE_STORE_PATH, Array.isArray);
+  const revisionOk = hasValidJsonFile(REVISION_STORE_PATH, Array.isArray);
+
+  return recentOk && timelineOk && revisionOk;
+}
+
+function hasValidBestConfig(): boolean {
+  return hasValidJsonFile(BEST_CONFIG_PATH, (value) => {
+    if (!isObjectRecord(value)) {
+      return false;
+    }
+
+    const threshold = value.threshold;
+    const weights = value.weights;
+
+    if (
+      typeof threshold !== "number" ||
+      Number.isNaN(threshold) ||
+      threshold < 0 ||
+      threshold > 1
+    ) {
+      return false;
+    }
+
+    if (!isObjectRecord(weights)) {
+      return false;
+    }
+
+    const semantic = weights.semantic;
+    const typeRelevance = weights.typeRelevance;
+    const importance = weights.importance;
+    const recency = weights.recency;
+
+    const values = [semantic, typeRelevance, importance, recency];
+
+    if (
+      values.some(
+        (item) =>
+          typeof item !== "number" ||
+          Number.isNaN(item) ||
+          item < 0 ||
+          item > 1,
+      )
+    ) {
+      return false;
+    }
+
+    const sum =
+      (semantic as number) +
+      (typeRelevance as number) +
+      (importance as number) +
+      (recency as number);
+    return Math.abs(sum - 1) <= 1e-6;
+  });
+}
+
+function hasValidBaselineReport(): boolean {
+  return hasValidJsonFile(BASELINE_REPORT_PATH, (value) => {
+    if (!isObjectRecord(value)) {
+      return false;
+    }
+
+    const passRate = value.passRate;
+    const totalCases = value.totalCases;
+
+    return (
+      typeof passRate === "number" &&
+      !Number.isNaN(passRate) &&
+      passRate >= 0 &&
+      passRate <= 100 &&
+      typeof totalCases === "number" &&
+      Number.isInteger(totalCases) &&
+      totalCases > 0
+    );
+  });
+}
 
 memoryRouter.post(
   "/process",
@@ -291,6 +407,29 @@ memoryRouter.get("/timeline", (req, res) => {
   res.status(200).json({
     events,
     count: events.length,
+  });
+});
+
+memoryRouter.get("/system/health", (_req, res) => {
+  ensureMemoryStoreIntegrity();
+
+  const storesIntegrity = hasValidStores();
+  const retrievalConfigLoaded = hasValidBestConfig();
+  const baselineReportPresent = hasValidBaselineReport();
+
+  const status =
+    storesIntegrity && retrievalConfigLoaded && baselineReportPresent
+      ? "ok"
+      : "degraded";
+
+  res.status(200).json({
+    status,
+    checkedAt: new Date().toISOString(),
+    checks: {
+      storesIntegrity,
+      retrievalConfigLoaded,
+      baselineReportPresent,
+    },
   });
 });
 
