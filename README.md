@@ -40,10 +40,10 @@ message -> extract -> score -> merge/evolve -> save -> retrieve -> timeline/revi
 
 ## Architecture
 
-The codebase is split into four layers:
+The codebase is split into three layers:
 
-- `server/routes`, `server/controllers`, `server/schemas`
-  Express routing + controllers + request validation
+- `server/routes`, `server/schemas`
+  Express route-first handlers + request validation
 - `lib/memory`
   Memory intelligence logic such as extraction, scoring, merge, evolve, ranking, timeline, revisions, and recent memory persistence
 - `lib/integrations`
@@ -101,7 +101,6 @@ server/
   app.ts
   index.ts
   routes/
-  controllers/
   schemas/
 
 lib/
