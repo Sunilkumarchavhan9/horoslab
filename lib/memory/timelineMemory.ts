@@ -76,11 +76,17 @@ export function recordMemoryEvolvedEvent( memory: Memory, reason: string ): Prom
   return createTimelineEvent(memory, "memory_evolved", reason);
 }
 
-export function recordMemoryArchivedEvent( memory: Memory, reason: string ): Promise<TimelineEvent> {
+export function recordMemoryArchivedEvent(
+  memory: Memory,
+  reason: string,
+): Promise<TimelineEvent> {
   return createTimelineEvent(memory, "memory_archived", reason);
 }
 
-export function recordMemoryUpdatedEvent( memory: Memory, reason: string ): Promise<TimelineEvent> {
+export function recordMemoryUpdatedEvent(
+  memory: Memory,
+  reason: string,
+): Promise<TimelineEvent> {
   return createTimelineEvent(memory, "memory_updated", reason);
 }
 
@@ -93,3 +99,4 @@ export function listTimelineEvents(userId?: string): TimelineEvent[] {
 
   return timelineStore.filter((event) => event.userId === userId);
 }
+    
