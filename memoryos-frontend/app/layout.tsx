@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { IBM_Plex_Mono, Sora, Space_Grotesk } from "next/font/google";
+import { isClerkEnabled } from "@/lib/clerk";
 import "./globals.css";
 
 const sora = Sora({
@@ -30,9 +32,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const clerkEnabled = isClerkEnabled();
+
   return (
     <html lang="en" className={`${sora.variable} ${spaceGrotesk.variable} ${plexMono.variable}`}>
-      <body>{children}</body>
+      <body>{clerkEnabled ? <ClerkProvider>{children}</ClerkProvider> : children}</body>
     </html>
   );
 }
