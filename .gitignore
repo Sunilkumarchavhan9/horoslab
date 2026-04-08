@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/memoryos-frontend/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -15,6 +16,8 @@
 
 # next.js
 /.next/
+/memoryos-frontend/.next/
+/memoryos-frontend/out/
 /out/
 
 # production

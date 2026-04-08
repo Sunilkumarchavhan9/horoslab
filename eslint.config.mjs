@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Nested frontend app build artifacts:
+    "memoryos-frontend/.next/**",
+    "memoryos-frontend/out/**",
+    "memoryos-frontend/node_modules/**",
   ]),
 ]);
 
