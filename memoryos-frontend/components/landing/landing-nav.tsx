@@ -109,12 +109,12 @@ export function LandingNav() {
             </button>
 
             <div className="pointer-events-none absolute right-0 top-full z-30 mt-4 w-[304px] translate-y-1 border border-[#b9cfef] bg-white opacity-0 shadow-[0_10px_24px_rgba(35,57,90,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
-              <a href="#" className="block px-5 py-5 hover:bg-white">
+              <a href="/developer-console/sign-in" className="block px-5 py-5 hover:bg-white">
                 <p className="text-[17px] leading-none text-[#1a2431]">Developer Console</p>
                 <p className="mt-3 text-[14px] leading-none text-[#44546a]">API keys, usage, docs</p>
               </a>
               <div className="mx-5 border-t border-[#d6e0ef]" />
-              <a href="#" className="block px-5 py-5 hover:bg-white">
+              <a href="/personal-app/sign-in" className="block px-5 py-5 hover:bg-white">
                 <p className="text-[17px] leading-none text-[#1a2431]">Personal App</p>
                 <p className="mt-3 text-[14px] leading-none text-[#44546a]">Your memory dashboard</p>
               </a>

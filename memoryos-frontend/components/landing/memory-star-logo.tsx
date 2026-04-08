@@ -12,8 +12,14 @@ const WORD_PATH =
 const TM_PATH =
   "M192.384 11.9609V5.00094H189.936V3.56094H196.416V5.00094H193.968V11.9609H192.384ZM197.495 11.9609V3.56094H200.435L201.887 10.8809H202.103L203.555 3.56094H206.495V11.9609H204.959V4.72494H204.743L203.303 11.9609H200.687L199.247 4.72494H199.031V11.9609H197.495Z";
 
-export function MemoryStarLogo() {
+type MemoryStarLogoProps = {
+  tone?: "black" | "white";
+};
+
+export function MemoryStarLogo({ tone = "black" }: MemoryStarLogoProps) {
   const [isHover, setIsHover] = useState(false);
+  const baseColor = tone === "white" ? "#FFFFFF" : "#000000";
+  const accentColor = tone === "white" ? "#FFFFFF" : "#000000";
 
   return (
     <span
@@ -33,12 +39,12 @@ export function MemoryStarLogo() {
         xmlns="http://www.w3.org/2000/svg"
         className="h-[29px] w-[207px]"
       >
-        <path d={WORD_PATH} fill="black" />
-        <path d={TM_PATH} fill="black" />
+        <path d={WORD_PATH} fill={baseColor} />
+        <path d={TM_PATH} fill={baseColor} />
 
         <motion.path
           d={STAR_PATH}
-          fill="black"
+          fill={baseColor}
           animate={
             isHover
               ? {
@@ -50,7 +56,7 @@ export function MemoryStarLogo() {
                   ],
                 }
               : {
-                  fill: "#000000",
+                  fill: baseColor,
                   filter: "drop-shadow(0 0 0px rgba(255,255,255,0))",
                 }
           }
@@ -75,7 +81,7 @@ export function MemoryStarLogo() {
         <motion.path
           d={STAR_PATH}
           fill="none"
-          stroke="#000000"
+          stroke={accentColor}
           strokeWidth="1.6"
           strokeLinecap="round"
           animate={

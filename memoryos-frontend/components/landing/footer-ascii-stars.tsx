@@ -1,13 +1,14 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
+import type { CSSProperties } from "react";
 import { useMemo, useRef } from "react";
 
 type PointGlyph = {
   x: number;
   y: number;
   glyph: string;
-  opacity: number;
+  opacity: string;
   size: number;
 };
 
@@ -96,6 +97,14 @@ function isInsideStar(x: number, y: number) {
   return isPointInPolygon(x, y, STAR_POLYGON);
 }
 
+function px(value: number, precision = 3) {
+  return `${value.toFixed(precision)}px`;
+}
+
+function decimal(value: number, precision = 6) {
+  return value.toFixed(precision);
+}
+
 function buildPointCloud() {
   const points: PointGlyph[] = [];
   const rowStep = 7.4;
@@ -112,7 +121,7 @@ function buildPointCloud() {
         x: x + (hash(seed + 11) - 0.5) * 1.3,
         y: y + (hash(seed + 23) - 0.5) * 1.1,
         glyph: weightedRun(seed + 71),
-        opacity: 0.82 + hash(seed + 37) * 0.14,
+        opacity: decimal(0.82 + hash(seed + 37) * 0.14),
         size: 7 + hash(seed + 53) * 0.9,
       });
     }
@@ -122,6 +131,29 @@ function buildPointCloud() {
 }
 
 const STAR_POINTS = buildPointCloud();
+
+function glitchStyle(seed: number, delay: number): CSSProperties {
+  const xBack = -2 - Math.round(hash(seed + 5) * 5);
+  const xFront = 4 + Math.round(hash(seed + 11) * 8);
+  const yBack = -2 + Math.round(hash(seed + 17) * 5);
+  const yFront = -3 + Math.round(hash(seed + 23) * 7);
+  const blur = (1.2 + hash(seed + 29) * 2.8).toFixed(2);
+  const scaleFront = (1.08 + hash(seed + 31) * 0.28).toFixed(3);
+  const scaleBack = (0.88 + hash(seed + 37) * 0.1).toFixed(3);
+  const duration = (0.92 + hash(seed + 41) * 0.72).toFixed(3);
+
+  return {
+    "--glitch-x-back": `${xBack}px`,
+    "--glitch-x-front": `${xFront}px`,
+    "--glitch-y-back": `${yBack}px`,
+    "--glitch-y-front": `${yFront}px`,
+    "--glitch-blur": `${blur}px`,
+    "--glitch-scale-front": scaleFront,
+    "--glitch-scale-back": scaleBack,
+    animationDelay: `${(delay + hash(seed + 47) * 0.12).toFixed(3)}s`,
+    animationDuration: `${duration}s`,
+  } as CSSProperties;
+}
 
 function AsciiStar({
   x,
@@ -142,8 +174,8 @@ function AsciiStar({
     () => STAR_POINTS.filter((_, index) => index % 4 === glitchGroup % 4),
     [glitchGroup],
   );
-  const width = STAR_WIDTH * scale;
-  const height = STAR_HEIGHT * scale;
+  const width = px(STAR_WIDTH * scale);
+  const height = px(STAR_HEIGHT * scale);
 
   return (
     <motion.div
@@ -182,12 +214,12 @@ function AsciiStar({
           key={`base-${index}`}
           className="absolute font-mono leading-none text-[#2166f3]"
           style={{
-            left: point.x * scale,
-            top: point.y * scale,
-            fontSize: point.size * scale,
+            left: px(point.x * scale),
+            top: px(point.y * scale),
+            fontSize: px(point.size * scale),
             opacity: point.opacity,
             transform: "translate(-50%, -50%)",
-            letterSpacing: `${-0.08 * point.size * scale}px`,
+            letterSpacing: px(-0.08 * point.size * scale),
           }}
         >
           {point.glyph}
@@ -197,18 +229,16 @@ function AsciiStar({
       {glitchPoints.map((point, index) => (
         <span
           key={`glitch-${index}`}
-          className="absolute font-mono leading-none text-[#2166f3]"
+          className={`absolute font-mono leading-none text-[#2166f3] ${active ? "footer-star-glitch" : ""}`}
           style={{
-            left: point.x * scale,
-            top: point.y * scale,
-            fontSize: point.size * scale,
-            opacity: 0.5,
+            left: px(point.x * scale),
+            top: px(point.y * scale),
+            fontSize: px(point.size * scale),
+            opacity: "0.5",
             textShadow: "0 0 12px rgba(33,102,243,0.5), 0 0 24px rgba(33,102,243,0.18)",
             transform: "translate(-50%, -50%)",
-            letterSpacing: `${-0.08 * point.size * scale}px`,
-            animation: active
-              ? `footerStarGlitch 1.15s steps(2, end) ${delay + index * 0.018}s infinite`
-              : "none",
+            letterSpacing: px(-0.08 * point.size * scale),
+            ...glitchStyle(glitchGroup * 1000 + index * 37, delay + index * 0.018),
           }}
         >
           {point.glyph}
@@ -233,40 +263,76 @@ export function FooterAsciiStars() {
           0%,
           100% {
             transform: translate(-50%, -50%) scale(1);
+            filter: blur(0px);
             opacity: 0;
           }
-          7% {
-            transform: translate(calc(-50% - 5px), calc(-50% + 1px)) scale(0.96);
-            opacity: 0.16;
-          }
-          11% {
-            transform: translate(calc(-50% + 7px), calc(-50% - 2px)) scale(1.06);
-            opacity: 0.34;
-          }
-          15% {
-            transform: translate(calc(-50% + 2px), calc(-50% + 4px)) scale(0.98);
-            opacity: 0.1;
-          }
-          51% {
-            transform: translate(calc(-50% - 4px), calc(-50% - 2px)) scale(0.95);
+          6% {
+            transform: translate(
+                calc(-50% + var(--glitch-x-back)),
+                calc(-50% + var(--glitch-y-back))
+              )
+              scale(var(--glitch-scale-back));
+            filter: blur(calc(var(--glitch-blur) * 0.65));
             opacity: 0.14;
           }
-          56% {
-            transform: translate(calc(-50% + 8px), calc(-50% + 1px)) scale(1.08);
-            opacity: 0.4;
+          11% {
+            transform: translate(
+                calc(-50% + var(--glitch-x-front)),
+                calc(-50% + var(--glitch-y-front))
+              )
+              scale(var(--glitch-scale-front));
+            filter: blur(var(--glitch-blur));
+            opacity: 0.42;
           }
-          61% {
-            transform: translate(calc(-50% - 2px), calc(-50% + 5px)) scale(0.97);
+          15% {
+            transform: translate(calc(-50% + 1px), calc(-50% - 1px)) scale(1.02);
+            filter: blur(calc(var(--glitch-blur) * 0.22));
+            opacity: 0.1;
+          }
+          52% {
+            transform: translate(
+                calc(-50% + var(--glitch-x-back)),
+                calc(-50% + var(--glitch-y-front))
+              )
+              scale(var(--glitch-scale-back));
+            filter: blur(calc(var(--glitch-blur) * 0.9));
             opacity: 0.18;
           }
-          66% {
-            transform: translate(calc(-50% + 10px), calc(-50% - 3px)) scale(1.12);
-            opacity: 0.46;
+          58% {
+            transform: translate(
+                calc(-50% + var(--glitch-x-front)),
+                calc(-50% + var(--glitch-y-back))
+              )
+              scale(calc(var(--glitch-scale-front) + 0.05));
+            filter: blur(calc(var(--glitch-blur) * 1.15));
+            opacity: 0.48;
           }
-          72% {
-            transform: translate(calc(-50% - 6px), calc(-50% + 2px)) scale(0.94);
-            opacity: 0.15;
+          63% {
+            transform: translate(calc(-50% - 1px), calc(-50% + 2px)) scale(0.97);
+            filter: blur(calc(var(--glitch-blur) * 0.35));
+            opacity: 0.12;
           }
+          69% {
+            transform: translate(
+                calc(-50% + calc(var(--glitch-x-front) * 1.2)),
+                calc(-50% + calc(var(--glitch-y-front) * 1.1))
+              )
+              scale(calc(var(--glitch-scale-front) + 0.08));
+            filter: blur(calc(var(--glitch-blur) * 1.3));
+            opacity: 0.54;
+          }
+          76% {
+            transform: translate(calc(-50% + 2px), calc(-50% - 2px)) scale(1.01);
+            filter: blur(calc(var(--glitch-blur) * 0.16));
+            opacity: 0.08;
+          }
+        }
+
+        .footer-star-glitch {
+          animation-iteration-count: infinite;
+          animation-name: footerStarGlitch;
+          animation-timing-function: steps(2, end);
+          will-change: transform, opacity, filter;
         }
       `}</style>
 

@@ -563,7 +563,8 @@ function OpenCodeMark() {
       alt=""
       width={132}
       height={21}
-      className="h-[21px] w-auto opacity-90"
+      className="opacity-90"
+      style={{ height: "21px", width: "auto" }}
       aria-hidden="true"
     />
   );

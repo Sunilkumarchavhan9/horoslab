@@ -70,8 +70,8 @@ export default function MemoryOssvg2() {
 <path d="M172 384L202 398" stroke="#1100FF"/>
 <path d="M220 353V387" stroke="#1100FF"/>
 <path d="M269 384L237 398" stroke="#1100FF"/>
-<path d="M319 443L255 484" stroke="#1100FF" stroke-dasharray="2 2"/>
-<path d="M117 445L196 484" stroke="#1100FF" stroke-dasharray="2 2"/>
+<path d="M319 443L255 484" stroke="#1100FF" strokeDasharray="2 2"/>
+<path d="M117 445L196 484" stroke="#1100FF" strokeDasharray="2 2"/>
 <rect width="255.045" height="252.277" transform="matrix(0.866025 0.5 -0.866025 0.5 227.478 556)" fill="#ABC5F0"/>
 <path d="M9.75342 691L230.262 818.599L230.262 836.501L9.25693 707.001L9.75342 691Z" fill="#46629C"/>
 <path d="M449.13 692L230.348 818.314L230.504 836.126L449.269 707.92L449.13 692Z" fill="#46629C"/>
