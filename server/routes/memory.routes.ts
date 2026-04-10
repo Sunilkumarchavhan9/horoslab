@@ -2,7 +2,7 @@ import { Router } from "express";
 import { existsSync, readFileSync } from "fs";
 import path from "path";
 import { runIngestFlowLangGraph } from "../../lib/workflows/ingestGraphLangGraph";
-import { retrieveRelevantMemory } from "../../lib/memory/retrieveRelevantMemory";
+import { runRetrieveFlowLangGraph } from "../../lib/workflows/retrieveGraphLangGraph";
 import { listRevisionEvents } from "../../lib/memory/revisionMemory";
 import { listTimelineEvents } from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
@@ -239,12 +239,18 @@ function buildWhyTop1(top?: {
   importanceScore: number;
   recencyScore: number;
   continuityBoost: number;
+  reasonTags?: string[];
 }): string {
   if (!top) {
     return "No ranked memories found for this question.";
   }
 
-  return `Top memory ranked highest because it matched intent/type (${top.memoryType ?? "unknown"}), had strong semantic relevance (${top.semanticScore.toFixed(2)}), and reached final score ${top.finalScore.toFixed(2)} with continuity boost ${top.continuityBoost.toFixed(2)}.`;
+  const reasonPart =
+    top.reasonTags && top.reasonTags.length > 0
+      ? ` Key reasons: ${top.reasonTags.slice(0, 3).join(", ")}.`
+      : "";
+
+  return `Top memory ranked highest because it matched intent/type (${top.memoryType ?? "unknown"}), had semantic relevance ${top.semanticScore.toFixed(2)}, and reached final score ${top.finalScore.toFixed(2)} with continuity boost ${top.continuityBoost.toFixed(2)}.${reasonPart}`;
 }
 
 memoryRouter.post(
@@ -285,7 +291,7 @@ memoryRouter.post(
       return;
     }
 
-    const result = await retrieveRelevantMemory({
+    const result = await runRetrieveFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
       topK: parsed.data.topK,
@@ -329,7 +335,7 @@ memoryRouter.get(
       return;
     }
 
-    const result = await retrieveRelevantMemory({
+    const result = await runRetrieveFlowLangGraph({
       userId: req.authUserId,
       question,
       ...(topK !== undefined ? { topK } : {}),
@@ -352,6 +358,15 @@ memoryRouter.get(
         updatedAt: memory.updatedAt,
         intent: debug?.intent,
         weightsUsed: debug?.weightsUsed,
+        reasonTags: debug?.reasonTags ?? [],
+        contributions: debug?.contributions ?? {
+          semantic: 0,
+          typeRelevance: 0,
+          importance: 0,
+          recency: 0,
+          continuity: 0,
+          total: memory.finalScore,
+        },
       };
     });
 
@@ -887,7 +902,7 @@ memoryRouter.post( "/retrieve/debug", asyncHandler(async (req, res) => {
     const requestedTopK = parsed.data.topK ?? 5;
     const debugTopK = 100;
 
-    const result = await retrieveRelevantMemory({
+    const result = await runRetrieveFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
       topK: debugTopK,
@@ -911,3 +926,4 @@ memoryRouter.post( "/retrieve/debug", asyncHandler(async (req, res) => {
 memoryRouter.all("/*splat", (_req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
+
