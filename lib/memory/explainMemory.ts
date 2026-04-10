@@ -1,4 +1,4 @@
-import { getMemoryById } from "../integrations/mem0";
+import { getMemoryStoreAdapter } from "../adapters/registry";
 import { listRevisionEvents } from "./revisionMemory";
 import { listTimelineEvents } from "./timelineMemory";
 import type {
@@ -127,7 +127,9 @@ function getStalenessBucket(days: number): "fresh" | "aging" | "stale" {
 export async function explainMemory(
   input: ExplainMemoryInput,
 ): Promise<ExplainMemoryResult | null> {
-  const memory = await getMemoryById({ id: input.memoryId });
+  const memory = await getMemoryStoreAdapter().getMemoryById({
+    id: input.memoryId,
+  });
   if (!memory) {
     return null;
   }

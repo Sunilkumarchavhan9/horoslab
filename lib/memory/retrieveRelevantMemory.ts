@@ -1,4 +1,5 @@
-import { searchMemoryFromMem0, type Mem0SearchResult } from "../integrations/mem0";
+import type { MemoryStoreSearchResult } from "../adapters/adapters";
+import { getMemoryStoreAdapter } from "../adapters/registry";
 import { getRecentMemories } from "./recentMemoryStore";
 import type { DeveloperSignals, Memory, MemoryStatus, MemoryType } from "./types";
 import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
@@ -11,7 +12,7 @@ export interface RetrieveRelevantMemoryInput {
   includeArchived?: boolean;
 }
 
-export interface RankedMemory extends Mem0SearchResult {
+export interface RankedMemory extends MemoryStoreSearchResult {
   memoryType?: MemoryType;
   importanceScore: number; // 0..1
   recencyScore: number; // 0..1
@@ -38,8 +39,25 @@ export interface RetrieveRelevantMemoryResult {
       importance: number;
       recency: number;
     };
+    reasonTags: string[];
+    contributions: ScoreContributions;
     finalScore: number;
   }>;
+}
+
+interface ScoreContributions {
+  semantic: number;
+  typeRelevance: number;
+  importance: number;
+  recency: number;
+  continuity: number;
+  total: number;
+}
+
+interface RankedMemoryInternal extends RankedMemory {
+  logicalKey: string;
+  reasonTags: string[];
+  contributions: ScoreContributions;
 }
 
 const DEFAULT_MEMORY_TYPES: MemoryType[] = [
@@ -145,7 +163,7 @@ function parseNumericMetadataValue(value: unknown, fallback: number): number {
   return fallback;
 }
 
-function getLogicalMemoryKey(result: Mem0SearchResult): string {
+function getLogicalMemoryKey(result: MemoryStoreSearchResult): string {
   const metadata = result.metadata;
   if (metadata && typeof metadata === "object") {
     const memoryId = (metadata as Record<string, unknown>).memoryId;
@@ -192,7 +210,10 @@ function computeLexicalSimilarity(a: string, b: string): number {
   return union === 0 ? 0.5 : intersection / union;
 }
 
-function memoryToSearchResult(memory: Memory, question: string): Mem0SearchResult {
+function memoryToSearchResult(
+  memory: Memory,
+  question: string,
+): MemoryStoreSearchResult {
   return {
     id: memory.id,
     memory: memory.content,
@@ -213,7 +234,7 @@ function memoryToSearchResult(memory: Memory, question: string): Mem0SearchResul
   };
 }
 
-function parseMetadata(result: Mem0SearchResult): {
+function parseMetadata(result: MemoryStoreSearchResult): {
   memoryType?: MemoryType;
   status?: MemoryStatus;
   importanceScore: number;
@@ -508,8 +529,7 @@ function getDeveloperSignalBoost(input: {
   return boost;
 }
 
-// 2) computeFinalScore should accept weights
-function computeFinalScore(input: {
+function computeScoreContributions(input: {
   semanticScore: number;
   typeRelevanceScore: number;
   importanceScore: number;
@@ -521,20 +541,88 @@ function computeFinalScore(input: {
     importance: number;
     recency: number;
   };
-}): number {
-  return (
-    input.semanticScore * input.weights.semantic +
-    input.typeRelevanceScore * input.weights.typeRelevance +
-    input.importanceScore * input.weights.importance +
-    input.recencyScore * input.weights.recency +
-    input.continuityBoost
-  );
+}): ScoreContributions {
+  const semantic = input.semanticScore * input.weights.semantic;
+  const typeRelevance = input.typeRelevanceScore * input.weights.typeRelevance;
+  const importance = input.importanceScore * input.weights.importance;
+  const recency = input.recencyScore * input.weights.recency;
+  const continuity = input.continuityBoost;
+  const total =
+    semantic + typeRelevance + importance + recency + continuity;
+
+  return {
+    semantic,
+    typeRelevance,
+    importance,
+    recency,
+    continuity,
+    total,
+  };
 }
 
+function buildReasonTags(input: {
+  memoryType: MemoryType | undefined;
+  semanticScore: number;
+  typeRelevanceScore: number;
+  importanceScore: number;
+  recencyScore: number;
+  continuityBoost: number;
+  contributions: ScoreContributions;
+}): string[] {
+  const reasons: string[] = [];
 
+  if (input.memoryType) {
+    reasons.push(`type:${input.memoryType}`);
+  } else {
+    reasons.push("type:unknown");
+  }
+
+  if (input.semanticScore >= 0.75) {
+    reasons.push("semantic:strong-match");
+  } else if (input.semanticScore >= 0.55) {
+    reasons.push("semantic:medium-match");
+  }
+
+  if (input.typeRelevanceScore >= 0.8) {
+    reasons.push("intent:high-type-fit");
+  } else if (input.typeRelevanceScore >= 0.6) {
+    reasons.push("intent:medium-type-fit");
+  }
+
+  if (input.importanceScore >= 0.8) {
+    reasons.push("importance:high");
+  } else if (input.importanceScore >= 0.65) {
+    reasons.push("importance:solid");
+  }
+
+  if (input.recencyScore >= 0.8) {
+    reasons.push("recency:fresh");
+  }
+
+  if (input.continuityBoost >= 0.08) {
+    reasons.push("continuity:strong");
+  } else if (input.continuityBoost > 0) {
+    reasons.push("continuity:present");
+  }
+
+  const weighted = [
+    { key: "contrib:semantic", value: input.contributions.semantic },
+    { key: "contrib:type-fit", value: input.contributions.typeRelevance },
+    { key: "contrib:importance", value: input.contributions.importance },
+    { key: "contrib:recency", value: input.contributions.recency },
+    { key: "contrib:continuity", value: input.contributions.continuity },
+  ]
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 2)
+    .map((item) => item.key);
+
+  reasons.push(...weighted);
+
+  return reasons;
+}
 
 export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput ): Promise<RetrieveRelevantMemoryResult> {
-  const mem0Candidates = await searchMemoryFromMem0({
+  const mem0Candidates = await getMemoryStoreAdapter().searchMemory({
     userId: input.userId,
     query: input.question,
     topK: Math.max(input.topK ?? 10, 10), // fetch wider candidate set first
@@ -556,7 +644,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
   const weightsUsed = getRetrievalWeights();
   const includeArchived = input.includeArchived === true;
 
-  const ranked: RankedMemory[] = candidates.flatMap((item) => {
+  const ranked: RankedMemoryInternal[] = candidates.flatMap((item) => {
     const meta = parseMetadata(item);
     if (!includeArchived && meta.status === "archived") {
       return [];
@@ -582,7 +670,7 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       recencyScore,
       developerSignals: meta.developerSignals,
     });
-    const finalScore = computeFinalScore({
+    const contributions = computeScoreContributions({
       semanticScore,
       typeRelevanceScore,
       importanceScore: meta.importanceScore,
@@ -590,9 +678,20 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       continuityBoost,
       weights: weightsUsed,
     });
+    const finalScore = contributions.total;
+    const reasonTags = buildReasonTags({
+      memoryType: effectiveMemoryType,
+      semanticScore,
+      typeRelevanceScore,
+      importanceScore: meta.importanceScore,
+      recencyScore,
+      continuityBoost,
+      contributions,
+    });
 
     return [{
       ...item,
+      logicalKey: getLogicalMemoryKey(item),
       memoryType: effectiveMemoryType,
       importanceScore: meta.importanceScore,
       recencyScore,
@@ -601,6 +700,8 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       continuityBoost,
       finalScore,
       updatedAt: meta.updatedAt,
+      reasonTags,
+      contributions,
     }];
   });
 
@@ -614,16 +715,21 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
 
   const uniqueRanked = Array.from(
     new Map(
-      ranked.map((item) => [getLogicalMemoryKey(item), item]),
+      ranked.map((item) => [item.logicalKey, item]),
     ).values(),
   );
 
   const finalTopK = input.topK ?? 5;
   const top = uniqueRanked.slice(0, finalTopK);
+  const memories: RankedMemory[] = top.map(({ logicalKey, reasonTags, contributions, ...memory }) => {
+    void logicalKey;
+    void reasonTags;
+    void contributions;
+    return memory;
+  });
 
   return {
-    memories: top,
-    // 4) in debug response
+    memories,
     debug: top.map((m) => ({
       id: m.id,
       semanticScore: m.semanticScore,
@@ -633,6 +739,8 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       continuityBoost: m.continuityBoost,
       intent,
       weightsUsed,
+      reasonTags: m.reasonTags,
+      contributions: m.contributions,
       finalScore: m.finalScore,
     })),
 

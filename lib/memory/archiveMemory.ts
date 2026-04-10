@@ -1,4 +1,4 @@
-import { getMemoryById, saveMemoryToMem0 } from "../integrations/mem0";
+import { getMemoryStoreAdapter } from "../adapters/registry";
 import { toInternalMemory } from "../workflows/ingestShared";
 import { upsertRecentMemory } from "./recentMemoryStore";
 import { recordRevisionEvent } from "./revisionMemory";
@@ -42,7 +42,7 @@ async function loadOwnedMemory(input: {
   memoryId: string;
   userId: string;
 }): Promise<Memory | null> {
-  const raw = await getMemoryById({ id: input.memoryId });
+  const raw = await getMemoryStoreAdapter().getMemoryById({ id: input.memoryId });
   if (!raw) {
     return null;
   }
@@ -103,7 +103,7 @@ export async function archiveMemory(input: {
     updatedAt: new Date().toISOString(),
   };
 
-  await saveMemoryToMem0({ memory: archivedMemory });
+  await getMemoryStoreAdapter().saveMemory({ memory: archivedMemory });
   await upsertRecentMemory(archivedMemory);
 
   const reason = "memory archived by user";
@@ -145,7 +145,7 @@ export async function unarchiveMemory(input: {
     updatedAt: new Date().toISOString(),
   };
 
-  await saveMemoryToMem0({ memory: activeMemory });
+  await getMemoryStoreAdapter().saveMemory({ memory: activeMemory });
   await upsertRecentMemory(activeMemory);
 
   const reason = "memory unarchived by user";
@@ -188,7 +188,7 @@ export async function updateMemoryStatus(input: {
     updatedAt: new Date().toISOString(),
   };
 
-  await saveMemoryToMem0({ memory: nextMemory });
+  await getMemoryStoreAdapter().saveMemory({ memory: nextMemory });
   await upsertRecentMemory(nextMemory);
 
   const reason = `memory status updated to ${input.status} by user`;

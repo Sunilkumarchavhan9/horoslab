@@ -1,4 +1,4 @@
-import { saveMemoryToMem0, searchMemoryFromMem0 } from "../integrations/mem0";
+import { getMemoryStoreAdapter } from "../adapters/registry";
 import { evolveMemory, type EvolveResult } from "../memory/evolveMemory";
 import { mergeMemory, type MergeResult } from "../memory/mergeMemory";
 import { getRecentMemories, upsertRecentMemory } from "../memory/recentMemoryStore";
@@ -16,12 +16,13 @@ export interface PersistAcceptedResult {
 export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[], threshold: number ): Promise<PersistAcceptedResult> {
   const acceptedMemories: Memory[] = [];
   const timelineEvents: TimelineEvent[] = [];
+  const memoryStore = getMemoryStoreAdapter();
 
   for (const candidate of accepted) {
     const memory = toMemory(candidate);
     const recentMemories = getRecentMemories(memory.userId);
 
-    const searchResults = await searchMemoryFromMem0({
+    const searchResults = await memoryStore.searchMemory({
       userId: memory.userId,
       query: memory.content,
       topK: 5,
@@ -86,7 +87,7 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
         ? `evolved existing memory (${bestEvolve.reason})`
         : `passed score threshold ${threshold.toFixed(2)}`;
 
-    await saveMemoryToMem0({ memory: memoryToPersist });
+    await memoryStore.saveMemory({ memory: memoryToPersist });
 
     
     if (bestMerge?.baseMemory) {

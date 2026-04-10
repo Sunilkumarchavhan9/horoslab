@@ -1,8 +1,5 @@
-import {
-  getMemoryById,
-  searchMemoryFromMem0,
-  type Mem0SearchResult,
-} from "../integrations/mem0";
+import type { MemoryStoreSearchResult } from "../adapters/adapters";
+import { getMemoryStoreAdapter } from "../adapters/registry";
 import { toInternalMemory } from "../workflows/ingestShared";
 import type { Memory, MemoryStatus, MemoryType } from "./types";
 
@@ -21,7 +18,9 @@ export interface ListMemoryResult {
 export async function listMemories(input: ListMemoryInput): Promise<ListMemoryResult> {
   const effectiveLimit = Math.min(Math.max(input.limit ?? 50, 1), 200);
 
-  const candidates = await searchMemoryFromMem0({
+  const memoryStore = getMemoryStoreAdapter();
+
+  const candidates = await memoryStore.searchMemory({
     userId: input.userId,
     query: "",
     topK: 200,
@@ -33,7 +32,7 @@ export async function listMemories(input: ListMemoryInput): Promise<ListMemoryRe
       memory: toInternalMemory(result, input.userId),
     }))
     .filter(
-      (item): item is { result: Mem0SearchResult; memory: Memory } =>
+      (item): item is { result: MemoryStoreSearchResult; memory: Memory } =>
         item.memory !== null,
     );
 
@@ -84,7 +83,7 @@ export async function getMemoryForUser(input: {
   memoryId: string;
   userId: string;
 }): Promise<Memory | null> {
-  const raw = await getMemoryById({ id: input.memoryId });
+  const raw = await getMemoryStoreAdapter().getMemoryById({ id: input.memoryId });
   if (!raw) {
     return null;
   }

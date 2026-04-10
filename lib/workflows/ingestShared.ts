@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import type { Mem0SearchResult } from "../integrations/mem0";
+import type { MemoryStoreSearchResult } from "../adapters/adapters";
 import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
 import type {
   DeveloperSignals,
@@ -105,7 +105,10 @@ export function toMemory(candidate: ScoredMemoryCandidate): Memory{
 
 
 
-export function toInternalMemory( result: Mem0SearchResult, userId: string ): Memory | null {
+export function toInternalMemory(
+  result: MemoryStoreSearchResult,
+  userId: string,
+): Memory | null {
   const metadata = result.metadata;
   const content = result.memory;
 
