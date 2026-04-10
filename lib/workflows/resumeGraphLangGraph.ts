@@ -4,9 +4,15 @@ import {
   type ResumePlannerInput,
   type ResumePlannerResult,
 } from "../memory/resumePlanner";
+import { getWorkflowStateAdapter } from "../adapters/workflowStateAdapter";
+
+type ResumeFlowInput = ResumePlannerInput & {
+  workspace?: string;
+  threadId?: string;
+};
 
 const ResumeGraphStateAnnotation = Annotation.Root({
-  input: Annotation<ResumePlannerInput>,
+  input: Annotation<ResumeFlowInput>,
   result: Annotation<ResumePlannerResult | null>,
 });
 
@@ -26,9 +32,19 @@ const resumeGraph = new StateGraph(ResumeGraphStateAnnotation)
 
 const compiledResumeGraph = resumeGraph.compile();
 
+function buildWorkflowKey(input: ResumeFlowInput): string {
+  const workspace = input.workspace ?? "default";
+  const thread = input.threadId ?? "default";
+  return `resume:${input.userId}:${workspace}:${input.project}:${thread}`;
+}
+
 export async function runResumeFlowLangGraph(
-  input: ResumePlannerInput,
+  input: ResumeFlowInput,
 ): Promise<ResumePlannerResult> {
+  const stateAdapter = getWorkflowStateAdapter();
+  const workflowKey = buildWorkflowKey(input);
+  const previousCheckpoint = await stateAdapter.loadCheckpoint({ key: workflowKey });
+
   const result = await compiledResumeGraph.invoke({
     input,
     result: null,
@@ -37,6 +53,16 @@ export async function runResumeFlowLangGraph(
   if (!result.result) {
     throw new Error("Resume graph returned no result");
   }
+
+  await stateAdapter.saveCheckpoint({
+    key: workflowKey,
+    state: {
+      updatedAt: new Date().toISOString(),
+      input,
+      previousCheckpoint,
+      result: result.result,
+    },
+  });
 
   return result.result;
 }
