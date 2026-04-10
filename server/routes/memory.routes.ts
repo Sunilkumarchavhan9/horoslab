@@ -13,8 +13,8 @@ import {
 } from "../../lib/memory/archiveMemory";
 import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
 import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
-import { planContinuity } from "../../lib/memory/continuityPlanner";
-import { planResume } from "../../lib/memory/resumePlanner";
+import { runContinueFlowLangGraph } from "../../lib/workflows/continueGraphLangGraph";
+import { runResumeFlowLangGraph } from "../../lib/workflows/resumeGraphLangGraph";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
 import { isSqliteRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
@@ -393,7 +393,7 @@ memoryRouter.post(
       return;
     }
 
-    const result = await planContinuity({
+    const result = await runContinueFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
       mode: parsed.data.mode,
@@ -417,7 +417,7 @@ memoryRouter.post(
       return;
     }
 
-    const result = await planResume({
+    const result = await runResumeFlowLangGraph({
       userId: req.authUserId,
       project: parsed.data.project,
       question: parsed.data.question,
