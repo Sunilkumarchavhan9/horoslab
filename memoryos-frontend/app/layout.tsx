@@ -36,7 +36,20 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${sora.variable} ${spaceGrotesk.variable} ${plexMono.variable}`}>
-      <body>{clerkEnabled ? <ClerkProvider>{children}</ClerkProvider> : children}</body>
+      <body>
+        {clerkEnabled ? (
+          <ClerkProvider
+            signInUrl="/developer-console/sign-in"
+            signUpUrl="/sign-up"
+            signInFallbackRedirectUrl="/developer-console"
+            signUpFallbackRedirectUrl="/developer-console"
+          >
+            {children}
+          </ClerkProvider>
+        ) : (
+          children
+        )}
+      </body>
     </html>
   );
 }

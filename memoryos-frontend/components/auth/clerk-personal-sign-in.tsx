@@ -1,11 +1,15 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
-import { useState } from "react";
+import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
+import { useSignIn } from "@clerk/nextjs/legacy";
+import { useEffect, useState } from "react";
 
 type ClerkPersonalSignInProps = {
   redirectTo: "/personal-app";
 };
+
+const AUTH_LOADING_MESSAGE =
+  "Preparing secure sign-in. If it keeps loading, disable Brave Shields or ad blockers for localhost.";
 
 function GoogleMark() {
   return (
@@ -63,7 +67,7 @@ function SocialButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex min-h-[56px] w-full items-center justify-center gap-3 rounded-[16px] border border-[#0a437f] bg-[linear-gradient(180deg,#083367_0%,#082a56_100%)] px-5 text-[16px] font-semibold text-white transition hover:border-[#1661b0] hover:bg-[linear-gradient(180deg,#093874_0%,#0a2f62_100%)] disabled:cursor-not-allowed disabled:opacity-60"
+      className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[16px] border border-[#0a437f] bg-[linear-gradient(180deg,#083367_0%,#082a56_100%)] px-4 text-center text-[15px] font-semibold text-white transition hover:border-[#1661b0] hover:bg-[linear-gradient(180deg,#093874_0%,#0a2f62_100%)] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
     >
       {children}
     </button>
@@ -72,40 +76,156 @@ function SocialButton({
 
 export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
   const { isLoaded, signIn } = useSignIn();
+  const authReady = isLoaded && Boolean(signIn);
   const [email, setEmail] = useState("");
-  const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | null>(null);
+  const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusTone, setStatusTone] = useState<"error" | "success" | "info" | null>(null);
+
+  useEffect(() => {
+    if (authReady) {
+      setStatusMessage((current) => {
+        if (current === AUTH_LOADING_MESSAGE) {
+          return null;
+        }
+
+        return current;
+      });
+      setStatusTone((current) => (current === "info" ? null : current));
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setStatusMessage(AUTH_LOADING_MESSAGE);
+      setStatusTone("info");
+    }, 2200);
+
+    return () => window.clearTimeout(timeout);
+  }, [authReady]);
+
+  function buildAbsoluteUrl(path: string) {
+    if (typeof window === "undefined") {
+      return path;
+    }
+
+    return new URL(path, window.location.origin).toString();
+  }
+
+  function getErrorMessage(error: unknown) {
+    if (isClerkAPIResponseError(error) && error.errors.length > 0) {
+      return error.errors[0]?.longMessage || error.errors[0]?.message || "Authentication failed.";
+    }
+
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+
+    return "Authentication failed. Check the Clerk provider setup and try again.";
+  }
 
   async function handleOauth(strategy: "oauth_google" | "oauth_github", completeUrl: string) {
-    if (!isLoaded || !signIn) return;
+    if (!authReady || !signIn) {
+      setStatusMessage(AUTH_LOADING_MESSAGE);
+      setStatusTone("info");
+      return;
+    }
 
     setPendingStrategy(strategy === "oauth_google" ? "google" : "github");
+    setStatusMessage(null);
+    setStatusTone(null);
     try {
       await signIn.authenticateWithRedirect({
         strategy,
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: completeUrl,
+        redirectUrl: buildAbsoluteUrl("/sso-callback"),
+        redirectUrlComplete: buildAbsoluteUrl(completeUrl),
       });
+    } catch (error) {
+      setStatusMessage(getErrorMessage(error));
+      setStatusTone("error");
+    } finally {
+      setPendingStrategy(null);
+    }
+  }
+
+  async function handleMagicLink() {
+    if (!authReady || !signIn) {
+      setStatusMessage(AUTH_LOADING_MESSAGE);
+      setStatusTone("info");
+      return;
+    }
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setStatusMessage("Enter your email address first.");
+      setStatusTone("error");
+      return;
+    }
+
+    setPendingStrategy("email");
+    setStatusMessage(null);
+    setStatusTone(null);
+
+    try {
+      const { startEmailLinkFlow } = signIn.createEmailLinkFlow();
+      const signInAttempt = await signIn.create({
+        strategy: "email_link",
+        identifier: trimmedEmail,
+        redirectUrl: buildAbsoluteUrl("/personal-app/verify-link"),
+      });
+
+      const emailLinkFactor = signInAttempt.supportedFirstFactors?.find(
+        (factor) => factor.strategy === "email_link" && "emailAddressId" in factor,
+      );
+
+      if (!emailLinkFactor || !("emailAddressId" in emailLinkFactor)) {
+        throw new Error(
+          "Email link sign-in is not enabled in Clerk. Enable Email verification link for sign-in.",
+        );
+      }
+
+      await startEmailLinkFlow({
+        emailAddressId: emailLinkFactor.emailAddressId,
+        redirectUrl: buildAbsoluteUrl("/personal-app/verify-link"),
+      });
+
+      setStatusMessage(`Magic link sent to ${trimmedEmail}. Open it in this browser to finish sign-in.`);
+      setStatusTone("success");
+    } catch (error) {
+      setStatusMessage(getErrorMessage(error));
+      setStatusTone("error");
     } finally {
       setPendingStrategy(null);
     }
   }
 
   return (
-    <div className="mx-auto w-full max-w-[480px] space-y-4 text-left">
+    <div className="mx-auto w-full max-w-[480px] space-y-4 text-left sm:space-y-5">
       <SocialButton
         onClick={() => handleOauth("oauth_google", redirectTo)}
-        disabled={!isLoaded || pendingStrategy !== null}
+        disabled={pendingStrategy !== null || !authReady}
       >
         <GoogleMark />
-        <span>{pendingStrategy === "google" ? "Connecting..." : "Continue with Google"}</span>
+        <span>
+          {!authReady
+            ? "Preparing sign-in..."
+            : pendingStrategy === "google"
+              ? "Connecting..."
+              : "Continue with Google"}
+        </span>
       </SocialButton>
 
       <SocialButton
         onClick={() => handleOauth("oauth_github", redirectTo)}
-        disabled={!isLoaded || pendingStrategy !== null}
+        disabled={pendingStrategy !== null || !authReady}
       >
         <GithubMark />
-        <span>{pendingStrategy === "github" ? "Connecting..." : "Continue with GitHub"}</span>
+        <span>
+          {!authReady
+            ? "Preparing sign-in..."
+            : pendingStrategy === "github"
+              ? "Connecting..."
+              : "Continue with GitHub"}
+        </span>
       </SocialButton>
 
       <div className="flex items-center justify-center py-1 text-[14px] font-semibold tracking-[0.08em] text-white/90">
@@ -117,19 +237,40 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         placeholder="your@email.com"
-        className="h-[56px] w-full rounded-[16px] border border-white/8 bg-[#09111c] px-5 text-[17px] text-white outline-none transition placeholder:text-[#667085] focus:border-[#215eb0]"
+        className="h-[54px] w-full rounded-[16px] border border-white/8 bg-[#09111c] px-4 text-[16px] text-white outline-none transition placeholder:text-[#667085] focus:border-[#215eb0] sm:h-[56px] sm:px-5 sm:text-[17px]"
       />
 
       <button
         type="button"
-        disabled
-        className="flex min-h-[56px] w-full items-center justify-center gap-3 rounded-[16px] border border-[#6d90ff] bg-[linear-gradient(180deg,#4782ff_0%,#4d53ff_18%,#3324ff_100%)] px-5 text-[16px] font-semibold text-white shadow-[0_18px_40px_rgba(54,88,255,0.4)] disabled:opacity-100"
+        onClick={handleMagicLink}
+        disabled={pendingStrategy !== null || !authReady}
+        className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[16px] border border-[#6d90ff] bg-[linear-gradient(180deg,#4782ff_0%,#4d53ff_18%,#3324ff_100%)] px-4 text-center text-[15px] font-semibold text-white shadow-[0_18px_40px_rgba(54,88,255,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
       >
         <BrandMark />
-        <span>Open MemoryOS Personal</span>
+        <span>
+          {!authReady
+            ? "Preparing sign-in..."
+            : pendingStrategy === "email"
+              ? "Sending magic link..."
+              : "Send magic link"}
+        </span>
       </button>
 
-      <p className="pt-4 text-center text-[14px] leading-7 text-[#7d8596]">
+      {statusMessage ? (
+        <p
+          className={`text-center text-[13px] leading-6 sm:text-[14px] sm:leading-7 ${
+            statusTone === "error"
+              ? "text-[#ff9b9b]"
+              : statusTone === "success"
+                ? "text-[#b6f4cf]"
+                : "text-[#9bb7ff]"
+          }`}
+        >
+          {statusMessage}
+        </p>
+      ) : null}
+
+      <p className="pt-3 text-center text-[13px] leading-6 text-[#7d8596] sm:pt-4 sm:text-[14px] sm:leading-7">
         By continuing, you agree to our <a href="#" className="underline underline-offset-2">Terms</a> and{" "}
         <a href="#" className="underline underline-offset-2">Privacy Policy</a>.
       </p>

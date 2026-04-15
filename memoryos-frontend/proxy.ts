@@ -13,8 +13,11 @@ export default clerkMiddleware(async (auth, req) => {
     pathname.startsWith("/developer-console/sign-in") ||
     pathname.startsWith("/personal-app/sign-in");
   const isCallbackRoute = pathname.startsWith("/sso-callback");
+  const isEmailVerifyRoute =
+    pathname.startsWith("/developer-console/verify-link") ||
+    pathname.startsWith("/personal-app/verify-link");
 
-  if (isProtectedRoute(req) && !isSignInRoute && !isCallbackRoute) {
+  if (isProtectedRoute(req) && !isSignInRoute && !isCallbackRoute && !isEmailVerifyRoute) {
     await auth.protect();
   }
 });

@@ -1,9 +1,19 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { ClerkConsoleSignIn } from "@/components/auth/clerk-console-sign-in";
 import { ConsoleAuthShell } from "@/components/auth/console-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
 
-export default function DeveloperConsoleSignInPage() {
+export default async function DeveloperConsoleSignInPage() {
   const clerkEnabled = isClerkEnabled();
+
+  if (clerkEnabled) {
+    const { userId } = await auth();
+
+    if (userId) {
+      redirect("/developer-console");
+    }
+  }
 
   return (
     <ConsoleAuthShell

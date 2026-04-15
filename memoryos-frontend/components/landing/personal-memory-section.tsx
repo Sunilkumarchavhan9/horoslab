@@ -1,6 +1,4 @@
 "use client";
-
-import Image from "next/image";
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { Reveal } from "./motion";
@@ -238,12 +236,11 @@ function CaptureCanvas() {
     ];
 
     let raf = 0;
-    let ctx: CanvasRenderingContext2D | null = null;
 
     const render = (time: number) => {
       const width = canvas.clientWidth || 420;
       const height = canvas.clientHeight || 260;
-      ctx = resizeCanvas(canvas, width, height);
+      const ctx = resizeCanvas(canvas, width, height);
       if (!ctx) return;
 
       ctx.clearRect(0, 0, width, height);
@@ -558,11 +555,10 @@ function VSCodeMark() {
 
 function OpenCodeMark() {
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src="/opencode.svg"
       alt=""
-      width={132}
-      height={21}
       className="opacity-90"
       style={{ height: "21px", width: "auto" }}
       aria-hidden="true"

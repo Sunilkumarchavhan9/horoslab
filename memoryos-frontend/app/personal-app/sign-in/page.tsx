@@ -1,9 +1,19 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { ClerkPersonalSignIn } from "@/components/auth/clerk-personal-sign-in";
 import { PersonalAuthShell } from "@/components/auth/personal-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
 
-export default function PersonalAppSignInPage() {
+export default async function PersonalAppSignInPage() {
   const clerkEnabled = isClerkEnabled();
+
+  if (clerkEnabled) {
+    const { userId } = await auth();
+
+    if (userId) {
+      redirect("/personal-app");
+    }
+  }
 
   return (
     <PersonalAuthShell>
@@ -40,9 +50,9 @@ export default function PersonalAppSignInPage() {
           >
             Continue with MemoryOS
           </button>
-          <p className="pt-2 text-center text-[14px] leading-7 text-[#7d8596]">
-            Add <code>NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> and Clerk secret keys, then enable
-            Google and GitHub providers in Clerk.
+          <p className="pt-4 text-center text-[14px] leading-7 text-[#7d8596]">
+            By continuing, you agree to our <a href="#" className="underline underline-offset-2">Terms</a> and{" "}
+            <a href="#" className="underline underline-offset-2">Privacy Policy</a>.
           </p>
         </div>
       )}

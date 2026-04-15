@@ -1,11 +1,15 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
-import { useState } from "react";
+import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
+import { useSignIn } from "@clerk/nextjs/legacy";
+import { useEffect, useState } from "react";
 
 type ClerkConsoleSignInProps = {
   redirectTo: "/developer-console" | "/personal-app";
 };
+
+const AUTH_LOADING_MESSAGE =
+  "Preparing secure sign-in. If it keeps loading, disable Brave Shields or ad blockers for localhost.";
 
 function GoogleMark() {
   return (
@@ -52,7 +56,7 @@ function ActionButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex min-h-[44px] w-full items-center justify-center gap-3 border border-[#343434] bg-transparent px-4 text-center text-[12px] font-medium tracking-[0.05em] text-white transition hover:border-[#4a4a4a] hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:text-[13px] lg:text-[14px]"
+      className="flex min-h-[44px] w-full items-center justify-center gap-3 border border-[#343434] bg-transparent px-3 text-center text-[11px] font-medium tracking-[0.05em] text-white transition hover:border-[#4a4a4a] hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:px-4 sm:text-[13px] lg:text-[14px]"
     >
       {children}
     </button>
@@ -61,19 +65,123 @@ function ActionButton({
 
 export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
   const { isLoaded, signIn } = useSignIn();
+  const authReady = isLoaded && Boolean(signIn);
   const [email, setEmail] = useState("");
-  const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | null>(null);
+  const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusTone, setStatusTone] = useState<"error" | "success" | "info" | null>(null);
+
+  useEffect(() => {
+    if (authReady) {
+      setStatusMessage((current) => {
+        if (current === AUTH_LOADING_MESSAGE) {
+          return null;
+        }
+
+        return current;
+      });
+      setStatusTone((current) => (current === "info" ? null : current));
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setStatusMessage(AUTH_LOADING_MESSAGE);
+      setStatusTone("info");
+    }, 2200);
+
+    return () => window.clearTimeout(timeout);
+  }, [authReady]);
+
+  function buildAbsoluteUrl(path: string) {
+    if (typeof window === "undefined") {
+      return path;
+    }
+
+    return new URL(path, window.location.origin).toString();
+  }
+
+  function getErrorMessage(error: unknown) {
+    if (isClerkAPIResponseError(error) && error.errors.length > 0) {
+      return error.errors[0]?.longMessage || error.errors[0]?.message || "Authentication failed.";
+    }
+
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+
+    return "Authentication failed. Check the Clerk provider setup and try again.";
+  }
 
   async function handleOauth(strategy: "oauth_google" | "oauth_github", completeUrl: string) {
-    if (!isLoaded || !signIn) return;
+    if (!authReady || !signIn) {
+      setStatusMessage(AUTH_LOADING_MESSAGE);
+      setStatusTone("info");
+      return;
+    }
 
     setPendingStrategy(strategy === "oauth_google" ? "google" : "github");
+    setStatusMessage(null);
+    setStatusTone(null);
     try {
       await signIn.authenticateWithRedirect({
         strategy,
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: completeUrl,
+        redirectUrl: buildAbsoluteUrl("/sso-callback"),
+        redirectUrlComplete: buildAbsoluteUrl(completeUrl),
       });
+    } catch (error) {
+      setStatusMessage(getErrorMessage(error));
+      setStatusTone("error");
+    } finally {
+      setPendingStrategy(null);
+    }
+  }
+
+  async function handleMagicLink() {
+    if (!authReady || !signIn) {
+      setStatusMessage(AUTH_LOADING_MESSAGE);
+      setStatusTone("info");
+      return;
+    }
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setStatusMessage("Enter your email address first.");
+      setStatusTone("error");
+      return;
+    }
+
+    setPendingStrategy("email");
+    setStatusMessage(null);
+    setStatusTone(null);
+
+    try {
+      const { startEmailLinkFlow } = signIn.createEmailLinkFlow();
+      const signInAttempt = await signIn.create({
+        strategy: "email_link",
+        identifier: trimmedEmail,
+        redirectUrl: buildAbsoluteUrl("/developer-console/verify-link"),
+      });
+
+      const emailLinkFactor = signInAttempt.supportedFirstFactors?.find(
+        (factor) => factor.strategy === "email_link" && "emailAddressId" in factor,
+      );
+
+      if (!emailLinkFactor || !("emailAddressId" in emailLinkFactor)) {
+        throw new Error(
+          "Email link sign-in is not enabled in Clerk. Enable Email verification link for sign-in.",
+        );
+      }
+
+      await startEmailLinkFlow({
+        emailAddressId: emailLinkFactor.emailAddressId,
+        redirectUrl: buildAbsoluteUrl("/developer-console/verify-link"),
+      });
+
+      setStatusMessage(`Magic link sent to ${trimmedEmail}. Open it in this browser to finish sign-in.`);
+      setStatusTone("success");
+    } catch (error) {
+      setStatusMessage(getErrorMessage(error));
+      setStatusTone("error");
     } finally {
       setPendingStrategy(null);
     }
@@ -87,16 +195,35 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="Email address"
-          className="h-[44px] w-full border border-[#343434] bg-transparent px-4 text-[15px] text-white outline-none placeholder:text-[#636c77] sm:h-[46px] sm:px-5 sm:text-[16px]"
+          className="h-[44px] w-full border border-[#343434] bg-transparent px-4 text-[14px] text-white outline-none placeholder:text-[#636c77] sm:h-[46px] sm:px-5 sm:text-[16px]"
         />
         <button
           type="button"
-          disabled
-          className="flex min-h-[44px] w-full items-center justify-center gap-3 bg-[#1f56aa] px-4 text-center text-[12px] font-medium tracking-[0.05em] text-white/75 sm:min-h-[46px] sm:text-[13px] lg:text-[14px]"
+          onClick={handleMagicLink}
+          disabled={pendingStrategy !== null || !authReady}
+          className="flex min-h-[44px] w-full items-center justify-center gap-3 bg-[#1f56aa] px-4 text-center text-[11px] font-medium tracking-[0.05em] text-white transition hover:bg-[#2763c3] disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:text-[13px] lg:text-[14px]"
         >
-          Send magic link
+          {!authReady
+            ? "PREPARING SIGN-IN..."
+            : pendingStrategy === "email"
+              ? "SENDING MAGIC LINK..."
+              : "SEND MAGIC LINK"}
         </button>
       </div>
+
+      {statusMessage ? (
+        <p
+          className={`text-[12px] leading-6 sm:text-[13px] ${
+            statusTone === "error"
+              ? "text-[#ff9b9b]"
+              : statusTone === "success"
+                ? "text-[#9fd3b6]"
+                : "text-[#8fb4ff]"
+          }`}
+        >
+          {statusMessage}
+        </p>
+      ) : null}
 
       <div className="flex items-center gap-3 py-1 text-[11px] tracking-[0.14em] text-[#555d67] sm:gap-4 sm:text-[13px] sm:tracking-[0.16em]">
         <span className="h-px flex-1 bg-[#2a2a2a]" />
@@ -106,24 +233,31 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
 
       <ActionButton
         onClick={() => handleOauth("oauth_google", redirectTo)}
-        disabled={!isLoaded || pendingStrategy !== null}
+        disabled={pendingStrategy !== null || !authReady}
       >
         <GoogleMark />
-        <span>{pendingStrategy === "google" ? "CONNECTING..." : "CONTINUE WITH GOOGLE"}</span>
+        <span>
+          {!authReady
+            ? "PREPARING SIGN-IN..."
+            : pendingStrategy === "google"
+              ? "CONNECTING..."
+              : "CONTINUE WITH GOOGLE"}
+        </span>
       </ActionButton>
 
       <ActionButton
         onClick={() => handleOauth("oauth_github", redirectTo)}
-        disabled={!isLoaded || pendingStrategy !== null}
+        disabled={pendingStrategy !== null || !authReady}
       >
         <GithubMark />
-        <span>{pendingStrategy === "github" ? "CONNECTING..." : "CONTINUE WITH GITHUB"}</span>
+        <span>
+          {!authReady
+            ? "PREPARING SIGN-IN..."
+            : pendingStrategy === "github"
+              ? "CONNECTING..."
+              : "CONTINUE WITH GITHUB"}
+        </span>
       </ActionButton>
-
-      <p className="pt-1 text-[12px] leading-6 text-[#767d87] sm:pt-2 sm:text-[13px]">
-        Email magic links can be enabled from Clerk once the email link strategy is configured for
-        your instance.
-      </p>
     </div>
   );
 }

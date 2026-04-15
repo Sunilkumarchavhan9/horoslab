@@ -30,7 +30,7 @@ function LeftMemoryDiagram() {
     { x: 554, y: 358, r: 16 },
     { x: 394, y: 336, r: 24 },
   ];
-
+ 
   return (
     <svg viewBox="0 0 608 401" className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -246,21 +246,21 @@ export function UnderTheHoodSection() {
     <section className="border-b border-[#c9d8ee] px-5 pt-7">
       <Reveal>
         <h2 className="text-center text-3xl font-semibold tracking-[-0.03em] text-slate-900 md:text-5xl">
-          Knowledge that can evolve, not just accumulate
+          Backend memory lifecycle, end to end
         </h2>
         <p className="mx-auto mt-3 max-w-3xl text-center text-base text-slate-600 md:text-lg">
-          The engine combines ingest, scoring, merge/evolve decisions, graph-style retrieval,
-          and trust signals so developer memory stays usable instead of becoming stale storage.
+          MemoryOS implements extraction, scoring, merge/evolve, retrieval reranking,
+          timeline events, revision diffs, and explain routes in one flow.
         </p>
       </Reveal>
 
       <div className="mt-6 grid gap-3 lg:grid-cols-2">
-        <Reveal className="h-[420px] overflow-hidden border border-[#c9d8ee] bg-[radial-gradient(circle_at_30%_30%,#ffffff,#ffffff_45%,#ffffff_100%)]">
+        <Reveal className="h-[420px] overflow-hidden rounded-xl border border-[#c9d8ee] bg-[radial-gradient(circle_at_30%_30%,#d9eaff,#eaf1fb_45%,#dde9f8_100%)]">
           <LeftMemoryDiagram />
         </Reveal>
         <Reveal
           delay={0.08}
-          className="h-[420px] overflow-hidden border border-[#c9d8ee] bg-[radial-gradient(circle_at_50%_50%,#ffffff,#ffffff_52%,#ffffff_100%)]"
+          className="h-[420px] overflow-hidden rounded-xl border border-[#c9d8ee] bg-[radial-gradient(circle_at_50%_50%,#d7f0ff,#eaf4ff_52%,#dce8fb_100%)]"
         >
           <RightGraphDiagram />
         </Reveal>
@@ -270,13 +270,13 @@ export function UnderTheHoodSection() {
         <Reveal className="border-b border-[#c9d8ee] px-5 py-4 lg:border-b-0 lg:border-r">
           <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900">Merge + Evolve Engine</h3>
           <p className="mt-2 text-sm text-[#5d6e86]">
-            Detects overlap, upgrades stale memories, and preserves a cleaner memory state when new evidence arrives.
+            Deduplicates overlap and upgrades stored memory fields when stronger evidence arrives.
           </p>
         </Reveal>
         <Reveal delay={0.06} className="px-5 py-4">
           <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900">Trust + Explainability</h3>
           <p className="mt-2 text-sm text-[#5d6e86]">
-            Timeline events, revision history, and explain routes expose why each memory exists and how it changed.
+            Timeline events and revision history expose why each memory exists and how it changed.
           </p>
         </Reveal>
       </div>
