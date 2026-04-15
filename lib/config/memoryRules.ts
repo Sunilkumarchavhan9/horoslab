@@ -5,6 +5,8 @@ export type RetrievalIntent =
   | "stack_fit"
   | "study_next"
   | "resume_project"
+  | "handoff"
+  | "decision_recall"
   | "bug_recall"
   | "backend_fit"
   | "general";
@@ -65,6 +67,16 @@ export const MEMORY_RULES = {
       resume_project: {
         project: 0.2,
         episodic: 0.1,
+      },
+      handoff: {
+        project: 0.2,
+        episodic: 0.12,
+        profile: 0.06,
+      },
+      decision_recall: {
+        preference: 0.22,
+        project: 0.08,
+        episodic: 0.08,
       },
       bug_recall: {
         episodic: 0.2,

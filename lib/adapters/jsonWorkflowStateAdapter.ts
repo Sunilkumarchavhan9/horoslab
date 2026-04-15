@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "fs";
 import path from "path";
-import type { WorkflowStateAdapter } from "./workflowStateAdapter";
+import type { WorkflowStateAdapter } from "./adapters";
 
 type WorkflowStateStore = Record<string, Record<string, unknown>>;
 

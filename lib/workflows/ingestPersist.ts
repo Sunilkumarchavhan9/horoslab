@@ -3,10 +3,17 @@ import { evolveMemory, type EvolveResult } from "../memory/evolveMemory";
 import { mergeMemory, type MergeResult } from "../memory/mergeMemory";
 import { getRecentMemories, upsertRecentMemory } from "../memory/recentMemoryStore";
 import { recordRevisionEvent } from "../memory/revisionMemory";
-import { recordMemoryCreatedEvent, recordMemoryEvolvedEvent, recordMemoryMergedEvent } from "../memory/timelineMemory";
+import {
+  recordMemoryContradictedEvent,
+  recordMemoryCreatedEvent,
+  recordMemoryEvolvedEvent,
+  recordMemoryMergedEvent,
+  recordMemoryStaleEvent,
+} from "../memory/timelineMemory";
 import type { Memory, TimelineEvent } from "../memory/types";
 import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
 import { toInternalMemory, toMemory } from "./ingestShared";
+import { resolveLifecycleTransition } from "../memory/contradictionResolver";
 
 export interface PersistAcceptedResult {
   acceptedMemories: Memory[];
@@ -40,7 +47,31 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
     let bestEvolve: EvolveResult | null = null;
 
     for (const existing of uniqueExistingMemories) {
-    
+      const transition = resolveLifecycleTransition(existing, memory);
+      if (transition.status !== "none") {
+        const transitionedMemory: Memory = {
+          ...existing,
+          status: transition.status,
+          updatedAt: new Date().toISOString(),
+        };
+
+        await memoryStore.saveMemory({ memory: transitionedMemory });
+        await upsertRecentMemory(transitionedMemory);
+        await recordRevisionEvent({
+          before: existing,
+          after: transitionedMemory,
+          reason: transition.reason,
+        });
+        const lifecycleEvent =
+          transition.status === "contradicted"
+            ? await recordMemoryContradictedEvent(
+                transitionedMemory,
+                transition.reason,
+              )
+            : await recordMemoryStaleEvent(transitionedMemory, transition.reason);
+        timelineEvents.push(lifecycleEvent);
+        continue;
+      }
 
       const mergeResult = mergeMemory(existing, memory);
 

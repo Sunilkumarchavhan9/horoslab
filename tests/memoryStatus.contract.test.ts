@@ -112,5 +112,46 @@ describe("Memory Status Route Contract", () => {
       status: "archived",
     });
   });
-});
 
+  it("accepts contradicted status in request payload", async () => {
+    mocks.updateMemoryStatus.mockResolvedValue({
+      status: "updated",
+      memory: {
+        id: "m1",
+        userId: authUserId,
+        type: "preference",
+        content: "User prefers TypeScript over Python",
+        summary: "Prefers TypeScript over Python",
+        importanceScore: 0.8,
+        confidence: 0.8,
+        source: "chat",
+        status: "contradicted",
+        createdAt: "2026-03-20T10:00:00.000Z",
+        updatedAt: "2026-03-20T11:00:00.000Z",
+        evidenceCount: 1,
+      },
+      revisionEvent: null,
+      timelineEvent: {
+        id: "t2",
+        userId: authUserId,
+        memoryId: "m1",
+        eventType: "memory_contradicted",
+        reason: "memory status updated to contradicted by user",
+        timestamp: "2026-03-20T11:00:00.000Z",
+      },
+    });
+
+    const res = await request(app)
+      .patch("/api/memory/m1/status")
+      .set("authorization", authHeader)
+      .send({ status: "contradicted" });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("memory.status", "contradicted");
+    expect(mocks.updateMemoryStatus).toHaveBeenCalledWith({
+      memoryId: "m1",
+      userId: authUserId,
+      status: "contradicted",
+    });
+  });
+});

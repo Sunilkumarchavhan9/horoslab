@@ -27,4 +27,3 @@ describe("API Versioning Contract", () => {
     expect(res.headers["x-api-version"]).toBe("1");
   });
 });
-

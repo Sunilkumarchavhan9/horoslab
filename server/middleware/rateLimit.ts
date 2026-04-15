@@ -18,9 +18,25 @@ export function rateLimitMemoryApi(
   const key = getBucketKey(req);
   const existing = requestBuckets.get(key) ?? [];
   const withinWindow = existing.filter((timestamp) => now - timestamp < WINDOW_MS);
+  const oldest = withinWindow[0] ?? now;
+  const resetMs = Math.max(0, WINDOW_MS - (now - oldest));
+  const resetSeconds = Math.ceil(resetMs / 1000);
+  const remaining = Math.max(0, MAX_REQUESTS_PER_WINDOW - withinWindow.length - 1);
+
+  res.setHeader("x-ratelimit-limit", String(MAX_REQUESTS_PER_WINDOW));
+  res.setHeader("x-ratelimit-remaining", String(remaining));
+  res.setHeader("x-ratelimit-reset", String(resetSeconds));
 
   if (withinWindow.length >= MAX_REQUESTS_PER_WINDOW) {
-    res.status(429).json({ error: "Too many requests" });
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil((WINDOW_MS - (now - withinWindow[0])) / 1000),
+    );
+    res.setHeader("retry-after", String(retryAfterSeconds));
+    res.status(429).json({
+      error: "Too many requests",
+      retryAfterSeconds,
+    });
     return;
   }
 

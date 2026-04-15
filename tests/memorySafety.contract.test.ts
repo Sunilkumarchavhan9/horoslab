@@ -30,15 +30,21 @@ describe("Memory API safety contracts", () => {
     const token = await makeToken("u_safety_limit");
 
     let lastStatus = 200;
+    let lastHeaders: Record<string, string | string[] | undefined> = {};
 
     for (let i = 0; i < 61; i += 1) {
       const res = await request(app)
         .get("/api/memory/timeline")
         .set("authorization", `Bearer ${token}`);
       lastStatus = res.status;
+      lastHeaders = res.headers;
     }
 
     expect(lastStatus).toBe(429);
+    expect(lastHeaders["x-ratelimit-limit"]).toBeTruthy();
+    expect(lastHeaders["x-ratelimit-remaining"]).toBeTruthy();
+    expect(lastHeaders["x-ratelimit-reset"]).toBeTruthy();
+    expect(lastHeaders["retry-after"]).toBeTruthy();
 
     const res = await request(app)
       .get("/api/memory/timeline")
@@ -46,5 +52,7 @@ describe("Memory API safety contracts", () => {
 
     expect(res.status).toBe(429);
     expect(res.body).toHaveProperty("error", "Too many requests");
+    expect(res.body).toHaveProperty("retryAfterSeconds");
+    expect(typeof res.body.retryAfterSeconds).toBe("number");
   });
 });

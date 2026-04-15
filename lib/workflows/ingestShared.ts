@@ -18,7 +18,13 @@ const ALLOWED_TYPES: MemoryType[] = [
 ];
 
 const ALLOWED_SOURCES: MemorySource[] = ["chat", "system", "import"];
-const ALLOWED_STATUSES: MemoryStatus[] = ["active", "archived", "merged"];
+const ALLOWED_STATUSES: MemoryStatus[] = [
+  "active",
+  "stale",
+  "contradicted",
+  "archived",
+  "merged",
+];
 
 
 export function  parseNumericMetadataValue(value:unknown, fallback:number): number{

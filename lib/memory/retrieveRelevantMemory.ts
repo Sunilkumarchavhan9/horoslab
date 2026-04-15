@@ -1,15 +1,26 @@
-import type { MemoryStoreSearchResult } from "../adapters/adapters";
-import { getMemoryStoreAdapter } from "../adapters/registry";
+import type {
+  ContextSearchResult,
+  MemoryStoreSearchResult,
+} from "../adapters/adapters";
+import { getContextAdapter, getMemoryStoreAdapter } from "../adapters/registry";
 import { getRecentMemories } from "./recentMemoryStore";
 import type { DeveloperSignals, Memory, MemoryStatus, MemoryType } from "./types";
 import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
 import { getRetrievalWeights } from "../config/retrievalWeights";
+import {
+  getLatestLifecycleSnapshot,
+  listTimelineEvents,
+  type LifecycleSnapshot,
+} from "./timelineMemory";
 
 export interface RetrieveRelevantMemoryInput {
   userId: string;
   question: string;
   topK?: number; // how many final memories to return
   includeArchived?: boolean;
+  workspace?: string;
+  project?: string;
+  threadId?: string;
 }
 
 export interface RankedMemory extends MemoryStoreSearchResult {
@@ -25,27 +36,10 @@ export interface RankedMemory extends MemoryStoreSearchResult {
 
 export interface RetrieveRelevantMemoryResult {
   memories: RankedMemory[];
-  debug: Array<{
-    id: string;
-    semanticScore: number;
-    typeRelevanceScore: number;
-    importanceScore: number;
-    recencyScore: number;
-    continuityBoost: number;
-    intent: RetrievalIntent;
-    weightsUsed: {
-      semantic: number;
-      typeRelevance: number;
-      importance: number;
-      recency: number;
-    };
-    reasonTags: string[];
-    contributions: ScoreContributions;
-    finalScore: number;
-  }>;
+  debug: RetrievalDebugItem[];
 }
 
-interface ScoreContributions {
+export interface ScoreContributions {
   semantic: number;
   typeRelevance: number;
   importance: number;
@@ -54,11 +48,63 @@ interface ScoreContributions {
   total: number;
 }
 
+export interface RetrievalDebugItem {
+  id: string;
+  semanticScore: number;
+  typeRelevanceScore: number;
+  importanceScore: number;
+  recencyScore: number;
+  continuityBoost: number;
+  intent: RetrievalIntent;
+  weightsUsed: {
+    semantic: number;
+    typeRelevance: number;
+    importance: number;
+    recency: number;
+  };
+  reasonTags: string[];
+  contributions: ScoreContributions;
+  finalScore: number;
+  lifecycle: {
+    latestEventType: LifecycleSnapshot["eventType"] | null;
+    latestReason: string | null;
+    latestChangedAt: string | null;
+  };
+}
+
+export interface RetrievalDiagnosticCandidate extends RetrievalDebugItem {
+  memory?: string;
+  memoryType?: MemoryType;
+  status?: MemoryStatus;
+  updatedAt?: string;
+  filteredOut: boolean;
+  filterReason?: string;
+}
+
+export interface RetrievalAnalysisResult {
+  intent: RetrievalIntent;
+  weightsUsed: RetrievalDebugItem["weightsUsed"];
+  selected: RankedMemory[];
+  debug: RetrievalDebugItem[];
+  rejected: RetrievalDiagnosticCandidate[];
+  allCandidates: RetrievalDiagnosticCandidate[];
+}
+
 interface RankedMemoryInternal extends RankedMemory {
   logicalKey: string;
   reasonTags: string[];
   contributions: ScoreContributions;
+  lifecycle: LifecycleSnapshot | null;
 }
+
+type ParsedCandidateMetadata = {
+  memoryType?: MemoryType;
+  status?: MemoryStatus;
+  importanceScore: number;
+  updatedAt?: string;
+  evidenceCount: number;
+  developerSignals?: DeveloperSignals;
+};
 
 const DEFAULT_MEMORY_TYPES: MemoryType[] = [
   "project",
@@ -73,6 +119,8 @@ const INTENT_MEMORY_TYPES = {
   stack_fit: ["preference", "project", "learning", "profile", "episodic"],
   study_next: ["learning", "project", "profile", "preference", "episodic"],
   resume_project: ["project", "episodic", "profile", "learning", "preference"],
+  handoff: ["project", "episodic", "profile", "learning", "preference"],
+  decision_recall: ["preference", "project", "episodic", "learning", "profile"],
   bug_recall: ["episodic", "project", "preference", "learning", "profile"],
   backend_fit: ["episodic", "project", "preference", "learning", "profile"],
   general: DEFAULT_MEMORY_TYPES,
@@ -88,6 +136,28 @@ function detectQuestionIntent(question: string): RetrievalIntent {
     q.includes("pick up")
   ) {
     return "resume_project";
+  }
+
+  if (
+    q.includes("handoff") ||
+    q.includes("hand off") ||
+    q.includes("handover") ||
+    q.includes("another agent") ||
+    q.includes("new agent") ||
+    q.includes("teammate takeover") ||
+    q.includes("take over this project")
+  ) {
+    return "handoff";
+  }
+
+  if (
+    q.includes("why did i choose") ||
+    q.includes("why did we choose") ||
+    q.includes("decision") ||
+    q.includes("tradeoff") ||
+    q.includes("chose this")
+  ) {
+    return "decision_recall";
   }
 
   if (
@@ -144,7 +214,13 @@ const VALID_MEMORY_TYPES: MemoryType[] = [
   "episodic",
 ];
 
-const VALID_MEMORY_STATUSES: MemoryStatus[] = ["active", "archived", "merged"];
+const VALID_MEMORY_STATUSES: MemoryStatus[] = [
+  "active",
+  "stale",
+  "contradicted",
+  "archived",
+  "merged",
+];
 const PROJECT_MILESTONE_REGEX =
   /\b(shipped|deployed|implemented|completed|added)\b/i;
 
@@ -234,14 +310,26 @@ function memoryToSearchResult(
   };
 }
 
-function parseMetadata(result: MemoryStoreSearchResult): {
-  memoryType?: MemoryType;
-  status?: MemoryStatus;
-  importanceScore: number;
-  updatedAt?: string;
-  evidenceCount: number;
-  developerSignals?: DeveloperSignals;
-} {
+function contextToSearchResult(
+  result: ContextSearchResult,
+): MemoryStoreSearchResult | null {
+  const memory =
+    result.content ??
+    (typeof result.metadata?.memory === "string" ? result.metadata.memory : undefined);
+
+  if (!memory) {
+    return null;
+  }
+
+  return {
+    id: result.id,
+    score: result.score,
+    memory,
+    metadata: result.metadata,
+  };
+}
+
+function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata {
   const metadata = result?.metadata;
 
   let memoryType: MemoryType | undefined = undefined;
@@ -496,6 +584,22 @@ function getDeveloperSignalBoost(input: {
   }
 
   if (
+    input.intent === "handoff" &&
+    ((signals.projectArea?.length ?? 0) > 0 || (signals.goal?.length ?? 0) > 0)
+  ) {
+    boost += 0.06;
+  }
+
+  if (
+    input.intent === "decision_recall" &&
+    ((signals.stack?.length ?? 0) > 0 ||
+      (signals.framework?.length ?? 0) > 0 ||
+      (signals.goal?.length ?? 0) > 0)
+  ) {
+    boost += 0.07;
+  }
+
+  if (
     (input.intent === "bug_recall" || input.intent === "backend_fit") &&
     (signals.bugType?.length ?? 0) > 0
   ) {
@@ -621,77 +725,150 @@ function buildReasonTags(input: {
   return reasons;
 }
 
-export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput ): Promise<RetrieveRelevantMemoryResult> {
-  const mem0Candidates = await getMemoryStoreAdapter().searchMemory({
-    userId: input.userId,
-    query: input.question,
-    topK: Math.max(input.topK ?? 10, 10), // fetch wider candidate set first
-  });
+async function fetchCandidatePool(
+  input: RetrieveRelevantMemoryInput,
+): Promise<MemoryStoreSearchResult[]> {
+  const candidateTopK = Math.max(input.topK ?? 10, 10);
+  const [memoryStoreCandidates, contextCandidatesRaw] = await Promise.all([
+    getMemoryStoreAdapter().searchMemory({
+      userId: input.userId,
+      query: input.question,
+      topK: candidateTopK,
+    }),
+    getContextAdapter().searchContext({
+      userId: input.userId,
+      query: input.question,
+      topK: candidateTopK,
+      ...(input.workspace ? { workspace: input.workspace } : {}),
+      ...(input.project ? { project: input.project } : {}),
+      ...(input.threadId ? { threadId: input.threadId } : {}),
+    }),
+  ]);
+
+  const contextCandidates = contextCandidatesRaw
+    .map((item) => contextToSearchResult(item))
+    .filter((item): item is MemoryStoreSearchResult => item !== null);
   const recentCandidates = getRecentMemories(input.userId).map((memory) =>
     memoryToSearchResult(memory, input.question),
   );
-  const candidates = Array.from(
+
+  return Array.from(
     new Map(
-      [...recentCandidates, ...mem0Candidates].map((item) => [
+      [...recentCandidates, ...contextCandidates, ...memoryStoreCandidates].map((item) => [
         getLogicalMemoryKey(item),
         item,
       ]),
     ).values(),
   );
+}
 
-  const intent = detectQuestionIntent(input.question);
-  const preferredTypes = inferPreferredTypes(intent);
-  const weightsUsed = getRetrievalWeights();
-  const includeArchived = input.includeArchived === true;
+function toDebugItem(
+  input: RankedMemoryInternal,
+  intent: RetrievalIntent,
+  weightsUsed: RetrievalDebugItem["weightsUsed"],
+): RetrievalDebugItem {
+  return {
+    id: input.id,
+    semanticScore: input.semanticScore,
+    typeRelevanceScore: input.typeRelevanceScore,
+    importanceScore: input.importanceScore,
+    recencyScore: input.recencyScore,
+    continuityBoost: input.continuityBoost,
+    intent,
+    weightsUsed,
+    reasonTags: input.reasonTags,
+    contributions: input.contributions,
+    finalScore: input.finalScore,
+    lifecycle: {
+      latestEventType: input.lifecycle?.eventType ?? null,
+      latestReason: input.lifecycle?.reason ?? null,
+      latestChangedAt: input.lifecycle?.changedAt ?? null,
+    },
+  };
+}
 
-  const ranked: RankedMemoryInternal[] = candidates.flatMap((item) => {
-    const meta = parseMetadata(item);
-    if (!includeArchived && meta.status === "archived") {
-      return [];
-    }
+function toRankedMemory(input: RankedMemoryInternal): RankedMemory {
+  const { logicalKey, reasonTags, contributions, lifecycle, ...memory } = input;
+  void logicalKey;
+  void reasonTags;
+  void contributions;
+  void lifecycle;
+  return memory;
+}
 
-    const effectiveMemoryType = resolveEffectiveMemoryType({
-      baseType: meta.memoryType,
-      memoryText: item.memory,
-      intent,
-    });
+function toDiagnosticCandidate(
+  input: RankedMemoryInternal,
+  intent: RetrievalIntent,
+  weightsUsed: RetrievalDebugItem["weightsUsed"],
+  filteredOut: boolean,
+  filterReason?: string,
+): RetrievalDiagnosticCandidate {
+  return {
+    memory: input.memory,
+    memoryType: input.memoryType,
+    updatedAt: input.updatedAt,
+    filteredOut,
+    ...(filterReason ? { filterReason } : {}),
+    ...toDebugItem(input, intent, weightsUsed),
+  };
+}
 
-    const semanticScore = normalizeSemanticScore(item.score);
-    const typeRelevanceScore = getTypeRelevanceScore(
-      effectiveMemoryType,
-      preferredTypes,
-    );
-    const recencyScore = getRecencyScore(meta.updatedAt);
-    const continuityBoost = getContinuityBoost({
-      intent,
-      question: input.question,
-      memoryType: effectiveMemoryType,
-      evidenceCount: meta.evidenceCount,
-      recencyScore,
-      developerSignals: meta.developerSignals,
-    });
-    const contributions = computeScoreContributions({
-      semanticScore,
-      typeRelevanceScore,
-      importanceScore: meta.importanceScore,
-      recencyScore,
-      continuityBoost,
-      weights: weightsUsed,
-    });
-    const finalScore = contributions.total;
-    const reasonTags = buildReasonTags({
-      memoryType: effectiveMemoryType,
-      semanticScore,
-      typeRelevanceScore,
-      importanceScore: meta.importanceScore,
-      recencyScore,
-      continuityBoost,
-      contributions,
-    });
+function buildRankedCandidate(input: {
+  item: MemoryStoreSearchResult;
+  question: string;
+  intent: RetrievalIntent;
+  preferredTypes: MemoryType[];
+  weightsUsed: RetrievalDebugItem["weightsUsed"];
+  lifecycle: LifecycleSnapshot | null;
+}): {
+  rankedItem: RankedMemoryInternal;
+  meta: ParsedCandidateMetadata;
+} {
+  const meta = parseMetadata(input.item);
+  const effectiveMemoryType = resolveEffectiveMemoryType({
+    baseType: meta.memoryType,
+    memoryText: input.item.memory,
+    intent: input.intent,
+  });
 
-    return [{
-      ...item,
-      logicalKey: getLogicalMemoryKey(item),
+  const semanticScore = normalizeSemanticScore(input.item.score);
+  const typeRelevanceScore = getTypeRelevanceScore(
+    effectiveMemoryType,
+    input.preferredTypes,
+  );
+  const recencyScore = getRecencyScore(meta.updatedAt);
+  const continuityBoost = getContinuityBoost({
+    intent: input.intent,
+    question: input.question,
+    memoryType: effectiveMemoryType,
+    evidenceCount: meta.evidenceCount,
+    recencyScore,
+    developerSignals: meta.developerSignals,
+  }) + (meta.status === "stale" ? -0.06 : 0);
+  const contributions = computeScoreContributions({
+    semanticScore,
+    typeRelevanceScore,
+    importanceScore: meta.importanceScore,
+    recencyScore,
+    continuityBoost,
+    weights: input.weightsUsed,
+  });
+  const finalScore = contributions.total;
+  const reasonTags = buildReasonTags({
+    memoryType: effectiveMemoryType,
+    semanticScore,
+    typeRelevanceScore,
+    importanceScore: meta.importanceScore,
+    recencyScore,
+    continuityBoost,
+    contributions,
+  });
+
+  return {
+    meta,
+    rankedItem: {
+      ...input.item,
+      logicalKey: getLogicalMemoryKey(input.item),
       memoryType: effectiveMemoryType,
       importanceScore: meta.importanceScore,
       recencyScore,
@@ -702,7 +879,71 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
       updatedAt: meta.updatedAt,
       reasonTags,
       contributions,
-    }];
+      lifecycle: input.lifecycle,
+    },
+  };
+}
+
+export async function analyzeRetrieval(
+  input: RetrieveRelevantMemoryInput,
+): Promise<RetrievalAnalysisResult> {
+  const candidates = await fetchCandidatePool(input);
+  const lifecycleEvents = listTimelineEvents(input.userId);
+  const timelineByMemoryId = new Map<string, typeof lifecycleEvents>();
+
+  for (const event of lifecycleEvents) {
+    const current = timelineByMemoryId.get(event.memoryId);
+    if (current) {
+      current.push(event);
+    } else {
+      timelineByMemoryId.set(event.memoryId, [event]);
+    }
+  }
+
+  const lifecycleByMemoryId = new Map<string, LifecycleSnapshot>();
+
+  for (const [memoryId, events] of timelineByMemoryId.entries()) {
+    const latest = getLatestLifecycleSnapshot(events);
+    if (latest) {
+      lifecycleByMemoryId.set(memoryId, latest);
+    }
+  }
+
+  const intent = detectQuestionIntent(input.question);
+  const preferredTypes = inferPreferredTypes(intent);
+  const weightsUsed = getRetrievalWeights();
+  const includeArchived = input.includeArchived === true;
+  const filteredByStatus: RetrievalDiagnosticCandidate[] = [];
+
+  const ranked: RankedMemoryInternal[] = candidates.flatMap((item) => {
+    const { meta, rankedItem } = buildRankedCandidate({
+      item,
+      question: input.question,
+      intent,
+      preferredTypes,
+      weightsUsed,
+      lifecycle: lifecycleByMemoryId.get(getLogicalMemoryKey(item)) ?? null,
+    });
+
+    if (
+      !includeArchived &&
+      (meta.status === "archived" ||
+        meta.status === "contradicted" ||
+        meta.status === "merged")
+    ) {
+      filteredByStatus.push({
+        status: meta.status,
+        memory: rankedItem.memory,
+        memoryType: rankedItem.memoryType,
+        updatedAt: rankedItem.updatedAt,
+        filteredOut: true,
+        filterReason: `status_${meta.status}`,
+        ...toDebugItem(rankedItem, intent, weightsUsed),
+      });
+      return [];
+    }
+
+    return [rankedItem];
   });
 
   ranked.sort((a, b) => {
@@ -721,28 +962,39 @@ export async function retrieveRelevantMemory( input: RetrieveRelevantMemoryInput
 
   const finalTopK = input.topK ?? 5;
   const top = uniqueRanked.slice(0, finalTopK);
-  const memories: RankedMemory[] = top.map(({ logicalKey, reasonTags, contributions, ...memory }) => {
-    void logicalKey;
-    void reasonTags;
-    void contributions;
-    return memory;
-  });
+  const selected = top.map((item) => toRankedMemory(item));
+  const debug = top.map((item) => toDebugItem(item, intent, weightsUsed));
+  const belowTopK = uniqueRanked
+    .slice(finalTopK)
+    .map((item) =>
+      toDiagnosticCandidate(
+        item,
+        intent,
+        weightsUsed,
+        true,
+        "below_topk_cutoff",
+      ),
+    );
+  const selectedDiagnostics = top.map((item) =>
+    toDiagnosticCandidate(item, intent, weightsUsed, false),
+  );
 
   return {
-    memories,
-    debug: top.map((m) => ({
-      id: m.id,
-      semanticScore: m.semanticScore,
-      typeRelevanceScore: m.typeRelevanceScore,
-      importanceScore: m.importanceScore,
-      recencyScore: m.recencyScore,
-      continuityBoost: m.continuityBoost,
-      intent,
-      weightsUsed,
-      reasonTags: m.reasonTags,
-      contributions: m.contributions,
-      finalScore: m.finalScore,
-    })),
+    intent,
+    weightsUsed,
+    selected,
+    debug,
+    rejected: [...filteredByStatus, ...belowTopK],
+    allCandidates: [...selectedDiagnostics, ...filteredByStatus, ...belowTopK],
+  };
+}
 
+export async function retrieveRelevantMemory(
+  input: RetrieveRelevantMemoryInput,
+): Promise<RetrieveRelevantMemoryResult> {
+  const analysis = await analyzeRetrieval(input);
+  return {
+    memories: analysis.selected,
+    debug: analysis.debug,
   };
 }

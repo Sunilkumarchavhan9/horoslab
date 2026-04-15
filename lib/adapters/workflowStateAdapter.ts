@@ -1,12 +1,5 @@
 import { JsonWorkflowStateAdapter } from "./jsonWorkflowStateAdapter";
-
-export interface WorkflowStateAdapter {
-  saveCheckpoint(input: {
-    key: string;
-    state: Record<string, unknown>;
-  }): Promise<void>;
-  loadCheckpoint(input: { key: string }): Promise<Record<string, unknown> | null>;
-}
+import type { WorkflowStateAdapter } from "./adapters";
 
 let workflowStateAdapterOverride: WorkflowStateAdapter | null = null;
 const defaultWorkflowStateAdapter = new JsonWorkflowStateAdapter();

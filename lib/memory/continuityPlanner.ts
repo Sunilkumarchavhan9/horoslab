@@ -1,4 +1,5 @@
 import { retrieveRelevantMemory, type RankedMemory } from "./retrieveRelevantMemory";
+import type { ContinuityScope } from "../adapters/adapters";
 import type { MemoryType } from "./types";
 
 export type ContinuityMode = "build_next" | "debug_next" | "learn_next";
@@ -9,7 +10,12 @@ export interface ContinuityPlannerInput {
   mode?: ContinuityMode;
   topK?: number;
   includeArchived?: boolean;
+  previousCheckpoint?: Record<string, unknown> | null;
 }
+
+export interface ContinuityPlannerScopedInput
+  extends ContinuityPlannerInput,
+    ContinuityScope {}
 
 export interface ContinuityUsedMemory {
   id: string;
@@ -44,6 +50,11 @@ export interface ContinuityPlannerResult {
     }>;
   };
 }
+
+type PreviousContinuityContext = {
+  previousNextActions?: string[];
+  previousMode?: string;
+};
 
 function getMetadataSummary(memory: RankedMemory): string | undefined {
   const metadata = memory.metadata;
@@ -112,20 +123,70 @@ function buildActions(
   return actions.slice(0, 3);
 }
 
+function getPreviousContinuityContext(
+  previousCheckpoint: Record<string, unknown> | null | undefined,
+): PreviousContinuityContext {
+  if (!previousCheckpoint) {
+    return {};
+  }
+
+  const rawResult = previousCheckpoint.result;
+  if (!rawResult || typeof rawResult !== "object") {
+    return {};
+  }
+
+  const result = rawResult as Record<string, unknown>;
+  const rawDebug =
+    result.debug && typeof result.debug === "object"
+      ? (result.debug as Record<string, unknown>)
+      : undefined;
+
+  return {
+    previousNextActions: Array.isArray(result.nextActions)
+      ? result.nextActions.filter(
+          (value): value is string => typeof value === "string" && value.length > 0,
+        )
+      : undefined,
+    previousMode:
+      typeof result.mode === "string"
+        ? result.mode
+        : typeof rawDebug?.mode === "string"
+          ? rawDebug.mode
+          : undefined,
+  };
+}
+
+function mergeNextActions(
+  currentNextActions: string[],
+  previousNextActions?: string[],
+): string[] {
+  return [...currentNextActions, ...(previousNextActions ?? [])]
+    .filter((value, index, values) => values.indexOf(value) === index)
+    .slice(0, 5);
+}
+
 export async function planContinuity(
-  input: ContinuityPlannerInput,
+  input: ContinuityPlannerScopedInput,
 ): Promise<ContinuityPlannerResult> {
   const mode: ContinuityMode = input.mode ?? "build_next";
+  const previousContext = getPreviousContinuityContext(input.previousCheckpoint);
 
   const retrieval = await retrieveRelevantMemory({
     userId: input.userId,
     question: input.question,
     topK: input.topK ?? 5,
     includeArchived: input.includeArchived ?? false,
+    ...(input.workspace ? { workspace: input.workspace } : {}),
+    ...(input.project ? { project: input.project } : {}),
+    ...(input.threadId ? { threadId: input.threadId } : {}),
   });
 
   const usedMemories = retrieval.memories.map(toUsedMemory);
-  const nextActions = buildActions(mode, input.question, usedMemories);
+  const currentNextActions = buildActions(mode, input.question, usedMemories);
+  const nextActions =
+    usedMemories.length === 0 && previousContext.previousNextActions?.length
+      ? previousContext.previousNextActions
+      : mergeNextActions(currentNextActions, previousContext.previousNextActions);
 
   return {
     nextActions,

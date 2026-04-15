@@ -14,6 +14,7 @@ type ContinueFlowInput = ContinuityPlannerInput & {
 
 const ContinueGraphStateAnnotation = Annotation.Root({
   input: Annotation<ContinueFlowInput>,
+  previousCheckpoint: Annotation<Record<string, unknown> | null>,
   result: Annotation<ContinuityPlannerResult | null>,
 });
 
@@ -22,7 +23,10 @@ type ContinueGraphState = typeof ContinueGraphStateAnnotation.State;
 async function runPlannerNode(
   state: ContinueGraphState,
 ): Promise<Partial<ContinueGraphState>> {
-  const result = await planContinuity(state.input);
+  const result = await planContinuity({
+    ...state.input,
+    previousCheckpoint: state.previousCheckpoint,
+  });
   return { result };
 }
 
@@ -49,6 +53,7 @@ export async function runContinueFlowLangGraph(
 
   const result = await compiledContinueGraph.invoke({
     input,
+    previousCheckpoint,
     result: null,
   });
 

@@ -1,6 +1,10 @@
 import { getMemoryStoreAdapter } from "../adapters/registry";
 import { listRevisionEvents } from "./revisionMemory";
-import { listTimelineEvents } from "./timelineMemory";
+import {
+  getLatestLifecycleSnapshot,
+  listTimelineEvents,
+  type LifecycleSnapshot,
+} from "./timelineMemory";
 import type {
   MemorySource,
   MemoryStatus,
@@ -17,7 +21,13 @@ const ALLOWED_TYPES: MemoryType[] = [
   "episodic",
 ];
 const ALLOWED_SOURCES: MemorySource[] = ["chat", "system", "import"];
-const ALLOWED_STATUSES: MemoryStatus[] = ["active", "archived", "merged"];
+const ALLOWED_STATUSES: MemoryStatus[] = [
+  "active",
+  "stale",
+  "contradicted",
+  "archived",
+  "merged",
+];
 
 export interface ExplainMemoryInput {
   memoryId: string;
@@ -52,6 +62,11 @@ export interface ExplainMemoryResult {
     revisionCount: number;
     stalenessDays: number;
     stalenessBucket: "fresh" | "aging" | "stale";
+    lifecycle: {
+      latestEventType: LifecycleSnapshot["eventType"] | null;
+      latestReason: string | null;
+      latestChangedAt: string | null;
+    };
   };
 }
 
@@ -188,6 +203,7 @@ export async function explainMemory(
   const stalenessDays = computeStalenessDays(updatedAt);
   const stalenessBucket = getStalenessBucket(stalenessDays);
   const safeStatus: MemoryStatus | "unknown" = status ?? "unknown";
+  const lifecycle = getLatestLifecycleSnapshot(timeline);
 
   return {
     memory: {
@@ -217,6 +233,11 @@ export async function explainMemory(
       revisionCount,
       stalenessDays,
       stalenessBucket,
+      lifecycle: {
+        latestEventType: lifecycle?.eventType ?? null,
+        latestReason: lifecycle?.reason ?? null,
+        latestChangedAt: lifecycle?.changedAt ?? null,
+      },
     },
   };
 }

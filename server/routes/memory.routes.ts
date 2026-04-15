@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "fs";
 import path from "path";
 import { runIngestFlowLangGraph } from "../../lib/workflows/ingestGraphLangGraph";
 import { runRetrieveFlowLangGraph } from "../../lib/workflows/retrieveGraphLangGraph";
+import { analyzeRetrieval } from "../../lib/memory/retrieveRelevantMemory";
 import { listRevisionEvents } from "../../lib/memory/revisionMemory";
 import { listTimelineEvents } from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
@@ -14,6 +15,7 @@ import {
 import { getRetrievalWeights, setRetrievalWeights } from "../../lib/config/retrievalWeights";
 import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
 import { runContinueFlowLangGraph } from "../../lib/workflows/continueGraphLangGraph";
+import { runHandoffFlowLangGraph } from "../../lib/workflows/handoffGraphLangGraph";
 import { runResumeFlowLangGraph } from "../../lib/workflows/resumeGraphLangGraph";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
@@ -21,6 +23,7 @@ import { isSqliteRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
 import { isRuntimeStoreDbHealthy } from "../../lib/storage/runtimeStoreDb";
 import {
   ContinueMemorySchema,
+  HandoffMemorySchema,
   ProcessMemorySchema,
   ResumeMemorySchema,
   MemoryStatusPatchSchema,
@@ -28,6 +31,14 @@ import {
   RetrieveMemorySchema,
 } from "../schemas/memory.schema";
 import { asyncHandler } from "../middleware/asyncHandler";
+import {
+  type ContinueResponseData,
+  type HandoffResponseData,
+  type ResumeResponseData,
+  type RetrieveExplainResponseData,
+  type RetrieveResponseData,
+} from "../types/api-contracts";
+import { buildApiMeta, sendApiError, sendApiSuccess } from "./api-response";
 
 export const memoryRouter = Router();
 
@@ -231,6 +242,15 @@ function parseQueryIncludeArchived(raw: unknown): boolean | undefined {
   return undefined;
 }
 
+function parseOptionalQueryText(raw: unknown): string | undefined {
+  if (typeof raw !== "string") {
+    return undefined;
+  }
+
+  const trimmed = raw.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 function buildWhyTop1(top?: {
   memoryType?: string;
   finalScore: number;
@@ -282,12 +302,19 @@ memoryRouter.post(
 memoryRouter.post(
   "/retrieve",
   asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
     const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
     if (!parsed.success) {
-      res.status(400).json({
-        error: "Invalid request body",
-        details: parsed.error.flatten(),
-      });
+      sendApiError<RetrieveResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "Invalid request body",
+          details: parsed.error.flatten(),
+        },
+        buildApiMeta(req, startedAt),
+      );
       return;
     }
 
@@ -298,48 +325,84 @@ memoryRouter.post(
       ...(parsed.data.includeArchived !== undefined
         ? { includeArchived: parsed.data.includeArchived }
         : {}),
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
     });
 
-    res.status(200).json(result);
+    sendApiSuccess<RetrieveResponseData>(
+      res,
+      200,
+      result,
+      buildApiMeta(req, startedAt, {
+        intent: result.debug[0]?.intent,
+      }),
+    );
   }),
 );
 
 memoryRouter.get(
   "/retrieve/explain",
   asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
     const question =
       typeof req.query.question === "string" && req.query.question.trim().length > 0
         ? req.query.question
         : undefined;
 
     if (!question) {
-      res.status(400).json({
-        error: "question is required",
-      });
+      sendApiError<RetrieveExplainResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "question is required",
+        },
+        buildApiMeta(req, startedAt),
+      );
       return;
     }
 
     const topK = parseQueryTopK(req.query.topK);
     if (req.query.topK !== undefined && topK === undefined) {
-      res.status(400).json({
-        error: "topK must be a positive integer <= 20",
-      });
+      sendApiError<RetrieveExplainResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "topK must be a positive integer <= 20",
+        },
+        buildApiMeta(req, startedAt),
+      );
       return;
     }
 
     const includeArchived = parseQueryIncludeArchived(req.query.includeArchived);
     if (req.query.includeArchived !== undefined && includeArchived === undefined) {
-      res.status(400).json({
-        error: "includeArchived must be true or false",
-      });
+      sendApiError<RetrieveExplainResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "includeArchived must be true or false",
+        },
+        buildApiMeta(req, startedAt),
+      );
       return;
     }
+
+    const workspace = parseOptionalQueryText(req.query.workspace);
+    const project = parseOptionalQueryText(req.query.project);
+    const threadId = parseOptionalQueryText(req.query.threadId);
 
     const result = await runRetrieveFlowLangGraph({
       userId: req.authUserId,
       question,
       ...(topK !== undefined ? { topK } : {}),
       ...(includeArchived !== undefined ? { includeArchived } : {}),
+      ...(workspace ? { workspace } : {}),
+      ...(project ? { project } : {}),
+      ...(threadId ? { threadId } : {}),
     });
 
     const debugById = new Map(result.debug.map((item) => [item.id, item]));
@@ -367,29 +430,50 @@ memoryRouter.get(
           continuity: 0,
           total: memory.finalScore,
         },
+        lifecycle: debug?.lifecycle ?? {
+          latestEventType: null,
+          latestReason: null,
+          latestChangedAt: null,
+        },
       };
     });
 
     const firstDebug = result.debug[0];
 
-    res.status(200).json({
+    const responseData: RetrieveExplainResponseData = {
       intent: firstDebug?.intent ?? "general",
       weightsUsed: firstDebug?.weightsUsed ?? getRetrievalWeights(),
       ranked,
       whyTop1: buildWhyTop1(ranked[0]),
-    });
+    };
+
+    sendApiSuccess<RetrieveExplainResponseData>(
+      res,
+      200,
+      responseData,
+      buildApiMeta(req, startedAt, {
+        intent: responseData.intent,
+      }),
+    );
   }),
 );
 
 memoryRouter.post(
   "/continue",
   asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
     const parsed = ContinueMemorySchema.safeParse(req.body ?? {});
     if (!parsed.success) {
-      res.status(400).json({
-        error: "Invalid request body",
-        details: parsed.error.flatten(),
-      });
+      sendApiError<ContinueResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "Invalid request body",
+          details: parsed.error.flatten(),
+        },
+        buildApiMeta(req, startedAt),
+      );
       return;
     }
 
@@ -399,21 +483,78 @@ memoryRouter.post(
       mode: parsed.data.mode,
       topK: parsed.data.topK,
       includeArchived: parsed.data.includeArchived,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
     });
 
-    res.status(200).json(result);
+    sendApiSuccess<ContinueResponseData>(
+      res,
+      200,
+      result,
+      buildApiMeta(req, startedAt, {
+        intent: result.debug.mode,
+      }),
+    );
+  }),
+);
+
+memoryRouter.post(
+  "/handoff",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const parsed = HandoffMemorySchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      sendApiError<HandoffResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "Invalid request body",
+          details: parsed.error.flatten(),
+        },
+        buildApiMeta(req, startedAt),
+      );
+      return;
+    }
+
+    const result = await runHandoffFlowLangGraph({
+      userId: req.authUserId,
+      project: parsed.data.project,
+      question: parsed.data.question,
+      topK: parsed.data.topK,
+      includeArchived: parsed.data.includeArchived,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+    });
+
+    sendApiSuccess<HandoffResponseData>(
+      res,
+      200,
+      result,
+      buildApiMeta(req, startedAt, {
+        intent: "handoff",
+      }),
+    );
   }),
 );
 
 memoryRouter.post(
   "/resume",
   asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
     const parsed = ResumeMemorySchema.safeParse(req.body ?? {});
     if (!parsed.success) {
-      res.status(400).json({
-        error: "Invalid request body",
-        details: parsed.error.flatten(),
-      });
+      sendApiError<ResumeResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "Invalid request body",
+          details: parsed.error.flatten(),
+        },
+        buildApiMeta(req, startedAt),
+      );
       return;
     }
 
@@ -423,9 +564,18 @@ memoryRouter.post(
       question: parsed.data.question,
       topK: parsed.data.topK,
       includeArchived: parsed.data.includeArchived,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
     });
 
-    res.status(200).json(result);
+    sendApiSuccess<ResumeResponseData>(
+      res,
+      200,
+      result,
+      buildApiMeta(req, startedAt, {
+        intent: "resume_project",
+      }),
+    );
   }),
 );
 
@@ -742,6 +892,8 @@ memoryRouter.get(
 
     const totalsByStatus = {
       active: 0,
+      stale: 0,
+      contradicted: 0,
       archived: 0,
       merged: 0,
     };
@@ -909,6 +1061,9 @@ memoryRouter.post( "/retrieve/debug", asyncHandler(async (req, res) => {
       ...(parsed.data.includeArchived !== undefined
         ? { includeArchived: parsed.data.includeArchived }
         : {}),
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
     });
 
     res.status(200).json({
@@ -923,7 +1078,44 @@ memoryRouter.post( "/retrieve/debug", asyncHandler(async (req, res) => {
   }),
 );
 
+memoryRouter.post("/retrieve/why-not", asyncHandler(async (req, res) => {
+    const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const requestedTopK = parsed.data.topK ?? 5;
+    const analysis = await analyzeRetrieval({
+      userId: req.authUserId,
+      question: parsed.data.question,
+      topK: requestedTopK,
+      ...(parsed.data.includeArchived !== undefined
+        ? { includeArchived: parsed.data.includeArchived }
+        : {}),
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+    });
+
+    res.status(200).json({
+      intent: analysis.intent,
+      weightsUsed: analysis.weightsUsed,
+      selected: analysis.allCandidates.filter((candidate) => !candidate.filteredOut),
+      rejected: analysis.rejected,
+      meta: {
+        requestedTopK,
+        totalCandidates: analysis.allCandidates.length,
+        selectedCount: analysis.selected.length,
+        rejectedCount: analysis.rejected.length,
+      },
+    });
+  }),
+);
+
 memoryRouter.all("/*splat", (_req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
-

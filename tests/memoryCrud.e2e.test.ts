@@ -115,8 +115,9 @@ describe("Memory CRUD catch-all E2E", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("memories");
-    expect(res.body).toHaveProperty("debug");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body).toHaveProperty("data.memories");
+    expect(res.body).toHaveProperty("data.debug");
   });
 
   it("GET /api/memory/list returns filtered memories for current user", async () => {
@@ -381,8 +382,9 @@ describe("Memory CRUD catch-all E2E", () => {
       });
 
     expect(defaultRetrieve.status).toBe(200);
+    expect(defaultRetrieve.body).toHaveProperty("ok", true);
     const defaultIds = new Set(
-      (defaultRetrieve.body.memories ?? []).map((memory: { id: string }) => memory.id),
+      (defaultRetrieve.body.data.memories ?? []).map((memory: { id: string }) => memory.id),
     );
     expect(defaultIds.has(memoryId)).toBe(false);
 
@@ -396,8 +398,9 @@ describe("Memory CRUD catch-all E2E", () => {
       });
 
     expect(includeArchivedRetrieve.status).toBe(200);
+    expect(includeArchivedRetrieve.body).toHaveProperty("ok", true);
     const includeArchivedIds = new Set(
-      (includeArchivedRetrieve.body.memories ?? []).map((memory: { id: string }) => memory.id),
+      (includeArchivedRetrieve.body.data.memories ?? []).map((memory: { id: string }) => memory.id),
     );
     expect(includeArchivedIds.has(memoryId)).toBe(true);
   });

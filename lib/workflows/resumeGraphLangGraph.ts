@@ -13,15 +13,20 @@ type ResumeFlowInput = ResumePlannerInput & {
 
 const ResumeGraphStateAnnotation = Annotation.Root({
   input: Annotation<ResumeFlowInput>,
+  previousCheckpoint: Annotation<Record<string, unknown> | null>,
   result: Annotation<ResumePlannerResult | null>,
 });
+
 
 type ResumeGraphState = typeof ResumeGraphStateAnnotation.State;
 
 async function runPlannerNode(
   state: ResumeGraphState,
 ): Promise<Partial<ResumeGraphState>> {
-  const result = await planResume(state.input);
+  const result = await planResume({
+    ...state.input,
+    previousCheckpoint: state.previousCheckpoint
+  });
   return { result };
 }
 
@@ -47,6 +52,7 @@ export async function runResumeFlowLangGraph(
 
   const result = await compiledResumeGraph.invoke({
     input,
+    previousCheckpoint,
     result: null,
   });
 

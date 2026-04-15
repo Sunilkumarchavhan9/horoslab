@@ -121,6 +121,20 @@ const RULES: Rule[] = [
   },
   {
     type: "episodic",
+    regex: /\bI(?:'m| am)\s+debugging\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User is debugging ${m[1].trim()}`,
+    toSummary: (m) => `Debugging: ${m[1].trim()}`,
+    toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "episodic",
+    regex: /\bI(?:'m| am)\s+fixing\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User is fixing ${m[1].trim()}`,
+    toSummary: (m) => `Fixing: ${m[1].trim()}`,
+    toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "episodic",
     regex: /\bI\s+solved\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User solved ${m[1].trim()}`,
     toSummary: (m) => `Solved: ${m[1].trim()}`,

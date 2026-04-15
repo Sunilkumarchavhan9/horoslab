@@ -80,10 +80,11 @@ describe("Memory Resume E2E", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body.usedMemories).toEqual([]);
-    expect(res.body).toHaveProperty("summary");
-    expect(res.body).toHaveProperty("recommendedNextStep");
-    expect(res.body.debug).toHaveProperty("project", "MemoryOS");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body.data.usedMemories).toEqual([]);
+    expect(res.body).toHaveProperty("data.summary");
+    expect(res.body).toHaveProperty("data.recommendedNextStep");
+    expect(res.body.data.debug).toHaveProperty("project", "MemoryOS");
   });
 
   it("returns project continuity response from seeded memories", async () => {
@@ -113,13 +114,14 @@ describe("Memory Resume E2E", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body.usedMemories)).toBe(true);
-    expect(res.body.usedMemories.length).toBeGreaterThan(0);
-    expect(typeof res.body.summary).toBe("string");
-    expect(typeof res.body.lastKnownState).toBe("string");
-    expect(Array.isArray(res.body.openLoops)).toBe(true);
-    expect(typeof res.body.recommendedNextStep).toBe("string");
-    expect(res.body.debug).toHaveProperty("project", "MemoryOS");
-    expect(Array.isArray(res.body.debug.retrieval)).toBe(true);
+    expect(res.body).toHaveProperty("ok", true);
+    expect(Array.isArray(res.body.data.usedMemories)).toBe(true);
+    expect(res.body.data.usedMemories.length).toBeGreaterThan(0);
+    expect(typeof res.body.data.summary).toBe("string");
+    expect(typeof res.body.data.lastKnownState).toBe("string");
+    expect(Array.isArray(res.body.data.openLoops)).toBe(true);
+    expect(typeof res.body.data.recommendedNextStep).toBe("string");
+    expect(res.body.data.debug).toHaveProperty("project", "MemoryOS");
+    expect(Array.isArray(res.body.data.debug.retrieval)).toBe(true);
   });
 });

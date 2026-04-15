@@ -16,6 +16,40 @@ vi.mock("../lib/memory/revisionMemory", () => ({
 
 vi.mock("../lib/memory/timelineMemory", () => ({
   listTimelineEvents: mocks.listTimelineEvents,
+  getLatestLifecycleSnapshot: (events: Array<{
+    eventType: string;
+    reason: string;
+    timestamp: string;
+  }>) => {
+    const lifecycleEvents = events
+      .filter((event) =>
+        [
+          "memory_stale",
+          "memory_contradicted",
+          "memory_archived",
+          "memory_merged",
+        ].includes(event.eventType),
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      );
+
+    const latest = lifecycleEvents[0];
+    if (!latest) {
+      return null;
+    }
+
+    return {
+      eventType: latest.eventType as
+        | "memory_stale"
+        | "memory_contradicted"
+        | "memory_archived"
+        | "memory_merged",
+      reason: latest.reason,
+      changedAt: latest.timestamp,
+    };
+  },
 }));
 
 import { explainMemory } from "../lib/memory/explainMemory";
@@ -90,6 +124,14 @@ describe("explainMemory service", () => {
         timestamp: "2026-03-20T00:00:00.000Z",
       },
       {
+        id: "t2",
+        userId: "u_explain_service",
+        memoryId: "m_explain_1",
+        eventType: "memory_stale",
+        reason: "Superseded by shipped milestone",
+        timestamp: "2026-03-21T00:00:00.000Z",
+      },
+      {
         id: "t_other",
         userId: "u_explain_service",
         memoryId: "m_other",
@@ -106,10 +148,17 @@ describe("explainMemory service", () => {
 
     expect(result).not.toBeNull();
     expect(result?.explanation.status).toBe("active");
-    expect(result?.explanation.timelineCount).toBe(1);
+    expect(result?.explanation.timelineCount).toBe(2);
     expect(result?.explanation.revisionCount).toBe(2);
     expect(result?.explanation.stalenessDays).toBe(3);
     expect(result?.explanation.stalenessBucket).toBe("fresh");
+    expect(result?.explanation.lifecycle.latestEventType).toBe("memory_stale");
+    expect(result?.explanation.lifecycle.latestReason).toBe(
+      "Superseded by shipped milestone",
+    );
+    expect(result?.explanation.lifecycle.latestChangedAt).toBe(
+      "2026-03-21T00:00:00.000Z",
+    );
   });
 
   it.each([

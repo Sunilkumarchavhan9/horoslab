@@ -5,6 +5,7 @@ import {
   type RetrieveRelevantMemoryInput,
   type RetrieveRelevantMemoryResult,
 } from "../memory/retrieveRelevantMemory";
+import { getWorkflowStateAdapter } from "../adapters/workflowStateAdapter";
 
 const RetrieveGraphStateAnnotation = Annotation.Root({
   input: Annotation<RetrieveRelevantMemoryInput>,
@@ -49,9 +50,22 @@ const retrieveGraph = new StateGraph(RetrieveGraphStateAnnotation)
 
 const compiledRetrieveGraph = retrieveGraph.compile();
 
+function buildWorkflowKey(input: RetrieveRelevantMemoryInput): string {
+  const workspace = input.workspace ?? "default";
+  const project = input.project ?? "default";
+  const thread = input.threadId ?? "default";
+  return `retrieve:${input.userId}:${workspace}:${project}:${thread}`;
+}
+
 export async function runRetrieveFlowLangGraph(
   input: RetrieveRelevantMemoryInput,
 ): Promise<RetrieveRelevantMemoryResult> {
+  const stateAdapter = getWorkflowStateAdapter();
+  const workflowKey = buildWorkflowKey(input);
+  const previousCheckpoint = await stateAdapter.loadCheckpoint({
+    key: workflowKey,
+  });
+
   const result = await compiledRetrieveGraph.invoke({
     input,
     retrieval: null,
@@ -59,8 +73,20 @@ export async function runRetrieveFlowLangGraph(
     debug: [],
   });
 
-  return {
+  const response: RetrieveRelevantMemoryResult = {
     memories: result.ranked,
     debug: result.debug,
   };
+
+  await stateAdapter.saveCheckpoint({
+    key: workflowKey,
+    state: {
+      updatedAt: new Date().toISOString(),
+      input,
+      previousCheckpoint,
+      result: response,
+    },
+  });
+
+  return response;
 }

@@ -113,7 +113,8 @@ describe("Memory retrieval weight config contract", () => {
       });
 
     expect(baseline.status).toBe(200);
-    expect(baseline.body.memories[0]?.id).toBe("sem-high");
+    expect(baseline.body).toHaveProperty("ok", true);
+    expect(baseline.body.data.memories[0]?.id).toBe("sem-high");
 
     const patchRes = await request(app)
       .patch("/api/memory/config/retrieval-weights")
@@ -143,6 +144,7 @@ describe("Memory retrieval weight config contract", () => {
       });
 
     expect(weighted.status).toBe(200);
-    expect(weighted.body.memories[0]?.id).toBe("imp-high");
+    expect(weighted.body).toHaveProperty("ok", true);
+    expect(weighted.body.data.memories[0]?.id).toBe("imp-high");
   });
 });

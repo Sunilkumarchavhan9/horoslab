@@ -5,6 +5,9 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   MEM0_API_KEY: z.string().min(1).optional(),
+  SUPERMEMORY_API_KEY: z.string().min(1).optional(),
+  SUPERMEMORY_BASE_URL: z.string().url().optional(),
+  SUPERMEMORY_PROJECT: z.string().min(1).optional(),
   JWT_SECRET: z.string().min(16),
   JWT_ISSUER: z.string().min(1).default("memoryos"),
   JWT_AUDIENCE: z.string().min(1).default("memoryos-api"),
@@ -15,6 +18,9 @@ export interface AppEnv {
   nodeEnv: "development" | "test" | "production";
   port: number;
   mem0ApiKey?: string;
+  supermemoryApiKey?: string;
+  supermemoryBaseUrl?: string;
+  supermemoryProject?: string;
   jwtSecret: string;
   jwtIssuer: string;
   jwtAudience: string;
@@ -47,6 +53,9 @@ export function loadEnvConfig(): AppEnv {
     nodeEnv: data.NODE_ENV,
     port: data.PORT,
     mem0ApiKey: data.MEM0_API_KEY,
+    supermemoryApiKey: data.SUPERMEMORY_API_KEY,
+    supermemoryBaseUrl: data.SUPERMEMORY_BASE_URL,
+    supermemoryProject: data.SUPERMEMORY_PROJECT,
     jwtSecret: data.JWT_SECRET,
     jwtIssuer: data.JWT_ISSUER,
     jwtAudience: data.JWT_AUDIENCE,
@@ -60,4 +69,3 @@ export function loadEnvConfig(): AppEnv {
 export function __resetEnvCacheForTests(): void {
   cachedEnv = null;
 }
-

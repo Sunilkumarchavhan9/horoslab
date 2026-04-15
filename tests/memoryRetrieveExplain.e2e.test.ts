@@ -94,16 +94,17 @@ describe("Memory Retrieve Explain E2E", () => {
       .set(await headersFor(userId));
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("intent");
-    expect(res.body).toHaveProperty("weightsUsed");
-    expect(res.body).toHaveProperty("ranked");
-    expect(res.body).toHaveProperty("whyTop1");
-    expect(typeof res.body.whyTop1).toBe("string");
-    expect((res.body.whyTop1 as string).length).toBeGreaterThan(0);
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body).toHaveProperty("data.intent");
+    expect(res.body).toHaveProperty("data.weightsUsed");
+    expect(res.body).toHaveProperty("data.ranked");
+    expect(res.body).toHaveProperty("data.whyTop1");
+    expect(typeof res.body.data.whyTop1).toBe("string");
+    expect((res.body.data.whyTop1 as string).length).toBeGreaterThan(0);
 
-    expect(Array.isArray(res.body.ranked)).toBe(true);
-    expect(res.body.ranked.length).toBeGreaterThan(0);
-    expect(res.body.ranked[0]).toHaveProperty("finalScore");
-    expect(typeof res.body.ranked[0].finalScore).toBe("number");
+    expect(Array.isArray(res.body.data.ranked)).toBe(true);
+    expect(res.body.data.ranked.length).toBeGreaterThan(0);
+    expect(res.body.data.ranked[0]).toHaveProperty("finalScore");
+    expect(typeof res.body.data.ranked[0].finalScore).toBe("number");
   });
 });

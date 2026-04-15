@@ -9,7 +9,13 @@ export const MEMORY_TYPES = [
 
 export type MemoryType = (typeof MEMORY_TYPES)[number];
 
-export const MEMORY_STATUS = ["active", "archived", "merged"] as const;
+export const MEMORY_STATUS = [
+  "active",
+  "stale",
+  "contradicted",
+  "archived",
+  "merged",
+] as const;
 export type MemoryStatus = (typeof MEMORY_STATUS)[number];
 
 export const MEMORY_SOURCE = ["chat", "system", "import"] as const;
@@ -58,6 +64,8 @@ export const TIMELINE_EVENT_TYPES = [
   "memory_created",
   "memory_updated",
   "memory_merged",
+  "memory_stale",
+  "memory_contradicted",
   "memory_archived",
   "memory_evolved",
 ] as const;

@@ -5,6 +5,7 @@ import { makeToken } from "./helpers/authToken";
 const mocks = vi.hoisted(() => ({
   runIngestFlowLangGraph: vi.fn(),
   retrieveRelevantMemory: vi.fn(),
+  analyzeRetrieval: vi.fn(),
   listRevisionEvents: vi.fn(),
 }));
 
@@ -14,6 +15,7 @@ vi.mock("@/lib/workflows/ingestGraphLangGraph", () => ({
 
 vi.mock("@/lib/memory/retrieveRelevantMemory", () => ({
   retrieveRelevantMemory: mocks.retrieveRelevantMemory,
+  analyzeRetrieval: mocks.analyzeRetrieval,
 }));
 
 vi.mock("@/lib/memory/revisionMemory", () => ({
@@ -32,6 +34,7 @@ describe("Memory API Route Contracts", () => {
   beforeEach(async () => {
     mocks.runIngestFlowLangGraph.mockReset();
     mocks.retrieveRelevantMemory.mockReset();
+    mocks.analyzeRetrieval.mockReset();
     mocks.listRevisionEvents.mockReset();
     authHeader = `Bearer ${await makeToken(authUserId)}`;
   });
@@ -90,8 +93,12 @@ describe("Memory API Route Contracts", () => {
       .send({ question: "" });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("error", "Invalid request body");
-    expect(res.body).toHaveProperty("details");
+    expect(res.body).toHaveProperty("ok", false);
+    expect(res.body).toHaveProperty("error.code", "BAD_REQUEST");
+    expect(res.body).toHaveProperty("error.message", "Invalid request body");
+    expect(res.body).toHaveProperty("error.details");
+    expect(res.body).toHaveProperty("meta.requestId");
+    expect(res.body).toHaveProperty("meta.latencyMs");
   });
 
   it("returns 200 with expected retrieve response keys", async () => {
@@ -110,8 +117,11 @@ describe("Memory API Route Contracts", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("memories");
-    expect(res.body).toHaveProperty("debug");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body).toHaveProperty("data.memories");
+    expect(res.body).toHaveProperty("data.debug");
+    expect(res.body).toHaveProperty("meta.requestId");
+    expect(res.body).toHaveProperty("meta.latencyMs");
     expect(mocks.retrieveRelevantMemory).toHaveBeenCalledWith({
       userId: authUserId,
       question: "what should I build next?",
@@ -134,6 +144,7 @@ describe("Memory API Route Contracts", () => {
       });
 
     expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("ok", true);
     expect(mocks.retrieveRelevantMemory).toHaveBeenCalledWith({
       userId: authUserId,
       question: "what should I build next?",

@@ -97,14 +97,15 @@ describe("Memory Continue E2E", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("nextActions");
-    expect(res.body).toHaveProperty("usedMemories");
-    expect(res.body).toHaveProperty("debug");
-    expect(Array.isArray(res.body.nextActions)).toBe(true);
-    expect(res.body.nextActions.length).toBeGreaterThan(0);
-    expect(res.body.debug.mode).toBe("build_next");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body).toHaveProperty("data.nextActions");
+    expect(res.body).toHaveProperty("data.usedMemories");
+    expect(res.body).toHaveProperty("data.debug");
+    expect(Array.isArray(res.body.data.nextActions)).toBe(true);
+    expect(res.body.data.nextActions.length).toBeGreaterThan(0);
+    expect(res.body.data.debug.mode).toBe("build_next");
     expect(
-      (res.body.nextActions as string[]).some((action) =>
+      (res.body.data.nextActions as string[]).some((action) =>
         action.includes("project thread"),
       ),
     ).toBe(true);
@@ -137,9 +138,10 @@ describe("Memory Continue E2E", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body.debug.mode).toBe("debug_next");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body.data.debug.mode).toBe("debug_next");
     expect(
-      (res.body.nextActions as string[]).some((action) =>
+      (res.body.data.nextActions as string[]).some((action) =>
         action.toLowerCase().includes("bug"),
       ),
     ).toBe(true);
@@ -172,9 +174,10 @@ describe("Memory Continue E2E", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body.debug.mode).toBe("learn_next");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body.data.debug.mode).toBe("learn_next");
     expect(
-      (res.body.nextActions as string[]).some((action) =>
+      (res.body.data.nextActions as string[]).some((action) =>
         action.toLowerCase().includes("study this next"),
       ),
     ).toBe(true);
@@ -208,7 +211,7 @@ describe("Memory Continue E2E", () => {
 
     expect(res.status).toBe(200);
 
-    const ids = (res.body.usedMemories as Array<{ id: string }>).map(
+    const ids = (res.body.data.usedMemories as Array<{ id: string }>).map(
       (memory) => memory.id,
     );
     const uniqueCount = new Set(ids).size;

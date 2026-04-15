@@ -4,7 +4,9 @@ import { upsertRecentMemory } from "./recentMemoryStore";
 import { recordRevisionEvent } from "./revisionMemory";
 import {
   recordMemoryArchivedEvent,
+  recordMemoryContradictedEvent,
   recordMemoryMergedEvent,
+  recordMemoryStaleEvent,
   recordMemoryUpdatedEvent,
 } from "./timelineMemory";
 import type { Memory, MemoryStatus, RevisionEvent, TimelineEvent } from "./types";
@@ -76,6 +78,14 @@ async function createStatusTimelineEvent(input: {
 
   if (input.nextStatus === "merged") {
     return recordMemoryMergedEvent(input.memory, input.reason);
+  }
+
+  if (input.nextStatus === "stale") {
+    return recordMemoryStaleEvent(input.memory, input.reason);
+  }
+
+  if (input.nextStatus === "contradicted") {
+    return recordMemoryContradictedEvent(input.memory, input.reason);
   }
 
   return recordMemoryUpdatedEvent(input.memory, input.reason);

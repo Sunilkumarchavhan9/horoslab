@@ -1,8 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 import { recordAppError } from "../observability/metrics";
 
-export function notFoundHandler(_req: Request, res: Response): void {
-  res.status(404).json({ error: "Route not found" });
+export function notFoundHandler(req: Request, res: Response): void {
+  res.status(404).json({
+    error: "Route not found",
+    requestId: req.requestId ?? "unknown",
+  });
 }
 
 export function errorHandler(
@@ -13,9 +16,19 @@ export function errorHandler(
 ): void {
   void next;
   recordAppError(`${req.baseUrl}${req.path}`);
-  const message = error instanceof Error ? error.message : "Unknown server error";
+  const requestId = req.requestId ?? "unknown";
+  const debugMessage = error instanceof Error ? error.message : "Unknown server error";
+
+  console.error(
+    `[error] path=${req.originalUrl} requestId=${requestId} message=${debugMessage}`,
+  );
+
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.status(500).json({
     error: "Internal Server Error",
-    message,
+    message: "Unexpected server error. Please retry or contact support with requestId.",
+    requestId,
+    ...(isProduction ? {} : { debugMessage }),
   });
 }

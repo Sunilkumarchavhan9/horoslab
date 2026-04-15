@@ -83,6 +83,11 @@ describe("Memory Explain Route Contract", () => {
         revisionCount: 0,
         stalenessDays: 2,
         stalenessBucket: "fresh",
+        lifecycle: {
+          latestEventType: "memory_stale",
+          latestReason: "Superseded by shipped milestone",
+          latestChangedAt: "2026-03-20T12:00:00.000Z",
+        },
       },
     });
 
@@ -100,6 +105,10 @@ describe("Memory Explain Route Contract", () => {
     expect(res.body.explanation).toHaveProperty("revisionCount");
     expect(res.body.explanation).toHaveProperty("stalenessDays");
     expect(res.body.explanation).toHaveProperty("stalenessBucket");
+    expect(res.body.explanation).toHaveProperty("lifecycle");
+    expect(res.body.explanation.lifecycle).toHaveProperty("latestEventType");
+    expect(res.body.explanation.lifecycle).toHaveProperty("latestReason");
+    expect(res.body.explanation.lifecycle).toHaveProperty("latestChangedAt");
     expect(mocks.explainMemory).toHaveBeenCalledWith({
       memoryId: "m1",
       userId: authUserId,

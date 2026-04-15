@@ -12,6 +12,7 @@ import {
   type IngestResult,
   type RejectedMemory,
 } from "./ingestGraph";
+import { getContextAdapter } from "../adapters/registry";
 import { persistAcceptedMemories } from "./ingestPersist";
 
 const IngestGraphStateAnnotation = Annotation.Root({
@@ -75,14 +76,48 @@ async function persistNode(
   };
 }
 
+async function ingestExternalContextNode(
+  state: IngestGraphState,
+): Promise<Partial<IngestGraphState>> {
+  if (state.acceptedMemories.length === 0) {
+    return {};
+  }
+
+  try {
+    await getContextAdapter().ingestContext({
+      userId: state.input.userId,
+      source: "memoryos_ingest",
+      ...(state.input.threadId ? { threadId: state.input.threadId } : {}),
+      payload: {
+        message: state.input.message,
+        acceptedMemories: state.acceptedMemories.map((memory) => ({
+          id: memory.id,
+          type: memory.type,
+          summary: memory.summary,
+          content: memory.content,
+          status: memory.status,
+          importanceScore: memory.importanceScore,
+          updatedAt: memory.updatedAt,
+        })),
+      },
+    });
+  } catch {
+    // External context enrichments should not make the core ingest flow fail.
+  }
+
+  return {};
+}
+
 const ingestGraph = new StateGraph(IngestGraphStateAnnotation)
   .addNode("extract", extractNode)
   .addNode("score", scoreNode)
   .addNode("persist", persistNode)
+  .addNode("ingestExternalContext", ingestExternalContextNode)
   .addEdge(START, "extract")
   .addEdge("extract", "score")
   .addEdge("score", "persist")
-  .addEdge("persist", END);
+  .addEdge("persist", "ingestExternalContext")
+  .addEdge("ingestExternalContext", END);
 
   
 const compiledIngestGraph = ingestGraph.compile();

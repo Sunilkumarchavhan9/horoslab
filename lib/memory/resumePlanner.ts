@@ -1,4 +1,5 @@
 import { retrieveRelevantMemory, type RankedMemory } from "./retrieveRelevantMemory";
+import type { ContinuityScope } from "../adapters/adapters";
 import type { MemoryType } from "./types";
 
 export interface ResumePlannerInput {
@@ -7,7 +8,12 @@ export interface ResumePlannerInput {
   question: string;
   topK?: number;
   includeArchived?: boolean;
+  previousCheckpoint?: Record<string, unknown> | null;
 }
+
+export interface ResumePlannerScopedInput
+  extends ResumePlannerInput,
+    Pick<ContinuityScope, "workspace" | "threadId"> {}
 
 export interface ResumeUsedMemory {
   id: string;
@@ -46,6 +52,11 @@ export interface ResumePlannerResult {
   };
 }
 
+type PreviousResumeContext = {
+  previousSummary?: string;
+  previousLastKnownState?: string;
+};
+
 function getMetadataSummary(memory: RankedMemory): string | undefined {
   const metadata = memory.metadata;
   if (!metadata || typeof metadata !== "object") return undefined;
@@ -67,10 +78,17 @@ function toUsedMemory(memory: RankedMemory): ResumeUsedMemory {
   };
 }
 
-function buildFallbackResult(input: ResumePlannerInput): ResumePlannerResult {
+function buildFallbackResult(
+  input: ResumePlannerInput,
+  previousContext?: PreviousResumeContext,
+): ResumePlannerResult {
   return {
-    summary: `No strong saved context found for ${input.project} yet.`,
-    lastKnownState: "No prior project progress memory was retrieved.",
+    summary:
+      previousContext?.previousSummary ??
+      `No strong saved context found for ${input.project} yet.`,
+    lastKnownState:
+      previousContext?.previousLastKnownState ??
+      "No prior project progress memory was retrieved.",
     openLoops: [
       `Capture your latest ${input.project} progress as a memory update.`,
       "Add one concrete milestone and one blocker.",
@@ -83,6 +101,7 @@ function buildFallbackResult(input: ResumePlannerInput): ResumePlannerResult {
     },
   };
 }
+
 
 function buildOpenLoopsFromUsedMemories(
   project: string,
@@ -98,19 +117,47 @@ function buildOpenLoopsFromUsedMemories(
   return loops.slice(0, 3);
 }
 
+function getPreviousResumeContext(
+  previousCheckpoint: Record<string, unknown> | null | undefined,
+): PreviousResumeContext {
+  if (!previousCheckpoint) {
+    return {};
+  }
+
+  const rawResult = previousCheckpoint.result;
+  if (!rawResult || typeof rawResult !== "object") {
+    return {};
+  }
+
+  const result = rawResult as Record<string, unknown>;
+
+  return {
+    previousSummary:
+      typeof result.summary === "string" ? result.summary : undefined,
+    previousLastKnownState:
+      typeof result.lastKnownState === "string"
+        ? result.lastKnownState
+        : undefined,
+  };
+}
+
 export async function planResume(
-  input: ResumePlannerInput,
+  input: ResumePlannerScopedInput,
 ): Promise<ResumePlannerResult> {
+  const previousContext = getPreviousResumeContext(input.previousCheckpoint);
   const retrieval = await retrieveRelevantMemory({
     userId: input.userId,
     question: `${input.project} ${input.question}`.trim(),
+    project: input.project,
     topK: input.topK ?? 5,
     includeArchived: input.includeArchived ?? false,
+    ...(input.workspace ? { workspace: input.workspace } : {}),
+    ...(input.threadId ? { threadId: input.threadId } : {}),
   });
 
   const usedMemories = retrieval.memories.map(toUsedMemory);
   if (usedMemories.length === 0) {
-    return buildFallbackResult(input);
+    return buildFallbackResult(input, previousContext);
   }
 
   const top = usedMemories[0];
@@ -118,8 +165,12 @@ export async function planResume(
   const topUpdatedAt = top.updatedAt ?? "unknown time";
 
   return {
-    summary: `You last worked on ${input.project} around this context: ${topAnchor}.`,
-    lastKnownState: `Top memory is ${top.memoryType ?? "general"} with score ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`,
+    summary: previousContext.previousSummary
+      ? `${previousContext.previousSummary} Latest retrieved context: ${topAnchor}.`
+      : `You last worked on ${input.project} around this context: ${topAnchor}.`,
+    lastKnownState: previousContext.previousLastKnownState
+      ? `${previousContext.previousLastKnownState} Refreshed with top memory ${top.memoryType ?? "general"} scored ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`
+      : `Top memory is ${top.memoryType ?? "general"} with score ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`,
     openLoops: buildOpenLoopsFromUsedMemories(input.project, usedMemories),
     recommendedNextStep: `Resume by executing one concrete task from: ${topAnchor}.`,
     usedMemories,
@@ -129,4 +180,3 @@ export async function planResume(
     },
   };
 }
-

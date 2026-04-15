@@ -7,6 +7,12 @@ export interface MemoryStoreSearchResult {
   metadata?: Record<string, unknown>;
 }
 
+export interface ContinuityScope {
+  workspace?: string;
+  project?: string;
+  threadId?: string;
+}
+
 export interface MemoryStoreAdapter {
   saveMemory(input: { memory: Memory }): Promise<{ id: string }>;
   searchMemory(input: {
@@ -22,12 +28,20 @@ export interface ContextAdapter {
     userId: string;
     source: string;
     payload: unknown;
-  }): Promise<void>;
+  } & ContinuityScope): Promise<void>;
   searchContext(input: {
     userId: string;
     query: string;
     topK?: number;
-  }): Promise<Array<Record<string, unknown>>>;
+  } & ContinuityScope): Promise<ContextSearchResult[]>;
+}
+
+export interface ContextSearchResult {
+  id: string;
+  score?: number;
+  content?: string;
+  metadata?: Record<string, unknown>;
+  source?: string;
 }
 
 export interface WorkflowStateAdapter {

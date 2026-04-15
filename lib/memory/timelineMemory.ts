@@ -11,6 +11,20 @@ import {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const TIMELINE_STORE_PATH = path.join(DATA_DIR, "timeline-events.json");
+const LIFECYCLE_EVENT_TYPES = [
+  "memory_stale",
+  "memory_contradicted",
+  "memory_archived",
+  "memory_merged",
+] as const;
+
+export type LifecycleEventType = (typeof LIFECYCLE_EVENT_TYPES)[number];
+
+export type LifecycleSnapshot = {
+  eventType: LifecycleEventType;
+  reason: string;
+  changedAt: string;
+};
 
 function ensureTimelineStore(): void {
   if (!existsSync(DATA_DIR)) {
@@ -96,6 +110,20 @@ export function recordMemoryMergedEvent( memory: Memory, reason: string ): Promi
   return createTimelineEvent(memory, "memory_merged", reason);
 }
 
+export function recordMemoryStaleEvent(
+  memory: Memory,
+  reason: string,
+): Promise<TimelineEvent> {
+  return createTimelineEvent(memory, "memory_stale", reason);
+}
+
+export function recordMemoryContradictedEvent(
+  memory: Memory,
+  reason: string,
+): Promise<TimelineEvent> {
+  return createTimelineEvent(memory, "memory_contradicted", reason);
+}
+
 export function recordMemoryEvolvedEvent( memory: Memory, reason: string ): Promise<TimelineEvent> {
   return createTimelineEvent(memory, "memory_evolved", reason);
 }
@@ -127,4 +155,26 @@ export function listTimelineEvents(userId?: string): TimelineEvent[] {
 
   return timelineStore.filter((event) => event.userId === userId);
 }
-    
+
+export function getLatestLifecycleSnapshot(
+  events: TimelineEvent[],
+): LifecycleSnapshot | null {
+  const latest = events
+    .filter((event): event is TimelineEvent & { eventType: LifecycleEventType } =>
+      (LIFECYCLE_EVENT_TYPES as readonly string[]).includes(event.eventType),
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )[0];
+
+  if (!latest) {
+    return null;
+  }
+
+  return {
+    eventType: latest.eventType,
+    reason: latest.reason,
+    changedAt: latest.timestamp,
+  };
+}

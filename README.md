@@ -13,6 +13,8 @@ This backend focuses on long-term memory behavior for developer workflows:
 ## API Docs
 
 - Full API reference: [docs/memory-api.md](./docs/memory-api.md)
+- MCP HTTP reference: [docs/mcp-api.md](./docs/mcp-api.md)
+- Design partner onboarding: [docs/design-partner-onboarding.md](./docs/design-partner-onboarding.md)
 - Postman collection: [docs/postman/MemoryOS.postman_collection.json](./docs/postman/MemoryOS.postman_collection.json)
 
 ## What It Does
@@ -34,6 +36,8 @@ The current backend supports:
 - `GET /api/memory/system/health`
 - `GET /api/memory/mvp/status`
 - `GET /api/memory/retrieve/explain`
+- `GET /api/mcp/tools`
+- `POST /api/mcp/invoke`
 - `GET /api/metrics`
 
 Versioned compatibility endpoints are also available under:

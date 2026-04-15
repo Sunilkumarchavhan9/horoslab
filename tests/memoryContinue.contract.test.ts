@@ -38,8 +38,12 @@ describe("Memory Continue Route Contract", () => {
       .send({ question: "" });
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("error", "Invalid request body");
-    expect(res.body).toHaveProperty("details");
+    expect(res.body).toHaveProperty("ok", false);
+    expect(res.body).toHaveProperty("error.code", "BAD_REQUEST");
+    expect(res.body).toHaveProperty("error.message", "Invalid request body");
+    expect(res.body).toHaveProperty("error.details");
+    expect(res.body).toHaveProperty("meta.requestId");
+    expect(res.body).toHaveProperty("meta.latencyMs");
     expect(mocks.planContinuity).not.toHaveBeenCalled();
   });
 
@@ -61,11 +65,14 @@ describe("Memory Continue Route Contract", () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("nextActions");
-    expect(res.body).toHaveProperty("usedMemories");
-    expect(res.body).toHaveProperty("debug");
-    expect(res.body.debug).toHaveProperty("mode");
-    expect(res.body.debug).toHaveProperty("retrieval");
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body).toHaveProperty("data.nextActions");
+    expect(res.body).toHaveProperty("data.usedMemories");
+    expect(res.body).toHaveProperty("data.debug");
+    expect(res.body).toHaveProperty("data.debug.mode");
+    expect(res.body).toHaveProperty("data.debug.retrieval");
+    expect(res.body).toHaveProperty("meta.requestId");
+    expect(res.body).toHaveProperty("meta.latencyMs");
     expect(mocks.planContinuity).toHaveBeenCalledWith({
       userId: authUserId,
       question: "what should I do next on MemoryOS?",
@@ -74,5 +81,36 @@ describe("Memory Continue Route Contract", () => {
       includeArchived: false,
     });
   });
-});
 
+  it("forwards workspace/project/threadId dimensions to continue flow", async () => {
+    mocks.planContinuity.mockResolvedValue({
+      nextActions: ["Continue this project thread: User is building MemoryOS"],
+      usedMemories: [],
+      debug: { mode: "build_next", retrieval: [] },
+    });
+
+    const res = await request(app)
+      .post("/api/memory/continue")
+      .set("authorization", authHeader)
+      .send({
+        question: "continue memoryos work",
+        mode: "build_next",
+        workspace: "ws-alpha",
+        project: "memoryos",
+        threadId: "thread-42",
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("ok", true);
+    expect(mocks.planContinuity).toHaveBeenCalledWith({
+      userId: authUserId,
+      question: "continue memoryos work",
+      mode: "build_next",
+      workspace: "ws-alpha",
+      project: "memoryos",
+      threadId: "thread-42",
+      topK: undefined,
+      includeArchived: undefined,
+    });
+  });
+});
