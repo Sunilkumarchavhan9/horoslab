@@ -43,3 +43,5 @@ jobs:
       - name: Baseline compare
         run: bun run eval:compare
 
+      - name: Benchmark report gate
+        run: bun run eval:benchmark

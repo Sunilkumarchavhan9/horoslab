@@ -10,6 +10,7 @@
     "start:next": "next start",
     "token": "tsx scripts/make-token.ts",
     "eval:retrieval": "tsx scripts/eval-retrieval.ts",
+    "eval:benchmark": "tsx scripts/eval-benchmark.ts",
     "eval:compare": "tsx scripts/eval-compare.ts",
     "tune:retrieval": "tsx scripts/tune-retrieval.ts",
     "tune:apply": "tsx scripts/write-best-config.ts",

@@ -33,6 +33,8 @@
 /data/eval/*
 !/data/eval/best-config.json
 !/data/eval/baseline-report.json
+!/data/eval/benchmark-cases.json
+/data/eval/benchmark-report.json
 
 # debug
 npm-debug.log*

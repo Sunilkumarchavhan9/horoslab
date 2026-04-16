@@ -1,0 +1,162 @@
+[
+  {
+    "id": "retrieve-build-next-memoryos",
+    "type": "retrieve",
+    "userId": "u_benchmark_retrieve_1",
+    "seedMemories": [
+      {
+        "text": "I am building MemoryOS",
+        "expectedType": "project"
+      },
+      {
+        "text": "I am learning transformers",
+        "expectedType": "learning"
+      },
+      {
+        "text": "I prefer TypeScript",
+        "expectedType": "preference"
+      }
+    ],
+    "input": {
+      "question": "what should I build next?"
+    },
+    "expected": {
+      "requiredTypes": ["project", "learning", "preference"],
+      "intent": "build_next"
+    }
+  },
+  {
+    "id": "retrieve-bug-recall-websocket",
+    "type": "retrieve",
+    "userId": "u_benchmark_retrieve_2",
+    "seedMemories": [
+      {
+        "text": "I fixed websocket reconnection failures",
+        "expectedType": "episodic"
+      },
+      {
+        "text": "I am building realtime backend services",
+        "expectedType": "project"
+      }
+    ],
+    "input": {
+      "question": "have I fixed something like this issue before?"
+    },
+    "expected": {
+      "requiredTypes": ["episodic", "project"],
+      "intent": "bug_recall"
+    }
+  },
+  {
+    "id": "retrieve-resume-memoryos",
+    "type": "retrieve",
+    "userId": "u_benchmark_retrieve_3",
+    "seedMemories": [
+      {
+        "text": "I am building MemoryOS",
+        "expectedType": "project"
+      },
+      {
+        "text": "I shipped JWT auth",
+        "expectedType": "episodic"
+      },
+      {
+        "text": "I added continuity API",
+        "expectedType": "episodic"
+      }
+    ],
+    "input": {
+      "question": "where did I leave off in MemoryOS?"
+    },
+    "expected": {
+      "requiredTypes": ["project", "episodic"],
+      "intent": "resume_project"
+    }
+  },
+  {
+    "id": "resume-handoff-context",
+    "type": "resume",
+    "userId": "u_benchmark_resume_1",
+    "seedMemories": [
+      {
+        "text": "I am building MemoryOS and currently working on the trust layer",
+        "expectedType": "project"
+      },
+      {
+        "text": "I need to finish the route tests for MemoryOS",
+        "expectedType": "episodic"
+      }
+    ],
+    "input": {
+      "project": "memoryos",
+      "question": "where did I leave off?"
+    },
+    "expected": {
+      "mustMention": ["trust layer", "route tests"]
+    }
+  },
+  {
+    "id": "resume-debug-workstream",
+    "type": "resume",
+    "userId": "u_benchmark_resume_2",
+    "seedMemories": [
+      {
+        "text": "I am building MemoryOS and debugging retrieval diagnostics ranking",
+        "expectedType": "project"
+      },
+      {
+        "text": "I need to finish the why-not-retrieved endpoint in MemoryOS",
+        "expectedType": "episodic"
+      }
+    ],
+    "input": {
+      "project": "memoryos",
+      "question": "help me resume this debug work"
+    },
+    "expected": {
+      "mustMention": ["retrieval diagnostics", "why-not-retrieved"]
+    }
+  },
+  {
+    "id": "contradiction-language-preference",
+    "type": "contradiction",
+    "userId": "u_benchmark_contradiction_1",
+    "seedMemories": [
+      {
+        "text": "I prefer TypeScript over Python",
+        "expectedType": "preference"
+      },
+      {
+        "text": "I prefer Python for data pipelines",
+        "expectedType": "preference"
+      }
+    ],
+    "input": {
+      "question": "what stack fits me now?"
+    },
+    "expected": {
+      "lifecycleStates": ["active", "stale", "contradicted"]
+    }
+  },
+  {
+    "id": "contradiction-project-direction",
+    "type": "contradiction",
+    "userId": "u_benchmark_contradiction_2",
+    "seedMemories": [
+      {
+        "text": "I am building a legacy monolith",
+        "expectedType": "project"
+      },
+      {
+        "text": "I am building MemoryOS v2",
+        "expectedType": "project"
+      }
+    ],
+    "input": {
+      "question": "what should I build next for MemoryOS?"
+    },
+    "expected": {
+      "preferFreshMemory": "MemoryOS v2"
+    }
+  }
+]
