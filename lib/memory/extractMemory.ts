@@ -75,6 +75,16 @@ const RULES: Rule[] = [
   },
   {
     type: "project",
+    regex: /\bcurrently\s+working\s+on\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User is currently working on ${m[1].trim()}`,
+    toSummary: (m) => `Working on ${m[1].trim()}`,
+    toDeveloperSignals: (m) => ({
+      projectArea: normalizeSignalTokens(m[1]),
+      goal: normalizeSignalTokens(`finish ${m[1].trim()}`),
+    }),
+  },
+  {
+    type: "project",
     regex: /\bI\s+shipped\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User shipped ${m[1].trim()}`,
     toSummary: (m) => `Shipped ${m[1].trim()}`,
@@ -128,7 +138,21 @@ const RULES: Rule[] = [
   },
   {
     type: "episodic",
+    regex: /\bdebugging\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User is debugging ${m[1].trim()}`,
+    toSummary: (m) => `Debugging: ${m[1].trim()}`,
+    toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "episodic",
     regex: /\bI(?:'m| am)\s+fixing\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User is fixing ${m[1].trim()}`,
+    toSummary: (m) => `Fixing: ${m[1].trim()}`,
+    toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "episodic",
+    regex: /\bfixing\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User is fixing ${m[1].trim()}`,
     toSummary: (m) => `Fixing: ${m[1].trim()}`,
     toDeveloperSignals: (m) => buildBugSignals(m[1]),
@@ -153,6 +177,16 @@ const RULES: Rule[] = [
     toContent: (m) => `User debugged ${m[1].trim()}`,
     toSummary: (m) => `Debugged: ${m[1].trim()}`,
     toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "episodic",
+    regex: /\bI\s+need\s+to\s+finish\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `User needs to finish ${m[1].trim()}`,
+    toSummary: (m) => `Need to finish: ${m[1].trim()}`,
+    toDeveloperSignals: (m) => ({
+      goal: normalizeSignalTokens(`finish ${m[1].trim()}`),
+      projectArea: normalizeSignalTokens(m[1]),
+    }),
   },
 ];
 

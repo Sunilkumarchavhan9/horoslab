@@ -257,12 +257,30 @@ function getLogicalMemoryKey(result: MemoryStoreSearchResult): string {
 }
 
 function tokenize(text: string): Set<string> {
+  const normalizeToken = (token: string): string => {
+    let normalized = token.toLowerCase().trim();
+
+    if (normalized.endsWith("ing") && normalized.length > 5) {
+      normalized = normalized.slice(0, -3);
+    } else if (normalized.endsWith("ed") && normalized.length > 4) {
+      normalized = normalized.slice(0, -2);
+    } else if (normalized.endsWith("s") && normalized.length > 3) {
+      normalized = normalized.slice(0, -1);
+    }
+
+    if (normalized.endsWith("ic") && normalized.length > 4) {
+      normalized = normalized.slice(0, -2);
+    }
+
+    return normalized;
+  };
+
   return new Set(
     text
       .toLowerCase()
       .replace(/[^\w\s]/g, " ")
       .split(/\s+/)
-      .map((token) => token.trim())
+      .map((token) => normalizeToken(token))
       .filter(Boolean),
   );
 }
