@@ -22,8 +22,10 @@ This backend focuses on long-term memory behavior for developer workflows:
 The current backend supports:
 - `POST /api/memory/process`
 - `POST /api/memory/retrieve`
+- `POST /api/memory/handoff`
 - `POST /api/memory/continue`
 - `POST /api/memory/resume`
+- `POST /api/memory/retrieve/debug`
 - `GET /api/memory/explain`
 - `GET /api/memory/list`
 - `GET /api/memory/:memoryId`
@@ -36,6 +38,8 @@ The current backend supports:
 - `GET /api/memory/system/health`
 - `GET /api/memory/mvp/status`
 - `GET /api/memory/retrieve/explain`
+- `GET /api/memory/requests`
+- `GET /api/memory/benchmark/report`
 - `GET /api/mcp/tools`
 - `POST /api/mcp/invoke`
 - `GET /api/metrics`
@@ -188,6 +192,27 @@ curl -X POST "http://localhost:3001/api/memory/resume" \
   }'
 ```
 
+6. Generate a handoff:
+
+```bash
+curl -X POST "http://localhost:3001/api/memory/handoff" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+    "project": "MemoryOS",
+    "question": "create a handoff for another developer",
+    "topK": 5
+  }'
+```
+
+7. (Optional) load live data in developer console:
+
+```js
+localStorage.setItem("memoryos.apiToken", "<JWT_TOKEN>");
+```
+
+Then open `/developer-console`.
+
 ## Local Development
 
 Install dependencies:
@@ -291,6 +316,20 @@ curl -X GET "http://localhost:3001/api/memory/explain?memoryId=<MEMORY_ID>" \
   -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
+Get request history:
+
+```bash
+curl -X GET "http://localhost:3001/api/memory/requests?limit=50&range=all" \
+  -H "Authorization: Bearer <JWT_TOKEN>"
+```
+
+Get benchmark report:
+
+```bash
+curl -X GET "http://localhost:3001/api/memory/benchmark/report" \
+  -H "Authorization: Bearer <JWT_TOKEN>"
+```
+
 ## Environment
 
 Create `.env` with:
@@ -326,3 +365,40 @@ Current automated test verifies:
 - retrieval
 - timeline event creation
 - revision diff recording
+
+## Canopy 48-Hour Proof Pack
+
+Use this checklist for your Ship-It submission:
+
+1. Live demo (60-90 sec):
+   - show `process -> retrieve -> resume -> handoff` in the developer console.
+2. Benchmark proof:
+   - run `bun run eval:benchmark`
+   - attach `data/eval/benchmark-report.json`
+3. Requests proof:
+   - show `/api/memory/requests` populated in console Requests page.
+4. Tester proof:
+   - collect 5 notes (what they tried, what worked, what broke) and one-line quote each.
+5. GitHub proof:
+   - push clean commits + updated docs/README.
+6. Public URL proof:
+   - include backend + console URL screenshot in Ship-It.
+
+Detailed runbook:
+- [docs/canopy-48h-proof-pack.md](./docs/canopy-48h-proof-pack.md)
+- [docs/canopy-tester-notes-template.md](./docs/canopy-tester-notes-template.md)
+- [docs/canopy-public-beta-checklist.md](./docs/canopy-public-beta-checklist.md)
+
+### 2-Minute Quickstart (Design Partner)
+
+```bash
+bun install
+bun run dev
+bun run token -- partner_demo_user
+```
+
+Use the generated token for the first 4 continuity calls:
+- `POST /api/memory/process`
+- `POST /api/memory/retrieve`
+- `POST /api/memory/resume`
+- `POST /api/memory/handoff`

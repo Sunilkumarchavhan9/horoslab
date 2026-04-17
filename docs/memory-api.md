@@ -219,6 +219,36 @@ Response `200`:
 }
 ```
 
+## Handoff Generation
+
+### `POST /api/memory/handoff`
+
+Body:
+
+```json
+{
+  "project": "MemoryOS",
+  "question": "create a handoff for another developer",
+  "topK": 5,
+  "includeArchived": false
+}
+```
+
+Response `200`:
+
+```json
+{
+  "handoffTitle": "MemoryOS continuity handoff",
+  "summary": "",
+  "lastKnownState": "",
+  "nextRecommendedAction": "",
+  "openLoops": [],
+  "keyDecisions": [],
+  "risks": [],
+  "usedMemories": []
+}
+```
+
 ## Explainability
 
 ### `GET /api/memory/explain?memoryId=<MEMORY_ID>`
@@ -434,6 +464,63 @@ Response `200`:
     "Best retrieval config is present and valid."
   ],
   "pending": []
+}
+```
+
+### `GET /api/memory/benchmark/report`
+
+Returns the latest benchmark artifact from `data/eval/benchmark-report.json`.
+
+Response `200`:
+
+```json
+{
+  "generatedAt": "2026-04-16T07:53:36.452Z",
+  "totalCases": 7,
+  "passedCases": 7,
+  "failedCases": 0,
+  "passRate": 100,
+  "kpis": {
+    "top3_retrieval_precision": 100,
+    "resume_success_rate": 100,
+    "contradiction_miss_rate": 0,
+    "wrong_merge_rate": null,
+    "p95_retrieve_latency": null
+  }
+}
+```
+
+Error `404`:
+
+```json
+{
+  "error": "Benchmark report not found",
+  "hint": "Run bun run eval:benchmark first"
+}
+```
+
+## Request History
+
+### `GET /api/memory/requests`
+
+Query params:
+- `limit` (default 100, max 400)
+- `type` (optional)
+- `status` (`Success` or `Error`, optional)
+- `range` (`1d`, `7d`, `30d`, `all`)
+
+Response `200`:
+
+```json
+{
+  "requests": [],
+  "count": 0,
+  "filters": {
+    "limit": 100,
+    "type": null,
+    "status": null,
+    "range": "all"
+  }
 }
 ```
 
