@@ -11,7 +11,7 @@ Ship one working beta proof (not full SaaS) that shows:
 
 ## Required Artifacts
 
-1. Live demo video (60-90 sec)
+1. Live demo video (60-90 sec) — https://www.youtube.com/watch?v=hM9znjbe_DY
 2. Benchmark artifact (`data/eval/benchmark-report.json`)
 3. Requests proof (real API calls in Requests page)
 4. 5 tester feedback notes (+ one-line quotes)

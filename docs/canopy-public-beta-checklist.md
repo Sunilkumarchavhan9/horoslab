@@ -37,7 +37,7 @@ Use this to upgrade from localhost proof to public proof before Ship-It.
 ## 5) Submission Attachments
 
 - [x] Public URL screenshot — see above
-- [x] 60-90 sec demo video — recorded 2026-04-17, covers process → retrieve → resume → handoff + console pages
+- [x] 60-90 sec demo video — https://www.youtube.com/watch?v=hM9znjbe_DY (recorded 2026-04-17, covers process → retrieve → resume → handoff + console pages)
 - [x] Benchmark JSON screenshot — `data/eval/benchmark-report.json` attached, recall@5 = 0.82
 - [x] 5 tester notes + quotes — see `docs/canopy-tester-notes-template.md`
 
