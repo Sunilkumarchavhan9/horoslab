@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RecentMemory {
+  userId    String @map("user_id")
+  memoryId  String @map("memory_id")
+  dataJson  String @map("data_json")
+  updatedAt String @map("updated_at")
+
+  @@id([userId, memoryId])
+  @@index([userId, updatedAt], map: "idx_recent_memories_user_updated")
+  @@map("recent_memories")
+}
+
+model TimelineEvent {
+  id          String  @id
+  userId      String  @map("user_id")
+  memoryId    String  @map("memory_id")
+  eventType   String  @map("event_type")
+  reason      String
+  timestamp   String
+  metadataJson String? @map("metadata_json")
+
+  @@index([userId, timestamp], map: "idx_timeline_user_ts")
+  @@map("timeline_events")
+}
+
+model RevisionEvent {
+  id        String @id
+  userId    String @map("user_id")
+  memoryId  String @map("memory_id")
+  version   Int
+  changedAt String @map("changed_at")
+  changedBy String @map("changed_by")
+  reason    String
+  changesJson String @map("changes_json")
+
+  @@index([memoryId, version], map: "idx_revision_memory_version")
+  @@index([userId, changedAt], map: "idx_revision_user_changed")
+  @@map("revision_events")
+}

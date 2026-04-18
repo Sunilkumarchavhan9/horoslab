@@ -239,6 +239,58 @@ Run tests:
 bun run test
 ```
 
+## Prisma Setup
+
+Prisma is configured for PostgreSQL.
+
+1. Add `DATABASE_URL` in `.env`:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/memoryos?schema=public"
+```
+
+2. Generate Prisma client:
+
+```bash
+npm run prisma:generate
+```
+
+3. Sync schema to DB (safe for local/dev Docker DB):
+
+```bash
+npm run prisma:push
+```
+
+Optional:
+
+```bash
+npm run prisma:studio
+```
+
+Prisma schema location: `prisma/schema.prisma` (provider: `postgresql`).
+
+## Docker Setup
+
+Build and run with Docker Compose (Postgres + app):
+
+```bash
+docker compose up -d --build
+```
+
+Stop:
+
+```bash
+docker compose down
+```
+
+The compose stack exposes:
+- API: `http://localhost:3001`
+- Postgres: `localhost:5432`
+
+Volumes:
+- `memoryos_data` for app runtime files under `/app/data`
+- `postgres_data` for PostgreSQL persistence
+
 ## Express API Run and cURL Examples
 
 Start the Express API:
@@ -352,6 +404,7 @@ Implemented:
 
 Production hardening included:
 - runtime store backend switch (`MEMORY_STORE_BACKEND=json|sqlite`)
+- Prisma + PostgreSQL setup for production data layer (`DATABASE_URL`)
 - Prometheus metrics endpoint (`/api/metrics`)
 - env validation at startup
 - release workflow (`.github/workflows/release.yml`)

@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: memoryos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: memoryos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d memoryos"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  memoryos-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: memoryos-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/memoryos?schema=public
+      - MEMORY_STORE_BACKEND=sqlite
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - memoryos_data:/app/data
+
+volumes:
+  memoryos_data:
+  postgres_data:
