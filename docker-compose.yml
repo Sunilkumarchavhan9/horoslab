@@ -30,7 +30,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/memoryos?schema=public
-      - MEMORY_STORE_BACKEND=sqlite
+      - MEMORY_STORE_BACKEND=postgres
     depends_on:
       postgres:
         condition: service_healthy

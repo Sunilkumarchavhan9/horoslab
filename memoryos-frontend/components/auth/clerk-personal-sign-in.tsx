@@ -1,8 +1,11 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useSignIn } from "@clerk/nextjs/legacy";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { warmMemoryTokenBridge } from "@/lib/memory-token";
 
 type ClerkPersonalSignInProps = {
   redirectTo: "/personal-app";
@@ -67,7 +70,7 @@ function SocialButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[16px] border border-[#0a437f] bg-[linear-gradient(180deg,#083367_0%,#082a56_100%)] px-4 text-center text-[15px] font-semibold text-white transition hover:border-[#1661b0] hover:bg-[linear-gradient(180deg,#093874_0%,#0a2f62_100%)] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
+      className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] bg-[linear-gradient(180deg,#0a2ba7_0%,#092891_100%)] px-4 text-center text-[15px] font-semibold text-white transition hover:bg-[linear-gradient(180deg,#1135bd_0%,#0c2f9f_100%)] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
     >
       {children}
     </button>
@@ -76,6 +79,8 @@ function SocialButton({
 
 export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
   const { isLoaded, signIn } = useSignIn();
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
   const authReady = isLoaded && Boolean(signIn);
   const [email, setEmail] = useState("");
   const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
@@ -113,7 +118,24 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
 
   function getErrorMessage(error: unknown) {
     if (isClerkAPIResponseError(error) && error.errors.length > 0) {
-      return error.errors[0]?.longMessage || error.errors[0]?.message || "Authentication failed.";
+      const firstError = error.errors[0];
+      const code = (firstError?.code ?? "").toLowerCase();
+      const longMessage = firstError?.longMessage ?? "";
+      const shortMessage = firstError?.message ?? "";
+
+      if (
+        code.includes("oauth") ||
+        longMessage.toLowerCase().includes("oauth") ||
+        longMessage.toLowerCase().includes("social")
+      ) {
+        return "Google/GitHub is not fully configured in Clerk for this app. Enable both social providers and allow localhost:3000 redirect URLs in Clerk dashboard.";
+      }
+
+      if (code.includes("dev_browser_unauthenticated")) {
+        return "Clerk development browser session is not trusted yet. Open this app in a clean browser tab, disable shields/ad blockers for localhost, then retry.";
+      }
+
+      return longMessage || shortMessage || "Authentication failed.";
     }
 
     if (error instanceof Error && error.message) {
@@ -123,10 +145,43 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
     return "Authentication failed. Check the Clerk provider setup and try again.";
   }
 
+  function isAlreadySignedInError(error: unknown): boolean {
+    if (isClerkAPIResponseError(error)) {
+      return error.errors.some((entry) => {
+        const code = (entry.code ?? "").toLocaleLowerCase();
+        const message = `${entry.longMessage ?? ""} ${entry.message ?? ""}`.toLocaleLowerCase();
+        return code.includes("session") || message.includes("already signed in");
+      });
+    }
+    if (error instanceof Error) {
+      return error.message.toLowerCase().includes("already signed in");
+    }
+    return false;
+  }
+
+  const redirectSignedInUser = useCallback(async () => {
+    try {
+      await warmMemoryTokenBridge();
+    } catch {
+      // If token bridge fails temporarily, still move signed-in users forward.
+    }
+    router.replace(redirectTo);
+  }, [redirectTo, router]);
+
+  useEffect(() => {
+    if (isSignedIn) {
+      void redirectSignedInUser();
+    }
+  }, [isSignedIn, redirectSignedInUser]);
+
   async function handleOauth(strategy: "oauth_google" | "oauth_github", completeUrl: string) {
     if (!authReady || !signIn) {
       setStatusMessage(AUTH_LOADING_MESSAGE);
       setStatusTone("info");
+      return;
+    }
+    if (isSignedIn) {
+      await redirectSignedInUser();
       return;
     }
 
@@ -136,10 +191,15 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
     try {
       await signIn.authenticateWithRedirect({
         strategy,
-        redirectUrl: buildAbsoluteUrl("/sso-callback"),
-        redirectUrlComplete: buildAbsoluteUrl(completeUrl),
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: completeUrl,
       });
     } catch (error) {
+      if (isAlreadySignedInError(error)) {
+        await redirectSignedInUser();
+        return;
+      }
+      console.error("[MemoryOS Auth] Personal OAuth sign-in failed", error);
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -191,6 +251,10 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
       setStatusMessage(`Magic link sent to ${trimmedEmail}. Open it in this browser to finish sign-in.`);
       setStatusTone("success");
     } catch (error) {
+      if (isAlreadySignedInError(error)) {
+        await redirectSignedInUser();
+        return;
+      }
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -234,27 +298,34 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
 
       <input
         type="email"
+        suppressHydrationWarning
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         placeholder="your@email.com"
-        className="h-[54px] w-full rounded-[16px] border border-white/8 bg-[#09111c] px-4 text-[16px] text-white outline-none transition placeholder:text-[#667085] focus:border-[#215eb0] sm:h-[56px] sm:px-5 sm:text-[17px]"
+        className="h-[54px] w-full rounded-[5px] bg-[#181c22] px-4 text-[16px] text-white outline-none transition placeholder:text-[#8892a2] focus:ring-2 focus:ring-[#314bf4] sm:h-[56px] sm:px-5 sm:text-[17px]"
       />
 
       <button
         type="button"
         onClick={handleMagicLink}
         disabled={pendingStrategy !== null || !authReady}
-        className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[16px] border border-[#6d90ff] bg-[linear-gradient(180deg,#4782ff_0%,#4d53ff_18%,#3324ff_100%)] px-4 text-center text-[15px] font-semibold text-white shadow-[0_18px_40px_rgba(54,88,255,0.4)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
+        className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] bg-[linear-gradient(180deg,#314bf4_0%,#0a2ba7_100%)] px-4 text-center text-[15px] font-semibold text-white shadow-[0_18px_40px_rgba(49,75,244,0.36)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
       >
         <BrandMark />
         <span>
           {!authReady
             ? "Preparing sign-in..."
             : pendingStrategy === "email"
-              ? "Sending magic link..."
-              : "Send magic link"}
+              ? "Logging in..."
+              : "Log in with MemoryOS"}
         </span>
       </button>
+
+      <div
+        id="clerk-captcha"
+        className="min-h-[70px] w-full"
+        aria-hidden="true"
+      />
 
       {statusMessage ? (
         <p

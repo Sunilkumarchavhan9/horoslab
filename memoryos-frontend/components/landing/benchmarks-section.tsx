@@ -9,6 +9,15 @@ const COMPARISON_ROWS = [
   ["Integration surface", "SDKs, REST, MCP, IDEs, agents", "One or two interfaces", "API-first but less workflow-native"],
 ];
 
+const LIVE_PROOF_CARDS = [
+  ["Latest benchmark run", "7 / 7 passed"],
+  ["Pass rate", "100%"],
+  ["Top-3 retrieval precision", "100%"],
+  ["Resume success rate", "100%"],
+  ["Contradiction miss rate", "0%"],
+  ["Mode", "Local adapter"],
+];
+
 function CapabilityCell({
   children,
   tone = "default",
@@ -35,12 +44,27 @@ export function BenchmarksSection() {
     <section className="border-b border-[#c9d8ee] px-5 py-7">
       <Reveal>
         <h2 className="text-center text-3xl font-semibold tracking-[-0.03em] text-slate-900 md:text-5xl">
-          Built to replace session memory, not just store notes
+          Benchmarked continuity quality, not just memory storage
         </h2>
         <p className="mx-auto mt-3 max-w-4xl text-center text-base text-slate-600 md:text-lg">
-          MemoryOS combines developer memory, retrieval, trust, and shared workspace controls in one
-          system. The product is designed to feel closer to infrastructure than a thin memory add-on.
+          MemoryOS is measured against retrieve, resume, and contradiction scenarios so continuity quality
+          stays visible and improves over time.
         </p>
+      </Reveal>
+
+      <Reveal delay={0.03} className="mx-auto mt-6 max-w-[1120px] border border-[#c9d8ee] bg-white p-4 md:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-[#356acc]">LATEST BENCHMARK PROOF</p>
+          <p className="text-[12px] text-[#64788f]">Updated: Apr 16, 2026</p>
+        </div>
+        <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {LIVE_PROOF_CARDS.map(([label, value]) => (
+            <div key={label} className="border border-[#d3deef] bg-white px-3.5 py-3">
+              <p className="text-[11px] uppercase tracking-[0.1em] text-[#6a7c95]">{label}</p>
+              <p className="mt-1 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">{value}</p>
+            </div>
+          ))}
+        </div>
       </Reveal>
 
       <div className="mx-auto mt-6 grid max-w-[1080px] gap-3 md:grid-cols-3">

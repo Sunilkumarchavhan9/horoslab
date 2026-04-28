@@ -362,7 +362,9 @@ async function runContradictionCase(
   const seedMessages = extractSeedMessages(testCase);
   await seedCaseMemories(userId, seedMessages);
 
-  const statuses = getRecentMemories(userId).map((memory) => memory.status);
+  const statuses = (await getRecentMemories(userId)).map(
+    (memory) => memory.status,
+  );
   const expectedStates = Array.isArray(testCase.expected.lifecycleStates)
     ? testCase.expected.lifecycleStates.filter((item): item is string => typeof item === "string")
     : [];

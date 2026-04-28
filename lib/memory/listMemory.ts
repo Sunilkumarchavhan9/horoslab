@@ -1,5 +1,6 @@
 import type { MemoryStoreSearchResult } from "../adapters/adapters";
 import { getMemoryStoreAdapter } from "../adapters/registry";
+import { getRecentMemories } from "./recentMemoryStore";
 import { toInternalMemory } from "../workflows/ingestShared";
 import type { Memory, MemoryStatus, MemoryType } from "./types";
 
@@ -18,40 +19,57 @@ export interface ListMemoryResult {
 export async function listMemories(input: ListMemoryInput): Promise<ListMemoryResult> {
   const effectiveLimit = Math.min(Math.max(input.limit ?? 50, 1), 200);
 
-  const memoryStore = getMemoryStoreAdapter();
+  const localRecent = await getRecentMemories(input.userId);
 
-  const candidates = await memoryStore.searchMemory({
-    userId: input.userId,
-    query: "",
-    topK: 200,
-  });
+  // Base list source: local recent memories is always available for each user.
+  // This keeps /api/memory/list stable even if an external provider rejects empty queries.
+  const uniqueById = new Map<string, Memory>(
+    localRecent.map((memory) => [memory.id, memory]),
+  );
 
-  const mapped = candidates
-    .map((result) => ({
-      result,
-      memory: toInternalMemory(result, input.userId),
-    }))
-    .filter(
-      (item): item is { result: MemoryStoreSearchResult; memory: Memory } =>
-        item.memory !== null,
-    );
+  // Optional enrichment from provider search.
+  // Some providers reject empty queries; swallow provider errors and keep local results.
+  try {
+    const memoryStore = getMemoryStoreAdapter();
+    const candidates = await memoryStore.searchMemory({
+      userId: input.userId,
+      query: "recent memory context",
+      topK: 200,
+    });
 
-  const filtered = mapped.filter(({ result, memory }) => {
-    const ownerFromMetadata =
-      result.metadata &&
-      typeof result.metadata === "object" &&
-      typeof result.metadata.userId === "string"
-        ? result.metadata.userId
-        : result.metadata &&
-            typeof result.metadata === "object" &&
-            typeof result.metadata.user_id === "string"
-          ? result.metadata.user_id
-          : undefined;
+    const mapped = candidates
+      .map((result) => ({
+        result,
+        memory: toInternalMemory(result, input.userId),
+      }))
+      .filter(
+        (item): item is { result: MemoryStoreSearchResult; memory: Memory } =>
+          item.memory !== null,
+      );
 
-    if (ownerFromMetadata && ownerFromMetadata !== input.userId) {
-      return false;
+    for (const { result, memory } of mapped) {
+      const ownerFromMetadata =
+        result.metadata &&
+        typeof result.metadata === "object" &&
+        typeof result.metadata.userId === "string"
+          ? result.metadata.userId
+          : result.metadata &&
+              typeof result.metadata === "object" &&
+              typeof result.metadata.user_id === "string"
+            ? result.metadata.user_id
+            : undefined;
+
+      if (ownerFromMetadata && ownerFromMetadata !== input.userId) {
+        continue;
+      }
+
+      uniqueById.set(memory.id, memory);
     }
+  } catch {
+    // no-op: localRecent fallback remains the source of truth for list endpoint stability.
+  }
 
+  const filtered = Array.from(uniqueById.values()).filter((memory) => {
     if (input.status && memory.status !== input.status) {
       return false;
     }
@@ -62,16 +80,11 @@ export async function listMemories(input: ListMemoryInput): Promise<ListMemoryRe
 
     return true;
   });
-
-  const unique = Array.from(
-    new Map(filtered.map(({ memory }) => [memory.id, memory])).values(),
-  );
-
-  unique.sort(
+  filtered.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
 
-  const memories = unique.slice(0, effectiveLimit);
+  const memories = filtered.slice(0, effectiveLimit);
 
   return {
     memories,

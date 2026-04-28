@@ -2,6 +2,11 @@ import { existsSync, mkdirSync } from "fs";
 import path from "path";
 import Database from "better-sqlite3";
 import type { Memory, RevisionEvent, TimelineEvent } from "../memory/types";
+import {
+  getRuntimeStoreBackend,
+  isPostgresRuntimeStore,
+} from "./runtimeStoreBackend";
+import { prisma } from "./prismaClient";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "memoryos.db");
@@ -16,7 +21,7 @@ function safeParseJson<T>(raw: string, fallback: T): T {
   }
 }
 
-function ensureDb(): Database.Database {
+function ensureSqliteDb(): Database.Database {
   if (db) {
     return db;
   }
@@ -75,27 +80,181 @@ function ensureDb(): Database.Database {
   return db;
 }
 
-export function ensureRuntimeStoreDb(): void {
-  void ensureDb();
+function toTimelineEventFromDb(row: {
+  id: string;
+  user_id: string;
+  memory_id: string;
+  event_type: string;
+  reason: string;
+  timestamp: string;
+  metadata_json: string | null;
+}): TimelineEvent {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    memoryId: row.memory_id,
+    eventType: row.event_type as TimelineEvent["eventType"],
+    reason: row.reason,
+    timestamp: row.timestamp,
+    ...(row.metadata_json
+      ? {
+          metadata: safeParseJson<Record<string, string | number | boolean>>(
+            row.metadata_json,
+            {},
+          ),
+        }
+      : {}),
+  };
 }
 
-export function isRuntimeStoreDbHealthy(): boolean {
+function toTimelineEventFromPrisma(row: {
+  id: string;
+  userId: string;
+  memoryId: string;
+  eventType: string;
+  reason: string;
+  timestamp: string;
+  metadataJson: string | null;
+}): TimelineEvent {
+  return {
+    id: row.id,
+    userId: row.userId,
+    memoryId: row.memoryId,
+    eventType: row.eventType as TimelineEvent["eventType"],
+    reason: row.reason,
+    timestamp: row.timestamp,
+    ...(row.metadataJson
+      ? {
+          metadata: safeParseJson<Record<string, string | number | boolean>>(
+            row.metadataJson,
+            {},
+          ),
+        }
+      : {}),
+  };
+}
+
+function toRevisionEventFromDb(row: {
+  id: string;
+  user_id: string;
+  memory_id: string;
+  version: number;
+  changed_at: string;
+  changed_by: string;
+  reason: string;
+  changes_json: string;
+}): RevisionEvent {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    memoryId: row.memory_id,
+    version: row.version,
+    changedAt: row.changed_at,
+    changedBy: row.changed_by as RevisionEvent["changedBy"],
+    reason: row.reason,
+    changes: safeParseJson(row.changes_json, []),
+  };
+}
+
+function toRevisionEventFromPrisma(row: {
+  id: string;
+  userId: string;
+  memoryId: string;
+  version: number;
+  changedAt: string;
+  changedBy: string;
+  reason: string;
+  changesJson: string;
+}): RevisionEvent {
+  return {
+    id: row.id,
+    userId: row.userId,
+    memoryId: row.memoryId,
+    version: row.version,
+    changedAt: row.changedAt,
+    changedBy: row.changedBy as RevisionEvent["changedBy"],
+    reason: row.reason,
+    changes: safeParseJson(row.changesJson, []),
+  };
+}
+
+export async function ensureRuntimeStoreDb(): Promise<void> {
+  if (isPostgresRuntimeStore()) {
+    await prisma.$queryRaw`SELECT 1`;
+    return;
+  }
+
+  if (getRuntimeStoreBackend() === "sqlite") {
+    void ensureSqliteDb();
+  }
+}
+
+export async function isRuntimeStoreDbHealthy(): Promise<boolean> {
   try {
-    const database = ensureDb();
-    database.prepare("SELECT 1 AS ok").get();
-    return true;
+    if (isPostgresRuntimeStore()) {
+      await prisma.$queryRaw`SELECT 1`;
+      return true;
+    }
+
+    if (getRuntimeStoreBackend() === "sqlite") {
+      const database = ensureSqliteDb();
+      database.prepare("SELECT 1 AS ok").get();
+      return true;
+    }
+
+    return false;
   } catch {
     return false;
   }
 }
 
-export function upsertRecentMemoryInDb(
+export async function upsertRecentMemoryInDb(
   memory: Memory,
   maxRecentPerUser: number,
-): void {
-  const database = ensureDb();
+): Promise<void> {
   const nowIso = memory.updatedAt || new Date().toISOString();
 
+  if (isPostgresRuntimeStore()) {
+    await prisma.recentMemory.upsert({
+      where: {
+        userId_memoryId: {
+          userId: memory.userId,
+          memoryId: memory.id,
+        },
+      },
+      create: {
+        userId: memory.userId,
+        memoryId: memory.id,
+        dataJson: JSON.stringify(memory),
+        updatedAt: nowIso,
+      },
+      update: {
+        dataJson: JSON.stringify(memory),
+        updatedAt: nowIso,
+      },
+    });
+
+    const keepRows = await prisma.recentMemory.findMany({
+      where: { userId: memory.userId },
+      orderBy: { updatedAt: "desc" },
+      take: maxRecentPerUser,
+      select: { memoryId: true },
+    });
+
+    const keepIds = keepRows.map((row) => row.memoryId);
+
+    await prisma.recentMemory.deleteMany({
+      where: {
+        userId: memory.userId,
+        memoryId: {
+          notIn: keepIds,
+        },
+      },
+    });
+    return;
+  }
+
+  const database = ensureSqliteDb();
   const upsertStmt = database.prepare(`
     INSERT INTO recent_memories(user_id, memory_id, data_json, updated_at)
     VALUES (@userId, @memoryId, @dataJson, @updatedAt)
@@ -133,8 +292,20 @@ export function upsertRecentMemoryInDb(
   tx();
 }
 
-export function listRecentMemoriesFromDb(userId?: string): Memory[] {
-  const database = ensureDb();
+export async function listRecentMemoriesFromDb(userId?: string): Promise<Memory[]> {
+  if (isPostgresRuntimeStore()) {
+    const rows = await prisma.recentMemory.findMany({
+      ...(userId ? { where: { userId } } : {}),
+      orderBy: { updatedAt: "desc" },
+      select: { dataJson: true },
+    });
+
+    return rows
+      .map((row) => safeParseJson<Memory | null>(row.dataJson, null))
+      .filter((memory): memory is Memory => memory !== null);
+  }
+
+  const database = ensureSqliteDb();
   const rows = userId
     ? database
         .prepare(
@@ -158,16 +329,28 @@ export function listRecentMemoriesFromDb(userId?: string): Memory[] {
 
   return rows
     .map((row: unknown) =>
-      safeParseJson<Memory | null>(
-        (row as { data_json: string }).data_json,
-        null,
-      ),
+      safeParseJson<Memory | null>((row as { data_json: string }).data_json, null),
     )
-    .filter((memory: Memory | null): memory is Memory => memory !== null);
+    .filter((memory): memory is Memory => memory !== null);
 }
 
-export function insertTimelineEventInDb(event: TimelineEvent): void {
-  const database = ensureDb();
+export async function insertTimelineEventInDb(event: TimelineEvent): Promise<void> {
+  if (isPostgresRuntimeStore()) {
+    await prisma.timelineEvent.create({
+      data: {
+        id: event.id,
+        userId: event.userId,
+        memoryId: event.memoryId,
+        eventType: event.eventType,
+        reason: event.reason,
+        timestamp: event.timestamp,
+        metadataJson: event.metadata ? JSON.stringify(event.metadata) : null,
+      },
+    });
+    return;
+  }
+
+  const database = ensureSqliteDb();
   database
     .prepare(
       `
@@ -188,8 +371,28 @@ export function insertTimelineEventInDb(event: TimelineEvent): void {
     );
 }
 
-export function listTimelineEventsFromDb(userId?: string): TimelineEvent[] {
-  const database = ensureDb();
+export async function listTimelineEventsFromDb(
+  userId?: string,
+): Promise<TimelineEvent[]> {
+  if (isPostgresRuntimeStore()) {
+    const rows = await prisma.timelineEvent.findMany({
+      ...(userId ? { where: { userId } } : {}),
+      orderBy: { timestamp: "asc" },
+      select: {
+        id: true,
+        userId: true,
+        memoryId: true,
+        eventType: true,
+        reason: true,
+        timestamp: true,
+        metadataJson: true,
+      },
+    });
+
+    return rows.map(toTimelineEventFromPrisma);
+  }
+
+  const database = ensureSqliteDb();
   const rows = userId
     ? database
         .prepare(
@@ -211,37 +414,39 @@ export function listTimelineEventsFromDb(userId?: string): TimelineEvent[] {
         )
         .all();
 
-  return rows.map((row: unknown) => {
-    const typed = row as {
-      id: string;
-      user_id: string;
-      memory_id: string;
-      event_type: TimelineEvent["eventType"];
-      reason: string;
-      timestamp: string;
-      metadata_json: string | null;
-    };
-
-    return {
-      id: typed.id,
-      userId: typed.user_id,
-      memoryId: typed.memory_id,
-      eventType: typed.event_type,
-      reason: typed.reason,
-      timestamp: typed.timestamp,
-      ...(typed.metadata_json
-        ? {
-            metadata: safeParseJson<
-              Record<string, string | number | boolean>
-            >(typed.metadata_json, {}),
-          }
-        : {}),
-    };
-  });
+  return rows.map((row: unknown) =>
+    toTimelineEventFromDb(
+      row as {
+        id: string;
+        user_id: string;
+        memory_id: string;
+        event_type: string;
+        reason: string;
+        timestamp: string;
+        metadata_json: string | null;
+      },
+    ),
+  );
 }
 
-export function insertRevisionEventInDb(event: RevisionEvent): void {
-  const database = ensureDb();
+export async function insertRevisionEventInDb(event: RevisionEvent): Promise<void> {
+  if (isPostgresRuntimeStore()) {
+    await prisma.revisionEvent.create({
+      data: {
+        id: event.id,
+        userId: event.userId,
+        memoryId: event.memoryId,
+        version: event.version,
+        changedAt: event.changedAt,
+        changedBy: event.changedBy,
+        reason: event.reason,
+        changesJson: JSON.stringify(event.changes),
+      },
+    });
+    return;
+  }
+
+  const database = ensureSqliteDb();
   database
     .prepare(
       `
@@ -263,19 +468,52 @@ export function insertRevisionEventInDb(event: RevisionEvent): void {
     );
 }
 
-export function countRevisionEventsForMemoryInDb(memoryId: string): number {
-  const database = ensureDb();
+export async function countRevisionEventsForMemoryInDb(
+  memoryId: string,
+): Promise<number> {
+  if (isPostgresRuntimeStore()) {
+    return prisma.revisionEvent.count({ where: { memoryId } });
+  }
+
+  const database = ensureSqliteDb();
   const row = database
     .prepare("SELECT COUNT(*) AS count FROM revision_events WHERE memory_id = ?")
     .get(memoryId) as { count: number } | undefined;
+
   return row?.count ?? 0;
 }
 
-export function listRevisionEventsFromDb(filters?: {
+export async function listRevisionEventsFromDb(filters?: {
   userId?: string;
   memoryId?: string;
-}): RevisionEvent[] {
-  const database = ensureDb();
+}): Promise<RevisionEvent[]> {
+  if (isPostgresRuntimeStore()) {
+    const rows = await prisma.revisionEvent.findMany({
+      where: {
+        ...(filters?.memoryId ? { memoryId: filters.memoryId } : {}),
+        ...(!filters?.memoryId && filters?.userId ? { userId: filters.userId } : {}),
+      },
+      orderBy: filters?.memoryId
+        ? { version: "asc" }
+        : {
+            changedAt: "asc",
+          },
+      select: {
+        id: true,
+        userId: true,
+        memoryId: true,
+        version: true,
+        changedAt: true,
+        changedBy: true,
+        reason: true,
+        changesJson: true,
+      },
+    });
+
+    return rows.map(toRevisionEventFromPrisma);
+  }
+
+  const database = ensureSqliteDb();
   const rows = filters?.memoryId
     ? database
         .prepare(
@@ -308,27 +546,18 @@ export function listRevisionEventsFromDb(filters?: {
           )
           .all();
 
-  return rows.map((row: unknown) => {
-    const typed = row as {
-      id: string;
-      user_id: string;
-      memory_id: string;
-      version: number;
-      changed_at: string;
-      changed_by: "system" | "user";
-      reason: string;
-      changes_json: string;
-    };
-
-    return {
-      id: typed.id,
-      userId: typed.user_id,
-      memoryId: typed.memory_id,
-      version: typed.version,
-      changedAt: typed.changed_at,
-      changedBy: typed.changed_by,
-      reason: typed.reason,
-      changes: safeParseJson(typed.changes_json, []),
-    };
-  });
+  return rows.map((row: unknown) =>
+    toRevisionEventFromDb(
+      row as {
+        id: string;
+        user_id: string;
+        memory_id: string;
+        version: number;
+        changed_at: string;
+        changed_by: string;
+        reason: string;
+        changes_json: string;
+      },
+    ),
+  );
 }

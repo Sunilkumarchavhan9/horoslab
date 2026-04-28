@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
-import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import { isRelationalRuntimeStore } from "../storage/runtimeStoreBackend";
 import { ensureRuntimeStoreDb } from "../storage/runtimeStoreDb";
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -53,8 +53,8 @@ export function ensureMemoryStoreIntegrity(): void {
     mkdirSync(DATA_DIR, { recursive: true });
   }
 
-  if (isSqliteRuntimeStore()) {
-    ensureRuntimeStoreDb();
+  if (isRelationalRuntimeStore()) {
+    void ensureRuntimeStoreDb();
     return;
   }
 

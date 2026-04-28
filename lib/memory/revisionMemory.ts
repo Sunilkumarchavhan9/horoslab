@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory, RevisionChange, RevisionEvent } from "./types";
 import { withFileLock } from "./jsonStoreLock";
-import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import { isRelationalRuntimeStore } from "../storage/runtimeStoreBackend";
 import {
   countRevisionEventsForMemoryInDb,
   insertRevisionEventInDb,
@@ -106,13 +106,13 @@ export async function recordRevisionEvent(input: {
   reason: string;
   changedBy?: "system" | "user";
 }): Promise<RevisionEvent | null> {
-  if (isSqliteRuntimeStore()) {
+  if (isRelationalRuntimeStore()) {
     const changes = buildRevisionChanges(input.before, input.after);
     if (changes.length === 0) {
       return null;
     }
 
-    const version = countRevisionEventsForMemoryInDb(input.after.id) + 1;
+    const version = (await countRevisionEventsForMemoryInDb(input.after.id)) + 1;
     const event: RevisionEvent = {
       id: randomUUID(),
       userId: input.after.userId,
@@ -124,7 +124,7 @@ export async function recordRevisionEvent(input: {
       changes,
     };
 
-    insertRevisionEventInDb(event);
+    await insertRevisionEventInDb(event);
     return event;
   }
 
@@ -159,11 +159,11 @@ export async function recordRevisionEvent(input: {
 }
 
 
-export function listRevisionEvents(filters?: {
+export async function listRevisionEvents(filters?: {
   userId?: string;
   memoryId?: string;
-}): RevisionEvent[] {
-  if (isSqliteRuntimeStore()) {
+}): Promise<RevisionEvent[]> {
+  if (isRelationalRuntimeStore()) {
     return listRevisionEventsFromDb(filters);
   }
 

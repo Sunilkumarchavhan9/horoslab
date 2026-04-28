@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory } from "./types";
 import { withFileLock } from "./jsonStoreLock";
-import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import { isRelationalRuntimeStore } from "../storage/runtimeStoreBackend";
 import {
   listRecentMemoriesFromDb,
   upsertRecentMemoryInDb,
@@ -46,8 +46,8 @@ function writeRecentMemoryStore(store: Record<string, Memory[]>): void {
   );
 }
 
-export function getRecentMemories(userId: string): Memory[] {
-  if (isSqliteRuntimeStore()) {
+export async function getRecentMemories(userId: string): Promise<Memory[]> {
+  if (isRelationalRuntimeStore()) {
     return listRecentMemoriesFromDb(userId);
   }
 
@@ -55,9 +55,9 @@ export function getRecentMemories(userId: string): Memory[] {
   return store[userId] ?? [];
 }
 
-export async  function upsertRecentMemory(memory: Memory): Promise<void> {
-  if (isSqliteRuntimeStore()) {
-    upsertRecentMemoryInDb(memory, MAX_RECENT_MEMORIES_PER_USER);
+export async function upsertRecentMemory(memory: Memory): Promise<void> {
+  if (isRelationalRuntimeStore()) {
+    await upsertRecentMemoryInDb(memory, MAX_RECENT_MEMORIES_PER_USER);
     return;
   }
 
@@ -81,8 +81,8 @@ export async  function upsertRecentMemory(memory: Memory): Promise<void> {
   
 }
 
-export function listRecentMemories(): Memory[] {
-  if (isSqliteRuntimeStore()) {
+export async function listRecentMemories(): Promise<Memory[]> {
+  if (isRelationalRuntimeStore()) {
     return listRecentMemoriesFromDb();
   }
 

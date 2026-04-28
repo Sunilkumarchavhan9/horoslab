@@ -747,26 +747,38 @@ async function fetchCandidatePool(
   input: RetrieveRelevantMemoryInput,
 ): Promise<MemoryStoreSearchResult[]> {
   const candidateTopK = Math.max(input.topK ?? 10, 10);
-  const [memoryStoreCandidates, contextCandidatesRaw] = await Promise.all([
-    getMemoryStoreAdapter().searchMemory({
-      userId: input.userId,
-      query: input.question,
-      topK: candidateTopK,
-    }),
-    getContextAdapter().searchContext({
+  const memoryStoreSearchPromise = getMemoryStoreAdapter().searchMemory({
+    userId: input.userId,
+    query: input.question,
+    topK: candidateTopK,
+  });
+  const contextSearchPromise = getContextAdapter()
+    .searchContext({
       userId: input.userId,
       query: input.question,
       topK: candidateTopK,
       ...(input.workspace ? { workspace: input.workspace } : {}),
       ...(input.project ? { project: input.project } : {}),
       ...(input.threadId ? { threadId: input.threadId } : {}),
-    }),
+    })
+    .catch((error: unknown) => {
+      const message =
+        error instanceof Error ? error.message : "Unknown context adapter error";
+      console.warn(
+        `[memory.retrieval] Context search failed for user=${input.userId}; continuing without context adapter results. ${message}`,
+      );
+      return [] as ContextSearchResult[];
+    });
+  const [memoryStoreCandidates, contextCandidatesRaw] = await Promise.all([
+    memoryStoreSearchPromise,
+    contextSearchPromise,
   ]);
 
   const contextCandidates = contextCandidatesRaw
     .map((item) => contextToSearchResult(item))
     .filter((item): item is MemoryStoreSearchResult => item !== null);
-  const recentCandidates = getRecentMemories(input.userId).map((memory) =>
+  const recentMemories = await getRecentMemories(input.userId);
+  const recentCandidates = recentMemories.map((memory) =>
     memoryToSearchResult(memory, input.question),
   );
 
@@ -906,7 +918,7 @@ export async function analyzeRetrieval(
   input: RetrieveRelevantMemoryInput,
 ): Promise<RetrievalAnalysisResult> {
   const candidates = await fetchCandidatePool(input);
-  const lifecycleEvents = listTimelineEvents(input.userId);
+  const lifecycleEvents = await listTimelineEvents(input.userId);
   const timelineByMemoryId = new Map<string, typeof lifecycleEvents>();
 
   for (const event of lifecycleEvents) {

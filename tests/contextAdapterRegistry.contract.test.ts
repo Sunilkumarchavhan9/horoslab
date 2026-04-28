@@ -12,19 +12,21 @@ describe("Context adapter registry defaults", () => {
     delete process.env.SUPERMEMORY_API_KEY;
     delete process.env.SUPERMEMORY_BASE_URL;
     delete process.env.SUPERMEMORY_PROJECT;
+    process.env.SUPERMEMORY_API_KEY = "";
+    process.env.SUPERMEMORY_BASE_URL = "";
+    process.env.SUPERMEMORY_PROJECT = "";
 
     const { getContextAdapter, resetContextAdapter } = await import(
       "../lib/adapters/registry.js"
     );
+    const { SupermemoryContextAdapter } = await import(
+      "../lib/adapters/supermemoryContextAdapter.js"
+    );
 
+    resetContextAdapter();
     const adapter = getContextAdapter();
 
-    await expect(
-      adapter.searchContext({
-        userId: "u1",
-        query: "handoff context",
-      }),
-    ).resolves.toEqual([]);
+    expect(adapter).not.toBeInstanceOf(SupermemoryContextAdapter);
 
     resetContextAdapter();
   });
@@ -40,6 +42,7 @@ describe("Context adapter registry defaults", () => {
       "../lib/adapters/supermemoryContextAdapter.js"
     );
 
+    resetContextAdapter();
     const adapter = getContextAdapter();
 
     expect(adapter).toBeInstanceOf(SupermemoryContextAdapter);

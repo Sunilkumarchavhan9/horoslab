@@ -4,6 +4,8 @@ import { ClerkConsoleSignIn } from "@/components/auth/clerk-console-sign-in";
 import { ConsoleAuthShell } from "@/components/auth/console-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
 
+export const dynamic = "force-dynamic";
+
 export default async function DeveloperConsoleSignInPage() {
   const clerkEnabled = isClerkEnabled();
 
@@ -27,6 +29,7 @@ export default async function DeveloperConsoleSignInPage() {
         <div className="space-y-4">
           <input
             type="email"
+            suppressHydrationWarning
             placeholder="Email address"
             className="h-[44px] w-full border border-[#343434] bg-transparent px-5 text-[16px] text-white outline-none placeholder:text-[#636c77]"
           />

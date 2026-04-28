@@ -1,17 +1,41 @@
 import { z } from "zod";
 import { getRuntimeStoreBackend, type RuntimeStoreBackend } from "../storage/runtimeStoreBackend";
 
+const optionalNonEmptyString = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? undefined : trimmed;
+}, z.string().min(1).optional());
+
+const optionalUrlString = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? undefined : trimmed;
+}, z.string().url().optional());
+
 const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
-  MEM0_API_KEY: z.string().min(1).optional(),
-  SUPERMEMORY_API_KEY: z.string().min(1).optional(),
-  SUPERMEMORY_BASE_URL: z.string().url().optional(),
-  SUPERMEMORY_PROJECT: z.string().min(1).optional(),
+  MEM0_API_KEY: optionalNonEmptyString,
+  SUPERMEMORY_API_KEY: optionalNonEmptyString,
+  SUPERMEMORY_BASE_URL: optionalUrlString,
+  SUPERMEMORY_PROJECT: optionalNonEmptyString,
   JWT_SECRET: z.string().min(16),
   JWT_ISSUER: z.string().min(1).default("memoryos"),
   JWT_AUDIENCE: z.string().min(1).default("memoryos-api"),
-  METRICS_TOKEN: z.string().min(8).optional(),
+  METRICS_TOKEN: z.preprocess((value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+    const trimmed = value.trim();
+    return trimmed.length === 0 ? undefined : trimmed;
+  }, z.string().min(8).optional()),
 });
 
 export interface AppEnv {

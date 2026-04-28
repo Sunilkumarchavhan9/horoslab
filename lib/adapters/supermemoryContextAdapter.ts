@@ -338,7 +338,7 @@ export class SupermemoryContextAdapter implements ContextAdapter {
 
     parts.push(sanitizeTagPart(userId));
 
-    return parts.join(".").slice(0, 100);
+    return parts.join(":").slice(0, 100);
   }
 
   async ingestContext(

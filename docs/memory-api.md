@@ -67,6 +67,97 @@ Body:
 }
 ```
 
+## Voice Streaming (Pipecat)
+
+### `POST /api/memory/voice/sessions/start`
+
+Body:
+
+```json
+{
+  "sessionId": "pc-session-001",
+  "source": "pipecat",
+  "workspace": "support-team",
+  "project": "voice-assistant",
+  "threadId": "voice:pc-session-001"
+}
+```
+
+Response `200`:
+
+```json
+{
+  "session": {
+    "sessionId": "pc-session-001",
+    "userId": "u_demo_1",
+    "source": "pipecat",
+    "status": "active",
+    "chunkCount": 0,
+    "totalCharacters": 0
+  }
+}
+```
+
+### `POST /api/memory/voice/chunk`
+
+Body:
+
+```json
+{
+  "sessionId": "pc-session-001",
+  "chunkIndex": 3,
+  "speaker": "user",
+  "chunk": "I am debugging audio latency in our support bot.",
+  "tags": ["latency", "support"],
+  "sentiment": "neutral"
+}
+```
+
+Response `200`:
+
+```json
+{
+  "session": {},
+  "acceptedMemories": [],
+  "rejectedMemories": [],
+  "timelineEvents": []
+}
+```
+
+### `GET /api/memory/voice/sessions/:sessionId`
+
+Response `200`:
+
+```json
+{
+  "session": {}
+}
+```
+
+### `POST /api/memory/voice/sessions/end`
+
+Body:
+
+```json
+{
+  "sessionId": "pc-session-001",
+  "finalSummary": "Call ended with next steps to improve latency monitoring."
+}
+```
+
+Response `200`:
+
+```json
+{
+  "session": {},
+  "summaryIngestResult": {
+    "acceptedMemories": [],
+    "rejectedMemories": [],
+    "timelineEvents": []
+  }
+}
+```
+
 Response `200`:
 
 ```json

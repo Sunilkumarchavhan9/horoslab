@@ -20,8 +20,8 @@ export function ConsoleAuthShell({
 }: ConsoleAuthShellProps) {
   return (
     <main className="min-h-svh bg-black lg:grid lg:min-h-svh lg:grid-cols-[minmax(420px,0.9fr)_1.1fr] lg:overflow-hidden xl:grid-cols-[minmax(500px,0.92fr)_1.08fr]">
-      <section className="flex min-h-svh bg-[#171717] text-white lg:min-h-0 lg:h-svh">
-        <div className="mx-auto flex w-full max-w-[560px] flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 lg:max-w-[520px] lg:px-10 lg:py-10 xl:py-12">
+      <section className="flex min-h-svh bg-[#171717] text-white lg:h-svh lg:min-h-0 lg:overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col justify-start px-5 py-6 sm:px-8 sm:py-8 lg:max-w-[520px] lg:px-10 lg:py-10 xl:py-12">
           <Link href="/" className="mt-5 w-fit lg:mt-3">
             <MemoryStarLogo tone="white" />
           </Link>

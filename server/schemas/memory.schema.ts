@@ -6,6 +6,38 @@ export const ProcessMemorySchema = z.object({
   message: z.string().min(1, "message is required"),
 });
 
+const VoiceSourceSchema = z.enum(["pipecat"]);
+const VoiceSpeakerSchema = z.enum(["user", "assistant", "system"]);
+const VoiceSentimentSchema = z.enum(["positive", "neutral", "negative"]);
+
+export const VoiceSessionStartSchema = z.object({
+  sessionId: z.string().min(1, "sessionId is required"),
+  source: VoiceSourceSchema.default("pipecat"),
+  workspace: z.string().min(1).optional(),
+  project: z.string().min(1).optional(),
+  threadId: z.string().min(1).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const VoiceChunkIngestSchema = z.object({
+  sessionId: z.string().min(1, "sessionId is required"),
+  chunk: z.string().min(1, "chunk is required"),
+  chunkIndex: z.number().int().nonnegative().optional(),
+  speaker: VoiceSpeakerSchema.optional(),
+  startedAt: z.string().datetime().optional(),
+  endedAt: z.string().datetime().optional(),
+  workspace: z.string().min(1).optional(),
+  project: z.string().min(1).optional(),
+  threadId: z.string().min(1).optional(),
+  tags: z.array(z.string().min(1)).max(20).optional(),
+  sentiment: VoiceSentimentSchema.optional(),
+});
+
+export const VoiceSessionEndSchema = z.object({
+  sessionId: z.string().min(1, "sessionId is required"),
+  finalSummary: z.string().min(1).optional(),
+});
+
 export const RetrieveMemorySchema = z.object({
   userId: z.string().min(1).optional(),
   question: z.string().min(1, "question is required"),

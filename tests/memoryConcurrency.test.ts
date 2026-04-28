@@ -43,7 +43,7 @@ describe("JSON store concurrency safety", () => {
       ),
     );
 
-    const recent = getRecentMemories(userId);
+    const recent = await getRecentMemories(userId);
     expect(recent).toHaveLength(20); // capped by MAX_RECENT_MEMORIES_PER_USER
     expect(new Set(recent.map((m) => m.id)).size).toBe(20);
   });
@@ -57,7 +57,7 @@ describe("JSON store concurrency safety", () => {
       ),
     );
 
-    const events = listTimelineEvents(memory.userId);
+    const events = await listTimelineEvents(memory.userId);
     expect(events).toHaveLength(25);
     expect(events.every((e) => e.eventType === "memory_created")).toBe(true);
     expect(new Set(events.map((e) => e.id)).size).toBe(25);
@@ -90,7 +90,7 @@ describe("JSON store concurrency safety", () => {
 
     expect(results.filter(Boolean)).toHaveLength(15);
 
-    const revisions = listRevisionEvents({ memoryId: base.id });
+    const revisions = await listRevisionEvents({ memoryId: base.id });
     expect(revisions).toHaveLength(15);
 
     const versions = revisions.map((r) => r.version).sort((a, b) => a - b);

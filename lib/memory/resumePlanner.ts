@@ -91,13 +91,14 @@ function toUsedMemoryFromRecent(memory: Memory): ResumeUsedMemory {
   };
 }
 
-function buildProjectRecentOpenLoops(
+async function buildProjectRecentOpenLoops(
   userId: string,
   project: string,
-): ResumeUsedMemory[] {
+): Promise<ResumeUsedMemory[]> {
   const projectName = project.toLowerCase();
+  const recent = await getRecentMemories(userId);
 
-  return getRecentMemories(userId)
+  return recent
     .filter((memory) => {
       const haystack = `${memory.content} ${memory.summary}`.toLowerCase();
       return haystack.includes(projectName);
@@ -209,7 +210,7 @@ export async function planResume(
     ).values(),
   ).sort((a, b) => b.finalScore - a.finalScore);
 
-  const recentOpenLoops = buildProjectRecentOpenLoops(
+  const recentOpenLoops = await buildProjectRecentOpenLoops(
     input.userId,
     input.project,
   );

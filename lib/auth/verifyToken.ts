@@ -20,19 +20,27 @@ export async function verifyAuthorizationHeader(
   const token = readBearerToken(authHeader);
   if (!token) return null;
 
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.MEMORYOS_JWT_SECRET ?? process.env.JWT_SECRET;
   if (!secret) {
-    throw new Error("Missing JWT_SECRET");
+    throw new Error("Missing MEMORYOS_JWT_SECRET or JWT_SECRET");
   }
 
   try {
+    const issuer =
+      process.env.MEMORYOS_JWT_ISSUER ??
+      process.env.JWT_ISSUER ??
+      undefined;
+    const audience =
+      process.env.MEMORYOS_JWT_AUDIENCE ??
+      process.env.JWT_AUDIENCE ??
+      undefined;
     const { payload } = await jwtVerify(
       token,
       new TextEncoder().encode(secret),
       {
         algorithms: ["HS256"],
-        issuer: process.env.JWT_ISSUER || undefined,
-        audience: process.env.JWT_AUDIENCE || undefined,
+        issuer,
+        audience,
       },
     );
 

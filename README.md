@@ -15,12 +15,17 @@ This backend focuses on long-term memory behavior for developer workflows:
 - Full API reference: [docs/memory-api.md](./docs/memory-api.md)
 - MCP HTTP reference: [docs/mcp-api.md](./docs/mcp-api.md)
 - Design partner onboarding: [docs/design-partner-onboarding.md](./docs/design-partner-onboarding.md)
+- Pipecat integration guide: [docs/pipecat-memoryos-integration.md](./docs/pipecat-memoryos-integration.md)
 - Postman collection: [docs/postman/MemoryOS.postman_collection.json](./docs/postman/MemoryOS.postman_collection.json)
 
 ## What It Does
 
 The current backend supports:
 - `POST /api/memory/process`
+- `POST /api/memory/voice/sessions/start`
+- `POST /api/memory/voice/chunk`
+- `GET /api/memory/voice/sessions/:sessionId`
+- `POST /api/memory/voice/sessions/end`
 - `POST /api/memory/retrieve`
 - `POST /api/memory/handoff`
 - `POST /api/memory/continue`
@@ -403,7 +408,7 @@ Implemented:
 - automated end-to-end workflow test
 
 Production hardening included:
-- runtime store backend switch (`MEMORY_STORE_BACKEND=json|sqlite`)
+- runtime store backend switch (`MEMORY_STORE_BACKEND=json|sqlite|postgres`)
 - Prisma + PostgreSQL setup for production data layer (`DATABASE_URL`)
 - Prometheus metrics endpoint (`/api/metrics`)
 - env validation at startup

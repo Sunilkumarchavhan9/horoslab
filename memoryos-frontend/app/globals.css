@@ -17,6 +17,8 @@ body {
   background: #ffffff !important;
   background-color: #ffffff !important;
   overflow-x: clip;
+  scrollbar-width: thin;
+  scrollbar-color: #1f1f1f #070707;
 }
 
 body {
@@ -24,6 +26,34 @@ body {
   background-color: #ffffff !important;
   color: var(--fg);
   font-family: var(--font-sora), sans-serif;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: #070707;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+  border-radius: 999px;
+  border: 2px solid #070707;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button {
+  background: #070707;
 }
 
 h1,
@@ -38,4 +68,9 @@ h6 {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Product-wide corner style: force all rounded UI surfaces to 3px */
+[class*="rounded"] {
+  border-radius: 3px !important;
 }

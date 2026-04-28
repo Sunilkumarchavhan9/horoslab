@@ -1,8 +1,11 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useSignIn } from "@clerk/nextjs/legacy";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { warmMemoryTokenBridge } from "@/lib/memory-token";
 
 type ClerkConsoleSignInProps = {
   redirectTo: "/developer-console" | "/personal-app";
@@ -65,6 +68,8 @@ function ActionButton({
 
 export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
   const { isLoaded, signIn } = useSignIn();
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
   const authReady = isLoaded && Boolean(signIn);
   const [email, setEmail] = useState("");
   const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
@@ -102,7 +107,24 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
 
   function getErrorMessage(error: unknown) {
     if (isClerkAPIResponseError(error) && error.errors.length > 0) {
-      return error.errors[0]?.longMessage || error.errors[0]?.message || "Authentication failed.";
+      const firstError = error.errors[0];
+      const code = (firstError?.code ?? "").toLowerCase();
+      const longMessage = firstError?.longMessage ?? "";
+      const shortMessage = firstError?.message ?? "";
+
+      if (
+        code.includes("oauth") ||
+        longMessage.toLowerCase().includes("oauth") ||
+        longMessage.toLowerCase().includes("social")
+      ) {
+        return "Google/GitHub is not fully configured in Clerk for this app. Enable both social providers and allow localhost:3000 redirect URLs in Clerk dashboard.";
+      }
+
+      if (code.includes("dev_browser_unauthenticated")) {
+        return "Clerk development browser session is not trusted yet. Open this app in a clean browser tab, disable shields/ad blockers for localhost, then retry.";
+      }
+
+      return longMessage || shortMessage || "Authentication failed.";
     }
 
     if (error instanceof Error && error.message) {
@@ -112,10 +134,47 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
     return "Authentication failed. Check the Clerk provider setup and try again.";
   }
 
+  function isAlreadySignedInError(error: unknown): boolean {
+    if (isClerkAPIResponseError(error)) {
+      return error.errors.some((entry) => {
+        const code = (entry.code ?? "").toLocaleLowerCase();
+        const message = `${entry.longMessage ?? ""} ${entry.message ?? ""}`.toLocaleLowerCase();
+        return code.includes("session") || message.includes("already signed in");
+      });
+    }
+
+    if (error instanceof Error) {
+      return error.message.toLowerCase().includes("already signed in");
+    }
+
+    return false;
+  }
+
+  const redirectSignedInUser = useCallback(async () => {
+    try {
+      await warmMemoryTokenBridge();
+    } catch {
+      // If token bridge fails temporarily, still move signed-in users forward.
+    }
+    router.replace(redirectTo);
+  }, [redirectTo, router]);
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      return;
+    }
+
+    void redirectSignedInUser();
+  }, [isSignedIn, redirectSignedInUser]);
+
   async function handleOauth(strategy: "oauth_google" | "oauth_github", completeUrl: string) {
     if (!authReady || !signIn) {
       setStatusMessage(AUTH_LOADING_MESSAGE);
       setStatusTone("info");
+      return;
+    }
+    if (isSignedIn) {
+      await redirectSignedInUser();
       return;
     }
 
@@ -125,10 +184,15 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
     try {
       await signIn.authenticateWithRedirect({
         strategy,
-        redirectUrl: buildAbsoluteUrl("/sso-callback"),
-        redirectUrlComplete: buildAbsoluteUrl(completeUrl),
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: completeUrl,
       });
     } catch (error) {
+      if (isAlreadySignedInError(error)) {
+        await redirectSignedInUser();
+        return;
+      }
+      console.error("[MemoryOS Auth] Developer OAuth sign-in failed", error);
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -180,6 +244,10 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
       setStatusMessage(`Magic link sent to ${trimmedEmail}. Open it in this browser to finish sign-in.`);
       setStatusTone("success");
     } catch (error) {
+      if (isAlreadySignedInError(error)) {
+        await redirectSignedInUser();
+        return;
+      }
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -192,6 +260,7 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
       <div className="space-y-3">
         <input
           type="email"
+          suppressHydrationWarning
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="Email address"
@@ -258,6 +327,12 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
               : "CONTINUE WITH GITHUB"}
         </span>
       </ActionButton>
+
+      <div
+        id="clerk-captcha"
+        className="min-h-[70px] w-full"
+        aria-hidden="true"
+      />
     </div>
   );
 }

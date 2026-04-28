@@ -4,12 +4,13 @@ import { ClerkPersonalSignIn } from "@/components/auth/clerk-personal-sign-in";
 import { PersonalAuthShell } from "@/components/auth/personal-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
 
+export const dynamic = "force-dynamic";
+
 export default async function PersonalAppSignInPage() {
   const clerkEnabled = isClerkEnabled();
 
   if (clerkEnabled) {
     const { userId } = await auth();
-
     if (userId) {
       redirect("/personal-app");
     }
@@ -24,14 +25,14 @@ export default async function PersonalAppSignInPage() {
           <button
             type="button"
             disabled
-            className="flex min-h-[56px] w-full items-center justify-center rounded-[16px] border border-[#0b3a72] bg-[linear-gradient(180deg,#062a58_0%,#07244a_100%)] px-5 text-[16px] font-semibold text-white/70"
+            className="flex min-h-[56px] w-full items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#0a2ba7_0%,#092891_100%)] px-5 text-[16px] font-semibold text-white/70"
           >
             Continue with Google
           </button>
           <button
             type="button"
             disabled
-            className="flex min-h-[56px] w-full items-center justify-center rounded-[16px] border border-[#0b3a72] bg-[linear-gradient(180deg,#062a58_0%,#07244a_100%)] px-5 text-[16px] font-semibold text-white/70"
+            className="flex min-h-[56px] w-full items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#0a2ba7_0%,#092891_100%)] px-5 text-[16px] font-semibold text-white/70"
           >
             Continue with GitHub
           </button>
@@ -40,15 +41,16 @@ export default async function PersonalAppSignInPage() {
           </div>
           <input
             type="email"
+            suppressHydrationWarning
             placeholder="your@email.com"
-            className="h-[56px] w-full rounded-[16px] border border-white/7 bg-[#08101b] px-5 text-[17px] text-white outline-none placeholder:text-[#667085]"
+            className="h-[56px] w-full rounded-[5px] bg-[#181c22] px-5 text-[17px] text-white outline-none placeholder:text-[#8892a2]"
           />
           <button
             type="button"
             disabled
-            className="flex min-h-[56px] w-full items-center justify-center rounded-[16px] border border-[#5b7fff] bg-[linear-gradient(180deg,#4d6cff_0%,#3928ff_100%)] px-5 text-[16px] font-semibold text-white/80"
+            className="flex min-h-[56px] w-full items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#314bf4_0%,#0a2ba7_100%)] px-5 text-[16px] font-semibold text-white/80"
           >
-            Continue with MemoryOS
+            Log in with MemoryOS
           </button>
           <p className="pt-4 text-center text-[14px] leading-7 text-[#7d8596]">
             By continuing, you agree to our <a href="#" className="underline underline-offset-2">Terms</a> and{" "}

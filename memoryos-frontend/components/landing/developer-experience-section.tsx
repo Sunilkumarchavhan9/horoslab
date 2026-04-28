@@ -18,7 +18,7 @@ const TAB_COPY: Record<
     label: "TypeScript",
     intro:
       "Use the MemoryOS SDK from a TypeScript app, agent wrapper, IDE extension, or internal service.",
-    code: `import { MemoryOS } from "@memoryos/sdk";
+    code: `import { MemoryOS } from "@memoryostm/sdk";
 
 const memory = new MemoryOS({
   apiKey: process.env.MEMORYOS_API_KEY!,
@@ -123,7 +123,7 @@ const USAGE_FLOW = [
 ];
 
 const PRODUCT_SURFACE = [
-  ["Package", "@memoryos/sdk"],
+  ["Package", "@memoryostm/sdk"],
   ["Python", "memoryos"],
   ["API", "api.memoryos.dev"],
   ["Control plane", "MemoryOS dashboard"],
@@ -173,7 +173,7 @@ export function DeveloperExperienceSection() {
 
       <Reveal delay={0.04} className="mx-auto mt-6 flex max-w-[760px] flex-wrap items-center justify-center gap-3 border border-[#c9d8ee] bg-white px-4 py-3 font-mono text-[13px] text-[#4f6383]">
         <span className="text-[#7d90ab]">$</span>
-        <span>npm install @memoryos/sdk</span>
+        <span>npm install @memoryostm/sdk</span>
         <span className="text-[#b2c0d4]">|</span>
         <span>pip install memoryos</span>
         <span className="text-[#b2c0d4]">|</span>

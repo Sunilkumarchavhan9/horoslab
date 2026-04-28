@@ -36,7 +36,7 @@ describe("SupermemoryContextAdapter", () => {
     expect(client.addDocument).toHaveBeenCalledTimes(1);
     expect(client.addDocument).toHaveBeenCalledWith(
       expect.objectContaining({
-        containerTag: "memoryos.ctx.memoryos.u_ctx",
+        containerTag: "memoryos:ctx:memoryos:u_ctx",
         metadata: expect.objectContaining({
           user_id: "u_ctx",
           source: "cursor",
@@ -104,7 +104,7 @@ describe("SupermemoryContextAdapter", () => {
     expect(client.search).toHaveBeenCalledWith({
       q: "retrieval handoff",
       limit: 5,
-      containerTag: "memoryos.ctx.memoryos.u_ctx",
+      containerTag: "memoryos:ctx:memoryos:u_ctx",
       searchMode: "hybrid",
       rerank: true,
       rewriteQuery: false,

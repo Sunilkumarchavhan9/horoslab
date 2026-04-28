@@ -94,14 +94,14 @@ describe("MemoryOS E2E", () => {
     expect(retrieved.memories.length).toBeGreaterThan(0);
     expect(retrieved.memories[0]?.memoryType).toBe("learning");
 
-    const timeline = listTimelineEvents("u_test_e2e");
+    const timeline = await listTimelineEvents("u_test_e2e");
     expect(timeline).toHaveLength(2);
     expect(timeline.map((event) => event.eventType)).toEqual([
       "memory_created",
       "memory_evolved",
     ]);
 
-    const revisions = listRevisionEvents({ userId: "u_test_e2e" });
+    const revisions = await listRevisionEvents({ userId: "u_test_e2e" });
     expect(revisions).toHaveLength(1);
     expect(revisions[0]?.changes.map((change) => change.field)).toEqual([
       "content",
@@ -171,7 +171,7 @@ it("does not evolve unrelated project milestones into one memory", async () => {
   expect(second.acceptedMemories).toHaveLength(1);
   expect(second.timelineEvents[0]?.eventType).toBe("memory_created");
 
-  const timeline = listTimelineEvents("u_test_project_milestones");
+  const timeline = await listTimelineEvents("u_test_project_milestones");
   expect(timeline).toHaveLength(2);
   expect(timeline.map((event) => event.eventType)).toEqual([
     "memory_created",

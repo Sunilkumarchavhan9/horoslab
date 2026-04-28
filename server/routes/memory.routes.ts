@@ -19,12 +19,16 @@ import { runHandoffFlowLangGraph } from "../../lib/workflows/handoffGraphLangGra
 import { runResumeFlowLangGraph } from "../../lib/workflows/resumeGraphLangGraph";
 import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
-import { isSqliteRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
+import { isRelationalRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
 import { isRuntimeStoreDbHealthy } from "../../lib/storage/runtimeStoreDb";
+import { listRequestHistory } from "../middleware/requestLogger";
 import {
   ContinueMemorySchema,
   HandoffMemorySchema,
   ProcessMemorySchema,
+  VoiceChunkIngestSchema,
+  VoiceSessionEndSchema,
+  VoiceSessionStartSchema,
   ResumeMemorySchema,
   MemoryStatusPatchSchema,
   RetrievalWeightsSchema,
@@ -39,6 +43,12 @@ import {
   type RetrieveResponseData,
 } from "../types/api-contracts";
 import { buildApiMeta, sendApiError, sendApiSuccess } from "./api-response";
+import {
+  endVoiceSession,
+  getVoiceSession,
+  recordVoiceChunk,
+  startVoiceSession,
+} from "../../lib/voice/sessionStore";
 
 export const memoryRouter = Router();
 
@@ -48,12 +58,24 @@ const TIMELINE_STORE_PATH = path.join(DATA_DIR, "timeline-events.json");
 const REVISION_STORE_PATH = path.join(DATA_DIR, "revision-events.json");
 const BEST_CONFIG_PATH = path.join(DATA_DIR, "eval", "best-config.json");
 const BASELINE_REPORT_PATH = path.join(DATA_DIR, "eval", "baseline-report.json");
+const BENCHMARK_REPORT_PATH = path.join(DATA_DIR, "eval", "benchmark-report.json");
+
+const REQUEST_RANGE_DAYS = {
+  "1d": 1,
+  "7d": 7,
+  "30d": 30,
+  all: null,
+} as const;
+
+const REQUEST_STATUSES = ["Success", "Error"] as const;
 
 type BaselineReport = {
   passRate: number;
   totalCases: number;
   updatedAt?: string;
 };
+
+type RequestRange = keyof typeof REQUEST_RANGE_DAYS;
 
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -76,8 +98,8 @@ function hasValidJsonFile(
   }
 }
 
-function hasValidStores(): boolean {
-  if (isSqliteRuntimeStore()) {
+async function hasValidStores(): Promise<boolean> {
+  if (isRelationalRuntimeStore()) {
     return isRuntimeStoreDbHealthy();
   }
 
@@ -251,6 +273,19 @@ function parseOptionalQueryText(raw: unknown): string | undefined {
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
+function parseRequestRange(raw: unknown): RequestRange {
+  if (typeof raw !== "string") {
+    return "30d";
+  }
+
+  const lowered = raw.toLowerCase() as RequestRange;
+  if (lowered in REQUEST_RANGE_DAYS) {
+    return lowered;
+  }
+
+  return "30d";
+}
+
 function buildWhyTop1(top?: {
   memoryType?: string;
   finalScore: number;
@@ -271,6 +306,54 @@ function buildWhyTop1(top?: {
       : "";
 
   return `Top memory ranked highest because it matched intent/type (${top.memoryType ?? "unknown"}), had semantic relevance ${top.semanticScore.toFixed(2)}, and reached final score ${top.finalScore.toFixed(2)} with continuity boost ${top.continuityBoost.toFixed(2)}.${reasonPart}`;
+}
+
+function labelForVoiceSpeaker(
+  speaker: "user" | "assistant" | "system" | undefined,
+): string | null {
+  if (!speaker) {
+    return null;
+  }
+
+  if (speaker === "user") {
+    return "User";
+  }
+
+  if (speaker === "assistant") {
+    return "Assistant";
+  }
+
+  return "System";
+}
+
+function formatVoiceChunkMessage(input: {
+  chunk: string;
+  speaker?: "user" | "assistant" | "system";
+  chunkIndex?: number;
+  tags?: string[];
+  sentiment?: "positive" | "neutral" | "negative";
+}): string {
+  const speakerLabel = labelForVoiceSpeaker(input.speaker);
+  const core = speakerLabel ? `${speakerLabel}: ${input.chunk}` : input.chunk;
+  const metadata: string[] = [];
+
+  if (typeof input.chunkIndex === "number") {
+    metadata.push(`chunkIndex=${input.chunkIndex}`);
+  }
+
+  if (input.sentiment) {
+    metadata.push(`sentiment=${input.sentiment}`);
+  }
+
+  if (input.tags && input.tags.length > 0) {
+    metadata.push(`tags=${input.tags.join(",")}`);
+  }
+
+  if (metadata.length === 0) {
+    return core;
+  }
+
+  return `${core}\n[voice_meta ${metadata.join(" ")}]`;
 }
 
 memoryRouter.post(
@@ -295,6 +378,167 @@ memoryRouter.post(
       acceptedMemories: result.acceptedMemories,
       rejectedMemories: result.rejectedMemories,
       timelineEvents: result.timelineEvents,
+    });
+  }),
+);
+
+memoryRouter.post(
+  "/voice/sessions/start",
+  asyncHandler(async (req, res) => {
+    const parsed = VoiceSessionStartSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const session = await startVoiceSession({
+      sessionId: parsed.data.sessionId,
+      userId: req.authUserId,
+      source: parsed.data.source,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+      ...(parsed.data.metadata ? { metadata: parsed.data.metadata } : {}),
+    });
+
+    res.status(200).json({
+      session,
+    });
+  }),
+);
+
+memoryRouter.post(
+  "/voice/chunk",
+  asyncHandler(async (req, res) => {
+    const parsed = VoiceChunkIngestSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const existingSession = getVoiceSession(req.authUserId, parsed.data.sessionId);
+    if (!existingSession) {
+      await startVoiceSession({
+        sessionId: parsed.data.sessionId,
+        userId: req.authUserId,
+        source: "pipecat",
+        ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+        ...(parsed.data.project ? { project: parsed.data.project } : {}),
+        ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+      });
+    }
+
+    const session = getVoiceSession(req.authUserId, parsed.data.sessionId);
+    const resolvedThreadId =
+      parsed.data.threadId ?? session?.threadId ?? `voice:${parsed.data.sessionId}`;
+
+    const chunkMessage = formatVoiceChunkMessage({
+      chunk: parsed.data.chunk,
+      speaker: parsed.data.speaker,
+      chunkIndex: parsed.data.chunkIndex,
+      tags: parsed.data.tags,
+      sentiment: parsed.data.sentiment,
+    });
+
+    const ingestResult = await runIngestFlowLangGraph({
+      userId: req.authUserId,
+      threadId: resolvedThreadId,
+      message: chunkMessage,
+    });
+
+    const updatedSession = await recordVoiceChunk({
+      sessionId: parsed.data.sessionId,
+      userId: req.authUserId,
+      chunkCharacters: parsed.data.chunk.length,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      threadId: resolvedThreadId,
+    });
+
+    res.status(200).json({
+      session: updatedSession,
+      acceptedMemories: ingestResult.acceptedMemories,
+      rejectedMemories: ingestResult.rejectedMemories,
+      timelineEvents: ingestResult.timelineEvents,
+    });
+  }),
+);
+
+memoryRouter.get("/voice/sessions/:sessionId", (req, res) => {
+  const sessionId =
+    typeof req.params.sessionId === "string" && req.params.sessionId.trim().length > 0
+      ? req.params.sessionId.trim()
+      : undefined;
+
+  if (!sessionId) {
+    res.status(400).json({ error: "sessionId is required" });
+    return;
+  }
+
+  const session = getVoiceSession(req.authUserId, sessionId);
+  if (!session) {
+    res.status(404).json({ error: "Session not found" });
+    return;
+  }
+
+  res.status(200).json({ session });
+});
+
+memoryRouter.post(
+  "/voice/sessions/end",
+  asyncHandler(async (req, res) => {
+    const parsed = VoiceSessionEndSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const existingSession = getVoiceSession(req.authUserId, parsed.data.sessionId);
+    if (!existingSession) {
+      res.status(404).json({ error: "Session not found" });
+      return;
+    }
+
+    let summaryIngestResult:
+      | {
+          acceptedMemories: unknown[];
+          rejectedMemories: unknown[];
+          timelineEvents: unknown[];
+        }
+      | undefined;
+
+    if (parsed.data.finalSummary) {
+      const threadId = existingSession.threadId ?? `voice:${parsed.data.sessionId}`;
+      const result = await runIngestFlowLangGraph({
+        userId: req.authUserId,
+        threadId,
+        message: `Voice session summary: ${parsed.data.finalSummary}`,
+      });
+
+      summaryIngestResult = {
+        acceptedMemories: result.acceptedMemories,
+        rejectedMemories: result.rejectedMemories,
+        timelineEvents: result.timelineEvents,
+      };
+    }
+
+    const session = await endVoiceSession({
+      userId: req.authUserId,
+      sessionId: parsed.data.sessionId,
+    });
+
+    res.status(200).json({
+      session,
+      ...(summaryIngestResult ? { summaryIngestResult } : {}),
     });
   }),
 );
@@ -723,35 +967,35 @@ memoryRouter.patch("/:memoryId/status", asyncHandler(async (req, res) => {
   }),
 );
 
-memoryRouter.get("/revisions", (req, res) => {
+memoryRouter.get("/revisions", asyncHandler(async (req, res) => {
   const memoryId =
     typeof req.query.memoryId === "string" && req.query.memoryId.length > 0
       ? req.query.memoryId
       : undefined;
 
-  const revisions = listRevisionEvents(
+  const revisions = (await listRevisionEvents(
     memoryId ? { memoryId } : { userId: req.authUserId },
-  ).filter((event) => event.userId === req.authUserId);
+  )).filter((event) => event.userId === req.authUserId);
 
   res.status(200).json({
     revisions,
     count: revisions.length,
   });
-});
+}));
 
-memoryRouter.get("/timeline", (req, res) => {
-  const events = listTimelineEvents(req.authUserId);
+memoryRouter.get("/timeline", asyncHandler(async (req, res) => {
+  const events = await listTimelineEvents(req.authUserId);
 
   res.status(200).json({
     events,
     count: events.length,
   });
-});
+}));
 
-memoryRouter.get("/system/health", (_req, res) => {
+memoryRouter.get("/system/health", asyncHandler(async (_req, res) => {
   ensureMemoryStoreIntegrity();
 
-  const storesIntegrity = hasValidStores();
+  const storesIntegrity = await hasValidStores();
   const retrievalConfigLoaded = hasValidBestConfig();
   const baselineReportPresent = hasValidBaselineReport();
 
@@ -769,12 +1013,12 @@ memoryRouter.get("/system/health", (_req, res) => {
       baselineReportPresent,
     },
   });
-});
+}));
 
-memoryRouter.get("/mvp/status", (_req, res) => {
+memoryRouter.get("/mvp/status", asyncHandler(async (_req, res) => {
   ensureMemoryStoreIntegrity();
 
-  const storesIntegrity = hasValidStores();
+  const storesIntegrity = await hasValidStores();
   const retrievalConfigLoaded = hasValidBestConfig();
   const baselineReport = readBaselineReport();
   const baselineReportPresent = baselineReport !== null;
@@ -828,7 +1072,38 @@ memoryRouter.get("/mvp/status", (_req, res) => {
     completed,
     pending,
   });
-});
+}));
+
+memoryRouter.get(
+  "/benchmark/report",
+  asyncHandler(async (_req, res) => {
+    if (!existsSync(BENCHMARK_REPORT_PATH)) {
+      res.status(404).json({
+        error: "Benchmark report not found",
+        path: BENCHMARK_REPORT_PATH,
+      });
+      return;
+    }
+
+    try {
+      const raw = readFileSync(BENCHMARK_REPORT_PATH, "utf8");
+      const parsed = JSON.parse(raw);
+
+      if (!isObjectRecord(parsed)) {
+        res.status(500).json({
+          error: "Benchmark report is invalid",
+        });
+        return;
+      }
+
+      res.status(200).json(parsed);
+    } catch {
+      res.status(500).json({
+        error: "Failed to read benchmark report",
+      });
+    }
+  }),
+);
 
 memoryRouter.get(
   "/explain",
@@ -880,7 +1155,7 @@ memoryRouter.get(
 
     const memoriesResult = await listMemories({ userId, limit: 200 });
     const memories = memoriesResult.memories;
-    const events = listTimelineEvents(userId);
+    const events = await listTimelineEvents(userId);
 
     const totalsByType = {
       profile: 0,
@@ -1011,6 +1286,88 @@ memoryRouter.get("/list", asyncHandler(async (req, res) => {
     res.status(200).json({
       memories: result.memories,
       count: result.count,
+    });
+  }),
+);
+
+memoryRouter.get(
+  "/requests",
+  asyncHandler(async (req, res) => {
+    const limitRaw =
+      typeof req.query.limit === "string" && req.query.limit.length > 0
+        ? req.query.limit
+        : undefined;
+    const typeFilter =
+      typeof req.query.type === "string" && req.query.type.length > 0
+        ? req.query.type.trim()
+        : undefined;
+    const statusFilter =
+      typeof req.query.status === "string" && req.query.status.length > 0
+        ? req.query.status.trim()
+        : undefined;
+    const rangeFilter = parseRequestRange(req.query.range);
+
+    let limit = 100;
+    if (limitRaw !== undefined) {
+      const parsedLimit = Number.parseInt(limitRaw, 10);
+      if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
+        res.status(400).json({
+          error: "Invalid query",
+          details: { limit: "limit must be a positive integer" },
+        });
+        return;
+      }
+      limit = Math.min(parsedLimit, 400);
+    }
+
+    if (
+      statusFilter !== undefined &&
+      !(REQUEST_STATUSES as readonly string[]).includes(statusFilter)
+    ) {
+      res.status(400).json({
+        error: "Invalid query",
+        details: { status: "status must be Success or Error" },
+      });
+      return;
+    }
+
+    const requestHistory = listRequestHistory({
+      userId: req.authUserId,
+      limit: 400,
+      memoryOnly: true,
+    });
+
+    const rangeDays = REQUEST_RANGE_DAYS[rangeFilter];
+    const rangeThresholdMs =
+      rangeDays === null ? null : Date.now() - rangeDays * 24 * 60 * 60 * 1000;
+
+    const filtered = requestHistory
+      .filter((entry) => {
+        if (typeFilter && entry.routeType !== typeFilter) {
+          return false;
+        }
+        if (statusFilter && entry.status !== statusFilter) {
+          return false;
+        }
+        if (rangeThresholdMs !== null) {
+          const createdAtMs = new Date(entry.createdAt).getTime();
+          if (!Number.isFinite(createdAtMs) || createdAtMs < rangeThresholdMs) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .slice(0, limit);
+
+    res.status(200).json({
+      requests: filtered,
+      count: filtered.length,
+      filters: {
+        type: typeFilter ?? "all",
+        status: statusFilter ?? "All",
+        range: rangeFilter,
+        limit,
+      },
     });
   }),
 );

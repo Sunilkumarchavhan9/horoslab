@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import type { Memory, TimelineEvent } from "./types";
 import { withFileLock } from "./jsonStoreLock";
-import { isSqliteRuntimeStore } from "../storage/runtimeStoreBackend";
+import { isRelationalRuntimeStore } from "../storage/runtimeStoreBackend";
 import {
   insertTimelineEventInDb,
   listTimelineEventsFromDb,
@@ -59,7 +59,7 @@ async function createTimelineEvent(
   eventType: TimelineEvent["eventType"],
   reason: string,
 ): Promise<TimelineEvent> {
-  if (isSqliteRuntimeStore()) {
+  if (isRelationalRuntimeStore()) {
     const event: TimelineEvent = {
       id: randomUUID(),
       userId: memory.userId,
@@ -74,7 +74,7 @@ async function createTimelineEvent(
       },
     };
 
-    insertTimelineEventInDb(event);
+    await insertTimelineEventInDb(event);
     return event;
   }
 
@@ -142,8 +142,8 @@ export function recordMemoryUpdatedEvent(
   return createTimelineEvent(memory, "memory_updated", reason);
 }
 
-export function listTimelineEvents(userId?: string): TimelineEvent[] {
-  if (isSqliteRuntimeStore()) {
+export async function listTimelineEvents(userId?: string): Promise<TimelineEvent[]> {
+  if (isRelationalRuntimeStore()) {
     return listTimelineEventsFromDb(userId);
   }
 

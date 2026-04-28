@@ -106,7 +106,7 @@ describe("MemoryOS developer workflow scenarios", () => {
       topK: 3,
     });
 
-    const timeline = listTimelineEvents("u_wf_project");
+    const timeline = await listTimelineEvents("u_wf_project");
 
     expect(retrieved.memories.length).toBeGreaterThan(0);
     expect(retrieved.memories[0]?.memoryType).toBe("project");

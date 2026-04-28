@@ -184,11 +184,11 @@ export async function explainMemory(
     Math.round(parseNumericMetadataValue(metadata.evidenceCount, 1)),
   );
 
-  const revisions = listRevisionEvents({ memoryId: input.memoryId });
+  const revisions = await listRevisionEvents({ memoryId: input.memoryId });
   const latestRevision = getLatestRevision(revisions);
 
   const timeline = sortByTimestampAsc(
-    listTimelineEvents(input.userId).filter(
+    (await listTimelineEvents(input.userId)).filter(
       (event) => event.memoryId === input.memoryId,
     ),
   );

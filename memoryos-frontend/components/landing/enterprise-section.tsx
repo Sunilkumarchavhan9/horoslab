@@ -32,10 +32,10 @@ export function EnterpriseSection() {
   return (
     <section className="border-b border-[#c9d8ee] bg-white">
       <Reveal className="px-5 py-12 text-center lg:px-7 lg:py-16">
-        <h2 className="mx-auto max-w-[900px] text-[44px] font-semibold tracking-[-0.05em] text-slate-900 md:text-[64px]">
+        <h2 className="mx-auto max-w-[900px] text-[34px] font-semibold tracking-[-0.05em] text-slate-900 md:text-[54px]">
           Memory infrastructure for serious teams
         </h2>
-        <p className="mx-auto mt-6 max-w-[860px] text-[22px] leading-[1.7] text-[#6a778a]">
+        <p className="mx-auto mt-5 max-w-[860px] text-[16px] leading-[1.7] text-[#6a778a] md:text-[19px]">
           MemoryOS is designed for platform teams, internal copilots, and agent products that need
           shared developer context, trustable recall, and operational control without losing speed.
         </p>
@@ -77,7 +77,7 @@ export function EnterpriseSection() {
               <h3 className="mt-5 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">
                 {card.title}
               </h3>
-              <p className="mt-3 max-w-[320px] text-[17px] leading-8 text-[#6a778a]">
+              <p className="mt-3 max-w-[320px] text-[15px] leading-7 text-[#6a778a]">
                 {card.body}
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
@@ -94,6 +94,27 @@ export function EnterpriseSection() {
           </Reveal>
         ))}
       </div>
+
+      <Reveal delay={0.14} className="border-t border-[#c9d8ee] px-5 py-7 lg:px-7">
+        <div className="mx-auto grid max-w-[1040px] gap-4 border border-[#c9d8ee] bg-[#f6f9ff] p-5 md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.18em] text-[#356acc]">ENTERPRISE ROLLOUT</p>
+            <p className="mt-2 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">
+              Launch MemoryOS with your platform team
+            </p>
+            <p className="mt-2 text-[14px] leading-6 text-[#61738d]">
+              We help teams scope workspace design, rollout sequence, trust controls, and first production
+              continuity benchmarks.
+            </p>
+          </div>
+          <a
+            href="#contact"
+            className="inline-flex min-w-[190px] items-center justify-center bg-[#2166f3] px-6 py-3 text-[14px] font-medium text-white"
+          >
+            Request enterprise intro →
+          </a>
+        </div>
+      </Reveal>
     </section>
   );
 }

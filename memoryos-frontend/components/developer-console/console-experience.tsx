@@ -1,10 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
+import { AgentsSection } from "@/components/developer-console/sections/agents-section";
+import { ApiKeysSection } from "@/components/developer-console/sections/api-keys-section";
+import {
+  BenchmarksSection,
+  type BenchmarkRunItem,
+} from "@/components/developer-console/sections/benchmarks-section";
+import { BillingSection } from "@/components/developer-console/sections/billing-section";
+import { ConnectorsSection } from "@/components/developer-console/sections/connectors-section";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
+import { IntegrationsSection } from "@/components/developer-console/sections/integrations-section";
+import { ImportsSection } from "@/components/developer-console/sections/imports-section";
+import { MemoriesSection } from "@/components/developer-console/sections/memories-section";
+import { OverviewSection } from "@/components/developer-console/sections/overview-section";
+import { PluginsSection } from "@/components/developer-console/sections/plugins-section";
+import { RunDemoSection } from "@/components/developer-console/sections/run-demo-section";
+import {
+  RequestsSection,
+  type RequestSectionEvent,
+} from "@/components/developer-console/sections/requests-section";
+import { SettingsSection } from "@/components/developer-console/sections/settings-section";
+import { TeamSection } from "@/components/developer-console/sections/team-section";
+import { fetchMemoryTokenFromBridge, readMemoryTokenFromStorage } from "@/lib/memory-token";
 
 const STORAGE_KEY = "memoryos.developer-console.onboarding";
 const DEFAULT_TOTAL_STEPS = 5;
@@ -16,13 +37,13 @@ const ENTRY_OPTIONS = [
   {
     id: "plugins",
     title: "Plugins",
-    description: "Use Claude Code, Cursor, OpenCode, or OpenClaw",
-    eyebrow: "Best for tooling and IDE workflows",
+    description: "Connect Claude Code, Cursor, OpenCode, or OpenClaw",
+    eyebrow: "Best for IDE and agent workflows",
   },
   {
     id: "memoryos",
-    title: "With MemoryOS",
-    description: "API integration, Chatbot, RAG, and more",
+    title: "MemoryOS API",
+    description: "Retrieve, resume, handoff, and continuity APIs",
     eyebrow: "Best for product and platform builds",
   },
 ] as const;
@@ -60,8 +81,8 @@ const USE_CASES = [
   },
   {
     id: "developer-docs",
-    title: "Developer Docs",
-    description: "Current APIs and working code examples",
+    title: "Developer Continuity",
+    description: "Memory-aware tooling, coding agents, and project recall",
     category: "Developer Docs",
   },
 ] as const;
@@ -121,15 +142,15 @@ const TEMPLATE_CARDS = [
   },
   {
     id: "developer-documentation",
-    title: "Developer Documentation",
+    title: "Continuity API Reference",
     category: "Developer Docs",
-    preview: "{{Company name}} developer platform. Content includes API docs, guides, and architecture notes.",
+    preview: "{{Company name}} developer platform. Content includes retrieve, resume, handoff, and architecture notes.",
   },
   {
     id: "sdk-documentation",
-    title: "SDK Documentation",
+    title: "SDK Quickstart",
     category: "Developer Docs",
-    preview: "{{Company name}} SDK reference. Content includes installation guides, code examples, and recipes.",
+    preview: "{{Company name}} SDK reference. Content includes beforeModel, afterModel, and handoff examples.",
   },
 ] as const;
 
@@ -145,10 +166,10 @@ const PLUGIN_CHOICES = [
       "Context injection before each prompt",
     ],
     steps: [
-      "Open API Keys in the Supermemory console and create a token.",
-      "Export SUPERMEMORY_API_KEY in your shell profile.",
-      "Install with `claude mcp add supermemory -- npx -y @supermemory/claude-code`.",
-      "Run `claude mcp list` and confirm Supermemory is connected.",
+      "Open API Keys in the MemoryOS developer console and create a token.",
+      "Export `MEMORYOS_API_KEY` in your shell profile.",
+      "Add the MemoryOS MCP server to Claude Code.",
+      "Run `claude mcp list` and confirm MemoryOS is connected.",
     ],
   },
   {
@@ -162,10 +183,10 @@ const PLUGIN_CHOICES = [
       "Context injection before each prompt",
     ],
     steps: [
-      "Create an API key from the Supermemory console.",
-      "Add `SUPERMEMORY_API_KEY` to your shell profile.",
-      "Install with `npx opencode@latest plugin add supermemory`.",
-      "Verify `~/.config/opencode/opencode.jsonc` includes the plugin.",
+      "Create an API key from the MemoryOS developer console.",
+      "Add `MEMORYOS_API_KEY` to your shell profile.",
+      "Install the MemoryOS plugin for OpenCode.",
+      "Verify your OpenCode config includes the MemoryOS plugin.",
     ],
   },
   {
@@ -179,10 +200,10 @@ const PLUGIN_CHOICES = [
       "Lightweight setup for local tooling",
     ],
     steps: [
-      "Create an API key in the Supermemory console.",
-      "Add `SUPERMEMORY_API_KEY` to your environment variables.",
+      "Create an API key in the MemoryOS developer console.",
+      "Add `MEMORYOS_API_KEY` to your environment variables.",
       "Install the OpenClaw adapter package.",
-      "Restart OpenClaw and verify the adapter loads.",
+      "Restart OpenClaw and verify the MemoryOS adapter loads.",
     ],
   },
   {
@@ -196,10 +217,10 @@ const PLUGIN_CHOICES = [
       "Fast retrieval for repeated tasks",
     ],
     steps: [
-      "Create an API key in the Supermemory console.",
-      "Save `SUPERMEMORY_API_KEY` in your Hermes environment.",
+      "Create an API key in the MemoryOS developer console.",
+      "Save `MEMORYOS_API_KEY` in your Hermes environment.",
       "Install the Hermes plugin package.",
-      "Run a sample memory read/write to confirm setup.",
+      "Run a sample retrieve/resume cycle to confirm setup.",
     ],
   },
   {
@@ -213,10 +234,10 @@ const PLUGIN_CHOICES = [
       "Recover context quickly after restarts",
     ],
     steps: [
-      "Create an API key in the Supermemory console.",
-      "Set `SUPERMEMORY_API_KEY` in your terminal environment.",
+      "Create an API key in the MemoryOS developer console.",
+      "Set `MEMORYOS_API_KEY` in your terminal environment.",
       "Install the Cursor memory integration package.",
-      "Open Cursor settings and verify the integration is enabled.",
+      "Open Cursor settings and verify MemoryOS is enabled.",
     ],
   },
 ] as const;
@@ -224,23 +245,25 @@ const PLUGIN_CHOICES = [
 const PRODUCT_TABS = ["All", "Platform", "Search", "Assistants", "Workflows"] as const;
 
 const PRODUCT_INTEGRATIONS = [
-  { id: "api-integration", title: "API Integration", subtitle: "Direct MemoryOS API", tab: "Platform", accent: "API" },
-  { id: "chatbot", title: "Chatbot", subtitle: "Embed memory into your assistant", tab: "Assistants", accent: "BOT" },
-  { id: "rag", title: "RAG Pipeline", subtitle: "Grounded retrieval workflow", tab: "Search", accent: "RAG" },
-  { id: "copilot", title: "Internal Copilot", subtitle: "Team knowledge assistant", tab: "Assistants", accent: "CO" },
-  { id: "workflow", title: "Automation Workflow", subtitle: "Event-driven memory sync", tab: "Workflows", accent: "WF" },
-  { id: "docs-search", title: "Docs Search", subtitle: "Developer-facing documentation search", tab: "Search", accent: "DS" },
-  { id: "playground", title: "Playground", subtitle: "Test your API quickly", tab: "Platform", accent: "PG" },
+  { id: "api-integration", title: "API Integration", subtitle: "Direct retrieve, resume, and handoff APIs", tab: "Platform", accent: "API" },
+  { id: "chatbot", title: "Chatbot", subtitle: "Embed continuity into your assistant", tab: "Assistants", accent: "BOT" },
+  { id: "rag", title: "RAG Pipeline", subtitle: "Grounded retrieval with project memory", tab: "Search", accent: "RAG" },
+  { id: "copilot", title: "Internal Copilot", subtitle: "Team knowledge and handoff assistant", tab: "Assistants", accent: "CO" },
+  { id: "workflow", title: "Automation Workflow", subtitle: "Event-driven continuity sync", tab: "Workflows", accent: "WF" },
+  { id: "docs-search", title: "Developer Recall", subtitle: "Search docs, bugs, and prior decisions", tab: "Search", accent: "DR" },
+  { id: "playground", title: "Playground", subtitle: "Test continuity flows interactively", tab: "Platform", accent: "PG" },
 ] as const;
+
+const MEMORY_TAG_OPTIONS = ["project", "debug", "decision", "handoff", "open-loop", "preference"] as const;
 
 const GLITCH_ASCII_PATTERN = Array.from({ length: 18 }, (_, row) =>
   Array.from({ length: 70 }, (_, col) => ["2", "3", "4", "5", "x", "+"][((row * 3) + (col * 5)) % 6]).join(" "),
 ).join("\n");
 
 const DASHBOARD_NAV = [
-  { section: "", items: ["Overview", "Documents", "Container Tags", "Memory Graph", "Requests", "User Insights"] },
-  { section: "Data", items: ["Connectors", "Import"] },
-  { section: "Developer", items: ["API Keys", "Agents", "Plugins"] },
+  { section: "", items: ["Overview", "Memories", "Requests", "Benchmarks"] },
+  { section: "Data", items: ["Connectors", "Integrations", "Imports"] },
+  { section: "Developer", items: ["API Keys", "Agents", "Plugins", "Playground"] },
   { section: "Organization", items: ["Team", "Billing", "Settings"] },
 ] as const;
 
@@ -544,6 +567,305 @@ function ProgressHeader({ step, entryPath }: { step: WizardStep; entryPath: Entr
   );
 }
 
+type MemoryListItem = {
+  id: string;
+  type: string;
+  summary: string;
+  content: string;
+  status: string;
+  confidence: number;
+  updatedAt: string;
+};
+
+type MemoryListResponse = {
+  memories: MemoryListItem[];
+  count: number;
+};
+
+type InsightsResponse = {
+  totalsByType: Record<string, number>;
+  totalsByStatus: Record<string, number>;
+  topSkills: string[];
+  activeProjects: string[];
+  recentMilestones: string[];
+};
+
+type ResumeResponseData = {
+  summary: string;
+  lastKnownState: string;
+  openLoops: string[];
+  recommendedNextStep: string;
+  usedMemories: Array<{
+    id: string;
+    content: string;
+    summary?: string;
+    memoryType?: string;
+    updatedAt?: string;
+  }>;
+};
+
+type HandoffResponseData = {
+  summary: string;
+  currentState: string;
+  openLoops: string[];
+  recommendedNextActions: string[];
+  keyMemories: Array<{
+    id: string;
+    content: string;
+    summary?: string;
+    memoryType?: string;
+    updatedAt?: string;
+  }>;
+};
+
+type MvpStatusResponse = {
+  status: string;
+  checks?: {
+    storesIntegrity?: boolean;
+    retrievalConfigLoaded?: boolean;
+    baselineReportPresent?: boolean;
+    evalPassRateAtLeast90?: boolean;
+  };
+  metrics?: {
+    evalPassRate?: number | null;
+    totalEvalCases?: number | null;
+  };
+  completed?: string[];
+  pending?: string[];
+};
+
+type RequestHistoryResponse = {
+  requests: Array<{
+    id: string;
+    method: string;
+    path: string;
+    routeType: string;
+    statusCode: number;
+    status: "Success" | "Error";
+    durationMs: number;
+    createdAt: string;
+  }>;
+};
+
+type TimelineHistoryResponse = {
+  count: number;
+  events: Array<{
+    id: string;
+    eventType: string;
+    timestamp: string;
+  }>;
+};
+
+type BenchmarkReportResponse = {
+  generatedAt: string;
+  totalCases: number;
+  passedCases: number;
+  failedCases: number;
+  passRate: number;
+  kpis: {
+    top3_retrieval_precision: number | null;
+    resume_success_rate: number | null;
+    contradiction_miss_rate: number | null;
+    wrong_merge_rate: number | null;
+    p95_retrieve_latency: number | null;
+  };
+  declaredCasesByType?: {
+    retrieve?: number;
+    resume?: number;
+    contradiction?: number;
+  };
+  results?: Array<{
+    id: string;
+    type: "retrieve" | "resume" | "contradiction";
+    passed: boolean;
+    details?: unknown;
+  }>;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function normalizeApiPayload<T>(payload: unknown): T {
+  if (
+    isRecord(payload) &&
+    payload.ok === true &&
+    "data" in payload
+  ) {
+    return payload.data as T;
+  }
+  return payload as T;
+}
+
+function extractErrorMessage(payload: unknown, fallback: string): string {
+  if (isRecord(payload)) {
+    if (typeof payload.error === "string" && payload.error.length > 0) {
+      return payload.error;
+    }
+    if (isRecord(payload.error) && typeof payload.error.message === "string") {
+      return payload.error.message;
+    }
+    if (typeof payload.message === "string" && payload.message.length > 0) {
+      return payload.message;
+    }
+  }
+  return fallback;
+}
+
+function getConsoleAuthTokenFromEnv(): string | null {
+  const envToken =
+    process.env.NEXT_PUBLIC_MEMORYOS_CONSOLE_TOKEN ??
+    process.env.NEXT_PUBLIC_MEMORYOS_API_TOKEN ??
+    null;
+  return envToken?.trim() || null;
+}
+
+async function getConsoleAuthToken(): Promise<string | null> {
+  const storageToken = readMemoryTokenFromStorage();
+  if (storageToken) {
+    return storageToken;
+  }
+
+  const envToken = getConsoleAuthTokenFromEnv();
+  if (envToken) {
+    return envToken;
+  }
+
+  return fetchMemoryTokenFromBridge();
+}
+
+async function fetchMemoryApi<T>(
+  routePath: string,
+  token: string,
+  init?: RequestInit,
+): Promise<T> {
+  const backendOrigin =
+    process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim() ??
+    "http://localhost:3001";
+  const normalizedOrigin = backendOrigin.replace(/\/+$/, "");
+  const normalizedPath = routePath.startsWith("/")
+    ? routePath
+    : `/${routePath}`;
+  const requestUrl = /^https?:\/\//i.test(routePath)
+    ? routePath
+    : `${normalizedOrigin}${normalizedPath}`;
+
+  const response = await fetch(requestUrl, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(init?.headers ?? {}),
+    },
+    cache: "no-store",
+  });
+
+  let payload: unknown = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      extractErrorMessage(
+        payload,
+        `Request failed (${response.status}) for ${requestUrl}`,
+      ),
+    );
+  }
+
+  return normalizeApiPayload<T>(payload);
+}
+
+function toPercentLabel(value: number | null | undefined): string {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "-";
+  }
+  return `${Math.max(0, Math.min(100, value)).toFixed(1)}%`;
+}
+
+function summarizeBenchmarkFailure(details: unknown): string {
+  if (!isRecord(details)) {
+    return "Benchmark case failed.";
+  }
+  if (Array.isArray(details.missing) && details.missing.length > 0) {
+    return `Missing: ${details.missing.join(", ")}`;
+  }
+  if (
+    Array.isArray(details.missingTypes) &&
+    details.missingTypes.length > 0
+  ) {
+    return `Missing types: ${details.missingTypes.join(", ")}`;
+  }
+  if (
+    Array.isArray(details.forbiddenPresentTypes) &&
+    details.forbiddenPresentTypes.length > 0
+  ) {
+    return `Forbidden types present: ${details.forbiddenPresentTypes.join(", ")}`;
+  }
+  if (typeof details.summary === "string" && details.summary.length > 0) {
+    return details.summary;
+  }
+  return "Benchmark case failed.";
+}
+
+function mapBenchmarkReportToRun(report: BenchmarkReportResponse): BenchmarkRunItem {
+  const generatedAtMs = new Date(report.generatedAt).getTime();
+  const safeGeneratedAtId = Number.isFinite(generatedAtMs)
+    ? new Date(generatedAtMs).toISOString()
+    : report.generatedAt;
+  const failedDetails =
+    (report.results ?? [])
+      .filter((item) => !item.passed)
+      .map((item) => ({
+        id: item.id,
+        type: item.type,
+        reason: summarizeBenchmarkFailure(item.details),
+      })) ?? [];
+
+  return {
+    id: `run_${safeGeneratedAtId}`,
+    generatedAt: report.generatedAt,
+    status: report.failedCases > 0 ? "Failed" : "Passed",
+    mode: "local",
+    totalCases: report.totalCases,
+    passedCases: report.passedCases,
+    failedCases: report.failedCases,
+    passRate: report.passRate,
+    top3RetrievalPrecision: report.kpis.top3_retrieval_precision ?? 0,
+    resumeSuccessRate: report.kpis.resume_success_rate ?? 0,
+    contradictionMissRate: report.kpis.contradiction_miss_rate ?? 0,
+    wrongMergeRate: report.kpis.wrong_merge_rate ?? 0,
+    p95RetrieveLatencyMs: report.kpis.p95_retrieve_latency,
+    suites: {
+      retrieve: {
+        passed:
+          (report.results ?? []).filter(
+            (item) => item.type === "retrieve" && item.passed,
+          ).length,
+        total: report.declaredCasesByType?.retrieve ?? 0,
+      },
+      resume: {
+        passed:
+          (report.results ?? []).filter(
+            (item) => item.type === "resume" && item.passed,
+          ).length,
+        total: report.declaredCasesByType?.resume ?? 0,
+      },
+      contradiction: {
+        passed:
+          (report.results ?? []).filter(
+            (item) => item.type === "contradiction" && item.passed,
+          ).length,
+        total: report.declaredCasesByType?.contradiction ?? 0,
+      },
+    },
+    failedDetails,
+  };
+}
+
 function readStoredState() {
   if (typeof window === "undefined") {
     return null;
@@ -623,6 +945,21 @@ export function DeveloperConsoleExperience() {
   const [showSupportWidget, setShowSupportWidget] = useState(false);
   const [showSupportComposer, setShowSupportComposer] = useState(false);
   const [supportMessage, setSupportMessage] = useState("");
+  const [activeDashboardItem, setActiveDashboardItem] = useState("Overview");
+  const [memoryLegendExpanded, setMemoryLegendExpanded] = useState(true);
+  const [showMemoryTagFilter, setShowMemoryTagFilter] = useState(false);
+  const [memoryTagQuery, setMemoryTagQuery] = useState("");
+  const [selectedMemoryTags, setSelectedMemoryTags] = useState<string[]>([]);
+  const [dashboardDataLoading, setDashboardDataLoading] = useState(false);
+  const [dashboardDataError, setDashboardDataError] = useState<string | null>(null);
+  const [liveMemories, setLiveMemories] = useState<MemoryListItem[]>([]);
+  const [liveInsights, setLiveInsights] = useState<InsightsResponse | null>(null);
+  const [liveTimelineCount, setLiveTimelineCount] = useState(0);
+  const [liveResume, setLiveResume] = useState<ResumeResponseData | null>(null);
+  const [liveHandoff, setLiveHandoff] = useState<HandoffResponseData | null>(null);
+  const [liveMvpStatus, setLiveMvpStatus] = useState<MvpStatusResponse | null>(null);
+  const [liveRequestEvents, setLiveRequestEvents] = useState<RequestSectionEvent[]>([]);
+  const [liveBenchmarkRuns, setLiveBenchmarkRuns] = useState<BenchmarkRunItem[]>([]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -696,6 +1033,357 @@ export function DeveloperConsoleExperience() {
   const selectedIntegrationDetails =
     integrationOptions.find((integration) => integration.id === selectedIntegration) ?? integrationOptions[0];
   const pluginIntegrationDetails = hasPluginSetupDetails(selectedIntegrationDetails) ? selectedIntegrationDetails : null;
+  const activeProjectName = currentOrganization?.name
+    ? `${currentOrganization.name} Continuity Workspace`
+    : "MemoryOS Continuity Workspace";
+  const activeProjectUseCase = selectedUseCase?.title ?? "Developer Continuity";
+  const activeProjectIntegration = selectedIntegrationDetails?.title ?? "MemoryOS API";
+  const activeProjectEntry = entryPath === "plugins" ? "Plugin / MCP" : "API / Platform";
+
+  useEffect(() => {
+    if (!hydrated || step !== "dashboard") {
+      return;
+    }
+
+    let cancelled = false;
+    const workspace = currentOrganization?.name ?? "memoryos";
+    const resumePayload = {
+      project: activeProjectName,
+      question: "What should I resume next for this project?",
+      workspace,
+    };
+    const handoffPayload = {
+      project: activeProjectName,
+      question: "Generate a continuity handoff for this project.",
+      workspace,
+    };
+
+    async function loadDashboardData() {
+      const token = await getConsoleAuthToken();
+      if (!token) {
+        if (!cancelled) {
+          setDashboardDataError(
+            "Sign in first so MemoryOS can mint your API token, or set memoryos.apiToken manually.",
+          );
+          setDashboardDataLoading(false);
+        }
+        return;
+      }
+      const authToken: string = token;
+
+      setDashboardDataLoading(true);
+      setDashboardDataError(null);
+      setLiveMemories([]);
+      setLiveInsights(null);
+      setLiveTimelineCount(0);
+      setLiveResume(null);
+      setLiveHandoff(null);
+      setLiveMvpStatus(null);
+      setLiveRequestEvents([]);
+      setLiveBenchmarkRuns([]);
+
+      const results = await Promise.allSettled([
+        fetchMemoryApi<MemoryListResponse>("/api/memory/list?limit=120", authToken),
+        fetchMemoryApi<InsightsResponse>("/api/memory/insights", authToken),
+        fetchMemoryApi<MvpStatusResponse>("/api/memory/mvp/status", authToken),
+        fetchMemoryApi<RequestHistoryResponse>(
+          "/api/memory/requests?limit=200&range=all",
+          authToken,
+        ),
+        fetchMemoryApi<TimelineHistoryResponse>("/api/memory/timeline?limit=200", authToken),
+        fetchMemoryApi<BenchmarkReportResponse>(
+          "/api/memory/benchmark/report",
+          authToken,
+        ),
+        fetchMemoryApi<ResumeResponseData>("/api/memory/resume", authToken, {
+          method: "POST",
+          body: JSON.stringify(resumePayload),
+        }),
+        fetchMemoryApi<HandoffResponseData>("/api/memory/handoff", authToken, {
+          method: "POST",
+          body: JSON.stringify(handoffPayload),
+        }),
+      ]);
+
+      if (cancelled) {
+        return;
+      }
+
+      const [
+        memoriesResult,
+        insightsResult,
+        mvpStatusResult,
+        requestsResult,
+        timelineResult,
+        benchmarkResult,
+        resumeResult,
+        handoffResult,
+      ] = results;
+
+      if (memoriesResult.status === "fulfilled") {
+        setLiveMemories(
+          [...memoriesResult.value.memories].sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+          ),
+        );
+      }
+
+      if (insightsResult.status === "fulfilled") {
+        setLiveInsights(insightsResult.value);
+      }
+
+      if (mvpStatusResult.status === "fulfilled") {
+        setLiveMvpStatus(mvpStatusResult.value);
+      }
+
+      if (requestsResult.status === "fulfilled") {
+        setLiveRequestEvents(
+          requestsResult.value.requests.map((entry) => ({
+            id: entry.id,
+            createdAt: entry.createdAt,
+            type: entry.routeType,
+            status: entry.status,
+            latencyMs: entry.durationMs,
+            route: entry.path,
+            method: entry.method,
+            statusCode: entry.statusCode,
+          })),
+        );
+      }
+
+      if (timelineResult.status === "fulfilled") {
+        setLiveTimelineCount(timelineResult.value.count ?? 0);
+      }
+
+      if (benchmarkResult.status === "fulfilled") {
+        setLiveBenchmarkRuns([mapBenchmarkReportToRun(benchmarkResult.value)]);
+      } else {
+        setLiveBenchmarkRuns([]);
+      }
+
+      if (resumeResult.status === "fulfilled") {
+        setLiveResume(resumeResult.value);
+      }
+
+      if (handoffResult.status === "fulfilled") {
+        setLiveHandoff(handoffResult.value);
+      }
+
+      const firstError = results.find(
+        (result): result is PromiseRejectedResult => result.status === "rejected",
+      );
+      if (firstError) {
+        setDashboardDataError(firstError.reason instanceof Error ? firstError.reason.message : "Some live dashboard data could not be loaded.");
+      } else {
+        setDashboardDataError(null);
+      }
+
+      setDashboardDataLoading(false);
+    }
+
+    void loadDashboardData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, step, currentOrganization?.name, activeProjectName, dashboardRefreshKey]);
+
+  const hasLiveContinuityData =
+    liveMemories.length > 0 || Boolean(liveResume) || Boolean(liveHandoff);
+  const currentSummary =
+    liveHandoff?.summary ??
+    liveResume?.summary ??
+    "No live project summary yet. Save one real project update to generate continuity state.";
+  const lastKnownState =
+    liveResume?.lastKnownState ??
+    liveHandoff?.currentState ??
+    "No live state yet. Run a retrieve/resume cycle from Playground to populate current state.";
+  const nextRecommendedAction =
+    liveResume?.recommendedNextStep ??
+    liveHandoff?.recommendedNextActions?.[0] ??
+    "Run /api/memory/process with a real update, then generate a handoff to validate end-to-end continuity.";
+  const openLoops =
+    (liveResume?.openLoops && liveResume.openLoops.length > 0
+      ? liveResume.openLoops
+      : liveHandoff?.openLoops && liveHandoff.openLoops.length > 0
+        ? liveHandoff.openLoops
+        : ["No open loops yet. Add a live update to create actionable follow-ups."]
+    ).slice(0, 4);
+
+  const activeProjectStatus = dashboardDataLoading
+    ? "Syncing"
+    : dashboardDataError
+      ? "Needs attention"
+      : hasLiveContinuityData
+        ? "Live"
+        : "Awaiting first memory";
+  const activeProjectLastUpdated = (() => {
+    const updatedAt =
+      liveMemories[0]?.updatedAt ??
+      liveRequestEvents[0]?.createdAt ??
+      liveBenchmarkRuns[0]?.generatedAt ??
+      null;
+    if (!updatedAt) return "During onboarding";
+    const date = new Date(updatedAt);
+    return Number.isFinite(date.getTime())
+      ? date.toLocaleDateString()
+      : "During onboarding";
+  })();
+
+  const activeWorkstreams = [
+    {
+      title: "Continuity setup",
+      status:
+        liveMvpStatus?.checks?.storesIntegrity &&
+        liveMvpStatus?.checks?.retrievalConfigLoaded
+          ? "Ready"
+          : "Pending",
+      detail:
+        "Project metadata, integration surface, and continuity checks are configured.",
+    },
+    {
+      title: "First memory capture",
+      status: liveMemories.length > 0 ? "Ready" : "Pending",
+      detail:
+        "Store at least one real work update so resume flows have project state.",
+    },
+    {
+      title: "Handoff validation",
+      status:
+        liveHandoff?.keyMemories && liveHandoff.keyMemories.length > 0
+          ? "Ready"
+          : "Pending",
+      detail:
+        "Generate and inspect a handoff for another human or coding agent.",
+    },
+  ];
+
+  const recentMemories =
+    liveMemories.length > 0
+      ? liveMemories.slice(0, 3).map((memory) => ({
+          type: memory.type.slice(0, 1).toUpperCase() + memory.type.slice(1),
+          detail: memory.summary || memory.content,
+          confidence:
+            memory.confidence <= 1
+              ? memory.confidence.toFixed(2)
+              : (memory.confidence / 100).toFixed(2),
+        }))
+      : [];
+
+  const latestHandoff =
+    liveHandoff && liveHandoff.keyMemories.length > 0
+      ? {
+          title: "Latest handoff generated",
+          detail: liveHandoff.summary,
+          status: "Ready",
+        }
+      : {
+          title: "No handoff generated yet",
+          detail:
+            "Create the first handoff after a retrieve/resume run to preserve current state, open loops, and next actions.",
+          status: "Pending",
+        };
+
+  const handoffUsedMemories =
+    liveHandoff?.keyMemories && liveHandoff.keyMemories.length > 0
+      ? liveHandoff.keyMemories.slice(0, 6).map((memory) => ({
+          id: memory.id,
+          type: memory.memoryType ?? "memory",
+          content: memory.summary ?? memory.content,
+          updatedAt: memory.updatedAt ?? "",
+        }))
+      : liveResume?.usedMemories && liveResume.usedMemories.length > 0
+        ? liveResume.usedMemories.slice(0, 6).map((memory) => ({
+            id: memory.id,
+            type: memory.memoryType ?? "memory",
+            content: memory.summary ?? memory.content,
+            updatedAt: memory.updatedAt ?? "",
+          }))
+        : [];
+
+  const handoffRequestEvents = liveRequestEvents
+    .filter((request) => request.route.includes("/api/memory/handoff"))
+    .slice(0, 6)
+    .map((request) => ({
+      id: request.id,
+      createdAt: request.createdAt,
+      status: request.status,
+      route: request.route,
+      latencyMs: request.latencyMs,
+    }));
+
+  const handoffRecommendedActions =
+    liveHandoff?.recommendedNextActions && liveHandoff.recommendedNextActions.length > 0
+      ? liveHandoff.recommendedNextActions.slice(0, 4)
+      : [nextRecommendedAction];
+
+  const latestBenchmark = liveBenchmarkRuns[0] ?? null;
+  const qualityStatus: [string, string][] = latestBenchmark
+    ? [
+        [
+          "Retrieve quality",
+          toPercentLabel(latestBenchmark.top3RetrievalPrecision),
+        ],
+        [
+          "Resume quality",
+          toPercentLabel(latestBenchmark.resumeSuccessRate),
+        ],
+        [
+          "Contradiction miss rate",
+          toPercentLabel(latestBenchmark.contradictionMissRate),
+        ],
+      ]
+    : [
+        ["Retrieve quality", "No run yet"],
+        ["Resume quality", "No run yet"],
+        ["Contradiction miss rate", "No run yet"],
+      ];
+
+  const integrationHealth: [string, string][] = [
+    ["Primary surface", activeProjectIntegration],
+    ["Entry path", activeProjectEntry],
+    [
+      "MVP status",
+      liveMvpStatus?.status ? liveMvpStatus.status.replace("_", " ") : "Unknown",
+    ],
+  ];
+
+  const recentRequests =
+    liveRequestEvents.length > 0
+      ? liveRequestEvents.slice(0, 3).map((request) => ({
+          method: request.type,
+          detail: `${request.method} ${request.route} · ${request.latencyMs}ms`,
+          state: request.status,
+        }))
+      : [];
+
+  const memoryStats: [string, string][] = [
+    ["Memories", `${liveMemories.length}`],
+    [
+      "Project facts",
+      `${liveMemories.filter((memory) => memory.type === "project").length}`,
+    ],
+    ["Open loops", `${openLoops.length}`],
+    ["Connections", `${liveInsights?.activeProjects?.length ?? 0}`],
+    ["Timeline events", `${liveTimelineCount}`],
+  ];
+  const memoryRelations = [
+    { label: "Derives", tone: "bg-[#ffd34d]" },
+    { label: "Updates", tone: "bg-[#9b7bff]" },
+    { label: "Extends", tone: "bg-[#4bb7ff]" },
+    { label: "Contradicts", tone: "bg-[#ff6d6d]" },
+  ];
+  const memoryStatuses = [
+    { label: "Recent (< 24h)", tone: "border-[#14c38e] text-[#8ce6c7]" },
+    { label: "Active", tone: "border-[#2678ff] text-[#8bb5ff]" },
+    { label: "Needs review", tone: "border-[#f0b429] text-[#ffd27a]" },
+    { label: "Forgotten", tone: "border-[#ff6d6d] text-[#ff9a9a]" },
+  ];
+  const filteredMemoryTagOptions = useMemo(
+    () => MEMORY_TAG_OPTIONS.filter((tag) => tag.includes(memoryTagQuery.toLowerCase())),
+    [memoryTagQuery],
+  );
 
   const canContinue =
     step === "org"
@@ -734,6 +1422,7 @@ export function DeveloperConsoleExperience() {
     };
     setOrganizations((current) => [...current, newOrganization]);
     setCurrentOrganizationId(newOrganization.id);
+    setActiveDashboardItem("Overview");
     setStep("dashboard");
   }
 
@@ -754,14 +1443,184 @@ export function DeveloperConsoleExperience() {
     setSelectedIntegration(null);
     setExpandedSetupSection(1);
     setCurrentOrganizationId(null);
+    setActiveDashboardItem("Overview");
     setShowOrganizationMenu(false);
     setStep("org");
   }
 
   function selectOrganization(organizationId: string) {
     setCurrentOrganizationId(organizationId);
+    setActiveDashboardItem("Overview");
     setShowOrganizationMenu(false);
     setStep("dashboard");
+  }
+
+  async function seedFirstWorkspaceMemory() {
+    const token = await getConsoleAuthToken();
+    if (!token) {
+      setDashboardDataError(
+        "Sign in first so MemoryOS can mint your API token, or set memoryos.apiToken manually.",
+      );
+      return;
+    }
+
+    const workspace = currentOrganization?.name ?? "memoryos";
+    const workspaceSlug = workspace.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").slice(0, 48) || "memoryos";
+
+    setIsSeedingFirstMemory(true);
+    setDashboardDataError(null);
+
+    try {
+      await fetchMemoryApi("/api/memory/process", token, {
+        method: "POST",
+        body: JSON.stringify({
+          threadId: `projects-seed-${workspaceSlug}-${Date.now()}`,
+          workspace,
+          project: activeProjectName,
+          message:
+            "Seeded from Developer Console Projects. This workspace is now live for retrieve, resume, and handoff continuity flows.",
+        }),
+      });
+      setDashboardRefreshKey((current) => current + 1);
+    } catch (error) {
+      setDashboardDataError(
+        error instanceof Error ? error.message : "Failed to seed first workspace memory.",
+      );
+    } finally {
+      setIsSeedingFirstMemory(false);
+    }
+  }
+
+  function renderDashboardMain() {
+    if (activeDashboardItem === "Overview") {
+      return (
+        <OverviewSection
+          actions={{
+            "Quick Start": () => setActiveDashboardItem("Integrations"),
+            "Run Demo": () => window.open("/run-demo", "_blank", "noopener,noreferrer"),
+            Playground: () => window.open("/playground", "_blank", "noopener,noreferrer"),
+            Documentation: () => setActiveDashboardItem("Integrations"),
+          }}
+        />
+      );
+    }
+
+    if (activeDashboardItem === "Memories") {
+      return (
+        <MemoriesSection
+          selectedMemoryTags={selectedMemoryTags}
+          workspaceName={currentOrganization?.name ?? "MemoryOS"}
+          showMemoryTagFilter={showMemoryTagFilter}
+          memoryLegendExpanded={memoryLegendExpanded}
+          memoryTagQuery={memoryTagQuery}
+          filteredMemoryTagOptions={filteredMemoryTagOptions}
+          memoryStats={memoryStats}
+          memoryRelations={memoryRelations}
+          memoryStatuses={memoryStatuses}
+          onToggleLegend={() => setMemoryLegendExpanded((current) => !current)}
+          onOpenTagFilter={() => setShowMemoryTagFilter(true)}
+          onCloseTagFilter={() => setShowMemoryTagFilter(false)}
+          onApplyTagFilter={() => setShowMemoryTagFilter(false)}
+          onResetTagFilter={() => {
+            setSelectedMemoryTags([]);
+            setMemoryTagQuery("");
+            setShowMemoryTagFilter(false);
+          }}
+          onTagQueryChange={setMemoryTagQuery}
+          onToggleTag={(tag: string) =>
+            setSelectedMemoryTags((current) =>
+              current.includes(tag) ? current.filter((item) => item !== tag) : [...current, tag],
+            )
+          }
+        />
+      );
+    }
+
+    if (activeDashboardItem === "Requests") {
+      return (
+        <RequestsSection
+          requestEvents={liveRequestEvents}
+          isLoading={dashboardDataLoading}
+          errorMessage={dashboardDataError}
+        />
+      );
+    }
+
+    if (activeDashboardItem === "Benchmarks") {
+      return (
+        <BenchmarksSection
+          runs={liveBenchmarkRuns}
+          isLoading={dashboardDataLoading}
+          errorMessage={dashboardDataError}
+        />
+      );
+    }
+
+    if (activeDashboardItem === "Connectors") {
+      return <ConnectorsSection />;
+    }
+
+    if (activeDashboardItem === "Integrations") {
+      return <IntegrationsSection />;
+    }
+
+    if (activeDashboardItem === "Run Demo" || activeDashboardItem === "RunDemo") {
+      return <RunDemoSection />;
+    }
+
+    if (activeDashboardItem === "Imports") {
+      return <ImportsSection />;
+    }
+
+    if (activeDashboardItem === "API Keys") {
+      return <ApiKeysSection />;
+    }
+
+    if (activeDashboardItem === "Agents") {
+      return <AgentsSection />;
+    }
+
+    if (activeDashboardItem === "Plugins") {
+      return <PluginsSection />;
+    }
+
+    if (activeDashboardItem === "Team") {
+      return (
+        <TeamSection
+          workspaceName={currentOrganization?.name ?? "MemoryOS"}
+          ownerName={userDisplayName}
+          ownerEmail={userEmail}
+          plan="Free"
+        />
+      );
+    }
+
+    if (activeDashboardItem === "Billing") {
+      return <BillingSection workspaceName={currentOrganization?.name ?? "MemoryOS"} currentPlan="Free" />;
+    }
+
+    if (activeDashboardItem === "Settings") {
+      return (
+        <SettingsSection
+          workspaceName={currentOrganization?.name ?? "MemoryOS"}
+          ownerName={userDisplayName}
+          ownerEmail={userEmail}
+          organizationId={currentOrganization?.id ?? ""}
+        />
+      );
+    }
+
+    return (
+      <>
+        <h1 className="text-[22px] font-semibold tracking-[-0.05em]">{activeDashboardItem}</h1>
+        <div className="mt-4 rounded-[10px] border border-dashed border-white/12 bg-[#151515] px-6 py-8">
+          <p className="text-[15px] leading-7 text-white/56">
+            {activeDashboardItem} is next in the console buildout. We&apos;ve wired the navigation now, and this section can be
+            filled with MemoryOS-specific workflows after Projects.
+          </p>
+        </div>
+      </>
+    );
   }
 
   async function handleSignOut() {
@@ -839,7 +1698,7 @@ export function DeveloperConsoleExperience() {
 
   if (step === "dashboard") {
     return (
-      <div className="h-dvh overflow-hidden bg-[#070707] text-white lg:grid lg:grid-cols-[304px_1fr]">
+      <div className="h-dvh overflow-hidden bg-[#080808] text-white lg:grid lg:grid-cols-[220px_1fr]">
         <aside className="flex flex-col border-b border-white/10 bg-[#111111] lg:h-dvh lg:border-b-0 lg:border-r">
           <div className="border-b border-white/10 px-4 pt-[clamp(9px,1vh,11px)] pb-[clamp(14px,1.5vh,18px)] sm:px-5 lg:px-4">
             <Link href="/">
@@ -855,7 +1714,7 @@ export function DeveloperConsoleExperience() {
             </div>
           </div>
 
-          <nav className="min-h-0 flex-1 space-y-[clamp(9px,1vh,13px)] px-4 pb-4 sm:px-5 lg:px-4">
+          <nav className="min-h-0 flex-1 space-y-[clamp(9px,1vh,13px)] overflow-y-auto px-4 pb-4 sm:px-5 lg:px-4">
             {DASHBOARD_NAV.map((group) => (
               <div key={group.section || "main"}>
                 {group.section ? (
@@ -868,8 +1727,16 @@ export function DeveloperConsoleExperience() {
                     <button
                       key={item}
                       type="button"
+                      onClick={() => {
+                        if (item === "Playground") {
+                          window.open("/playground", "_blank", "noopener,noreferrer");
+                          return;
+                        }
+
+                        setActiveDashboardItem(item);
+                      }}
                       className={`flex w-full items-center rounded-[8px] px-4 py-[clamp(6px,0.7vh,8px)] text-left text-[14px] leading-[1.25] transition ${
-                        item === "Overview"
+                        item === activeDashboardItem
                           ? "bg-[#232323] font-semibold text-white"
                           : "text-white/72 hover:bg-white/5 hover:text-white"
                       }`}
@@ -922,7 +1789,7 @@ export function DeveloperConsoleExperience() {
                             <p className="text-[13px] text-white/42">Free</p>
                           </div>
                         </div>
-                        {organization.id === currentOrganizationId ? <span className="text-[#2678ff]">✓</span> : null}
+                        {organization.id === currentOrganizationId ? <span className="text-[#4f93ff]">✓</span> : null}
                       </button>
                     ))}
                     <button
@@ -936,6 +1803,7 @@ export function DeveloperConsoleExperience() {
                   </div>
                 ) : null}
               </div>
+
               <div className="flex items-center gap-4 text-[13px] font-medium tracking-[0.08em] text-white/78">
                 <a href="#" className="hover:text-white">DOCS</a>
                 <button type="button" onClick={() => setShowSupportWidget(true)} className="hover:text-white">
@@ -985,41 +1853,9 @@ export function DeveloperConsoleExperience() {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-hidden px-4 py-4 sm:px-5 lg:px-6">
-            <h1 className="text-[22px] font-semibold tracking-[-0.05em]">Overview</h1>
-
-            <div className="mt-3.5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              {[
-                ["Documents", "0"],
-                ["Memories", "0"],
-                ["Search Requests", "0"],
-                ["Container Tags", "0"],
-                ["Connectors", "0"],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-[8px] border border-white/10 bg-[#181818] px-5 py-4.5">
-                  <p className="text-[13px] text-white/42">{label}</p>
-                  <p className="mt-2 text-[26px] font-semibold tracking-[-0.05em]">{value}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5.5">
-              <h2 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-white/92">
-                Explore the Platform
-              </h2>
-              <div className="mt-3 grid gap-3 lg:grid-cols-4">
-                {[
-                  ["Quick Setup", "Configure your workspace step by step"],
-                  ["Live Demo", "See MemoryOS in action"],
-                  ["Playground", "Test the API interactively"],
-                  ["Documentation", "Read the full API reference"],
-                ].map(([title, copy]) => (
-                  <div key={title} className="rounded-[8px] border border-white/10 bg-[#181818] px-5 py-4.5">
-                    <p className="text-[17px] font-semibold tracking-[-0.03em]">{title}</p>
-                    <p className="mt-1.5 text-[14px] leading-5 text-white/42">{copy}</p>
-                  </div>
-                ))}
-              </div>
+          <div className="memoryos-console-scroll min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5 lg:px-6">
+            <div className="mx-auto w-full max-w-[1360px]">
+              {renderDashboardMain()}
             </div>
           </div>
         </main>
@@ -1114,6 +1950,35 @@ export function DeveloperConsoleExperience() {
             )}
           </div>
         ) : null}
+
+        <style jsx>{`
+          .memoryos-console-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #1f1f1f #070707;
+          }
+
+          .memoryos-console-scroll::-webkit-scrollbar {
+            width: 10px;
+          }
+
+          .memoryos-console-scroll::-webkit-scrollbar-track {
+            background: #070707;
+          }
+
+          .memoryos-console-scroll::-webkit-scrollbar-thumb {
+            background: #1f1f1f;
+            border-radius: 999px;
+            border: 2px solid #070707;
+          }
+
+          .memoryos-console-scroll::-webkit-scrollbar-thumb:hover {
+            background: #2a2a2a;
+          }
+
+          .memoryos-console-scroll::-webkit-scrollbar-button {
+            background: #070707;
+          }
+        `}</style>
       </div>
     );
   }
@@ -1293,7 +2158,7 @@ export function DeveloperConsoleExperience() {
                       setOrgContext((current) =>
                         current.trim().length > 0
                           ? current
-                          : `${orgName || "Your company"} uses a ${card.title.toLowerCase()} knowledge workflow with memory retrieval, safe filtering, and source-aware responses.`,
+                          : `${orgName || "Your company"} uses ${card.title.toLowerCase()} with continuity retrieval, trusted memory recall, and clear handoff context.`,
                       );
                     }}
                     className={`rounded-[8px] border p-5 text-left transition ${
@@ -1473,7 +2338,7 @@ export function DeveloperConsoleExperience() {
                               : section.id === 1
                                 ? section.copy
                                 : section.id === 2
-                                  ? "SUPERMEMORY_API_KEY=sm_xxxxx\nSUPERMEMORY_PROJECT=memoryos"
+                                  ? "MEMORYOS_API_KEY=mo_xxxxx\nMEMORYOS_PROJECT=memoryos"
                                   : "npm run memoryos:verify"}
                           </div>
                         </div>

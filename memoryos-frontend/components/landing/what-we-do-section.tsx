@@ -12,11 +12,11 @@ export function WhatWeDoSection() {
           <span className="inline-flex h-[0.62em] min-h-[20px] items-center justify-center rounded-md bg-[#2166f3] px-2 align-[0.08em] text-[0.42em] font-semibold leading-none text-white">
             ✶
           </span>{" "}
-          <span className="text-[#2166f3]">Memory lifecycle runs.</span>
+          <span className="text-[#2166f3]">Continuity stays alive.</span>
           <br />
-          <span>Context stays recoverable across agents.</span>
+          <span>Memory that survives sessions, tools, and handoffs.</span>
         </h2>
-        <p className="mx-auto mt-4 max-w-4xl text-[11px] leading-[1.55] text-slate-600 md:text-[13px]">
+        <p className="mx-auto mt-4 max-w-4xl text-[12px] leading-[1.55] text-slate-600 md:text-[14px]">
           MemoryOS turns messy technical conversations into structured developer memory, retrieves
           the right context when work resumes, and keeps a visible trail of what changed.
         </p>
@@ -31,18 +31,21 @@ export function WhatWeDoSection() {
             MemoryOS is designed for developer workflows where preference, project state, bug history,
             and prior decisions need to survive across threads, tools, and model sessions.
           </p>
-          <div className="mt-6 grid grid-cols-3 gap-4 text-slate-900">
-            <div>
-              <p className="text-4xl font-semibold tracking-[-0.03em]">PROCESS</p>
-              <p className="mt-1 text-sm text-slate-600">extract + score + merge/evolve</p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-3 text-slate-900">
+            <div className="border border-[#c9d8ee] bg-white px-3 py-3">
+              <p className="font-mono text-[11px] tracking-[0.14em] text-[#356acc]">CORE FLOWS</p>
+              <p className="mt-1 text-[24px] font-semibold tracking-[-0.03em]">3</p>
+              <p className="mt-1 text-[12px] text-slate-600">process + retrieve + trust</p>
             </div>
-            <div>
-              <p className="text-4xl font-semibold tracking-[-0.03em]">RETRIEVE</p>
-              <p className="mt-1 text-sm text-slate-600">semantic + type + importance + recency</p>
+            <div className="border border-[#c9d8ee] bg-white px-3 py-3">
+              <p className="font-mono text-[11px] tracking-[0.14em] text-[#356acc]">BENCHMARK</p>
+              <p className="mt-1 text-[24px] font-semibold tracking-[-0.03em]">100%</p>
+              <p className="mt-1 text-[12px] text-slate-600">retrieve precision + resume quality</p>
             </div>
-            <div>
-              <p className="text-4xl font-semibold tracking-[-0.03em]">TRUST</p>
-              <p className="mt-1 text-sm text-slate-600">timeline + revisions + explain</p>
+            <div className="border border-[#c9d8ee] bg-white px-3 py-3">
+              <p className="font-mono text-[11px] tracking-[0.14em] text-[#356acc]">TRUST LAYER</p>
+              <p className="mt-1 text-[24px] font-semibold tracking-[-0.03em]">Live</p>
+              <p className="mt-1 text-[12px] text-slate-600">timeline + revisions + explain</p>
             </div>
           </div>
           <p className="mt-5 text-[15px] text-slate-700">Developer profile + continuity retrieval + memory evolution + trust layer</p>
@@ -63,20 +66,20 @@ export function WhatWeDoSection() {
             and inspect why a memory was saved, changed, or recalled.
           </p>
           <div className="mt-6 border-y border-[#c9d8ee]">
-            <div className="flex items-center justify-between border-b border-[#c9d8ee] py-3">
-              <span className="text-[18px] font-medium text-slate-900 md:text-[15px]">Write memory</span>
-              <span className="text-[15px] text-slate-600 md:text-[11px]">/process + status + archive controls</span>
+            <div className="grid gap-1 border-b border-[#c9d8ee] py-3 md:grid-cols-[180px_1fr] md:items-center">
+              <span className="text-[15px] font-medium text-slate-900">Write memory</span>
+              <span className="text-[12px] text-slate-600 md:text-right">/process + status + archive controls</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#c9d8ee] py-3">
-              <span className="text-[18px] font-medium text-slate-900 md:text-[15px]">Recover context</span>
-              <span className="text-[15px] text-slate-600 md:text-[11px]">/retrieve + /continue + /resume</span>
+            <div className="grid gap-1 border-b border-[#c9d8ee] py-3 md:grid-cols-[180px_1fr] md:items-center">
+              <span className="text-[15px] font-medium text-slate-900">Recover context</span>
+              <span className="text-[12px] text-slate-600 md:text-right">/retrieve + /continue + /resume</span>
             </div>
-            <div className="flex items-center justify-between py-3">
-              <span className="text-[18px] font-medium text-slate-900 md:text-[15px]">Inspect trust</span>
-              <span className="text-[15px] text-slate-600 md:text-[11px]">/timeline + /revisions + /explain</span>
+            <div className="grid gap-1 py-3 md:grid-cols-[180px_1fr] md:items-center">
+              <span className="text-[15px] font-medium text-slate-900">Inspect trust</span>
+              <span className="text-[12px] text-slate-600 md:text-right">/timeline + /revisions + /explain</span>
             </div>
           </div>
-          <p className="mt-6 text-2xl font-semibold tracking-[-0.03em] text-slate-900 md:text-xl">
+          <p className="mt-6 text-[22px] font-semibold tracking-[-0.03em] text-slate-900 md:text-[24px]">
             Developer memory, continuity planners, trust history, and integration-ready APIs in one system
           </p>
           <a

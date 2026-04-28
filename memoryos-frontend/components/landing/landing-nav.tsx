@@ -1,30 +1,11 @@
 import { MemoryStarLogo } from "./memory-star-logo";
 
 const PRIMARY_LINKS = [
-  { label: "Research", href: "#what-we-do" },
-  { label: "Pricing", href: "#benchmarks" },
+  { label: "Research", href: "#benchmarks" },
+  { label: "Pricing", href: "#pricing" },
   { label: "Docs", href: "#developer-experience" },
-  { label: "Blog", href: "#under-the-hood" },
+  { label: "Blog", href: "#what-we-do" },
 ];
-
-function ChevronIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      height="16"
-      width="16"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-      className={className}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M14.0607 5.49999L13.5303 6.03032L8.7071 10.8535C8.31658 11.2441 7.68341 11.2441 7.29289 10.8535L2.46966 6.03032L1.93933 5.49999L2.99999 4.43933L3.53032 4.96966L7.99999 9.43933L12.4697 4.96966L13 4.43933L14.0607 5.49999Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
 
 function GithubIcon() {
   return (
@@ -41,12 +22,36 @@ function GithubIcon() {
 
 function XIcon() {
   return (
-    <svg height="18" width="18" viewBox="0 0 16 16" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="currentColor" aria-hidden="true">
+      <path d="M18.9 3H21l-4.59 5.25L21.8 21h-4.22l-3.3-7.37L7.83 21H5.7l4.9-5.6L5.4 3h4.33l2.98 6.7L18.9 3Z" />
+    </svg>
+  );
+}
+
+function DiscordIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="currentColor" aria-hidden="true">
+      <path d="M20.32 4.37A16.7 16.7 0 0 0 16.2 3.1l-.2.4a15.4 15.4 0 0 1 3.72 1.79a12.8 12.8 0 0 0-4.54-2.08a15.7 15.7 0 0 0-6.36 0a12.8 12.8 0 0 0-4.54 2.08A15.4 15.4 0 0 1 8 3.5l-.2-.4a16.7 16.7 0 0 0-4.12 1.27C1.08 8.25.39 12.03.74 15.76A16.9 16.9 0 0 0 5.8 18.3l.95-1.56a10.8 10.8 0 0 1-1.5-.73l.37-.28c2.9 1.36 6.04 1.36 8.9 0l.37.28c-.48.28-.98.52-1.5.73l.95 1.56a16.9 16.9 0 0 0 5.06-2.54c.41-4.33-.7-8.07-2.08-11.39ZM9.68 13.54c-.87 0-1.58-.8-1.58-1.78s.7-1.78 1.58-1.78c.89 0 1.6.8 1.58 1.78c0 .98-.7 1.78-1.58 1.78Zm4.64 0c-.87 0-1.58-.8-1.58-1.78s.7-1.78 1.58-1.78c.89 0 1.6.8 1.58 1.78c0 .98-.69 1.78-1.58 1.78Z" />
+    </svg>
+  );
+}
+
+function Chevron() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M1.60022 2H5.80022L8.78759 6.16842L12.4002 2H14.0002L9.5118 7.17895L14.4002 14H10.2002L7.21285 9.83158L3.60022 14H2.00022L6.48864 8.82105L1.60022 2ZM10.8166 12.8L3.93657 3.2H5.18387L12.0639 12.8H10.8166Z"
-        fill="currentColor"
+        d="M6 9L12 15L18 9"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -55,12 +60,12 @@ function XIcon() {
 export function LandingNav() {
   return (
     <header className="border-b border-[#c9d8ee] bg-white">
-      <div className="grid items-center gap-4 px-5 py-3 lg:h-[72px] lg:grid-cols-[auto_1fr_auto] lg:px-7 lg:py-0">
+      <div className="grid items-center gap-4 px-5 py-3 lg:h-[78px] lg:grid-cols-[auto_1fr_auto] lg:px-7 lg:py-0">
         <div className="flex items-center">
           <MemoryStarLogo />
         </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-7 text-[15px] text-[#101827]">
+        <nav className="flex flex-wrap items-center justify-center gap-6 text-[15px] text-[#101827]">
           {PRIMARY_LINKS.map((item) => (
             <a key={item.label} href={item.href} className="transition hover:text-[#2166f3]">
               {item.label}
@@ -70,56 +75,82 @@ export function LandingNav() {
           <div className="group relative">
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 transition hover:text-[#2166f3]"
+              className="inline-flex items-center gap-1.5 text-[15px] text-[#101827] transition hover:text-[#2166f3]"
             >
-              <span>Consumer</span>
-              <ChevronIcon className="mt-[1px] transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
+              Consumer
+              <Chevron />
             </button>
-
-            <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-4 w-[200px] -translate-x-1/2 translate-y-1 border border-[#b9cfef] bg-white opacity-0 shadow-[0_10px_24px_rgba(35,57,90,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
-              <a href="#" className="block px-5 py-4 text-[17px] text-[#1a2431] hover:bg-white">
+            <div className="invisible absolute left-1/2 top-[calc(100%+10px)] z-40 w-[220px] -translate-x-1/2 border border-[#c9d8ee] bg-white opacity-0 shadow-[0_12px_30px_rgba(15,23,42,0.12)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <a
+                href="/developer-console/sign-in"
+                className="block border-b border-[#d7e2f3] px-4 py-3 text-[15px] text-[#111827] hover:bg-[#f6f9ff]"
+              >
                 App
               </a>
-              <div className="border-t border-[#d6e0ef]" />
-              <a href="#" className="block px-5 py-4 text-[17px] text-[#1a2431] hover:bg-white">
+              <a
+                href="#developer-experience"
+                className="block px-4 py-3 text-[15px] text-[#111827] hover:bg-[#f6f9ff]"
+              >
                 Plugins
               </a>
             </div>
           </div>
         </nav>
 
-        <div className="flex flex-wrap items-center justify-end gap-5 text-[14px] text-[#111827]">
-          <a href="#" className="inline-flex items-center gap-1.5 transition hover:text-[#2166f3]">
+        <div className="flex flex-wrap items-center justify-end gap-4 text-[14px] text-[#111827]">
+          <a
+            href="https://github.com/Sunilkumarchavhan9/MemoryOS"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden items-center gap-1.5 transition hover:text-[#2166f3] xl:inline-flex"
+          >
             <GithubIcon />
             <span>0</span>
           </a>
-
-          <a href="#" className="inline-flex items-center gap-1.5 transition hover:text-[#2166f3]">
+          <a
+            href="https://x.com"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden items-center gap-1.5 transition hover:text-[#2166f3] xl:inline-flex"
+          >
             <XIcon />
+            <span>0</span>
+          </a>
+          <a
+            href="https://discord.com"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden items-center gap-1.5 transition hover:text-[#2166f3] xl:inline-flex"
+          >
+            <DiscordIcon />
             <span>0</span>
           </a>
 
           <div className="group relative">
             <button
               type="button"
-              className="inline-flex items-center gap-2 border border-[#bfd1ee] bg-white px-6 py-2.5 text-[15px] font-medium text-[#101827]"
+              className="inline-flex items-center gap-2 border border-[#bfd1ee] bg-white px-5 py-2.5 text-[14px] font-medium transition hover:border-[#9db8e3] hover:text-[#2166f3]"
             >
-              <span>Login</span>
-              <ChevronIcon className="transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
+              Login
+              <Chevron />
             </button>
-
-            <div className="pointer-events-none absolute right-0 top-full z-30 mt-4 w-[304px] translate-y-1 border border-[#b9cfef] bg-white opacity-0 shadow-[0_10px_24px_rgba(35,57,90,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
-              <a href="/developer-console/sign-in" className="block px-5 py-5 hover:bg-white">
-                <p className="text-[17px] leading-none text-[#1a2431]">Developer Console</p>
-                <p className="mt-3 text-[14px] leading-none text-[#44546a]">API keys, usage, docs</p>
+            <div className="invisible absolute right-0 top-[calc(100%+10px)] z-40 w-[300px] border border-[#c9d8ee] bg-white opacity-0 shadow-[0_12px_30px_rgba(15,23,42,0.12)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <a href="/developer-console/sign-in" className="block border-b border-[#d7e2f3] px-5 py-4 hover:bg-[#f6f9ff]">
+                <p className="text-[15px] font-medium text-[#111827]">Developer Console</p>
+                <p className="mt-1 text-[13px] text-[#5d6f87]">API keys, usage, docs</p>
               </a>
-              <div className="mx-5 border-t border-[#d6e0ef]" />
-              <a href="/personal-app/sign-in" className="block px-5 py-5 hover:bg-white">
-                <p className="text-[17px] leading-none text-[#1a2431]">Personal App</p>
-                <p className="mt-3 text-[14px] leading-none text-[#44546a]">Your memory dashboard</p>
+              <a href="/personal-app" className="block px-5 py-4 hover:bg-[#f6f9ff]">
+                <p className="text-[15px] font-medium text-[#111827]">Personal App</p>
+                <p className="mt-1 text-[13px] text-[#5d6f87]">Your memory dashboard</p>
               </a>
             </div>
           </div>
+          <a
+            href="/developer-console/sign-in"
+            className="inline-flex items-center gap-2 bg-[#2166f3] px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-[#0f56de] lg:hidden"
+          >
+            Start
+          </a>
         </div>
       </div>
 

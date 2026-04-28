@@ -15,6 +15,8 @@ const PLAN_CARDS = [
     ],
     cta: "Start free →",
     secondary: "Explore the docs →",
+    ctaHref: "/developer-console/sign-in",
+    secondaryHref: "#developer-experience",
     featured: false,
   },
   {
@@ -31,6 +33,8 @@ const PLAN_CARDS = [
     ],
     cta: "Get MemoryOS Pro →",
     secondary: "Install the SDK →",
+    ctaHref: "/developer-console/sign-in",
+    secondaryHref: "#developer-experience",
     featured: true,
   },
   {
@@ -47,6 +51,8 @@ const PLAN_CARDS = [
     ],
     cta: "Talk to sales →",
     secondary: "See platform details →",
+    ctaHref: "#contact",
+    secondaryHref: "#enterprise",
     featured: false,
   },
 ];
@@ -116,7 +122,7 @@ export function PricingSection() {
 
               <div className="mt-7 space-y-3">
                 <a
-                  href="#developer-experience"
+                  href={plan.ctaHref}
                   className={`inline-flex w-full items-center justify-center px-4 py-3 text-[14px] font-medium transition md:text-[15px] ${
                     plan.featured
                       ? "bg-[#2166f3] text-white"
@@ -126,7 +132,7 @@ export function PricingSection() {
                   {plan.cta}
                 </a>
                 <a
-                  href="#developer-experience"
+                  href={plan.secondaryHref}
                   className="block text-center text-[12px] text-[#6b7c95] transition hover:text-slate-900 md:text-[13px]"
                 >
                   {plan.secondary}

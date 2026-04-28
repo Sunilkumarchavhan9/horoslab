@@ -27,7 +27,7 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
 
   for (const candidate of accepted) {
     const memory = toMemory(candidate);
-    const recentMemories = getRecentMemories(memory.userId);
+    const recentMemories = await getRecentMemories(memory.userId);
 
     const searchResults = await memoryStore.searchMemory({
       userId: memory.userId,
