@@ -53,3 +53,7 @@ memoryos-frontend/devserver.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python caches
+__pycache__/
+*.pyc
