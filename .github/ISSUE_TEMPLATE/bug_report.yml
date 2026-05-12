@@ -1,0 +1,46 @@
+name: Bug Report
+description: Report a reproducible bug in MemoryOS
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please provide enough detail so we can reproduce quickly.
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, browser, and deployment environment
+      placeholder: "Windows 11, Node 20, Chrome 135, local dev"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      placeholder: "What should happen?"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      placeholder: "What actually happened?"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs / Screenshots
+      placeholder: "Paste logs or attach screenshots"
