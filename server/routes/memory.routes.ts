@@ -1255,7 +1255,7 @@ memoryRouter.post("/conflicts/resolve", asyncHandler(async (req, res) => {
     return;
   }
 
-  let updatedTarget: Memory = target;
+  const updatedTarget: Memory = target;
   let updatedConflicting: Memory = conflicting;
   const nowIso = new Date().toISOString();
   if (action === "replace") {
