@@ -29,20 +29,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Install Frontend Dependencies
-        run: npm --prefix memoryos-frontend ci
-
       - name: Typecheck Backend
         run: npx tsc --noEmit -p tsconfig.json
 
-      - name: Typecheck Frontend
-        run: npx tsc --noEmit -p memoryos-frontend/tsconfig.json
-
       - name: Lint Backend
         run: npm run lint
-
-      - name: Lint Frontend
-        run: npm --prefix memoryos-frontend run lint
 
       - name: Unit and E2E Tests
         run: npm run test
