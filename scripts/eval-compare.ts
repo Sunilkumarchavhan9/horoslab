@@ -1,7 +1,6 @@
 import "dotenv/config";
 import { existsSync, readFileSync } from "fs";
 import path from "path";
-import { runAllCases } from "./eval/harness";
 
 type BaselineReport = {
   passRate: number;
@@ -53,6 +52,10 @@ function readBaselineReport(): BaselineReport {
 }
 
 async function main(): Promise<void> {
+  // Compare eval should use local store and avoid external Mem0 dependency in CI.
+  process.env.MEMORY_STORE_PROVIDER = "local";
+
+  const { runAllCases } = await import("./eval/harness");
   const baseline = readBaselineReport();
   const current = await runAllCases({ printEach: false });
 
