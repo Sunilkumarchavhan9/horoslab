@@ -25,7 +25,9 @@ async function runPlannerNode(
 ): Promise<Partial<ResumeGraphState>> {
   const result = await planResume({
     ...state.input,
-    previousCheckpoint: state.previousCheckpoint
+    ...(state.previousCheckpoint
+      ? { previousCheckpoint: state.previousCheckpoint }
+      : {}),
   });
   return { result };
 }

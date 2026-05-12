@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
+      MEMORY_STORE_PROVIDER: mem0
       JWT_SECRET: ci-test-secret
       JWT_ISSUER: memoryos-ci
       JWT_AUDIENCE: memoryos-api

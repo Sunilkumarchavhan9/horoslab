@@ -25,7 +25,9 @@ async function runPlannerNode(
 ): Promise<Partial<ContinueGraphState>> {
   const result = await planContinuity({
     ...state.input,
-    previousCheckpoint: state.previousCheckpoint,
+    ...(state.previousCheckpoint
+      ? { previousCheckpoint: state.previousCheckpoint }
+      : {}),
   });
   return { result };
 }
