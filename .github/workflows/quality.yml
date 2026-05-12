@@ -20,13 +20,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 20
+          cache: npm
 
       - name: Install Dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Typecheck
         run: npx tsc --noEmit
@@ -35,13 +36,13 @@ jobs:
         run: npm run lint
 
       - name: Unit and E2E Tests
-        run: bun run test
+        run: npm run test
 
       - name: Retrieval Eval Gate
-        run: bun run eval:retrieval
+        run: npm run eval:retrieval
 
       - name: Retrieval Baseline Compare
-        run: bun run eval:compare
+        run: npm run eval:compare
 
       - name: Benchmark Report Gate
-        run: bun run eval:benchmark
+        run: npm run eval:benchmark
