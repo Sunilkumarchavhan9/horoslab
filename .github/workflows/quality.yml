@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Typecheck Backend
-        run: npx tsc --noEmit -p tsconfig.json
+        run: npx tsc --noEmit -p tsconfig.backend.json
 
       - name: Lint Backend
         run: npm run lint
