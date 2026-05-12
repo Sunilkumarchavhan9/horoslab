@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "server/**/*.ts",
+    "lib/**/*.ts",
+    "prisma/**/*.ts",
+    "tests/**/*.ts",
+    "scripts/**/*.ts",
+    "app/**/*.ts",
+    "docs/**/*.ts",
+    "integrations/**/*.ts",
+    "packages/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "memoryos-frontend",
+    ".next"
+  ]
+}

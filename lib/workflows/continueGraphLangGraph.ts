@@ -10,6 +10,7 @@ type ContinueFlowInput = ContinuityPlannerInput & {
   workspace?: string;
   project?: string;
   threadId?: string;
+  omitNullPreviousCheckpoint?: boolean;
 };
 
 const ContinueGraphStateAnnotation = Annotation.Root({
@@ -23,9 +24,17 @@ type ContinueGraphState = typeof ContinueGraphStateAnnotation.State;
 async function runPlannerNode(
   state: ContinueGraphState,
 ): Promise<Partial<ContinueGraphState>> {
+  const { omitNullPreviousCheckpoint: _omitNullPreviousCheckpoint, ...plannerInput } =
+    state.input;
+  const shouldOmitNullCheckpoint =
+    state.input.omitNullPreviousCheckpoint === true &&
+    state.previousCheckpoint === null;
+
   const result = await planContinuity({
-    ...state.input,
-    previousCheckpoint: state.previousCheckpoint,
+    ...plannerInput,
+    ...(shouldOmitNullCheckpoint
+      ? {}
+      : { previousCheckpoint: state.previousCheckpoint }),
   });
   return { result };
 }

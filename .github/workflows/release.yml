@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
+      MEMORY_STORE_PROVIDER: mem0
       JWT_SECRET: ci-release-secret
       JWT_ISSUER: memoryos-ci
       JWT_AUDIENCE: memoryos-api
@@ -20,28 +21,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Typecheck
-        run: npx tsc --noEmit
+        run: npm ci
 
       - name: Lint
         run: npm run lint
 
       - name: Run tests
-        run: bun run test
+        run: npm run test
 
       - name: Eval gate
-        run: bun run eval:retrieval
+        run: npm run eval:retrieval
 
       - name: Baseline compare
-        run: bun run eval:compare
+        run: npm run eval:compare
 
       - name: Benchmark report gate
-        run: bun run eval:benchmark
+        run: npm run eval:benchmark

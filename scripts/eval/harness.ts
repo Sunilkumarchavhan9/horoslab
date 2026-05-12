@@ -3,7 +3,7 @@ import { readFileSync, existsSync, rmSync, mkdirSync } from "fs";
 import path from "path";
 import { runIngestFlowLangGraph } from "../../lib/workflows/ingestGraphLangGraph";
 import { retrieveRelevantMemory } from "../../lib/memory/retrieveRelevantMemory";
-import { saveMemoryToMem0 } from "../../lib/integrations/mem0";
+import { getMemoryStoreAdapter } from "../../lib/adapters/registry";
 import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
 import type { Memory, MemoryType } from "../../lib/memory/types";
 
@@ -243,6 +243,7 @@ export async function applyCaseMutations(
   testCase: EvalCase,
   acceptedMemories: Memory[],
 ): Promise<void> {
+  const memoryStoreAdapter = getMemoryStoreAdapter();
   const archiveIndices = testCase.archiveAcceptedIndices ?? [];
 
   for (const acceptedIndex of archiveIndices) {
@@ -259,7 +260,7 @@ export async function applyCaseMutations(
       updatedAt: new Date().toISOString(),
     };
 
-    await saveMemoryToMem0({ memory: archivedMemory });
+    await memoryStoreAdapter.saveMemory({ memory: archivedMemory });
     await upsertRecentMemory(archivedMemory);
     acceptedMemories[acceptedIndex] = archivedMemory;
   }
@@ -281,7 +282,7 @@ export async function applyCaseMutations(
       updatedAt: agedDate,
     };
 
-    await saveMemoryToMem0({ memory: agedMemory });
+    await memoryStoreAdapter.saveMemory({ memory: agedMemory });
     await upsertRecentMemory(agedMemory);
     acceptedMemories[config.acceptedIndex] = agedMemory;
   }

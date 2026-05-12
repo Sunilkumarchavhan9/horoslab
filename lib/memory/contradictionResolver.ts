@@ -285,14 +285,6 @@ export function resolveLifecycleTransition(
   existing: Memory,
   incoming: Memory,
 ): LifecycleTransition {
-  if (existing.userId !== incoming.userId) {
-    return { status: "none" };
-  }
-
-  if (existing.type !== "preference" || incoming.type !== "preference") {
-    return { status: "none" };
-  }
-
   if (existing.status !== "active") {
     return { status: "none" };
   }

@@ -1,11 +1,14 @@
 import { Router } from "express";
-import { existsSync, readFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { runIngestFlowLangGraph } from "../../lib/workflows/ingestGraphLangGraph";
 import { runRetrieveFlowLangGraph } from "../../lib/workflows/retrieveGraphLangGraph";
 import { analyzeRetrieval } from "../../lib/memory/retrieveRelevantMemory";
 import { listRevisionEvents } from "../../lib/memory/revisionMemory";
-import { listTimelineEvents } from "../../lib/memory/timelineMemory";
+import {
+  listTimelineEvents,
+  recordMemoryCreatedEvent,
+} from "../../lib/memory/timelineMemory";
 import { explainMemory } from "../../lib/memory/explainMemory";
 import {
   archiveMemory,
@@ -17,8 +20,14 @@ import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
 import { runContinueFlowLangGraph } from "../../lib/workflows/continueGraphLangGraph";
 import { runHandoffFlowLangGraph } from "../../lib/workflows/handoffGraphLangGraph";
 import { runResumeFlowLangGraph } from "../../lib/workflows/resumeGraphLangGraph";
-import { MEMORY_STATUS, MEMORY_TYPES, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
+import { MEMORY_STATUS, MEMORY_TYPES, type Memory, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
 import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
+import {
+  createApiKeyForUser,
+  listApiKeysForUser,
+  revokeApiKeyForUser,
+  type ApiKeyPermissionMode,
+} from "../../lib/auth/apiKeyStore";
 import { isRelationalRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
 import { isRuntimeStoreDbHealthy } from "../../lib/storage/runtimeStoreDb";
 import { listRequestHistory } from "../middleware/requestLogger";
@@ -26,14 +35,22 @@ import {
   ContinueMemorySchema,
   HandoffMemorySchema,
   ProcessMemorySchema,
+  VoiceChatSchema,
   VoiceChunkIngestSchema,
   VoiceSessionEndSchema,
   VoiceSessionStartSchema,
   ResumeMemorySchema,
+  MemoryContractSchema,
   MemoryStatusPatchSchema,
   RetrievalWeightsSchema,
   RetrieveMemorySchema,
 } from "../schemas/memory.schema";
+
+type AgentId = "agent-a" | "agent-b";
+
+function normalizeAgentId(value: unknown): AgentId {
+  return value === "agent-b" ? "agent-b" : "agent-a";
+}
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
   type ContinueResponseData,
@@ -49,6 +66,10 @@ import {
   recordVoiceChunk,
   startVoiceSession,
 } from "../../lib/voice/sessionStore";
+import { generateMemoryAwareResponse } from "../../lib/memory/chatCompletion";
+import { getMemoryStoreAdapter } from "../../lib/adapters/registry";
+import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
+import { randomUUID } from "crypto";
 
 export const memoryRouter = Router();
 
@@ -68,6 +89,17 @@ const REQUEST_RANGE_DAYS = {
 } as const;
 
 const REQUEST_STATUSES = ["Success", "Error"] as const;
+const API_KEY_EXPIRY_OPTIONS = ["30 days", "90 days", "1 year", "Never"] as const;
+const API_KEY_ENDPOINTS = [
+  "retrieve",
+  "resume",
+  "continue",
+  "handoff",
+  "memory_add",
+  "memory_update",
+  "memory_delete",
+  "search",
+] as const;
 
 type BaselineReport = {
   passRate: number;
@@ -76,9 +108,502 @@ type BaselineReport = {
 };
 
 type RequestRange = keyof typeof REQUEST_RANGE_DAYS;
+type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
+type TeamRole = "owner" | "admin" | "member";
+type TeamAccess = "Full" | "Scoped" | "Read";
+type PluginStatus = "available" | "installed" | "degraded";
+
+type BillingInvoice = {
+  id: string;
+  amountCents: number;
+  currency: string;
+  status: "paid" | "open" | "void";
+  issuedAt: string;
+  hostedInvoiceUrl: string | null;
+};
+
+type TeamMemberRecord = {
+  id: string;
+  name: string;
+  email: string;
+  role: TeamRole;
+  access: TeamAccess;
+  joined: string;
+  status: "active" | "invited";
+};
+
+type TeamInviteRecord = {
+  id: string;
+  email: string;
+  role: TeamRole;
+  access: TeamAccess;
+  sentAt: string;
+  state: "pending" | "accepted" | "expired";
+};
+
+type PluginRecord = {
+  id: string;
+  name: string;
+  category: string;
+  runtime: string;
+  version: string;
+  status: PluginStatus;
+  capabilities: string[];
+  source: string;
+  installedAt?: string;
+  updatedAt?: string;
+  health: "healthy" | "unknown" | "error";
+  healthDetail?: string;
+};
+
+type PluginEvent = {
+  id: string;
+  pluginId: string;
+  action: "installed" | "uninstalled";
+  at: string;
+};
+
+type PluginUserState = {
+  installed: string[];
+  events: PluginEvent[];
+};
+
+type PluginStoreState = {
+  users: Record<string, PluginUserState>;
+};
+
+type GovernancePolicyStore = {
+  users: Record<string, GovernancePolicy | { policy: GovernancePolicy; savedAt: string }>;
+};
+
+type ConflictActionRecord = {
+  id: string;
+  traceId: string;
+  userId: string;
+  type: "mark_stale" | "pin" | "merge";
+  memoryId: string;
+  beforeStatus: string | null;
+  afterStatus: string | null;
+  result: "success" | "fail";
+  error: string | null;
+  actor: "user";
+  at: string;
+};
+
+type ConflictActionStore = {
+  actions: ConflictActionRecord[];
+};
+
+type ConflictQueueItem = {
+  id: string;
+  traceId: string;
+  userId: string;
+  memoryId: string;
+  conflictingWithMemoryId: string;
+  severity: "low" | "medium" | "high";
+  reason: string;
+  suggestedAction: "replace" | "merge" | "pin_old" | "deprecate";
+  confidence: number;
+  state: "open" | "resolved";
+  createdAt: string;
+  resolvedAt?: string;
+  resolution?: "replace" | "merge" | "pin_old" | "deprecate";
+};
+
+type ConflictQueueStore = {
+  items: ConflictQueueItem[];
+};
+
+type GovernanceReviewItem = {
+  id: string;
+  traceId: string;
+  userId: string;
+  reason: string;
+  payload: {
+    threadId?: string;
+    message?: string;
+    contract?: unknown;
+    governance: GovernancePolicy;
+  };
+  state: "pending" | "approved" | "rejected";
+  createdAt: string;
+  reviewedAt?: string;
+  reviewedByRole?: TeamRole;
+  reviewNote?: string;
+};
+
+type GovernanceReviewStore = {
+  items: GovernanceReviewItem[];
+};
+
+type WorkspaceState = {
+  workspaceName: string;
+  plan: BillingPlan;
+  usage: {
+    tokenLimit: number;
+    tokenUsed: number;
+    searchLimit: number;
+    searchUsed: number;
+    resetInDays: number;
+  };
+  invoices: BillingInvoice[];
+  members: TeamMemberRecord[];
+  invites: TeamInviteRecord[];
+  organization: {
+    organizationId: string;
+    ownerName: string;
+    ownerEmail: string;
+    contextEnabled: boolean;
+  };
+};
+
+const WORKSPACE_STATE_BY_USER = new Map<string, WorkspaceState>();
+const PLUGIN_STORE_PATH = path.join(DATA_DIR, "plugins-state.json");
+const GOVERNANCE_POLICY_STORE_PATH = path.join(DATA_DIR, "governance-policies.json");
+const CONFLICT_ACTIONS_STORE_PATH = path.join(DATA_DIR, "conflict-actions.json");
+const CONFLICT_QUEUE_STORE_PATH = path.join(DATA_DIR, "conflict-queue.json");
+const GOVERNANCE_REVIEW_STORE_PATH = path.join(DATA_DIR, "governance-review-queue.json");
+const GOVERNANCE_POLICY_BY_USER = new Map<string, GovernancePolicy>();
+const GOVERNANCE_POLICY_SAVED_AT_BY_USER = new Map<string, string>();
+let GOVERNANCE_POLICY_STORE_LOADED = false;
 
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+type GovernancePolicy = {
+  ttlHours: number;
+  retentionClass: "short" | "standard" | "long";
+  pinCriticalDecisions: boolean;
+  redactSecrets: boolean;
+  requireManualReviewForHighRisk: boolean;
+  mode: "balanced" | "strict" | "enterprise";
+};
+
+const DEFAULT_GOVERNANCE_POLICY: GovernancePolicy = {
+  ttlHours: 168,
+  retentionClass: "standard",
+  pinCriticalDecisions: true,
+  redactSecrets: true,
+  requireManualReviewForHighRisk: false,
+  mode: "balanced",
+};
+
+const SECRET_KEY_PATTERN = /(api[-_]?key|token|password|secret|authorization|bearer|private[-_]?key)/i;
+
+function applySecretRedaction(input: string): string {
+  return input
+    .split("\n")
+    .map((line) => {
+      if (!SECRET_KEY_PATTERN.test(line)) return line;
+      const [key] = line.split(/[:=]/, 1);
+      return key ? `${key}: [REDACTED]` : "[REDACTED]";
+    })
+    .join("\n");
+}
+
+function sanitizeStringList(values: string[] | undefined, redactSecrets: boolean): string[] | undefined {
+  if (!values || values.length === 0) return undefined;
+  return values.map((value) => (redactSecrets ? applySecretRedaction(value) : value));
+}
+
+function resolveGovernancePolicy(input: unknown): GovernancePolicy {
+  if (!isObjectRecord(input)) return DEFAULT_GOVERNANCE_POLICY;
+
+  const retentionClass =
+    input.retentionClass === "short" || input.retentionClass === "standard" || input.retentionClass === "long"
+      ? input.retentionClass
+      : DEFAULT_GOVERNANCE_POLICY.retentionClass;
+  const retentionTtl = retentionClass === "short" ? 24 : retentionClass === "long" ? 720 : 168;
+
+  const ttlHours =
+    typeof input.ttlHours === "number" && Number.isFinite(input.ttlHours)
+      ? Math.max(1, Math.min(720, Math.round(input.ttlHours)))
+      : retentionTtl;
+  const pinCriticalDecisions =
+    typeof input.pinCriticalDecisions === "boolean"
+      ? input.pinCriticalDecisions
+      : DEFAULT_GOVERNANCE_POLICY.pinCriticalDecisions;
+  const redactSecrets =
+    typeof input.redactSecrets === "boolean"
+      ? input.redactSecrets
+      : DEFAULT_GOVERNANCE_POLICY.redactSecrets;
+  const requireManualReviewForHighRisk =
+    typeof input.requireManualReviewForHighRisk === "boolean"
+      ? input.requireManualReviewForHighRisk
+      : DEFAULT_GOVERNANCE_POLICY.requireManualReviewForHighRisk;
+  const mode =
+    input.mode === "strict" || input.mode === "enterprise" || input.mode === "balanced"
+      ? input.mode
+      : DEFAULT_GOVERNANCE_POLICY.mode;
+
+  return { ttlHours, retentionClass, pinCriticalDecisions, redactSecrets, requireManualReviewForHighRisk, mode };
+}
+
+function getGovernancePolicyForUser(userId: string): GovernancePolicy {
+  ensureGovernancePolicyStoreLoaded();
+  return GOVERNANCE_POLICY_BY_USER.get(userId) ?? DEFAULT_GOVERNANCE_POLICY;
+}
+
+function setGovernancePolicyForUser(userId: string, input: unknown): GovernancePolicy {
+  ensureGovernancePolicyStoreLoaded();
+  const resolved = resolveGovernancePolicy(input);
+  const savedAt = new Date().toISOString();
+  GOVERNANCE_POLICY_BY_USER.set(userId, resolved);
+  GOVERNANCE_POLICY_SAVED_AT_BY_USER.set(userId, savedAt);
+  const users: Record<string, { policy: GovernancePolicy; savedAt: string }> = {};
+  for (const [storedUserId, policy] of GOVERNANCE_POLICY_BY_USER.entries()) {
+    users[storedUserId] = {
+      policy,
+      savedAt: GOVERNANCE_POLICY_SAVED_AT_BY_USER.get(storedUserId) ?? savedAt,
+    };
+  }
+  writeGovernancePolicyStore({ users });
+  return resolved;
+}
+
+function resolveGovernancePolicyWithUserDefault(userId: string, input: unknown): GovernancePolicy {
+  const userDefault = getGovernancePolicyForUser(userId);
+  if (!isObjectRecord(input)) return userDefault;
+  return resolveGovernancePolicy({
+    retentionClass:
+      input.retentionClass === "short" || input.retentionClass === "standard" || input.retentionClass === "long"
+        ? input.retentionClass
+        : userDefault.retentionClass,
+    ttlHours:
+      typeof input.ttlHours === "number" && Number.isFinite(input.ttlHours)
+        ? input.ttlHours
+        : userDefault.ttlHours,
+    pinCriticalDecisions:
+      typeof input.pinCriticalDecisions === "boolean"
+        ? input.pinCriticalDecisions
+        : userDefault.pinCriticalDecisions,
+    redactSecrets:
+      typeof input.redactSecrets === "boolean"
+        ? input.redactSecrets
+        : userDefault.redactSecrets,
+    requireManualReviewForHighRisk:
+      typeof input.requireManualReviewForHighRisk === "boolean"
+        ? input.requireManualReviewForHighRisk
+        : userDefault.requireManualReviewForHighRisk,
+    mode:
+      input.mode === "balanced" || input.mode === "strict" || input.mode === "enterprise"
+        ? input.mode
+        : userDefault.mode,
+  });
+}
+
+function inferActorRole(reqBody: unknown): TeamRole {
+  if (isObjectRecord(reqBody)) {
+    const role = reqBody.actorRole;
+    if (role === "owner" || role === "admin" || role === "member") {
+      return role;
+    }
+  }
+  return "owner";
+}
+
+function canManageGovernance(role: TeamRole): boolean {
+  return role === "owner" || role === "admin";
+}
+
+function resolveActorRoleForUser(userId: string): TeamRole {
+  const state = getWorkspaceState(userId);
+  const owner = state.members.find((member) => member.role === "owner");
+  if (!owner) return "owner";
+  return owner.email.startsWith(userId) ? "owner" : "member";
+}
+
+function isHighRiskWrite(input: {
+  message?: string;
+  contract?: unknown;
+  governance: GovernancePolicy;
+}): { highRisk: boolean; reason: string } {
+  const text = `${input.message ?? ""}\n${JSON.stringify(input.contract ?? {})}`.toLowerCase();
+  const hasSensitiveSignals =
+    /(ssn|passport|credit card|private key|bearer|token|password|api key|phi|pii)/i.test(text);
+  const hasLargeContract =
+    isObjectRecord(input.contract) &&
+    JSON.stringify(input.contract).length > 1500;
+  const highRisk = hasSensitiveSignals || hasLargeContract || input.governance.mode === "enterprise";
+  if (!highRisk) {
+    return { highRisk: false, reason: "not_high_risk" };
+  }
+  if (hasSensitiveSignals) return { highRisk: true, reason: "sensitive_data_signal" };
+  if (hasLargeContract) return { highRisk: true, reason: "large_contract_payload" };
+  return { highRisk: true, reason: "enterprise_policy_guardrail" };
+}
+
+function minimumContractFieldsForMode(mode: GovernancePolicy["mode"]): number {
+  if (mode === "enterprise") return 4;
+  if (mode === "strict") return 3;
+  return 2;
+}
+
+type ContractLike = {
+  goal?: string;
+  constraints?: string[];
+  decisions?: string[];
+  open_risks?: string[];
+  next_actions?: string[];
+};
+
+function computeContractQuality(contract: ContractLike): {
+  score: number;
+  grade: "A" | "B" | "C" | "D";
+  presentFields: string[];
+  missingFields: string[];
+  reasons: string[];
+} {
+  const checks = [
+    { key: "goal", ok: typeof contract.goal === "string" && contract.goal.trim().length > 0, weight: 28 },
+    { key: "constraints", ok: (contract.constraints?.length ?? 0) > 0, weight: 18 },
+    { key: "decisions", ok: (contract.decisions?.length ?? 0) > 0, weight: 18 },
+    { key: "open_risks", ok: (contract.open_risks?.length ?? 0) > 0, weight: 18 },
+    { key: "next_actions", ok: (contract.next_actions?.length ?? 0) > 0, weight: 18 },
+  ] as const;
+  const presentFields = checks.filter((check) => check.ok).map((check) => check.key);
+  const missingFields = checks.filter((check) => !check.ok).map((check) => check.key);
+  const score = checks.reduce((sum, check) => sum + (check.ok ? check.weight : 0), 0);
+  const grade: "A" | "B" | "C" | "D" =
+    score >= 85 ? "A" : score >= 70 ? "B" : score >= 50 ? "C" : "D";
+  const reasons = [
+    missingFields.includes("goal") ? "Missing explicit goal blocks execution continuity." : undefined,
+    missingFields.includes("constraints") ? "Missing constraints increases drift risk." : undefined,
+    missingFields.includes("decisions") ? "Missing decisions weakens handoff fidelity." : undefined,
+    missingFields.includes("open_risks") ? "Missing risks hides blockers and uncertainty." : undefined,
+    missingFields.includes("next_actions") ? "Missing next actions prevents reliable continuation." : undefined,
+  ].filter((item): item is string => Boolean(item));
+  return { score, grade, presentFields, missingFields, reasons };
+}
+
+function extractGoalIntakeFromMessage(message: string): {
+  goal?: string;
+  owner?: string;
+  deadline?: string;
+} {
+  const goalMatch = message.match(/\bgoal\s*:\s*(.+)$/im) ?? message.match(/\bmy goal is to\s+(.+?)(?:[.!?]|$)/i);
+  const ownerMatch = message.match(/\bowner\s*:\s*(.+)$/im);
+  const deadlineMatch =
+    message.match(/\bdeadline\s*:\s*(.+)$/im) ??
+    message.match(/\bdue(?:\s+date)?\s*:\s*(.+)$/im);
+  return {
+    goal: goalMatch?.[1]?.trim(),
+    owner: ownerMatch?.[1]?.trim(),
+    deadline: deadlineMatch?.[1]?.trim(),
+  };
+}
+
+function buildAgentsMdExport(input: {
+  workspace: string;
+  project: string;
+  governance: GovernancePolicy;
+  sampleContract: {
+    goal?: string;
+    constraints: string[];
+    decisions: string[];
+    open_risks: string[];
+    next_actions: string[];
+  };
+}): string {
+  return [
+    "# AGENTS.md",
+    "",
+    `workspace: ${input.workspace}`,
+    `project: ${input.project}`,
+    "schema: memoryos.contract.v1",
+    "",
+    "## Memory Contract",
+    `- goal: ${input.sampleContract.goal ?? "not_set"}`,
+    `- constraints: ${input.sampleContract.constraints.length > 0 ? input.sampleContract.constraints.join(" | ") : "none"}`,
+    `- decisions: ${input.sampleContract.decisions.length > 0 ? input.sampleContract.decisions.join(" | ") : "none"}`,
+    `- open_risks: ${input.sampleContract.open_risks.length > 0 ? input.sampleContract.open_risks.join(" | ") : "none"}`,
+    `- next_actions: ${input.sampleContract.next_actions.length > 0 ? input.sampleContract.next_actions.join(" | ") : "none"}`,
+    "",
+    "## Governance",
+    `- mode: ${input.governance.mode}`,
+    `- retention_class: ${input.governance.retentionClass}`,
+    `- ttl_hours: ${input.governance.ttlHours}`,
+    `- redact_secrets: ${input.governance.redactSecrets ? "true" : "false"}`,
+    `- pin_critical_decisions: ${input.governance.pinCriticalDecisions ? "true" : "false"}`,
+    `- manual_review_high_risk: ${input.governance.requireManualReviewForHighRisk ? "true" : "false"}`,
+    "",
+    "## Execution",
+    "- context_injection: required",
+    "- continuity_benchmark: enabled",
+    "- conflict_staleness_checks: enabled",
+  ].join("\n");
+}
+
+function createTraceId(prefix: string): string {
+  return `${prefix}_${randomUUID().slice(0, 12)}`;
+}
+
+function normalizeConflictText(input: string): string {
+  return input.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function inferConflictSeverity(confidence: number): "low" | "medium" | "high" {
+  if (confidence >= 0.85) return "high";
+  if (confidence >= 0.65) return "medium";
+  return "low";
+}
+
+function detectAutoConflicts(params: {
+  userId: string;
+  traceId: string;
+  acceptedMemories: Memory[];
+  existingMemories: Memory[];
+}): ConflictQueueItem[] {
+  const items: ConflictQueueItem[] = [];
+  for (const accepted of params.acceptedMemories) {
+    const acceptedText = normalizeConflictText(`${accepted.summary} ${accepted.content}`);
+    for (const existing of params.existingMemories) {
+      if (existing.id === accepted.id) continue;
+      if (existing.type !== accepted.type) continue;
+      if (existing.status !== "active") continue;
+
+      const existingText = normalizeConflictText(`${existing.summary} ${existing.content}`);
+      const hasDirectNegationPair =
+        (acceptedText.includes(" not ") && existingText.includes(" prefer ")) ||
+        (existingText.includes(" not ") && acceptedText.includes(" prefer ")) ||
+        (acceptedText.includes(" no longer ") || existingText.includes(" no longer "));
+      const containsSameAnchor =
+        acceptedText.includes("memoryos") && existingText.includes("memoryos");
+      const candidateConflict = hasDirectNegationPair || containsSameAnchor;
+      if (!candidateConflict) continue;
+
+      const confidence = Math.min(
+        0.95,
+        0.55 +
+          (accepted.type === "preference" ? 0.2 : 0.1) +
+          (accepted.evidenceCount >= 2 ? 0.1 : 0) +
+          (existing.evidenceCount >= 2 ? 0.1 : 0),
+      );
+      items.push({
+        id: `cq_${randomUUID().slice(0, 10)}`,
+        traceId: params.traceId,
+        userId: params.userId,
+        memoryId: accepted.id,
+        conflictingWithMemoryId: existing.id,
+        severity: inferConflictSeverity(confidence),
+        reason: "Auto-detected contradictory or stale continuity signals between active memories.",
+        suggestedAction: accepted.type === "preference" ? "replace" : "merge",
+        confidence,
+        state: "open",
+        createdAt: new Date().toISOString(),
+      });
+    }
+  }
+  return items;
+}
+
+function isApiKeyPermissionMode(value: unknown): value is ApiKeyPermissionMode {
+  return value === "full" || value === "scoped";
+}
+
+function isAllowedApiKeyEndpoint(value: unknown): value is (typeof API_KEY_ENDPOINTS)[number] {
+  return typeof value === "string" && API_KEY_ENDPOINTS.includes(value as (typeof API_KEY_ENDPOINTS)[number]);
 }
 
 function hasValidJsonFile(
@@ -165,6 +690,742 @@ function hasValidBestConfig(): boolean {
     return Math.abs(sum - 1) <= 1e-6;
   });
 }
+
+memoryRouter.get("/api-keys", asyncHandler(async (req, res) => {
+  res.json({ keys: listApiKeysForUser(req.authUserId) });
+}));
+
+memoryRouter.post("/api-keys", asyncHandler(async (req, res) => {
+  if (!isObjectRecord(req.body)) {
+    res.status(400).json({ error: "Invalid API key payload" });
+    return;
+  }
+
+  const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+  const expires = typeof req.body.expires === "string" ? req.body.expires : "1 year";
+  const mode = req.body.mode;
+  const contentTag =
+    typeof req.body.contentTag === "string" && req.body.contentTag.trim().length > 0
+      ? req.body.contentTag.trim()
+      : "all";
+  const requestedEndpoints = Array.isArray(req.body.endpoints)
+    ? req.body.endpoints.filter(isAllowedApiKeyEndpoint)
+    : [];
+
+  if (name.length === 0) {
+    res.status(400).json({ error: "API key name is required" });
+    return;
+  }
+
+  if (!API_KEY_EXPIRY_OPTIONS.includes(expires as (typeof API_KEY_EXPIRY_OPTIONS)[number])) {
+    res.status(400).json({ error: "Invalid API key expiry" });
+    return;
+  }
+
+  if (!isApiKeyPermissionMode(mode)) {
+    res.status(400).json({ error: "Invalid API key permission mode" });
+    return;
+  }
+
+  if (mode === "scoped" && requestedEndpoints.length === 0) {
+    res.status(400).json({ error: "Scoped keys require at least one endpoint" });
+    return;
+  }
+
+  const result = createApiKeyForUser({
+    userId: req.authUserId,
+    name,
+    expires,
+    mode,
+    endpoints: mode === "full" ? [...API_KEY_ENDPOINTS] : requestedEndpoints,
+    contentTag: mode === "full" ? "all" : contentTag,
+  });
+
+  res.status(201).json(result);
+}));
+
+memoryRouter.post("/api-keys/:keyId/revoke", asyncHandler(async (req, res) => {
+  const revoked = revokeApiKeyForUser(req.authUserId, req.params.keyId as string);
+  if (!revoked) {
+    res.status(404).json({ error: "API key not found" });
+    return;
+  }
+
+  res.json({ key: revoked });
+}));
+
+memoryRouter.get("/billing", asyncHandler(async (req, res) => {
+  const state = getWorkspaceState(req.authUserId);
+  const paddleConfigured = Boolean(
+    process.env.PADDLE_API_KEY?.trim() &&
+      process.env.PADDLE_WEBHOOK_SECRET?.trim() &&
+      process.env.PADDLE_PRICE_ID?.trim(),
+  );
+  res.json({
+    workspaceName: state.workspaceName,
+    currentPlan: state.plan,
+    usage: state.usage,
+    invoices: state.invoices,
+    paddle: {
+      configured: paddleConfigured,
+      environment:
+        process.env.PADDLE_ENVIRONMENT?.trim()?.toLowerCase() === "production"
+          ? "production"
+          : "sandbox",
+      portalUrl: toBillingPortalUrl(),
+    },
+  });
+}));
+
+memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
+  if (!isObjectRecord(req.body) || typeof req.body.plan !== "string") {
+    res.status(400).json({ error: "plan is required" });
+    return;
+  }
+  const requestedPlan = req.body.plan as BillingPlan;
+  const allowedPlans: BillingPlan[] = ["Pro", "Scale", "Enterprise"];
+  if (!allowedPlans.includes(requestedPlan)) {
+    res.status(400).json({ error: "Invalid plan for checkout" });
+    return;
+  }
+  const checkoutUrl = toPaddleCheckoutUrl(requestedPlan);
+  if (!checkoutUrl) {
+    res.status(500).json({
+      error: `Paddle checkout URL is not configured for ${requestedPlan}`,
+      requiredEnv: `PADDLE_CHECKOUT_URL_${requestedPlan.toUpperCase()}`,
+    });
+    return;
+  }
+  const state = getWorkspaceState(req.authUserId);
+  state.plan = requestedPlan;
+  state.usage.tokenLimit = requestedPlan === "Pro" ? 3_000_000 : 80_000_000;
+  state.usage.searchLimit = requestedPlan === "Pro" ? 100_000 : 20_000_000;
+  res.json({
+    checkoutUrl,
+    portalUrl: toBillingPortalUrl(),
+    currentPlan: state.plan,
+  });
+}));
+
+memoryRouter.get("/team", asyncHandler(async (req, res) => {
+  const state = getWorkspaceState(req.authUserId);
+  res.json({
+    workspaceName: state.workspaceName,
+    plan: state.plan,
+    members: state.members,
+    invites: state.invites,
+  });
+}));
+
+memoryRouter.post("/team/invites", asyncHandler(async (req, res) => {
+  if (
+    !isObjectRecord(req.body) ||
+    typeof req.body.email !== "string" ||
+    typeof req.body.role !== "string" ||
+    typeof req.body.access !== "string"
+  ) {
+    res.status(400).json({ error: "Invalid invite payload" });
+    return;
+  }
+  const role = req.body.role as TeamRole;
+  const access = req.body.access as TeamAccess;
+  const email = req.body.email.trim().toLowerCase();
+  if (!email) {
+    res.status(400).json({ error: "Invite email is required" });
+    return;
+  }
+  if (!["owner", "admin", "member"].includes(role)) {
+    res.status(400).json({ error: "Invalid invite role" });
+    return;
+  }
+  if (!["Full", "Scoped", "Read"].includes(access)) {
+    res.status(400).json({ error: "Invalid invite access" });
+    return;
+  }
+  const state = getWorkspaceState(req.authUserId);
+  const invite: TeamInviteRecord = {
+    id: randomUUID(),
+    email,
+    role,
+    access,
+    sentAt: new Date().toISOString(),
+    state: "pending",
+  };
+  state.invites = [invite, ...state.invites].slice(0, 30);
+  res.status(201).json({ invite, invites: state.invites });
+}));
+
+memoryRouter.get("/plugins", asyncHandler(async (req, res) => {
+  const { plugins, events } = buildPluginCatalog(req.authUserId);
+  res.json({ plugins, events });
+}));
+
+memoryRouter.get("/governance-policy", asyncHandler(async (req, res) => {
+  const savedAt = GOVERNANCE_POLICY_SAVED_AT_BY_USER.get(req.authUserId) ?? null;
+  res.status(200).json({
+    governance: getGovernancePolicyForUser(req.authUserId),
+    savedAt,
+  });
+}));
+
+memoryRouter.post("/governance-policy", asyncHandler(async (req, res) => {
+  if (!isObjectRecord(req.body)) {
+    res.status(400).json({ error: "Invalid governance payload" });
+    return;
+  }
+  const actorRole = resolveActorRoleForUser(req.authUserId);
+  if (!canManageGovernance(actorRole)) {
+    res.status(403).json({ error: "Only owner/admin can modify governance policy" });
+    return;
+  }
+
+  const policy = setGovernancePolicyForUser(req.authUserId, req.body.governance ?? req.body);
+  const savedAt = GOVERNANCE_POLICY_SAVED_AT_BY_USER.get(req.authUserId) ?? new Date().toISOString();
+  res.status(200).json({
+    governance: policy,
+    savedAt,
+  });
+}));
+
+memoryRouter.post("/contract/validate", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("contract_validate");
+  if (!isObjectRecord(req.body)) {
+    res.status(400).json({ error: "Invalid contract payload", traceId });
+    return;
+  }
+
+  const contractCandidate = isObjectRecord(req.body.contract) ? req.body.contract : req.body;
+  const parsedContract = MemoryContractSchema.safeParse(contractCandidate);
+  if (!parsedContract.success) {
+    res.status(400).json({
+      error: "Invalid contract fields",
+      details: parsedContract.error.flatten(),
+      traceId,
+    });
+    return;
+  }
+
+  const governanceModeRaw = req.body.governanceMode;
+  const governanceMode: GovernancePolicy["mode"] =
+    governanceModeRaw === "strict" || governanceModeRaw === "enterprise" || governanceModeRaw === "balanced"
+      ? governanceModeRaw
+      : getGovernancePolicyForUser(req.authUserId).mode;
+
+  const contract = parsedContract.data;
+  const checks = [
+    { key: "goal", label: "goal", ok: typeof contract.goal === "string" && contract.goal.trim().length > 0 },
+    { key: "constraints", label: "constraints", ok: (contract.constraints?.length ?? 0) > 0 },
+    { key: "decisions", label: "decisions", ok: (contract.decisions?.length ?? 0) > 0 },
+    { key: "open_risks", label: "open_risks", ok: (contract.open_risks?.length ?? 0) > 0 },
+    { key: "next_actions", label: "next_actions", ok: (contract.next_actions?.length ?? 0) > 0 },
+  ];
+  const presentFields = checks.filter((item) => item.ok).map((item) => item.label);
+  const missingFields = checks.filter((item) => !item.ok).map((item) => item.label);
+  const minimumRequired = minimumContractFieldsForMode(governanceMode);
+  const completenessScore = Math.round((presentFields.length / checks.length) * 100);
+  const pass = presentFields.length >= minimumRequired;
+  const quality = computeContractQuality(contract);
+
+  const suggestions = [
+    missingFields.includes("goal") ? "Add one explicit goal sentence that defines success." : undefined,
+    missingFields.includes("constraints") ? "Add at least one hard constraint (time, stack, policy, budget)." : undefined,
+    missingFields.includes("decisions") ? "Capture at least one decision already made to avoid agent drift." : undefined,
+    missingFields.includes("open_risks") ? "List unresolved risks/blockers so handoffs preserve uncertainty." : undefined,
+    missingFields.includes("next_actions") ? "Add concrete next actions with owner/order." : undefined,
+  ].filter((item): item is string => Boolean(item));
+
+  res.status(200).json({
+    traceId,
+    governanceMode,
+    completenessScore,
+    minimumRequiredFields: minimumRequired,
+    presentFields,
+    missingFields,
+    pass,
+    readyToWrite: pass,
+    suggestions,
+    qualityScore: quality.score,
+    qualityGrade: quality.grade,
+    qualityReasons: quality.reasons,
+    normalizedContract: contract,
+  });
+}));
+
+memoryRouter.post("/conflicts/mark-stale", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("conflict_stale");
+  if (!isObjectRecord(req.body) || typeof req.body.memoryId !== "string" || req.body.memoryId.trim().length === 0) {
+    res.status(400).json({ error: "memoryId is required", traceId });
+    return;
+  }
+  const memoryId = req.body.memoryId.trim();
+  const before = await getMemoryForUser({ memoryId, userId: req.authUserId });
+
+  const result = await updateMemoryStatus({
+    memoryId,
+    userId: req.authUserId,
+    status: "stale",
+  });
+
+  if (result.status === "not_found") {
+    appendConflictAction({
+      id: randomUUID(),
+      traceId,
+      userId: req.authUserId,
+      type: "mark_stale",
+      memoryId,
+      beforeStatus: before?.status ?? null,
+      afterStatus: null,
+      result: "fail",
+      error: "Memory not found",
+      actor: "user",
+      at: new Date().toISOString(),
+    });
+    res.status(404).json({ error: "Memory not found", traceId });
+    return;
+  }
+
+  appendConflictAction({
+    id: randomUUID(),
+    traceId,
+    userId: req.authUserId,
+    type: "mark_stale",
+    memoryId,
+    beforeStatus: before?.status ?? null,
+    afterStatus: result.memory?.status ?? "stale",
+    result: "success",
+    error: null,
+    actor: "user",
+    at: new Date().toISOString(),
+  });
+
+  res.status(200).json({
+    traceId,
+    memory: result.memory ?? null,
+    status: result.status,
+    timelineEvent: result.timelineEvent ?? null,
+  });
+}));
+
+memoryRouter.post("/conflicts/merge", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("conflict_merge");
+  if (!isObjectRecord(req.body) || typeof req.body.memoryId !== "string" || req.body.memoryId.trim().length === 0) {
+    res.status(400).json({ error: "memoryId is required", traceId });
+    return;
+  }
+  const memoryId = req.body.memoryId.trim();
+  const before = await getMemoryForUser({ memoryId, userId: req.authUserId });
+
+  const result = await updateMemoryStatus({
+    memoryId,
+    userId: req.authUserId,
+    status: "merged",
+  });
+
+  if (result.status === "not_found") {
+    appendConflictAction({
+      id: randomUUID(),
+      traceId,
+      userId: req.authUserId,
+      type: "merge",
+      memoryId,
+      beforeStatus: before?.status ?? null,
+      afterStatus: null,
+      result: "fail",
+      error: "Memory not found",
+      actor: "user",
+      at: new Date().toISOString(),
+    });
+    res.status(404).json({ error: "Memory not found", traceId });
+    return;
+  }
+
+  appendConflictAction({
+    id: randomUUID(),
+    traceId,
+    userId: req.authUserId,
+    type: "merge",
+    memoryId,
+    beforeStatus: before?.status ?? null,
+    afterStatus: result.memory?.status ?? "merged",
+    result: "success",
+    error: null,
+    actor: "user",
+    at: new Date().toISOString(),
+  });
+
+  res.status(200).json({
+    traceId,
+    memory: result.memory ?? null,
+    status: result.status,
+    timelineEvent: result.timelineEvent ?? null,
+  });
+}));
+
+memoryRouter.post("/conflicts/pin", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("conflict_pin");
+  if (!isObjectRecord(req.body) || typeof req.body.memoryId !== "string" || req.body.memoryId.trim().length === 0) {
+    res.status(400).json({ error: "memoryId is required", traceId });
+    return;
+  }
+  const memoryId = req.body.memoryId.trim();
+  const memory = await getMemoryForUser({
+    memoryId,
+    userId: req.authUserId,
+  });
+  if (!memory) {
+    appendConflictAction({
+      id: randomUUID(),
+      traceId,
+      userId: req.authUserId,
+      type: "pin",
+      memoryId,
+      beforeStatus: null,
+      afterStatus: null,
+      result: "fail",
+      error: "Memory not found",
+      actor: "user",
+      at: new Date().toISOString(),
+    });
+    res.status(404).json({ error: "Memory not found", traceId });
+    return;
+  }
+
+  const nextSummary = memory.summary.startsWith("[PINNED] ")
+    ? memory.summary
+    : `[PINNED] ${memory.summary}`;
+  const pinnedMemory: Memory = {
+    ...memory,
+    summary: nextSummary,
+    updatedAt: new Date().toISOString(),
+  };
+  await getMemoryStoreAdapter().saveMemory({ memory: pinnedMemory });
+  await upsertRecentMemory(pinnedMemory);
+  appendConflictAction({
+    id: randomUUID(),
+    traceId,
+    userId: req.authUserId,
+    type: "pin",
+    memoryId,
+    beforeStatus: memory.status,
+    afterStatus: pinnedMemory.status,
+    result: "success",
+    error: null,
+    actor: "user",
+    at: new Date().toISOString(),
+  });
+
+  res.status(200).json({
+    traceId,
+    memory: pinnedMemory,
+    status: "updated",
+  });
+}));
+
+memoryRouter.get("/conflicts/actions", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("conflict_actions");
+  const store = readConflictActionStore();
+  const actions = store.actions
+    .filter((action) => action.userId === req.authUserId)
+    .slice(0, 200);
+  res.status(200).json({
+    traceId,
+    actions,
+    count: actions.length,
+  });
+}));
+
+memoryRouter.get("/conflicts/queue", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("conflict_queue");
+  const queue = readConflictQueueStore();
+  const state = req.query.state === "resolved" ? "resolved" : "open";
+  const items = queue.items
+    .filter((item) => item.userId === req.authUserId && item.state === state)
+    .slice(0, 200);
+  res.status(200).json({
+    traceId,
+    state,
+    items,
+    count: items.length,
+  });
+}));
+
+memoryRouter.get("/governance/review-queue", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("governance_review_queue");
+  const state = req.query.state === "approved" || req.query.state === "rejected" ? req.query.state : "pending";
+  const store = readGovernanceReviewStore();
+  const items = store.items
+    .filter((item) => item.userId === req.authUserId && item.state === state)
+    .slice(0, 200);
+  res.status(200).json({
+    traceId,
+    state,
+    items,
+    count: items.length,
+  });
+}));
+
+memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("governance_review");
+  if (
+    !isObjectRecord(req.body) ||
+    typeof req.body.reviewItemId !== "string" ||
+    req.body.reviewItemId.trim().length === 0
+  ) {
+    res.status(400).json({ error: "reviewItemId is required", traceId });
+    return;
+  }
+  const decision = req.body.decision === "approve" || req.body.decision === "reject" ? req.body.decision : null;
+  if (!decision) {
+    res.status(400).json({ error: "decision must be approve|reject", traceId });
+    return;
+  }
+  const actorRole = resolveActorRoleForUser(req.authUserId);
+  if (!canManageGovernance(actorRole)) {
+    res.status(403).json({ error: "Only owner/admin can review high-risk writes", traceId });
+    return;
+  }
+
+  const store = readGovernanceReviewStore();
+  const item = store.items.find((entry) => entry.id === req.body.reviewItemId && entry.userId === req.authUserId);
+  if (!item) {
+    res.status(404).json({ error: "Review item not found", traceId });
+    return;
+  }
+  if (item.state !== "pending") {
+    res.status(400).json({ error: "Review item already finalized", traceId });
+    return;
+  }
+
+  item.state = decision === "approve" ? "approved" : "rejected";
+  item.reviewedAt = new Date().toISOString();
+  item.reviewedByRole = actorRole;
+  item.reviewNote = typeof req.body.note === "string" ? req.body.note : undefined;
+  writeGovernanceReviewStore(store);
+
+  res.status(200).json({
+    traceId,
+    item,
+    status: item.state,
+  });
+}));
+
+memoryRouter.post("/conflicts/resolve", asyncHandler(async (req, res) => {
+  const traceId = createTraceId("conflict_resolve");
+  if (
+    !isObjectRecord(req.body) ||
+    typeof req.body.queueItemId !== "string" ||
+    req.body.queueItemId.trim().length === 0
+  ) {
+    res.status(400).json({ error: "queueItemId is required", traceId });
+    return;
+  }
+  const actionRaw = req.body.action;
+  const action =
+    actionRaw === "replace" || actionRaw === "merge" || actionRaw === "pin_old" || actionRaw === "deprecate"
+      ? actionRaw
+      : null;
+  if (!action) {
+    res.status(400).json({ error: "action must be one of replace|merge|pin_old|deprecate", traceId });
+    return;
+  }
+
+  const queue = readConflictQueueStore();
+  const queueItem = queue.items.find(
+    (item) => item.id === req.body.queueItemId && item.userId === req.authUserId,
+  );
+  if (!queueItem) {
+    res.status(404).json({ error: "Conflict queue item not found", traceId });
+    return;
+  }
+  if (queueItem.state === "resolved") {
+    res.status(400).json({ error: "Conflict queue item already resolved", traceId });
+    return;
+  }
+
+  const target = await getMemoryForUser({
+    memoryId: queueItem.memoryId,
+    userId: req.authUserId,
+  });
+  const conflicting = await getMemoryForUser({
+    memoryId: queueItem.conflictingWithMemoryId,
+    userId: req.authUserId,
+  });
+  if (!target || !conflicting) {
+    res.status(404).json({ error: "Related memories not found", traceId });
+    return;
+  }
+
+  const updatedTarget: Memory = target;
+  let updatedConflicting: Memory = conflicting;
+  const nowIso = new Date().toISOString();
+  if (action === "replace") {
+    const staleResult = await updateMemoryStatus({
+      memoryId: conflicting.id,
+      userId: req.authUserId,
+      status: "stale",
+    });
+    if (staleResult.memory) {
+      updatedConflicting = staleResult.memory;
+    }
+  } else if (action === "merge") {
+    const mergedResult = await updateMemoryStatus({
+      memoryId: conflicting.id,
+      userId: req.authUserId,
+      status: "merged",
+    });
+    if (mergedResult.memory) {
+      updatedConflicting = mergedResult.memory;
+    }
+  } else if (action === "pin_old") {
+    updatedConflicting = {
+      ...conflicting,
+      summary: conflicting.summary.startsWith("[PINNED] ")
+        ? conflicting.summary
+        : `[PINNED] ${conflicting.summary}`,
+      updatedAt: nowIso,
+    };
+    await getMemoryStoreAdapter().saveMemory({ memory: updatedConflicting });
+    await upsertRecentMemory(updatedConflicting);
+  } else if (action === "deprecate") {
+    const contradictedResult = await updateMemoryStatus({
+      memoryId: conflicting.id,
+      userId: req.authUserId,
+      status: "contradicted",
+    });
+    if (contradictedResult.memory) {
+      updatedConflicting = contradictedResult.memory;
+    }
+  }
+
+  appendConflictAction({
+    id: randomUUID(),
+    traceId,
+    userId: req.authUserId,
+    type: action === "merge" ? "merge" : action === "pin_old" ? "pin" : "mark_stale",
+    memoryId: queueItem.memoryId,
+    beforeStatus: target.status,
+    afterStatus: updatedTarget.status,
+    result: "success",
+    error: null,
+    actor: "user",
+    at: nowIso,
+  });
+
+  queueItem.state = "resolved";
+  queueItem.resolvedAt = nowIso;
+  queueItem.resolution = action;
+  writeConflictQueueStore(queue);
+
+  res.status(200).json({
+    traceId,
+    queueItem,
+    target: updatedTarget,
+    conflicting: updatedConflicting,
+    status: "resolved",
+  });
+}));
+
+memoryRouter.post("/plugins/:pluginId/install", asyncHandler(async (req, res) => {
+  const pluginIdParam = req.params.pluginId;
+  const pluginId = Array.isArray(pluginIdParam) ? pluginIdParam[0] : pluginIdParam;
+  if (typeof pluginId !== "string" || pluginId.trim().length === 0) {
+    res.status(400).json({ error: "pluginId is required" });
+    return;
+  }
+  const { plugins } = buildPluginCatalog(req.authUserId);
+  const plugin = plugins.find((entry) => entry.id === pluginId);
+  if (!plugin) {
+    res.status(404).json({ error: "Plugin not found" });
+    return;
+  }
+
+  const userState = getPluginUserState(req.authUserId);
+  if (!userState.installed.includes(pluginId)) {
+    userState.installed.push(pluginId);
+  }
+  const installEvent: PluginEvent = {
+    id: randomUUID(),
+    pluginId,
+    action: "installed",
+    at: new Date().toISOString(),
+  };
+  userState.events = [
+    installEvent,
+    ...userState.events,
+  ].slice(0, 100);
+  setPluginUserState(req.authUserId, userState);
+
+  const next = buildPluginCatalog(req.authUserId);
+  res.json({ plugin: next.plugins.find((entry) => entry.id === pluginId), plugins: next.plugins, events: next.events });
+}));
+
+memoryRouter.post("/plugins/:pluginId/uninstall", asyncHandler(async (req, res) => {
+  const pluginIdParam = req.params.pluginId;
+  const pluginId = Array.isArray(pluginIdParam) ? pluginIdParam[0] : pluginIdParam;
+  if (typeof pluginId !== "string" || pluginId.trim().length === 0) {
+    res.status(400).json({ error: "pluginId is required" });
+    return;
+  }
+  const { plugins } = buildPluginCatalog(req.authUserId);
+  const plugin = plugins.find((entry) => entry.id === pluginId);
+  if (!plugin) {
+    res.status(404).json({ error: "Plugin not found" });
+    return;
+  }
+
+  const userState = getPluginUserState(req.authUserId);
+  userState.installed = userState.installed.filter((entry) => entry !== pluginId);
+  const uninstallEvent: PluginEvent = {
+    id: randomUUID(),
+    pluginId,
+    action: "uninstalled",
+    at: new Date().toISOString(),
+  };
+  userState.events = [
+    uninstallEvent,
+    ...userState.events,
+  ].slice(0, 100);
+  setPluginUserState(req.authUserId, userState);
+
+  const next = buildPluginCatalog(req.authUserId);
+  res.json({ plugin: next.plugins.find((entry) => entry.id === pluginId), plugins: next.plugins, events: next.events });
+}));
+
+memoryRouter.get("/settings", asyncHandler(async (req, res) => {
+  const state = getWorkspaceState(req.authUserId);
+  res.json({
+    workspaceName: state.workspaceName,
+    organization: state.organization,
+    connectorStatuses: {
+      github: "connected",
+      notion: "available",
+      googleDrive: "available",
+      oneDrive: "available",
+      gmail: "available",
+      s3: "available",
+      webCrawler: "available",
+    },
+  });
+}));
+
+memoryRouter.patch("/settings", asyncHandler(async (req, res) => {
+  if (!isObjectRecord(req.body)) {
+    res.status(400).json({ error: "Invalid settings payload" });
+    return;
+  }
+  const state = getWorkspaceState(req.authUserId);
+  if (typeof req.body.workspaceName === "string" && req.body.workspaceName.trim().length > 0) {
+    state.workspaceName = req.body.workspaceName.trim();
+  }
+  if (typeof req.body.contextEnabled === "boolean") {
+    state.organization.contextEnabled = req.body.contextEnabled;
+  }
+  res.json({
+    workspaceName: state.workspaceName,
+    organization: state.organization,
+  });
+}));
+
 
 function hasValidBaselineReport(): boolean {
   return hasValidJsonFile(BASELINE_REPORT_PATH, (value) => {
@@ -286,6 +1547,259 @@ function parseRequestRange(raw: unknown): RequestRange {
   return "30d";
 }
 
+function readJsonFile<T>(filePath: string, fallback: T): T {
+  if (!existsSync(filePath)) {
+    return fallback;
+  }
+  try {
+    return JSON.parse(readFileSync(filePath, "utf8")) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJsonFile(filePath: string, data: unknown): void {
+  mkdirSync(path.dirname(filePath), { recursive: true });
+  writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+}
+
+function readGovernancePolicyStore(): GovernancePolicyStore {
+  return readJsonFile<GovernancePolicyStore>(GOVERNANCE_POLICY_STORE_PATH, { users: {} });
+}
+
+function writeGovernancePolicyStore(state: GovernancePolicyStore): void {
+  writeJsonFile(GOVERNANCE_POLICY_STORE_PATH, state);
+}
+
+function readConflictActionStore(): ConflictActionStore {
+  return readJsonFile<ConflictActionStore>(CONFLICT_ACTIONS_STORE_PATH, { actions: [] });
+}
+
+function writeConflictActionStore(state: ConflictActionStore): void {
+  writeJsonFile(CONFLICT_ACTIONS_STORE_PATH, state);
+}
+
+function readConflictQueueStore(): ConflictQueueStore {
+  return readJsonFile<ConflictQueueStore>(CONFLICT_QUEUE_STORE_PATH, { items: [] });
+}
+
+function writeConflictQueueStore(state: ConflictQueueStore): void {
+  writeJsonFile(CONFLICT_QUEUE_STORE_PATH, state);
+}
+
+function readGovernanceReviewStore(): GovernanceReviewStore {
+  return readJsonFile<GovernanceReviewStore>(GOVERNANCE_REVIEW_STORE_PATH, { items: [] });
+}
+
+function writeGovernanceReviewStore(state: GovernanceReviewStore): void {
+  writeJsonFile(GOVERNANCE_REVIEW_STORE_PATH, state);
+}
+
+function appendConflictAction(record: ConflictActionRecord): void {
+  const store = readConflictActionStore();
+  const next = [record, ...store.actions].slice(0, 1000);
+  writeConflictActionStore({ actions: next });
+}
+
+function appendConflictQueueItems(items: ConflictQueueItem[]): void {
+  if (items.length === 0) return;
+  const store = readConflictQueueStore();
+  const dedupedIncoming = items.filter((item) =>
+    !store.items.some(
+      (existing) =>
+        existing.userId === item.userId &&
+        existing.memoryId === item.memoryId &&
+        existing.conflictingWithMemoryId === item.conflictingWithMemoryId &&
+        existing.state === "open",
+    ),
+  );
+  if (dedupedIncoming.length === 0) return;
+  const next = [...dedupedIncoming, ...store.items].slice(0, 1000);
+  writeConflictQueueStore({ items: next });
+}
+
+function appendGovernanceReviewItem(item: GovernanceReviewItem): void {
+  const store = readGovernanceReviewStore();
+  const next = [item, ...store.items].slice(0, 1000);
+  writeGovernanceReviewStore({ items: next });
+}
+
+function ensureGovernancePolicyStoreLoaded(): void {
+  if (GOVERNANCE_POLICY_STORE_LOADED) return;
+  GOVERNANCE_POLICY_STORE_LOADED = true;
+
+  const store = readGovernancePolicyStore();
+  const entries = Object.entries(store.users);
+  for (const [userId, raw] of entries) {
+    if (isObjectRecord(raw) && "policy" in raw) {
+      const policy = resolveGovernancePolicy((raw as { policy?: unknown }).policy);
+      GOVERNANCE_POLICY_BY_USER.set(userId, policy);
+      const savedAt = (raw as { savedAt?: unknown }).savedAt;
+      if (typeof savedAt === "string" && savedAt.trim().length > 0) {
+        GOVERNANCE_POLICY_SAVED_AT_BY_USER.set(userId, savedAt);
+      }
+      continue;
+    }
+    GOVERNANCE_POLICY_BY_USER.set(userId, resolveGovernancePolicy(raw));
+  }
+}
+
+function readPluginStore(): PluginStoreState {
+  return readJsonFile<PluginStoreState>(PLUGIN_STORE_PATH, { users: {} });
+}
+
+function writePluginStore(state: PluginStoreState): void {
+  writeJsonFile(PLUGIN_STORE_PATH, state);
+}
+
+function getPluginUserState(userId: string): PluginUserState {
+  const store = readPluginStore();
+  const existing = store.users[userId];
+  if (existing) {
+    return existing;
+  }
+  const created: PluginUserState = { installed: [], events: [] };
+  store.users[userId] = created;
+  writePluginStore(store);
+  return created;
+}
+
+function setPluginUserState(userId: string, state: PluginUserState): void {
+  const store = readPluginStore();
+  store.users[userId] = state;
+  writePluginStore(store);
+}
+
+function packageVersionFrom(filePath: string): string {
+  const pkg = readJsonFile<Record<string, unknown> | null>(filePath, null);
+  if (!pkg || typeof pkg.version !== "string") {
+    return "unknown";
+  }
+  return pkg.version;
+}
+
+function buildPluginCatalog(userId: string): { plugins: PluginRecord[]; events: PluginEvent[] } {
+  const userState = getPluginUserState(userId);
+  const installed = new Set(userState.installed);
+
+  const mcpPath = path.join(process.cwd(), "packages", "mcp-server", "package.json");
+  const sdkPath = path.join(process.cwd(), "packages", "sdk", "package.json");
+  const serverPath = path.join(process.cwd(), "package.json");
+  const mcpBuiltPath = path.join(process.cwd(), "packages", "mcp-server", "dist", "stdio.js");
+
+  const plugins: PluginRecord[] = [
+    {
+      id: "memoryos-mcp",
+      name: "MemoryOS MCP Bridge",
+      category: "MCP",
+      runtime: "stdio transport",
+      version: packageVersionFrom(mcpPath),
+      status: installed.has("memoryos-mcp") ? "installed" : "available",
+      capabilities: ["retrieve", "resume", "handoff", "mcp-tools"],
+      source: "packages/mcp-server",
+      installedAt: userState.events.find((event) => event.pluginId === "memoryos-mcp" && event.action === "installed")?.at,
+      updatedAt: userState.events.find((event) => event.pluginId === "memoryos-mcp")?.at,
+      health: existsSync(mcpBuiltPath) ? "healthy" : "unknown",
+      healthDetail: existsSync(mcpBuiltPath) ? "Built output found at packages/mcp-server/dist/stdio.js" : "Build output not found yet.",
+    },
+    {
+      id: "sdk-runtime",
+      name: "TypeScript SDK Runtime",
+      category: "Runtime",
+      runtime: "Node package",
+      version: packageVersionFrom(sdkPath),
+      status: installed.has("sdk-runtime") ? "installed" : "available",
+      capabilities: ["beforeModel", "afterModel", "process", "retrieve"],
+      source: "packages/sdk",
+      installedAt: userState.events.find((event) => event.pluginId === "sdk-runtime" && event.action === "installed")?.at,
+      updatedAt: userState.events.find((event) => event.pluginId === "sdk-runtime")?.at,
+      health: existsSync(sdkPath) ? "healthy" : "error",
+      healthDetail: existsSync(sdkPath) ? "SDK package manifest found." : "SDK package manifest missing.",
+    },
+    {
+      id: "http-runtime",
+      name: "HTTP Agent Runtime",
+      category: "Runtime",
+      runtime: "REST API",
+      version: packageVersionFrom(serverPath),
+      status: installed.has("http-runtime") ? "installed" : "available",
+      capabilities: ["process", "retrieve", "resume", "handoff"],
+      source: "server/api/memory",
+      installedAt: userState.events.find((event) => event.pluginId === "http-runtime" && event.action === "installed")?.at,
+      updatedAt: userState.events.find((event) => event.pluginId === "http-runtime")?.at,
+      health: "healthy",
+      healthDetail: "Memory API routes are available on /api/memory/*.",
+    },
+  ];
+
+  return {
+    plugins,
+    events: [...userState.events].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 40),
+  };
+}
+
+function createDefaultWorkspaceState(userId: string): WorkspaceState {
+  const normalizedUser = userId.trim() || "memoryos-user";
+  return {
+    workspaceName: "MemoryOS",
+    plan: "Free",
+    usage: {
+      tokenLimit: 1_000_000,
+      tokenUsed: 0,
+      searchLimit: 10_000,
+      searchUsed: 0,
+      resetInDays: 20,
+    },
+    invoices: [],
+    members: [
+      {
+        id: "owner",
+        name: "Workspace Owner",
+        email: `${normalizedUser}@memoryos.local`,
+        role: "owner",
+        access: "Full",
+        joined: new Date().toISOString(),
+        status: "active",
+      },
+    ],
+    invites: [],
+    organization: {
+      organizationId: `org_${normalizedUser.slice(0, 10)}`,
+      ownerName: "Workspace Owner",
+      ownerEmail: `${normalizedUser}@memoryos.local`,
+      contextEnabled: false,
+    },
+  };
+}
+
+function getWorkspaceState(userId: string): WorkspaceState {
+  const existing = WORKSPACE_STATE_BY_USER.get(userId);
+  if (existing) {
+    return existing;
+  }
+  const created = createDefaultWorkspaceState(userId);
+  WORKSPACE_STATE_BY_USER.set(userId, created);
+  return created;
+}
+
+function toBillingPortalUrl(): string {
+  const dashboard = process.env.PADDLE_DASHBOARD_URL?.trim();
+  if (dashboard) {
+    return dashboard;
+  }
+  return "https://vendors.paddle.com";
+}
+
+function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
+  const byPlanEnv: Record<Exclude<BillingPlan, "Free">, string | undefined> = {
+    Pro: process.env.PADDLE_CHECKOUT_URL_PRO,
+    Scale: process.env.PADDLE_CHECKOUT_URL_SCALE,
+    Enterprise: process.env.PADDLE_CHECKOUT_URL_ENTERPRISE,
+  };
+  const raw = byPlanEnv[plan as Exclude<BillingPlan, "Free">];
+  return raw?.trim() ? raw.trim() : null;
+}
+
 function buildWhyTop1(top?: {
   memoryType?: string;
   finalScore: number;
@@ -356,28 +1870,269 @@ function formatVoiceChunkMessage(input: {
   return `${core}\n[voice_meta ${metadata.join(" ")}]`;
 }
 
+function formatAgentChatMemory(input: {
+  speaker: "user" | "assistant";
+  message: string;
+  sessionId: string;
+  threadId: string;
+  workspace?: string;
+  project?: string;
+  agentId?: string;
+  model?: string;
+  mode?: string;
+  governance?: GovernancePolicy;
+}): string {
+  const speakerLabel = input.speaker === "assistant" ? "Assistant" : "User";
+  const effectiveMessage = input.governance?.redactSecrets ? applySecretRedaction(input.message) : input.message;
+  const metadata = [
+    `sessionId=${input.sessionId}`,
+    `threadId=${input.threadId}`,
+    input.workspace ? `workspace=${input.workspace}` : undefined,
+    input.project ? `project=${input.project}` : undefined,
+    input.agentId ? `agent=${input.agentId}` : undefined,
+    input.model ? `model=${input.model}` : undefined,
+    input.mode ? `mode=${input.mode}` : undefined,
+    input.governance ? `ttlHours=${input.governance.ttlHours}` : undefined,
+    input.governance ? `policyMode=${input.governance.mode}` : undefined,
+    input.governance?.pinCriticalDecisions ? "pinCriticalDecisions=true" : undefined,
+    input.governance?.redactSecrets ? "redaction=enabled" : undefined,
+  ].filter((item): item is string => Boolean(item));
+
+  return `${speakerLabel}: ${effectiveMessage}\n[agent_chat_meta ${metadata.join(" ")}]`;
+}
+
+async function persistAgentTurnMemory(input: {
+  userId: string;
+  sessionId: string;
+  threadId: string;
+  workspace?: string;
+  project?: string;
+  agentId: string;
+  model?: string;
+  mode: string;
+  userMessage: string;
+  assistantReply: string;
+  projectState?: unknown;
+  governance: GovernancePolicy;
+}): Promise<{ memory: Memory; timelineEvent: Awaited<ReturnType<typeof recordMemoryCreatedEvent>> }> {
+  const now = new Date().toISOString();
+  const userMessage = input.governance.redactSecrets ? applySecretRedaction(input.userMessage) : input.userMessage;
+  const assistantReply = input.governance.redactSecrets ? applySecretRedaction(input.assistantReply) : input.assistantReply;
+  const shouldPin =
+    input.governance.pinCriticalDecisions &&
+    /\b(decision|decide|chosen|we will|selected)\b/i.test(`${userMessage}\n${assistantReply}`);
+  const memory: Memory = {
+    id: randomUUID(),
+    userId: input.userId,
+    type: "episodic",
+    content: [
+      `User: ${userMessage}`,
+      `Assistant: ${assistantReply}`,
+      `Agent turn metadata: session=${input.sessionId}; thread=${input.threadId}; agent=${input.agentId}; model=${input.model ?? "default"}; mode=${input.mode}; workspace=${input.workspace ?? "default"}; project=${input.project ?? "default"}`,
+      `Governance: mode=${input.governance.mode}; ttlHours=${input.governance.ttlHours}; redaction=${input.governance.redactSecrets ? "on" : "off"}; pinning=${input.governance.pinCriticalDecisions ? "on" : "off"}`,
+      shouldPin ? "Pinned decision signal: critical decision preserved for future handoffs." : undefined,
+      input.projectState
+        ? `Updated project state: ${JSON.stringify(input.projectState)}`
+        : undefined,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    summary: `${input.agentId} ${input.mode} turn stored for ${input.project ?? "MemoryOS project"} using ${input.model ?? "configured model"}.`,
+    importanceScore: shouldPin ? 0.95 : 0.82,
+    confidence: 0.96,
+    source: "chat",
+    status: "active",
+    createdAt: now,
+    updatedAt: now,
+    evidenceCount: 1,
+    developerSignals: {
+      projectArea: [input.project ?? "run-demo", input.mode, input.agentId],
+    },
+  };
+
+  await getMemoryStoreAdapter().saveMemory({ memory });
+  await upsertRecentMemory(memory);
+  const timelineEvent = await recordMemoryCreatedEvent(
+    memory,
+    `${input.agentId} ${input.mode} turn stored with ${input.model ?? "configured model"}; user input, model reply, and project state are now recoverable.`,
+  );
+
+  return { memory, timelineEvent };
+}
+
 memoryRouter.post(
   "/process",
   asyncHandler(async (req, res) => {
+    const traceId = createTraceId("memory_process");
     const parsed = ProcessMemorySchema.safeParse(req.body ?? {});
     if (!parsed.success) {
       res.status(400).json({
         error: "Invalid request body",
         details: parsed.error.flatten(),
+        traceId,
       });
       return;
     }
 
+    const contract = parsed.data.contract;
+    const governancePolicy = resolveGovernancePolicyWithUserDefault(req.authUserId, parsed.data.governance);
+    const contractFieldsCount =
+      (contract?.goal ? 1 : 0) +
+      ((contract?.constraints?.length ?? 0) > 0 ? 1 : 0) +
+      ((contract?.decisions?.length ?? 0) > 0 ? 1 : 0) +
+      ((contract?.open_risks?.length ?? 0) > 0 ? 1 : 0) +
+      ((contract?.next_actions?.length ?? 0) > 0 ? 1 : 0);
+
+    const minimumRequiredFields =
+      parsed.data.enforceContract || governancePolicy.mode !== "balanced"
+        ? minimumContractFieldsForMode(governancePolicy.mode)
+        : 2;
+
+    if (parsed.data.enforceContract && contractFieldsCount < minimumRequiredFields) {
+      res.status(422).json({
+        error: "Weak memory contract",
+        details: {
+          message:
+            `contract must include at least ${minimumRequiredFields} non-empty fields among goal, constraints, decisions, open_risks, next_actions`,
+          receivedFieldCount: contractFieldsCount,
+          governanceMode: governancePolicy.mode,
+        },
+        traceId,
+      });
+      return;
+    }
+
+    if (!parsed.data.enforceContract && governancePolicy.mode !== "balanced" && contractFieldsCount < minimumRequiredFields) {
+      res.status(422).json({
+        error: "Governance contract threshold not met",
+        details: {
+          message: `${governancePolicy.mode} mode requires at least ${minimumRequiredFields} contract fields`,
+          receivedFieldCount: contractFieldsCount,
+          governanceMode: governancePolicy.mode,
+        },
+        traceId,
+      });
+      return;
+    }
+
+    const normalizedContract = contract
+      ? {
+          goal:
+            typeof contract.goal === "string"
+              ? (governancePolicy.redactSecrets ? applySecretRedaction(contract.goal) : contract.goal)
+              : undefined,
+          constraints: sanitizeStringList(contract.constraints, governancePolicy.redactSecrets),
+          decisions: sanitizeStringList(contract.decisions, governancePolicy.redactSecrets),
+          open_risks: sanitizeStringList(contract.open_risks, governancePolicy.redactSecrets),
+          next_actions: sanitizeStringList(contract.next_actions, governancePolicy.redactSecrets),
+        }
+      : undefined;
+
+    const contractMessage =
+      contractFieldsCount > 0
+        ? [
+            normalizedContract?.goal ? `Goal: ${normalizedContract.goal}` : undefined,
+            (normalizedContract?.constraints?.length ?? 0) > 0
+              ? `Constraints: ${normalizedContract?.constraints?.join(" | ")}`
+              : undefined,
+            (normalizedContract?.decisions?.length ?? 0) > 0
+              ? `Decisions: ${normalizedContract?.decisions?.join(" | ")}`
+              : undefined,
+            (normalizedContract?.open_risks?.length ?? 0) > 0
+              ? `Open Risks: ${normalizedContract?.open_risks?.join(" | ")}`
+              : undefined,
+            (normalizedContract?.next_actions?.length ?? 0) > 0
+              ? `Next Actions: ${normalizedContract?.next_actions?.join(" | ")}`
+              : undefined,
+            `Governance: mode=${governancePolicy.mode}; ttlHours=${governancePolicy.ttlHours}; redaction=${governancePolicy.redactSecrets ? "on" : "off"}; pinning=${governancePolicy.pinCriticalDecisions ? "on" : "off"}`,
+          ]
+            .filter(Boolean)
+            .join("\n")
+        : "";
+
+    const normalizedMessage =
+      typeof parsed.data.message === "string"
+        ? (governancePolicy.redactSecrets ? applySecretRedaction(parsed.data.message) : parsed.data.message)
+        : undefined;
+
+    const risk = isHighRiskWrite({
+      message: normalizedMessage,
+      contract: normalizedContract,
+      governance: governancePolicy,
+    });
+    if (governancePolicy.requireManualReviewForHighRisk && risk.highRisk) {
+      const reviewItem: GovernanceReviewItem = {
+        id: `gr_${randomUUID().slice(0, 10)}`,
+        traceId,
+        userId: req.authUserId,
+        reason: risk.reason,
+        payload: {
+          threadId: parsed.data.threadId,
+          message: normalizedMessage,
+          contract: normalizedContract,
+          governance: governancePolicy,
+        },
+        state: "pending",
+        createdAt: new Date().toISOString(),
+      };
+      appendGovernanceReviewItem(reviewItem);
+      res.status(202).json({
+        traceId,
+        status: "pending_review",
+        reviewItemId: reviewItem.id,
+        reason: reviewItem.reason,
+      });
+      return;
+    }
+
+    const message = [normalizedMessage, contractMessage]
+      .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
+      .join("\n");
+    if (message.trim().length === 0) {
+      res.status(422).json({
+        error: "Weak memory input",
+        details: {
+          message:
+            "Provide a non-empty message or a contract with meaningful fields (goal, constraints, decisions, open_risks, next_actions).",
+        },
+        traceId,
+      });
+      return;
+    }
+
+    const existingBefore = await listMemories({
+      userId: req.authUserId,
+      status: "active",
+      limit: 200,
+    });
+
     const result = await runIngestFlowLangGraph({
       userId: req.authUserId,
       threadId: parsed.data.threadId,
-      message: parsed.data.message,
+      message,
     });
 
+    const existingBeforeIds = new Set(existingBefore.memories.map((memory) => memory.id));
+    const acceptedMemories = result.acceptedMemories.filter(
+      (memory) => !existingBeforeIds.has(memory.id),
+    );
+    const autoConflicts = detectAutoConflicts({
+      userId: req.authUserId,
+      traceId,
+      acceptedMemories,
+      existingMemories: existingBefore.memories,
+    });
+    appendConflictQueueItems(autoConflicts);
+
     res.status(200).json({
+      traceId,
       acceptedMemories: result.acceptedMemories,
       rejectedMemories: result.rejectedMemories,
       timelineEvents: result.timelineEvents,
+      contract: normalizedContract ?? null,
+      contractFieldCount: contractFieldsCount,
+      governance: governancePolicy,
+      autoConflictsQueued: autoConflicts.length,
     });
   }),
 );
@@ -510,10 +2265,10 @@ memoryRouter.post(
 
     let summaryIngestResult:
       | {
-          acceptedMemories: unknown[];
-          rejectedMemories: unknown[];
-          timelineEvents: unknown[];
-        }
+        acceptedMemories: unknown[];
+        rejectedMemories: unknown[];
+        timelineEvents: unknown[];
+      }
       | undefined;
 
     if (parsed.data.finalSummary) {
@@ -539,6 +2294,432 @@ memoryRouter.post(
     res.status(200).json({
       session,
       ...(summaryIngestResult ? { summaryIngestResult } : {}),
+    });
+  }),
+);
+
+memoryRouter.post(
+  "/voice/chat",
+  asyncHandler(async (req, res) => {
+    const parsed = VoiceChatSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const existingSession = getVoiceSession(req.authUserId, parsed.data.sessionId);
+    if (!existingSession) {
+      await startVoiceSession({
+        sessionId: parsed.data.sessionId,
+        userId: req.authUserId,
+        source: "pipecat",
+        ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+        ...(parsed.data.project ? { project: parsed.data.project } : {}),
+        ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+      });
+    }
+
+    const session = getVoiceSession(req.authUserId, parsed.data.sessionId);
+    const resolvedThreadId =
+      parsed.data.threadId ?? session?.threadId ?? `voice:${parsed.data.sessionId}`;
+
+    const mode = parsed.data.mode ?? "chat";
+    const agentId = normalizeAgentId(parsed.data.agentId);
+    const modelName = parsed.data.model;
+    const governancePolicy = resolveGovernancePolicyWithUserDefault(req.authUserId, parsed.data.governance);
+    const intakeFromMessage = extractGoalIntakeFromMessage(parsed.data.message);
+
+    const hasGoal = Boolean(parsed.data.injectedProjectState?.systemGoal || intakeFromMessage.goal);
+    const hasOwner =
+      Boolean(intakeFromMessage.owner) ||
+      Boolean((parsed.data.injectedProjectState?.activeConstraints ?? []).some((item) => /\bowner\b/i.test(item)));
+    const hasDeadline =
+      Boolean(intakeFromMessage.deadline) ||
+      Boolean((parsed.data.injectedProjectState?.activeConstraints ?? []).some((item) => /\bdeadline\b|\bdue\b/i.test(item)));
+    const missingIntakeFields = [
+      hasGoal ? null : "goal",
+      hasOwner ? null : "owner",
+      hasDeadline ? null : "deadline",
+    ].filter((item): item is string => Boolean(item));
+
+    if (missingIntakeFields.length > 0) {
+      res.status(422).json({
+        error: "Goal intake required before agent execution",
+        code: "goal_intake_required",
+        details: {
+          missingFields: missingIntakeFields,
+          requiredTemplate:
+            "Goal: <what success looks like>; Owner: <name or team>; Deadline: <date/timeframe>",
+        },
+      });
+      return;
+    }
+
+    if (governancePolicy.mode !== "balanced") {
+      const requiredProjectSignals = [
+        parsed.data.injectedProjectState?.systemGoal ? 1 : 0,
+        (parsed.data.injectedProjectState?.activeConstraints?.length ?? 0) > 0 ? 1 : 0,
+        (parsed.data.injectedProjectState?.preferences?.length ?? 0) > 0 ? 1 : 0,
+        (parsed.data.injectedProjectState?.executionPlan?.length ?? 0) > 0 ? 1 : 0,
+      ].reduce((sum, value) => sum + value, 0);
+      const required = governancePolicy.mode === "enterprise" ? 3 : 2;
+      if (requiredProjectSignals < required) {
+        res.status(422).json({
+          error: "Governance context threshold not met",
+          details: {
+            message: `${governancePolicy.mode} mode requires richer injected project state before write`,
+            requiredSignals: required,
+            receivedSignals: requiredProjectSignals,
+          },
+        });
+        return;
+      }
+    }
+
+    const sanitizedUserMessage = governancePolicy.redactSecrets
+      ? applySecretRedaction(parsed.data.message)
+      : parsed.data.message;
+
+    const enrichedInjectedProjectState = {
+      ...(parsed.data.injectedProjectState ?? {}),
+      systemGoal:
+        parsed.data.injectedProjectState?.systemGoal ?? intakeFromMessage.goal,
+      activeConstraints: Array.from(
+        new Set([
+          ...(parsed.data.injectedProjectState?.activeConstraints ?? []),
+          ...(intakeFromMessage.owner ? [`Owner: ${intakeFromMessage.owner}`] : []),
+          ...(intakeFromMessage.deadline ? [`Deadline: ${intakeFromMessage.deadline}`] : []),
+        ]),
+      ),
+    };
+
+    // 1. Ingest user message into MemoryOS with agent/mode metadata.
+    const ingestResult = await runIngestFlowLangGraph({
+      userId: req.authUserId,
+      threadId: resolvedThreadId,
+      message: formatAgentChatMemory({
+        speaker: "user",
+        message: sanitizedUserMessage,
+        sessionId: parsed.data.sessionId,
+        threadId: resolvedThreadId,
+        workspace: parsed.data.workspace,
+        project: parsed.data.project,
+        agentId,
+        model: modelName,
+        mode,
+        governance: governancePolicy,
+      }),
+    });
+
+    // 2. Generate memory-aware response + structured project state
+    const chatResult = await generateMemoryAwareResponse({
+      userId: req.authUserId,
+      message: sanitizedUserMessage,
+      sessionId: parsed.data.sessionId,
+      threadId: resolvedThreadId,
+      workspace: parsed.data.workspace,
+      project: parsed.data.project,
+      agentId,
+      modelName,
+      mode,
+      injectedProjectState: enrichedInjectedProjectState,
+    });
+
+    const contractQuality = computeContractQuality({
+      goal: chatResult.projectState.systemGoal,
+      constraints: chatResult.projectState.activeConstraints ?? [],
+      decisions: chatResult.projectState.preferences ?? [],
+      open_risks: chatResult.projectState.missingInfo ?? [],
+      next_actions: chatResult.projectState.executionPlan ?? [],
+    });
+
+    // 3. Store the assistant/model reply too, so handoffs can recover what the
+    // agent actually said, which model said it, and which mode produced it.
+    const assistantIngestResult = await runIngestFlowLangGraph({
+      userId: req.authUserId,
+      threadId: resolvedThreadId,
+      message: formatAgentChatMemory({
+        speaker: "assistant",
+        message: chatResult.reply,
+        sessionId: parsed.data.sessionId,
+        threadId: resolvedThreadId,
+        workspace: parsed.data.workspace,
+        project: parsed.data.project,
+        agentId,
+        model: modelName,
+        mode,
+        governance: governancePolicy,
+      }),
+    });
+
+    const guaranteedTurnMemory = await persistAgentTurnMemory({
+      userId: req.authUserId,
+      sessionId: parsed.data.sessionId,
+      threadId: resolvedThreadId,
+      workspace: parsed.data.workspace,
+      project: parsed.data.project,
+      agentId,
+      model: modelName,
+      mode,
+      userMessage: sanitizedUserMessage,
+      assistantReply: chatResult.reply,
+      projectState: chatResult.projectState,
+      governance: governancePolicy,
+    });
+
+    // 4. Update session character count
+    const updatedSession = await recordVoiceChunk({
+      sessionId: parsed.data.sessionId,
+      userId: req.authUserId,
+      chunkCharacters: parsed.data.message.length + chatResult.reply.length,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.project ? { project: parsed.data.project } : {}),
+      threadId: resolvedThreadId,
+    });
+
+    res.status(200).json({
+      session: updatedSession,
+      reply: chatResult.reply,
+      projectState: chatResult.projectState,
+      mutations: chatResult.mutations,
+      acceptedMemories: [
+        ...ingestResult.acceptedMemories,
+        ...assistantIngestResult.acceptedMemories,
+        guaranteedTurnMemory.memory,
+      ],
+      timelineEvents: [
+        ...ingestResult.timelineEvents,
+        ...assistantIngestResult.timelineEvents,
+        guaranteedTurnMemory.timelineEvent,
+      ],
+      governance: governancePolicy,
+      contractQuality,
+    });
+  }),
+);
+
+memoryRouter.get(
+  "/portability/export",
+  asyncHandler(async (req, res) => {
+    const traceId = createTraceId("portability_export");
+    const workspace =
+      typeof req.query.workspace === "string" && req.query.workspace.trim().length > 0
+        ? req.query.workspace.trim()
+        : "memoryos";
+    const project =
+      typeof req.query.project === "string" && req.query.project.trim().length > 0
+        ? req.query.project.trim()
+        : "company-brain";
+    const governance = resolveGovernancePolicyWithUserDefault(req.authUserId, {
+      mode: typeof req.query.mode === "string" ? req.query.mode : undefined,
+      ttlHours: typeof req.query.ttlHours === "string" ? Number(req.query.ttlHours) : undefined,
+      redactSecrets: req.query.redactSecrets === "true" ? true : req.query.redactSecrets === "false" ? false : undefined,
+      pinCriticalDecisions:
+        req.query.pinCriticalDecisions === "true" ? true : req.query.pinCriticalDecisions === "false" ? false : undefined,
+    });
+
+    const listed = await listMemories({ userId: req.authUserId, limit: 120 });
+    const memories = listed.memories;
+
+    const sampleContract = {
+      goal: memories.find((memory) => memory.content.toLowerCase().includes("goal:"))?.summary,
+      constraints: memories
+        .filter((memory) => /constraint/i.test(memory.content))
+        .slice(0, 5)
+        .map((memory) => memory.summary),
+      decisions: memories
+        .filter((memory) => /decision|decide|selected/i.test(memory.content))
+        .slice(0, 8)
+        .map((memory) => memory.summary),
+      open_risks: memories
+        .filter((memory) => /risk|blocker|unknown/i.test(memory.content))
+        .slice(0, 8)
+        .map((memory) => memory.summary),
+      next_actions: memories
+        .filter((memory) => /next action|next step|todo|ship/i.test(memory.content))
+        .slice(0, 8)
+        .map((memory) => memory.summary),
+    };
+
+    const agentsMd = buildAgentsMdExport({
+      workspace,
+      project,
+      governance,
+      sampleContract,
+    });
+
+    res.status(200).json({
+      traceId,
+      workspace,
+      project,
+      exportedAt: new Date().toISOString(),
+      governance,
+      agentsMd,
+      snapshot: {
+        schema: "memoryos.snapshot.v1",
+        workspace,
+        project,
+        exportedAt: new Date().toISOString(),
+        contract: sampleContract,
+        memories: memories.map((memory) => ({
+          id: memory.id,
+          type: memory.type,
+          status: memory.status,
+          summary: memory.summary,
+          updatedAt: memory.updatedAt,
+        })),
+      },
+    });
+  }),
+);
+
+memoryRouter.post(
+  "/portability/import",
+  asyncHandler(async (req, res) => {
+    const traceId = createTraceId("portability_import");
+    if (!isObjectRecord(req.body)) {
+      res.status(400).json({ error: "Invalid request body", traceId });
+      return;
+    }
+
+    const workspace =
+      typeof req.body.workspace === "string" && req.body.workspace.trim().length > 0
+        ? req.body.workspace.trim()
+        : "memoryos";
+    const project =
+      typeof req.body.project === "string" && req.body.project.trim().length > 0
+        ? req.body.project.trim()
+        : "company-brain";
+    const governance = resolveGovernancePolicyWithUserDefault(req.authUserId, req.body.governance);
+    const snapshot = isObjectRecord(req.body.snapshot) ? req.body.snapshot : null;
+    const dryRun = req.body.dryRun === true;
+
+    if (!snapshot) {
+      res.status(400).json({ error: "snapshot is required", traceId });
+      return;
+    }
+
+    const importedMessages: string[] = [];
+    const contract = isObjectRecord(snapshot.contract) ? snapshot.contract : {};
+    const validationErrors: string[] = [];
+    const validationWarnings: string[] = [];
+    const schema =
+      typeof snapshot.schema === "string" && snapshot.schema.trim().length > 0
+        ? snapshot.schema.trim()
+        : null;
+    if (!schema) {
+      validationErrors.push("snapshot.schema is required");
+    } else if (schema !== "memoryos.snapshot.v1") {
+      validationWarnings.push(`unexpected schema '${schema}', expected 'memoryos.snapshot.v1'`);
+    }
+
+    if (!isObjectRecord(contract)) {
+      validationErrors.push("snapshot.contract must be an object");
+    }
+    const contractLines = [
+      typeof contract.goal === "string" ? `Goal: ${contract.goal}` : undefined,
+      Array.isArray(contract.constraints) ? `Constraints: ${contract.constraints.join(" | ")}` : undefined,
+      Array.isArray(contract.decisions) ? `Decisions: ${contract.decisions.join(" | ")}` : undefined,
+      Array.isArray(contract.open_risks) ? `Open Risks: ${contract.open_risks.join(" | ")}` : undefined,
+      Array.isArray(contract.next_actions) ? `Next Actions: ${contract.next_actions.join(" | ")}` : undefined,
+    ].filter((line): line is string => Boolean(line));
+
+    if (contractLines.length > 0) {
+      importedMessages.push(contractLines.join("\n"));
+    } else {
+      validationWarnings.push("snapshot.contract has no populated continuity fields");
+    }
+
+    if (Array.isArray(snapshot.memories)) {
+      for (const item of snapshot.memories.slice(0, 25)) {
+        if (!isObjectRecord(item)) continue;
+        if (typeof item.summary !== "string" || item.summary.trim().length === 0) continue;
+        importedMessages.push(`Imported memory summary: ${item.summary}`);
+      }
+    } else {
+      validationErrors.push("snapshot.memories must be an array");
+    }
+
+    if (importedMessages.length === 0) {
+      res.status(422).json({
+        error: "No importable memory content found in snapshot",
+        traceId,
+        validation: {
+          valid: false,
+          dryRun,
+          errors: validationErrors.length > 0 ? validationErrors : ["No contract lines or memory summaries found"],
+          warnings: validationWarnings,
+          stats: {
+            importedCandidateCount: 0,
+            contractFieldCount: contractLines.length,
+            memorySummaryCount: 0,
+          },
+        },
+      });
+      return;
+    }
+
+    const validation = {
+      valid: validationErrors.length === 0,
+      dryRun,
+      errors: validationErrors,
+      warnings: validationWarnings,
+      stats: {
+        importedCandidateCount: importedMessages.length,
+        contractFieldCount: contractLines.length,
+        memorySummaryCount: Math.max(0, importedMessages.length - (contractLines.length > 0 ? 1 : 0)),
+      },
+    };
+
+    if (!validation.valid) {
+      res.status(422).json({
+        error: "Snapshot schema validation failed",
+        traceId,
+        validation,
+      });
+      return;
+    }
+
+    if (dryRun) {
+      res.status(200).json({
+        traceId,
+        importedCount: importedMessages.length,
+        acceptedMemories: [],
+        rejectedMemories: [],
+        timelineEvents: [],
+        governance,
+        validation,
+      });
+      return;
+    }
+
+    const acceptedMemories: unknown[] = [];
+    const rejectedMemories: unknown[] = [];
+    const timelineEvents: unknown[] = [];
+
+    for (const chunk of importedMessages.slice(0, 15)) {
+      const message = governance.redactSecrets ? applySecretRedaction(chunk) : chunk;
+      const result = await runIngestFlowLangGraph({
+        userId: req.authUserId,
+        threadId: `portability-import:${project}`,
+        message: `[Portability Import]\nworkspace=${workspace}; project=${project}\n${message}`,
+      });
+      acceptedMemories.push(...result.acceptedMemories);
+      rejectedMemories.push(...result.rejectedMemories);
+      timelineEvents.push(...result.timelineEvents);
+    }
+
+    res.status(200).json({
+      traceId,
+      importedCount: importedMessages.length,
+      acceptedMemories,
+      rejectedMemories,
+      timelineEvents,
+      governance,
+      validation,
     });
   }),
 );
@@ -727,6 +2908,7 @@ memoryRouter.post(
       mode: parsed.data.mode,
       topK: parsed.data.topK,
       includeArchived: parsed.data.includeArchived,
+      omitNullPreviousCheckpoint: true,
       ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
       ...(parsed.data.project ? { project: parsed.data.project } : {}),
       ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
@@ -922,49 +3104,49 @@ memoryRouter.patch(
 );
 
 memoryRouter.patch("/:memoryId/status", asyncHandler(async (req, res) => {
-    const memoryId =
-      typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
-        ? req.params.memoryId
-        : undefined;
+  const memoryId =
+    typeof req.params.memoryId === "string" && req.params.memoryId.length > 0
+      ? req.params.memoryId
+      : undefined;
 
-    if (!memoryId) {
-      res.status(400).json({ error: "memoryId is required" });
-      return;
-    }
+  if (!memoryId) {
+    res.status(400).json({ error: "memoryId is required" });
+    return;
+  }
 
-    const parsed = MemoryStatusPatchSchema.safeParse(req.body ?? {});
-    if (!parsed.success) {
-      res.status(400).json({
-        error: "Invalid request body",
-        details: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const result = await updateMemoryStatus({
-      memoryId,
-      userId: req.authUserId,
-      status: parsed.data.status,
+  const parsed = MemoryStatusPatchSchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
     });
+    return;
+  }
 
-    if (result.status === "not_found") {
-      res.status(404).json({ error: "Memory not found" });
-      return;
-    }
+  const result = await updateMemoryStatus({
+    memoryId,
+    userId: req.authUserId,
+    status: parsed.data.status,
+  });
 
-    if (result.status === "already_in_status") {
-      res.status(400).json({
-        error: `Memory is already ${parsed.data.status}`,
-      });
-      return;
-    }
+  if (result.status === "not_found") {
+    res.status(404).json({ error: "Memory not found" });
+    return;
+  }
 
-    res.status(200).json({
-      memory: result.memory,
-      revisionEvent: result.revisionEvent ?? null,
-      timelineEvent: result.timelineEvent ?? null,
+  if (result.status === "already_in_status") {
+    res.status(400).json({
+      error: `Memory is already ${parsed.data.status}`,
     });
-  }),
+    return;
+  }
+
+  res.status(200).json({
+    memory: result.memory,
+    revisionEvent: result.revisionEvent ?? null,
+    timelineEvent: result.timelineEvent ?? null,
+  });
+}),
 );
 
 memoryRouter.get("/revisions", asyncHandler(async (req, res) => {
@@ -1234,141 +3416,155 @@ memoryRouter.get(
   }),
 );
 memoryRouter.get("/list", asyncHandler(async (req, res) => {
-    const status =
-      typeof req.query.status === "string" && req.query.status.length > 0
-        ? req.query.status
-        : undefined;
-    const type =
-      typeof req.query.type === "string" && req.query.type.length > 0
-        ? req.query.type
-        : undefined;
-    const limitRaw =
-      typeof req.query.limit === "string" && req.query.limit.length > 0
-        ? req.query.limit
-        : undefined;
+  const status =
+    typeof req.query.status === "string" && req.query.status.length > 0
+      ? req.query.status
+      : undefined;
+  const type =
+    typeof req.query.type === "string" && req.query.type.length > 0
+      ? req.query.type
+      : undefined;
+  const limitRaw =
+    typeof req.query.limit === "string" && req.query.limit.length > 0
+      ? req.query.limit
+      : undefined;
 
-    if (status && !MEMORY_STATUS.includes(status as MemoryStatus)) {
+  if (status && !MEMORY_STATUS.includes(status as MemoryStatus)) {
+    res.status(400).json({
+      error: "Invalid query",
+      details: { status: `status must be one of: ${MEMORY_STATUS.join(", ")}` },
+    });
+    return;
+  }
+
+  if (type && !MEMORY_TYPES.includes(type as MemoryType)) {
+    res.status(400).json({
+      error: "Invalid query",
+      details: { type: `type must be one of: ${MEMORY_TYPES.join(", ")}` },
+    });
+    return;
+  }
+
+  let limit: number | undefined;
+  if (limitRaw !== undefined) {
+    const parsedLimit = Number.parseInt(limitRaw, 10);
+    if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
       res.status(400).json({
         error: "Invalid query",
-        details: { status: `status must be one of: ${MEMORY_STATUS.join(", ")}` },
+        details: { limit: "limit must be a positive integer" },
       });
       return;
     }
+    limit = parsedLimit;
+  }
 
-    if (type && !MEMORY_TYPES.includes(type as MemoryType)) {
-      res.status(400).json({
-        error: "Invalid query",
-        details: { type: `type must be one of: ${MEMORY_TYPES.join(", ")}` },
-      });
-      return;
-    }
+  const result = await listMemories({
+    userId: req.authUserId,
+    ...(status ? { status: status as MemoryStatus } : {}),
+    ...(type ? { type: type as MemoryType } : {}),
+    ...(limit !== undefined ? { limit } : {}),
+  });
 
-    let limit: number | undefined;
-    if (limitRaw !== undefined) {
-      const parsedLimit = Number.parseInt(limitRaw, 10);
-      if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
-        res.status(400).json({
-          error: "Invalid query",
-          details: { limit: "limit must be a positive integer" },
-        });
-        return;
-      }
-      limit = parsedLimit;
-    }
-
-    const result = await listMemories({
-      userId: req.authUserId,
-      ...(status ? { status: status as MemoryStatus } : {}),
-      ...(type ? { type: type as MemoryType } : {}),
-      ...(limit !== undefined ? { limit } : {}),
-    });
-
-    res.status(200).json({
-      memories: result.memories,
-      count: result.count,
-    });
-  }),
+  res.status(200).json({
+    memories: result.memories,
+    count: result.count,
+  });
+}),
 );
 
 memoryRouter.get(
   "/requests",
   asyncHandler(async (req, res) => {
-    const limitRaw =
-      typeof req.query.limit === "string" && req.query.limit.length > 0
-        ? req.query.limit
-        : undefined;
-    const typeFilter =
-      typeof req.query.type === "string" && req.query.type.length > 0
-        ? req.query.type.trim()
-        : undefined;
-    const statusFilter =
-      typeof req.query.status === "string" && req.query.status.length > 0
-        ? req.query.status.trim()
-        : undefined;
-    const rangeFilter = parseRequestRange(req.query.range);
+    try {
+      const limitRaw =
+        typeof req.query.limit === "string" && req.query.limit.length > 0
+          ? req.query.limit
+          : undefined;
+      const typeFilter =
+        typeof req.query.type === "string" && req.query.type.length > 0
+          ? req.query.type.trim()
+          : undefined;
+      const statusFilter =
+        typeof req.query.status === "string" && req.query.status.length > 0
+          ? req.query.status.trim()
+          : undefined;
+      const rangeFilter = parseRequestRange(req.query.range);
 
-    let limit = 100;
-    if (limitRaw !== undefined) {
-      const parsedLimit = Number.parseInt(limitRaw, 10);
-      if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
+      let limit = 100;
+      if (limitRaw !== undefined) {
+        const parsedLimit = Number.parseInt(limitRaw, 10);
+        if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
+          res.status(400).json({
+            error: "Invalid query",
+            details: { limit: "limit must be a positive integer" },
+          });
+          return;
+        }
+        limit = Math.min(parsedLimit, 400);
+      }
+
+      if (
+        statusFilter !== undefined &&
+        !(REQUEST_STATUSES as readonly string[]).includes(statusFilter)
+      ) {
         res.status(400).json({
           error: "Invalid query",
-          details: { limit: "limit must be a positive integer" },
+          details: { status: "status must be Success or Error" },
         });
         return;
       }
-      limit = Math.min(parsedLimit, 400);
-    }
 
-    if (
-      statusFilter !== undefined &&
-      !(REQUEST_STATUSES as readonly string[]).includes(statusFilter)
-    ) {
-      res.status(400).json({
-        error: "Invalid query",
-        details: { status: "status must be Success or Error" },
+      const requestHistory = listRequestHistory({
+        userId: req.authUserId,
+        limit: 400,
+        memoryOnly: true,
       });
-      return;
-    }
 
-    const requestHistory = listRequestHistory({
-      userId: req.authUserId,
-      limit: 400,
-      memoryOnly: true,
-    });
+      const rangeDays = REQUEST_RANGE_DAYS[rangeFilter];
+      const rangeThresholdMs =
+        rangeDays === null ? null : Date.now() - rangeDays * 24 * 60 * 60 * 1000;
 
-    const rangeDays = REQUEST_RANGE_DAYS[rangeFilter];
-    const rangeThresholdMs =
-      rangeDays === null ? null : Date.now() - rangeDays * 24 * 60 * 60 * 1000;
-
-    const filtered = requestHistory
-      .filter((entry) => {
-        if (typeFilter && entry.routeType !== typeFilter) {
-          return false;
-        }
-        if (statusFilter && entry.status !== statusFilter) {
-          return false;
-        }
-        if (rangeThresholdMs !== null) {
-          const createdAtMs = new Date(entry.createdAt).getTime();
-          if (!Number.isFinite(createdAtMs) || createdAtMs < rangeThresholdMs) {
+      const filtered = requestHistory
+        .filter((entry) => {
+          if (typeFilter && entry.routeType !== typeFilter) {
             return false;
           }
-        }
-        return true;
-      })
-      .slice(0, limit);
+          if (statusFilter && entry.status !== statusFilter) {
+            return false;
+          }
+          if (rangeThresholdMs !== null) {
+            const createdAtMs = new Date(entry.createdAt).getTime();
+            if (!Number.isFinite(createdAtMs) || createdAtMs < rangeThresholdMs) {
+              return false;
+            }
+          }
+          return true;
+        })
+        .slice(0, limit);
 
-    res.status(200).json({
-      requests: filtered,
-      count: filtered.length,
-      filters: {
-        type: typeFilter ?? "all",
-        status: statusFilter ?? "All",
-        range: rangeFilter,
-        limit,
-      },
-    });
+      res.status(200).json({
+        requests: filtered,
+        count: filtered.length,
+        filters: {
+          type: typeFilter ?? "all",
+          status: statusFilter ?? "All",
+          range: rangeFilter,
+          limit,
+        },
+      });
+    } catch {
+      res.status(200).json({
+        requests: [],
+        count: 0,
+        filters: {
+          type: "all",
+          status: "All",
+          range: "all",
+          limit: 200,
+        },
+        warning: "request_history_unavailable",
+      });
+    }
   }),
 );
 
@@ -1398,79 +3594,79 @@ memoryRouter.get(
     res.status(200).json({ memory });
   }),
 );
-memoryRouter.post( "/retrieve/debug", asyncHandler(async (req, res) => {
-    const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
-    if (!parsed.success) {
-      res.status(400).json({
-        error: "Invalid request body",
-        details: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const requestedTopK = parsed.data.topK ?? 5;
-    const debugTopK = 100;
-
-    const result = await runRetrieveFlowLangGraph({
-      userId: req.authUserId,
-      question: parsed.data.question,
-      topK: debugTopK,
-      ...(parsed.data.includeArchived !== undefined
-        ? { includeArchived: parsed.data.includeArchived }
-        : {}),
-      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
-      ...(parsed.data.project ? { project: parsed.data.project } : {}),
-      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
+  const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
     });
+    return;
+  }
 
-    res.status(200).json({
-      memories: result.memories,
-      debug: result.debug,
-      meta: {
-        requestedTopK,
-        debugTopK,
-        returnedCount: result.memories.length,
-      },
-    });
-  }),
+  const requestedTopK = parsed.data.topK ?? 5;
+  const debugTopK = 100;
+
+  const result = await runRetrieveFlowLangGraph({
+    userId: req.authUserId,
+    question: parsed.data.question,
+    topK: debugTopK,
+    ...(parsed.data.includeArchived !== undefined
+      ? { includeArchived: parsed.data.includeArchived }
+      : {}),
+    ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+    ...(parsed.data.project ? { project: parsed.data.project } : {}),
+    ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+  });
+
+  res.status(200).json({
+    memories: result.memories,
+    debug: result.debug,
+    meta: {
+      requestedTopK,
+      debugTopK,
+      returnedCount: result.memories.length,
+    },
+  });
+}),
 );
 
 memoryRouter.post("/retrieve/why-not", asyncHandler(async (req, res) => {
-    const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
-    if (!parsed.success) {
-      res.status(400).json({
-        error: "Invalid request body",
-        details: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const requestedTopK = parsed.data.topK ?? 5;
-    const analysis = await analyzeRetrieval({
-      userId: req.authUserId,
-      question: parsed.data.question,
-      topK: requestedTopK,
-      ...(parsed.data.includeArchived !== undefined
-        ? { includeArchived: parsed.data.includeArchived }
-        : {}),
-      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
-      ...(parsed.data.project ? { project: parsed.data.project } : {}),
-      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+  const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({
+      error: "Invalid request body",
+      details: parsed.error.flatten(),
     });
+    return;
+  }
 
-    res.status(200).json({
-      intent: analysis.intent,
-      weightsUsed: analysis.weightsUsed,
-      selected: analysis.allCandidates.filter((candidate) => !candidate.filteredOut),
-      rejected: analysis.rejected,
-      meta: {
-        requestedTopK,
-        totalCandidates: analysis.allCandidates.length,
-        selectedCount: analysis.selected.length,
-        rejectedCount: analysis.rejected.length,
-      },
-    });
-  }),
+  const requestedTopK = parsed.data.topK ?? 5;
+  const analysis = await analyzeRetrieval({
+    userId: req.authUserId,
+    question: parsed.data.question,
+    topK: requestedTopK,
+    ...(parsed.data.includeArchived !== undefined
+      ? { includeArchived: parsed.data.includeArchived }
+      : {}),
+    ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+    ...(parsed.data.project ? { project: parsed.data.project } : {}),
+    ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+  });
+
+  res.status(200).json({
+    intent: analysis.intent,
+    weightsUsed: analysis.weightsUsed,
+    selected: analysis.allCandidates.filter((candidate) => !candidate.filteredOut),
+    rejected: analysis.rejected,
+    meta: {
+      requestedTopK,
+      totalCandidates: analysis.allCandidates.length,
+      selectedCount: analysis.selected.length,
+      rejectedCount: analysis.rejected.length,
+    },
+  });
+}),
 );
 
 memoryRouter.all("/*splat", (_req, res) => {
