@@ -1,10 +1,8 @@
 import "dotenv/config";
 
 async function main(): Promise<void> {
-  // Eval should be deterministic and not require external Mem0 credentials in CI.
-  if (!process.env.MEMORY_STORE_PROVIDER) {
-    process.env.MEMORY_STORE_PROVIDER = "local";
-  }
+  // Retrieval eval must be deterministic and should not depend on external Mem0 creds.
+  process.env.MEMORY_STORE_PROVIDER = "local";
 
   const { runAllCases } = await import("./eval/harness");
   const summary = await runAllCases({ printEach: true });
