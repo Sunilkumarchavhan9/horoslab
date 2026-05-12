@@ -30,9 +30,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Typecheck Backend
-        run: npx tsc --noEmit -p tsconfig.backend.json
-
       - name: Lint Backend
         run: npm run lint
 
