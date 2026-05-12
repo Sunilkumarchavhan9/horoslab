@@ -1,0 +1,12 @@
+# Default owner for repository changes
+* @Sunilkumarchavhan9
+
+# Frontend ownership
+/memoryos-frontend/ @Sunilkumarchavhan9
+
+# Backend ownership
+/server/ @Sunilkumarchavhan9
+/lib/ @Sunilkumarchavhan9
+
+# Package ownership
+/packages/ @Sunilkumarchavhan9
