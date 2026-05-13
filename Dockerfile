@@ -16,7 +16,7 @@ RUN mkdir -p /app/default-data/eval \
   && cp /app/data/eval/best-config.json /app/default-data/eval/best-config.json \
   && cp /app/data/eval/baseline-report.json /app/default-data/eval/baseline-report.json \
   && cp /app/data/eval/benchmark-cases.json /app/default-data/eval/benchmark-cases.json \
-  && cp /app/data/eval/benchmark-report.json /app/default-data/eval/benchmark-report.json
+  && if [ -f /app/data/eval/benchmark-report.json ]; then cp /app/data/eval/benchmark-report.json /app/default-data/eval/benchmark-report.json; fi
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
   && chmod +x /usr/local/bin/docker-entrypoint.sh
