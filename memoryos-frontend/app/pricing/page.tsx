@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { initializePaddle } from "@paddle/paddle-js";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
@@ -41,28 +41,58 @@ function PlanCard({ name, price, limits, ctaLabel, onClick, disabled = false }: 
 
 export default function PricingPage() {
   const [busyPlan, setBusyPlan] = useState<"pro" | "scale" | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-  const canUsePaddleJs = useMemo(
-    () => Boolean(paddleClientToken && (proPriceId || scalePriceId)),
-    [],
-  );
+  async function openBackendCheckout(plan: "pro" | "scale"): Promise<boolean> {
+    try {
+      const planName = plan === "pro" ? "Pro" : "Scale";
+      const response = await fetch("/api/memory/billing/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ plan: planName }),
+      });
+      if (!response.ok) {
+        return false;
+      }
+      const data = (await response.json()) as { checkoutUrl?: string };
+      if (!data.checkoutUrl) {
+        return false;
+      }
+      window.location.href = data.checkoutUrl;
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   async function openPlanCheckout(plan: "pro" | "scale"): Promise<void> {
     const directUrl = plan === "pro" ? proCheckoutUrl : scaleCheckoutUrl;
     const priceId = plan === "pro" ? proPriceId : scalePriceId;
+    const canUsePaddleJs = Boolean(paddleClientToken && priceId);
 
     try {
       setBusyPlan(plan);
+      setCheckoutError(null);
 
       if (canUsePaddleJs && priceId) {
-        const paddle = await initializePaddle({
-          environment: paddleEnvironment === "sandbox" ? "sandbox" : "production",
-          token: paddleClientToken,
-        });
-        paddle?.Checkout.open({
-          items: [{ priceId, quantity: 1 }],
-        });
-        return;
+        try {
+          const paddle = await initializePaddle({
+            environment: paddleEnvironment === "sandbox" ? "sandbox" : "production",
+            token: paddleClientToken,
+          });
+          if (!paddle) {
+            throw new Error("Paddle failed to initialize");
+          }
+          paddle.Checkout.open({
+            items: [{ priceId, quantity: 1 }],
+          });
+          return;
+        } catch (paddleError) {
+          console.error("[Pricing] Paddle checkout failed:", paddleError);
+        }
       }
 
       if (directUrl) {
@@ -70,6 +100,12 @@ export default function PricingPage() {
         return;
       }
 
+      const openedBackend = await openBackendCheckout(plan);
+      if (openedBackend) {
+        return;
+      }
+
+      setCheckoutError("Checkout is temporarily unavailable. Please sign in and retry, or contact support.");
       window.location.href = "/developer-console/sign-in";
     } finally {
       setBusyPlan(null);
@@ -113,6 +149,11 @@ export default function PricingPage() {
             disabled={busyPlan !== null}
           />
         </div>
+        {checkoutError ? (
+          <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {checkoutError}
+          </p>
+        ) : null}
 
         <div className="mt-8 rounded-xl border border-slate-200 p-6">
           <h3 className="text-lg font-semibold">Enterprise</h3>
