@@ -109,6 +109,14 @@ function formatMoney(cents: number, currency: string): string {
   }).format((cents || 0) / 100);
 }
 
+function isUsableCheckoutUrl(value: string | undefined | null): boolean {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return false;
+  if (normalized.startsWith("placeholder_")) return false;
+  return normalized.startsWith("http://") || normalized.startsWith("https://");
+}
+
 export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingSectionProps) {
   const [activeTab, setActiveTab] = useState<BillingTab>("Plans");
   const [loading, setLoading] = useState(true);
@@ -217,7 +225,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
         throw new Error(message);
       }
       await loadBilling();
-      if (payload?.checkoutUrl) {
+      if (isUsableCheckoutUrl(payload?.checkoutUrl)) {
         window.open(payload.checkoutUrl, "_blank", "noopener,noreferrer");
       } else {
         window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
