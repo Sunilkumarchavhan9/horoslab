@@ -1790,6 +1790,70 @@ function toBillingPortalUrl(): string {
   return "https://vendors.paddle.com";
 }
 
+type UsageMeter = "tokens" | "searches";
+
+function estimateTokenCostFromText(input: string): number {
+  const trimmed = input.trim();
+  if (!trimmed) return 1;
+  // Approximate token cost with a conservative chars/token heuristic.
+  return Math.max(1, Math.ceil(trimmed.length / 4));
+}
+
+function sendUpgradeRequired(
+  res: Parameters<typeof sendApiError>[0],
+  startedAt: number,
+  req: { authUserId: string },
+  meter: UsageMeter,
+  state: WorkspaceState,
+): void {
+  const used = meter === "tokens" ? state.usage.tokenUsed : state.usage.searchUsed;
+  const limit = meter === "tokens" ? state.usage.tokenLimit : state.usage.searchLimit;
+  const unit = meter === "tokens" ? "tokens" : "search queries";
+  sendApiError(
+    res,
+    402,
+    {
+      code: "UPGRADE_REQUIRED",
+      message: `Your ${unit} limit for the ${state.plan} plan has been reached.`,
+      details: {
+        meter,
+        plan: state.plan,
+        used,
+        limit,
+        upgradePlans: ["Pro", "Scale"],
+        action: "Open Billing and upgrade plan.",
+        billingPath: "/developer-console",
+      },
+    },
+    buildApiMeta(req as never, startedAt),
+  );
+}
+
+function applyUsageOrReject(params: {
+  req: { authUserId: string };
+  res: Parameters<typeof sendApiError>[0];
+  startedAt: number;
+  tokenCost?: number;
+  searchCost?: number;
+}): boolean {
+  const state = getWorkspaceState(params.req.authUserId);
+  const tokenCost = Math.max(0, params.tokenCost ?? 0);
+  const searchCost = Math.max(0, params.searchCost ?? 0);
+
+  if (tokenCost > 0 && state.usage.tokenUsed + tokenCost > state.usage.tokenLimit) {
+    sendUpgradeRequired(params.res, params.startedAt, params.req, "tokens", state);
+    return false;
+  }
+  if (searchCost > 0 && state.usage.searchUsed + searchCost > state.usage.searchLimit) {
+    sendUpgradeRequired(params.res, params.startedAt, params.req, "searches", state);
+    return false;
+  }
+
+  state.usage.tokenUsed += tokenCost;
+  state.usage.searchUsed += searchCost;
+  return true;
+}
+
 function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
   const byPlanEnv: Record<Exclude<BillingPlan, "Free">, string | undefined> = {
     Pro: process.env.PADDLE_CHECKOUT_URL_PRO,
@@ -1964,6 +2028,7 @@ memoryRouter.post(
   "/process",
   asyncHandler(async (req, res) => {
     const traceId = createTraceId("memory_process");
+    const startedAt = Date.now();
     const parsed = ProcessMemorySchema.safeParse(req.body ?? {});
     if (!parsed.success) {
       res.status(400).json({
@@ -2097,6 +2162,15 @@ memoryRouter.post(
         },
         traceId,
       });
+      return;
+    }
+
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(message),
+    })) {
       return;
     }
 
@@ -2743,6 +2817,16 @@ memoryRouter.post(
       return;
     }
 
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
+      return;
+    }
+
     const result = await runRetrieveFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
@@ -2785,6 +2869,16 @@ memoryRouter.get(
         },
         buildApiMeta(req, startedAt),
       );
+      return;
+    }
+
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(question),
+      searchCost: 1,
+    })) {
       return;
     }
 
@@ -2902,6 +2996,16 @@ memoryRouter.post(
       return;
     }
 
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
+      return;
+    }
+
     const result = await runContinueFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
@@ -2944,6 +3048,16 @@ memoryRouter.post(
       return;
     }
 
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
+      return;
+    }
+
     const result = await runHandoffFlowLangGraph({
       userId: req.authUserId,
       project: parsed.data.project,
@@ -2981,6 +3095,16 @@ memoryRouter.post(
         },
         buildApiMeta(req, startedAt),
       );
+      return;
+    }
+
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
       return;
     }
 
@@ -3596,11 +3720,22 @@ memoryRouter.get(
 );
 memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
   const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+  const startedAt = Date.now();
   if (!parsed.success) {
     res.status(400).json({
       error: "Invalid request body",
       details: parsed.error.flatten(),
     });
+    return;
+  }
+
+  if (!applyUsageOrReject({
+    req,
+    res,
+    startedAt,
+    tokenCost: estimateTokenCostFromText(parsed.data.question),
+    searchCost: 1,
+  })) {
     return;
   }
 
@@ -3633,11 +3768,22 @@ memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
 
 memoryRouter.post("/retrieve/why-not", asyncHandler(async (req, res) => {
   const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+  const startedAt = Date.now();
   if (!parsed.success) {
     res.status(400).json({
       error: "Invalid request body",
       details: parsed.error.flatten(),
     });
+    return;
+  }
+
+  if (!applyUsageOrReject({
+    req,
+    res,
+    startedAt,
+    tokenCost: estimateTokenCostFromText(parsed.data.question),
+    searchCost: 1,
+  })) {
     return;
   }
 

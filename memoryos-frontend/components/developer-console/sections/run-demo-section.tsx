@@ -237,6 +237,13 @@ function normalizeApiPayload<T>(payload: unknown): T {
 
 function extractErrorMessage(payload: unknown, fallback: string): string {
   if (isRecord(payload)) {
+    if (
+      isRecord(payload.error) &&
+      payload.error.code === "UPGRADE_REQUIRED" &&
+      typeof payload.error.message === "string"
+    ) {
+      return `${payload.error.message} Upgrade in Developer Console > Billing to continue.`;
+    }
     if (typeof payload.error === "string") return payload.error;
     if (isRecord(payload.error) && typeof payload.error.message === "string") return payload.error.message;
     if (typeof payload.message === "string") return payload.message;
