@@ -1,5 +1,5 @@
-import { RunDemoSection } from "@/components/developer-console/sections/run-demo-section";
+import { redirect } from "next/navigation";
 
 export default function RunDemoPage() {
-  return <RunDemoSection />;
+  redirect("/continuity-lab");
 }

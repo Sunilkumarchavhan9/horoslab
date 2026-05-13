@@ -79,6 +79,7 @@ describe("Memory Continue Route Contract", () => {
       mode: "build_next",
       topK: 5,
       includeArchived: false,
+      previousCheckpoint: null,
     });
   });
 
@@ -111,6 +112,7 @@ describe("Memory Continue Route Contract", () => {
       threadId: "thread-42",
       topK: undefined,
       includeArchived: undefined,
+      previousCheckpoint: null,
     });
   });
 });

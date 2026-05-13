@@ -1,493 +1,15 @@
 "use client";
-import type { ReactNode } from "react";
-import { useEffect, useRef } from "react";
+
+import { useState, useEffect, type ReactNode } from "react";
 import { Reveal } from "./motion";
-
-function resizeCanvas(canvas: HTMLCanvasElement, width: number, height: number) {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.round(width * dpr);
-  canvas.height = Math.round(height * dpr);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  return ctx;
-}
-
-function roundedRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number,
-) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.arcTo(x + width, y, x + width, y + height, radius);
-  ctx.arcTo(x + width, y + height, x, y + height, radius);
-  ctx.arcTo(x, y + height, x, y, radius);
-  ctx.arcTo(x, y, x + width, y, radius);
-  ctx.closePath();
-}
-
-function drawMemoryCore(ctx: CanvasRenderingContext2D, cx: number, cy: number, scale: number) {
-  const starBack = new Path2D(
-    "M162 170L144 297L120.5 170L0 59L120.5 116.5H158.5L255.5 59L162 170Z",
-  );
-  const starFront = new Path2D(
-    "M117.5 127L135.5 0L159 127L279.5 238L159 180.5H121L24 238L117.5 127Z",
-  );
-  const starScale = 0.34;
-
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(scale * starScale, scale * starScale);
-  ctx.translate(-140, -148.5);
-
-  const outerGlow = ctx.createRadialGradient(140, 148.5, 20, 140, 148.5, 92);
-  outerGlow.addColorStop(0, "rgba(53,236,250,0.34)");
-  outerGlow.addColorStop(0.45, "rgba(53,185,249,0.22)");
-  outerGlow.addColorStop(1, "rgba(53,185,249,0)");
-  ctx.fillStyle = outerGlow;
-  ctx.beginPath();
-  ctx.arc(140, 148.5, 96, 0, Math.PI * 2);
-  ctx.fill();
-
-  const starGlow = ctx.createRadialGradient(140, 148.5, 10, 140, 148.5, 68);
-  starGlow.addColorStop(0, "rgba(109,246,255,0.52)");
-  starGlow.addColorStop(0.5, "rgba(53,236,250,0.22)");
-  starGlow.addColorStop(1, "rgba(53,236,250,0)");
-  ctx.fillStyle = starGlow;
-  ctx.beginPath();
-  ctx.arc(140, 148.5, 72, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.shadowColor = "rgba(53,236,250,0.55)";
-  ctx.shadowBlur = 28;
-  const gradientBack = ctx.createLinearGradient(0, 59, 0, 297);
-  gradientBack.addColorStop(0, "#35B9F9");
-  gradientBack.addColorStop(1, "#35ECFA");
-  ctx.fillStyle = gradientBack;
-  ctx.fill(starBack);
-
-  ctx.shadowColor = "rgba(53,236,250,0.7)";
-  ctx.shadowBlur = 22;
-  const gradientFront = ctx.createLinearGradient(0, 0, 0, 238);
-  gradientFront.addColorStop(0, "#35ECFA");
-  gradientFront.addColorStop(1, "#35B9F9");
-  ctx.fillStyle = gradientFront;
-  ctx.fill(starFront);
-  ctx.restore();
-}
-
-function drawMiniTile(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  rotation: number,
-  fill: string,
-  stroke: string,
-  kind: string,
-) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rotation);
-  ctx.shadowColor = "rgba(0,0,0,0.26)";
-  ctx.shadowBlur = 16;
-  ctx.shadowOffsetY = 8;
-  roundedRect(ctx, -width / 2, -height / 2, width, height, Math.min(width, height) * 0.26);
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = stroke;
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetY = 0;
-
-  ctx.save();
-  ctx.translate(0, 1);
-
-  if (kind === "window") {
-    roundedRect(ctx, -11, -9, 22, 18, 4);
-    ctx.fillStyle = "#f4f8ff";
-    ctx.fill();
-    ctx.strokeStyle = "#c6d4e6";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.fillStyle = "#1b2432";
-    roundedRect(ctx, -9, -7, 18, 10, 3);
-    ctx.fill();
-    ctx.fillStyle = "#2f80ff";
-    ctx.fillRect(-7, -5, 14, 6);
-    ctx.fillStyle = "#ff5353";
-    ctx.fillRect(-11, 6, 22, 3);
-  } else if (kind === "pdf") {
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(-9, -10);
-    ctx.lineTo(3, -10);
-    ctx.lineTo(9, -4);
-    ctx.lineTo(9, 10);
-    ctx.lineTo(-9, 10);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#ff6159";
-    ctx.lineWidth = 1.4;
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(3, -10);
-    ctx.lineTo(3, -4);
-    ctx.lineTo(9, -4);
-    ctx.stroke();
-    ctx.strokeStyle = "#ff6159";
-    ctx.lineWidth = 1.3;
-    ctx.beginPath();
-    ctx.moveTo(-4, -1);
-    ctx.lineTo(2, 5);
-    ctx.moveTo(2, -1);
-    ctx.lineTo(-4, 5);
-    ctx.stroke();
-  } else if (kind === "sheet") {
-    ctx.fillStyle = "#ffffff";
-    for (let row = -7; row <= 1; row += 4) {
-      for (let col = -7; col <= 1; col += 4) {
-        ctx.fillRect(col, row, 3, 3);
-      }
-    }
-  } else if (kind === "x") {
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    ctx.moveTo(-6, -6);
-    ctx.lineTo(6, 6);
-    ctx.moveTo(6, -6);
-    ctx.lineTo(-6, 6);
-    ctx.stroke();
-  } else if (kind === "doc") {
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.moveTo(-5, -5);
-    ctx.lineTo(4, -5);
-    ctx.moveTo(-5, -1);
-    ctx.lineTo(5, -1);
-    ctx.moveTo(-5, 3);
-    ctx.lineTo(3, 3);
-    ctx.stroke();
-  } else if (kind === "web") {
-    ctx.strokeStyle = "#0f1725";
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.arc(0, 0, 7, 0, Math.PI * 2);
-    ctx.moveTo(-7, 0);
-    ctx.lineTo(7, 0);
-    ctx.moveTo(0, -7);
-    ctx.lineTo(0, 7);
-    ctx.moveTo(-5, -5);
-    ctx.lineTo(5, 5);
-    ctx.moveTo(5, -5);
-    ctx.lineTo(-5, 5);
-    ctx.stroke();
-  } else if (kind === "folder") {
-    ctx.fillStyle = "#0f2944";
-    roundedRect(ctx, -8, -2, 16, 8, 2);
-    ctx.fill();
-    ctx.fillStyle = "#73c1ff";
-    ctx.beginPath();
-    ctx.moveTo(-8, -2);
-    ctx.lineTo(-2, -2);
-    ctx.lineTo(0, -5);
-    ctx.lineTo(5, -5);
-    ctx.lineTo(8, -2);
-    ctx.closePath();
-    ctx.fill();
-  } else if (kind === "yt") {
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(-2, -5);
-    ctx.lineTo(5, 0);
-    ctx.lineTo(-2, 5);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  ctx.restore();
-  ctx.restore();
-}
-
-function CaptureCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const nodes = [
-      { kind: "window", color: "#ffffff", stroke: "#dfe5f0", angle: -2.35, radius: 108, w: 42, h: 42, rot: -0.18 },
-      { kind: "sheet", color: "#25bf67", stroke: "#25bf67", angle: -1.5, radius: 104, w: 44, h: 44, rot: -0.02 },
-      { kind: "x", color: "#080808", stroke: "#080808", angle: -0.78, radius: 108, w: 42, h: 42, rot: 0.12 },
-      { kind: "doc", color: "#2f80ff", stroke: "#2f80ff", angle: 0.05, radius: 108, w: 42, h: 42, rot: 0.16 },
-      { kind: "web", color: "#ffffff", stroke: "#dfe5f0", angle: 0.88, radius: 106, w: 42, h: 42, rot: 0.08 },
-      { kind: "folder", color: "#5ab4ff", stroke: "#5ab4ff", angle: 1.55, radius: 98, w: 38, h: 38, rot: 0.04 },
-      { kind: "yt", color: "#ff2020", stroke: "#ff2020", angle: 2.28, radius: 96, w: 38, h: 38, rot: 0.07 },
-      { kind: "pdf", color: "#ffffff", stroke: "#ff6459", angle: 3.02, radius: 98, w: 40, h: 40, rot: -0.2 },
-    ];
-
-    let raf = 0;
-
-    const render = (time: number) => {
-      const width = canvas.clientWidth || 420;
-      const height = canvas.clientHeight || 260;
-      const ctx = resizeCanvas(canvas, width, height);
-      if (!ctx) return;
-
-      ctx.clearRect(0, 0, width, height);
-
-      const cx = width / 2;
-      const cy = height / 2 - 4;
-      const pulse = 1 + Math.sin(time / 900) * 0.045;
-
-      const glow = ctx.createRadialGradient(cx, cy, 12, cx, cy, 112);
-      glow.addColorStop(0, "rgba(66,223,255,0.40)");
-      glow.addColorStop(0.46, "rgba(46,148,255,0.12)");
-      glow.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 118, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = "rgba(111,220,255,0.20)";
-      ctx.lineWidth = 1.35;
-
-      nodes.forEach((node, index) => {
-        const drift = Math.sin(time / 820 + index * 0.7) * 4;
-        const x = cx + Math.cos(node.angle) * (node.radius + drift);
-        const y = cy + Math.sin(node.angle) * (node.radius + drift * 0.8);
-
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-
-        drawMiniTile(
-          ctx,
-          x,
-          y,
-          node.w,
-          node.h,
-          node.rot + Math.sin(time / 1400 + index) * 0.04,
-          node.color,
-          node.stroke,
-          node.kind,
-        );
-      });
-
-      drawMemoryCore(ctx, cx, cy, pulse);
-      raf = window.requestAnimationFrame(render);
-    };
-
-    raf = window.requestAnimationFrame(render);
-    return () => window.cancelAnimationFrame(raf);
-  }, []);
-
-  return (
-    <div className="relative mx-auto h-52 w-full max-w-[430px] overflow-hidden">
-      <canvas ref={canvasRef} className="h-full w-full" />
-    </div>
-  );
-}
-
-function MemoryGraphCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    let raf = 0;
-
-    const render = (time: number) => {
-      const width = canvas.clientWidth || 430;
-      const height = canvas.clientHeight || 260;
-      const ctx = resizeCanvas(canvas, width, height);
-      if (!ctx) return;
-
-      ctx.clearRect(0, 0, width, height);
-
-      const cx = width / 2;
-      const topY = 30;
-      const glowY = 118;
-      const leftCardX = cx - 92;
-      const rightCardX = cx + 18;
-      const baseY = 140;
-      const pulse = 1 + Math.sin(time / 950) * 0.035;
-
-      const glow = ctx.createRadialGradient(cx, glowY, 18, cx, glowY, 118);
-      glow.addColorStop(0, "rgba(57,112,255,0.52)");
-      glow.addColorStop(0.4, "rgba(57,112,255,0.18)");
-      glow.addColorStop(1, "rgba(57,112,255,0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(cx, glowY, 118 * pulse, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = "rgba(123,157,255,0.34)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cx - 26, topY + 92);
-      ctx.bezierCurveTo(cx - 22, glowY, cx - 52, glowY + 8, leftCardX + 68, baseY);
-      ctx.moveTo(cx + 26, topY + 92);
-      ctx.bezierCurveTo(cx + 22, glowY, cx + 52, glowY + 8, rightCardX + 68, baseY);
-      ctx.stroke();
-
-      const topFloat = Math.sin(time / 1200) * 3;
-      ctx.save();
-      ctx.translate(cx - 118, topY + topFloat);
-      ctx.shadowColor = "rgba(0,0,0,0.36)";
-      ctx.shadowBlur = 24;
-      ctx.shadowOffsetY = 10;
-      roundedRect(ctx, 0, 0, 236, 96, 18);
-      ctx.fillStyle = "#121923";
-      ctx.fill();
-      ctx.lineWidth = 1.4;
-      ctx.strokeStyle = "#263244";
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.fillStyle = "#ff7e79";
-      ctx.font = "700 10px Arial";
-      ctx.fillText(".memory", 18, 20);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "700 14px Arial";
-      ctx.fillText("Developer Profile Revision", 18, 40);
-      ctx.fillStyle = "#75849b";
-      ctx.font = "12px Arial";
-      ctx.fillText("Trust timeline linked score updates,", 18, 60);
-      ctx.fillText("revision reasons, and retrieval history.", 18, 76);
-      ctx.fillStyle = "#63d5ff";
-      ctx.font = "700 10px Arial";
-      ctx.fillText("243 memory links", 18, 88);
-      ctx.fillStyle = "#6c7a90";
-      ctx.fillText("Live workspace", 160, 88);
-      ctx.restore();
-
-      [
-        { x: leftCardX, text: "Resume recall linked to\nproject scoring signals", version: "v1" },
-        { x: rightCardX, text: "Trust history explains why\nmemory changed over time", version: "v2" },
-      ].forEach((card, index) => {
-        const float = Math.sin(time / 900 + index * 0.9) * 2;
-        ctx.save();
-        ctx.translate(card.x, baseY + float);
-        ctx.shadowColor = "rgba(0,0,0,0.34)";
-        ctx.shadowBlur = 20;
-        ctx.shadowOffsetY = 8;
-        roundedRect(ctx, 0, 0, 148, 74, 16);
-        ctx.fillStyle = "#111924";
-        ctx.fill();
-        ctx.lineWidth = 1.3;
-        ctx.strokeStyle = "#1d3556";
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.fillStyle = "#d7e3f6";
-        ctx.font = "12px Arial";
-        const lines = card.text.split("\n");
-        ctx.fillText(lines[0] ?? "", 12, 24);
-        ctx.fillText(lines[1] ?? "", 12, 42);
-        ctx.fillStyle = "#37d39a";
-        ctx.font = "700 10px Arial";
-        ctx.fillText(card.version, 12, 60);
-        ctx.fillText("Latest", 108, 60);
-        ctx.restore();
-      });
-
-      raf = window.requestAnimationFrame(render);
-    };
-
-    raf = window.requestAnimationFrame(render);
-    return () => window.cancelAnimationFrame(raf);
-  }, []);
-
-  return (
-    <div className="relative mx-auto h-52 w-full max-w-[430px] overflow-hidden">
-      <canvas ref={canvasRef} className="h-full w-full" />
-    </div>
-  );
-}
-
-function QueryPreview() {
-  return (
-    <div className="flex h-40 flex-col items-center justify-center gap-4">
-      {[
-        "Summarize the key ideas from my MemoryOS notes",
-        "Which memories connect retrieval and trust?",
-        "What are the main themes across this workspace?",
-      ].map((query) => (
-        <div
-          key={query}
-          className="inline-flex w-[88%] items-center gap-3 rounded-full border border-[#1d4fb0] bg-[#0f1724] px-5 py-3 text-[14px] text-[#dce7fb]"
-        >
-          <span className="text-[#57a7ff]">Q</span>
-          <span>{query}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ProjectBoards() {
-  return (
-    <div className="relative flex h-40 items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
-      <div className="relative h-32 w-52 rounded-[18px] border border-[#28384f] bg-[#171f2b] p-3 shadow-[0_14px_36px_rgba(0,0,0,0.3)]">
-        <p className="text-[12px] text-[#d9e7ff]">MemoryOS / Retrieval</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="h-10 rounded-[8px] border border-[#2d3d57] bg-[#111927]">
-              <div className="mx-2 mt-2 h-1 rounded bg-[#2b5fc6]" />
-              <div className="mx-2 mt-2 h-1 rounded bg-[#24344d]" />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="absolute right-[18%] top-[26%] h-28 w-44 rotate-[6deg] rounded-[18px] border border-[#28384f] bg-[#171f2b]/90 p-3 shadow-[0_14px_36px_rgba(0,0,0,0.25)]">
-        <p className="text-[12px] text-[#d9e7ff]">my g-docs</p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-9 rounded-[8px] border border-[#2d3d57] bg-[#111927]">
-              <div className="mx-2 mt-2 h-1 rounded bg-[#2b5fc6]" />
-              <div className="mx-2 mt-2 h-1 rounded bg-[#24344d]" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ToolPill({
-  label,
-  icon,
-}: {
-  label: string;
-  icon: ReactNode;
-}) {
-  return (
-    <span className="inline-flex h-16 min-w-16 items-center justify-center text-[#aebfd9] opacity-80 transition duration-300 hover:opacity-100 hover:text-[#f4f8ff] hover:[filter:drop-shadow(0_0_14px_rgba(84,200,255,0.38))]">
-      <span className="grid h-[30px] place-items-center text-current transition duration-300 hover:scale-[1.06]">
-        {icon}
-      </span>
-      <span className="sr-only">{label}</span>
-    </span>
-  );
-}
+import { motion } from "framer-motion";
+import { MessageSquare, GitPullRequest, Activity, FileText, Shield, Database, GitBranch, Hash, Terminal, Cloud, Brain } from "lucide-react";
+import { MemoryStarLogo } from "./memory-star-logo";
 
 function ClaudeMark() {
   return (
-    <svg viewBox="0 0 16 16" className="h-[21px] w-[21px]" fill="none" aria-hidden="true">
-      <g fill="#ff7043">
+    <svg viewBox="0 0 16 16" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
+      <g fill="currentColor">
         <path d="m14.375 6.48l.49.28v.209l-.14.489l-5.937 1.397l-.558-1.387zm0 0" />
         <path d="m12.155 2.373l.683.143l.182.224l.173.535l-.072.342l-3.983 5.447L7.81 7.737l3.673-4.82z" />
         <path d="m8.719 1.522l.419-.28l.349.14l.349.49l-.957 5.748l-.65-.441l-.279-.769l.49-4.33z" />
@@ -507,7 +29,7 @@ function ClaudeMark() {
 
 function CursorMark() {
   return (
-    <svg viewBox="0 0 24 24" className="h-[21px] w-[21px]" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
       <path
         fill="currentColor"
         d="m20.42 6.73l-8-4.62a.82.82 0 0 0-.83 0L3.58 6.73c-.22.12-.35.36-.35.61v9.32c0 .25.13.48.35.61l8.01 4.62c.26.15.57.15.83 0l8.01-4.62c.22-.12.35-.36.35-.61V7.34c0-.25-.13-.48-.35-.61Zm-.5.98L12.19 21.1c-.05.09-.19.05-.19-.05v-8.77c0-.18-.09-.34-.25-.43L4.16 7.47c-.09-.05-.05-.19.05-.19h15.46c.22 0 .36.24.25.43"
@@ -518,7 +40,7 @@ function CursorMark() {
 
 function VSCodeMark() {
   return (
-    <svg viewBox="0 0 128 128" className="h-[21px] w-[21px]" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 128 128" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
       <mask
         id="memoryos-vscode-mask"
         width="128"
@@ -537,15 +59,15 @@ function VSCodeMark() {
       </mask>
       <g mask="url(#memoryos-vscode-mask)">
         <path
-          fill="#0065A9"
+          fill="currentColor"
           d="M123.471 13.82 97.097 1.12A7.97 7.97 0 0 0 88 2.668L1.662 81.387a5.333 5.333 0 0 0 .006 7.887l7.052 6.411a5.33 5.33 0 0 0 6.811.303l103.971-78.875c3.488-2.646 8.498-.158 8.498 4.22v-.306a8 8 0 0 0-4.529-7.208Z"
         />
         <path
-          fill="#007ACC"
+          fill="currentColor"
           d="m123.471 114.181-26.374 12.698A7.97 7.97 0 0 1 88 125.333L1.662 46.613a5.333 5.333 0 0 1 .006-7.887l7.052-6.411a5.33 5.33 0 0 1 6.811-.303l103.971 78.874c3.488 2.647 8.498.159 8.498-4.219v.306a8 8 0 0 1-4.529 7.208"
         />
         <path
-          fill="#1F9CF0"
+          fill="currentColor"
           d="M97.098 126.882A7.98 7.98 0 0 1 88 125.333c2.952 2.952 8 .861 8-3.314V5.98c0-4.175-5.048-6.266-8-3.313a7.98 7.98 0 0 1 9.098-1.549L123.467 13.8A8 8 0 0 1 128 21.01v85.982a8 8 0 0 1-4.533 7.21Z"
         />
       </g>
@@ -559,8 +81,8 @@ function OpenCodeMark() {
     <img
       src="/opencode.svg"
       alt=""
-      className="opacity-90"
-      style={{ height: "21px", width: "auto" }}
+      className="opacity-90 brightness-0 invert"
+      style={{ height: "24px", width: "auto" }}
       aria-hidden="true"
     />
   );
@@ -568,7 +90,7 @@ function OpenCodeMark() {
 
 function WindsurfMark() {
   return (
-    <svg viewBox="0 0 24 24" className="h-[21px] w-[21px]" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
       <path
         fill="currentColor"
         d="M23.55 5.067a2.177 2.177 0 0 0-2.18 2.177v4.867a1.77 1.77 0 0 1-1.76 1.76a1.82 1.82 0 0 1-1.472-.766l-4.971-7.1a2.2 2.2 0 0 0-1.81-.942c-1.134 0-2.154.964-2.154 2.153v4.896c0 .972-.797 1.76-1.76 1.76c-.57 0-1.136-.287-1.472-.766L.408 5.16A.224.224 0 0 0 0 5.288v4.245c0 .215.066.423.188.6l5.475 7.818c.324.462.8.805 1.351.93a2.164 2.164 0 0 0 2.645-2.098V11.89c0-.972.787-1.76 1.76-1.76h.002a1.8 1.8 0 0 1 1.472.766l4.972 7.1a2.172 2.172 0 0 0 3.96-1.212v-4.895a1.76 1.76 0 0 1 1.76-1.76h.195a.22.22 0 0 0 .22-.22V5.287a.22.22 0 0 0-.22-.22Z"
@@ -579,7 +101,7 @@ function WindsurfMark() {
 
 function MoreMark() {
   return (
-    <svg viewBox="0 0 64 18" className="h-[21px] w-auto" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 64 18" className="h-[24px] w-auto" fill="none" aria-hidden="true">
       <path
         fill="currentColor"
         d="M6.9 14c-2.7 0-4.9-2.2-4.9-5s2.2-5 4.9-5s4.9 2.2 4.9 5s-2.2 5-4.9 5m16.5-5c0 2.8-2.2 5-4.9 5s-4.9-2.2-4.9-5s2.2-5 4.9-5s4.9 2.2 4.9 5m11.5 5C32.2 14 30 11.8 30 9s2.2-5 4.9-5s4.9 2.2 4.9 5s-2.2 5-4.9 5m12.4-.3v-1.6h2.3V5.9h-2.3V4.3h6.5c3.2 0 5.3 1.8 5.3 4.7c0 2.9-2.1 4.7-5.3 4.7zm4.4-3.4h1.9c1.7 0 2.8-.9 2.8-2.5s-1.1-2.5-2.8-2.5h-1.9z"
@@ -588,105 +110,413 @@ function MoreMark() {
   );
 }
 
-function FeatureCard({
-  visual,
-  title,
-  body,
-}: {
-  visual: ReactNode;
-  title: string;
-  body: string;
-}) {
+const LOGO_URLS = {
+  mastra: "https://mastra.ai/brand/logo.svg",
+  langgraph: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/langgraph.png",
+  zapier: "https://imgs.search.brave.com/rUnpoLu5DfS-QakqnhSngX2XdXgncYahdOlqsqMhpO0/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGQ5Mzg2ZjM0/OWU3NGJmZmM4OWQ5/ZGU1OGIyOGNkZjli/MzI0ODg1OWNjZWQ3/OTVkZTczNTk2YzM1/NTQ3MTQ2Mi96YXBp/ZXIuY29tLw",
+  n8n: "https://cdn.simpleicons.org/n8n/ffffff",
+};
+
+function MastraMark() {
+  return <img src={LOGO_URLS.mastra} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
+}
+
+function LangGraphMark() {
+  return <img src={LOGO_URLS.langgraph} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
+}
+
+function N8nMark() {
+  return <img src={LOGO_URLS.n8n} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
+}
+
+function ZapierMark() {
+  return <img src={LOGO_URLS.zapier} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
+}
+
+function ToolPill({ label, icon }: { label: string; icon: ReactNode }) {
   return (
-    <div className="group overflow-hidden rounded-[22px] border border-[#18304f] bg-[#0d1219] shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition duration-300 hover:border-[#244266] hover:shadow-[0_26px_56px_rgba(0,0,0,0.34)]">
-      <div className="min-h-[300px] border-b border-[#172737] bg-[radial-gradient(circle_at_50%_42%,rgba(31,99,242,0.14),rgba(31,99,242,0)_58%),linear-gradient(180deg,#0c1118_0%,#0d131b_100%)] px-5 py-5">
-        {visual}
+    <span className="inline-flex h-16 min-w-16 items-center justify-center text-muted-foreground opacity-70 transition duration-300 hover:opacity-100 hover:text-foreground hover:-translate-y-1">
+      <span className="grid h-[30px] place-items-center text-current transition duration-300">
+        {icon}
+      </span>
+      <span className="sr-only">{label}</span>
+    </span>
+  );
+}
+
+function FloatingPill({ delay, x, icon, text }: { delay: number; x: number; icon: ReactNode; text: string }) {
+  // Use text length to create varied, organic floating speeds and heights across the pills
+  const floatDuration = 3 + (text.length % 3);
+  const floatY = 6 + (text.length % 6);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: x - 20, y: 15 }}
+      whileInView={{ opacity: 1, x: x, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay, type: "spring", stiffness: 60 }}
+      style={{ marginLeft: `${x}px` }}
+      className="w-fit pointer-events-auto z-10"
+    >
+      <motion.div
+        animate={{ y: [0, -floatY, 0] }}
+        transition={{ duration: floatDuration, repeat: Infinity, ease: "easeInOut", delay }}
+        className="flex items-center gap-3 bg-card border border-border shadow-lg rounded-xl px-4 py-3 w-fit hover:shadow-primary/20 hover:border-primary/50 transition-all cursor-default"
+      >
+        <div className="shrink-0">{icon}</div>
+        <p className="text-[13px] font-semibold text-foreground tracking-tight whitespace-nowrap">{text}</p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+const PM_FEATURES = [
+  {
+    num: "01",
+    tab: "CONTEXT CAPTURE",
+    heading: "Capture developer context from anywhere",
+    description: "Capture execution context from code findings, decisions, debugging notes, docs, links, and task history across daily tools.",
+    bullets: [
+      "Code findings and logic decisions",
+      "Debugging notes and stack traces",
+      "Docs, links, and task history"
+    ],
+    bgClass: "bg-blue-500/10",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border/20 overflow-hidden p-6 shadow-sm flex flex-col items-center justify-center min-h-[300px] w-full">
+        <div className="w-full max-w-sm">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"><GitBranch className="text-primary w-6 h-6"/></div>
+            <div>
+              <div className="w-32 h-3 bg-muted rounded-full mb-2"></div>
+              <div className="w-20 h-3 bg-muted/50 rounded-full"></div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="w-full h-16 bg-muted/30 rounded-xl border border-border/10 flex items-center px-4 gap-4">
+               <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center"><FileText className="w-4 h-4 text-blue-500" /></div>
+               <div className="w-40 h-2 bg-muted rounded-full"></div>
+            </div>
+            <div className="w-full h-16 bg-muted/30 rounded-xl border border-border/10 flex items-center px-4 gap-4">
+               <div className="w-8 h-8 rounded-lg bg-chart-2/20 flex items-center justify-center"><Activity className="w-4 h-4 text-chart-2" /></div>
+               <div className="w-48 h-2 bg-muted rounded-full"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="px-7 py-7">
-        <h3 className="text-[20px] font-semibold tracking-[-0.03em] text-white md:text-[22px]">
-          {title}
-        </h3>
-        <p className="mt-3 text-[16px] leading-8 text-[#9ba9bd]">{body}</p>
+    )
+  },
+  {
+    num: "02",
+    tab: "CONNECTED GRAPH",
+    heading: "Turn scattered work into connected memory",
+    description: "MemoryOS links related context across sessions so retrieval, revisions, and continuity planning operate from one connected memory graph.",
+    bullets: [
+      "Unified graph of all developer activity",
+      "Seamless retrieval across multiple sessions",
+      "Continuity planning grounded in truth"
+    ],
+    bgClass: "bg-chart-2/10",
+    visualContent: (
+      <div className="w-full h-full min-h-[300px] bg-background rounded-lg border border-border/20 overflow-hidden p-6 flex items-center justify-center relative">
+         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M 30,30 L 70,70 M 70,30 L 30,70 M 50,20 L 50,80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" className="text-foreground" />
+         </svg>
+         <div className="relative z-10 flex flex-wrap gap-8 items-center justify-center">
+            <div className="w-20 h-20 rounded-2xl bg-card border border-border/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"><Brain className="text-primary w-10 h-10"/></div>
+            <div className="w-20 h-20 rounded-2xl bg-card border border-border/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"><Database className="text-chart-2 w-10 h-10"/></div>
+            <div className="w-20 h-20 rounded-2xl bg-card border border-border/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"><Terminal className="text-blue-500 w-10 h-10"/></div>
+         </div>
+      </div>
+    )
+  },
+  {
+    num: "03",
+    tab: "GLOBAL SEARCH",
+    heading: "Ask MemoryOS across everything you have stored",
+    description: "Query company memory directly and get answers grounded in prior work, documents, conversations, constraints, and technical decisions.",
+    bullets: [
+      "Summarize notes",
+      "Connect retrieval + trust",
+      "Themes across workspace"
+    ],
+    bgClass: "bg-purple-500/10",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border/20 overflow-hidden p-6 flex flex-col items-center justify-center h-full min-h-[300px]">
+        <div className="w-full flex flex-col gap-4 max-w-sm">
+          {["Summarize notes", "Connect retrieval + trust", "Themes across workspace"].map((q, i) => (
+            <div key={i} className="flex items-center gap-4 bg-card border border-border/20 rounded-full px-6 py-4 shadow-sm transform transition-transform hover:scale-105">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                 <MessageSquare className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-[15px] text-foreground font-medium truncate">{q}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  },
+  {
+    num: "04",
+    tab: "WORKSPACE SCOPING",
+    heading: "Separate memory by workspace and project",
+    description: "Scope memory by products, repos, teams, research tracks, or debugging streams so context stays clean, governed, and reusable.",
+    bullets: [
+      "Frontend",
+      "Backend",
+      "Research & Debugging Streams"
+    ],
+    bgClass: "bg-amber-500/10",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border/20 overflow-hidden p-6 flex items-center justify-center h-full min-h-[300px] gap-8">
+        <div className="w-48 h-56 bg-card border border-border/20 rounded-xl shadow-lg p-5 rotate-[-6deg] hover:rotate-0 transition-transform">
+           <div className="text-[13px] font-bold text-foreground mb-6 flex items-center gap-3 tracking-widest uppercase"><div className="w-3 h-3 rounded-full bg-blue-500"></div>Frontend</div>
+           <div className="space-y-4">
+              <div className="w-full h-6 bg-muted/30 rounded"></div>
+              <div className="w-3/4 h-6 bg-muted/30 rounded"></div>
+              <div className="w-5/6 h-6 bg-muted/30 rounded"></div>
+           </div>
+        </div>
+        <div className="w-48 h-56 bg-card border border-border/20 rounded-xl shadow-lg p-5 rotate-[6deg] hover:rotate-0 transition-transform -ml-16 mt-16">
+           <div className="text-[13px] font-bold text-foreground mb-6 flex items-center gap-3 tracking-widest uppercase"><div className="w-3 h-3 rounded-full bg-chart-2"></div>Backend</div>
+           <div className="space-y-4">
+              <div className="w-full h-6 bg-muted/30 rounded"></div>
+              <div className="w-4/5 h-6 bg-muted/30 rounded"></div>
+              <div className="w-2/3 h-6 bg-muted/30 rounded"></div>
+           </div>
+        </div>
+      </div>
+    )
+  }
+];
+
+function PersonalMemoryFeaturesGrid() {
+  const [activeTab, setActiveTab] = useState("01");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = PM_FEATURES.map(f => document.getElementById(`pm-feature-${f.num}`));
+      let current = "01";
+      for (const section of sections) {
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 2) {
+            current = section.id.replace("pm-feature-", "");
+          }
+        }
+      }
+      setActiveTab(current);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div className="dark bg-background text-foreground py-24 w-full border-t border-border mt-24">
+      <div className="mx-auto max-w-[1400px]">
+        {/* Two Column Layout */}
+        <div className="flex flex-col lg:flex-row relative gap-8 lg:gap-16 items-start px-6">
+          {/* Left Sidebar (Sticky Tabs) */}
+          <div className="hidden lg:block w-[280px] shrink-0 relative">
+             <div className="sticky top-32 flex flex-col gap-2">
+                {PM_FEATURES.map(feature => (
+                  <a 
+                    key={feature.num} 
+                    href={`#pm-feature-${feature.num}`}
+                    className={`flex items-center gap-4 px-6 py-4 rounded-xl transition-all ${activeTab === feature.num ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'}`}
+                  >
+                     <span className={`font-mono text-[11px] px-2 py-1 rounded transition-colors ${activeTab === feature.num ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'}`}>
+                        {feature.num}
+                     </span>
+                     <span className="font-sans text-[12px] font-bold tracking-widest uppercase">{feature.tab}</span>
+                  </a>
+                ))}
+             </div>
+          </div>
+
+          {/* Right Content Area (Stacked Cards) */}
+          <div className="flex-1 flex flex-col pb-[50vh] relative border-t border-border xl:border-t-0">
+             {PM_FEATURES.map((feature, i) => (
+                <div 
+                  key={feature.num} 
+                  id={`pm-feature-${feature.num}`} 
+                  className={`sticky flex flex-col xl:flex-row bg-card border-b border-border`}
+                  style={{ 
+                    top: '6rem', 
+                    minHeight: '480px',
+                    zIndex: i,
+                  }}
+                >
+                   {/* Left Visual Pane */}
+                   <div className={`w-full xl:w-[55%] p-8 xl:p-16 relative flex items-center justify-center overflow-hidden border-b xl:border-b-0 xl:border-r border-border ${feature.bgClass}`}>
+                      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                      <div className="relative z-10 w-full max-w-lg shadow-2xl rounded-xl transition-transform duration-500 hover:scale-[1.02]">
+                         {feature.visualContent}
+                      </div>
+                   </div>
+
+                   {/* Right Text Pane */}
+                   <div className="w-full xl:w-[45%] p-8 xl:p-16 flex flex-col justify-center bg-card">
+                      <span className="font-mono text-[11px] bg-muted text-muted-foreground border border-border px-2 py-1 rounded w-fit mb-8">
+                         {feature.num}
+                      </span>
+                      <h3 className="text-[32px] font-semibold tracking-tight text-foreground mb-4 leading-[1.1]">
+                         {feature.heading}
+                      </h3>
+                      <p className="text-[16px] leading-relaxed text-muted-foreground mb-10">
+                         {feature.description}
+                      </p>
+                      
+                      <div className="flex flex-col gap-5 pl-5 border-l-2 border-border">
+                         {feature.bullets.map(bullet => (
+                            <p key={bullet} className="text-[14px] text-foreground/80 leading-relaxed font-medium">
+                               {bullet}
+                            </p>
+                         ))}
+                      </div>
+                   </div>
+                </div>
+             ))}
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function PersonalMemorySection() {
   return (
-    <section className="border-b border-[#c9d8ee] bg-[#0b1117] px-5 py-12 text-white">
-      <Reveal className="mx-auto max-w-[980px] text-center">
-        <div className="inline-flex items-center rounded-full border border-[#1d4fb0] bg-[rgba(20,35,58,0.78)] px-4 py-2 font-mono text-[12px] tracking-[0.08em] text-[#69a7ff]">
-          MEMORYOS WORKSPACE MEMORY
-        </div>
-        <h2 className="mx-auto mt-7 max-w-[820px] text-[44px] font-semibold tracking-[-0.05em] text-white md:text-[64px]">
-          One developer memory layer. Across every workflow.
-        </h2>
-        <p className="mx-auto mt-5 max-w-[760px] text-[22px] leading-[1.75] text-[#8797ae]">
-          MemoryOS keeps project context, developer preferences, bug history, and architecture
-          decisions available across IDEs, copilots, dashboards, and shared workspaces.
-        </p>
-      </Reveal>
+    <section className="dark bg-background text-foreground font-sans overflow-hidden">
+      
+      {/* 1. COMPOSIO STYLE HEADER (Light theme, side by side) */}
+      <div className="px-6 py-24">
+         <Reveal className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-8">
+           
+           {/* LEFT: Text Block */}
+           <div className="flex-1 w-full text-left lg:pr-10">
+             <div className="flex items-center gap-3 mb-8">
+                <MemoryStarLogo />
+                <span className="px-2 py-0.5 rounded border border-primary/30 bg-primary/5 text-[11px] font-bold tracking-widest text-primary uppercase">Workspace</span>
+             </div>
+             
+             <h3 className="text-[40px] lg:text-[52px] font-semibold tracking-[-0.03em] text-foreground leading-[1.05] mb-6">
+               One company brain layer.<br/>
+               <span className="text-muted-foreground">Across every workflow.</span>
+             </h3>
+             
+             <p className="text-muted-foreground text-[17px] leading-relaxed mb-8 max-w-lg">
+               MemoryOS keeps goals, constraints, decisions, risks, and execution context available across cloud models, local agents, control planes, and shared workspaces.
+             </p>
+             
+             <button className="bg-foreground text-background px-8 py-4 font-bold text-[11px] tracking-[0.2em] uppercase hover:opacity-90 transition-opacity rounded-sm">
+               Learn More
+             </button>
+           </div>
 
-      <Reveal delay={0.06} className="mx-auto mt-12 max-w-[860px] text-center">
-        <p className="font-mono text-[13px] tracking-[0.24em] text-[#5e708a]">
-          AVAILABLE ACROSS
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-12 md:gap-16">
-          <ToolPill label="Claude" icon={<ClaudeMark />} />
-          <ToolPill label="Cursor" icon={<CursorMark />} />
-          <ToolPill label="VS Code" icon={<VSCodeMark />} />
-          <ToolPill label="OpenCode" icon={<OpenCodeMark />} />
-          <ToolPill label="Windsurf" icon={<WindsurfMark />} />
-          <ToolPill label="More" icon={<MoreMark />} />
-        </div>
-      </Reveal>
+           {/* RIGHT: Floating Pills Graphic */}
+           <div className="flex-1 w-full relative min-h-[460px] flex items-center justify-end">
+             {/* Faint background terminal graphic */}
+             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full max-w-[500px] h-[380px] bg-muted/10 border border-border rounded-xl shadow-sm overflow-hidden hidden sm:flex flex-col">
+               <div className="h-10 border-b border-border bg-card flex items-center px-4 gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                  <div className="mx-auto text-[10px] font-mono text-muted-foreground tracking-widest">agent-memory.log</div>
+               </div>
+               <div className="p-8 font-mono text-xs md:text-[13px] text-muted-foreground/80 leading-relaxed space-y-5">
+                  <div>
+                    <p className="text-primary font-semibold">{`$ memoryos.search({ query: 'session_context' })`}</p>
+                    <p className="text-muted-foreground">{`-> Retrieved 3 graph nodes`}</p>
+                  </div>
+                  <div>
+                    <p className="text-primary font-semibold">{`$ POST /v1/http/sync`}</p>
+                    <p className="text-muted-foreground">{`-> 200 OK (Timeline updated)`}</p>
+                  </div>
+                  <div>
+                    <p className="text-primary font-semibold">{`$ memoryos.add({ context: 'resolved_bug_404' })`}</p>
+                    <p className="text-muted-foreground">{`-> Appended to team memory workspace`}</p>
+                  </div>
+                  
+                  <div className="pt-4 text-6xl font-bold opacity-[0.03] text-foreground tracking-tighter">
+                     MEMORYOS
+                  </div>
+               </div>
+             </div>
 
-      <div className="mx-auto mt-14 grid max-w-[1080px] gap-5 lg:grid-cols-2">
-        <Reveal>
-          <FeatureCard
-            visual={<CaptureCanvas />}
-            title="Capture developer context from anywhere"
-            body="Save code findings, design decisions, debugging notes, docs, links, and task history from the tools developers already use every day."
-          />
-        </Reveal>
-        <Reveal delay={0.05}>
-          <FeatureCard
-            visual={<MemoryGraphCanvas />}
-            title="Turn scattered work into connected memory"
-            body="MemoryOS links related context across sessions so retrieval, revisions, and continuity planning work from one connected memory graph."
-          />
-        </Reveal>
-        <Reveal delay={0.08}>
-          <FeatureCard
-            visual={<QueryPreview />}
-            title="Ask MemoryOS across everything you have stored"
-            body="Query project memory directly and get answers grounded in prior work, documents, conversations, preferences, and technical decisions."
-          />
-        </Reveal>
-        <Reveal delay={0.12}>
-          <FeatureCard
-            visual={<ProjectBoards />}
-            title="Separate memory by workspace and project"
-            body="Keep memory scoped to products, repos, teams, research tracks, or debugging streams so context stays clean, searchable, and reusable."
-          />
-        </Reveal>
+             {/* Floating Cascading Pills */}
+             <div className="relative w-full max-w-[500px] flex flex-col gap-4 z-10 sm:pr-8">
+                <FloatingPill x={0} icon={<FileText className="text-blue-500" size={16}/>} text="Summarize the key ideas from my notes" delay={0.1} />
+                <FloatingPill x={40} icon={<Activity className="text-chart-2" size={16}/>} text="Which memories connect retrieval and trust?" delay={0.2} />
+                <FloatingPill x={80} icon={<MessageSquare className="text-purple-500" size={16}/>} text="What are the main themes across this workspace?" delay={0.3} />
+                <FloatingPill x={30} icon={<GitPullRequest className="text-amber-500" size={16}/>} text="Capture developer context from anywhere" delay={0.4} />
+                <FloatingPill x={100} icon={<Database className="text-indigo-500" size={16}/>} text="Scope memory by products and repos" delay={0.5} />
+                <FloatingPill x={20} icon={<Shield className="text-destructive" size={16}/>} text="Turn scattered work into connected memory" delay={0.6} />
+             </div>
+           </div>
+         </Reveal>
       </div>
 
-      <Reveal delay={0.16} className="mx-auto mt-14 max-w-[720px]">
-        <div className="grid gap-6 border-t border-[#1b2b40] pt-10 text-center sm:grid-cols-3">
-          {[
-            ["Shared", "team memory"],
-            ["Multi-tool", "integrations"],
-            ["Fast", "context recall"],
-          ].map(([value, label]) => (
-            <div key={label}>
-              <p className="text-[42px] font-semibold tracking-[-0.05em] text-white">{value}</p>
-              <p className="mt-2 text-[18px] text-[#7f8fa7]">{label}</p>
-            </div>
-          ))}
-        </div>
-      </Reveal>
+      {/* 2. AVAILABLE ACROSS */}
+      <div className="px-6 pt-16">
+         <Reveal delay={0.06} className="mx-auto max-w-4xl text-center">
+           <p className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase font-semibold">
+             AVAILABLE ACROSS
+           </p>
+           <div 
+             className="mt-8 relative flex overflow-hidden w-[100vw] max-w-[100vw] left-1/2 right-1/2 -mx-[50vw] pb-4 group"
+             style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}
+           >
+             <div className="flex shrink-0 min-w-max items-center justify-around gap-10 md:gap-14 animate-marquee group-hover:[animation-play-state:paused] pr-10 md:pr-14">
+               <ToolPill label="Claude" icon={<ClaudeMark />} />
+               <ToolPill label="Mastra" icon={<MastraMark />} />
+               <ToolPill label="GPT Agents" icon={<CursorMark />} />
+               <ToolPill label="Ollama" icon={<VSCodeMark />} />
+               <ToolPill label="LangGraph" icon={<LangGraphMark />} />
+               <ToolPill label="n8n" icon={<N8nMark />} />
+               <ToolPill label="Zapier" icon={<ZapierMark />} />
+               <ToolPill label="Qwen" icon={<OpenCodeMark />} />
+               <ToolPill label="DeepSeek" icon={<WindsurfMark />} />
+               <ToolPill label="More" icon={<MoreMark />} />
+             </div>
+             <div className="flex shrink-0 min-w-max items-center justify-around gap-10 md:gap-14 animate-marquee group-hover:[animation-play-state:paused] pr-10 md:pr-14" aria-hidden="true">
+               <ToolPill label="Claude" icon={<ClaudeMark />} />
+               <ToolPill label="Mastra" icon={<MastraMark />} />
+               <ToolPill label="GPT Agents" icon={<CursorMark />} />
+               <ToolPill label="Ollama" icon={<VSCodeMark />} />
+               <ToolPill label="LangGraph" icon={<LangGraphMark />} />
+               <ToolPill label="n8n" icon={<N8nMark />} />
+               <ToolPill label="Zapier" icon={<ZapierMark />} />
+               <ToolPill label="Qwen" icon={<OpenCodeMark />} />
+               <ToolPill label="DeepSeek" icon={<WindsurfMark />} />
+               <ToolPill label="More" icon={<MoreMark />} />
+             </div>
+           </div>
+         </Reveal>
+      </div>
+
+      {/* 3. STICKY FEATURE SCROLL (Replaces 2x2 grid) */}
+      <PersonalMemoryFeaturesGrid />
+
+      {/* 4. FOOTER STATS */}
+      <div className="px-6 pb-24 dark bg-background text-foreground border-b border-border">
+         <Reveal delay={0.16} className="mx-auto max-w-4xl">
+           <div className="grid gap-8 pt-12 text-center sm:grid-cols-3">
+             {[
+               ["Shared", "team memory"],
+               ["Multi-tool", "integrations"],
+               ["Fast", "context recall"],
+             ].map(([value, label]) => (
+               <div key={label} className="group">
+                 <p className="text-[32px] md:text-[40px] font-semibold tracking-[-0.03em] text-foreground group-hover:text-primary transition-colors">{value}</p>
+                 <p className="mt-2 text-[15px] text-muted-foreground uppercase tracking-widest font-mono text-[11px]">{label}</p>
+               </div>
+             ))}
+           </div>
+         </Reveal>
+      </div>
+
     </section>
   );
 }

@@ -37,6 +37,7 @@ function toSearchResult(memory: Memory, query: string): MemoryStoreSearchResult 
     memory: memory.content,
     metadata: {
       memoryId: memory.id,
+      userId: memory.userId,
       type: memory.type,
       summary: memory.summary,
       importanceScore: memory.importanceScore,

@@ -1,157 +1,285 @@
 "use client";
 
-const STAT_CARDS = [
-  { label: "Memories Stored", value: "0", accent: "#4f93ff" },
-  { label: "Resume Runs", value: "0", accent: "#14c38e" },
-  { label: "Retrieve Requests", value: "0", accent: "#9b7bff" },
-  { label: "Handoffs Generated", value: "0", accent: "#f0b429" },
-  { label: "Active Projects", value: "0", accent: "#4f93ff" },
-] as const;
-
-const ACTION_CARDS = [
-  {
-    title: "Quick Start",
-    copy: "Set up MemoryOS in your app or agent loop",
-    accent: "#4f93ff",
-  },
-  {
-    title: "Run Demo",
-    copy: "See retrieve, resume, and handoff in action",
-    accent: "#14c38e",
-  },
-  {
-    title: "Playground",
-    copy: "Test continuity flows interactively",
-    accent: "#9b7bff",
-  },
-  {
-    title: "Documentation",
-    copy: "Read the SDK, MCP, and API quickstart",
-    accent: "#f0b429",
-  },
-] as const;
-
-type ActionCardTitle = (typeof ACTION_CARDS)[number]["title"];
+type ActionCardTitle = "Quick Start" | "Continuity Lab" | "Playground" | "Documentation";
 type OverviewActionHandlers = Partial<Record<ActionCardTitle, () => void>>;
+type InstallationVerificationStatus = "idle" | "waiting" | "connected" | "error";
 
 type OverviewSectionProps = {
   actions?: OverviewActionHandlers;
+  stats?: Array<{ label: string; value: string; accent?: string }>;
+  isLoading?: boolean;
+  errorMessage?: string | null;
+  memories?: Array<{ content: string; type?: string; updatedAt: string }>;
+  requestEvents?: Array<{
+    id: string;
+    createdAt: string;
+    type: string;
+    status: "Success" | "Error";
+    route: string;
+    latencyMs: number;
+    method?: string;
+  }>;
+  insights?: {
+    activeProjects?: string[];
+  } | null;
+  resumeData?: {
+    summary?: string;
+    recommendedNextStep?: string;
+    openLoops?: string[];
+  } | null;
+  handoffData?: {
+    openLoops?: string[];
+  } | null;
+  timelineCount?: number;
+  installationVerification?: {
+    status: InstallationVerificationStatus;
+    message: string;
+    onVerify: () => void;
+  };
 };
 
-function ActionIcon({ title }: { title: ActionCardTitle }) {
-  if (title === "Quick Start") {
-    return (
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 7.5h11M9 3.5l4 4-4 4" />
-      </svg>
-    );
-  }
-  if (title === "Run Demo") {
-    return (
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="3.5,2.5 12,7.5 3.5,12.5" />
-      </svg>
-    );
-  }
-  if (title === "Playground") {
-    return (
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1.5" y="1.5" width="4.5" height="4.5" rx="1" />
-        <rect x="9" y="1.5" width="4.5" height="4.5" rx="1" />
-        <rect x="1.5" y="9" width="4.5" height="4.5" rx="1" />
-        <rect x="9" y="9" width="4.5" height="4.5" rx="1" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5.5 2H2v11h11V8.5M8.5 2H13v4.5M13 2L6.5 8.5" />
-    </svg>
-  );
-}
+export function OverviewSection({
+  actions,
+  stats = [],
+  isLoading = false,
+  errorMessage = null,
+  memories = [],
+  requestEvents = [],
+  insights = null,
+  resumeData = null,
+  handoffData = null,
+  timelineCount = 0,
+  installationVerification,
+}: OverviewSectionProps) {
+  const verificationStatus = installationVerification?.status ?? "idle";
+  const isConnected = verificationStatus === "connected";
 
-export function OverviewSection({ actions }: OverviewSectionProps) {
-  return (
-    <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-[22px] font-semibold tracking-[-0.05em]">Overview</h1>
-          <p className="mt-1 text-[13px] text-white/40">Workspace usage and continuity metrics at a glance.</p>
-        </div>
-        <div className="flex items-center gap-2 rounded-[8px] border border-[#14c38e]/25 bg-[#14c38e]/6 px-3 py-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#14c38e]" />
-          <span className="text-[11px] font-medium tracking-[0.06em] text-[#8ce6c7]">WORKSPACE ACTIVE</span>
-        </div>
-      </div>
+  const statusPills = [
+    { label: "Workspace Active", active: memories.length > 0 || requestEvents.length > 0, dotClass: "bg-primary" },
+    { label: "SDK Connected", active: isConnected, dotClass: "bg-primary" },
+    { label: "Graph Synced", active: timelineCount > 0, dotClass: "bg-primary" },
+    { label: "Handoff Ready", active: (handoffData?.openLoops?.length ?? 0) > 0, dotClass: "bg-primary" },
+  ];
 
-      <div className="mt-3.5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {STAT_CARDS.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-[8px] border border-white/10 bg-[#161616] px-5 py-4"
-            style={{ borderTopColor: card.accent, borderTopWidth: "2px" }}
-          >
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/36">{card.label}</p>
-            <p className="mt-2.5 text-[28px] font-semibold tracking-[-0.05em]">{card.value}</p>
+  const metricCards = stats.map((entry) => ({
+    title: entry.label,
+    value: entry.value,
+    delta: null as string | null,
+    accentClass: "text-primary",
+    rows: [
+      { label: "Source", value: "Live backend", valueClass: "text-primary" },
+      { label: "Updated", value: "Realtime", valueClass: "text-foreground" },
+    ],
+  }));
+
+  const primaryProjectName = insights?.activeProjects?.[0] ?? "No active project";
+  const topMemory = memories[0]?.content ?? "No memory captured yet";
+  const nextAction =
+    resumeData?.recommendedNextStep ??
+    handoffData?.openLoops?.[0] ??
+    "No next action detected yet.";
+  const detectedProblem =
+    [...(resumeData?.openLoops ?? []), ...(handoffData?.openLoops ?? [])].find((loop) =>
+      loop.toLowerCase().includes("problem") ||
+      loop.toLowerCase().includes("risk") ||
+      loop.toLowerCase().includes("blocked"),
+    ) ?? "No blocker detected from current live context.";
+
+  const liveActivity = [
+    ...requestEvents.slice(0, 3).map((event) => ({
+      at: new Date(event.createdAt).toLocaleTimeString(),
+      title: `${event.method ?? "API"} ${event.route}`,
+      detail: `${event.status} · ${event.latencyMs}ms`,
+    })),
+    ...memories.slice(0, 2).map((memory) => ({
+      at: new Date(memory.updatedAt).toLocaleTimeString(),
+      title: "Memory updated",
+      detail: memory.content,
+    })),
+  ].slice(0, 4);
+
+  return (
+    <div className="dark bg-background pb-12 text-foreground">
+      <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
+        <div className="absolute inset-0 bg-gray " />
+        <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <h1 className="text-[26px] font-bold tracking-tight text-foreground">Memory Command Center</h1>
+            <p className="mt-1.5 max-w-xl text-[14px] leading-relaxed text-muted-foreground">
+              Live observability for agent memory, retrieval quality, and cross-session continuity.
+            </p>
           </div>
-        ))}
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-white/40">Build with MemoryOS</h2>
-        <div className="mt-3 grid gap-3 lg:grid-cols-4">
-          {ACTION_CARDS.map((card) => (
-            <button
-              key={card.title}
-              type="button"
-              onClick={actions?.[card.title]}
-              className="group cursor-pointer rounded-[8px] border border-white/10 bg-[#161616] px-5 py-4.5 transition-colors hover:border-white/18 hover:bg-[#1b1b1b]"
-              style={{ borderTopColor: card.accent, borderTopWidth: "2px" }}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-[15px] font-semibold tracking-[-0.03em]">{card.title}</p>
-                <span
-                  className="mt-0.5 shrink-0 transition-all group-hover:translate-x-0.5"
-                  style={{ color: card.accent, opacity: 0.6 }}
-                >
-                  <ActionIcon title={card.title} />
+          <div className="flex flex-wrap gap-2">
+            {statusPills.map((pill) => (
+              <div key={pill.label} className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
+                <span className={`h-2 w-2 rounded-full ${pill.active ? `${pill.dotClass} animate-pulse` : "bg-muted-foreground/40"}`} />
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${pill.active ? "text-foreground/90" : "text-muted-foreground"}`}>
+                  {pill.label}
                 </span>
               </div>
-              <p className="mt-1.5 text-left text-[13px] leading-5 text-white/40">{card.copy}</p>
-            </button>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="mt-5 rounded-[10px] border border-white/8 bg-[#141414] px-5 py-4.5">
-        <div className="flex items-center gap-2">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/30">
-            <circle cx="6.5" cy="6.5" r="5" />
-            <path d="M6.5 4v3.5h2.5" />
-          </svg>
-          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-white/30">Getting started</p>
-        </div>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {[
-            ["1", "Install the SDK", "npm install @memoryostm/sdk", "#4f93ff"],
-            ["2", "Initialize a client", "createMemoryOSClient({ apiKey })", "#9b7bff"],
-            ["3", "Start saving context", "client.afterModel({ ... })", "#14c38e"],
-          ].map(([step, label, code, accent]) => (
-            <div key={step} className="flex items-start gap-3 rounded-[8px] border border-white/8 bg-[#0f0f0f] px-3.5 py-3.5">
-              <span
-                className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
-                style={{ background: `${accent}22`, color: accent }}
-              >
-                {step}
-              </span>
-              <div className="min-w-0">
-                <p className="text-[12px] font-semibold text-white/76">{label}</p>
-                <p className="mt-1 truncate font-mono text-[11px] text-white/36">{code}</p>
+      <div className="px-6 mt-8 space-y-8 max-w-[1440px]">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {metricCards.map((metric) => (
+            <div
+              key={metric.title}
+              className="relative overflow-hidden rounded-[10px] border border-border bg-card p-5 shadow-sm"
+            >
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{metric.title}</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-[32px] font-bold tracking-tight text-foreground">{metric.value}</span>
+                {metric.delta ? <span className={`text-[12px] font-medium ${metric.accentClass}`}>{metric.delta}</span> : null}
+              </div>
+              <div className="mt-4 space-y-1 text-[11px] font-mono text-muted-foreground">
+                {metric.rows.map((row) => (
+                  <div key={row.label} className="flex justify-between">
+                    <span>{row.label}</span>
+                    <span className={row.valueClass}>{row.value}</span>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
+
+        <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+          <div className="flex flex-col overflow-hidden rounded-[12px] border border-border bg-card">
+            <div className="flex items-center justify-between border-b border-border bg-card px-5 py-4">
+              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">Active Project State</h2>
+              <span className="text-[10px] font-mono text-muted-foreground">Confidence: live</span>
+            </div>
+            <div className="flex-1 space-y-6 p-6">
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Project</p>
+                <p className="text-[15px] font-medium text-foreground">{primaryProjectName}</p>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Current Focus</p>
+                <p className="pl-3 text-[14px] leading-relaxed text-foreground/90">
+                  {resumeData?.summary ?? topMemory}
+                </p>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-destructive">Detected Problem</p>
+                <p className="pl-3 text-[14px] leading-relaxed text-foreground/90">{detectedProblem}</p>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Next Action</p>
+                <p className="rounded-r bg-muted py-2 pl-3 pr-2 text-[14px] font-medium leading-relaxed text-primary">
+                  {nextAction}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex h-full flex-col overflow-hidden rounded-[12px] border border-border bg-card">
+            <div className="flex items-center justify-between border-b border-border bg-card px-5 py-4">
+              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">Live Memory Activity</h2>
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+            </div>
+            <div className="flex-1 space-y-5 overflow-y-auto p-5">
+              {liveActivity.length === 0 ? (
+                <p className="text-[12px] text-muted-foreground">No live events yet.</p>
+              ) : liveActivity.map((item, idx) => (
+                <div key={`${item.at}-${idx}`} className="relative border-l border-border pl-4">
+                  <div className="absolute left-[-4.5px] top-1.5 h-2 w-2 rounded-full bg-primary" />
+                  <p className="mb-1 text-[10px] font-mono text-muted-foreground">{item.at}</p>
+                  <p className="mb-0.5 text-[12px] font-bold text-foreground">{item.title}</p>
+                  <p className="text-[12px] text-muted-foreground">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="flex flex-col rounded-[12px] border border-border bg-card p-6">
+            <h2 className="mb-6 text-[12px] font-bold uppercase tracking-widest text-primary">Continuity Graph</h2>
+            <div className="mb-6 flex-1 rounded-[8px] border border-border bg-muted/50 p-4 font-mono text-[12px] leading-6 text-muted-foreground">
+              <div className="text-foreground">User</div>
+              <div className="ml-2 text-primary"> └── Project: {primaryProjectName}</div>
+              <div className="ml-8 text-muted-foreground"> ├── Focus: {resumeData?.summary ?? "Not captured yet"}</div>
+              <div className="ml-8 text-destructive"> ├── Problem: {detectedProblem}</div>
+              <div className="ml-8 text-muted-foreground"> ├── Task: {topMemory}</div>
+              <div className="ml-8 text-primary"> └── Next Action: {nextAction}</div>
+            </div>
+            <button
+              onClick={actions?.["Playground"]}
+              className="w-full rounded-[8px] !border !border-primary/40 !bg-primary py-3 text-[12px] font-bold uppercase tracking-wider !text-primary-foreground shadow-md transition hover:!bg-primary/90"
+            >
+              Open Memory Playground
+            </button>
+          </div>
+
+          <div className="flex flex-col rounded-[12px] border border-border bg-card p-6">
+            <h2 className="mb-6 text-[12px] font-bold uppercase tracking-widest text-foreground">Recommended Actions</h2>
+            <div className="space-y-3 flex-1">
+              {[
+                { title: "Test memory extraction in Playground", impact: "High", time: "2 min", status: "Ready", accent: "text-primary", action: actions?.["Playground"] },
+                { title: "Run a continuity handoff simulation", impact: "High", time: "2 min", status: "Ready", accent: "text-primary", action: actions?.["Continuity Lab"] },
+                { title: "Connect your first source", impact: "Med", time: "5 min", status: "Not started", accent: "text-muted-foreground", action: undefined },
+                { title: "Generate SDK integration code", impact: "High", time: "3 min", status: "Ready", accent: "text-primary", action: actions?.["Quick Start"] },
+              ].map((item, i) => (
+                <div key={i} className="flex cursor-pointer items-center justify-between rounded-[8px] border border-border bg-muted/40 p-3 transition hover:bg-accent/40" onClick={item.action}>
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background text-[10px] text-muted-foreground">{i + 1}</span>
+                    <span className="text-[13px] font-medium text-foreground">{item.title}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest">
+                    <span className="hidden text-muted-foreground sm:inline-block">Impact: {item.impact}</span>
+                    <span className="hidden text-muted-foreground sm:inline-block">Time: {item.time}</span>
+                    <span className={`${item.accent} font-bold`}>{item.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Build with MemoryOS</h2>
+          <div className="grid gap-4 lg:grid-cols-4">
+            <button onClick={actions?.["Quick Start"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
+              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Quick Start</p>
+              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">Add MemoryOS to your agent loop in under 5 minutes.</p>
+              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Install SDK →</span>
+            </button>
+            <button onClick={actions?.["Continuity Lab"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
+              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Continuity Lab</p>
+              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">Watch retrieve, resume, and handoff work with live workspace data.</p>
+              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Open Continuity Lab →</span>
+            </button>
+            <button onClick={actions?.["Playground"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
+              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Playground</p>
+              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">Inspect what your agent remembers and why.</p>
+              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Open Memory Playground →</span>
+            </button>
+            <button onClick={actions?.["Documentation"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
+              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Docs</p>
+              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">SDK, MCP, REST API, and LangGraph examples.</p>
+              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Read Integration Guide →</span>
+            </button>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading overview data…</p>
+        ) : null}
+        {errorMessage ? (
+          <p className="rounded-md border border-border bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {errorMessage}
+          </p>
+        ) : null}
+        {installationVerification?.message ? (
+          <div className="rounded-md border border-border bg-card px-3 py-2 text-sm text-muted-foreground">
+            {installationVerification.message}
+          </div>
+        ) : null}
       </div>
-    </>
+    </div>
   );
 }

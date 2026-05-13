@@ -1,8 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 
 const isDeveloperProtectedRoute = createRouteMatcher([
   "/developer-console",
   "/developer-console/(.*)",
+  "/playground",
 ]);
 
 const isPersonalProtectedRoute = createRouteMatcher([
@@ -10,23 +12,29 @@ const isPersonalProtectedRoute = createRouteMatcher([
   "/personal-app/(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  const pathname = req.nextUrl.pathname;
+const isPublicAuthRoute = createRouteMatcher([
+  "/",
+  "/sign-up",
+  "/developer-console/sign-in",
+  "/developer-console/verify-link",
+  "/personal-app/sign-in",
+  "/personal-app/sign-up",
+  "/personal-app/verify-link",
+  "/sso-callback",
+  "/sso-callback/(.*)",
+  "/sso-callback-developer",
+  "/sso-callback-developer/(.*)",
+  "/sso-callback-personal",
+  "/sso-callback-personal/(.*)",
+]);
+
+const isMemoryTokenRoute = createRouteMatcher(["/api/memory/token"]);
+
+const protectedMiddleware = clerkMiddleware(async (auth, req) => {
   const developerSignInUrl = new URL("/developer-console/sign-in", req.url).toString();
   const personalSignInUrl = new URL("/personal-app/sign-in", req.url).toString();
-  const isSignInRoute =
-    pathname.startsWith("/developer-console/sign-in") ||
-    pathname.startsWith("/personal-app/sign-in") ||
-    pathname.startsWith("/personal-app/sign-up");
-  const isCallbackRoute =
-    pathname.startsWith("/sso-callback") ||
-    pathname.startsWith("/sso-callback-developer") ||
-    pathname.startsWith("/sso-callback-personal");
-  const isEmailVerifyRoute =
-    pathname.startsWith("/developer-console/verify-link") ||
-    pathname.startsWith("/personal-app/verify-link");
 
-  if (isSignInRoute || isCallbackRoute || isEmailVerifyRoute) {
+  if (isPublicAuthRoute(req)) {
     return;
   }
 
@@ -45,6 +53,10 @@ export default clerkMiddleware(async (auth, req) => {
     });
   }
 });
+
+export default function proxy(req: NextRequest, event: NextFetchEvent) {
+  return protectedMiddleware(req, event);
+}
 
 export const config = {
   matcher: [

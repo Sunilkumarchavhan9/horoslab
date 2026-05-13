@@ -18,6 +18,7 @@ export function createClassicMemoryOsApp() {
 
   const app = express();
   const classicErrorHandler: ErrorRequestHandler = function (error, req, res, _next) {
+    void _next;
     console.error(error);
 
     res.status(500).json({

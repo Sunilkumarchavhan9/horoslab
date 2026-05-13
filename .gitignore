@@ -57,3 +57,4 @@ next-env.d.ts
 # python caches
 __pycache__/
 *.pyc
+.blackboxcli/

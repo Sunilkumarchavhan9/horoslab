@@ -1,378 +1,317 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { DitherBackground } from "@/components/ui/dither-background";
+import { EASE_OUT } from "@/lib/motion";
+import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
-type SourceConnector = {
+type ConnectorRecord = {
   id: string;
-  name: string;
   type: string;
-  status: "connected" | "pending" | "error";
-  lastSync: string;
-  records: number;
-  mode: "batch" | "continuous";
+  name: string;
+  status: "connected" | "not_connected" | "pending";
+  lastSyncAt?: string | null;
+  recordCount?: number;
 };
 
-type ImportRun = {
+type ActivityItem = {
   id: string;
-  sourceId: string;
-  source: string;
-  status: "success" | "pending" | "error";
-  imported: number;
-  rejected: number;
-  durationMs: number;
-  startedAt: string;
+  message: string;
+  at: string;
+  tone: "success" | "info" | "error";
 };
 
-type MappingRow = {
-  sourceField: string;
-  memoryField: string;
-  confidence: number;
+type ConnectorDiagnostic = {
+  connectorType: string;
+  status: "healthy" | "degraded" | "down";
+  checkedAt: string;
+  latencyMs?: number;
+  errorRate?: number;
 };
 
-const SOURCE_CONNECTORS: SourceConnector[] = [
-  { id: "github", name: "GitHub", type: "Code + issues", status: "connected", lastSync: "2m ago", records: 1287, mode: "continuous" },
-  { id: "notion", name: "Notion", type: "Docs + notes", status: "connected", lastSync: "8m ago", records: 642, mode: "batch" },
-  { id: "slack", name: "Slack", type: "Threads + decisions", status: "pending", lastSync: "Waiting", records: 0, mode: "continuous" },
-  { id: "local", name: "Local files", type: "Markdown + JSONL", status: "connected", lastSync: "Just now", records: 96, mode: "batch" },
-];
+export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: number }) {
+  const [connectors, setConnectors] = useState<ConnectorRecord[]>([]);
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [diagnostics, setDiagnostics] = useState<ConnectorDiagnostic[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-const PIPELINE_STAGES = [
-  { name: "Ingest", state: "healthy" },
-  { name: "Parse", state: "healthy" },
-  { name: "Normalize", state: "healthy" },
-  { name: "Deduplicate", state: "watch" },
-  { name: "Index", state: "healthy" },
-] as const;
+  const loadConnectors = useCallback(async () => {
+    setLoading(true);
+    const token = await getOrCreateMemoryToken();
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    const response = await fetch(`/api/connector`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    const payload = (await response.json().catch(() => null)) as
+      | { data?: { connectors?: ConnectorRecord[] }; error?: { message?: string } }
+      | null;
+    if (!response.ok) {
+      throw new Error(payload?.error?.message ?? "Could not load connectors.");
+    }
+    const raw = payload?.data?.connectors ?? [];
+    const deduped = Array.from(
+      new Map(
+        raw
+          .filter((item) => item && typeof item.id === "string")
+          .map((item) => [item.type || item.id, item]),
+      ).values(),
+    ) as ConnectorRecord[];
+    setConnectors(deduped);
+    setLastUpdated(new Date().toISOString());
+    setLoading(false);
+  }, []);
 
-const IMPORT_RUNS: ImportRun[] = [
-  { id: "run-1", sourceId: "github", source: "GitHub", status: "success", imported: 142, rejected: 3, durationMs: 1820, startedAt: "2m ago" },
-  { id: "run-2", sourceId: "notion", source: "Notion", status: "success", imported: 86, rejected: 1, durationMs: 1240, startedAt: "9m ago" },
-  { id: "run-3", sourceId: "local", source: "Local files", status: "pending", imported: 0, rejected: 0, durationMs: 0, startedAt: "Running..." },
-  { id: "run-4", sourceId: "slack", source: "Slack", status: "error", imported: 0, rejected: 12, durationMs: 600, startedAt: "25m ago" },
-];
+  const loadDiagnostics = useCallback(async () => {
+    const token = await getOrCreateMemoryToken();
+    if (!token) return;
+    const response = await fetch(`/api/connector/health`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!response.ok) return;
+    const payload = (await response.json().catch(() => null)) as
+      | { data?: { diagnostics?: ConnectorDiagnostic[] } }
+      | null;
+    const list = payload?.data?.diagnostics;
+    if (Array.isArray(list)) {
+      setDiagnostics(list);
+    }
+  }, []);
 
-const MAPPING_ROWS: MappingRow[] = [
-  { sourceField: "repo.name", memoryField: "project.name", confidence: 94 },
-  { sourceField: "issue.title", memoryField: "open_loop.summary", confidence: 89 },
-  { sourceField: "pr.body", memoryField: "decision.context", confidence: 81 },
-  { sourceField: "doc.section", memoryField: "knowledge.chunk", confidence: 86 },
-  { sourceField: "comment.thread", memoryField: "handoff.detail", confidence: 77 },
-];
+  useEffect(() => {
+    void (async () => {
+      try {
+        await loadConnectors();
+        await loadDiagnostics();
+        setErrorMessage(null);
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : "Failed to load.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+    const interval = window.setInterval(() => {
+      void (async () => {
+        try {
+          await loadConnectors();
+          await loadDiagnostics();
+          setErrorMessage(null);
+        } catch (error) {
+          setErrorMessage(error instanceof Error ? error.message : "Failed to load.");
+          setLoading(false);
+        }
+      })();
+    }, 8000);
+    return () => window.clearInterval(interval);
+  }, [loadConnectors, loadDiagnostics, liveMemoryCount]);
 
-const PREVIEW_ROWS = [
-  { source: "github/issue-183", type: "open_loop", mapped: "Need route tests for handoff endpoint", score: 0.92 },
-  { source: "notion/decision-log", type: "decision", mapped: "Use API + MCP as initial integration surface", score: 0.88 },
-  { source: "repo/changelog.md", type: "project", mapped: "Continuity graph UI shipped for projects", score: 0.85 },
-];
+  const connected = connectors.filter((item) => item.status === "connected");
+  const totalRecords = connected.reduce((sum, item) => sum + (item.recordCount ?? 0), 0);
 
-function toneForStatus(status: SourceConnector["status"] | ImportRun["status"] | string) {
-  if (status === "connected" || status === "success" || status === "healthy") return "#14c38e";
-  if (status === "pending" || status === "watch") return "#f0b429";
-  return "#ff6d6d";
-}
+  const addActivity = useCallback((message: string, tone: ActivityItem["tone"]) => {
+    setActivity((current) => [
+      {
+        id: `${Date.now()}-${Math.random()}`,
+        message,
+        at: new Date().toLocaleString(),
+        tone,
+      },
+      ...current,
+    ].slice(0, 20));
+  }, []);
 
-export function ImportsSection() {
-  const [activeSourceId, setActiveSourceId] = useState<string>(SOURCE_CONNECTORS[0]?.id ?? "github");
-  const [importMode, setImportMode] = useState<"batch" | "continuous">("continuous");
-  const [format, setFormat] = useState<"jsonl" | "markdown" | "api-push">("jsonl");
+  async function syncConnector(type: string) {
+    setBusyId(type);
+    setErrorMessage(null);
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) throw new Error("Missing auth token.");
+      const response = await fetch(`/api/connector/${type}/sync`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | { data?: { extractedCount?: number }; error?: { message?: string } }
+        | null;
+      if (!response.ok) {
+        throw new Error(payload?.error?.message ?? `Failed to sync ${type}`);
+      }
+      addActivity(
+        `${type} synced. Extracted ${payload?.data?.extractedCount ?? 0} records.`,
+        "success",
+      );
+      await loadConnectors();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : `Failed to sync ${type}`;
+      setErrorMessage(message);
+      addActivity(message, "error");
+    } finally {
+      setBusyId(null);
+    }
+  }
 
-  const activeSource = useMemo(
-    () => SOURCE_CONNECTORS.find((source) => source.id === activeSourceId) ?? SOURCE_CONNECTORS[0],
-    [activeSourceId],
-  );
-
-  const visibleRuns = useMemo(
-    () => IMPORT_RUNS.filter((run) => run.sourceId === activeSource?.id || run.status === "pending"),
-    [activeSource?.id],
-  );
-
-  const totalImported = IMPORT_RUNS.reduce((sum, run) => sum + run.imported, 0);
-  const totalRejected = IMPORT_RUNS.reduce((sum, run) => sum + run.rejected, 0);
-  const healthyStages = PIPELINE_STAGES.filter((stage) => stage.state === "healthy").length;
+  const healthLabel = useMemo(() => {
+    if (connected.length === 0) return "No connected sources";
+    if (diagnostics.some((item) => item.status === "down")) return "Degraded";
+    if (diagnostics.some((item) => item.status === "degraded")) return "Degraded";
+    return `${connected.length} source(s) connected`;
+  }, [connected.length, diagnostics]);
 
   return (
-    <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Imports</h1>
-          <p className="mt-1 text-[12px] leading-6 text-white/46 sm:text-[13px]">
-            Ingest project context into MemoryOS with auditable import runs and field mapping quality.
+    <div className="space-y-3 text-foreground">
+      <motion.div
+        className="relative overflow-hidden rounded-[10px] border border-border bg-background px-4 py-4"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: EASE_OUT }}
+      >
+        <div className="absolute inset-0 bg-primary/5" />
+        <motion.div
+          className="pointer-events-none absolute inset-0"
+          animate={{ x: [0, 2, -2, 0], y: [0, -1, 1, 0] }}
+          transition={{ duration: 9, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        >
+          <DitherBackground className="h-full w-full opacity-25" accent="var(--color-chart-5)" density={0.54} cols={260} rows={72} />
+        </motion.div>
+        <div className="relative z-10">
+          <h2 className="inline-block rounded-[6px] px-2 py-1 text-[17px] font-semibold">
+            Imports
+          </h2>
+          <br/>
+          <p className="mt-1 inline-block rounded-[6px] px-2 py-1 text-[12px] text-muted-foreground">
+            Live connector ingestion and sync status from real backend integrations.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="rounded-[8px] border border-[#4f93ff]/30 bg-[#4f93ff]/8 px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-[#8bb5ff]"
-          >
-            NEW IMPORT JOB
-          </button>
-          <button
-            type="button"
-            className="rounded-[8px] border border-white/10 bg-[#111111] px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-white/62"
-          >
-            OPEN CONNECTORS
-          </button>
+      </motion.div>
+
+      {errorMessage ? (
+        <div className="rounded-[10px] border border-destructive/40 bg-destructive/15 px-3.5 py-3 text-[12px] text-destructive">
+          {errorMessage}
         </div>
+      ) : null}
+      {!errorMessage && loading ? (
+        <div className="rounded-[10px] border border-border bg-muted px-3.5 py-3 text-[12px] text-muted-foreground">
+          Loading live connector status...
+        </div>
+      ) : null}
+      <p className="text-[11px] text-muted-foreground">
+        Last updated: {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Waiting for backend"}
+      </p>
+
+      <div className="grid gap-2.5 md:grid-cols-3">
+        {[
+          { label: "Connected", value: connected.length, tone: "var(--color-chart-5)" },
+          { label: "Records", value: totalRecords, tone: "var(--color-chart-4)" },
+          { label: "Health", value: healthLabel, tone: "var(--color-chart-2)" },
+        ].map((card) => (
+          <div key={card.label} className="relative overflow-hidden rounded-[10px] border border-border bg-card px-3.5 py-3">
+            <DitherBackground
+              cols={52}
+              rows={20}
+              accent={card.tone}
+              density={0.52}
+              opacity={0.22}
+              className="pointer-events-none absolute inset-0"
+            />
+            <p className="relative">
+              <span className="inline-block rounded-[4px] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-foreground">
+                {card.label}
+              </span>
+            </p>
+            <p className="relative mt-1">
+              <span className="inline-block rounded-[4px] px-1.5 py-0.5 text-[18px] font-semibold text-foreground">
+                {card.value}
+              </span>
+            </p>
+          </div>
+        ))}
       </div>
 
-      <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[10px] border border-white/10 bg-[#161616] px-3.5 py-3" style={{ borderTopColor: "#4f93ff", borderTopWidth: "2px" }}>
-          <p className="text-[10px] uppercase tracking-[0.1em] text-white/36">Imported records</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{totalImported}</p>
-        </div>
-        <div className="rounded-[10px] border border-white/10 bg-[#161616] px-3.5 py-3" style={{ borderTopColor: "#ff6d6d", borderTopWidth: "2px" }}>
-          <p className="text-[10px] uppercase tracking-[0.1em] text-white/36">Rejected records</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{totalRejected}</p>
-        </div>
-        <div className="rounded-[10px] border border-white/10 bg-[#161616] px-3.5 py-3" style={{ borderTopColor: "#14c38e", borderTopWidth: "2px" }}>
-          <p className="text-[10px] uppercase tracking-[0.1em] text-white/36">Pipeline stages healthy</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">
-            {healthyStages} / {PIPELINE_STAGES.length}
+      <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="rounded-[10px] border border-border bg-card p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground/75">
+            Sources
           </p>
-        </div>
-        <div className="rounded-[10px] border border-white/10 bg-[#161616] px-3.5 py-3" style={{ borderTopColor: "#9b7bff", borderTopWidth: "2px" }}>
-          <p className="text-[10px] uppercase tracking-[0.1em] text-white/36">Active source</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{activeSource?.name ?? "-"}</p>
-        </div>
-      </div>
-
-      <div className="mt-2.5 rounded-[10px] border border-white/10 bg-[#161616] px-4 py-4">
-        <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/34">
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <ellipse cx="5.5" cy="3" rx="4" ry="1.5" /><path d="M1.5 3v2c0 .83 1.79 1.5 4 1.5S9.5 5.83 9.5 5V3" /><path d="M1.5 5v2c0 .83 1.79 1.5 4 1.5S9.5 7.83 9.5 7V5" />
-          </svg>
-          Source Connectors
-        </p>
-        <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
-          {SOURCE_CONNECTORS.map((source) => (
-            <button
-              key={source.id}
-              type="button"
-              onClick={() => {
-                setActiveSourceId(source.id);
-                setImportMode(source.mode);
-              }}
-              className={`rounded-[10px] border px-3.5 py-3 text-left transition ${
-                activeSourceId === source.id
-                  ? "border-[#4f93ff]/45 bg-[#4f93ff]/8"
-                  : "border-white/10 bg-[#111111] hover:border-white/20"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-semibold tracking-[-0.02em]">{source.name}</p>
-                <span
-                  className="rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em]"
-                  style={{
-                    borderColor: `${toneForStatus(source.status)}55`,
-                    color: toneForStatus(source.status),
-                    background: `${toneForStatus(source.status)}12`,
-                  }}
-                >
-                  {source.status}
-                </span>
-              </div>
-              <p className="mt-1 text-[11px] text-white/52">{source.type}</p>
-              <p className="mt-1 text-[11px] text-white/40">
-                {source.records} records · {source.lastSync}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="rounded-[10px] border border-white/10 bg-[#161616] px-4 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/34">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="2,1.5 9.5,5.5 2,9.5" />
-              </svg>
-              Import Runs
-            </p>
-            <div className="flex items-center overflow-hidden rounded-[8px] border border-white/10 bg-[#111111]">
-              {(["batch", "continuous"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setImportMode(mode)}
-                  className={`px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] transition ${
-                    importMode === mode ? "bg-[#1f1f1f] text-white" : "text-white/46 hover:text-white/76"
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
-          </div>
-         
-          <div className="mt-2.5 overflow-x-auto rounded-[10px] border border-white/10 bg-[#111111]">
-            <table className="min-w-full divide-y divide-white/10">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-white/34">
-                  <th className="px-3 py-2.5">Source</th>
-                  <th className="px-3 py-2.5">Status</th>
-                  <th className="px-3 py-2.5">Imported</th>
-                  <th className="px-3 py-2.5">Rejected</th>
-                  <th className="px-3 py-2.5">Duration</th>
-                  <th className="px-3 py-2.5">Started</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/8">
-                {visibleRuns.map((run) => (
-                  <tr key={run.id} className="text-[12px]">
-                    <td className="px-3 py-2.5 text-white/82">{run.source}</td>
-                    <td className="px-3 py-2.5">
-                      <span
-                        className="rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em]"
-                        style={{
-                          borderColor: `${toneForStatus(run.status)}55`,
-                          color: toneForStatus(run.status),
-                          background: `${toneForStatus(run.status)}14`,
-                        }}
-                      >
-                        {run.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2.5 text-white/62">{run.imported}</td>
-                    <td className="px-3 py-2.5 text-white/62">{run.rejected}</td>
-                    <td className="px-3 py-2.5 text-white/62">{run.durationMs > 0 ? `${run.durationMs}ms` : "-"}</td>
-                    <td className="px-3 py-2.5 text-white/62">{run.startedAt}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <div className="rounded-[10px] border border-white/10 bg-[#161616] px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/34">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1.5 5.5h2.5M4 3.5l2 2-2 2M7 5.5h2.5" />
-              </svg>
-              Ingestion Pipeline
-            </p>
-            <div className="mt-2.5 space-y-2">
-              {PIPELINE_STAGES.map((stage) => (
-                <div key={stage.name} className="flex items-center justify-between gap-3 rounded-[8px] border border-white/10 bg-[#111111] px-3 py-2.5">
-                  <p className="text-[12px] text-white/74">{stage.name}</p>
-                  <span
-                    className="rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em]"
-                    style={{
-                      borderColor: `${toneForStatus(stage.state)}55`,
-                      color: toneForStatus(stage.state),
-                      background: `${toneForStatus(stage.state)}14`,
-                    }}
-                  >
-                    {stage.state}
-                  </span>
+          <div className="mt-2 space-y-2">
+            {connectors.map((connector) => (
+              <div key={connector.id} className="rounded-[8px] border border-border bg-card/60 px-3 py-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[12px] font-semibold">{connector.name}</p>
+                    <p className="text-[11px] text-muted-foreground">{connector.type}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] ${
+                        connector.status === "connected"
+                          ? "border-primary/45 bg-primary/10 text-primary"
+                          : connector.status === "pending"
+                            ? "border-muted-foreground/45 bg-muted text-muted-foreground"
+                            : "border-border bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {connector.status}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={connector.status !== "connected" || busyId === connector.type}
+                      onClick={() => void syncConnector(connector.type)}
+                      className="rounded-[7px] border border-primary/45 bg-primary px-2.5 py-1 text-[10px] font-semibold tracking-[0.08em] text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {busyId === connector.type ? "SYNCING" : "SYNC"}
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  Records: {connector.recordCount ?? 0} · Last sync: {connector.lastSyncAt ? new Date(connector.lastSyncAt).toLocaleString() : "Never"}
+                </p>
+              </div>
+            ))}
+            {connectors.length === 0 ? (
+              <p className="text-[12px] text-muted-foreground">No connector data returned yet.</p>
+            ) : null}
           </div>
+        </section>
 
-          <div className="rounded-[10px] border border-white/10 bg-[#161616] px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/34">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3.5 3L1 5.5l2.5 2.5M7.5 3L10 5.5 7.5 8" />
-              </svg>
-              Payload Format
-            </p>
-            <div className="mt-2.5 flex items-center overflow-hidden rounded-[8px] border border-white/10 bg-[#111111]">
-              {([
-                ["jsonl", "JSONL"],
-                ["markdown", "Markdown"],
-                ["api-push", "API Push"],
-              ] as const).map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setFormat(value)}
-                  className={`px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] transition ${
-                    format === value ? "bg-[#1f1f1f] text-white" : "text-white/46 hover:text-white/76"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <pre className="mt-3 overflow-x-auto rounded-[8px] border border-white/10 bg-[#0f0f0f] p-3 text-[11px] leading-6 text-white/72">
-              <code>{`{
-  "workspace": "acm",
-  "project": "continuity-workspace",
-  "thread": "onboarding-thread-01",
-  "items": [{ "type": "decision", "text": "..." }]
-}`}</code>
-            </pre>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-2">
-        <div className="rounded-[10px] border border-white/10 bg-[#151515] px-4 py-4">
-          <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/34">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 3.5h2.5M6 3.5h3M4.5 3.5L6 5.5l-1.5 2M2 7.5h2.5M6 7.5h3" />
-            </svg>
-            Field Mapping Quality
+        <section className="rounded-[10px] border border-border bg-card p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground/75">
+            Activity
           </p>
-          <div className="mt-2.5 overflow-x-auto">
-            <table className="min-w-full divide-y divide-white/10">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-white/34">
-                  <th className="px-2.5 py-2">Source field</th>
-                  <th className="px-2.5 py-2">Memory field</th>
-                  <th className="px-2.5 py-2">Confidence</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/6">
-                {MAPPING_ROWS.map((row) => (
-                  <tr key={`${row.sourceField}-${row.memoryField}`} className="text-[12px]">
-                    <td className="px-2.5 py-2.5 text-white/74">{row.sourceField}</td>
-                    <td className="px-2.5 py-2.5 font-semibold text-white/82">{row.memoryField}</td>
-                    <td className="px-2.5 py-2.5 text-white/62">{row.confidence}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-2 space-y-2">
+            {activity.map((item) => (
+              <div key={item.id} className="rounded-[8px] border border-border bg-card/60 px-3 py-2">
+                <p className="text-[12px] text-foreground">{item.message}</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">{item.at}</p>
+              </div>
+            ))}
+            {activity.length === 0 ? (
+              diagnostics.length > 0 ? (
+                diagnostics.slice(0, 8).map((item, index) => (
+                  <div key={`${item.connectorType}-${item.checkedAt}-${index}`} className="rounded-[8px] border border-border bg-card/60 px-3 py-2">
+                    <p className="text-[12px] text-foreground">
+                      {item.connectorType} health={item.status}
+                    </p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      {new Date(item.checkedAt).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[12px] text-muted-foreground">No sync activity yet.</p>
+              )
+            ) : null}
           </div>
-        </div>
-
-        <div className="rounded-[10px] border border-white/10 bg-[#151515] px-4 py-4">
-          <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-white/34">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M1 5.5S2.5 2 5.5 2 10 5.5 10 5.5 8.5 9 5.5 9 1 5.5 1 5.5z" /><circle cx="5.5" cy="5.5" r="1.5" />
-            </svg>
-            Import Preview
-          </p>
-          <div className="mt-2.5 overflow-x-auto">
-            <table className="min-w-full divide-y divide-white/10">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-white/34">
-                  <th className="px-2.5 py-2">Source</th>
-                  <th className="px-2.5 py-2">Type</th>
-                  <th className="px-2.5 py-2">Mapped output</th>
-                  <th className="px-2.5 py-2">Score</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/6">
-                {PREVIEW_ROWS.map((row) => (
-                  <tr key={row.source} className="text-[12px] text-white/76">
-                    <td className="px-2.5 py-2.5">{row.source}</td>
-                    <td className="px-2.5 py-2.5">
-                      <span className="rounded-[6px] border border-white/10 bg-[#101010] px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-white/56">
-                        {row.type}
-                      </span>
-                    </td>
-                    <td className="px-2.5 py-2.5">{row.mapped}</td>
-                    <td className="px-2.5 py-2.5">{row.score.toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        </section>
       </div>
-    </>
+    </div>
   );
 }

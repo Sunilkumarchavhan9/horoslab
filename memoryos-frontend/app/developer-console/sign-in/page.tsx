@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { ClerkConsoleSignIn } from "@/components/auth/clerk-console-sign-in";
 import { ConsoleAuthShell } from "@/components/auth/console-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +19,8 @@ export default async function DeveloperConsoleSignInPage() {
 
   return (
     <ConsoleAuthShell
-      title="Your developer memory layer awaits"
-      subtitle="Sign in to access the MemoryOS developer console, API keys, workspace controls, and usage dashboard."
+      title="Your continuity control plane awaits"
+      subtitle="Sign in to access the MemoryOS developer console, API keys, governance controls, and continuity proof."
       footerLabel="BUILT FOR DEVELOPER TEAMS USING MEMORYOS"
     >
       {clerkEnabled ? (

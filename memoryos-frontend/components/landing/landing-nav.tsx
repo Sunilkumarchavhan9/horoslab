@@ -1,37 +1,114 @@
 import { MemoryStarLogo } from "./memory-star-logo";
+import type { ComponentType } from "react";
+import {
+  Activity,
+  Blocks,
+  BookOpenText,
+  Brain,
+  Briefcase,
+  Cable,
+  FileCode2,
+  Gauge,
+  GraduationCap,
+  Layers,
+  Package,
+  PlugZap,
+  Rocket,
+  Settings2,
+  Users,
+  WalletCards,
+} from "lucide-react";
 
-const PRIMARY_LINKS = [
-  { label: "Research", href: "#benchmarks" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Docs", href: "#developer-experience" },
-  { label: "Blog", href: "#what-we-do" },
+const PERSONAL_APP_COMING_SOON_HREF = "/personal-app-coming-soon";
+
+const NAV_ITEM_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  "Core Engine": Activity,
+  "Developer Experience": Settings2,
+  "Personal Memory": Brain,
+  "API Reference": BookOpenText,
+  "Client SDKs": FileCode2,
+  "Context Stack": Layers,
+  "Benchmarks": Gauge,
+  "Case Studies": Briefcase,
+  "Starter (Free)": Rocket,
+  "Pro ($29/mo)": WalletCards,
+  "Scale ($299/mo)": Users,
+  "Personal App": Blocks,
+  Plugins: PlugZap,
+};
+
+const NAV_DROPDOWNS = [
+  {
+    label: "Platform",
+    width: "w-[400px]",
+    items: [
+      { label: "Core Engine", description: "High-performance memory ingestion and indexing", href: "#what-we-do" },
+      { label: "Developer Experience", description: "Next-generation observability and control planes", href: "#developer-experience" },
+      { label: "Personal Memory", description: "Dedicated memory graph for individual workflows", href: "#personal-memory" }
+    ]
+  },
+  {
+    label: "Integrate",
+    width: "w-[400px]",
+    items: [
+      { label: "API Reference", description: "Complete documentation for REST and GraphQL endpoints", href: "#developer-experience" },
+      { label: "Client SDKs", description: "Native libraries for TypeScript, Python, and Go", href: "#developer-experience" },
+      { label: "Context Stack", description: "Connect your existing agents and swarms easily", href: "#context-stack" }
+    ]
+  },
+  {
+    label: "Proof",
+    width: "w-[300px]",
+    items: [
+      { label: "Benchmarks", description: "See our zero-miss-rate test results in action", href: "#benchmarks" },
+      { label: "Case Studies", description: "Learn how top teams scale with MemoryOS", href: "#benchmarks" }
+    ]
+  },
+  {
+    label: "Pricing",
+    width: "w-[420px]",
+    items: [
+      { label: "Starter (Free)", description: "For individual developers validating workflows", href: "/developer-console/sign-in?plan=starter" },
+      { label: "Pro ($29/mo)", description: "For active builders running multi-agent workflows", href: "/developer-console/sign-in?plan=pro" },
+      { label: "Scale ($299/mo)", description: "For teams running shared company memory", href: "/developer-console/sign-in?plan=scale" }
+    ]
+  },
+  {
+    label: "Consumer",
+    width: "w-[300px]",
+    items: [
+      { label: "Personal App", description: "Page coming soon. We are actively building this.", href: PERSONAL_APP_COMING_SOON_HREF },
+      { label: "Plugins", description: "Extend capabilities with 3rd-party integrations", href: "#developer-experience" }
+    ]
+  }
 ];
+
+function NavItemIcon({ label }: { label: string }) {
+  const Icon = NAV_ITEM_ICONS[label] ?? Cable;
+
+  return <Icon className="h-[16px] w-[16px] text-[#5d6f87]" aria-hidden="true" />;
+}
 
 function GithubIcon() {
   return (
-    <svg height="18" width="18" viewBox="0 0 16 16" aria-hidden="true">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M8 0C3.58 0 0 3.57879 0 7.99729C0 11.5361 2.29 14.5251 5.47 15.5847C5.87 15.6547 6.02 15.4148 6.02 15.2049C6.02 15.0149 6.01 14.3851 6.01 13.7154C4 14.0852 3.48 13.2255 3.32 12.7757C3.23 12.5458 2.84 11.836 2.5 11.6461C2.22 11.4961 1.82 11.1262 2.49 11.1162C3.12 11.1062 3.57 11.696 3.72 11.936C4.44 13.1455 5.59 12.8057 6.05 12.5957C6.12 12.0759 6.33 11.726 6.56 11.5261C4.78 11.3262 2.92 10.6364 2.92 7.57743C2.92 6.70773 3.23 5.98797 3.74 5.42816C3.66 5.22823 3.38 4.40851 3.82 3.30888C3.82 3.30888 4.49 3.09895 6.02 4.1286C6.66 3.94866 7.34 3.85869 8.02 3.85869C8.7 3.85869 9.38 3.94866 10.02 4.1286C11.55 3.08895 12.22 3.30888 12.22 3.30888C12.66 4.40851 12.38 5.22823 12.3 5.42816C12.81 5.98797 13.12 6.69773 13.12 7.57743C13.12 10.6464 11.25 11.3262 9.47 11.5261C9.76 11.776 10.01 12.2558 10.01 13.0056C10.01 14.0752 10 14.9349 10 15.2049C10 15.4148 10.15 15.6647 10.55 15.5847C12.1381 15.0488 13.5182 14.0284 14.4958 12.6673C15.4735 11.3062 15.9996 9.67293 16 7.99729C16 3.57879 12.42 0 8 0Z"
-        fill="currentColor"
-      />
+    <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" />
     </svg>
   );
 }
 
 function XIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="currentColor" aria-hidden="true">
-      <path d="M18.9 3H21l-4.59 5.25L21.8 21h-4.22l-3.3-7.37L7.83 21H5.7l4.9-5.6L5.4 3h4.33l2.98 6.7L18.9 3Z" />
+    <svg viewBox="0 0 16 16" className="h-[16px] w-[16px]" fill="currentColor" aria-hidden="true">
+      <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z" />
     </svg>
   );
 }
 
 function DiscordIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="currentColor" aria-hidden="true">
-      <path d="M20.32 4.37A16.7 16.7 0 0 0 16.2 3.1l-.2.4a15.4 15.4 0 0 1 3.72 1.79a12.8 12.8 0 0 0-4.54-2.08a15.7 15.7 0 0 0-6.36 0a12.8 12.8 0 0 0-4.54 2.08A15.4 15.4 0 0 1 8 3.5l-.2-.4a16.7 16.7 0 0 0-4.12 1.27C1.08 8.25.39 12.03.74 15.76A16.9 16.9 0 0 0 5.8 18.3l.95-1.56a10.8 10.8 0 0 1-1.5-.73l.37-.28c2.9 1.36 6.04 1.36 8.9 0l.37.28c-.48.28-.98.52-1.5.73l.95 1.56a16.9 16.9 0 0 0 5.06-2.54c.41-4.33-.7-8.07-2.08-11.39ZM9.68 13.54c-.87 0-1.58-.8-1.58-1.78s.7-1.78 1.58-1.78c.89 0 1.6.8 1.58 1.78c0 .98-.7 1.78-1.58 1.78Zm4.64 0c-.87 0-1.58-.8-1.58-1.78s.7-1.78 1.58-1.78c.89 0 1.6.8 1.58 1.78c0 .98-.69 1.78-1.58 1.78Z" />
+    <svg viewBox="0 0 16 16" className="h-[16px] w-[16px]" fill="currentColor" aria-hidden="true">
+      <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612" />
     </svg>
   );
 }
@@ -59,42 +136,49 @@ function Chevron() {
 
 export function LandingNav() {
   return (
-    <header className="border-b border-[#c9d8ee] bg-white">
-      <div className="grid items-center gap-4 px-5 py-3 lg:h-[78px] lg:grid-cols-[auto_1fr_auto] lg:px-7 lg:py-0">
+    <header className="border-b border-[#c9d8ee] bg-white relative z-50">
+      <div className="grid items-center gap-4 px-5 py-3 lg:h-[78px] lg:grid-cols-[auto_1fr_auto] lg:px-7 lg:py-0 relative z-50">
         <div className="flex items-center">
           <MemoryStarLogo />
         </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-6 text-[15px] text-[#101827]">
-          {PRIMARY_LINKS.map((item) => (
-            <a key={item.label} href={item.href} className="transition hover:text-[#2166f3]">
-              {item.label}
-            </a>
-          ))}
-
-          <div className="group relative">
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 text-[15px] text-[#101827] transition hover:text-[#2166f3]"
-            >
-              Consumer
-              <Chevron />
-            </button>
-            <div className="invisible absolute left-1/2 top-[calc(100%+10px)] z-40 w-[220px] -translate-x-1/2 border border-[#c9d8ee] bg-white opacity-0 shadow-[0_12px_30px_rgba(15,23,42,0.12)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <a
-                href="/developer-console/sign-in"
-                className="block border-b border-[#d7e2f3] px-4 py-3 text-[15px] text-[#111827] hover:bg-[#f6f9ff]"
+        <nav className="flex flex-wrap items-center justify-center gap-8 text-[15px] text-[#101827]">
+          {NAV_DROPDOWNS.map((dropdown) => (
+            <div key={dropdown.label} className="group relative py-6 -my-6">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 text-[15px] text-[#101827] transition hover:text-blue-600"
               >
-                App
-              </a>
-              <a
-                href="#developer-experience"
-                className="block px-4 py-3 text-[15px] text-[#111827] hover:bg-[#f6f9ff]"
+                {dropdown.label}
+                <Chevron />
+              </button>
+              
+              {/* Mega Menu Dropdown */}
+              <div 
+                className={`invisible absolute left-1/2 top-full z-[100] ${dropdown.width} -translate-x-1/2 translate-y-2 rounded-xl border border-[#c9d8ee] bg-white p-3 opacity-0 shadow-[0_20px_40px_rgba(15,23,42,0.12)] transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100`}
               >
-                Plugins
-              </a>
+                <div className="flex flex-col gap-1">
+                  {dropdown.items.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      className="block rounded-lg px-4 py-3 transition-colors hover:bg-[#f6f9ff]"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <NavItemIcon label={item.label} />
+                        <p className="text-[14px] font-semibold text-slate-900 group-hover/link:text-blue-600">
+                          {item.label}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-[13px] text-[#5d6f87] leading-relaxed">
+                        {item.description}
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </nav>
 
         <div className="flex flex-wrap items-center justify-end gap-4 text-[14px] text-[#111827]">
@@ -102,7 +186,7 @@ export function LandingNav() {
             href="https://github.com/Sunilkumarchavhan9/MemoryOS"
             target="_blank"
             rel="noreferrer"
-            className="hidden items-center gap-1.5 transition hover:text-[#2166f3] xl:inline-flex"
+            className="hidden items-center gap-1.5 transition hover:text-blue-600 xl:inline-flex"
           >
             <GithubIcon />
             <span>0</span>
@@ -111,7 +195,7 @@ export function LandingNav() {
             href="https://x.com"
             target="_blank"
             rel="noreferrer"
-            className="hidden items-center gap-1.5 transition hover:text-[#2166f3] xl:inline-flex"
+            className="hidden items-center gap-1.5 transition hover:text-blue-600 xl:inline-flex"
           >
             <XIcon />
             <span>0</span>
@@ -120,34 +204,40 @@ export function LandingNav() {
             href="https://discord.com"
             target="_blank"
             rel="noreferrer"
-            className="hidden items-center gap-1.5 transition hover:text-[#2166f3] xl:inline-flex"
+            className="hidden items-center gap-1.5 transition hover:text-blue-600 xl:inline-flex"
           >
             <DiscordIcon />
             <span>0</span>
           </a>
 
-          <div className="group relative">
+          <div className="group relative py-6 -my-6">
             <button
               type="button"
-              className="inline-flex items-center gap-2 border border-[#bfd1ee] bg-white px-5 py-2.5 text-[14px] font-medium transition hover:border-[#9db8e3] hover:text-[#2166f3]"
+              className="inline-flex items-center gap-2 border border-[#bfd1ee] bg-white px-5 py-2.5 text-[14px] font-medium transition hover:border-[#9db8e3] hover:text-blue-600 rounded-md"
             >
               Login
               <Chevron />
             </button>
-            <div className="invisible absolute right-0 top-[calc(100%+10px)] z-40 w-[300px] border border-[#c9d8ee] bg-white opacity-0 shadow-[0_12px_30px_rgba(15,23,42,0.12)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <a href="/developer-console/sign-in" className="block border-b border-[#d7e2f3] px-5 py-4 hover:bg-[#f6f9ff]">
-                <p className="text-[15px] font-medium text-[#111827]">Developer Console</p>
-                <p className="mt-1 text-[13px] text-[#5d6f87]">API keys, usage, docs</p>
+            <div className="invisible absolute right-0 top-full z-[100] w-[300px] translate-y-2 rounded-xl border border-[#c9d8ee] bg-white p-3 opacity-0 shadow-[0_20px_40px_rgba(15,23,42,0.12)] transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <a href="/developer-console/sign-in" className="block rounded-lg px-4 py-3 transition-colors hover:bg-[#f6f9ff]">
+                <p className="flex items-center gap-2 text-[14px] font-semibold text-slate-900">
+                  <GraduationCap className="h-[16px] w-[16px] text-[#5d6f87]" aria-hidden="true" />
+                  Developer Console
+                </p>
+                <p className="mt-1 text-[13px] text-[#5d6f87] leading-relaxed">API keys, usage limits, and documentation</p>
               </a>
-              <a href="/personal-app" className="block px-5 py-4 hover:bg-[#f6f9ff]">
-                <p className="text-[15px] font-medium text-[#111827]">Personal App</p>
-                <p className="mt-1 text-[13px] text-[#5d6f87]">Your memory dashboard</p>
+              <a href={PERSONAL_APP_COMING_SOON_HREF} className="block mt-1 rounded-lg px-4 py-3 transition-colors hover:bg-[#f6f9ff]">
+                <p className="flex items-center gap-2 text-[14px] font-semibold text-slate-900">
+                  <Blocks className="h-[16px] w-[16px] text-[#5d6f87]" aria-hidden="true" />
+                  Personal App
+                </p>
+                <p className="mt-1 text-[13px] text-[#5d6f87] leading-relaxed">Page coming soon. We are actively building this.</p>
               </a>
             </div>
           </div>
           <a
             href="/developer-console/sign-in"
-            className="inline-flex items-center gap-2 bg-[#2166f3] px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-[#0f56de] lg:hidden"
+            className="inline-flex items-center gap-2 bg-blue-600 px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-blue-700 rounded-md lg:hidden"
           >
             Start
           </a>

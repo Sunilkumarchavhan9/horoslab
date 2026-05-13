@@ -170,6 +170,45 @@ describe("MCP HTTP contract", () => {
     });
   });
 
+  it("invokes memory.after_model with contract-only input over HTTP", async () => {
+    mocks.afterModel.mockResolvedValue({
+      acceptedCount: 1,
+      rejectedCount: 0,
+      contractFieldCount: 3,
+    });
+
+    const res = await request(app)
+      .post("/api/mcp/invoke")
+      .set("authorization", authHeader)
+      .send({
+        name: "memory.after_model",
+        input: {
+          contract: {
+            goal: "Ship MCP contract support.",
+            decisions: ["Use memory.after_model for structured ingest."],
+            next_actions: ["Add MCP contract tests."],
+          },
+          enforceContract: true,
+          threadId: "thread-contract-http-1",
+        },
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("ok", true);
+    expect(res.body).toHaveProperty("data.name", "memory.after_model");
+    expect(res.body).toHaveProperty("data.result.contractFieldCount", 3);
+    expect(mocks.afterModel).toHaveBeenCalledWith({
+      userId: authUserId,
+      contract: {
+        goal: "Ship MCP contract support.",
+        decisions: ["Use memory.after_model for structured ingest."],
+        next_actions: ["Add MCP contract tests."],
+      },
+      enforceContract: true,
+      threadId: "thread-contract-http-1",
+    });
+  });
+
   it("invokes memory.handoff over HTTP", async () => {
     mocks.runHandoffFlowLangGraph.mockResolvedValue({
       summary: "Handoff for MemoryOS.",

@@ -21,6 +21,7 @@ export interface RetrieveRelevantMemoryInput {
   workspace?: string;
   project?: string;
   threadId?: string;
+  strictThreadId?: boolean;
 }
 
 export interface RankedMemory extends MemoryStoreSearchResult {
@@ -345,6 +346,27 @@ function contextToSearchResult(
     memory,
     metadata: result.metadata,
   };
+}
+
+function candidateMatchesThreadScope(candidate: MemoryStoreSearchResult, threadId: string): boolean {
+  const metadata = candidate.metadata;
+  if (metadata && typeof metadata === "object") {
+    const metadataThread =
+      typeof metadata.threadId === "string"
+        ? metadata.threadId
+        : typeof metadata.thread_id === "string"
+          ? metadata.thread_id
+          : undefined;
+    if (metadataThread === threadId) {
+      return true;
+    }
+  }
+
+  if (!candidate.memory) {
+    return false;
+  }
+
+  return candidate.memory.includes(`threadId=${threadId}`) || candidate.memory.includes(`thread=${threadId}`);
 }
 
 function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata {
@@ -782,7 +804,7 @@ async function fetchCandidatePool(
     memoryToSearchResult(memory, input.question),
   );
 
-  return Array.from(
+  const mergedCandidates = Array.from(
     new Map(
       [...recentCandidates, ...contextCandidates, ...memoryStoreCandidates].map((item) => [
         getLogicalMemoryKey(item),
@@ -790,6 +812,15 @@ async function fetchCandidatePool(
       ]),
     ).values(),
   );
+
+  if (input.strictThreadId) {
+    if (!input.threadId) {
+      return [];
+    }
+    return mergedCandidates.filter((candidate) => candidateMatchesThreadScope(candidate, input.threadId as string));
+  }
+
+  return mergedCandidates;
 }
 
 function toDebugItem(

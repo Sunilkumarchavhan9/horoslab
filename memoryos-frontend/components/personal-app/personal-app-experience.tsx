@@ -81,7 +81,11 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
 }
 
 async function fetchPersonalApi<T>(path: string, token: string, init?: RequestInit): Promise<T> {
-  const baseUrl = (process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN ?? "http://localhost:3001").replace(/\/+$/, "");
+  const configuredOrigin = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim();
+  const baseUrl =
+    configuredOrigin && configuredOrigin !== "same-origin"
+      ? configuredOrigin.replace(/\/+$/, "")
+      : "";
   const response = await fetch(`${baseUrl}${path}`, {
     method: init?.method ?? "GET",
     ...init,

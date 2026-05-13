@@ -64,6 +64,10 @@ describe("Adapter contract registry", () => {
   });
 
   it("provides a no-op default ContextAdapter and supports override", async () => {
+    const originalApiKey = process.env.SUPERMEMORY_API_KEY;
+    delete process.env.SUPERMEMORY_API_KEY;
+    resetContextAdapter();
+    
     const defaultAdapter = getContextAdapter();
     await expect(
       defaultAdapter.ingestContext({
@@ -105,6 +109,10 @@ describe("Adapter contract registry", () => {
       query: "debug history",
       topK: 3,
     });
+    
+    if (originalApiKey) {
+      process.env.SUPERMEMORY_API_KEY = originalApiKey;
+    }
   });
 
   it("uses overridden WorkflowStateAdapter contract implementation", async () => {

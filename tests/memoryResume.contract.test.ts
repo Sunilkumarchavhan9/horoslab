@@ -83,6 +83,7 @@ describe("Memory Resume Route Contract", () => {
       question: "where did I leave off?",
       topK: 5,
       includeArchived: false,
+      previousCheckpoint: null,
     });
   });
 
@@ -116,6 +117,7 @@ describe("Memory Resume Route Contract", () => {
       threadId: "thread-9",
       topK: undefined,
       includeArchived: undefined,
+      previousCheckpoint: null,
     });
   });
 });

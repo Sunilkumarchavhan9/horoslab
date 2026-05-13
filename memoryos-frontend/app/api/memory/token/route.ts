@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { SignJWT } from "jose";
+import { isClerkEnabled } from "@/lib/clerk";
 
 export async function GET(): Promise<NextResponse> {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  let userId: string | null = null;
+
+  if (isClerkEnabled()) {
+    const authState = await auth();
+    userId = authState.userId;
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  } else {
+    userId = process.env.MEMORYOS_DEV_USER_ID?.trim() || "user-demo";
   }
 
   const secret = process.env.MEMORYOS_JWT_SECRET ?? process.env.JWT_SECRET;

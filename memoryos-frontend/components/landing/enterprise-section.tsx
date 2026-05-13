@@ -9,19 +9,19 @@ const LOGO_PLACEHOLDERS = [
 
 const ENTERPRISE_CARDS = [
   {
-    title: "Deploy inside your stack",
+    title: "Deploy in your stack",
     body:
-      "Run MemoryOS behind your IDEs, copilots, agent runners, and internal tools with workspace-level control over memory scope and retention.",
+      "Run MemoryOS behind cloud agents, local model runners, agent frameworks, and internal tools with workspace-level control over memory scope and retention.",
     tags: ["VPC-ready", "workspace isolation", "self-host options"],
   },
   {
-    title: "Trust, audit, and explain",
+    title: "Audit every memory decision",
     body:
       "Timeline, revisions, and memory explainability give teams a clear record of what changed, why it changed, and what was surfaced to agents.",
     tags: ["timeline", "revisions", "memory explain"],
   },
   {
-    title: "Own the memory layer",
+    title: "Own your company brain",
     body:
       "Keep developer knowledge inside your product stack. Project memory stays searchable, exportable, and visible to the teams that rely on it.",
     tags: ["export control", "shared memory", "team visibility"],
@@ -33,11 +33,11 @@ export function EnterpriseSection() {
     <section className="border-b border-[#c9d8ee] bg-white">
       <Reveal className="px-5 py-12 text-center lg:px-7 lg:py-16">
         <h2 className="mx-auto max-w-[900px] text-[34px] font-semibold tracking-[-0.05em] text-slate-900 md:text-[54px]">
-          Memory infrastructure for serious teams
+          Production memory infrastructure for serious teams
         </h2>
         <p className="mx-auto mt-5 max-w-[860px] text-[16px] leading-[1.7] text-[#6a778a] md:text-[19px]">
-          MemoryOS is designed for platform teams, internal copilots, and agent products that need
-          shared developer context, trustable recall, and operational control without losing speed.
+          MemoryOS is built for platform teams and agent products that need durable shared context,
+          interoperability, and governance without slowing engineering velocity.
         </p>
       </Reveal>
 
@@ -71,7 +71,7 @@ export function EnterpriseSection() {
         {ENTERPRISE_CARDS.map((card, index) => (
           <Reveal key={card.title} delay={0.08 + index * 0.04} className={index < 2 ? "border-b border-[#c9d8ee] lg:border-b-0 lg:border-r" : "border-b border-[#c9d8ee] lg:border-b-0"}>
             <div className="h-full px-7 py-9">
-              <div className="grid h-12 w-12 place-items-center bg-white text-[#2166f3]">
+              <div className="grid h-12 w-12 place-items-center bg-white text-[hsl(var(--primary))]">
                 <span className="text-[22px]">{index === 0 ? "⌂" : index === 1 ? "◎" : "↓"}</span>
               </div>
               <h3 className="mt-5 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">
@@ -103,13 +103,13 @@ export function EnterpriseSection() {
               Launch MemoryOS with your platform team
             </p>
             <p className="mt-2 text-[14px] leading-6 text-[#61738d]">
-              We help teams scope workspace design, rollout sequence, trust controls, and first production
-              continuity benchmarks.
+              We help teams scope memory contracts, rollout sequence, governance policies, and first
+              continuity benchmark baselines.
             </p>
           </div>
           <a
             href="#contact"
-            className="inline-flex min-w-[190px] items-center justify-center bg-[#2166f3] px-6 py-3 text-[14px] font-medium text-white"
+            className="inline-flex min-w-[190px] items-center justify-center bg-[hsl(var(--primary))] px-6 py-3 text-[14px] font-medium text-white"
           >
             Request enterprise intro →
           </a>

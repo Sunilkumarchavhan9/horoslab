@@ -6,7 +6,6 @@ import { useSignUp } from "@clerk/nextjs/legacy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { warmMemoryTokenBridge } from "@/lib/memory-token";
 
 type ClerkConsoleSignUpProps = {
   redirectTo: "/developer-console";
@@ -68,10 +67,11 @@ function ActionButton({
 }
 
 export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { isLoaded: isSignUpLoaded, signUp, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
   const router = useRouter();
-  const authReady = isLoaded && Boolean(signUp) && Boolean(setActive);
+  const authReady = !isSignedIn && isSignUpLoaded && Boolean(signUp) && Boolean(setActive);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
   const [isResolvingMissingFields, setIsResolvingMissingFields] = useState(false);
@@ -94,12 +94,15 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
     return false;
   }
 
-  const redirectSignedInUser = useCallback(async () => {
-    try {
-      await warmMemoryTokenBridge();
-    } catch {
-      // Non-blocking. Route forward even if bridge warmup fails transiently.
+  function buildAbsoluteUrl(path: string) {
+    if (typeof window === "undefined") {
+      return path;
     }
+
+    return new URL(path, window.location.origin).toString();
+  }
+
+  const redirectSignedInUser = useCallback(() => {
     router.replace(redirectTo);
   }, [redirectTo, router]);
 
@@ -174,8 +177,11 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
         return;
       }
 
+      const metadataUsername = signUpClient.unsafeMetadata?.preferredUsername;
+      const preferredUsername =
+        username.trim() || (typeof metadataUsername === "string" ? metadataUsername.trim() : "");
       const resolvedEmail = signUpClient.emailAddress ?? email.trim();
-      if (!resolvedEmail) {
+      if (!preferredUsername && !resolvedEmail) {
         if (!cancelled) {
           setStatusMessage("Finish sign-up: username is required. Enter email and retry.");
           setStatusTone("error");
@@ -186,7 +192,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       setIsResolvingMissingFields(true);
       try {
         const updated = await signUpClient.update({
-          username: buildUsernameFromEmail(resolvedEmail),
+          username: preferredUsername || buildUsernameFromEmail(resolvedEmail),
         });
 
         if (updated.status === "complete" && updated.createdSessionId) {
@@ -223,7 +229,11 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
     return () => {
       cancelled = true;
     };
-  }, [authReady, email, redirectTo, setActive, signUp]);
+  }, [authReady, email, redirectTo, setActive, signUp, username]);
+
+  if (isSignedIn) {
+    return null;
+  }
 
   function getErrorMessage(error: unknown) {
     if (isClerkAPIResponseError(error) && error.errors.length > 0) {
@@ -265,14 +275,24 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       return;
     }
 
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
+      setStatusMessage("Enter a username first.");
+      setStatusTone("error");
+      return;
+    }
+
     setPendingStrategy(strategy === "oauth_google" ? "google" : "github");
     setStatusMessage(null);
     setStatusTone(null);
     try {
       await signUp.authenticateWithRedirect({
         strategy,
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: completeUrl,
+        redirectUrl: buildAbsoluteUrl("/sso-callback-developer"),
+        redirectUrlComplete: buildAbsoluteUrl(completeUrl),
+        unsafeMetadata: {
+          preferredUsername: trimmedUsername,
+        },
       });
     } catch (error) {
       if (isAlreadySignedInError(error)) {
@@ -299,6 +319,13 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
     }
 
     const trimmedEmail = email.trim();
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
+      setStatusMessage("Enter a username first.");
+      setStatusTone("error");
+      return;
+    }
+
     if (!trimmedEmail) {
       setStatusMessage("Enter your email address first.");
       setStatusTone("error");
@@ -313,6 +340,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
       const signUpAttempt = await signUp.create({
         emailAddress: trimmedEmail,
+        username: trimmedUsername,
       });
 
       if (signUpAttempt.status === "complete" && signUpAttempt.createdSessionId) {
@@ -324,7 +352,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       }
 
       await startEmailLinkFlow({
-        redirectUrl: "/sso-callback",
+        redirectUrl: buildAbsoluteUrl("/sso-callback-developer"),
       });
 
       setStatusMessage(
@@ -346,6 +374,14 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
   return (
     <div className="space-y-4 sm:space-y-5">
       <div className="space-y-3">
+        <input
+          type="text"
+          suppressHydrationWarning
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          placeholder="Username"
+          className="h-[44px] w-full border border-[#343434] bg-transparent px-4 text-[14px] text-white outline-none placeholder:text-[#636c77] sm:h-[46px] sm:px-5 sm:text-[16px]"
+        />
         <input
           type="email"
           suppressHydrationWarning

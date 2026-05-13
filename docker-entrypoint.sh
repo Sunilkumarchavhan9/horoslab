@@ -15,4 +15,8 @@ if [ ! -f /app/data/eval/benchmark-cases.json ] && [ -f /app/default-data/eval/b
   cp /app/default-data/eval/benchmark-cases.json /app/data/eval/benchmark-cases.json
 fi
 
+if [ ! -f /app/data/eval/benchmark-report.json ] && [ -f /app/default-data/eval/benchmark-report.json ]; then
+  cp /app/default-data/eval/benchmark-report.json /app/data/eval/benchmark-report.json
+fi
+
 exec "$@"

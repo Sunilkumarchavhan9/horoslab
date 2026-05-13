@@ -47,7 +47,7 @@ function isTokenLikelyValid(token: string): boolean {
   return exp > nowSeconds + 15;
 }
 
-function clearStoredMemoryTokens(): void {
+export function clearStoredMemoryTokens(): void {
   if (typeof window === "undefined") {
     return;
   }

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { IBM_Plex_Mono, Sora, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { isClerkEnabled } from "@/lib/clerk";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
 
 const sora = Sora({
   variable: "--font-sora",
@@ -35,7 +38,7 @@ export default function RootLayout({
   const clerkEnabled = isClerkEnabled();
 
   return (
-    <html lang="en" className={`${sora.variable} ${spaceGrotesk.variable} ${plexMono.variable}`}>
+    <html lang="en" className={cn(sora.variable, spaceGrotesk.variable, plexMono.variable, "font-mono", jetbrainsMono.variable)}>
       <body>
         {clerkEnabled ? (
           <ClerkProvider

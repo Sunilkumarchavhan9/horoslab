@@ -1,312 +1,261 @@
 "use client";
 
-import { useState } from "react";
-import { INTEGRATIONS } from "./data";
-import { Reveal } from "./motion";
+import { useState, useEffect } from "react";
+import { Search, AlertCircle, Database, Code2, TerminalSquare, Network, Layers, CheckCircle2 } from "lucide-react";
 
-type SetupTab = "typescript" | "python" | "rest";
-
-const TAB_COPY: Record<
-  SetupTab,
+const FEATURES = [
   {
-    label: string;
-    intro: string;
-    code: string;
+    num: "01",
+    tab: "AGENT MEMORY",
+    heading: "Persistent context for coding agents",
+    description: "Preferences, project state, bug history, and prior decisions stay available across sessions.",
+    bullets: [
+      "List unresolved bugs and continue last decision thread",
+      "Retrieve prior architecture decisions to avoid drift",
+      "Inject latest bug fix context automatically"
+    ],
+    bgClass: "bg-primary/5",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border overflow-hidden">
+        <div className="bg-muted/30 px-3 py-2 border-b border-border text-[9px] text-muted-foreground uppercase flex items-center gap-2 font-mono">
+          <Search size={10} /> MEMORYOS_SEARCH_TOOLS
+        </div>
+        <div className="p-4 space-y-3 font-mono text-[10px]">
+          <div className="bg-card border border-border rounded-lg p-3 flex justify-between items-start">
+             <div className="flex flex-col gap-1">
+                <div className="text-foreground font-bold flex items-center gap-2"><AlertCircle size={10} className="text-muted-foreground" /> retrieve project blockers</div>
+                <div className="text-muted-foreground pl-4">List unresolved bugs and continue last decision thread</div>
+             </div>
+             <span className="bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded text-[8px] uppercase font-bold">Match</span>
+          </div>
+          <div className="bg-card border border-border rounded-lg p-3 flex justify-between items-start">
+             <div className="flex flex-col gap-1">
+                <div className="text-foreground font-bold flex items-center gap-2"><Database size={10} className="text-muted-foreground" /> retrieve prior architecture decisions</div>
+             </div>
+             <span className="bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded text-[8px] uppercase font-bold">Match</span>
+          </div>
+          <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 flex justify-between items-start shadow-sm">
+             <div className="flex flex-col gap-1">
+                <div className="text-primary font-bold flex items-center gap-2"><Code2 size={10} className="text-primary" /> retrieve latest bug fix context</div>
+             </div>
+             <span className="bg-primary text-primary-foreground border border-primary px-1.5 py-0.5 rounded text-[8px] uppercase font-bold">Match</span>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    num: "02",
+    tab: "TEAM MEMORY",
+    heading: "Shared workspace intelligence",
+    description: "MemoryOS stores project-level memory so teams and agents can resume work with the same context model.",
+    bullets: [
+      "Resume current sprint from continuity contract",
+      "Load MemoryOS retrieval + trust diagnostics",
+      "Generate plan from prior decisions and open risks"
+    ],
+    bgClass: "bg-chart-2/5",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border overflow-hidden">
+        <div className="bg-muted/30 px-3 py-2 border-b border-border text-[9px] text-muted-foreground uppercase flex items-center gap-2 font-mono">
+          <TerminalSquare size={10} /> YOUR_AI_AGENT
+        </div>
+        <div className="p-4 text-[11px] space-y-4 font-mono">
+           <div className="text-muted-foreground flex items-start gap-2">
+             <span className="text-chart-2 mt-0.5"><CheckCircle2 size={12}/></span> Resume current MemoryOS sprint from continuity contract and latest trusted context.
+           </div>
+           <div className="text-muted-foreground flex items-start gap-2">
+             <span className="text-chart-2 mt-0.5"><CheckCircle2 size={12}/></span> MemoryOS retrieval + trust diagnostics loaded.
+           </div>
+           <div className="text-muted-foreground flex items-start gap-2">
+             <span className="text-chart-2 mt-0.5"><CheckCircle2 size={12}/></span> Plan generated from prior decisions and open risks.
+           </div>
+           <div className="bg-primary/10 border border-primary/20 p-3 rounded-lg flex items-center justify-between mt-6">
+             <span className="text-primary font-bold">memory context injection active</span>
+             <span className="bg-primary text-primary-foreground px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider animate-pulse">Live</span>
+           </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    num: "03",
+    tab: "TRUST LAYER",
+    heading: "Every memory is inspectable",
+    description: "Explain, timeline, and revisions turn memory recall into something developers can verify and debug.",
+    bullets: [
+      "Inspect timeline of all memory events",
+      "Trace revisions to previous execution contexts",
+      "Full explainability for diagnostic debugging"
+    ],
+    bgClass: "bg-muted/30",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border overflow-hidden">
+        <div className="bg-muted/30 px-3 py-2 border-b border-border text-[9px] text-muted-foreground uppercase flex items-center gap-2 font-mono">
+          <Network size={10} /> MEMORYOS_MANAGE_CONNECTIONS
+        </div>
+        <div className="p-4 space-y-3 font-mono text-[11px]">
+           {["GitHub", "Notion", "Slack"].map((tool) => (
+             <div key={tool} className="bg-card border border-border rounded-lg p-3 flex justify-between items-center">
+                <span className="font-bold text-foreground flex items-center gap-2"><Layers size={12} className="text-muted-foreground"/> {tool}</span>
+                <span className="bg-chart-2/10 text-chart-2 border border-chart-2/20 px-2 py-0.5 rounded text-[9px] uppercase font-bold">Connected</span>
+             </div>
+           ))}
+           <div className="bg-muted border border-border rounded-lg p-3 mt-4">
+              <div className="text-muted-foreground uppercase text-[9px] mb-2 font-bold">AGENT_CONFIG</div>
+              <div className="space-y-1 text-foreground/80">
+                 <p>runtime: sdk / mcp / http</p>
+                 <p>mode: contract-first continuity</p>
+                 <p>trust: timeline + revisions + explain</p>
+              </div>
+           </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    num: "04",
+    tab: "CONTROL SURFACE",
+    heading: "Control plane, APIs, and policies",
+    description: "Search, archive, review, and govern memory through the MemoryOS control plane and unified API surface.",
+    bullets: [
+      "Write memory: /process + status + archive",
+      "Recover context: /retrieve + /continue + /resume",
+      "Inspect trust: /timeline + /revisions + /explain"
+    ],
+    bgClass: "bg-primary/5",
+    visualContent: (
+      <div className="bg-background rounded-lg border border-border overflow-hidden">
+        <div className="bg-muted/30 px-3 py-2 border-b border-border text-[9px] text-muted-foreground uppercase flex items-center gap-2 font-mono">
+          <Code2 size={10} /> PLATFORM_SURFACE_API
+        </div>
+        <div className="p-4 space-y-4 font-mono">
+           <div className="bg-card border border-border rounded-lg p-3">
+              <div className="text-foreground font-bold mb-2 flex items-center justify-between text-[11px]">
+                 Write memory
+                 <span className="text-muted-foreground font-normal text-[9px]">MemoryOS exposes focused routes</span>
+              </div>
+              <div className="text-primary bg-primary/10 border border-primary/20 px-2 py-1.5 rounded w-fit text-[10px]">/process + status + archive</div>
+           </div>
+           <div className="bg-card border border-border rounded-lg p-3">
+              <div className="text-foreground font-bold mb-2 flex items-center justify-between text-[11px]">
+                 Recover context
+                 <span className="text-muted-foreground font-normal text-[9px]">Recover exact context</span>
+              </div>
+              <div className="text-primary bg-primary/10 border border-primary/20 px-2 py-1.5 rounded w-fit text-[10px]">/retrieve + /continue + /resume</div>
+           </div>
+           <div className="bg-card border border-border rounded-lg p-3">
+              <div className="text-foreground font-bold mb-2 flex items-center justify-between text-[11px]">
+                 Inspect trust
+                 <span className="text-muted-foreground font-normal text-[9px]">Inspect why a memory was saved</span>
+              </div>
+              <div className="text-primary bg-primary/10 border border-primary/20 px-2 py-1.5 rounded w-fit text-[10px]">/timeline + /revisions + /explain</div>
+           </div>
+        </div>
+      </div>
+    )
   }
-> = {
-  typescript: {
-    label: "TypeScript",
-    intro:
-      "Use the MemoryOS SDK from a TypeScript app, agent wrapper, IDE extension, or internal service.",
-    code: `import { MemoryOS } from "@memoryostm/sdk";
-
-const memory = new MemoryOS({
-  apiKey: process.env.MEMORYOS_API_KEY!,
-});
-
-await memory.process({
-  threadId: "cursor-session-14",
-  message: "Using Cursor with Claude on the retrieval refactor.",
-});
-
-const context = await memory.resume({
-  project: "MemoryOS",
-  question: "Where did I leave off on retrieval ranking?",
-  topK: 5,
-});`,
-  },
-  python: {
-    label: "Python",
-    intro:
-      "The Python SDK plugs into notebooks, services, and Python-based agents with the same memory model.",
-    code: `from memoryos import MemoryOS
-
-memory = MemoryOS(api_key="MEMORYOS_API_KEY")
-
-memory.process(
-    thread_id="agent-run-21",
-    message="I fixed the merge threshold issue in MemoryOS.",
-)
-
-context = memory.resume(
-    project="MemoryOS",
-    question="What should I continue next?",
-    top_k=5,
-)`,
-  },
-  rest: {
-    label: "REST API",
-    intro:
-      "The REST API gives the same lifecycle directly over HTTP for internal platforms and custom agents.",
-    code: `curl -X POST "https://api.memoryos.dev/v1/memory/process" \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer MEMORYOS_API_KEY" \\
-  -d '{
-    "threadId": "cursor-session-14",
-    "message": "I am building MemoryOS and testing retrieval quality."
-  }'
-
-curl -X POST "https://api.memoryos.dev/v1/memory/retrieve" \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer MEMORYOS_API_KEY" \\
-  -d '{
-    "question": "what matters before I continue MemoryOS work?",
-    "topK": 5
-  }'`,
-  },
-};
-
-const SETUP_STEPS = [
-  "Install the MemoryOS SDK or call the REST API.",
-  "Initialize the client with your API key.",
-  "Send work updates to `process()` during the session.",
-  "Call `retrieve()`, `continue()`, or `resume()` before generation.",
 ];
-
-const USAGE_FLOW = [
-  {
-    title: "Install once",
-    body:
-      "Add MemoryOS from the npm registry or Python package index, then connect your workspace with one API key.",
-    meta: "npm · pip · REST",
-  },
-  {
-    title: "Work normally",
-    body:
-      "Keep using Cursor, VS Code, Claude, ChatGPT, or internal agents. MemoryOS sits behind the workflow instead of replacing it.",
-    meta: "IDE + agent compatible",
-  },
-  {
-    title: "Store decisions automatically",
-    body:
-      "Project milestones, bug fixes, stack choices, preferences, and recurring patterns become durable memory for the next session.",
-    meta: "process() + memory graph",
-  },
-  {
-    title: "Retrieve before every response",
-    body:
-      "Agents load the right project context before they answer, so they can resume work with less repetition and less drift.",
-    meta: "retrieve() + resume()",
-  },
-  {
-    title: "Review in the dashboard",
-    body:
-      "Timeline, revisions, and explanations make it clear what was stored, why it surfaced, and how memory changed over time.",
-    meta: "dashboard + trust layer",
-  },
-  {
-    title: "Share team memory",
-    body:
-      "Workspace memory can be used by multiple developers and agents so project knowledge survives handoffs, pauses, and tool switches.",
-    meta: "shared workspaces",
-  },
-];
-
-const PRODUCT_SURFACE = [
-  ["Package", "@memoryostm/sdk"],
-  ["Python", "memoryos"],
-  ["API", "api.memoryos.dev"],
-  ["Control plane", "MemoryOS dashboard"],
-  ["Trust", "timeline + revisions + explain"],
-  ["Agent layer", "MCP + IDE integrations"],
-];
-
-function TabButton({
-  active,
-  label,
-  onClick,
-}: {
-  active: boolean;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`border-r border-[#c9d8ee] px-5 py-3 font-mono text-[13px] tracking-[0.12em] transition ${
-        active
-          ? "bg-white text-[#2166f3] shadow-[inset_0_-2px_0_0_#2166f3]"
-          : "bg-white text-[#1f2937] hover:bg-white"
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
 
 export function DeveloperExperienceSection() {
-  const [activeTab, setActiveTab] = useState<SetupTab>("typescript");
-  const tab = TAB_COPY[activeTab];
+  const [activeTab, setActiveTab] = useState("01");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = FEATURES.map(f => document.getElementById(`feature-${f.num}`));
+      let current = "01";
+      for (const section of sections) {
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 2) {
+            current = section.id.replace("feature-", "");
+          }
+        }
+      }
+      setActiveTab(current);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // initial check
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <section className="px-5 py-7">
-      <Reveal>
-        <h2 className="text-center text-[40px] font-semibold tracking-[-0.04em] text-slate-900 md:text-[64px]">
-          Setup in 5 minutes
-        </h2>
-        <p className="mx-auto mt-3 max-w-4xl text-center text-[18px] leading-[1.55] text-slate-500 md:text-[20px]">
-          The simplest setup for developer memory. Use TypeScript, Python, or REST,
-          then drop MemoryOS into your agent loop with one write step and one retrieval step.
-        </p>
-      </Reveal>
+    <section id="developer-experience" className="bg-background border-t border-border relative">
+      <div className="mx-auto max-w-[1400px]">
+        {/* Header Section */}
+        <div className="px-6 py-20 lg:px-12 max-w-4xl">
+          <h2 className="text-[40px] font-semibold tracking-tight text-foreground leading-[1.1] md:text-[56px] mb-6">
+            Your agents are smart.<br />
+            Their memory should be too.
+          </h2>
+          <p className="text-[18px] leading-relaxed text-muted-foreground">
+            Continuity infrastructure for real coding sessions. MemoryOS is designed for developer workflows where preference, project state, bug history, and prior decisions need to survive across threads, tools, and model sessions.
+          </p>
+        </div>
 
-      <Reveal delay={0.04} className="mx-auto mt-6 flex max-w-[760px] flex-wrap items-center justify-center gap-3 border border-[#c9d8ee] bg-white px-4 py-3 font-mono text-[13px] text-[#4f6383]">
-        <span className="text-[#7d90ab]">$</span>
-        <span>npm install @memoryostm/sdk</span>
-        <span className="text-[#b2c0d4]">|</span>
-        <span>pip install memoryos</span>
-        <span className="text-[#b2c0d4]">|</span>
-        <span>api.memoryos.dev</span>
-      </Reveal>
-
-      <Reveal delay={0.06} className="mx-auto mt-6 grid max-w-[980px] gap-3 md:grid-cols-4">
-        {SETUP_STEPS.map((step, index) => (
-          <div key={step} className="border border-[#c9d8ee] bg-white p-4">
-            <p className="font-mono text-[11px] tracking-[0.18em] text-[#3367cd]">{`0${index + 1}`}</p>
-            <p className="mt-2 text-sm leading-6 text-[#536883]">{step}</p>
+        {/* Two Column Layout */}
+        <div className="flex flex-col lg:flex-row border-t border-border">
+          
+          {/* Left Sidebar (Sticky Tabs) */}
+          <div className="hidden lg:block w-[280px] shrink-0 border-r border-border relative">
+             <div className="sticky top-24 pt-12 pb-24 flex flex-col">
+                {FEATURES.map(feature => (
+                  <a 
+                    key={feature.num} 
+                    href={`#feature-${feature.num}`}
+                    className={`flex items-center gap-4 px-8 py-5 border-l-2 transition-all ${activeTab === feature.num ? 'border-primary text-foreground bg-muted/20' : 'border-transparent text-muted-foreground hover:bg-muted/10 hover:text-foreground'}`}
+                  >
+                     <span className={`font-mono text-[11px] px-2 py-1 rounded transition-colors ${activeTab === feature.num ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                        {feature.num}
+                     </span>
+                     <span className="font-sans text-[12px] font-bold tracking-widest uppercase">{feature.tab}</span>
+                  </a>
+                ))}
+             </div>
           </div>
-        ))}
-      </Reveal>
 
-      <div className="mx-auto mt-6 grid max-w-[980px] gap-3 md:grid-cols-3">
-        {PRODUCT_SURFACE.map(([label, value], index) => (
-          <Reveal
-            key={label}
-            delay={0.03 * index}
-            className="border border-[#c9d8ee] bg-white px-4 py-3"
-          >
-            <p className="font-mono text-[11px] tracking-[0.18em] text-[#7a8dab]">{label}</p>
-            <p className="mt-2 text-[20px] font-semibold tracking-[-0.02em] text-slate-900">{value}</p>
-          </Reveal>
-        ))}
+          {/* Right Content Area (Stacked Cards) */}
+          <div className="flex-1 flex flex-col">
+             {FEATURES.map((feature, i) => (
+                <div key={feature.num} id={`feature-${feature.num}`} className={`flex flex-col xl:flex-row border-b border-border ${i === FEATURES.length - 1 ? 'border-b-0' : ''}`}>
+                   
+                   {/* Left Visual Pane */}
+                   <div className={`w-full xl:w-[55%] p-8 xl:p-16 relative flex items-center justify-center overflow-hidden border-b xl:border-b-0 xl:border-r border-border ${feature.bgClass}`}>
+                      {/* Subdued pattern */}
+                      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                      
+                      <div className="relative z-10 w-full max-w-lg shadow-2xl rounded-xl transition-transform duration-500 hover:scale-[1.02]">
+                         {feature.visualContent}
+                      </div>
+                   </div>
+
+                   {/* Right Text Pane */}
+                   <div className="w-full xl:w-[45%] p-8 xl:p-16 flex flex-col justify-center bg-card">
+                      <span className="font-mono text-[11px] bg-muted text-muted-foreground border border-border px-2 py-1 rounded w-fit mb-8">
+                         {feature.num}
+                      </span>
+                      <h3 className="text-[32px] font-semibold tracking-tight text-foreground mb-4 leading-[1.1]">
+                         {feature.heading}
+                      </h3>
+                      <p className="text-[16px] leading-relaxed text-muted-foreground mb-10">
+                         {feature.description}
+                      </p>
+                      
+                      <div className="flex flex-col gap-5 pl-5 border-l-2 border-border">
+                         {feature.bullets.map(bullet => (
+                            <p key={bullet} className="text-[14px] text-foreground/80 leading-relaxed font-medium">
+                               {bullet}
+                            </p>
+                         ))}
+                      </div>
+                   </div>
+                </div>
+             ))}
+          </div>
+
+        </div>
       </div>
-
-      <Reveal
-        delay={0.1}
-        className="mx-auto mt-7 w-full max-w-[820px] overflow-hidden border border-[#b9cfef] bg-white"
-      >
-        <div className="flex flex-wrap border-b border-[#c9d8ee] bg-white">
-          {(Object.keys(TAB_COPY) as SetupTab[]).map((key) => (
-            <TabButton
-              key={key}
-              label={TAB_COPY[key].label}
-              active={activeTab === key}
-              onClick={() => setActiveTab(key)}
-            />
-          ))}
-        </div>
-
-        <div className="border-b border-[#c9d8ee] bg-[#0b1017] px-6 py-5">
-          <p className="mb-4 text-sm leading-6 text-[#a8b6cc]">{tab.intro}</p>
-          <pre className="overflow-x-auto font-mono text-[13px] leading-7 text-[#8df0ac]">
-            {tab.code}
-          </pre>
-        </div>
-      </Reveal>
-
-      <div className="mx-auto mt-5 grid max-w-[980px] gap-3 md:grid-cols-3">
-        {[
-          [
-            "PRE MODEL",
-            "Call retrieve, continue, or resume before the next model response so the agent starts with relevant memory.",
-          ],
-          [
-            "POST MODEL",
-            "Call process after messages, decisions, bug fixes, or milestones so MemoryOS keeps the developer context up to date.",
-          ],
-          [
-            "IN PRODUCT",
-            "Render timeline, revisions, and explain views in the dashboard so memory stays visible, reviewable, and trusted.",
-          ],
-        ].map(([title, body], index) => (
-          <Reveal
-            key={title}
-            delay={0.04 * index}
-            className="border border-[#c9d8ee] bg-white p-4"
-          >
-            <p className="font-mono text-[11px] tracking-[0.18em] text-[#3367cd]">{title}</p>
-            <p className="mt-2 text-sm leading-6 text-[#556983]">{body}</p>
-          </Reveal>
-        ))}
-      </div>
-
-      <Reveal delay={0.12} className="mx-auto mt-8 max-w-[1100px]">
-        <div className="border border-[#c9d8ee] bg-white p-5 md:p-6">
-          <div className="max-w-[720px]">
-            <p className="font-mono text-[12px] tracking-[0.2em] text-[#3367cd]">HOW DEVELOPERS USE MEMORYOS</p>
-            <h3 className="mt-3 text-[30px] font-semibold tracking-[-0.03em] text-slate-900 md:text-[40px]">
-              Install it once. Keep coding the same way.
-            </h3>
-            <p className="mt-3 text-[15px] leading-7 text-[#556983] md:text-[17px]">
-              Developers install MemoryOS from the npm registry, connect an API key, and add it to their
-              app, agent runtime, IDE extension, or internal platform. From that point on, MemoryOS handles
-              developer memory behind the scenes: it stores useful context, retrieves it before the next model
-              call, and exposes a dashboard where teams can inspect, search, and control shared memory.
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {USAGE_FLOW.map((item, index) => (
-              <Reveal
-                key={item.title}
-                delay={0.03 * index}
-                className="border border-[#cadef5] bg-[rgba(255,255,255,0.7)] p-4 backdrop-blur-sm"
-              >
-                <p className="font-mono text-[11px] tracking-[0.18em] text-[#3367cd]">{`0${index + 1}`}</p>
-                <h4 className="mt-2 text-[22px] font-semibold tracking-[-0.02em] text-slate-900">
-                  {item.title}
-                </h4>
-                <p className="mt-2 text-[14px] leading-6 text-[#556983]">{item.body}</p>
-                <p className="mt-3 font-mono text-[11px] tracking-[0.08em] text-[#4770ab]">{item.meta}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </Reveal>
-
-      <Reveal delay={0.14} className="mt-8 text-center">
-        <p className="font-mono text-[14px] tracking-[0.22em] text-[#1f2937]">
-          WORKS WITH EVERYTHING
-        </p>
-      </Reveal>
-
-      <Reveal delay={0.16} className="mx-auto mt-5 flex max-w-[900px] flex-wrap justify-center gap-3">
-        {INTEGRATIONS.map((item) => (
-          <span
-            key={item}
-            className="border border-[#bfd1ee] bg-white px-4 py-2 text-[15px] text-[#334b71]"
-          >
-            {item}
-          </span>
-        ))}
-      </Reveal>
-
-      <Reveal delay={0.18} className="mt-8 text-center">
-        <a href="#what-we-do" className="text-[20px] text-[#2166f3]">
-          See how the memory lifecycle works →
-        </a>
-      </Reveal>
     </section>
   );
 }

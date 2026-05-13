@@ -84,6 +84,7 @@ export function MemoryStarLogo({ tone = "black" }: MemoryStarLogoProps) {
           stroke={accentColor}
           strokeWidth="1.6"
           strokeLinecap="round"
+          initial={{ opacity: 0, pathLength: 0 }}
           animate={
             isHover
               ? {
@@ -100,11 +101,11 @@ export function MemoryStarLogo({ tone = "black" }: MemoryStarLogoProps) {
               ? {
                   pathLength: { duration: 0.42, ease: "easeOut" },
                   opacity: { duration: 0.12 },
-              }
+                }
               : {
                   pathLength: { duration: 0.16, ease: "easeIn" },
                   opacity: { duration: 0.1 },
-              }
+                }
           }
         />
 
@@ -115,6 +116,7 @@ export function MemoryStarLogo({ tone = "black" }: MemoryStarLogoProps) {
           strokeWidth="1.6"
           strokeDasharray="0.1 0.9"
           pathLength={1}
+          initial={{ opacity: 0, pathOffset: 1 }}
           animate={
             isHover
               ? {

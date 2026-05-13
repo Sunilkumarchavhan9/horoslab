@@ -29,13 +29,13 @@ export function HeroSection() {
           <div className="mt-6 flex flex-wrap gap-2.5">
             <a
               href="/developer-console/sign-in"
-              className="bg-[#2166f3] px-5 py-2.5 text-[15px] font-medium text-white transition hover:bg-[#0f56de]"
+              className="bg-blue-600 px-5 py-2.5 text-[15px] font-medium text-white transition hover:bg-blue-800"
             >
               Start Building →
             </a>
             <a
               href="#contact"
-              className="border border-[#c9d8ee] bg-white px-5 py-2.5 text-[15px] font-medium text-slate-800 transition hover:border-[#9db8e3] hover:text-[#2166f3]"
+              className="border border-[#c9d8ee] bg-white px-5 py-2.5 text-[15px] font-medium text-slate-800 transition hover:border-[#9db8e3] hover:text-[hsl(var(--primary))]"
             >
               Talk to Founder
             </a>
@@ -43,9 +43,9 @@ export function HeroSection() {
 
           <a
             href="#personal-memory"
-            className="mt-3 inline-flex text-[14px] text-[#516882] underline-offset-4 transition hover:text-[#2166f3] hover:underline"
+            className="mt-3 inline-flex text-[14px] text-[#516882] underline-offset-4 transition hover:text-[hsl(var(--primary))] hover:underline"
           >
-            Get a personal MemoryOS ↗
+            Start a personal continuity workspace ↗
           </a>
 
           <div className="mt-4 grid max-w-[620px] gap-2 sm:grid-cols-3">
@@ -72,7 +72,7 @@ export function HeroSection() {
               "Developer memory graph",
               "Team memory workspaces",
               "Timeline + revisions",
-              "Dashboard + trust controls",
+              "Control plane + trust controls",
               "MCP + agent integrations",
             ].map((item) => (
               <span

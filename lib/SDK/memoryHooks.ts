@@ -27,14 +27,23 @@ export interface BeforeModelResult {
 
 export interface AfterModelInput {
   userId: string;
-  message: string;
+  message?: string;
   threadId?: string;
   modelResponse?: string;
+  contract?: {
+    goal?: string;
+    constraints?: string[];
+    decisions?: string[];
+    open_risks?: string[];
+    next_actions?: string[];
+  };
+  enforceContract?: boolean;
 }
 
 export interface AfterModelResult {
   acceptedCount: number;
   rejectedCount: number;
+  contractFieldCount?: number;
 }
 
 function buildContextText(
@@ -113,18 +122,36 @@ export async function beforeModel(
 export async function afterModel(
   input: AfterModelInput,
 ): Promise<AfterModelResult> {
-  const combinedMessage = input.modelResponse
-    ? `User: ${input.message}\nAssistant: ${input.modelResponse}`
-    : input.message;
+  const normalizedMessage = typeof input.message === "string" ? input.message.trim() : "";
+  const hasMessage = normalizedMessage.length > 0;
+  const hasContract = Boolean(input.contract);
+  if (!hasMessage && !hasContract) {
+    throw new Error("afterModel requires either a non-empty message or a memory contract.");
+  }
+
+  const combinedMessage = hasMessage
+    ? input.modelResponse
+      ? `User: ${normalizedMessage}\nAssistant: ${input.modelResponse}`
+      : normalizedMessage
+    : "";
 
   const result = await runIngestFlowLangGraph({
     userId: input.userId,
     threadId: input.threadId,
-    message: combinedMessage,
+    message: combinedMessage || JSON.stringify(input.contract ?? {}),
   });
+
+  const contract = input.contract;
+  const contractFieldCount =
+    (contract?.goal ? 1 : 0) +
+    ((contract?.constraints?.length ?? 0) > 0 ? 1 : 0) +
+    ((contract?.decisions?.length ?? 0) > 0 ? 1 : 0) +
+    ((contract?.open_risks?.length ?? 0) > 0 ? 1 : 0) +
+    ((contract?.next_actions?.length ?? 0) > 0 ? 1 : 0);
 
   return {
     acceptedCount: result.acceptedMemories.length,
     rejectedCount: result.rejectedMemories.length,
+    contractFieldCount: contractFieldCount > 0 ? contractFieldCount : undefined,
   };
 }

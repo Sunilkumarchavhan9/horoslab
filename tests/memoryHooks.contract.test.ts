@@ -141,4 +141,36 @@ describe("memory hooks contract", () => {
         "User: What should I do next for MemoryOS?\nAssistant: Finish the SDK hook tests and then wire MCP.",
     });
   });
+
+  it("ingests from contract-only input when no message is provided", async () => {
+    mocks.runIngestFlowLangGraph.mockResolvedValue({
+      acceptedMemories: [{ id: "m3" }],
+      rejectedMemories: [],
+      timelineEvents: [],
+    });
+
+    const result = await afterModel({
+      userId: "u3",
+      threadId: "thread-contract-2",
+      contract: {
+        goal: "Improve continuity quality.",
+        decisions: ["Prioritize MCP contract support."],
+        next_actions: ["Run MCP contract tests."],
+      },
+      enforceContract: true,
+    });
+
+    expect(result.acceptedCount).toBe(1);
+    expect(result.rejectedCount).toBe(0);
+    expect(result.contractFieldCount).toBe(3);
+    expect(mocks.runIngestFlowLangGraph).toHaveBeenCalledWith({
+      userId: "u3",
+      threadId: "thread-contract-2",
+      message: JSON.stringify({
+        goal: "Improve continuity quality.",
+        decisions: ["Prioritize MCP contract support."],
+        next_actions: ["Run MCP contract tests."],
+      }),
+    });
+  });
 });

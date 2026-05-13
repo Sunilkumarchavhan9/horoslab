@@ -2,15 +2,15 @@ export const NAV_LINKS = [
   { label: "What We Do", href: "#what-we-do" },
   { label: "Context Stack", href: "#context-stack" },
   { label: "Under The Hood", href: "#under-the-hood" },
-  { label: "Benchmarks", href: "#benchmarks" },
-  { label: "Developer Experience", href: "#developer-experience" },
+  { label: "Proof", href: "#benchmarks" },
+  { label: "Integrate", href: "#developer-experience" },
 ];
 
 export const CONTEXT_LAYERS = [
   {
     id: "01",
-    title: "Developer Profile",
-    desc: "Turns developer messages into memory candidates with rule-based extraction and importance scoring.",
+    title: "Memory Contract",
+    desc: "Turns conversations into structured memory candidates with extraction and contract scoring.",
     active: true,
   },
   {
@@ -20,8 +20,8 @@ export const CONTEXT_LAYERS = [
   },
   {
     id: "03",
-    title: "Continuity Retrieval",
-    desc: "Retrieves relevant context and reranks by semantic score, type relevance, importance, and recency.",
+    title: "Context Injection",
+    desc: "Retrieves relevant context and reranks by semantic score, type relevance, importance, and recency before model runs.",
   },
   {
     id: "04",
@@ -30,37 +30,41 @@ export const CONTEXT_LAYERS = [
   },
   {
     id: "05",
-    title: "Trust Timeline",
-    desc: "Explains why a memory exists using timeline events, revision diffs, and explain endpoints.",
+    title: "Audit Timeline",
+    desc: "Explains why memory exists using timeline events, revision diffs, and explain endpoints.",
   },
 ];
 
 export const BENCHMARK_ROWS = [
-  ["Ingest pipeline", "Included", "Extract + score + merge/evolve", "Turns raw messages into durable developer memory"],
-  ["Retrieval layer", "Included", "Semantic + type + importance + recency", "Reranks memories before continuation or resume"],
+  ["Ingest pipeline", "Included", "Extract + score + merge/evolve", "Turns raw messages into durable company memory"],
+  ["Retrieval layer", "Included", "Semantic + type + importance + recency", "Reranks memory before continuity injection"],
   ["Continuity routes", "Included", "/continue + /resume", "Helps agents pick up work with usable next-step context"],
-  ["Trust layer", "Included", "/timeline + /revisions + /explain", "Shows why memory exists and how it changed"],
-  ["Storage options", "Included", "Unified memory + local persistence", "Keeps developer context accessible across tools and sessions"],
+  ["Audit layer", "Included", "/timeline + /revisions + /explain", "Shows why memory exists and how it changed"],
+  ["Storage options", "Included", "Unified memory + local persistence", "Keeps context accessible across tools and sessions"],
   ["Auth + validation", "Included", "JWT + schema validation", "Keeps the API predictable for real integrations"],
-  ["Observability", "Included", "Metrics + health checks", "Makes the memory layer measurable in production"],
-  ["Developer integrations", "Included", "SDKs + REST + agent workflow hooks", "Fits directly into existing coding and agent loops"],
+  ["Observability", "Included", "Metrics + health checks", "Makes continuity quality measurable in production"],
+  ["Integrations", "Included", "SDK + MCP + HTTP workflow hooks", "Fits directly into existing coding and agent loops"],
 ];
 
 export const INTEGRATIONS = [
   "TypeScript SDK",
-  "Python SDK",
-  "REST API",
+  "MCP adapter",
+  "HTTP API",
   "npm registry",
-  "MCP server",
+  "OpenAI / GPT",
   "Claude",
-  "ChatGPT",
-  "Cursor",
-  "VS Code",
-  "Custom agents",
-  "LangChain",
+  "Gemini",
+  "Ollama",
+  "Qwen",
+  "DeepSeek",
+  "Mistral",
+  "Llama",
   "LangGraph",
-  "Dashboard",
+  "LangChain",
+  "CrewAI",
+  "Custom agents",
+  "Control plane",
   "Team workspaces",
   "Timeline + revisions",
-  "Continue + resume",
+  "Continuity routes",
 ];
