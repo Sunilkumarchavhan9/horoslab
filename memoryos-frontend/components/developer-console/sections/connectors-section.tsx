@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { type BillingPlan } from "../../../../shared/planCatalog";
 
-type ConnectorPlan = "Free" | "Scale";
 type ConnectorStatus = "connected" | "not_connected" | "pending";
 type HealthStatus = "good" | "watch" | "error" | "offline";
 
@@ -11,7 +11,7 @@ type ConnectorRow = {
   id: string;
   name: string;
   purpose: string;
-  plan: ConnectorPlan;
+  requiredPlan: BillingPlan;
   status: ConnectorStatus;
   health: HealthStatus;
   records: number;
@@ -41,7 +41,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "GitHub",
     purpose: "Best for developer continuity: PRs, issues, repo decisions, bug history",
     description: "PRs, issues, commits, repo decisions",
-    plan: "Free",
+    requiredPlan: "Free",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -54,7 +54,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "Local Files",
     purpose: "Import markdown/json context from local workspace",
     description: "Markdown, JSON, workspace context",
-    plan: "Free",
+    requiredPlan: "Free",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -66,7 +66,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "Notion",
     purpose: "Product notes, specs, and team decisions",
     description: "Docs, Specs, and Team decisions",
-    plan: "Free",
+    requiredPlan: "Pro",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -78,7 +78,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "Google Drive",
     purpose: "Shared documents and project specs",
     description: "Shared documents and project specs",
-    plan: "Scale",
+    requiredPlan: "Scale",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -90,7 +90,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "OneDrive",
     purpose: "Enterprise docs and shared folders",
     description: "Enterprise docs and shared folders",
-    plan: "Scale",
+    requiredPlan: "Scale",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -102,7 +102,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "Gmail",
     purpose: "Email threads and follow-up context",
     description: "Email threads and follow-up context",
-    plan: "Scale",
+    requiredPlan: "Scale",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -114,7 +114,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "Web Crawler",
     purpose: "Capture public docs and release notes",
     description: "Capture public docs and release notes",
-    plan: "Scale",
+    requiredPlan: "Scale",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -126,7 +126,7 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     name: "Amazon S3",
     purpose: "Import knowledge snapshots from object storage",
     description: "Import knowledge snapshots from object storage",
-    plan: "Scale",
+    requiredPlan: "Scale",
     status: "not_connected",
     health: "offline",
     records: 0,
@@ -147,6 +147,18 @@ const EXTRACTS = [
 ];
 
 const INITIAL_ACTIVITY: Array<{ time: string; message: string; status: string }> = [];
+const PLAN_ORDER: BillingPlan[] = ["Free", "Pro", "Scale", "Enterprise"];
+const FOUNDER_EMAIL = "chavhansunilkumar753@gmail.com";
+
+function canUseConnector(currentPlan: BillingPlan, requiredPlan: BillingPlan): boolean {
+  return PLAN_ORDER.indexOf(currentPlan) >= PLAN_ORDER.indexOf(requiredPlan);
+}
+
+function nextUpgradeLabel(currentPlan: BillingPlan, requiredPlan: BillingPlan): string {
+  if (canUseConnector(currentPlan, requiredPlan)) return "Connect";
+  if (requiredPlan === "Enterprise") return "Contact Sales";
+  return `Upgrade to ${requiredPlan}`;
+}
 
 export function ConnectorsSection({ 
   liveMemoryCount = 0, 
@@ -159,6 +171,7 @@ export function ConnectorsSection({
   const [activity, setActivity] = useState(INITIAL_ACTIVITY);
   const [internalRecords, setInternalRecords] = useState(0);
   const [diagnostics, setDiagnostics] = useState<ConnectorDiagnostic[]>([]);
+  const [currentPlan, setCurrentPlan] = useState<BillingPlan>("Free");
 
   const connectedCount = connectors.filter((connector) => connector.status === "connected").length;
   const totalRecords = liveMemoryCount + internalRecords;
@@ -199,15 +212,22 @@ useEffect(() => {
       });
 
       if (response.ok) {
-        const { data } = await response.json();
-        const dbConnectors = data.connectors || [];
+        const { data } = (await response.json()) as {
+          data?: {
+            connectors?: Array<{
+              type: string;
+              status: ConnectorStatus;
+              recordCount: number;
+              lastSyncAt: string | null;
+            }>;
+          };
+        };
+        const dbConnectors = data?.connectors || [];
 
         if (cancelled) return;
         setConnectors((prev) =>
           prev.map((c) => {
-            const dbMatch = dbConnectors.find(
-              (dbc: any) => dbc.type === c.id.replace("-", "_"),
-            );
+            const dbMatch = dbConnectors.find((dbc) => dbc.type === c.id.replace("-", "_"));
 
             if (dbMatch) {
               return {
@@ -271,7 +291,72 @@ useEffect(() => {
   };
 }, [liveMemoryCount, liveRequestCount]);
 
+useEffect(() => {
+  let cancelled = false;
+  async function loadCurrentPlan() {
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) return;
+      const response = await fetch("/api/memory/billing", {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const payload = (await response.json().catch(() => null)) as { currentPlan?: BillingPlan } | null;
+      const plan = payload?.currentPlan;
+      if (!cancelled && plan && PLAN_ORDER.includes(plan)) {
+        setCurrentPlan(plan);
+      }
+    } catch {
+      // non-blocking
+    }
+  }
+  void loadCurrentPlan();
+  return () => {
+    cancelled = true;
+  };
+}, []);
+
+async function routeToUpgrade(requiredPlan: BillingPlan) {
+  if (requiredPlan === "Enterprise") {
+    window.location.href = `mailto:${FOUNDER_EMAIL}`;
+    return;
+  }
+  try {
+    const token = await getOrCreateMemoryToken();
+    if (!token) throw new Error("Missing auth token.");
+    const response = await fetch("/api/memory/billing/checkout", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ plan: requiredPlan }),
+    });
+    const payload = (await response.json().catch(() => null)) as { checkoutUrl?: string; error?: string } | null;
+    if (!response.ok) {
+      throw new Error(payload?.error ?? `Checkout failed (${response.status})`);
+    }
+    if (payload?.checkoutUrl) {
+      window.open(payload.checkoutUrl, "_blank", "noopener,noreferrer");
+    }
+  } catch (error) {
+    addActivity(error instanceof Error ? error.message : "Could not start checkout", "error");
+  }
+}
+
 async function connectConnector(connectorId: string) {
+  const connectorMeta = connectors.find((entry) => entry.id === connectorId);
+  if (!connectorMeta) return;
+  if (!canUseConnector(currentPlan, connectorMeta.requiredPlan)) {
+    addActivity(
+      `${connectorMeta.name} requires ${connectorMeta.requiredPlan}. You are on ${currentPlan}.`,
+      "info",
+    );
+    await routeToUpgrade(connectorMeta.requiredPlan);
+    return;
+  }
+
   const typeMap: Record<string, string> = {
     github: "github",
     notion: "notion",
@@ -370,9 +455,9 @@ function disconnectConnector(connectorId: string) {
             ...connector,
             status: "not_connected",
             health: "offline",
-            records: connector.plan === "Scale" ? 0 : connector.records,
+            records: connector.requiredPlan === "Scale" ? 0 : connector.records,
             lastSync:
-              connector.plan === "Scale"
+              connector.requiredPlan === "Scale"
                 ? "Requires Scale plan"
                 : "Disconnected",
           }
@@ -523,10 +608,10 @@ function addActivity(message: string, status: string = "info") {
                           <div className="flex items-center gap-2">
                             <span 
                               className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${
-                                connector.plan === "Free" ? "border-primary/30 text-primary bg-primary/5" : "border-chart-5/30 text-chart-5 bg-chart-5/5"
+                                connector.requiredPlan === "Free" ? "border-primary/30 text-primary bg-primary/5" : "border-chart-5/30 text-chart-5 bg-chart-5/5"
                               }`}
                             >
-                              {connector.plan}
+                              {connector.requiredPlan}
                             </span>
                             {connector.status === "connected" && (
                               <div className="h-2 w-2 rounded-full bg-chart-2 shadow-md shadow-chart-2/40" />
@@ -555,9 +640,12 @@ function addActivity(message: string, status: string = "info") {
                         </div>
 
                         <div className="pt-4 flex gap-2">
-                          {connector.plan === "Scale" && connector.status === "not_connected" ? (
-                            <button className="flex-1 rounded-[4px] border border-chart-5/30 bg-chart-5/10 py-1.5 text-[10px] font-bold uppercase tracking-widest text-chart-5 hover:bg-chart-5/20 transition-colors">
-                              Upgrade to Connect
+                          {!canUseConnector(currentPlan, connector.requiredPlan) ? (
+                            <button
+                              onClick={() => void routeToUpgrade(connector.requiredPlan)}
+                              className="flex-1 rounded-[4px] border border-chart-5/30 bg-chart-5/10 py-1.5 text-[10px] font-bold uppercase tracking-widest text-chart-5 hover:bg-chart-5/20 transition-colors"
+                            >
+                              {nextUpgradeLabel(currentPlan, connector.requiredPlan)}
                             </button>
                           ) : connector.status === "connected" ? (
                             <>
