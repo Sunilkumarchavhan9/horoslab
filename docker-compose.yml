@@ -23,12 +23,14 @@ services:
       dockerfile: Dockerfile
     container_name: memoryos-backend
     restart: unless-stopped
+    command: ["npm", "run", "start"]
     ports:
-      - "3001:3001"
+      # Host port: default 3001; override in `.env` if busy (e.g. local backend from `dev:all`)
+      - "${MEMORYOS_BACKEND_HOST_PORT:-3001}:3001"
     env_file:
       - .env
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/memoryos?schema=public
       - MEMORY_STORE_BACKEND=postgres
     depends_on:

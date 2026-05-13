@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
 type BillingTab = "Plans" | "Usage" | "Invoices";
 type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
@@ -8,6 +9,33 @@ type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
 type BillingSectionProps = {
   workspaceName: string;
   currentPlan?: BillingPlan;
+};
+
+type BillingInvoice = {
+  id: string;
+  amountCents: number;
+  currency: string;
+  status: "paid" | "open" | "void";
+  issuedAt: string;
+  hostedInvoiceUrl: string | null;
+};
+
+type BillingResponse = {
+  workspaceName: string;
+  currentPlan: BillingPlan;
+  usage: {
+    tokenLimit: number;
+    tokenUsed: number;
+    searchLimit: number;
+    searchUsed: number;
+    resetInDays: number;
+  };
+  invoices: BillingInvoice[];
+  paddle?: {
+    configured: boolean;
+    environment: "sandbox" | "production";
+    portalUrl?: string;
+  };
 };
 
 type PlanCard = {
@@ -58,178 +86,223 @@ function usagePercent(used: number, limit: number) {
   return Math.max(0, Math.min(100, Math.round((used / limit) * 100)));
 }
 
+function formatMoney(cents: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: (currency || "USD").toUpperCase(),
+  }).format((cents || 0) / 100);
+}
+
 export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingSectionProps) {
   const [activeTab, setActiveTab] = useState<BillingTab>("Plans");
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string>("-");
+  const [billing, setBilling] = useState<BillingResponse | null>(null);
+  const [checkoutPendingPlan, setCheckoutPendingPlan] = useState<BillingPlan | null>(null);
 
-  const usageData = useMemo(() => {
-    const isFree = currentPlan === "Free";
-    return {
-      previous: {
-        from: "Mar 6, 2026",
-        to: "Apr 6, 2026",
-        tokens: isFree ? 0 : 184_230,
-        searches: isFree ? 0 : 22_910,
-      },
-      current: {
-        from: "Apr 6, 2026",
-        to: "May 6, 2026",
-        resetInDays: 20,
-        tokenLimit: isFree ? 1_000_000 : 3_000_000,
-        tokenUsed: isFree ? 0 : 452_840,
-        searchLimit: isFree ? 10_000 : 100_000,
-        searchUsed: isFree ? 0 : 28_760,
-      },
+  const plan = billing?.currentPlan ?? currentPlan;
+  const labelWorkspace = billing?.workspaceName ?? workspaceName;
+  const usage = billing?.usage ?? {
+    tokenLimit: 1_000_000,
+    tokenUsed: 0,
+    searchLimit: 10_000,
+    searchUsed: 0,
+    resetInDays: 30,
+  };
+  const invoices = useMemo(
+    () =>
+      Array.from(new Map((billing?.invoices ?? []).map((invoice) => [invoice.id, invoice])).values()).sort(
+        (a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime(),
+      ),
+    [billing?.invoices],
+  );
+
+  const tokenPercent = usagePercent(usage.tokenUsed, usage.tokenLimit);
+  const searchPercent = usagePercent(usage.searchUsed, usage.searchLimit);
+
+  async function loadBilling(): Promise<void> {
+    const token = await getOrCreateMemoryToken();
+    if (!token) {
+      setErrorMessage("Missing auth token. Sign in again.");
+      setLoading(false);
+      return;
+    }
+    const response = await fetch("/api/memory/billing", {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    const payload = (await response.json().catch(() => null)) as BillingResponse | { error?: string } | null;
+    if (!response.ok) {
+      throw new Error((payload as { error?: string } | null)?.error ?? `Failed to load billing (${response.status})`);
+    }
+    setBilling(payload as BillingResponse);
+    setLastUpdated(new Date().toISOString());
+    setErrorMessage(null);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        await loadBilling();
+      } catch (error) {
+        if (!cancelled) {
+          setErrorMessage(error instanceof Error ? error.message : "Failed to load billing.");
+          setLoading(false);
+        }
+      }
+    })();
+    const timer = window.setInterval(() => {
+      void (async () => {
+        try {
+          await loadBilling();
+        } catch (error) {
+          if (!cancelled) {
+            setErrorMessage(error instanceof Error ? error.message : "Failed to refresh billing.");
+          }
+        }
+      })();
+    }, 12000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
     };
-  }, [currentPlan]);
+  }, []);
 
-  const tokenPercent = usagePercent(usageData.current.tokenUsed, usageData.current.tokenLimit);
-  const searchPercent = usagePercent(usageData.current.searchUsed, usageData.current.searchLimit);
+  async function startCheckout(nextPlan: BillingPlan): Promise<void> {
+    if (nextPlan === "Free") return;
+    try {
+      setCheckoutPendingPlan(nextPlan);
+      const token = await getOrCreateMemoryToken();
+      if (!token) throw new Error("Missing auth token.");
+      const response = await fetch("/api/memory/billing/checkout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ plan: nextPlan }),
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | { checkoutUrl?: string; currentPlan?: BillingPlan; error?: string }
+        | null;
+      if (!response.ok) {
+        throw new Error(payload?.error ?? `Checkout failed (${response.status})`);
+      }
+      await loadBilling();
+      if (payload?.checkoutUrl) {
+        window.open(payload.checkoutUrl, "_blank", "noopener,noreferrer");
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Failed to start checkout.");
+    } finally {
+      setCheckoutPendingPlan(null);
+    }
+  }
 
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Billing</h1>
-          <p className="mt-1 text-[12px] leading-6 text-white/46 sm:text-[13px]">
-            Manage plans, monitor usage, and review invoices for {workspaceName}.
+          <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
+            Manage plans, monitor usage, and review invoices for {labelWorkspace}.
+          </p>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Status: {loading ? "Syncing billing..." : errorMessage ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
           </p>
         </div>
       </div>
 
-      <div className="mt-2.5 flex items-center border-b border-white/10">
+      {errorMessage ? (
+        <div className="mt-2.5 rounded-[10px] border border-destructive/40 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+          {errorMessage}
+        </div>
+      ) : null}
+
+      <div className="mt-2.5 flex items-center border-b border-border">
         {TABS.map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
             className={`-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-[13px] transition ${
-              activeTab === tab
-                ? "border-[#4f93ff] text-[#8bb5ff]"
-                : "border-transparent text-white/44 hover:text-white/76"
+              activeTab === tab ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-muted-foreground"
             }`}
           >
-            {tab === "Plans" && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="1" y="2" width="10" height="3" rx="1" />
-                <rect x="1" y="7" width="10" height="3" rx="1" />
-              </svg>
-            )}
-            {tab === "Usage" && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="1" y="6.5" width="2" height="4" rx="0.5" />
-                <rect x="5" y="4" width="2" height="6.5" rx="0.5" />
-                <rect x="9" y="1.5" width="2" height="9" rx="0.5" />
-              </svg>
-            )}
-            {tab === "Invoices" && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 1.5h8v9l-1.5-1.5L7 10.5 6 9l-1 1.5-1.5-1.5L2 10.5V1.5z" />
-                <path d="M4 4.5h4M4 6.5h2.5" />
-              </svg>
-            )}
             {tab}
           </button>
         ))}
       </div>
 
       {activeTab === "Plans" ? (
-        <>
-          <div className="mt-3 grid gap-3 lg:grid-cols-2 2xl:grid-cols-4">
-            {PLAN_CARDS.map((plan) => {
-              const isCurrent = plan.name === currentPlan;
-              return (
-                <div
-                  key={plan.name}
-                  className={`rounded-[10px] border px-4 py-4 ${
-                    plan.highlight
-                      ? "border-[#4f93ff]/40 bg-[linear-gradient(180deg,#1a1f2e_0%,#161616_35%)]"
-                      : "border-white/10 bg-[#161616]"
+        <div className="mt-3 grid gap-3 lg:grid-cols-2 2xl:grid-cols-4">
+          {PLAN_CARDS.map((card) => {
+            const isCurrent = card.name === plan;
+            return (
+              <div
+                key={card.name}
+                className={`rounded-[10px] border px-4 py-4 ${
+                  card.highlight ? "border-primary/40 bg-gradient-to-b from-primary/10 to-card" : "border-border bg-card"
+                }`}
+              >
+                <p className="text-[34px] font-semibold tracking-[-0.04em] leading-none">{card.name}</p>
+                <p className="mt-2 text-[34px] font-semibold tracking-[-0.05em]">{card.price}</p>
+                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">{card.subtitle}</p>
+                <div className="mt-3 space-y-1.5">
+                  {card.features.map((feature) => (
+                    <p key={feature} className="text-[13px] text-muted-foreground">{feature}</p>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  disabled={isCurrent || checkoutPendingPlan === card.name}
+                  onClick={() => void startCheckout(card.name)}
+                  className={`mt-4 w-full rounded-[8px] border px-3 py-2 text-[12px] font-medium tracking-[0.08em] uppercase ${
+                    isCurrent ? "border-border bg-muted/50 text-muted-foreground" : "border-primary/30 bg-primary/10 text-primary disabled:opacity-50"
                   }`}
                 >
-                  <p className="text-[34px] font-semibold tracking-[-0.04em] leading-none">{plan.name}</p>
-                  <p className="mt-2 text-[34px] font-semibold tracking-[-0.05em]">{plan.price}</p>
-                  <p className="mt-2 text-[13px] leading-6 text-white/58">{plan.subtitle}</p>
-
-                  <div className="mt-3 space-y-1.5">
-                    {plan.features.map((feature) => (
-                      <p key={feature} className="text-[13px] text-white/74">
-                        {feature}
-                      </p>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    className={`mt-4 w-full rounded-[8px] border px-3 py-2 text-[12px] font-medium tracking-[0.08em] uppercase ${
-                      isCurrent
-                        ? "border-white/10 bg-[#111111] text-white/42"
-                        : "border-[#4f93ff]/30 bg-[#4f93ff]/8 text-[#8bb5ff]"
-                    }`}
-                  >
-                    {isCurrent ? "Current Plan" : plan.cta}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-3 rounded-[10px] border border-white/10 bg-[#161616] px-4 py-3.5">
-            <p className="text-[16px] font-semibold tracking-[-0.02em]">Overage Pricing (Pro & Scale)</p>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              <p className="text-[14px] text-white/74">Token Processing: $0.01 per 1,000 tokens</p>
-              <p className="text-[14px] text-white/74">Search Queries: $0.10 per 1,000 queries</p>
-            </div>
-          </div>
-        </>
+                  {isCurrent ? "Current Plan" : checkoutPendingPlan === card.name ? "Opening..." : card.cta}
+                </button>
+              </div>
+            );
+          })}
+        </div>
       ) : null}
 
       {activeTab === "Usage" ? (
         <div className="mt-3 space-y-3">
-          <div className="rounded-[10px] border border-white/10 bg-[#161616] px-4 py-4">
-            <p className="text-[30px] font-semibold tracking-[-0.04em]">Previous Billing Period</p>
-            <p className="mt-1 text-[14px] text-white/66">
-              {usageData.previous.from} - {usageData.previous.to}
-            </p>
-            <p className="mt-2 text-[14px] leading-7 text-white/52">
-              Previous period data is available in the billing portal.
-            </p>
-          </div>
-
-          <div className="rounded-[10px] border border-white/10 bg-[#161616] px-4 py-4">
+          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="text-[30px] font-semibold tracking-[-0.04em]">Current Billing Period</p>
-                <p className="mt-1 text-[14px] text-white/66">
-                  {usageData.current.from} - {usageData.current.to}
-                </p>
+                <p className="mt-1 text-[14px] text-muted-foreground">Live workspace usage</p>
               </div>
-              <p className="text-[14px] text-white/46">Resets in {usageData.current.resetInDays} days</p>
+              <p className="text-[14px] text-muted-foreground">Resets in {usage.resetInDays} days</p>
             </div>
-
             <div className="mt-4 space-y-4">
               <div>
                 <div className="mb-1 flex items-center justify-between text-[14px]">
                   <span>Tokens</span>
-                  <span className="text-white/66">
-                    {usageData.current.tokenUsed.toLocaleString()} / {usageData.current.tokenLimit.toLocaleString()} ({tokenPercent}
-                    %)
+                  <span className="text-muted-foreground">
+                    {usage.tokenUsed.toLocaleString()} / {usage.tokenLimit.toLocaleString()} ({tokenPercent}%)
                   </span>
                 </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#101010]">
-                  <div className="h-full bg-[#4f93ff]" style={{ width: `${tokenPercent}%` }} />
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div className="h-full bg-primary" style={{ width: `${tokenPercent}%` }} />
                 </div>
               </div>
-
               <div>
                 <div className="mb-1 flex items-center justify-between text-[14px]">
                   <span>Search Queries</span>
-                  <span className="text-white/66">
-                    {usageData.current.searchUsed.toLocaleString()} / {usageData.current.searchLimit.toLocaleString()} ({searchPercent}
-                    %)
+                  <span className="text-muted-foreground">
+                    {usage.searchUsed.toLocaleString()} / {usage.searchLimit.toLocaleString()} ({searchPercent}%)
                   </span>
                 </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#101010]">
-                  <div className="h-full bg-[#5cbe88]" style={{ width: `${searchPercent}%` }} />
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div className="h-full bg-chart-2" style={{ width: `${searchPercent}%` }} />
                 </div>
               </div>
             </div>
@@ -238,23 +311,41 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       ) : null}
 
       {activeTab === "Invoices" ? (
-        <div className="mt-3 rounded-[10px] border border-white/10 bg-[#141414] px-4 py-4">
-          <div className="grid min-h-[340px] place-items-center text-center">
-            <div className="max-w-[420px]">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-white/10 text-white/28">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="5.5" width="18" height="12" rx="2" />
-                  <path d="M2 10h18M5.5 14.5h5" />
-                </svg>
-              </div>
-              <h2 className="mt-3 text-[34px] font-semibold tracking-[-0.05em]">No invoices yet</h2>
-              <p className="mt-2 text-[15px] leading-7 text-white/46">
-                Your invoices will appear here once you move to a paid subscription.
+        <div className="mt-3 rounded-[10px] border border-border bg-card px-4 py-4">
+          {invoices.length === 0 ? (
+            <div className="grid min-h-[240px] place-items-center text-center">
+              <p className="text-[15px] leading-7 text-muted-foreground">
+                No invoices yet. Your invoices will appear here once billing starts.
               </p>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-2.5">
+              {invoices.map((invoice) => (
+                <div key={invoice.id} className="rounded-[8px] border border-border bg-muted/40 px-3 py-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[12px] font-semibold text-foreground">{invoice.id}</p>
+                    <span className="text-[11px] text-muted-foreground">{invoice.status}</span>
+                  </div>
+                  <p className="mt-1 text-[12px] text-muted-foreground">
+                    {formatMoney(invoice.amountCents, invoice.currency)} · {new Date(invoice.issuedAt).toLocaleString()}
+                  </p>
+                  {invoice.hostedInvoiceUrl ? (
+                    <a
+                      href={invoice.hostedInvoiceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-block text-[11px] text-primary"
+                    >
+                      Open invoice
+                    </a>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : null}
     </>
   );
 }
+

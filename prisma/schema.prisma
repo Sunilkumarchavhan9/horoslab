@@ -7,6 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SessionStatus {
+  IDLE
+  RECORDING
+  PAUSED
+  VERIFYING
+  COMPLETED
+}
+
+enum VerificationStatus {
+  PASSED
+  FAILED
+  PENDING
+}
+
+enum MemoryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  MERGED
+  PROMOTED
+}
+
 model RecentMemory {
   userId    String @map("user_id")
   memoryId  String @map("memory_id")
@@ -44,4 +66,104 @@ model RevisionEvent {
   @@index([memoryId, version], map: "idx_revision_memory_version")
   @@index([userId, changedAt], map: "idx_revision_user_changed")
   @@map("revision_events")
+}
+
+model Connector {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  name          String   // e.g., "GitHub", "Notion"
+  type          String   // e.g., "github", "notion"
+  status        String   @default("not_connected") // connected, error, syncing
+  configJson    String?  @map("config_json") // encrypted tokens/credentials
+  lastSyncAt    String?  @map("last_sync_at")
+  recordCount   Int      @default(0) @map("record_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("connectors")
+}
+
+model AgentProfile {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  templateId    String   @map("template_id")
+  name          String
+  runtime       String
+  category      String
+  status        String   @default("idle") // online, idle, offline
+  connectedAt   String   @map("connected_at")
+  lastHeartbeat String   @map("last_heartbeat")
+  threads24h    Int      @default(0)
+  resumeScore   Int      @default(0)
+  handoffs24h   Int      @default(0)
+  configJson    String?  @map("config_json")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("agent_profiles")
+}
+
+model AgentSession {
+  id                 String    @id @default(uuid())
+  projectId          String?
+  agentId            String
+  model              String
+  tool               String
+  task               String?
+  mode               String
+  status             SessionStatus @default(IDLE)
+  startedAt          DateTime  @default(now())
+  endedAt            DateTime?
+  preflightId        String?
+  handoffId          String?
+  verificationStatus VerificationStatus?
+  summary            String?
+
+  events             AgentSessionEvent[]
+  proposedMemories   ProposedMemory[]
+  verificationResult VerificationResult?
+
+  @@index([agentId, status])
+}
+
+model AgentSessionEvent {
+  id          String   @id @default(uuid())
+  sessionId   String
+  type        String
+  summary     String
+  payloadJson Json?
+  timestamp   DateTime @default(now())
+
+  session AgentSession @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, timestamp])
+}
+
+model ProposedMemory {
+  id          String   @id @default(uuid())
+  sessionId   String
+  type        String
+  content     String
+  confidence  Float
+  source      String
+  status      MemoryStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+
+  session AgentSession @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, status])
+}
+
+model VerificationResult {
+  id          String   @id @default(uuid())
+  sessionId   String   @unique
+  status      VerificationStatus
+  confidence  Float
+  checksJson  Json
+  warningsJson Json?
+  createdAt   DateTime @default(now())
+
+  session AgentSession @relation(fields: [sessionId], references: [id])
 }

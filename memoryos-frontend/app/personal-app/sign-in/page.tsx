@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { ClerkPersonalSignIn } from "@/components/auth/clerk-personal-sign-in";
 import { PersonalAuthShell } from "@/components/auth/personal-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,7 @@ export default async function PersonalAppSignInPage() {
 
   if (clerkEnabled) {
     const { userId } = await auth();
+
     if (userId) {
       redirect("/personal-app");
     }

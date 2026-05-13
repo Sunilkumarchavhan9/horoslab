@@ -22,7 +22,7 @@ const noopContextAdapter: ContextAdapter = {
 };
 
 function buildDefaultContextAdapter(): ContextAdapter {
-  const apiKey = process.env.SUPERMEMORY_API_KEY;
+  const apiKey = process.env.SUPERMEMORY_API_KEY?.trim();
 
   if (!apiKey) {
     return noopContextAdapter;

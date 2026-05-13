@@ -142,7 +142,7 @@ function buildCustomId(input: {
     .digest("hex")
     .slice(0, 12);
 
-  return [...parts, fingerprint].join(".").slice(0, 100);
+  return [...parts, fingerprint].join("_").slice(0, 100);
 }
 
 function matchesScope(
@@ -311,6 +311,7 @@ export class SupermemoryContextAdapter implements ContextAdapter {
   private readonly client: SupermemoryContextClient;
 
   private readonly namespace?: string;
+  private disabled = false;
 
   constructor(options: SupermemoryContextAdapterOptions = {}) {
     if (options.client) {
@@ -348,33 +349,47 @@ export class SupermemoryContextAdapter implements ContextAdapter {
       payload: unknown;
     } & ContinuityScope,
   ): Promise<void> {
+    if (this.disabled) {
+      return;
+    }
     const serializedPayload = stringifyPayload(input.payload);
 
     if (!serializedPayload) {
       throw new Error("Supermemory context ingest requires non-empty payload");
     }
 
-    await this.client.addDocument({
-      content: serializedPayload,
-      containerTag: this.buildContainerTag(input.userId),
-      customId: buildCustomId({
-        userId: input.userId,
-        source: input.source,
-        serializedPayload,
-        workspace: input.workspace,
-        project: input.project,
-        threadId: input.threadId,
-      }),
-      metadata: {
-        user_id: input.userId,
-        source: input.source,
-        payload_kind: typeof input.payload === "string" ? "text" : "json",
-        ...(input.workspace ? { workspace: input.workspace } : {}),
-        ...(input.project ? { project: input.project } : {}),
-        ...(input.threadId ? { thread_id: input.threadId } : {}),
-        ...pickPrimitiveMetadata(input.payload),
-      },
-    });
+    try {
+      await this.client.addDocument({
+        content: serializedPayload,
+        containerTag: this.buildContainerTag(input.userId),
+        customId: buildCustomId({
+          userId: input.userId,
+          source: input.source,
+          serializedPayload,
+          workspace: input.workspace,
+          project: input.project,
+          threadId: input.threadId,
+        }),
+        metadata: {
+          user_id: input.userId,
+          source: input.source,
+          payload_kind: typeof input.payload === "string" ? "text" : "json",
+          ...(input.workspace ? { workspace: input.workspace } : {}),
+          ...(input.project ? { project: input.project } : {}),
+          ...(input.threadId ? { thread_id: input.threadId } : {}),
+          ...pickPrimitiveMetadata(input.payload),
+        },
+      });
+    } catch (error) {
+      if (this.shouldDisable(error)) {
+        this.disabled = true;
+        console.warn(
+          "[context.supermemory] disabling adapter after unauthorized response",
+        );
+        return;
+      }
+      throw error;
+    }
   }
 
   async searchContext(
@@ -384,14 +399,29 @@ export class SupermemoryContextAdapter implements ContextAdapter {
       topK?: number;
     } & ContinuityScope,
   ): Promise<ContextSearchResult[]> {
-    const response = await this.client.search({
-      q: input.query,
-      limit: input.topK ?? 10,
-      containerTag: this.buildContainerTag(input.userId),
-      searchMode: "hybrid",
-      rerank: true,
-      rewriteQuery: false,
-    });
+    if (this.disabled) {
+      return [];
+    }
+    let response: SupermemorySearchResponse;
+    try {
+      response = await this.client.search({
+        q: input.query,
+        limit: input.topK ?? 10,
+        containerTag: this.buildContainerTag(input.userId),
+        searchMode: "hybrid",
+        rerank: true,
+        rewriteQuery: false,
+      });
+    } catch (error) {
+      if (this.shouldDisable(error)) {
+        this.disabled = true;
+        console.warn(
+          "[context.supermemory] disabling adapter after unauthorized response",
+        );
+        return [];
+      }
+      throw error;
+    }
 
     const scopedResults = (response.results ?? [])
       .map((item) => toContextSearchResult(item))
@@ -399,5 +429,12 @@ export class SupermemoryContextAdapter implements ContextAdapter {
       .filter((item) => matchesScope(item.metadata, input));
 
     return scopedResults.slice(0, input.topK ?? 10);
+  }
+
+  private shouldDisable(error: unknown): boolean {
+    if (!(error instanceof Error)) {
+      return false;
+    }
+    return /401|unauthorized|invalid api key|forbidden/i.test(error.message);
   }
 }

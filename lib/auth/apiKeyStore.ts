@@ -111,3 +111,29 @@ export function revokeApiKeyForUser(userId: string, keyId: string): ApiKeyRecord
   writeStore(store);
   return target;
 }
+
+export function verifyApiKeyToken(token: string): { userId: string } | null {
+  if (!token || typeof token !== "string") {
+    return null;
+  }
+
+  const nowMs = Date.now();
+  const store = readStore();
+  const key = store.keys.find((entry) => entry.keyHash === token);
+  if (!key) {
+    return null;
+  }
+
+  if (key.status !== "active") {
+    return null;
+  }
+
+  const expiresAtMs = Date.parse(key.expires);
+  if (Number.isFinite(expiresAtMs) && expiresAtMs < nowMs) {
+    return null;
+  }
+
+  key.lastUsedAt = new Date(nowMs).toISOString();
+  writeStore(store);
+  return { userId: key.userId };
+}

@@ -1,0 +1,46 @@
+{
+  "name": "@memoryostm/mcp",
+  "version": "0.1.2",
+  "description": "MemoryOS MCP adapter for universal agent memory across MCP-compatible runtimes.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "memoryostm-mcp": "dist/stdio.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/stdio.ts",
+    "start": "node dist/stdio.js",
+    "prepack": "npm run build",
+    "pack:dry": "npm pack --dry-run"
+  },
+  "keywords": [
+    "memoryos",
+    "mcp",
+    "model-context-protocol",
+    "agents",
+    "ai-agents",
+    "memory",
+    "continuity",
+    "ollama",
+    "claude",
+    "openai",
+    "qwen",
+    "deepseek"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

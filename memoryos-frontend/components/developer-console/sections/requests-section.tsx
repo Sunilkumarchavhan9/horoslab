@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
 const REQUEST_TIME_FILTERS = ["1d", "7d", "30d", "All"] as const;
 const REQUEST_STATUS_FILTERS = ["All statuses", "Success", "Error"] as const;
@@ -17,6 +18,10 @@ export type RequestSectionEvent = {
   route: string;
   method: string;
   statusCode: number;
+  agent?: string;
+  payloadSummary?: string;
+  responseSummary?: string;
+  errorDetails?: string;
 };
 
 type RequestsSectionProps = {
@@ -36,6 +41,8 @@ export function RequestsSection({
   isLoading = false,
   errorMessage = null,
 }: RequestsSectionProps) {
+  const [liveEvents, setLiveEvents] = useState<RequestSectionEvent[]>(requestEvents);
+  const [liveError, setLiveError] = useState<string | null>(null);
   const [requestTimeFilter, setRequestTimeFilter] =
     useState<RequestTimeFilter>("30d");
   const [requestTypeFilter, setRequestTypeFilter] = useState<string>("All types");
@@ -43,19 +50,83 @@ export function RequestsSection({
     useState<RequestStatusFilter>("All statuses");
   const [showRequestTypeMenu, setShowRequestTypeMenu] = useState(false);
   const [showRequestStatusMenu, setShowRequestStatusMenu] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string>("-");
+
+  useEffect(() => {
+    const deduped = Array.from(new Map(requestEvents.map((event) => [event.id, event])).values())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    setLiveEvents(deduped);
+    setLastUpdated(new Date().toISOString());
+  }, [requestEvents]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchLive = async () => {
+      try {
+        const token = await getOrCreateMemoryToken();
+        if (!token) return;
+        const response = await fetch("/api/memory/requests?limit=200&range=all", {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error(`Could not refresh requests (${response.status})`);
+        }
+        const payload = await response.json();
+        const rawList = Array.isArray(payload?.requests)
+          ? payload.requests
+          : Array.isArray(payload?.data?.requests)
+            ? payload.data.requests
+            : [];
+        const mapped: RequestSectionEvent[] = rawList.map((entry: any) => ({
+          id: String(entry.id),
+          createdAt: entry.createdAt,
+          type: entry.routeType ?? entry.type ?? "other",
+          status: entry.status >= 200 && entry.status < 400 ? "Success" : "Error",
+          latencyMs: entry.durationMs ?? entry.latencyMs ?? 0,
+          route: entry.path ?? entry.route ?? "",
+          method: entry.method ?? "GET",
+          statusCode: entry.statusCode ?? entry.status ?? 0,
+          agent: entry.agent,
+          payloadSummary: entry.payloadSummary,
+          responseSummary: entry.responseSummary,
+          errorDetails: entry.errorDetails,
+        }));
+        const deduped = Array.from(new Map(mapped.map((event) => [event.id, event])).values())
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        if (!cancelled) {
+          setLiveEvents(deduped);
+          setLiveError(null);
+          setLastUpdated(new Date().toISOString());
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setLiveError(err instanceof Error ? err.message : "Could not refresh requests.");
+        }
+      }
+    };
+
+    void fetchLive();
+    const timer = window.setInterval(() => {
+      void fetchLive();
+    }, 10000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   const requestTypeFilters = useMemo(() => {
     const dynamicTypes = Array.from(
-      new Set(requestEvents.map((event) => normalizeRequestType(event.type))),
+      new Set(liveEvents.map((event) => normalizeRequestType(event.type))),
     ).sort((a, b) => a.localeCompare(b));
     return ["All types", ...dynamicTypes];
-  }, [requestEvents]);
+  }, [liveEvents]);
 
   const filteredRequestEvents = useMemo(() => {
-    const referenceTimeMs = requestEvents.reduce((max, event) => {
-      const eventTime = new Date(event.createdAt).getTime();
-      return Number.isFinite(eventTime) ? Math.max(max, eventTime) : max;
-    }, 0);
+    const referenceTimeMs = Date.now();
     const maxAgeMs =
       requestTimeFilter === "All"
         ? null
@@ -65,7 +136,7 @@ export function RequestsSection({
             ? 7 * ONE_DAY_MS
             : 30 * ONE_DAY_MS;
 
-    return requestEvents.filter((event) => {
+    return liveEvents.filter((event) => {
       const matchesType =
         requestTypeFilter === "All types" ||
         normalizeRequestType(event.type) === requestTypeFilter;
@@ -75,12 +146,12 @@ export function RequestsSection({
       const eventTimeMs = new Date(event.createdAt).getTime();
       const matchesTime =
         maxAgeMs === null ||
-        !Number.isFinite(eventTimeMs) ||
+        !Number.isFinite(eventTimeMs) ? false :
         referenceTimeMs - eventTimeMs <= maxAgeMs;
 
       return matchesType && matchesStatus && matchesTime;
     });
-  }, [requestEvents, requestTimeFilter, requestTypeFilter, requestStatusFilter]);
+  }, [liveEvents, requestTimeFilter, requestTypeFilter, requestStatusFilter]);
 
   const successfulRequestCount = filteredRequestEvents.filter(
     (event) => event.status === "Success",
@@ -98,13 +169,13 @@ export function RequestsSection({
   const hasRows = filteredRequestEvents.length > 0;
   const emptyTitle = isLoading
     ? "Loading requests..."
-    : errorMessage
+    : errorMessage || liveError
       ? "Could not load requests"
       : "No requests yet";
   const emptyDescription = isLoading
     ? "Fetching request history from the MemoryOS API."
-    : errorMessage
-      ? errorMessage
+    : errorMessage || liveError
+      ? (errorMessage ?? liveError ?? "Could not load requests")
       : "API requests will appear here once you run retrieve, resume, continue, or handoff flows.";
 
   return (
@@ -114,13 +185,13 @@ export function RequestsSection({
           <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">
             Requests
           </h1>
-          <p className="mt-1 text-[12px] leading-6 text-white/46 sm:text-[13px]">
+          <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
             View MemoryOS API request history and continuity runtime details.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center overflow-hidden rounded-[8px] border border-white/10 bg-[#111111]">
+          <div className="flex items-center overflow-hidden rounded-[8px] border border-border bg-card">
             {REQUEST_TIME_FILTERS.map((range) => (
               <button
                 key={range}
@@ -128,8 +199,8 @@ export function RequestsSection({
                 onClick={() => setRequestTimeFilter(range)}
                 className={`px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] transition ${
                   requestTimeFilter === range
-                    ? "bg-[#1e1e1e] text-white"
-                    : "text-white/42 hover:bg-white/5 hover:text-white/72"
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"
                 }`}
               >
                 {range}
@@ -144,7 +215,7 @@ export function RequestsSection({
                 setShowRequestTypeMenu((current) => !current);
                 setShowRequestStatusMenu(false);
               }}
-              className="flex items-center gap-2 rounded-[8px] border border-white/10 bg-[#111111] px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-white/84 transition hover:border-white/20"
+              className="flex items-center gap-2 rounded-[8px] border border-border bg-card px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-foreground transition hover:border-border"
             >
               {requestTypeFilter}
               <svg
@@ -156,13 +227,13 @@ export function RequestsSection({
                 strokeWidth="1.6"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-white/36"
+                className="text-muted-foreground"
               >
                 <path d="M2 4l3 3 3-3" />
               </svg>
             </button>
             {showRequestTypeMenu ? (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[220px] overflow-hidden rounded-[8px] border border-white/10 bg-[#1d1d1d] shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+              <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[220px] overflow-hidden rounded-[8px] border border-border bg-card shadow-xl">
                 {requestTypeFilters.map((item) => (
                   <button
                     key={item}
@@ -173,13 +244,13 @@ export function RequestsSection({
                     }}
                     className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-[12px] transition ${
                       requestTypeFilter === item
-                        ? "bg-[#252525] font-semibold text-white"
-                        : "text-white/76 hover:bg-white/5"
+                        ? "bg-muted font-semibold text-foreground"
+                        : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     <span>{item}</span>
                     {requestTypeFilter === item ? (
-                      <span className="text-white/52">✓</span>
+                      <span className="text-muted-foreground">✓</span>
                     ) : null}
                   </button>
                 ))}
@@ -194,7 +265,7 @@ export function RequestsSection({
                 setShowRequestStatusMenu((current) => !current);
                 setShowRequestTypeMenu(false);
               }}
-              className="flex items-center gap-2 rounded-[8px] border border-white/10 bg-[#111111] px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-white/84 transition hover:border-white/20"
+              className="flex items-center gap-2 rounded-[8px] border border-border bg-card px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-foreground transition hover:border-border"
             >
               {requestStatusFilter}
               <svg
@@ -206,13 +277,13 @@ export function RequestsSection({
                 strokeWidth="1.6"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-white/36"
+                className="text-muted-foreground"
               >
                 <path d="M2 4l3 3 3-3" />
               </svg>
             </button>
             {showRequestStatusMenu ? (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[180px] overflow-hidden rounded-[8px] border border-white/10 bg-[#1d1d1d] shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+              <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[180px] overflow-hidden rounded-[8px] border border-border bg-card shadow-xl">
                 {REQUEST_STATUS_FILTERS.map((item) => (
                   <button
                     key={item}
@@ -223,13 +294,13 @@ export function RequestsSection({
                     }}
                     className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-[12px] transition ${
                       requestStatusFilter === item
-                        ? "bg-[#252525] font-semibold text-white"
-                        : "text-white/76 hover:bg-white/5"
+                        ? "bg-muted font-semibold text-foreground"
+                        : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     <span>{item}</span>
                     {requestStatusFilter === item ? (
-                      <span className="text-white/52">✓</span>
+                      <span className="text-muted-foreground">✓</span>
                     ) : null}
                   </button>
                 ))}
@@ -238,40 +309,34 @@ export function RequestsSection({
           </div>
         </div>
       </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Status: {isLoading ? "Syncing requests..." : (errorMessage || liveError) ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
+      </p>
 
       <div className="mt-3 grid gap-2.5 lg:grid-cols-3">
-        <div
-          className="rounded-[8px] border border-white/10 bg-[#161616] px-3.5 py-3.5 sm:px-4 sm:py-4"
-          style={{ borderTopColor: "#9b7bff", borderTopWidth: "2px" }}
-        >
-          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/34">
+        <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
             By request type
           </p>
-          <p className="mt-2 text-[13px] text-white/74">
+          <p className="mt-2 text-[13px] text-muted-foreground">
             {filteredRequestEvents.length > 0
               ? `${filteredRequestEvents.length} request(s) in this period`
               : "No requests in this period"}
           </p>
         </div>
-        <div
-          className="rounded-[8px] border border-white/10 bg-[#161616] px-3.5 py-3.5 sm:px-4 sm:py-4"
-          style={{ borderTopColor: "#14c38e", borderTopWidth: "2px" }}
-        >
-          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/34">
+        <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
             Successful requests (2xx)
           </p>
           <p className="mt-2 text-[28px] font-semibold tracking-[-0.04em]">
             {successfulRequestCount}
-            <span className="ml-1.5 text-[12px] font-normal text-white/36">
+            <span className="ml-1.5 text-[12px] font-normal text-muted-foreground">
               of {filteredRequestEvents.length}
             </span>
           </p>
         </div>
-        <div
-          className="rounded-[8px] border border-white/10 bg-[#161616] px-3.5 py-3.5 sm:px-4 sm:py-4"
-          style={{ borderTopColor: "#4f93ff", borderTopWidth: "2px" }}
-        >
-          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/34">
+        <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
             Average latency (ms)
           </p>
           <p className="mt-2 text-[28px] font-semibold tracking-[-0.04em]">
@@ -280,11 +345,11 @@ export function RequestsSection({
         </div>
       </div>
 
-      <div className="mt-3 rounded-[10px] border border-white/10 bg-[#141414] px-4 py-4 sm:px-5 sm:py-5">
+      <div className="mt-3 rounded-[10px] border border-border bg-card px-4 py-4 sm:px-5 sm:py-5">
         {!hasRows ? (
           <div className="grid min-h-[300px] place-items-center text-center sm:min-h-[360px]">
             <div className="max-w-[460px]">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-white/10 text-white/28">
+              <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-border text-muted-foreground">
                 <svg
                   width="22"
                   height="22"
@@ -301,16 +366,16 @@ export function RequestsSection({
               <h2 className="mt-4 text-[30px] font-semibold tracking-[-0.04em]">
                 {emptyTitle}
               </h2>
-              <p className="mt-2 text-[14px] leading-7 text-white/46">
+              <p className="mt-2 text-[14px] leading-7 text-muted-foreground">
                 {emptyDescription}
               </p>
             </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-white/10">
+            <table className="min-w-full divide-y divide-border">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.12em] text-white/38">
+                <tr className="text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
                   <th className="px-3 py-2">Time</th>
                   <th className="px-3 py-2">Type</th>
                   <th className="px-3 py-2">Route</th>
@@ -318,9 +383,9 @@ export function RequestsSection({
                   <th className="px-3 py-2">Latency</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/6">
+              <tbody className="divide-y divide-border">
                 {filteredRequestEvents.map((event) => (
-                  <tr key={event.id} className="text-[12px] text-white/76">
+                  <tr key={event.id} className="text-[12px] text-muted-foreground">
                     <td className="px-3 py-3">
                       {new Date(event.createdAt).toLocaleString()}
                     </td>

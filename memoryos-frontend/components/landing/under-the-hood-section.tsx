@@ -1,289 +1,495 @@
+"use client";
+
+import { useState } from "react";
 import { Reveal } from "./motion";
 
-function hexPoints(cx: number, cy: number, r: number) {
-  const points: string[] = [];
-  for (let i = 0; i < 6; i += 1) {
-    const angle = (Math.PI / 180) * (60 * i - 30);
-    const x = cx + r * Math.cos(angle);
-    const y = cy + r * Math.sin(angle);
-    points.push(`${x.toFixed(2)},${y.toFixed(2)}`);
-  }
-  return points.join(" ");
-}
+type GraphNodeKind = "session" | "operation" | "memory" | "agent";
 
-function LeftMemoryDiagram() {
-  const leftNodes = [
-    { x: 42, y: 78, r: 23 },
-    { x: 70, y: 166, r: 30 },
-    { x: 162, y: 124, r: 18 },
-    { x: 194, y: 216, r: 18 },
-    { x: 232, y: 308, r: 30 },
-    { x: 62, y: 372, r: 24 },
-    { x: 212, y: 396, r: 20 },
-  ];
-  const rightNodes = [
-    { x: 352, y: 170, r: 31 },
-    { x: 390, y: 112, r: 19 },
-    { x: 458, y: 84, r: 30 },
-    { x: 430, y: 228, r: 24 },
-    { x: 498, y: 286, r: 22 },
-    { x: 554, y: 358, r: 16 },
-    { x: 394, y: 336, r: 24 },
-  ];
- 
-  return (
-    <svg viewBox="0 0 608 401" className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="leftHexFill" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#c9dbf4" />
-          <stop offset="100%" stopColor="#aec4e5" />
-        </linearGradient>
-        <filter id="leftSoftShadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="1.2" stdDeviation="1.8" floodColor="#5a7fbc" floodOpacity="0.22" />
-        </filter>
-      </defs>
+type GraphNode = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  color: string;
+  kind: GraphNodeKind;
+};
 
-      <rect x="0" y="228" width="52" height="90" rx="16" fill="#a9c0e7" stroke="#5e7fb7" strokeWidth="1.7" />
-      <text x="26" y="278" textAnchor="middle" fontSize="12.5" fill="#4f6f9f" fontFamily="Inter, sans-serif">
-        Doc
-      </text>
+type GraphEdge = {
+  id: string;
+  from: string;
+  to: string;
+  color: string;
+};
 
-      <rect x="552" y="146" width="52" height="86" rx="16" fill="#a9c0e7" stroke="#5e7fb7" strokeWidth="1.7" />
-      <text x="578" y="193" textAnchor="middle" fontSize="12.5" fill="#4f6f9f" fontFamily="Inter, sans-serif">
-        Doc
-      </text>
+type SelectedGraphItem =
+  | { kind: "node"; id: string }
+  | { kind: "edge"; id: string }
+  | null;
 
-      <line x1="44" y1="261" x2="42" y2="78" stroke="#32589a" strokeWidth="2" />
-      <line x1="44" y1="261" x2="70" y2="166" stroke="#32589a" strokeWidth="2" />
-      <line x1="44" y1="261" x2="162" y2="124" stroke="#32589a" strokeWidth="2" />
-      <line x1="44" y1="261" x2="194" y2="216" stroke="#32589a" strokeWidth="2" />
-      <line x1="44" y1="261" x2="232" y2="308" stroke="#32589a" strokeWidth="2" />
-      <line x1="44" y1="261" x2="62" y2="372" stroke="#32589a" strokeWidth="2" />
-      <line x1="44" y1="261" x2="212" y2="396" stroke="#32589a" strokeWidth="2" />
+const memoryGraph: {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+} = {
+  nodes: [
+    // Live Sessions
+    { id: "s1", label: "", x: 100, y: 110, color: "#4f93ff", kind: "session" },
+    { id: "s2", label: "", x: 100, y: 190, color: "#4f93ff", kind: "session" },
+    { id: "s3", label: "", x: 100, y: 270, color: "#4f93ff", kind: "session" },
+    { id: "s4", label: "", x: 100, y: 350, color: "#4f93ff", kind: "session" },
+    { id: "s5", label: "", x: 100, y: 430, color: "#4f93ff", kind: "session" },
+    { id: "s6", label: "", x: 100, y: 510, color: "#4f93ff", kind: "session" },
 
-      <line x1="44" y1="261" x2="552" y2="188" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="352" y2="170" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="390" y2="112" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="458" y2="84" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="430" y2="228" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="498" y2="286" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="554" y2="358" stroke="#32589a" strokeWidth="2.1" />
-      <line x1="552" y1="188" x2="394" y2="336" stroke="#32589a" strokeWidth="2.1" />
+    { id: "s1b", label: "", x: 190, y: 110, color: "#4f93ff", kind: "session" },
+    { id: "s2b", label: "", x: 190, y: 190, color: "#4f93ff", kind: "session" },
+    { id: "s3b", label: "", x: 190, y: 270, color: "#4f93ff", kind: "session" },
+    { id: "s4b", label: "", x: 190, y: 350, color: "#4f93ff", kind: "session" },
+    { id: "s5b", label: "", x: 190, y: 430, color: "#4f93ff", kind: "session" },
+    { id: "s6b", label: "", x: 190, y: 510, color: "#4f93ff", kind: "session" },
 
-      {leftNodes.map((node, index) => (
-        <polygon
-          key={`left-${index + 1}`}
-          points={hexPoints(node.x, node.y, node.r)}
-          fill="url(#leftHexFill)"
-          stroke="#365f9f"
-          strokeWidth="2"
-          filter="url(#leftSoftShadow)"
-        />
-      ))}
-      {rightNodes.map((node, index) => (
-        <polygon
-          key={`right-${index + 1}`}
-          points={hexPoints(node.x, node.y, node.r)}
-          fill="url(#leftHexFill)"
-          stroke="#365f9f"
-          strokeWidth="2"
-          filter="url(#leftSoftShadow)"
-        />
-      ))}
+    // Memory Operations
+    { id: "resume", label: "resume", x: 390, y: 130, color: "#8b5cf6", kind: "operation" },
+    { id: "handoff", label: "handoff", x: 390, y: 210, color: "#fbbf24", kind: "operation" },
+    { id: "insights", label: "insights", x: 390, y: 290, color: "#f472b6", kind: "operation" },
+    { id: "timeline", label: "timeline", x: 390, y: 370, color: "#64748b", kind: "operation" },
+    { id: "other", label: "other", x: 390, y: 450, color: "#a8a29e", kind: "operation" },
+    { id: "process", label: "process", x: 390, y: 530, color: "#14c38e", kind: "operation" },
 
-      <line x1="200" y1="126" x2="332" y2="126" stroke="#f09500" strokeWidth="2.2" />
-      <line x1="332" y1="126" x2="352" y2="106" stroke="#f09500" strokeWidth="2.2" />
-      <circle cx="354" cy="98" r="3.5" fill="#f09500" />
-      <polygon points={hexPoints(372, 96, 18)} fill="none" stroke="#f09500" strokeWidth="3" />
-      <rect x="194" y="104" width="104" height="20" rx="5" fill="#eaf1fb" />
-      <text x="198" y="118" fill="#f09500" fontSize="14" fontFamily="Inter, sans-serif">
-        Expiring Soon
-      </text>
+    // Stored Knowledge
+    { id: "m0", label: "Building MemoryOS", x: 620, y: 90, color: "#ef6b45", kind: "memory" },
+    { id: "m1", label: "agent-a chat turn stored fo...", x: 620, y: 140, color: "#ef6b45", kind: "memory" },
+    { id: "m2", label: "agent-a chat turn stored fo...", x: 620, y: 190, color: "#ef6b45", kind: "memory" },
+    { id: "m3", label: "agent-b handoff turn stored...", x: 620, y: 240, color: "#ef6b45", kind: "memory" },
+    { id: "m4", label: "agent-a chat turn stored fo...", x: 620, y: 290, color: "#ef6b45", kind: "memory" },
+    { id: "m5", label: "agent-a chat turn stored fo...", x: 620, y: 340, color: "#ef6b45", kind: "memory" },
+    { id: "m6", label: "agent-a chat turn stored fo...", x: 620, y: 390, color: "#ef6b45", kind: "memory" },
+    { id: "m7", label: "agent-a chat turn stored fo...", x: 620, y: 440, color: "#ef6b45", kind: "memory" },
+    { id: "m8", label: "agent-b handoff turn stored...", x: 620, y: 490, color: "#ef6b45", kind: "memory" },
+    { id: "m9", label: "agent-b chat turn stored fo...", x: 620, y: 540, color: "#ef6b45", kind: "memory" },
 
-      <line x1="314" y1="46" x2="434" y2="46" stroke="#ff5b6a" strokeWidth="2.2" />
-      <line x1="434" y1="46" x2="456" y2="24" stroke="#ff5b6a" strokeWidth="2.2" />
-      <circle cx="458" cy="28" r="3.5" fill="#ff5b6a" />
-      <polygon points={hexPoints(478, 26, 20)} fill="none" stroke="#ff5b6a" strokeWidth="2.8" />
-      <line x1="466" y1="15" x2="492" y2="37" stroke="#ff5b6a" strokeWidth="2" />
-      <line x1="466" y1="37" x2="492" y2="15" stroke="#ff5b6a" strokeWidth="2" />
-      <rect x="308" y="48" width="76" height="18" rx="5" fill="#eaf1fb" />
-      <text x="312" y="61" fill="#ff5b6a" fontSize="14" fontFamily="Inter, sans-serif">
-        Forgotten
-      </text>
+    // Live Agents
+    { id: "ide", label: "IDE Copilot", x: 880, y: 200, color: "#e11d48", kind: "agent" },
+    { id: "auto", label: "Autopilot", x: 880, y: 320, color: "#e11d48", kind: "agent" },
+    { id: "cli", label: "CLI Agent", x: 880, y: 440, color: "#e11d48", kind: "agent" },
+  ],
 
-      <polygon points={hexPoints(168, 318, 21)} fill="#506b9a" stroke="#365f9f" strokeWidth="2" />
-      <path d="M152 308L165 298L182 308L186 323L174 334L158 329Z" fill="#3c5383" />
-      <circle cx="186" cy="334" r="4" fill="#365f9f" />
-      <line x1="186" y1="334" x2="224" y2="360" stroke="#365f9f" strokeWidth="2" />
-      <line x1="224" y1="360" x2="360" y2="360" stroke="#365f9f" strokeWidth="2" />
-      <text x="368" y="364" fill="#4f6383" fontSize="14" fontFamily="Inter, sans-serif">
-        New Memory
-      </text>
+  edges: [
+    // Session internal links
+    { id: "s-e1", from: "s1", to: "s1b", color: "#4f93ff" },
+    { id: "s-e2", from: "s2", to: "s2b", color: "#4f93ff" },
+    { id: "s-e3", from: "s3", to: "s3b", color: "#4f93ff" },
+    { id: "s-e4", from: "s4", to: "s4b", color: "#4f93ff" },
+    { id: "s-e5", from: "s5", to: "s5b", color: "#4f93ff" },
+    { id: "s-e6", from: "s6", to: "s6b", color: "#4f93ff" },
 
-      <line x1="184" y1="318" x2="308" y2="270" stroke="#7a98cd" strokeWidth="2" />
-      <line x1="182" y1="320" x2="322" y2="313" stroke="#7a98cd" strokeWidth="2" />
+    // Sessions to operations
+    { id: "o-e1", from: "s1b", to: "resume", color: "#4f93ff" },
+    { id: "o-e2", from: "s3b", to: "resume", color: "#4f93ff" },
+    { id: "o-e3", from: "s2b", to: "handoff", color: "#4f93ff" },
+    { id: "o-e4", from: "s5b", to: "insights", color: "#4f93ff" },
+    { id: "o-e5", from: "s4b", to: "timeline", color: "#4f93ff" },
+    { id: "o-e6", from: "s6b", to: "timeline", color: "#4f93ff" },
+    { id: "o-e7", from: "s1b", to: "other", color: "#4f93ff" },
+    { id: "o-e8", from: "s6b", to: "other", color: "#4f93ff" },
 
-      <g transform="rotate(-20 318 279)">
-        <rect x="276" y="267" width="84" height="24" rx="4" fill="#244aa6" />
-        <text x="318" y="283" textAnchor="middle" fill="#eef4ff" fontSize="12" fontFamily="Inter, sans-serif">
-          Update
-        </text>
-      </g>
+    // Operations to memories
+    { id: "m-e1", from: "resume", to: "m0", color: "#ef6b45" },
+    { id: "m-e2", from: "resume", to: "m1", color: "#ef6b45" },
+    { id: "m-e3", from: "resume", to: "m3", color: "#ef6b45" },
+    { id: "m-e4", from: "resume", to: "m6", color: "#ef6b45" },
 
-      <rect x="262" y="302" width="84" height="24" rx="4" fill="#244aa6" />
-      <text x="304" y="318" textAnchor="middle" fill="#eef4ff" fontSize="12" fontFamily="Inter, sans-serif">
-        Update
-      </text>
+    { id: "m-e5", from: "handoff", to: "m2", color: "#ef6b45" },
+    { id: "m-e6", from: "handoff", to: "m3", color: "#ef6b45" },
+    { id: "m-e7", from: "handoff", to: "m5", color: "#ef6b45" },
+    { id: "m-e8", from: "handoff", to: "m8", color: "#ef6b45" },
 
-      <text x="16" y="389" fontSize="12" fontFamily="monospace" fill="#5e7aa5">
-        extract → score → merge/evolve → timeline + revisions
-      </text>
-    </svg>
-  );
-}
+    { id: "m-e9", from: "insights", to: "m0", color: "#ef6b45" },
+    { id: "m-e10", from: "insights", to: "m2", color: "#ef6b45" },
+    { id: "m-e11", from: "insights", to: "m4", color: "#ef6b45" },
+    { id: "m-e12", from: "insights", to: "m6", color: "#ef6b45" },
+    { id: "m-e13", from: "insights", to: "m9", color: "#ef6b45" },
 
-function RightGraphDiagram() {
-  const center = { x: 324, y: 186 };
-  const nodes = [
-    { x: 324, y: 42, r: 17, muted: false },
-    { x: 226, y: 84, r: 15, muted: false },
-    { x: 438, y: 84, r: 15, muted: true },
-    { x: 182, y: 148, r: 19, muted: false },
-    { x: 250, y: 234, r: 15, muted: false },
-    { x: 344, y: 238, r: 15, muted: false },
-    { x: 482, y: 146, r: 18, muted: false },
-    { x: 516, y: 226, r: 18, muted: false },
-    { x: 424, y: 300, r: 19, muted: true },
-    { x: 296, y: 318, r: 18, muted: false },
-    { x: 192, y: 292, r: 20, muted: false },
-    { x: 108, y: 224, r: 14, muted: false },
-    { x: 106, y: 138, r: 15, muted: false },
-    { x: 390, y: 112, r: 13, muted: false },
-    { x: 460, y: 178, r: 17, muted: false },
-    { x: 564, y: 152, r: 20, muted: false },
-  ];
+    { id: "m-e14", from: "timeline", to: "m1", color: "#ef6b45" },
+    { id: "m-e15", from: "timeline", to: "m4", color: "#ef6b45" },
+    { id: "m-e16", from: "timeline", to: "m7", color: "#ef6b45" },
+    { id: "m-e17", from: "timeline", to: "m9", color: "#ef6b45" },
 
-  const focusEdges = [
-    { x1: 182, y1: 148, x2: 482, y2: 146, color: "#20b2ae" },
-    { x1: 250, y1: 234, x2: 390, y2: 112, color: "#20b2ae" },
-    { x1: 192, y1: 292, x2: 460, y2: 178, color: "#20b2ae" },
-    { x1: 108, y1: 224, x2: 192, y2: 292, color: "#20b2ae" },
-    { x1: 344, y1: 238, x2: 516, y2: 226, color: "#20b2ae" },
-    { x1: 296, y1: 318, x2: 106, y2: 138, color: "#20b2ae" },
-    { x1: 516, y1: 226, x2: 424, y2: 300, color: "#e1a2e1" },
-  ];
+    { id: "m-e18", from: "other", to: "m0", color: "#ef6b45" },
+    { id: "m-e19", from: "other", to: "m5", color: "#ef6b45" },
+    { id: "m-e20", from: "other", to: "m8", color: "#ef6b45" },
 
-  return (
-    <svg viewBox="0 0 640 400" className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <marker id="arrowTealR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0 0L10 5L0 10Z" fill="#20b2ae" />
-        </marker>
-        <marker id="arrowPinkR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0 0L10 5L0 10Z" fill="#e1a2e1" />
-        </marker>
-      </defs>
+    { id: "m-e21", from: "process", to: "m0", color: "#ef6b45" },
+    { id: "m-e22", from: "process", to: "m1", color: "#ef6b45" },
+    { id: "m-e23", from: "process", to: "m2", color: "#ef6b45" },
+    { id: "m-e24", from: "process", to: "m3", color: "#ef6b45" },
+    { id: "m-e25", from: "process", to: "m4", color: "#ef6b45" },
+    { id: "m-e26", from: "process", to: "m5", color: "#ef6b45" },
+    { id: "m-e27", from: "process", to: "m6", color: "#ef6b45" },
+    { id: "m-e28", from: "process", to: "m7", color: "#ef6b45" },
+    { id: "m-e29", from: "process", to: "m8", color: "#ef6b45" },
+    { id: "m-e30", from: "process", to: "m9", color: "#ef6b45" },
 
-      <text x="20" y="26" fontSize="12" fontFamily="monospace" fill="#4f6f9f" letterSpacing="1.2">
-        RETRIEVE + RERANK
-      </text>
+    // Memories to agents
+    { id: "a-e1", from: "m0", to: "ide", color: "#e11d48" },
+    { id: "a-e2", from: "m2", to: "ide", color: "#e11d48" },
+    { id: "a-e3", from: "m5", to: "ide", color: "#e11d48" },
 
-      {nodes.map((node, index) => (
-        <line
-          key={`spoke-${index + 1}`}
-          x1={center.x}
-          y1={center.y}
-          x2={node.x}
-          y2={node.y}
-          stroke={node.muted ? "#bfcee5" : "#95b5e8"}
-          strokeWidth="2"
-          opacity={node.muted ? 0.58 : 0.9}
-        />
-      ))}
+    { id: "a-e4", from: "m3", to: "auto", color: "#e11d48" },
+    { id: "a-e5", from: "m4", to: "auto", color: "#e11d48" },
+    { id: "a-e6", from: "m8", to: "auto", color: "#e11d48" },
 
-      {focusEdges.map((edge, index) => (
-        <line
-          key={`focus-${index + 1}`}
-          x1={edge.x1}
-          y1={edge.y1}
-          x2={edge.x2}
-          y2={edge.y2}
-          stroke={edge.color}
-          strokeWidth="2.4"
-          markerEnd={edge.color === "#e1a2e1" ? "url(#arrowPinkR)" : "url(#arrowTealR)"}
-        />
-      ))}
-
-      <rect x="298" y="160" width="52" height="52" rx="14" fill="#d5dde8" stroke="#aab9cd" strokeWidth="2.2" />
-      <circle cx="324" cy="186" r="10" fill="none" stroke="#889ab2" strokeWidth="2.2" />
-      <path d="M318.5 186H329.5M324 180.5V191.5" stroke="#889ab2" strokeWidth="2.2" strokeLinecap="round" />
-      <text x="324" y="230" textAnchor="middle" fill="#4f6383" fontSize="12" fontFamily="Inter, sans-serif">
-        Dev profile
-      </text>
-
-      <circle cx="256" cy="207" r="11.5" fill="#a8cae6" stroke="#8db7d9" strokeWidth="2" />
-
-      {nodes.map((node, index) => (
-        <polygon
-          key={`node-${index + 1}`}
-          points={hexPoints(node.x, node.y, node.r)}
-          fill={node.muted ? "#c5d5e8" : "#b5d8f8"}
-          stroke={node.muted ? "#9eb2ca" : "#5d9ff0"}
-          strokeWidth="2.2"
-          opacity={node.muted ? 0.74 : 1}
-        />
-      ))}
-
-      <text x="22" y="364" fontSize="12" fontFamily="monospace" fill="#5e7aa5">
-        semantic + type + importance + recency → explain → resume
-      </text>
-    </svg>
-  );
-}
+    { id: "a-e7", from: "m1", to: "cli", color: "#e11d48" },
+    { id: "a-e8", from: "m6", to: "cli", color: "#e11d48" },
+    { id: "a-e9", from: "m9", to: "cli", color: "#e11d48" },
+  ],
+};
 
 export function UnderTheHoodSection() {
+  const [selectedGraphItem, setSelectedGraphItem] = useState<SelectedGraphItem>(null);
+
+  const hasGraphData = memoryGraph.nodes.length > 0 && memoryGraph.edges.length > 0;
+
+  const selectedGraphNode =
+    selectedGraphItem?.kind === "node"
+      ? memoryGraph.nodes.find((node) => node.id === selectedGraphItem.id) ?? null
+      : null;
+
+  const selectedGraphEdge =
+    selectedGraphItem?.kind === "edge"
+      ? memoryGraph.edges.find((edge) => edge.id === selectedGraphItem.id) ?? null
+      : null;
+
   return (
     <section className="border-b border-[#c9d8ee] px-5 pt-7">
       <Reveal>
         <h2 className="text-center text-3xl font-semibold tracking-[-0.03em] text-slate-900 md:text-5xl">
-          Backend memory lifecycle, end to end
+          Production memory lifecycle, end to end
         </h2>
+
         <p className="mx-auto mt-3 max-w-3xl text-center text-base text-slate-600 md:text-lg">
-          MemoryOS implements extraction, scoring, merge/evolve, retrieval reranking,
-          timeline events, revision diffs, and explain routes in one flow.
+          MemoryOS implements extraction, contract scoring, merge/evolve logic, retrieval reranking,
+          revision history, and explainable injection in one continuity flow.
         </p>
       </Reveal>
 
-      <div className="mt-6 grid gap-3 lg:grid-cols-2">
-        <Reveal className="h-[420px] overflow-hidden rounded-xl border border-[#c9d8ee] bg-[radial-gradient(circle_at_30%_30%,#d9eaff,#eaf1fb_45%,#dde9f8_100%)]">
-          <LeftMemoryDiagram />
-        </Reveal>
-        <Reveal
-          delay={0.08}
-          className="h-[420px] overflow-hidden rounded-xl border border-[#c9d8ee] bg-[radial-gradient(circle_at_50%_50%,#d7f0ff,#eaf4ff_52%,#dce8fb_100%)]"
-        >
-          <RightGraphDiagram />
-        </Reveal>
-      </div>
+      <Reveal className="mt-6">
+        <div className="overflow-hidden bg-white">
+          <div className="flex items-center justify-between bg-white px-5 py-4">
+            <h2 className="text-[12px] font-bold uppercase tracking-widest text-slate-950">
+              Live Brain Map
+            </h2>
 
-      <div className="mt-3 grid border border-[#c9d8ee] border-b-0 lg:grid-cols-2">
-        <Reveal className="border-b border-[#c9d8ee] px-5 py-4 lg:border-b-0 lg:border-r">
-          <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900">Merge + Evolve Engine</h3>
-          <p className="mt-2 text-sm text-[#5d6e86]">
-            Deduplicates overlap and upgrades stored memory fields when stronger evidence arrives.
-          </p>
-        </Reveal>
-        <Reveal delay={0.06} className="px-5 py-4">
-          <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900">Trust + Explainability</h3>
-          <p className="mt-2 text-sm text-[#5d6e86]">
-            Timeline events and revision history expose why each memory exists and how it changed.
-          </p>
-        </Reveal>
-      </div>
+            {selectedGraphItem ? (
+              <button
+                type="button"
+                onClick={() => setSelectedGraphItem(null)}
+                className="text-[11px] font-bold uppercase tracking-widest text-slate-500 transition hover:text-slate-950"
+              >
+                Clear Focus
+              </button>
+            ) : null}
+          </div>
 
-      <Reveal className="mb-5 border border-[#c9d8ee] px-4 py-2.5 text-center text-sm text-[#3d72cd] md:text-base">
-        /process → /retrieve → /continue → /resume → /timeline → /revisions → /explain
+          <div className="group relative min-h-[640px] overflow-hidden bg-white">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(79,147,255,0.08),transparent_70%)]" />
+
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_100%)]" />
+
+            {hasGraphData ? (
+              <svg
+                viewBox="0 0 1020 640"
+                className="absolute inset-0 h-full w-full"
+                role="img"
+                aria-label="MemoryOS live brain map"
+              >
+                <defs>
+                  <filter id="memory-graph-soft-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow
+                      dx="0"
+                      dy="8"
+                      stdDeviation="8"
+                      floodColor="#0f172a"
+                      floodOpacity="0.18"
+                    />
+                    <feDropShadow
+                      dx="0"
+                      dy="3"
+                      stdDeviation="4"
+                      floodColor="#4f93ff"
+                      floodOpacity="0.18"
+                    />
+                  </filter>
+
+                  <filter id="beam-glow-blue" x="-80%" y="-80%" width="260%" height="260%">
+                    <feGaussianBlur stdDeviation="2.5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+
+                  <filter id="beam-glow-orange" x="-80%" y="-80%" width="260%" height="260%">
+                    <feGaussianBlur stdDeviation="3.4" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+
+                  <filter id="beam-glow-red" x="-80%" y="-80%" width="260%" height="260%">
+                    <feGaussianBlur stdDeviation="2.8" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <rect width="1020" height="640" fill="transparent" />
+
+                <g opacity="0.8">
+                  {Array.from({ length: 12 }).map((_, index) => (
+                    <line
+                      key={`v-${index}`}
+                      x1={70 + index * 80}
+                      y1="65"
+                      x2={70 + index * 80}
+                      y2="600"
+                      stroke="#cbd5e1"
+                      strokeWidth="0.7"
+                    />
+                  ))}
+
+                  {Array.from({ length: 8 }).map((_, index) => (
+                    <line
+                      key={`h-${index}`}
+                      x1="50"
+                      y1={80 + index * 70}
+                      x2="970"
+                      y2={80 + index * 70}
+                      stroke="#cbd5e1"
+                      strokeWidth="0.7"
+                    />
+                  ))}
+                </g>
+
+                {[
+                  { label: "Live Sessions", x: 90, y: 36, color: "#4f93ff", width: 185 },
+                  { label: "Memory Operations", x: 315, y: 36, color: "#14c38e", width: 200 },
+                  { label: "Stored Knowledge", x: 600, y: 36, color: "#ef6b45", width: 200 },
+                  { label: "Live Agents", x: 810, y: 36, color: "#e11d48", width: 190 },
+                ].map((heading) => (
+                  <g key={heading.label}>
+                    <rect
+                      x={heading.x - 25}
+                      y="14"
+                      width={heading.width}
+                      height="34"
+                      rx="8"
+                      fill={heading.color}
+                      opacity="0.12"
+                    />
+                    <circle cx={heading.x - 12} cy="31" r="4" fill={heading.color} />
+                    <text
+                      x={heading.x}
+                      y="36"
+                      fill="#0f172a"
+                      fontSize="12"
+                      fontWeight="900"
+                      letterSpacing="2"
+                    >
+                      {heading.label.toUpperCase()}
+                    </text>
+                  </g>
+                ))}
+
+                {memoryGraph.edges.map((edge) => {
+                  const from = memoryGraph.nodes.find((node) => node.id === edge.from);
+                  const to = memoryGraph.nodes.find((node) => node.id === edge.to);
+
+                  if (!from || !to) return null;
+
+                  const selected = selectedGraphEdge?.id === edge.id;
+
+                  const isConnectedToSelectedNode = selectedGraphNode
+                    ? from.id === selectedGraphNode.id || to.id === selectedGraphNode.id
+                    : true;
+
+                  const isFaint = selectedGraphNode ? !isConnectedToSelectedNode : false;
+
+                  const isOrangeMesh = edge.color === "#ef6b45";
+                  const isAgentEdge = edge.color === "#e11d48";
+                  const isBlueEdge = edge.color === "#4f93ff";
+
+                  const strokeWidth = selected
+                    ? 9
+                    : isOrangeMesh
+                      ? 1.75
+                      : isAgentEdge
+                        ? 1.55
+                        : 1.45;
+
+                  const strokeOpacity = selected
+                    ? 1
+                    : isFaint
+                      ? 0.04
+                      : isOrangeMesh
+                        ? 0.7
+                        : isAgentEdge
+                          ? 0.68
+                          : 0.62;
+
+                  const controlOffset = Math.max(70, Math.abs(to.x - from.x) * 0.52);
+
+                  const control1X = from.x + controlOffset;
+                  const control1Y = from.y;
+                  const control2X = to.x - controlOffset;
+                  const control2Y = to.y;
+
+                  const path = `M ${from.x} ${from.y} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${to.x} ${to.y}`;
+
+                  const animDuration = isOrangeMesh
+                    ? 1.25 + ((from.y + to.y) % 5) * 0.12
+                    : 1.75 + ((from.y + to.y) % 4) * 0.18;
+
+                  const beamStroke = isOrangeMesh
+                    ? "#fb6b2f"
+                    : isAgentEdge
+                      ? "#e11d48"
+                      : "#2563eb";
+
+                  const beamWidth = selected
+                    ? 3
+                    : isOrangeMesh
+                      ? 2.1
+                      : 1.8;
+
+                  const beamOpacity = selected
+                    ? 1
+                    : isFaint
+                      ? 0
+                      : isOrangeMesh
+                        ? 0.55
+                        : isAgentEdge
+                          ? 0.48
+                          : 0.42;
+
+                  const beamFilter = isOrangeMesh
+                    ? "url(#beam-glow-orange)"
+                    : isAgentEdge
+                      ? "url(#beam-glow-red)"
+                      : isBlueEdge
+                        ? "url(#beam-glow-blue)"
+                        : undefined;
+
+                  return (
+                    <g
+                      key={edge.id}
+                      className="cursor-pointer"
+                      onClick={() => setSelectedGraphItem({ kind: "edge", id: edge.id })}
+                    >
+                      <path
+                        d={path}
+                        fill="none"
+                        stroke={edge.color}
+                        strokeOpacity={strokeOpacity}
+                        strokeWidth={strokeWidth}
+                        strokeLinecap="round"
+                      />
+
+                      {!isFaint && (
+                        <path
+                          d={path}
+                          fill="none"
+                          stroke={beamStroke}
+                          strokeWidth={beamWidth}
+                          strokeLinecap="round"
+                          strokeDasharray="10 1500"
+                          opacity={beamOpacity}
+                          filter={beamFilter}
+                        >
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            from="1500"
+                            to="0"
+                            dur={`${animDuration}s`}
+                            repeatCount="indefinite"
+                          />
+                        </path>
+                      )}
+
+                      <path d={path} fill="none" stroke="transparent" strokeWidth="18" />
+                    </g>
+                  );
+                })}
+
+                {memoryGraph.nodes.map((node) => {
+                  const selected = selectedGraphNode?.id === node.id;
+
+                  const rectHeight =
+                    node.kind === "memory"
+                      ? 22
+                      : node.kind === "operation"
+                        ? 42
+                        : node.kind === "agent"
+                          ? 22
+                          : 20;
+
+                  const rectWidth = 6;
+
+                  return (
+                    <g
+                      key={node.id}
+                      className="cursor-pointer transition-opacity duration-300"
+                      onClick={() => setSelectedGraphItem({ kind: "node", id: node.id })}
+                      style={{ opacity: selectedGraphNode && !selected ? 0.3 : 1 }}
+                    >
+                      {selected && (
+                        <rect
+                          x={node.x - rectWidth / 2 - 6}
+                          y={node.y - rectHeight / 2 - 6}
+                          width={rectWidth + 12}
+                          height={rectHeight + 12}
+                          fill={node.color}
+                          opacity={0.3}
+                          rx={5}
+                        />
+                      )}
+
+                      <rect
+                        x={node.x - rectWidth / 2}
+                        y={node.y - rectHeight / 2}
+                        width={rectWidth}
+                        height={rectHeight}
+                        fill={selected ? "#111827" : node.color}
+                        rx={2}
+                        filter="url(#memory-graph-soft-shadow)"
+                      />
+
+                      {node.label ? (
+                        <text
+                          x={node.x + 14}
+                          y={node.y + 4}
+                          fill={selected ? "#0f172a" : "#111827"}
+                          fontSize={node.kind === "memory" ? "10.5" : "12"}
+                          fontWeight="800"
+                        >
+                          {node.label}
+                        </text>
+                      ) : null}
+                    </g>
+                  );
+                })}
+              </svg>
+            ) : (
+              <div className="absolute inset-0 grid place-items-center">
+                <p className="text-[13px] font-medium text-slate-400">No graph data yet.</p>
+              </div>
+            )}
+          </div>
+        </div>
       </Reveal>
+
+ 
     </section>
   );
 }

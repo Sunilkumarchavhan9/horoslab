@@ -8,6 +8,7 @@ import {
 } from "../../SDK/memoryHooks";
 import { runHandoffFlowLangGraph } from "../../workflows/handoffGraphLangGraph";
 import type { HandoffPlannerResult } from "../handoffPlanner";
+import { executePreflight, type PreflightInput } from "../preflightLogic";
 
 export type McpTool<Input, Output> = {
   name: string;
@@ -49,7 +50,15 @@ export const handoffTool: McpTool<HandoffToolInput, HandoffPlannerResult> = {
   },
 };
 
-export const memoryTools = [beforeModelTool, afterModelTool, handoffTool] as const;
+export const preflightTool: McpTool<PreflightInput, any> = {
+  name: "memoryos.preflight",
+  description: "Returns the project state, decisions, blockers, active tasks, relevant files, and next recommended action before an AI agent continues work.",
+  async execute(input) {
+    return executePreflight(input);
+  },
+};
+
+export const memoryTools = [beforeModelTool, afterModelTool, handoffTool, preflightTool] as const;
 
 export function getMemoryTool(name: string): McpTool<unknown, unknown> | undefined {
   return memoryTools.find((tool) => tool.name === name) as McpTool<unknown, unknown> | undefined;

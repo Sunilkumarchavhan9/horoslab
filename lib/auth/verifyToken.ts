@@ -1,4 +1,5 @@
 import { jwtVerify } from "jose";
+import { verifyApiKeyToken } from "./apiKeyStore";
 
 export interface VerifiedAuth {
   userId: string;
@@ -19,6 +20,11 @@ export async function verifyAuthorizationHeader(
 ): Promise<VerifiedAuth | null> {
   const token = readBearerToken(authHeader);
   if (!token) return null;
+
+  const apiKeyAuth = verifyApiKeyToken(token);
+  if (apiKeyAuth) {
+    return apiKeyAuth;
+  }
 
   const secret = process.env.MEMORYOS_JWT_SECRET ?? process.env.JWT_SECRET;
   if (!secret) {

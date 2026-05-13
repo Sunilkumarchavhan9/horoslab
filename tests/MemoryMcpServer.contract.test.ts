@@ -100,6 +100,31 @@ describe("Memory MCP server contract", () => {
     expect(result).toHaveProperty("acceptedCount", 1);
   });
 
+  it("invokes memory.after_model with contract-only payload", async () => {
+    mocks.afterModel.mockResolvedValue({
+      acceptedCount: 1,
+      rejectedCount: 0,
+      contractFieldCount: 3,
+    });
+
+    const input = {
+      userId: "u2",
+      contract: {
+        goal: "Ship MCP contract support.",
+        decisions: ["Use MCP invoke as the shared contract path."],
+        next_actions: ["Add contract-only MCP tests."],
+      },
+      enforceContract: true,
+      threadId: "thread-contract-1",
+    };
+
+    const result = await invokeMemoryTool("memory.after_model", input);
+
+    expect(mocks.afterModel).toHaveBeenCalledWith(input);
+    expect(result).toHaveProperty("acceptedCount", 1);
+    expect(result).toHaveProperty("contractFieldCount", 3);
+  });
+
   it("invokes memory.handoff through the dispatcher", async () => {
     mocks.runHandoffFlowLangGraph.mockResolvedValue({
       summary: "Handoff for MemoryOS.",

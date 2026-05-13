@@ -10,7 +10,7 @@ type ConsoleAuthShellProps = {
   footerLabel: string;
 };
 
-const LOGO_STRIP = ["Cursor", "Claude", "VS Code", "GitHub", "MCP", "API"];
+const LOGO_STRIP = ["GPT Agents", "Claude", "Ollama", "Qwen", "MCP", "HTTP API"];
 
 export function ConsoleAuthShell({
   title,

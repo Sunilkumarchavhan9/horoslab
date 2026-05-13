@@ -5,7 +5,6 @@ import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useSignIn } from "@clerk/nextjs/legacy";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { warmMemoryTokenBridge } from "@/lib/memory-token";
 
 type ClerkPersonalSignInProps = {
   redirectTo: "/personal-app";
@@ -13,6 +12,8 @@ type ClerkPersonalSignInProps = {
 
 const AUTH_LOADING_MESSAGE =
   "Preparing secure sign-in. If it keeps loading, disable Brave Shields or ad blockers for localhost.";
+const REDIRECT_BLOCKED_MESSAGE =
+  "Redirect did not start. Disable Brave Shields/ad blockers for localhost, allow Clerk cookies, then try again.";
 
 function GoogleMark() {
   return (
@@ -78,10 +79,10 @@ function SocialButton({
 }
 
 export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
-  const { isLoaded, signIn } = useSignIn();
+  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const { isSignedIn } = useAuth();
   const router = useRouter();
-  const authReady = isLoaded && Boolean(signIn);
+  const authReady = !isSignedIn && isSignInLoaded && Boolean(signIn);
   const [email, setEmail] = useState("");
   const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -107,6 +108,20 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
 
     return () => window.clearTimeout(timeout);
   }, [authReady]);
+
+  useEffect(() => {
+    if (pendingStrategy !== "google" && pendingStrategy !== "github") {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setStatusMessage(REDIRECT_BLOCKED_MESSAGE);
+      setStatusTone("error");
+      setPendingStrategy(null);
+    }, 7000);
+
+    return () => window.clearTimeout(timeout);
+  }, [pendingStrategy]);
 
   function buildAbsoluteUrl(path: string) {
     if (typeof window === "undefined") {
@@ -159,12 +174,7 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
     return false;
   }
 
-  const redirectSignedInUser = useCallback(async () => {
-    try {
-      await warmMemoryTokenBridge();
-    } catch {
-      // If token bridge fails temporarily, still move signed-in users forward.
-    }
+  const redirectSignedInUser = useCallback(() => {
     router.replace(redirectTo);
   }, [redirectTo, router]);
 
@@ -173,6 +183,10 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
       void redirectSignedInUser();
     }
   }, [isSignedIn, redirectSignedInUser]);
+
+  if (isSignedIn) {
+    return null;
+  }
 
   async function handleOauth(strategy: "oauth_google" | "oauth_github", completeUrl: string) {
     if (!authReady || !signIn) {
@@ -191,8 +205,8 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
     try {
       await signIn.authenticateWithRedirect({
         strategy,
-        redirectUrl: "/sso-callback",
-        redirectUrlComplete: completeUrl,
+        redirectUrl: buildAbsoluteUrl("/sso-callback-personal"),
+        redirectUrlComplete: buildAbsoluteUrl(completeUrl),
       });
     } catch (error) {
       if (isAlreadySignedInError(error)) {

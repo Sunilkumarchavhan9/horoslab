@@ -11,7 +11,7 @@ import type {
 } from "../lib/adapters/adapters";
 import { getRecentMemories } from "../lib/memory/recentMemoryStore";
 import { retrieveRelevantMemory } from "../lib/memory/retrieveRelevantMemory";
-import type { Memory } from "../lib/memory/types";
+import { MEMORY_TYPES, type Memory, type MemoryType } from "../lib/memory/types";
 import { runResumeFlowLangGraph } from "../lib/workflows/resumeGraphLangGraph";
 import {
   resetDataDir,
@@ -50,6 +50,9 @@ type BenchmarkReport = {
   failedCases: number;
   passRate: number;
   kpis: BenchmarkKpis;
+  abSummary: {
+    missingStepsImprovement: number;
+  };
   results: BenchmarkCaseResult[];
 };
 
@@ -277,6 +280,59 @@ async function runRetrieveCase(
   };
 }
 
+async function runRetrieveCaseWithoutMemory(
+  testCase: BenchmarkCase,
+): Promise<BenchmarkCaseResult> {
+  const requiredTypes = Array.isArray(testCase.expected.requiredTypes)
+    ? testCase.expected.requiredTypes.filter(
+        (item): item is MemoryType =>
+          typeof item === "string" && (MEMORY_TYPES as readonly string[]).includes(item),
+      )
+    : [];
+  const question =
+    typeof testCase.input.question === "string" ? testCase.input.question : "";
+
+  if (!question) {
+    throw new Error(
+      `benchmark case ${testCase.id}: retrieve case requires input.question`,
+    );
+  }
+
+  const retrieval = await retrieveRelevantMemory({
+    userId: `${testCase.userId}_without_memory_${Date.now()}`,
+    question,
+    topK:
+      typeof testCase.input.topK === "number" && Number.isInteger(testCase.input.topK)
+        ? testCase.input.topK
+        : 5,
+    includeArchived:
+      typeof testCase.input.includeArchived === "boolean"
+        ? testCase.input.includeArchived
+        : undefined,
+  });
+
+  const actualTypes = (retrieval.memories ?? []).map((m) => m.memoryType ?? null);
+  const actualTypesAsStrings: MemoryType[] = actualTypes.flatMap((value) =>
+    typeof value === "string" && value.length > 0 ? [value] : [],
+  );
+  const missingTypes = requiredTypes.filter(
+    (type) => !actualTypesAsStrings.includes(type),
+  );
+  const passed = missingTypes.length === 0;
+
+  return {
+    id: `${testCase.id}__without_memory`,
+    type: "retrieve",
+    passed,
+    score: passed ? 1 : 0,
+    details: {
+      expectedTypes: requiredTypes,
+      actualTypes,
+      missingTypes,
+    },
+  };
+}
+
 async function runResumeCase(
   testCase: BenchmarkCase,
 ): Promise<BenchmarkCaseResult> {
@@ -347,6 +403,53 @@ async function runResumeCase(
       lastKnownState: result.lastKnownState,
       recommendedNextStep: result.recommendedNextStep,
       openLoops: result.openLoops,
+      usedMemoryIds: result.usedMemories.map((memory) => memory.id),
+    },
+  };
+}
+
+async function runResumeCaseWithoutMemory(
+  testCase: BenchmarkCase,
+): Promise<BenchmarkCaseResult> {
+  resetDataDir();
+  const userId = `${testCase.userId}_without_memory_${Date.now()}`;
+  const project =
+    typeof testCase.input.project === "string" ? testCase.input.project : undefined;
+  const question =
+    typeof testCase.input.question === "string" ? testCase.input.question : "";
+
+  if (!project || !question) {
+    throw new Error(`benchmark case ${testCase.id}: resume case requires input.project and input.question`);
+  }
+
+  const result = await runResumeFlowLangGraph({ userId, project, question });
+  const combinedText = [
+    result.summary,
+    result.lastKnownState,
+    result.recommendedNextStep,
+    ...result.openLoops,
+  ]
+    .filter((value): value is string => typeof value === "string" && value.length > 0)
+    .join(" ")
+    .toLowerCase();
+
+  const mustMention = Array.isArray(testCase.expected.mustMention)
+    ? testCase.expected.mustMention.filter((item): item is string => typeof item === "string")
+    : [];
+  const missing = mustMention.filter(
+    (phrase) => !combinedText.includes(phrase.toLowerCase()),
+  );
+
+  return {
+    id: `${testCase.id}__without_memory`,
+    type: "resume",
+    passed: missing.length === 0,
+    score:
+      mustMention.length === 0 ? (result.usedMemories.length > 0 ? 1 : 0) : (mustMention.length - missing.length) / mustMention.length,
+    details: {
+      mustMention,
+      missing,
+      summary: result.summary,
       usedMemoryIds: result.usedMemories.map((memory) => memory.id),
     },
   };
@@ -466,6 +569,18 @@ function buildBenchmarkReport(params: {
           contradictionCases.length) *
         100;
 
+  const missingStepsImprovement = (() => {
+    const deltas = params.results
+      .map((result) => {
+        const details = result.details as Record<string, unknown>;
+        const value = details.missingStepsImprovement;
+        return typeof value === "number" ? value : null;
+      })
+      .filter((value): value is number => value !== null);
+    if (deltas.length === 0) return 0;
+    return deltas.reduce((sum, value) => sum + value, 0) / deltas.length;
+  })();
+
   return {
     generatedAt: params.generatedAt,
     totalCases: params.totalCases,
@@ -480,6 +595,9 @@ function buildBenchmarkReport(params: {
       contradiction_miss_rate: contradictionMissRate,
       wrong_merge_rate: null,
       p95_retrieve_latency: null,
+    },
+    abSummary: {
+      missingStepsImprovement,
     },
     results: params.results,
   };
@@ -503,6 +621,32 @@ async function main(): Promise<void> {
 
     for (const testCase of benchmarkCases) {
       const result = await runBenchmarkCase(testCase);
+      let missingStepsImprovement = 0;
+
+      if (testCase.type === "retrieve") {
+        const without = await runRetrieveCaseWithoutMemory(testCase);
+        const withMissing = Array.isArray((result.details as Record<string, unknown>).missingTypes)
+          ? ((result.details as Record<string, unknown>).missingTypes as unknown[]).length
+          : 0;
+        const withoutMissing = Array.isArray((without.details as Record<string, unknown>).missingTypes)
+          ? ((without.details as Record<string, unknown>).missingTypes as unknown[]).length
+          : 0;
+        missingStepsImprovement = Math.max(0, withoutMissing - withMissing);
+      } else if (testCase.type === "resume") {
+        const without = await runResumeCaseWithoutMemory(testCase);
+        const withMissing = Array.isArray((result.details as Record<string, unknown>).missing)
+          ? ((result.details as Record<string, unknown>).missing as unknown[]).length
+          : 0;
+        const withoutMissing = Array.isArray((without.details as Record<string, unknown>).missing)
+          ? ((without.details as Record<string, unknown>).missing as unknown[]).length
+          : 0;
+        missingStepsImprovement = Math.max(0, withoutMissing - withMissing);
+      }
+
+      result.details = {
+        ...result.details,
+        missingStepsImprovement,
+      };
       results.push(result);
       printBenchmarkCaseResult(result);
     }

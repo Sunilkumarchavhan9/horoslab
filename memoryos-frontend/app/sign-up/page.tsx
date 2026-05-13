@@ -1,8 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { ClerkConsoleSignUp } from "@/components/auth/clerk-console-sign-up";
 import { ConsoleAuthShell } from "@/components/auth/console-auth-shell";
 import { isClerkEnabled } from "@/lib/clerk";
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 export default async function SignUpPage() {
   const clerkEnabled = isClerkEnabled();

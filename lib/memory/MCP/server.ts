@@ -25,9 +25,20 @@ const beforeModelInputSchema = z.object({
 
 const afterModelInputSchema = z.object({
   userId: z.string().min(1, "userId is required"),
-  message: z.string().min(1, "message is required"),
+  message: z.string().trim().min(1).optional(),
   modelResponse: z.string().min(1).optional(),
   threadId: z.string().min(1).optional(),
+  contract: z.object({
+    goal: z.string().trim().min(1).optional(),
+    constraints: z.array(z.string().trim().min(1)).max(20).optional(),
+    decisions: z.array(z.string().trim().min(1)).max(30).optional(),
+    open_risks: z.array(z.string().trim().min(1)).max(30).optional(),
+    next_actions: z.array(z.string().trim().min(1)).max(30).optional(),
+  }).optional(),
+  enforceContract: z.boolean().optional(),
+}).refine((value) => Boolean(value.message) || Boolean(value.contract), {
+  message: "message or contract is required",
+  path: ["message"],
 });
 
 const handoffInputSchema = z.object({

@@ -1,4 +1,52 @@
-# MemoryOS MCP HTTP API
+# MemoryOS MCP API
+
+MemoryOS exposes MCP in two ways:
+
+- `@memoryostm/mcp` on npm for any MCP-compatible agent runtime
+- HTTP endpoints under `/api/mcp/*` for hosted platforms and custom bridges
+
+## Published MCP package
+
+Install or run the stdio MCP server with:
+
+```bash
+npx -y @memoryostm/mcp
+```
+
+Package page:
+
+```text
+https://www.npmjs.com/package/@memoryostm/mcp
+```
+
+The stdio server waits silently for an MCP client. No terminal output is normal when it starts successfully.
+
+Example agent config:
+
+```json
+{
+  "mcpServers": {
+    "memoryos": {
+      "command": "npx",
+      "args": ["-y", "@memoryostm/mcp"],
+      "env": {
+        "MEMORYOS_API_KEY": "YOUR_MEMORYOS_TOKEN",
+        "MEMORYOS_BASE_URL": "http://localhost:3001"
+      }
+    }
+  }
+}
+```
+
+For local development inside this repo, run:
+
+```bash
+npm run mcp:stdio
+```
+
+See `packages/mcp-server/README.md` for configuration.
+
+## HTTP MCP API
 
 Base URL:
 
@@ -65,6 +113,27 @@ Body:
 ```
 
 The API injects `userId` from the bearer token. Clients do not need to send it.
+
+`memory.after_model` accepts either:
+- `message` (optionally with `modelResponse`)
+- or a structured `contract` payload (optionally with `enforceContract`)
+
+Contract-only example:
+
+```json
+{
+  "name": "memory.after_model",
+  "input": {
+    "threadId": "thread-contract-1",
+    "enforceContract": true,
+    "contract": {
+      "goal": "Ship MCP contract support",
+      "decisions": ["Use memory.after_model as the MCP ingest contract path"],
+      "next_actions": ["Add contract-only MCP tests"]
+    }
+  }
+}
+```
 
 Response `200`:
 
