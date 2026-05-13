@@ -38,7 +38,16 @@ export default function PricingPage() {
   const [busyPlan, setBusyPlan] = useState<"pro" | "scale" | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-  async function openBackendCheckout(plan: "pro" | "scale"): Promise<boolean> {
+  type CheckoutAttemptResult =
+    | { ok: true }
+    | {
+        ok: false;
+        status?: number;
+        message: string;
+        shouldSignIn?: boolean;
+      };
+
+  async function openBackendCheckout(plan: "pro" | "scale"): Promise<CheckoutAttemptResult> {
     try {
       const planName = plan === "pro" ? "Pro" : "Scale";
       const response = await fetch("/api/memory/billing/checkout", {
@@ -50,16 +59,42 @@ export default function PricingPage() {
         body: JSON.stringify({ plan: planName }),
       });
       if (!response.ok) {
-        return false;
+        let message = `Checkout request failed (${response.status}).`;
+        try {
+          const data = (await response.json()) as { error?: string; message?: string };
+          message = data.error || data.message || message;
+        } catch {
+          try {
+            const text = await response.text();
+            if (text.trim()) {
+              message = text.trim();
+            }
+          } catch {
+            // no-op
+          }
+        }
+        return {
+          ok: false,
+          status: response.status,
+          message,
+          shouldSignIn: response.status === 401 || response.status === 403,
+        };
       }
       const data = (await response.json()) as { checkoutUrl?: string };
       if (!data.checkoutUrl) {
-        return false;
+        return {
+          ok: false,
+          status: response.status,
+          message: "Checkout URL was not returned by the server.",
+        };
       }
       window.location.href = data.checkoutUrl;
-      return true;
+      return { ok: true };
     } catch {
-      return false;
+      return {
+        ok: false,
+        message: "Network error while contacting checkout endpoint.",
+      };
     }
   }
 
@@ -75,13 +110,20 @@ export default function PricingPage() {
         return;
       }
 
-      const openedBackend = await openBackendCheckout(plan);
-      if (openedBackend) {
+      const checkoutResult = await openBackendCheckout(plan);
+      if (checkoutResult.ok) {
         return;
       }
 
-      setCheckoutError("Checkout is temporarily unavailable. Please sign in and retry, or contact support.");
-      window.location.href = "/developer-console/sign-in";
+      if (checkoutResult.shouldSignIn) {
+        setCheckoutError(
+          `Checkout unavailable: ${checkoutResult.message} Please sign in, then retry.`,
+        );
+        return;
+      }
+
+      const suffix = checkoutResult.status ? ` (status ${checkoutResult.status})` : "";
+      setCheckoutError(`Checkout unavailable${suffix}: ${checkoutResult.message}`);
     } finally {
       setBusyPlan(null);
     }
