@@ -48,6 +48,7 @@ type PlanCard = {
 };
 
 const TABS: BillingTab[] = ["Plans", "Usage", "Invoices"];
+const FOUNDER_EMAIL = "chavhansunilkumar753@gmail.com";
 
 const PLAN_CARDS: PlanCard[] = [
   {
@@ -173,6 +174,10 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
 
   async function startCheckout(nextPlan: BillingPlan): Promise<void> {
     if (nextPlan === "Free") return;
+    if (nextPlan === "Enterprise") {
+      window.location.href = `mailto:${FOUNDER_EMAIL}`;
+      return;
+    }
     try {
       setCheckoutPendingPlan(nextPlan);
       const token = await getOrCreateMemoryToken();
@@ -348,4 +353,3 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
     </>
   );
 }
-

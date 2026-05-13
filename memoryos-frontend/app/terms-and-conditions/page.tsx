@@ -12,9 +12,10 @@ export default function TermsAndConditionsPage() {
           <p><strong>Billing:</strong> Paid subscriptions renew according to the plan selected at checkout, unless canceled before renewal.</p>
           <p><strong>Acceptable use:</strong> You must not use the service to violate laws, abuse systems, or infringe third-party rights.</p>
           <p><strong>Service changes:</strong> We may update features and limits to improve reliability, security, and product quality.</p>
-          <p><strong>Contact:</strong> For legal or support questions, contact <a className="underline" href="mailto:sunilkumarchavhan753@gmail.com">sunilkumarchavhan753@gmail.com</a>.</p>
+          <p><strong>Contact:</strong> For legal or support questions, contact <a className="underline" href="mailto:chavhansunilkumar753@gmail.com">chavhansunilkumar753@gmail.com</a>.</p>
         </div>
       </div>
     </main>
   );
 }
+

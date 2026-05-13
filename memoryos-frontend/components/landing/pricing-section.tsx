@@ -160,7 +160,7 @@ export function PricingSection() {
             ))}
           </div>
           <a
-            href="#enterprise"
+            href="mailto:chavhansunilkumar753@gmail.com"
             className="mt-7 inline-flex w-full max-w-[270px] items-center justify-center whitespace-nowrap border border-[#c9d8ee] bg-white px-10 py-3 text-[14px] font-medium text-slate-900 md:text-[15px]"
           >
             Talk to founder →
@@ -217,3 +217,4 @@ export function PricingSection() {
     </section>
   );
 }
+

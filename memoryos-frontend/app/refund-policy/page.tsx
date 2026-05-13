@@ -8,10 +8,11 @@ export default function RefundPolicyPage() {
           <p><strong>Monthly subscriptions:</strong> you may request a refund within 14 days of first purchase if the service did not meet expectations.</p>
           <p><strong>Renewals:</strong> renewal charges are generally non-refundable, except where required by law.</p>
           <p><strong>Enterprise contracts:</strong> refund and termination terms are defined in the signed order form or MSA.</p>
-          <p><strong>How to request:</strong> email your Paddle receipt and account email to <a className="underline" href="mailto:sunilkumarchavhan753@gmail.com">sunilkumarchavhan753@gmail.com</a>.</p>
+          <p><strong>How to request:</strong> email your Paddle receipt and account email to <a className="underline" href="mailto:chavhansunilkumar753@gmail.com">chavhansunilkumar753@gmail.com</a>.</p>
           <p><strong>Processing time:</strong> approved refunds are typically processed within 5-10 business days via the original payment method.</p>
         </div>
       </div>
     </main>
   );
 }
+

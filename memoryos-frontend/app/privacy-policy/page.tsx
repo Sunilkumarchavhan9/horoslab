@@ -10,9 +10,10 @@ export default function PrivacyPolicyPage() {
           <p><strong>Billing data:</strong> payments are processed by Paddle; we do not store full payment card details on our servers.</p>
           <p><strong>Retention:</strong> data is retained as needed to operate the service, satisfy legal obligations, and resolve disputes.</p>
           <p><strong>Your controls:</strong> you can request correction or deletion of personal data by contacting support.</p>
-          <p><strong>Contact:</strong> privacy requests can be sent to <a className="underline" href="mailto:sunilkumarchavhan753@gmail.com">sunilkumarchavhan753@gmail.com</a>.</p>
+          <p><strong>Contact:</strong> privacy requests can be sent to <a className="underline" href="mailto:chavhansunilkumar753@gmail.com">chavhansunilkumar753@gmail.com</a>.</p>
         </div>
       </div>
     </main>
   );
 }
+
