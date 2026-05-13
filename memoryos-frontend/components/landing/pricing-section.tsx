@@ -1,17 +1,18 @@
 import { Reveal } from "./motion";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
 const PLAN_CARDS = [
   {
     tier: "STARTER",
-    price: "$0",
+    price: `$${PLAN_CATALOG.Free.monthlyPriceUsd}`,
     suffix: "",
     description: "For developers validating memory contracts and continuity loops in personal workflows.",
     features: [
+      `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} search queries/month`,
       "1 workspace",
       "Core memory processing",
-      "Control plane access",
-      "Timeline + revisions",
-      "Community support",
+      "Email support",
     ],
     cta: "Start free →",
     secondary: "Explore the docs →",
@@ -21,37 +22,37 @@ const PLAN_CARDS = [
   },
   {
     tier: "PRO",
-    price: "$29",
+    price: `$${PLAN_CATALOG.Pro.monthlyPriceUsd}`,
     suffix: "/mo.",
     description: "For active builders running MemoryOS in daily multi-agent and model workflows.",
     features: [
+      `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} search queries/month`,
       "Unlimited personal projects",
       "Resume + retrieve + continue",
-      "Control plane + audit controls",
-      "MCP + HTTP + SDK access",
       "Priority email support",
     ],
     cta: "Get MemoryOS Pro →",
     secondary: "Install the SDK →",
-    ctaHref: "/developer-console/sign-in",
+    ctaHref: "/pricing?plan=pro",
     secondaryHref: "#developer-experience",
     featured: true,
   },
   {
     tier: "SCALE",
-    price: "$299",
+    price: `$${PLAN_CATALOG.Scale.monthlyPriceUsd}`,
     suffix: "/mo.",
     description: "For teams running shared company memory across products, internal agents, and workspaces.",
     features: [
+      `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} search queries/month`,
       "Shared workspaces",
       "Team memory graph",
-      "Role-aware controls",
-      "Observability + export",
       "Dedicated support channel",
     ],
     cta: "Talk to sales →",
     secondary: "See platform details →",
-    ctaHref: "#contact",
+    ctaHref: "/pricing?plan=scale",
     secondaryHref: "#enterprise",
     featured: false,
   },
@@ -160,7 +161,7 @@ export function PricingSection() {
             ))}
           </div>
           <a
-            href="#enterprise"
+            href="mailto:chavhansunilkumar753@gmail.com"
             className="mt-7 inline-flex w-full max-w-[270px] items-center justify-center whitespace-nowrap border border-[#c9d8ee] bg-white px-10 py-3 text-[14px] font-medium text-slate-900 md:text-[15px]"
           >
             Talk to founder →
@@ -217,3 +218,4 @@ export function PricingSection() {
     </section>
   );
 }
+

@@ -29,7 +29,7 @@ const FOOTER_COLUMNS = [
       { label: "Terms", href: "/terms-of-service" },
       { label: "Privacy", href: "/privacy-policy" },
       { label: "Refunds", href: "/refund-policy" },
-      { label: "Contact", href: "mailto:sunilkumarchavhan753@gmail.com" },
+      { label: "Contact", href: "mailto:chavhansunilkumar753@gmail.com" },
     ],
   },
 ];
@@ -125,3 +125,4 @@ export function LandingFooter() {
     </footer>
   );
 }
+

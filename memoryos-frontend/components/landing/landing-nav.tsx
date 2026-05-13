@@ -1,4 +1,5 @@
 import { MemoryStarLogo } from "./memory-star-logo";
+import { PLAN_CATALOG } from "@/lib/plan-catalog";
 import type { ComponentType } from "react";
 import {
   Activity,
@@ -31,8 +32,8 @@ const NAV_ITEM_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   "Benchmarks": Gauge,
   "Case Studies": Briefcase,
   "Starter (Free)": Rocket,
-  "Pro ($29/mo)": WalletCards,
-  "Scale ($299/mo)": Users,
+  [`Pro ($${PLAN_CATALOG.Pro.monthlyPriceUsd}/mo)`]: WalletCards,
+  [`Scale ($${PLAN_CATALOG.Scale.monthlyPriceUsd}/mo)`]: Users,
   "Personal App": Blocks,
   Plugins: PlugZap,
 };
@@ -69,8 +70,8 @@ const NAV_DROPDOWNS = [
     width: "w-[420px]",
     items: [
       { label: "Starter (Free)", description: "For individual developers validating workflows", href: "/developer-console/sign-in?plan=starter" },
-      { label: "Pro ($29/mo)", description: "For active builders running multi-agent workflows", href: "/developer-console/sign-in?plan=pro" },
-      { label: "Scale ($299/mo)", description: "For teams running shared company memory", href: "/developer-console/sign-in?plan=scale" }
+      { label: `Pro ($${PLAN_CATALOG.Pro.monthlyPriceUsd}/mo)`, description: "For active builders running multi-agent workflows", href: "/developer-console/sign-in?plan=pro" },
+      { label: `Scale ($${PLAN_CATALOG.Scale.monthlyPriceUsd}/mo)`, description: "For teams running shared company memory", href: "/developer-console/sign-in?plan=scale" }
     ]
   },
   {

@@ -70,6 +70,7 @@ import { generateMemoryAwareResponse } from "../../lib/memory/chatCompletion";
 import { getMemoryStoreAdapter } from "../../lib/adapters/registry";
 import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
 import { randomUUID } from "crypto";
+import { PLAN_CATALOG, type BillingPlan } from "../../shared/planCatalog";
 
 export const memoryRouter = Router();
 
@@ -108,7 +109,6 @@ type BaselineReport = {
 };
 
 type RequestRange = keyof typeof REQUEST_RANGE_DAYS;
-type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
 type TeamRole = "owner" | "admin" | "member";
 type TeamAccess = "Full" | "Scoped" | "Read";
 type PluginStatus = "available" | "installed" | "degraded";
@@ -256,6 +256,8 @@ type WorkspaceState = {
     contextEnabled: boolean;
   };
 };
+
+type CheckoutProvider = "dodo" | "paddle" | "custom";
 
 const WORKSPACE_STATE_BY_USER = new Map<string, WorkspaceState>();
 const PLUGIN_STORE_PATH = path.join(DATA_DIR, "plugins-state.json");
@@ -756,22 +758,19 @@ memoryRouter.post("/api-keys/:keyId/revoke", asyncHandler(async (req, res) => {
 
 memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   const state = getWorkspaceState(req.authUserId);
-  const paddleConfigured = Boolean(
-    process.env.PADDLE_API_KEY?.trim() &&
-      process.env.PADDLE_WEBHOOK_SECRET?.trim() &&
-      process.env.PADDLE_PRICE_ID?.trim(),
+  const checkoutConfigured = Boolean(
+    process.env.CHECKOUT_URL_PRO?.trim() ||
+      process.env.CHECKOUT_URL_SCALE?.trim() ||
+      process.env.CHECKOUT_URL_ENTERPRISE?.trim(),
   );
   res.json({
     workspaceName: state.workspaceName,
     currentPlan: state.plan,
     usage: state.usage,
     invoices: state.invoices,
-    paddle: {
-      configured: paddleConfigured,
-      environment:
-        process.env.PADDLE_ENVIRONMENT?.trim()?.toLowerCase() === "production"
-          ? "production"
-          : "sandbox",
+    checkout: {
+      configured: checkoutConfigured,
+      provider: resolveCheckoutProvider(),
       portalUrl: toBillingPortalUrl(),
     },
   });
@@ -791,15 +790,15 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
   const checkoutUrl = toPaddleCheckoutUrl(requestedPlan);
   if (!checkoutUrl) {
     res.status(500).json({
-      error: `Paddle checkout URL is not configured for ${requestedPlan}`,
-      requiredEnv: `PADDLE_CHECKOUT_URL_${requestedPlan.toUpperCase()}`,
+      error: `Checkout URL is not configured for ${requestedPlan}`,
+      requiredEnv: `CHECKOUT_URL_${requestedPlan.toUpperCase()}`,
     });
     return;
   }
   const state = getWorkspaceState(req.authUserId);
   state.plan = requestedPlan;
-  state.usage.tokenLimit = requestedPlan === "Pro" ? 3_000_000 : 80_000_000;
-  state.usage.searchLimit = requestedPlan === "Pro" ? 100_000 : 20_000_000;
+  state.usage.tokenLimit = PLAN_CATALOG[requestedPlan].tokenLimit ?? PLAN_CATALOG.Scale.tokenLimit ?? 80_000_000;
+  state.usage.searchLimit = PLAN_CATALOG[requestedPlan].searchLimit ?? PLAN_CATALOG.Scale.searchLimit ?? 20_000_000;
   res.json({
     checkoutUrl,
     portalUrl: toBillingPortalUrl(),
@@ -1744,9 +1743,9 @@ function createDefaultWorkspaceState(userId: string): WorkspaceState {
     workspaceName: "MemoryOS",
     plan: "Free",
     usage: {
-      tokenLimit: 1_000_000,
+      tokenLimit: PLAN_CATALOG.Free.tokenLimit ?? 1_000_000,
       tokenUsed: 0,
-      searchLimit: 10_000,
+      searchLimit: PLAN_CATALOG.Free.searchLimit ?? 10_000,
       searchUsed: 0,
       resetInDays: 20,
     },
@@ -1783,21 +1782,99 @@ function getWorkspaceState(userId: string): WorkspaceState {
 }
 
 function toBillingPortalUrl(): string {
-  const dashboard = process.env.PADDLE_DASHBOARD_URL?.trim();
+  const dashboard = process.env.CHECKOUT_DASHBOARD_URL?.trim();
   if (dashboard) {
     return dashboard;
   }
-  return "https://vendors.paddle.com";
+  const provider = resolveCheckoutProvider();
+  if (provider === "dodo") {
+    return "https://app.dodopayments.com";
+  }
+  if (provider === "paddle") {
+    return "https://vendors.paddle.com";
+  }
+  return "";
+}
+
+type UsageMeter = "tokens" | "searches";
+
+function estimateTokenCostFromText(input: string): number {
+  const trimmed = input.trim();
+  if (!trimmed) return 1;
+  // Approximate token cost with a conservative chars/token heuristic.
+  return Math.max(1, Math.ceil(trimmed.length / 4));
+}
+
+function sendUpgradeRequired(
+  res: Parameters<typeof sendApiError>[0],
+  startedAt: number,
+  req: { authUserId: string },
+  meter: UsageMeter,
+  state: WorkspaceState,
+): void {
+  const used = meter === "tokens" ? state.usage.tokenUsed : state.usage.searchUsed;
+  const limit = meter === "tokens" ? state.usage.tokenLimit : state.usage.searchLimit;
+  const unit = meter === "tokens" ? "tokens" : "search queries";
+  sendApiError(
+    res,
+    402,
+    {
+      code: "UPGRADE_REQUIRED",
+      message: `Your ${unit} limit for the ${state.plan} plan has been reached.`,
+      details: {
+        meter,
+        plan: state.plan,
+        used,
+        limit,
+        upgradePlans: ["Pro", "Scale"],
+        action: "Open Billing and upgrade plan.",
+        billingPath: "/developer-console",
+      },
+    },
+    buildApiMeta(req as never, startedAt),
+  );
+}
+
+function applyUsageOrReject(params: {
+  req: { authUserId: string };
+  res: Parameters<typeof sendApiError>[0];
+  startedAt: number;
+  tokenCost?: number;
+  searchCost?: number;
+}): boolean {
+  const state = getWorkspaceState(params.req.authUserId);
+  const tokenCost = Math.max(0, params.tokenCost ?? 0);
+  const searchCost = Math.max(0, params.searchCost ?? 0);
+
+  if (tokenCost > 0 && state.usage.tokenUsed + tokenCost > state.usage.tokenLimit) {
+    sendUpgradeRequired(params.res, params.startedAt, params.req, "tokens", state);
+    return false;
+  }
+  if (searchCost > 0 && state.usage.searchUsed + searchCost > state.usage.searchLimit) {
+    sendUpgradeRequired(params.res, params.startedAt, params.req, "searches", state);
+    return false;
+  }
+
+  state.usage.tokenUsed += tokenCost;
+  state.usage.searchUsed += searchCost;
+  return true;
 }
 
 function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
   const byPlanEnv: Record<Exclude<BillingPlan, "Free">, string | undefined> = {
-    Pro: process.env.PADDLE_CHECKOUT_URL_PRO,
-    Scale: process.env.PADDLE_CHECKOUT_URL_SCALE,
-    Enterprise: process.env.PADDLE_CHECKOUT_URL_ENTERPRISE,
+    Pro: process.env.CHECKOUT_URL_PRO,
+    Scale: process.env.CHECKOUT_URL_SCALE,
+    Enterprise: process.env.CHECKOUT_URL_ENTERPRISE,
   };
   const raw = byPlanEnv[plan as Exclude<BillingPlan, "Free">];
   return raw?.trim() ? raw.trim() : null;
+}
+
+function resolveCheckoutProvider(): CheckoutProvider {
+  const raw = process.env.CHECKOUT_PROVIDER?.trim().toLowerCase();
+  if (raw === "dodo") return "dodo";
+  if (raw === "paddle") return "paddle";
+  return "custom";
 }
 
 function buildWhyTop1(top?: {
@@ -1964,6 +2041,7 @@ memoryRouter.post(
   "/process",
   asyncHandler(async (req, res) => {
     const traceId = createTraceId("memory_process");
+    const startedAt = Date.now();
     const parsed = ProcessMemorySchema.safeParse(req.body ?? {});
     if (!parsed.success) {
       res.status(400).json({
@@ -2097,6 +2175,15 @@ memoryRouter.post(
         },
         traceId,
       });
+      return;
+    }
+
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(message),
+    })) {
       return;
     }
 
@@ -2743,6 +2830,16 @@ memoryRouter.post(
       return;
     }
 
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
+      return;
+    }
+
     const result = await runRetrieveFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
@@ -2785,6 +2882,16 @@ memoryRouter.get(
         },
         buildApiMeta(req, startedAt),
       );
+      return;
+    }
+
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(question),
+      searchCost: 1,
+    })) {
       return;
     }
 
@@ -2902,6 +3009,16 @@ memoryRouter.post(
       return;
     }
 
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
+      return;
+    }
+
     const result = await runContinueFlowLangGraph({
       userId: req.authUserId,
       question: parsed.data.question,
@@ -2944,6 +3061,16 @@ memoryRouter.post(
       return;
     }
 
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
+      return;
+    }
+
     const result = await runHandoffFlowLangGraph({
       userId: req.authUserId,
       project: parsed.data.project,
@@ -2981,6 +3108,16 @@ memoryRouter.post(
         },
         buildApiMeta(req, startedAt),
       );
+      return;
+    }
+
+    if (!applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    })) {
       return;
     }
 
@@ -3596,11 +3733,22 @@ memoryRouter.get(
 );
 memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
   const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+  const startedAt = Date.now();
   if (!parsed.success) {
     res.status(400).json({
       error: "Invalid request body",
       details: parsed.error.flatten(),
     });
+    return;
+  }
+
+  if (!applyUsageOrReject({
+    req,
+    res,
+    startedAt,
+    tokenCost: estimateTokenCostFromText(parsed.data.question),
+    searchCost: 1,
+  })) {
     return;
   }
 
@@ -3633,11 +3781,22 @@ memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
 
 memoryRouter.post("/retrieve/why-not", asyncHandler(async (req, res) => {
   const parsed = RetrieveMemorySchema.safeParse(req.body ?? {});
+  const startedAt = Date.now();
   if (!parsed.success) {
     res.status(400).json({
       error: "Invalid request body",
       details: parsed.error.flatten(),
     });
+    return;
+  }
+
+  if (!applyUsageOrReject({
+    req,
+    res,
+    startedAt,
+    tokenCost: estimateTokenCostFromText(parsed.data.question),
+    searchCost: 1,
+  })) {
     return;
   }
 

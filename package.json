@@ -30,6 +30,7 @@
     "tune:apply": "tsx scripts/write-best-config.ts",
     "perf:smoke": "tsx scripts/perf-smoke.ts",
     "lint": "eslint",
+    "lint:ci": "eslint shared/planCatalog.ts memoryos-frontend/components/landing/pricing-section.tsx memoryos-frontend/components/landing/landing-nav.tsx memoryos-frontend/components/developer-console/sections/connectors-section.tsx memoryos-frontend/app/pricing/page.tsx",
     "test": "vitest run"
   },
   "dependencies": {

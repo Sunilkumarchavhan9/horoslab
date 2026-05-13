@@ -19,8 +19,8 @@ export default function TermsOfServicePage() {
         </p>
         <p>
           For questions about these terms, contact{" "}
-          <a className="text-blue-700 underline" href="mailto:sunilkumarchavhan753@gmail.com">
-            sunilkumarchavhan753@gmail.com
+          <a className="text-blue-700 underline" href="mailto:chavhansunilkumar753@gmail.com">
+            chavhansunilkumar753@gmail.com
           </a>
           .
         </p>
@@ -28,4 +28,5 @@ export default function TermsOfServicePage() {
     </main>
   );
 }
+
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
 type BillingTab = "Plans" | "Usage" | "Invoices";
 type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
@@ -31,9 +32,9 @@ type BillingResponse = {
     resetInDays: number;
   };
   invoices: BillingInvoice[];
-  paddle?: {
+  checkout?: {
     configured: boolean;
-    environment: "sandbox" | "production";
+    provider: "dodo" | "paddle" | "custom";
     portalUrl?: string;
   };
 };
@@ -48,27 +49,42 @@ type PlanCard = {
 };
 
 const TABS: BillingTab[] = ["Plans", "Usage", "Invoices"];
+const FOUNDER_EMAIL = "chavhansunilkumar753@gmail.com";
 
 const PLAN_CARDS: PlanCard[] = [
   {
     name: "Free",
-    price: "$0",
+    price: `$${PLAN_CATALOG.Free.monthlyPriceUsd}`,
     subtitle: "Get started with core continuity workflows",
-    features: ["1M tokens/month", "10K search queries/month", "Email support"],
+    features: [
+      `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} search queries/month`,
+      "Email support",
+    ],
     cta: "Current Plan",
   },
   {
     name: "Pro",
-    price: "$19/month",
+    price: `$${PLAN_CATALOG.Pro.monthlyPriceUsd}/month`,
     subtitle: "For solo developers building with AI memory",
-    features: ["3M tokens/month", "100K search queries/month", "Priority support", "All plugin integrations"],
+    features: [
+      `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} search queries/month`,
+      "Priority support",
+      "All plugin integrations",
+    ],
     cta: "Upgrade",
   },
   {
     name: "Scale",
-    price: "$399/month",
+    price: `$${PLAN_CATALOG.Scale.monthlyPriceUsd}/month`,
     subtitle: "For teams and production continuity workloads",
-    features: ["80M tokens/month", "20M search queries/month", "Dedicated support", "Connector suite"],
+    features: [
+      `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} search queries/month`,
+      "Dedicated support",
+      "Connector suite",
+    ],
     cta: "Upgrade",
     highlight: true,
   },
@@ -93,6 +109,14 @@ function formatMoney(cents: number, currency: string): string {
   }).format((cents || 0) / 100);
 }
 
+function isUsableCheckoutUrl(value: string | undefined | null): boolean {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return false;
+  if (normalized.startsWith("placeholder_")) return false;
+  return normalized.startsWith("http://") || normalized.startsWith("https://");
+}
+
 export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingSectionProps) {
   const [activeTab, setActiveTab] = useState<BillingTab>("Plans");
   const [loading, setLoading] = useState(true);
@@ -104,9 +128,9 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
   const plan = billing?.currentPlan ?? currentPlan;
   const labelWorkspace = billing?.workspaceName ?? workspaceName;
   const usage = billing?.usage ?? {
-    tokenLimit: 1_000_000,
+    tokenLimit: PLAN_CATALOG.Free.tokenLimit ?? 1_000_000,
     tokenUsed: 0,
-    searchLimit: 10_000,
+    searchLimit: PLAN_CATALOG.Free.searchLimit ?? 10_000,
     searchUsed: 0,
     resetInDays: 30,
   };
@@ -173,6 +197,10 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
 
   async function startCheckout(nextPlan: BillingPlan): Promise<void> {
     if (nextPlan === "Free") return;
+    if (nextPlan === "Enterprise") {
+      window.location.href = `mailto:${FOUNDER_EMAIL}`;
+      return;
+    }
     try {
       setCheckoutPendingPlan(nextPlan);
       const token = await getOrCreateMemoryToken();
@@ -189,11 +217,19 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
         | { checkoutUrl?: string; currentPlan?: BillingPlan; error?: string }
         | null;
       if (!response.ok) {
-        throw new Error(payload?.error ?? `Checkout failed (${response.status})`);
+        const message = payload?.error ?? `Checkout failed (${response.status})`;
+        if (message.toLowerCase().includes("not configured")) {
+          window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
+          return;
+        }
+        throw new Error(message);
       }
       await loadBilling();
-      if (payload?.checkoutUrl) {
-        window.open(payload.checkoutUrl, "_blank", "noopener,noreferrer");
+      const checkoutUrl = payload?.checkoutUrl;
+      if (isUsableCheckoutUrl(checkoutUrl)) {
+        window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+      } else {
+        window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to start checkout.");
@@ -348,4 +384,3 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
     </>
   );
 }
-
