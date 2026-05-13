@@ -225,8 +225,9 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
         throw new Error(message);
       }
       await loadBilling();
-      if (isUsableCheckoutUrl(payload?.checkoutUrl)) {
-        window.open(payload.checkoutUrl, "_blank", "noopener,noreferrer");
+      const checkoutUrl = payload?.checkoutUrl;
+      if (isUsableCheckoutUrl(checkoutUrl)) {
+        window.open(checkoutUrl, "_blank", "noopener,noreferrer");
       } else {
         window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
       }
