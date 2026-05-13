@@ -9,7 +9,7 @@ const FOOTER_COLUMNS = [
       { label: "Developer Console", href: "/developer-console/sign-in" },
       { label: "API + SDK", href: "#developer-experience" },
       { label: "Proof", href: "#benchmarks" },
-      { label: "Pricing", href: "#pricing" },
+      { label: "Pricing", href: "/pricing" },
     ],
   },
   {
@@ -26,6 +26,9 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "About", href: "#what-we-do" },
       { label: "Enterprise", href: "#enterprise" },
+      { label: "Terms", href: "/terms-of-service" },
+      { label: "Privacy", href: "/privacy-policy" },
+      { label: "Refunds", href: "/refund-policy" },
       { label: "Contact", href: "mailto:sunilkumarchavhan753@gmail.com" },
     ],
   },
