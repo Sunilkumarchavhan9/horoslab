@@ -1,5 +1,5 @@
 import { Reveal } from "./motion";
-import { PLAN_CATALOG, formatLimit } from "../../../shared/planCatalog";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
 const PLAN_CARDS = [
   {

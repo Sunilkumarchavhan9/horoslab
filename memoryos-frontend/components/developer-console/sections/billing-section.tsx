@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
-import { PLAN_CATALOG, formatLimit } from "../../../../shared/planCatalog";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
 type BillingTab = "Plans" | "Usage" | "Invoices";
 type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";

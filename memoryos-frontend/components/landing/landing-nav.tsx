@@ -1,5 +1,5 @@
 import { MemoryStarLogo } from "./memory-star-logo";
-import { PLAN_CATALOG } from "../../../shared/planCatalog";
+import { PLAN_CATALOG } from "@/lib/plan-catalog";
 import type { ComponentType } from "react";
 import {
   Activity,

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
-import { PLAN_CATALOG, formatLimit } from "../../../../shared/planCatalog";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,

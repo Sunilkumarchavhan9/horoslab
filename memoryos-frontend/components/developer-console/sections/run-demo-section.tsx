@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PLAN_CATALOG, formatLimit } from "../../../../shared/planCatalog";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,

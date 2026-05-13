@@ -1,4 +1,4 @@
-import { PLAN_CATALOG, formatLimit } from "../../../shared/planCatalog";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
 const bullets = [
   "MemoryOS helps teams persist and retrieve project context across AI-assisted workflows.",
