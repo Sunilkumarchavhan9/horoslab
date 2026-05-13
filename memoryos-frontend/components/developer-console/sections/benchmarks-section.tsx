@@ -97,6 +97,13 @@ export function BenchmarksSection({
   errorMessage: errorMessageProp,
 }: BenchmarksSectionProps) {
   const live = useBenchmarks();
+  const {
+    listRunCases,
+    getWeeklyMetrics,
+    getRegressionAlerts,
+    triggerRun,
+    isRunning,
+  } = live;
   const runs = useMemo<BenchmarkRunItem[]>(
     () =>
       (runsProp ??
@@ -220,7 +227,7 @@ export function BenchmarksSection({
   const latestRun = latestFromLive ?? sortedRuns[0] ?? null;
   useEffect(() => {
     if (!latestRun?.runId) return;
-    void live.listRunCases(latestRun.runId).then((cases) => {
+    void listRunCases(latestRun.runId).then((cases) => {
       setRunCases(
         cases.map((item) => ({
           caseId: item.caseId,
@@ -230,11 +237,11 @@ export function BenchmarksSection({
         })),
       );
     });
-  }, [latestRun?.runId, live]);
+  }, [latestRun?.runId, listRunCases]);
   useEffect(() => {
-    void live.getWeeklyMetrics().then((value) => setWeeklyMetrics(value));
-    void live.getRegressionAlerts().then((value) => setRegressionAlerts(value?.alerts ?? []));
-  }, [live, latestRun?.runId]);
+    void getWeeklyMetrics().then((value) => setWeeklyMetrics(value));
+    void getRegressionAlerts().then((value) => setRegressionAlerts(value?.alerts ?? []));
+  }, [getWeeklyMetrics, getRegressionAlerts, latestRun?.runId]);
   const trendRuns = [...sortedRuns].reverse();
   const passTrend = trendRuns.map((run) => run.passRate);
 
@@ -304,11 +311,11 @@ export function BenchmarksSection({
         </div>
         <button
           type="button"
-          onClick={() => void live.triggerRun()}
-          disabled={live.isRunning}
+          onClick={() => void triggerRun()}
+          disabled={isRunning}
           className="rounded-[8px] border border-primary/50 bg-primary px-3 py-2 text-[11px] font-medium tracking-[0.08em] text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {live.isRunning ? "RUNNING..." : "RUN A/B NOW"}
+          {isRunning ? "RUNNING..." : "RUN A/B NOW"}
         </button>
       </div>
 
