@@ -209,11 +209,18 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
         | { checkoutUrl?: string; currentPlan?: BillingPlan; error?: string }
         | null;
       if (!response.ok) {
-        throw new Error(payload?.error ?? `Checkout failed (${response.status})`);
+        const message = payload?.error ?? `Checkout failed (${response.status})`;
+        if (message.toLowerCase().includes("not configured")) {
+          window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
+          return;
+        }
+        throw new Error(message);
       }
       await loadBilling();
       if (payload?.checkoutUrl) {
         window.open(payload.checkoutUrl, "_blank", "noopener,noreferrer");
+      } else {
+        window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to start checkout.");
