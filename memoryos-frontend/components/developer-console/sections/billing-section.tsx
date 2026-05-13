@@ -32,9 +32,9 @@ type BillingResponse = {
     resetInDays: number;
   };
   invoices: BillingInvoice[];
-  paddle?: {
+  checkout?: {
     configured: boolean;
-    environment: "sandbox" | "production";
+    provider: "dodo" | "paddle" | "custom";
     portalUrl?: string;
   };
 };

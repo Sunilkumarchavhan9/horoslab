@@ -257,6 +257,8 @@ type WorkspaceState = {
   };
 };
 
+type CheckoutProvider = "dodo" | "paddle" | "custom";
+
 const WORKSPACE_STATE_BY_USER = new Map<string, WorkspaceState>();
 const PLUGIN_STORE_PATH = path.join(DATA_DIR, "plugins-state.json");
 const GOVERNANCE_POLICY_STORE_PATH = path.join(DATA_DIR, "governance-policies.json");
@@ -756,22 +758,19 @@ memoryRouter.post("/api-keys/:keyId/revoke", asyncHandler(async (req, res) => {
 
 memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   const state = getWorkspaceState(req.authUserId);
-  const paddleConfigured = Boolean(
-    process.env.PADDLE_API_KEY?.trim() &&
-      process.env.PADDLE_WEBHOOK_SECRET?.trim() &&
-      process.env.PADDLE_PRICE_ID?.trim(),
+  const checkoutConfigured = Boolean(
+    process.env.CHECKOUT_URL_PRO?.trim() ||
+      process.env.CHECKOUT_URL_SCALE?.trim() ||
+      process.env.CHECKOUT_URL_ENTERPRISE?.trim(),
   );
   res.json({
     workspaceName: state.workspaceName,
     currentPlan: state.plan,
     usage: state.usage,
     invoices: state.invoices,
-    paddle: {
-      configured: paddleConfigured,
-      environment:
-        process.env.PADDLE_ENVIRONMENT?.trim()?.toLowerCase() === "production"
-          ? "production"
-          : "sandbox",
+    checkout: {
+      configured: checkoutConfigured,
+      provider: resolveCheckoutProvider(),
       portalUrl: toBillingPortalUrl(),
     },
   });
@@ -791,8 +790,8 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
   const checkoutUrl = toPaddleCheckoutUrl(requestedPlan);
   if (!checkoutUrl) {
     res.status(500).json({
-      error: `Paddle checkout URL is not configured for ${requestedPlan}`,
-      requiredEnv: `PADDLE_CHECKOUT_URL_${requestedPlan.toUpperCase()}`,
+      error: `Checkout URL is not configured for ${requestedPlan}`,
+      requiredEnv: `CHECKOUT_URL_${requestedPlan.toUpperCase()}`,
     });
     return;
   }
@@ -1783,11 +1782,18 @@ function getWorkspaceState(userId: string): WorkspaceState {
 }
 
 function toBillingPortalUrl(): string {
-  const dashboard = process.env.PADDLE_DASHBOARD_URL?.trim();
+  const dashboard = process.env.CHECKOUT_DASHBOARD_URL?.trim();
   if (dashboard) {
     return dashboard;
   }
-  return "https://vendors.paddle.com";
+  const provider = resolveCheckoutProvider();
+  if (provider === "dodo") {
+    return "https://app.dodopayments.com";
+  }
+  if (provider === "paddle") {
+    return "https://vendors.paddle.com";
+  }
+  return "";
 }
 
 type UsageMeter = "tokens" | "searches";
@@ -1856,12 +1862,19 @@ function applyUsageOrReject(params: {
 
 function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
   const byPlanEnv: Record<Exclude<BillingPlan, "Free">, string | undefined> = {
-    Pro: process.env.PADDLE_CHECKOUT_URL_PRO,
-    Scale: process.env.PADDLE_CHECKOUT_URL_SCALE,
-    Enterprise: process.env.PADDLE_CHECKOUT_URL_ENTERPRISE,
+    Pro: process.env.CHECKOUT_URL_PRO,
+    Scale: process.env.CHECKOUT_URL_SCALE,
+    Enterprise: process.env.CHECKOUT_URL_ENTERPRISE,
   };
   const raw = byPlanEnv[plan as Exclude<BillingPlan, "Free">];
   return raw?.trim() ? raw.trim() : null;
+}
+
+function resolveCheckoutProvider(): CheckoutProvider {
+  const raw = process.env.CHECKOUT_PROVIDER?.trim().toLowerCase();
+  if (raw === "dodo") return "dodo";
+  if (raw === "paddle") return "paddle";
+  return "custom";
 }
 
 function buildWhyTop1(top?: {

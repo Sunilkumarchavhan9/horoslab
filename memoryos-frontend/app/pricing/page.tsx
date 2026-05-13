@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { initializePaddle } from "@paddle/paddle-js";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
-const proCheckoutUrl = process.env.NEXT_PUBLIC_PADDLE_CHECKOUT_URL_PRO?.trim() || "";
-const scaleCheckoutUrl = process.env.NEXT_PUBLIC_PADDLE_CHECKOUT_URL_SCALE?.trim() || "";
-const paddleClientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN?.trim() || "";
-const paddleEnvironment = process.env.NEXT_PUBLIC_PADDLE_ENV?.trim() || "production";
-const proPriceId = process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_PRO?.trim() || "";
-const scalePriceId = process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_SCALE?.trim() || "";
+const proCheckoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL_PRO?.trim() || "";
+const scaleCheckoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL_SCALE?.trim() || "";
 const founderEmail = "chavhansunilkumar753@gmail.com";
 
 type PlanCardProps = {
@@ -70,35 +65,14 @@ export default function PricingPage() {
 
   async function openPlanCheckout(plan: "pro" | "scale"): Promise<void> {
     const directUrl = plan === "pro" ? proCheckoutUrl : scaleCheckoutUrl;
-    const priceId = plan === "pro" ? proPriceId : scalePriceId;
-    const canUsePaddleJs = Boolean(paddleClientToken && priceId);
 
     try {
       setBusyPlan(plan);
       setCheckoutError(null);
 
-      // Prefer hosted checkout links in production for better reliability.
       if (directUrl) {
         window.location.href = directUrl;
         return;
-      }
-
-      if (canUsePaddleJs && priceId) {
-        try {
-          const paddle = await initializePaddle({
-            environment: paddleEnvironment === "sandbox" ? "sandbox" : "production",
-            token: paddleClientToken,
-          });
-          if (!paddle) {
-            throw new Error("Paddle failed to initialize");
-          }
-          paddle.Checkout.open({
-            items: [{ priceId, quantity: 1 }],
-          });
-          return;
-        } catch (paddleError) {
-          console.error("[Pricing] Paddle checkout failed:", paddleError);
-        }
       }
 
       const openedBackend = await openBackendCheckout(plan);
