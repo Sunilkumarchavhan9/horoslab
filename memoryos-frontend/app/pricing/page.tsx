@@ -77,6 +77,12 @@ export default function PricingPage() {
       setBusyPlan(plan);
       setCheckoutError(null);
 
+      // Prefer hosted checkout links in production for better reliability.
+      if (directUrl) {
+        window.location.href = directUrl;
+        return;
+      }
+
       if (canUsePaddleJs && priceId) {
         try {
           const paddle = await initializePaddle({
@@ -93,11 +99,6 @@ export default function PricingPage() {
         } catch (paddleError) {
           console.error("[Pricing] Paddle checkout failed:", paddleError);
         }
-      }
-
-      if (directUrl) {
-        window.location.href = directUrl;
-        return;
       }
 
       const openedBackend = await openBackendCheckout(plan);
