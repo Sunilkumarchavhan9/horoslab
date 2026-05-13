@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PLAN_CATALOG, formatLimit } from "../../../../shared/planCatalog";
 import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,
@@ -184,6 +185,7 @@ const DEFAULT_GOVERNANCE_POLICY: GovernancePolicy = {
   pinCriticalDecisions: true,
   requireManualReviewForHighRisk: false,
 };
+const PLAN_LIMITS_LINE = `Free ${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens / ${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} searches · Pro ${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} / ${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} · Scale ${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} / ${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} per month`;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -1549,6 +1551,9 @@ export function RunDemoSection() {
           </Button>
         </div>
       </header>
+      <div className="shrink-0 border-b border-border bg-background px-5 py-2 text-[11px] text-muted-foreground">
+        Limits: {PLAN_LIMITS_LINE}
+      </div>
 
       {micError || errorMessage ? (
         <div className="shrink-0 border-b border-amber-500/30 bg-amber-500/10 px-5 py-3 text-[13px] text-amber-800 dark:text-amber-200">

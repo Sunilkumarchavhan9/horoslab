@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
+import { PLAN_CATALOG, formatLimit } from "../../../../shared/planCatalog";
 import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,
@@ -129,6 +130,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function extractErrorMessage(payload: unknown, fallback: string): string {
   if (isRecord(payload)) {
+    if (
+      isRecord(payload.error) &&
+      payload.error.code === "UPGRADE_REQUIRED" &&
+      typeof payload.error.message === "string"
+    ) {
+      return `${payload.error.message} Upgrade in Developer Console > Billing to continue.`;
+    }
     if (typeof payload.error === "string" && payload.error.length > 0) {
       return payload.error;
     }
@@ -309,6 +317,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   );
   const [setupTab, setSetupTab] = useState<SetupTab>("configure");
   const [importText, setImportText] = useState("");
+  const planLimitsLine = `Free ${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens / ${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} searches · Pro ${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} / ${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} · Scale ${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} / ${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} per month`;
 
   const selectedConfig = useMemo(
     () => MODE_CONFIG.find((item) => item.mode === mode) ?? MODE_CONFIG[0],
@@ -1583,6 +1592,7 @@ handoff = httpx.post(
               <span>Mode: {selectedConfig.label}</span>
               <span>TopK: {topK}</span>
               <span>Workspace: {workspace}</span>
+              <span>Limits: {planLimitsLine}</span>
             </div>
           </div>
         </section>
