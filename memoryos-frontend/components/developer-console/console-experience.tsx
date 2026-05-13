@@ -950,6 +950,8 @@ export function DeveloperConsoleExperience() {
   const [showMemoryTagFilter, setShowMemoryTagFilter] = useState(false);
   const [memoryTagQuery, setMemoryTagQuery] = useState("");
   const [selectedMemoryTags, setSelectedMemoryTags] = useState<string[]>([]);
+  const [, setIsSeedingFirstMemory] = useState(false);
+  const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [dashboardDataLoading, setDashboardDataLoading] = useState(false);
   const [dashboardDataError, setDashboardDataError] = useState<string | null>(null);
   const [liveMemories, setLiveMemories] = useState<MemoryListItem[]>([]);
