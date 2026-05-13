@@ -2,6 +2,9 @@
   "name": "memoryos-frontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev --webpack",
     "dev:all": "concurrently --names \"backend,frontend\" --prefix-colors \"cyan,green\" --kill-others-on-fail \"node start-backend.js\" \"next dev --webpack\"",
