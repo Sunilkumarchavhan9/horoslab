@@ -16,9 +16,9 @@ export default function PricingPage() {
         <div className="mt-8 rounded-xl border border-slate-200 p-6">
           <h2 className="text-xl font-semibold">Current plans</h2>
           <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-700">
-            <li>Free: local development and evaluation</li>
-            <li>Pro: production-ready developer workflows</li>
-            <li>Scale: higher limits, collaboration, and governance features</li>
+            <li>Free: $0 with 1M tokens/month and 10K search queries/month</li>
+            <li>Pro: $19/month with 3M tokens/month and 100K search queries/month</li>
+            <li>Scale: $399/month with 80M tokens/month and 20M search queries/month</li>
             <li>Enterprise: custom security, support, and deployment requirements</li>
           </ul>
         </div>
