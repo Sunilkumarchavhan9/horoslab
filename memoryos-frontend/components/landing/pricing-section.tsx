@@ -1,14 +1,15 @@
 import { Reveal } from "./motion";
+import { PLAN_CATALOG, formatLimit } from "../../../shared/planCatalog";
 
 const PLAN_CARDS = [
   {
     tier: "STARTER",
-    price: "$0",
+    price: `$${PLAN_CATALOG.Free.monthlyPriceUsd}`,
     suffix: "",
     description: "For developers validating memory contracts and continuity loops in personal workflows.",
     features: [
-      "1M tokens/month",
-      "10K search queries/month",
+      `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} search queries/month`,
       "1 workspace",
       "Core memory processing",
       "Email support",
@@ -21,12 +22,12 @@ const PLAN_CARDS = [
   },
   {
     tier: "PRO",
-    price: "$19",
+    price: `$${PLAN_CATALOG.Pro.monthlyPriceUsd}`,
     suffix: "/mo.",
     description: "For active builders running MemoryOS in daily multi-agent and model workflows.",
     features: [
-      "3M tokens/month",
-      "100K search queries/month",
+      `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} search queries/month`,
       "Unlimited personal projects",
       "Resume + retrieve + continue",
       "Priority email support",
@@ -39,12 +40,12 @@ const PLAN_CARDS = [
   },
   {
     tier: "SCALE",
-    price: "$399",
+    price: `$${PLAN_CATALOG.Scale.monthlyPriceUsd}`,
     suffix: "/mo.",
     description: "For teams running shared company memory across products, internal agents, and workspaces.",
     features: [
-      "80M tokens/month",
-      "20M search queries/month",
+      `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} search queries/month`,
       "Shared workspaces",
       "Team memory graph",
       "Dedicated support channel",

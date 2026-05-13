@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { PLAN_CATALOG, formatLimit } from "../../../../shared/planCatalog";
 
 type BillingTab = "Plans" | "Usage" | "Invoices";
 type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
@@ -53,23 +54,37 @@ const FOUNDER_EMAIL = "chavhansunilkumar753@gmail.com";
 const PLAN_CARDS: PlanCard[] = [
   {
     name: "Free",
-    price: "$0",
+    price: `$${PLAN_CATALOG.Free.monthlyPriceUsd}`,
     subtitle: "Get started with core continuity workflows",
-    features: ["1M tokens/month", "10K search queries/month", "Email support"],
+    features: [
+      `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} search queries/month`,
+      "Email support",
+    ],
     cta: "Current Plan",
   },
   {
     name: "Pro",
-    price: "$19/month",
+    price: `$${PLAN_CATALOG.Pro.monthlyPriceUsd}/month`,
     subtitle: "For solo developers building with AI memory",
-    features: ["3M tokens/month", "100K search queries/month", "Priority support", "All plugin integrations"],
+    features: [
+      `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} search queries/month`,
+      "Priority support",
+      "All plugin integrations",
+    ],
     cta: "Upgrade",
   },
   {
     name: "Scale",
-    price: "$399/month",
+    price: `$${PLAN_CATALOG.Scale.monthlyPriceUsd}/month`,
     subtitle: "For teams and production continuity workloads",
-    features: ["80M tokens/month", "20M search queries/month", "Dedicated support", "Connector suite"],
+    features: [
+      `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month`,
+      `${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} search queries/month`,
+      "Dedicated support",
+      "Connector suite",
+    ],
     cta: "Upgrade",
     highlight: true,
   },
@@ -105,9 +120,9 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
   const plan = billing?.currentPlan ?? currentPlan;
   const labelWorkspace = billing?.workspaceName ?? workspaceName;
   const usage = billing?.usage ?? {
-    tokenLimit: 1_000_000,
+    tokenLimit: PLAN_CATALOG.Free.tokenLimit ?? 1_000_000,
     tokenUsed: 0,
-    searchLimit: 10_000,
+    searchLimit: PLAN_CATALOG.Free.searchLimit ?? 10_000,
     searchUsed: 0,
     resetInDays: 30,
   };

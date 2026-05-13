@@ -70,6 +70,7 @@ import { generateMemoryAwareResponse } from "../../lib/memory/chatCompletion";
 import { getMemoryStoreAdapter } from "../../lib/adapters/registry";
 import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
 import { randomUUID } from "crypto";
+import { PLAN_CATALOG, type BillingPlan } from "../../shared/planCatalog";
 
 export const memoryRouter = Router();
 
@@ -108,7 +109,6 @@ type BaselineReport = {
 };
 
 type RequestRange = keyof typeof REQUEST_RANGE_DAYS;
-type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
 type TeamRole = "owner" | "admin" | "member";
 type TeamAccess = "Full" | "Scoped" | "Read";
 type PluginStatus = "available" | "installed" | "degraded";
@@ -798,8 +798,8 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
   }
   const state = getWorkspaceState(req.authUserId);
   state.plan = requestedPlan;
-  state.usage.tokenLimit = requestedPlan === "Pro" ? 3_000_000 : 80_000_000;
-  state.usage.searchLimit = requestedPlan === "Pro" ? 100_000 : 20_000_000;
+  state.usage.tokenLimit = PLAN_CATALOG[requestedPlan].tokenLimit ?? PLAN_CATALOG.Scale.tokenLimit ?? 80_000_000;
+  state.usage.searchLimit = PLAN_CATALOG[requestedPlan].searchLimit ?? PLAN_CATALOG.Scale.searchLimit ?? 20_000_000;
   res.json({
     checkoutUrl,
     portalUrl: toBillingPortalUrl(),
@@ -1744,9 +1744,9 @@ function createDefaultWorkspaceState(userId: string): WorkspaceState {
     workspaceName: "MemoryOS",
     plan: "Free",
     usage: {
-      tokenLimit: 1_000_000,
+      tokenLimit: PLAN_CATALOG.Free.tokenLimit ?? 1_000_000,
       tokenUsed: 0,
-      searchLimit: 10_000,
+      searchLimit: PLAN_CATALOG.Free.searchLimit ?? 10_000,
       searchUsed: 0,
       resetInDays: 20,
     },
