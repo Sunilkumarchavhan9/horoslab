@@ -25,9 +25,14 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MemoryOS | Developer Memory Infrastructure",
+  title: "memoryos™",
   description:
     "MemoryOS helps AI remember developer context across projects, decisions, and workflows.",
+  icons: {
+    icon: "/memoryostmlogoofficial.png",
+    shortcut: "/memoryostmlogoofficial.png",
+    apple: "/memoryostmlogoofficial.png",
+  },
 };
 
 export default function RootLayout({
