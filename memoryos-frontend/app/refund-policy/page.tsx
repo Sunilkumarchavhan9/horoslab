@@ -3,9 +3,7 @@ export default function RefundPolicyPage() {
     <main className="min-h-screen bg-white px-6 py-16 text-slate-900">
       <div className="mx-auto max-w-3xl">
         <h1 className="text-4xl font-semibold tracking-[-0.04em]">Refund Policy</h1>
-        <p className="mt-4 text-slate-700">
-          We want you to be confident in MemoryOS. This policy outlines refund eligibility for paid plans.
-        </p>
+        <p className="mt-4 text-slate-700">Last updated: May 13, 2026</p>
         <div className="mt-8 space-y-5 text-slate-700">
           <p><strong>Monthly subscriptions:</strong> you may request a refund within 14 days of first purchase if the service did not meet expectations.</p>
           <p><strong>Renewals:</strong> renewal charges are generally non-refundable, except where required by law.</p>
