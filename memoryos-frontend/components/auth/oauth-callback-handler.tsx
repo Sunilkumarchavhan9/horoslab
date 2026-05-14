@@ -38,11 +38,7 @@ export function OAuthCallbackHandler({
       };
     }
 
-    const fallbackTimer = window.setTimeout(() => {
-      router.replace(completeUrl);
-    }, 2500);
-
-    clerk
+    void clerk
       .handleRedirectCallback({
         signInUrl,
         signUpUrl,
@@ -52,15 +48,18 @@ export function OAuthCallbackHandler({
         signUpForceRedirectUrl: completeUrl,
         signUpFallbackRedirectUrl: completeUrl,
       })
+      .then(() => {
+        if (!active) return;
+        router.replace(completeUrl);
+      })
       .catch((callbackError) => {
         if (!active) return;
         console.error("[MemoryOS Auth] OAuth callback failed", callbackError);
-        router.replace(signInUrl);
+        router.replace(`${signInUrl}?auth_error=oauth_callback`);
       });
 
     return () => {
       active = false;
-      window.clearTimeout(fallbackTimer);
     };
   }, [clerk, completeUrl, continueSignUpUrl, isSessionLoaded, isSignedIn, router, signInUrl, signUpUrl]);
 

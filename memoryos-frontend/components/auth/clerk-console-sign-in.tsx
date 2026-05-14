@@ -3,6 +3,7 @@
 import { useAuth } from "@clerk/nextjs";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useSignIn } from "@clerk/nextjs/legacy";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -347,6 +348,13 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
         className="min-h-[70px] w-full"
         aria-hidden="true"
       />
+
+      <p className="pt-1 text-center text-[13px] text-[#9ca5b0]">
+        New to MemoryOS?{" "}
+        <Link href="/sign-up" className="text-[#c9defd] underline-offset-2 hover:underline">
+          Create account
+        </Link>
+      </p>
     </div>
   );
 }
