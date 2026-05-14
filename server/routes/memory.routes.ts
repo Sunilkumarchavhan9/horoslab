@@ -761,7 +761,10 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   const checkoutConfigured = Boolean(
     process.env.CHECKOUT_URL_PRO?.trim() ||
       process.env.CHECKOUT_URL_SCALE?.trim() ||
-      process.env.CHECKOUT_URL_ENTERPRISE?.trim(),
+      process.env.CHECKOUT_URL_ENTERPRISE?.trim() ||
+      process.env.PADDLE_CHECKOUT_URL_PRO?.trim() ||
+      process.env.PADDLE_CHECKOUT_URL_SCALE?.trim() ||
+      process.env.PADDLE_CHECKOUT_URL_ENTERPRISE?.trim(),
   );
   res.json({
     workspaceName: state.workspaceName,
@@ -1862,9 +1865,9 @@ function applyUsageOrReject(params: {
 
 function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
   const byPlanEnv: Record<Exclude<BillingPlan, "Free">, string | undefined> = {
-    Pro: process.env.CHECKOUT_URL_PRO,
-    Scale: process.env.CHECKOUT_URL_SCALE,
-    Enterprise: process.env.CHECKOUT_URL_ENTERPRISE,
+    Pro: process.env.CHECKOUT_URL_PRO ?? process.env.PADDLE_CHECKOUT_URL_PRO,
+    Scale: process.env.CHECKOUT_URL_SCALE ?? process.env.PADDLE_CHECKOUT_URL_SCALE,
+    Enterprise: process.env.CHECKOUT_URL_ENTERPRISE ?? process.env.PADDLE_CHECKOUT_URL_ENTERPRISE,
   };
   const raw = byPlanEnv[plan as Exclude<BillingPlan, "Free">];
   return raw?.trim() ? raw.trim() : null;
