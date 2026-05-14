@@ -69,8 +69,11 @@ export function loadEnvConfig(): AppEnv {
   }
 
   const data = parsed.data;
-  if (data.NODE_ENV === "production" && !data.MEM0_API_KEY) {
-    throw new Error("MEM0_API_KEY is required in production");
+  const memoryStoreProvider = process.env.MEMORY_STORE_PROVIDER?.trim().toLowerCase();
+  const mem0Required = memoryStoreProvider === "mem0";
+
+  if (mem0Required && !data.MEM0_API_KEY) {
+    throw new Error("MEM0_API_KEY is required when MEMORY_STORE_PROVIDER=mem0");
   }
 
   cachedEnv = {
