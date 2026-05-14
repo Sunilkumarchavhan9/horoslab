@@ -19,4 +19,11 @@ if [ ! -f /app/data/eval/benchmark-report.json ] && [ -f /app/default-data/eval/
   cp /app/default-data/eval/benchmark-report.json /app/data/eval/benchmark-report.json
 fi
 
+# Keep database schema in sync on startup when enabled.
+# Disable by setting PRISMA_DB_PUSH_ON_START=false.
+if [ "${PRISMA_DB_PUSH_ON_START:-true}" = "true" ]; then
+  echo "[entrypoint] Running prisma db push..."
+  npx prisma db push
+fi
+
 exec "$@"
