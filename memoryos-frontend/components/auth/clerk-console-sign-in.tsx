@@ -170,6 +170,10 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
     router.replace(redirectTo);
   }, [redirectTo, router]);
 
+  const redirectToOrganizationTask = useCallback(() => {
+    router.replace("/developer-console/choose-organization");
+  }, [router]);
+
   useEffect(() => {
     if (!isSignedIn) {
       return;
@@ -204,7 +208,7 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
       });
     } catch (error) {
       if (isAlreadySignedInError(error)) {
-        await redirectSignedInUser();
+        await redirectToOrganizationTask();
         return;
       }
       console.error("[MemoryOS Auth] Developer OAuth sign-in failed", error);
@@ -260,7 +264,7 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
       setStatusTone("success");
     } catch (error) {
       if (isAlreadySignedInError(error)) {
-        await redirectSignedInUser();
+        await redirectToOrganizationTask();
         return;
       }
       setStatusMessage(getErrorMessage(error));

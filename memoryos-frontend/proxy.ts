@@ -16,6 +16,7 @@ const isPublicAuthRoute = createRouteMatcher([
   "/",
   "/sign-up",
   "/developer-console/sign-in",
+  "/developer-console/choose-organization",
   "/developer-console/verify-link",
   "/personal-app/sign-in",
   "/personal-app/sign-up",
