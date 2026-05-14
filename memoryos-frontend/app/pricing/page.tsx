@@ -1,5 +1,5 @@
 "use client";
-
+          
 import { useState } from "react";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 import { getOrCreateMemoryTokenWithRetry } from "@/lib/memory-token";
@@ -16,16 +16,9 @@ let paddleReadyPromise: Promise<boolean> | null = null;
 declare global {
   interface Window {
     Paddle?: {
-      Environment?: {
-        set: (env: "sandbox" | "production") => void;
-      };
+      Environment?: { set: (env: "sandbox" | "production") => void };
       Initialize?: (params: { token: string }) => void;
-      Checkout?: {
-        open: (params: { items: Array<{ priceId: string; quantity?: number }> }) => void;
-      };
-      Status?: {
-        libraryVersion?: string;
-      };
+      Checkout?: { open: (params: { items: Array<{ priceId: string; quantity?: number }> }) => void };
     };
   }
 }
@@ -191,14 +184,12 @@ export default function PricingPage() {
       if (!loaded || !window.Paddle) {
         return { ok: false, message: "Failed to initialize Paddle checkout." };
       }
-
       if (window.Paddle.Environment?.set) {
         window.Paddle.Environment.set(paddleEnv);
       }
       if (window.Paddle.Initialize) {
         window.Paddle.Initialize({ token: paddleToken });
       }
-
       window.Paddle.Checkout?.open({
         items: [{ priceId, quantity: 1 }],
       });
