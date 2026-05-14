@@ -799,12 +799,11 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
     return;
   }
   const state = getWorkspaceState(req.authUserId);
-  state.plan = requestedPlan;
-  state.usage.tokenLimit = PLAN_CATALOG[requestedPlan].tokenLimit ?? PLAN_CATALOG.Scale.tokenLimit ?? 80_000_000;
-  state.usage.searchLimit = PLAN_CATALOG[requestedPlan].searchLimit ?? PLAN_CATALOG.Scale.searchLimit ?? 20_000_000;
   res.json({
     checkoutUrl,
     portalUrl: toBillingPortalUrl(),
+    pendingPlan: requestedPlan,
+    pendingActivation: true,
     currentPlan: state.plan,
   });
 }));
