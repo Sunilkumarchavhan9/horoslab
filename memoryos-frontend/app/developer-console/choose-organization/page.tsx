@@ -14,7 +14,6 @@ export default function ChooseOrganizationPage() {
 
         <div className="mt-8 rounded-xl border border-[#2a2a2a] bg-[#0f1114] p-4 sm:p-6">
           <OrganizationList
-            hideSlug
             afterSelectOrganizationUrl="/developer-console"
             afterCreateOrganizationUrl="/developer-console"
           />
@@ -29,4 +28,3 @@ export default function ChooseOrganizationPage() {
     </main>
   );
 }
-
