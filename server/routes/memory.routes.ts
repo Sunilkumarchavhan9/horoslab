@@ -257,7 +257,7 @@ type WorkspaceState = {
   };
 };
 
-type CheckoutProvider = "dodo" | "paddle" | "custom";
+type CheckoutProvider = "polar" | "custom";
 
 const WORKSPACE_STATE_BY_USER = new Map<string, WorkspaceState>();
 const PLUGIN_STORE_PATH = path.join(DATA_DIR, "plugins-state.json");
@@ -762,9 +762,9 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
     process.env.CHECKOUT_URL_PRO?.trim() ||
       process.env.CHECKOUT_URL_SCALE?.trim() ||
       process.env.CHECKOUT_URL_ENTERPRISE?.trim() ||
-      process.env.PADDLE_CHECKOUT_URL_PRO?.trim() ||
-      process.env.PADDLE_CHECKOUT_URL_SCALE?.trim() ||
-      process.env.PADDLE_CHECKOUT_URL_ENTERPRISE?.trim(),
+      process.env.POLAR_CHECKOUT_URL_PRO?.trim() ||
+      process.env.POLAR_CHECKOUT_URL_SCALE?.trim() ||
+      process.env.POLAR_CHECKOUT_URL_ENTERPRISE?.trim(),
   );
   res.json({
     workspaceName: state.workspaceName,
@@ -790,7 +790,7 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
     res.status(400).json({ error: "Invalid plan for checkout" });
     return;
   }
-  const checkoutUrl = toPaddleCheckoutUrl(requestedPlan);
+  const checkoutUrl = toConfiguredCheckoutUrl(requestedPlan);
   if (!checkoutUrl) {
     res.status(500).json({
       error: `Checkout URL is not configured for ${requestedPlan}`,
@@ -1789,11 +1789,8 @@ function toBillingPortalUrl(): string {
     return dashboard;
   }
   const provider = resolveCheckoutProvider();
-  if (provider === "dodo") {
-    return "https://app.dodopayments.com";
-  }
-  if (provider === "paddle") {
-    return "https://vendors.paddle.com";
+  if (provider === "polar") {
+    return "https://dashboard.polar.sh";
   }
   return "";
 }
@@ -1862,11 +1859,17 @@ function applyUsageOrReject(params: {
   return true;
 }
 
-function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
+function toConfiguredCheckoutUrl(plan: BillingPlan): string | null {
   const byPlanEnv: Record<Exclude<BillingPlan, "Free">, string | undefined> = {
-    Pro: process.env.CHECKOUT_URL_PRO ?? process.env.PADDLE_CHECKOUT_URL_PRO,
-    Scale: process.env.CHECKOUT_URL_SCALE ?? process.env.PADDLE_CHECKOUT_URL_SCALE,
-    Enterprise: process.env.CHECKOUT_URL_ENTERPRISE ?? process.env.PADDLE_CHECKOUT_URL_ENTERPRISE,
+    Pro:
+      process.env.CHECKOUT_URL_PRO ??
+      process.env.POLAR_CHECKOUT_URL_PRO,
+    Scale:
+      process.env.CHECKOUT_URL_SCALE ??
+      process.env.POLAR_CHECKOUT_URL_SCALE,
+    Enterprise:
+      process.env.CHECKOUT_URL_ENTERPRISE ??
+      process.env.POLAR_CHECKOUT_URL_ENTERPRISE,
   };
   const raw = byPlanEnv[plan as Exclude<BillingPlan, "Free">];
   return raw?.trim() ? raw.trim() : null;
@@ -1874,8 +1877,7 @@ function toPaddleCheckoutUrl(plan: BillingPlan): string | null {
 
 function resolveCheckoutProvider(): CheckoutProvider {
   const raw = process.env.CHECKOUT_PROVIDER?.trim().toLowerCase();
-  if (raw === "dodo") return "dodo";
-  if (raw === "paddle") return "paddle";
+  if (raw === "polar") return "polar";
   return "custom";
 }
 

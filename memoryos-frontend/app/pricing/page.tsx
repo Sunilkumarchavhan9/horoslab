@@ -6,49 +6,9 @@ import { getOrCreateMemoryTokenWithRetry } from "@/lib/memory-token";
 
 const proCheckoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL_PRO?.trim() || "";
 const scaleCheckoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL_SCALE?.trim() || "";
-const paddleEnv = (process.env.NEXT_PUBLIC_PADDLE_ENV?.trim().toLowerCase() || "production") as "production" | "sandbox";
-const paddleToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN?.trim() || "";
-const paddlePriceIdPro = process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_PRO?.trim() || "";
-const paddlePriceIdScale = process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_SCALE?.trim() || "";
+const polarProCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_PRO?.trim() || "";
+const polarScaleCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_SCALE?.trim() || "";
 const founderEmail = "chavhansunilkumar753@gmail.com";
-let paddleReadyPromise: Promise<boolean> | null = null;
-
-declare global {
-  interface Window {
-    Paddle?: {
-      Environment?: { set: (env: "sandbox" | "production") => void };
-      Initialize?: (params: { token: string }) => void;
-      Checkout?: { open: (params: { items: Array<{ priceId: string; quantity?: number }> }) => void };
-    };
-  }
-}
-
-async function ensurePaddleLoaded(): Promise<boolean> {
-  if (typeof window === "undefined") return false;
-  if (window.Paddle?.Checkout?.open) return true;
-
-  if (!paddleReadyPromise) {
-    paddleReadyPromise = new Promise<boolean>((resolve) => {
-      const existing = document.querySelector<HTMLScriptElement>('script[data-paddle-js="true"]');
-      if (existing) {
-        existing.addEventListener("load", () => resolve(Boolean(window.Paddle?.Checkout?.open)), { once: true });
-        existing.addEventListener("error", () => resolve(false), { once: true });
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
-      script.async = true;
-      script.defer = true;
-      script.dataset.paddleJs = "true";
-      script.onload = () => resolve(Boolean(window.Paddle?.Checkout?.open));
-      script.onerror = () => resolve(false);
-      document.head.appendChild(script);
-    });
-  }
-
-  return paddleReadyPromise;
-}
 
 type PlanCardProps = {
   name: string;
@@ -165,43 +125,10 @@ export default function PricingPage() {
     }
   }
 
-  function getPaddlePriceId(plan: "pro" | "scale"): string {
-    return plan === "pro" ? paddlePriceIdPro : paddlePriceIdScale;
-  }
-
-  function canUsePaddle(plan: "pro" | "scale"): boolean {
-    return Boolean(paddleToken && getPaddlePriceId(plan));
-  }
-
-  async function openPaddleCheckout(plan: "pro" | "scale"): Promise<CheckoutAttemptResult> {
-    const priceId = getPaddlePriceId(plan);
-    if (!priceId || !paddleToken) {
-      return { ok: false, message: "Paddle client token or price ID is missing." };
-    }
-
-    try {
-      const loaded = await ensurePaddleLoaded();
-      if (!loaded || !window.Paddle) {
-        return { ok: false, message: "Failed to initialize Paddle checkout." };
-      }
-      if (window.Paddle.Environment?.set) {
-        window.Paddle.Environment.set(paddleEnv);
-      }
-      if (window.Paddle.Initialize) {
-        window.Paddle.Initialize({ token: paddleToken });
-      }
-      window.Paddle.Checkout?.open({
-        items: [{ priceId, quantity: 1 }],
-      });
-
-      return { ok: true };
-    } catch {
-      return { ok: false, message: "Unable to open Paddle checkout." };
-    }
-  }
-
   async function openPlanCheckout(plan: "pro" | "scale"): Promise<void> {
-    const directUrl = plan === "pro" ? proCheckoutUrl : scaleCheckoutUrl;
+    const directUrl = plan === "pro"
+      ? (polarProCheckoutUrl || proCheckoutUrl)
+      : (polarScaleCheckoutUrl || scaleCheckoutUrl);
 
     try {
       setBusyPlan(plan);
@@ -210,12 +137,6 @@ export default function PricingPage() {
       if (directUrl) {
         window.location.href = directUrl;
         return;
-      }
-      if (canUsePaddle(plan)) {
-        const paddleResult = await openPaddleCheckout(plan);
-        if (paddleResult.ok) {
-          return;
-        }
       }
 
       const checkoutResult = await openBackendCheckout(plan);

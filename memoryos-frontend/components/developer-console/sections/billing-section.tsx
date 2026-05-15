@@ -34,7 +34,7 @@ type BillingResponse = {
   invoices: BillingInvoice[];
   checkout?: {
     configured: boolean;
-    provider: "dodo" | "paddle" | "custom";
+    provider: "polar" | "custom";
     portalUrl?: string;
   };
 };
