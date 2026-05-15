@@ -1,18 +1,21 @@
 import { Reveal } from "./motion";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
+const polarProCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_PRO?.trim() || process.env.NEXT_PUBLIC_CHECKOUT_URL_PRO?.trim() || "";
+const polarScaleCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_SCALE?.trim() || process.env.NEXT_PUBLIC_CHECKOUT_URL_SCALE?.trim() || "";
+
 const PLAN_CARDS = [
   {
     tier: "STARTER",
     price: `$${PLAN_CATALOG.Free.monthlyPriceUsd}`,
     suffix: "",
-    description: "For developers validating memory contracts and continuity loops in personal workflows.",
+    description: "For individuals getting started with MemoryOS.",
     features: [
       `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month`,
       `${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} search queries/month`,
       "1 workspace",
-      "Core memory processing",
-      "Email support",
+      "Basic memory/history",
+      "Community support",
     ],
     cta: "Start free →",
     secondary: "Explore the docs →",
@@ -24,17 +27,17 @@ const PLAN_CARDS = [
     tier: "PRO",
     price: `$${PLAN_CATALOG.Pro.monthlyPriceUsd}`,
     suffix: "/mo.",
-    description: "For active builders running MemoryOS in daily multi-agent and model workflows.",
+    description: "For active builders running MemoryOS in daily multi-agent workflows.",
     features: [
       `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month`,
       `${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} search queries/month`,
-      "Unlimited personal projects",
-      "Resume + retrieve + continue",
+      "Advanced memory tools (resume/handoff/insights)",
+      "Connector integrations",
       "Priority email support",
     ],
     cta: "Get MemoryOS Pro →",
     secondary: "Install the SDK →",
-    ctaHref: "/pricing?plan=pro",
+    ctaHref: polarProCheckoutUrl || "/pricing?plan=pro",
     secondaryHref: "#developer-experience",
     featured: true,
   },
@@ -42,27 +45,27 @@ const PLAN_CARDS = [
     tier: "SCALE",
     price: `$${PLAN_CATALOG.Scale.monthlyPriceUsd}`,
     suffix: "/mo.",
-    description: "For teams running shared company memory across products, internal agents, and workspaces.",
+    description: "For teams running shared company memory in production.",
     features: [
       `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month`,
       `${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} search queries/month`,
-      "Shared workspaces",
-      "Team memory graph",
-      "Dedicated support channel",
+      "Team collaboration + governance",
+      "Audit logs + advanced controls",
+      "Faster support/SLA response",
     ],
-    cta: "Talk to sales →",
+    cta: "Upgrade to Scale →",
     secondary: "See platform details →",
-    ctaHref: "/pricing?plan=scale",
+    ctaHref: polarScaleCheckoutUrl || "/pricing?plan=scale",
     secondaryHref: "#enterprise",
     featured: false,
   },
 ];
 
 const ENTERPRISE_POINTS = [
-  "Private deployment options",
-  "SSO and access controls",
-  "Custom retention and audit policies",
-  "Deployment and onboarding support",
+  "Custom token/search limits (or unlimited by contract)",
+  "SSO/SAML",
+  "Dedicated infra/security controls",
+  "Onboarding + dedicated success/support",
 ];
 
 export function PricingSection() {
@@ -190,9 +193,8 @@ export function PricingSection() {
           </div>
 
           <p className="mt-4 text-[13px] leading-6 text-[#61738d]">
-            Pricing can be tuned around seats, workspace count, deployment model, and memory
-            volume. The right structure depends on how your agents and engineering teams actually
-            use MemoryOS.
+            Limit reset: usage resets monthly on billing anniversary. If limit is reached, requests pause
+            until reset or upgrade. On downgrade, new plan limits apply immediately.
           </p>
 
           <div className="mt-5 border border-[#c9d8ee]  px-5 py-4">
