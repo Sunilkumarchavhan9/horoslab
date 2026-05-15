@@ -6,17 +6,13 @@ const polarScaleCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_SCALE?.
 
 const PLAN_CARDS = [
   {
-    tier: "STARTER",
+    tier: "FREE",
     price: `$${PLAN_CATALOG.Free.monthlyPriceUsd}`,
     suffix: "",
     description: "For individuals getting started with MemoryOS.",
-    features: [
-      `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month`,
-      `${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} search queries/month`,
-      "1 workspace",
-      "Basic memory/history",
-      "Community support",
-    ],
+    limits: `${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens/month · ${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} searches/month`,
+    features: ["1 workspace", "Basic memory/history", "Community support"],
+    overage: "Blocked until reset or upgrade.",
     cta: "Start free →",
     secondary: "Explore the docs →",
     ctaHref: "/developer-console/sign-in",
@@ -28,13 +24,9 @@ const PLAN_CARDS = [
     price: `$${PLAN_CATALOG.Pro.monthlyPriceUsd}`,
     suffix: "/mo.",
     description: "For active builders running MemoryOS in daily multi-agent workflows.",
-    features: [
-      `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month`,
-      `${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} search queries/month`,
-      "Advanced memory tools (resume/handoff/insights)",
-      "Connector integrations",
-      "Priority email support",
-    ],
+    limits: `${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} tokens/month · ${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} searches/month`,
+    features: ["Advanced memory tools (resume/handoff/insights)", "Connector integrations", "Priority email support"],
+    overage: "Prompt to upgrade to Scale.",
     cta: "Get MemoryOS Pro →",
     secondary: "Install the SDK →",
     ctaHref: polarProCheckoutUrl || "/pricing?plan=pro",
@@ -46,13 +38,9 @@ const PLAN_CARDS = [
     price: `$${PLAN_CATALOG.Scale.monthlyPriceUsd}`,
     suffix: "/mo.",
     description: "For teams running shared company memory in production.",
-    features: [
-      `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month`,
-      `${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} search queries/month`,
-      "Team collaboration + governance",
-      "Audit logs + advanced controls",
-      "Faster support/SLA response",
-    ],
+    limits: `${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} tokens/month · ${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} searches/month`,
+    features: ["Team collaboration + governance", "Audit logs + advanced controls", "Faster support/SLA response"],
+    overage: "Contact support or move to Enterprise.",
     cta: "Upgrade to Scale →",
     secondary: "See platform details →",
     ctaHref: polarScaleCheckoutUrl || "/pricing?plan=scale",
@@ -78,6 +66,11 @@ export function PricingSection() {
         <p className="mx-auto mt-4 max-w-[820px] text-[15px] leading-[1.7] text-[#6a778a] md:text-[16px]">
           One platform for memory contracts, injected context visibility, interoperability, governance,
           and team workspaces. Start free, scale with usage, and move to enterprise deployment when needed.
+        </p>
+        <p className="mx-auto mt-3 max-w-[820px] text-[14px] leading-[1.7] text-slate-700 md:text-[15px]">
+          Free: {formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens + {formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} searches.
+          Pro: {formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} + {formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)}.
+          Scale: {formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} + {formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} per month.
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[13px] text-slate-900 md:text-[14px]">
           <span className="inline-flex items-center gap-2">
@@ -113,6 +106,7 @@ export function PricingSection() {
               <p className="mt-3 max-w-[320px] text-[14px] leading-6 text-[#61738d] md:text-[15px]">
                 {plan.description}
               </p>
+              <p className="mt-3 text-[14px] leading-6 text-[#61738d] md:text-[15px]">{plan.limits}</p>
 
               <div className="mt-5 grid gap-3 text-[14px] leading-6 text-slate-900 md:text-[15px]">
                 {plan.features.map((feature) => (
@@ -122,6 +116,9 @@ export function PricingSection() {
                   </div>
                 ))}
               </div>
+              <p className="mt-4 text-[13px] leading-6 text-[#61738d]">
+                <span className="font-semibold text-slate-900">Overage:</span> {plan.overage}
+              </p>
 
               <div className="mt-7 space-y-3">
                 <a
