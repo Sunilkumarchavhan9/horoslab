@@ -5,6 +5,8 @@ import { GitHubClient } from "../../lib/integrations/github";
 import { NotionClient } from "../../lib/integrations/notion";
 import { GoogleClient } from "../../lib/integrations/google";
 import { MicrosoftClient } from "../../lib/integrations/microsoft";
+import { GmailClient } from "../../lib/integrations/gmail";
+import { SlackClient } from "../../lib/integrations/slack";
 import { appendConnectorSyncLog, listConnectorSyncLogs } from "../../lib/integrations/syncLogStore";
 import { prisma } from "../../lib/storage/prismaClient";
 import { asyncHandler } from "../middleware/asyncHandler";
@@ -248,9 +250,17 @@ connectorRouter.get(
       authorizeUrl = process.env.GOOGLE_CLIENT_ID 
         ? GoogleClient.getAuthorizeUrl(state) 
         : getMockCallbackUrl();
+    } else if (type === "gmail") {
+      authorizeUrl = process.env.GOOGLE_CLIENT_ID
+        ? GmailClient.getAuthorizeUrl(state)
+        : getMockCallbackUrl();
     } else if (type === "onedrive") {
       authorizeUrl = process.env.MICROSOFT_CLIENT_ID 
         ? MicrosoftClient.getAuthorizeUrl(state) 
+        : getMockCallbackUrl();
+    } else if (type === "slack") {
+      authorizeUrl = process.env.SLACK_CLIENT_ID
+        ? SlackClient.getAuthorizeUrl(state)
         : getMockCallbackUrl();
     } else {
       sendApiError(res, 400, {
@@ -294,15 +304,21 @@ connectorRouter.get(
         const tokens = await GoogleClient.getAccessToken(code);
         accessToken = tokens.accessToken;
         googleRefreshToken = tokens.refreshToken;
+      } else if (type === "gmail") {
+        const tokens = await GmailClient.getAccessToken(code);
+        accessToken = tokens.accessToken;
+        googleRefreshToken = tokens.refreshToken;
       } else if (type === "onedrive") {
         accessToken = await MicrosoftClient.getAccessToken(code);
+      } else if (type === "slack") {
+        accessToken = await SlackClient.getAccessToken(code);
       } else {
         throw new Error(`Unsupported connector type: ${type}`);
       }
 
       // 2. Store or update connector in DB
       const tokenConfig: Record<string, unknown> = { accessToken };
-      if (type === "google_drive" && googleRefreshToken) {
+      if ((type === "google_drive" || type === "gmail") && googleRefreshToken) {
         tokenConfig.refreshToken = googleRefreshToken;
       }
 
@@ -491,10 +507,31 @@ connectorRouter.post(
           }, buildApiMeta(req, startedAt));
           return;
         }
+        let syncToken = accessToken;
+        if ((type === "google_drive" || type === "gmail") && typeof config.refreshToken === "string" && config.refreshToken.length > 0) {
+          try {
+            const refreshed = type === "gmail"
+              ? await GmailClient.refreshAccessToken(config.refreshToken)
+              : await GoogleClient.refreshAccessToken(config.refreshToken);
+            if (type === "gmail") {
+              syncToken = refreshed.accessToken;
+              config.accessToken = refreshed.accessToken;
+              if (refreshed.refreshToken) config.refreshToken = refreshed.refreshToken;
+              config.lastTokenRefreshAt = new Date().toISOString();
+            } else {
+              syncToken = refreshed.accessToken;
+              config.accessToken = refreshed.accessToken;
+              if (refreshed.refreshToken) config.refreshToken = refreshed.refreshToken;
+              config.lastTokenRefreshAt = new Date().toISOString();
+            }
+          } catch {
+            // fall back to existing token; sync path will surface auth error if expired
+          }
+        }
         const result = await ConnectorManager.triggerSync(
           userId,
           type as ConnectorType,
-          accessToken,
+          syncToken,
           previousCheckpoint,
           recentItemKeys,
         );
@@ -502,6 +539,18 @@ connectorRouter.post(
         checkpoint = typeof result.checkpoint === "string" ? result.checkpoint : undefined;
         dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
         syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
+        if (type === "slack") {
+          const slackCursor = (result as unknown as { cursor?: unknown }).cursor;
+          const slackLastMessageTs = (result as unknown as { lastMessageTs?: unknown }).lastMessageTs;
+          if (typeof slackCursor === "string" && slackCursor.length > 0) config.cursor = slackCursor;
+          if (typeof slackLastMessageTs === "string" && slackLastMessageTs.length > 0) config.lastMessageTs = slackLastMessageTs;
+        }
+        if (type === "gmail") {
+          const gmailLastMessageId = (result as unknown as { lastMessageId?: unknown }).lastMessageId;
+          const gmailLastCheckpointEpochMs = (result as unknown as { lastCheckpointEpochMs?: unknown }).lastCheckpointEpochMs;
+          if (typeof gmailLastMessageId === "string" && gmailLastMessageId.length > 0) config.lastMessageId = gmailLastMessageId;
+          if (typeof gmailLastCheckpointEpochMs === "number") config.lastCheckpointEpochMs = gmailLastCheckpointEpochMs;
+        }
       }
       const nextRecentItemKeys = Array.from(new Set([...recentItemKeys, ...dedupeKeys])).slice(-500);
       
