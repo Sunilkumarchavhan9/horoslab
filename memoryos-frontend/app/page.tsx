@@ -1,6 +1,7 @@
 import { BenchmarksSection } from "@/components/landing/benchmarks-section";
 import { BlueBand } from "@/components/landing/blue-band";
 import { ContextStackSection } from "@/components/landing/context-stack-section";
+import { CompanyBrainThesisSection } from "@/components/landing/company-brain-thesis-section";
 import { DeveloperExperienceSection } from "@/components/landing/developer-experience-section";
 import { EnterpriseSection } from "@/components/landing/enterprise-section";
 import { LandingFooter } from "@/components/landing/landing-footer";
@@ -28,16 +29,25 @@ export default function Home() {
         <section id="what-we-do" className="relative">
           <SectionLabel
             title="WHAT WE DO"
-            index="[1/8]"
+            index="[1/9]"
             className="sticky top-[72px] z-[70]"
           />
           <WhatWeDoSection />
         </section>
 
+        <section id="company-brain-thesis" className="relative">
+          <SectionLabel
+            title="COMPANY BRAIN"
+            index="[2/9]"
+            className="sticky top-[72px] z-[70]"
+          />
+          <CompanyBrainThesisSection />
+        </section>
+
         <section id="context-stack" className="relative">
           <SectionLabel
             title="THE CONTEXT STACK"
-            index="[2/8]"
+            index="[3/9]"
             className="sticky top-[72px] z-[70]"
           />
           <ContextStackSection />
@@ -46,7 +56,7 @@ export default function Home() {
         <section id="under-the-hood" className="relative">
           <SectionLabel
             title="UNDER THE HOOD"
-            index="[3/8]"
+            index="[4/9]"
             className="sticky top-[72px] z-[70]"
           />
           <UnderTheHoodSection />
@@ -55,7 +65,7 @@ export default function Home() {
         <section id="benchmarks" className="relative">
           <SectionLabel
             title="BENCHMARKS"
-            index="[4/8]"
+            index="[5/9]"
             className="sticky top-[72px] z-[70]"
           />
           <BenchmarksSection />
@@ -64,7 +74,7 @@ export default function Home() {
         <section id="developer-experience" className="relative">
           <SectionLabel
             title="DEVELOPER EXPERIENCE"
-            index="[5/8]"
+            index="[6/9]"
             className="sticky top-[72px] z-[70]"
           />
           <DeveloperExperienceSection />
@@ -73,7 +83,7 @@ export default function Home() {
 
       <section id="personal-memory" className="relative left-1/2 right-1/2 -mx-[50vw] mt-0 w-screen">
         <div className="sticky top-[72px] z-[70] mx-auto max-w-[1240px] border-x border-b border-[#c9d8ee] bg-white">
-          <SectionLabel title="PERSONAL MEMORY" index="[6/8]" />
+          <SectionLabel title="PERSONAL MEMORY" index="[7/9]" />
         </div>
         <PersonalMemorySection />
       </section>
@@ -82,7 +92,7 @@ export default function Home() {
         <section id="enterprise" className="relative">
           <SectionLabel
             title="ENTERPRISE"
-            index="[7/8]"
+            index="[8/9]"
             className="sticky top-[72px] z-[70]"
           />
           <EnterpriseSection />
@@ -91,7 +101,7 @@ export default function Home() {
         <section id="pricing" className="relative">
           <SectionLabel
             title="PRICING"
-            index="[8/8]"
+            index="[9/9]"
             className="sticky top-[72px] z-[70]"
           />
           <PricingSection />
