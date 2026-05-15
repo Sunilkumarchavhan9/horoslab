@@ -44,3 +44,10 @@ jobs:
 
       - name: Benchmark report gate
         run: npm run eval:benchmark
+
+      - name: Company Brain Gate (Strict)
+        env:
+          COMPANY_BRAIN_GATE_STRICT: "true"
+          COMPANY_BRAIN_EVAL_MIN_SCORE: "90"
+          COMPANY_BRAIN_SCENARIO_MIN_PASS_RATE: "100"
+        run: npm run eval:company-brain:gate
