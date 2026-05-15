@@ -1,10 +1,13 @@
+import "./tracing";
 import "dotenv/config";
 import { createMemoryOsApp } from "./app";
 import { loadBestRetrievalConfig } from "../lib/config/loadBestRetrievalConfig";
 import { loadEnvConfig } from "../lib/config/env";
+import { initSentry } from "../lib/observability/sentry";
 
 const env = loadEnvConfig();
 const port = env.port;
+initSentry();
 const app = createMemoryOsApp();
 
 const config = loadBestRetrievalConfig();

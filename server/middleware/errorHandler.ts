@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { recordAppError } from "../observability/metrics";
+import { captureBackendError } from "../../lib/observability/sentry";
 
 export function notFoundHandler(req: Request, res: Response): void {
   res.status(404).json({
@@ -22,6 +23,11 @@ export function errorHandler(
   console.error(
     `[error] path=${req.originalUrl} requestId=${requestId} message=${debugMessage}`,
   );
+  captureBackendError(error, {
+    requestId,
+    path: req.originalUrl,
+    method: req.method,
+  });
 
   const isProduction = process.env.NODE_ENV === "production";
 

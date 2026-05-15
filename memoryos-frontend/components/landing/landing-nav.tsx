@@ -26,6 +26,7 @@ const NAV_ITEM_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   "Core Engine": Activity,
   "Developer Experience": Settings2,
   "Personal Memory": Brain,
+  "Company Brain": Brain,
   "API Reference": BookOpenText,
   "Client SDKs": FileCode2,
   "Context Stack": Layers,
@@ -44,6 +45,7 @@ const NAV_DROPDOWNS = [
     width: "w-[400px]",
     items: [
       { label: "Core Engine", description: "High-performance memory ingestion and indexing", href: "#what-we-do" },
+      { label: "Company Brain", description: "From scattered knowledge to executable agent skills", href: "#company-brain-thesis" },
       { label: "Developer Experience", description: "Next-generation observability and control planes", href: "#developer-experience" },
       { label: "Personal Memory", description: "Dedicated memory graph for individual workflows", href: "#personal-memory" }
     ]
