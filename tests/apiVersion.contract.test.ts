@@ -9,7 +9,15 @@ describe("API Versioning Contract", () => {
     const res = await request(app).get("/api/v1/health");
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: "ok" });
+    expect(res.body?.status).toBe("ok");
+    expect(res.body?.companyBrain).toMatchObject({
+      activeSchedulers: expect.any(Number),
+      bootstrappedUsers: expect.any(Number),
+      queueBackendMode: expect.stringMatching(/^(file|redis)$/),
+      staleWorkers: expect.any(Number),
+      totalUsers: expect.any(Number),
+      usersWithEnabledSources: expect.any(Number),
+    });
   });
 
   it("adds compatibility headers on legacy memory routes", async () => {
