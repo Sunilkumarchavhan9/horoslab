@@ -82,6 +82,7 @@ export const VoiceChatSchema = z.object({
   agentId: z.string().min(1).optional(),
   model: z.string().min(1).optional(),
   mode: z.enum(["chat", "handoff", "next_step", "execute"]).optional(),
+  useCompanyBrain: z.boolean().optional(),
   injectedProjectState: ProjectStateSchema.optional(),
   governance: GovernancePolicySchema.optional(),
 });

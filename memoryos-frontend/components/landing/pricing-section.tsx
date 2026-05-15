@@ -205,7 +205,7 @@ export function PricingSection() {
                 </p>
               </div>
               <a
-                href="#contact"
+                href="mailto:chavhansunilkumar753@gmail.com?subject=Startup%20program%20application"
                 className="inline-flex min-w-[164px] items-center justify-center whitespace-nowrap bg-blue-600 hover:bg-blue-700 transition-colors px-7 py-3 text-[13px] font-medium text-white md:text-[14px]"
               >
                 Apply now →

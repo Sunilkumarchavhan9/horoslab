@@ -5,10 +5,10 @@ import { GitHubClient } from "./github";
 import { NotionClient } from "./notion";
 import { GoogleClient } from "./google";
 import { MicrosoftClient } from "./microsoft";
-import { getMemoryStoreAdapter } from "../adapters/registry";
+import { LocalFilesClient } from "./localFiles";
 import { randomUUID } from "crypto";
 
-export type ConnectorType = "github" | "notion" | "google_drive" | "onedrive";
+export type ConnectorType = "github" | "notion" | "google_drive" | "onedrive" | "local_files";
 
 export interface ConnectorPayload {
   userId: string;
@@ -16,6 +16,58 @@ export interface ConnectorPayload {
   externalId: string;
   content: string;
   metadata?: Record<string, any>;
+}
+
+export type ConnectorSyncResult = {
+  success: boolean;
+  extractedCount: number;
+  checkpoint?: string;
+  dedupeKeys?: string[];
+  attempts?: number;
+};
+
+const CONNECTOR_SYNC_MAX_ATTEMPTS = Math.max(1, Number(process.env.CONNECTOR_SYNC_MAX_ATTEMPTS ?? 3));
+const CONNECTOR_SYNC_BACKOFF_MS = Math.max(100, Number(process.env.CONNECTOR_SYNC_BACKOFF_MS ?? 750));
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRetryableSyncError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const maybeStatus = "status" in error ? Number((error as { status?: unknown }).status) : NaN;
+  if (Number.isFinite(maybeStatus) && maybeStatus >= 500) return true;
+  const message =
+    "message" in error && typeof (error as { message?: unknown }).message === "string"
+      ? (error as { message: string }).message.toLowerCase()
+      : "";
+  return (
+    message.includes("timeout")
+    || message.includes("network")
+    || message.includes("temporar")
+    || message.includes("econnreset")
+    || message.includes("429")
+    || message.includes("rate limit")
+  );
+}
+
+async function withRetry<T>(run: () => Promise<T>, label: string): Promise<{ value: T; attempts: number }> {
+  let attempts = 0;
+  let lastError: unknown;
+  while (attempts < CONNECTOR_SYNC_MAX_ATTEMPTS) {
+    attempts += 1;
+    try {
+      const value = await run();
+      return { value, attempts };
+    } catch (error) {
+      lastError = error;
+      if (attempts >= CONNECTOR_SYNC_MAX_ATTEMPTS || !isRetryableSyncError(error)) break;
+      const backoff = CONNECTOR_SYNC_BACKOFF_MS * Math.pow(2, attempts - 1);
+      console.warn(`[ConnectorManager] ${label} failed attempt=${attempts}, retrying in ${backoff}ms`);
+      await sleep(backoff);
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(`${label} failed`);
 }
 
 /**
@@ -73,27 +125,57 @@ export const ConnectorManager = {
   /**
    * Triggers a real sync for a specific connector.
    */
-  async triggerSync(userId: string, type: ConnectorType, accessToken?: string) {
+  async triggerSync(
+    userId: string,
+    type: ConnectorType,
+    accessToken?: string,
+    since?: string,
+    recentItemKeys?: string[],
+  ): Promise<ConnectorSyncResult> {
     console.log(`[ConnectorManager] Triggering ${type} sync for user ${userId}`);
+
+    if (type === "local_files") {
+      const { value, attempts } = await withRetry(
+        () => LocalFilesClient.sync({ userId, recentItemKeys }),
+        "local_files sync",
+      );
+      return { ...value, attempts };
+    }
 
     if (!accessToken) {
       throw new Error(`${type} access token is required for sync.`);
     }
 
     if (type === "github") {
-      return GitHubClient.sync({ userId, accessToken });
+      const { value, attempts } = await withRetry(
+        () => GitHubClient.sync({ userId, accessToken, since, recentItemKeys }),
+        "github sync",
+      );
+      return { ...value, attempts };
     }
 
     if (type === "notion") {
-      return NotionClient.sync({ userId, accessToken });
+      const { value, attempts } = await withRetry(
+        () => NotionClient.sync({ userId, accessToken, since, recentItemKeys }),
+        "notion sync",
+      );
+      return { ...value, attempts };
     }
 
     if (type === "google_drive") {
-      return GoogleClient.sync({ userId, accessToken });
+      const { value, attempts } = await withRetry(
+        () => GoogleClient.sync({ userId, accessToken }),
+        "google_drive sync",
+      );
+      return { ...value, attempts };
     }
 
     if (type === "onedrive") {
-      return MicrosoftClient.sync({ userId, accessToken });
+      const { value, attempts } = await withRetry(
+        () => MicrosoftClient.sync({ userId, accessToken }),
+        "onedrive sync",
+      );
+      return { ...value, attempts };
     }
 
     // Fallback for types not yet fully implemented

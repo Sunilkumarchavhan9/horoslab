@@ -446,7 +446,7 @@ export function PersonalMemorySection() {
              </div>
 
              {/* Floating Cascading Pills */}
-             <div className="relative w-full max-w-[500px] flex flex-col gap-4 z-10 sm:pr-8">
+             <div className="relative w-full max-w-[500px] flex flex-col gap-4 z-10 sm:pr-8 ">
                 <FloatingPill x={0} icon={<FileText className="text-blue-500" size={16}/>} text="Summarize the key ideas from my notes" delay={0.1} />
                 <FloatingPill x={40} icon={<Activity className="text-chart-2" size={16}/>} text="Which memories connect retrieval and trust?" delay={0.2} />
                 <FloatingPill x={80} icon={<MessageSquare className="text-purple-500" size={16}/>} text="What are the main themes across this workspace?" delay={0.3} />

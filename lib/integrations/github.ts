@@ -6,6 +6,8 @@ import { randomUUID } from "crypto";
 export interface GitHubSyncOptions {
   userId: string;
   accessToken: string;
+  since?: string;
+  recentItemKeys?: string[];
 }
 
 /**
@@ -18,6 +20,8 @@ export const GitHubClient = {
   async sync(options: GitHubSyncOptions) {
     const octokit = new Octokit({ auth: options.accessToken });
     const memoriesExtracted = [];
+    const seen = new Set(options.recentItemKeys ?? []);
+    const dedupeKeys: string[] = [];
 
     try {
       // 1. Fetch recent repositories
@@ -41,6 +45,9 @@ export const GitHubClient = {
 
         for (const pr of prs) {
           if (!pr.merged_at) continue;
+          if (options.since && pr.updated_at && new Date(pr.updated_at).getTime() <= new Date(options.since).getTime()) continue;
+          const prKey = `github:pr:${repo.full_name}:${pr.number}`;
+          if (seen.has(prKey)) continue;
 
           const content = `GitHub PR ${pr.title}: ${pr.body || "No description provided."}\nMerged at: ${pr.merged_at}`;
           const candidates = extractMemory({
@@ -64,6 +71,7 @@ export const GitHubClient = {
             });
             memoriesExtracted.push(candidate);
           }
+          dedupeKeys.push(prKey);
         }
 
         // 3. Fetch recent closed issues
@@ -78,6 +86,9 @@ export const GitHubClient = {
 
         for (const issue of issues) {
           if (issue.pull_request) continue; // Skip PRs (already handled)
+          if (options.since && issue.updated_at && new Date(issue.updated_at).getTime() <= new Date(options.since).getTime()) continue;
+          const issueKey = `github:issue:${repo.full_name}:${issue.number}`;
+          if (seen.has(issueKey)) continue;
 
           const content = `GitHub Issue ${issue.title}: ${issue.body || "No description provided."}\nClosed at: ${issue.closed_at}`;
           const candidates = extractMemory({
@@ -101,12 +112,15 @@ export const GitHubClient = {
             });
             memoriesExtracted.push(candidate);
           }
+          dedupeKeys.push(issueKey);
         }
       }
 
       return {
         success: true,
         extractedCount: memoriesExtracted.length,
+        checkpoint: new Date().toISOString(),
+        dedupeKeys,
       };
     } catch (error) {
       console.error("[GitHubClient] Sync failed:", error);

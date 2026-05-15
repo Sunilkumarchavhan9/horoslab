@@ -16,10 +16,18 @@ import { memoryDoctorRouter } from "./routes/memoryDoctor.routes";
 import { preflightRouter } from "./routes/preflight.routes";
 import { agentRouter } from "./routes/agent.routes";
 import { agentSessionRouter } from "./routes/agent-session.routes";
+import { companyBrainRouter } from "./routes/companyBrain.routes";
 import { getMetricsContentType, observeHttpMetrics, renderMetrics } from "./observability/metrics";
+import { bootstrapCompanyBrainRuntime } from "../lib/companyBrain/platform";
 
 export function createMemoryOsApp(): Express {
   ensureMemoryStoreIntegrity();
+  const bootstrapResult = bootstrapCompanyBrainRuntime(
+    Number(process.env.COMPANY_BRAIN_SCHEDULER_INTERVAL_SECONDS ?? 300),
+  );
+  console.log(
+    `[CompanyBrain] Runtime bootstrap restored schedulers=${bootstrapResult.restoredSchedulers} users=${bootstrapResult.totalUsers}`,
+  );
   const app: Express = express();
 
   app.use(corsMiddleware);
@@ -112,6 +120,12 @@ export function createMemoryOsApp(): Express {
     setApiVersionHeaders,
     requireAuth,
     preflightRouter,
+  );
+  app.use(
+    "/api/company-brain",
+    setApiVersionHeaders,
+    requireAuth,
+    companyBrainRouter,
   );
   app.use(
     "/api/agents",

@@ -4,6 +4,7 @@ import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
 import type {
   DeveloperSignals,
   Memory,
+  OperationalTag,
   MemorySource,
   MemoryStatus,
   MemoryType,
@@ -87,6 +88,16 @@ function parseDeveloperSignals(value: unknown): DeveloperSignals | undefined {
   return hasAny ? signals : undefined;
 }
 
+function parseOperationalTags(value: unknown): OperationalTag[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const allowed: OperationalTag[] = ["decision", "policy", "incident", "runbook"];
+  const parsed = value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim().toLowerCase())
+    .filter((item): item is OperationalTag => allowed.includes(item as OperationalTag));
+  return parsed.length > 0 ? Array.from(new Set(parsed)) : undefined;
+}
+
 
 export function toMemory(candidate: ScoredMemoryCandidate): Memory{
     const now  =  new Date().toISOString();
@@ -157,6 +168,7 @@ export function toInternalMemory(
   const confidence = parseNumericMetadataValue(metadata.confidence, 0.5);
   const evidenceCount = Math.max( 1, Math.round(parseNumericMetadataValue(metadata.evidenceCount, 1)),);
   const developerSignals = parseDeveloperSignals(metadata.developerSignals);
+  const operationalTags = parseOperationalTags(metadata.operationalTags);
 
   return {
     id: result.id,
@@ -172,5 +184,6 @@ export function toInternalMemory(
     updatedAt,
     evidenceCount,
     developerSignals,
+    operationalTags,
   };
 }

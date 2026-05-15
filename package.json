@@ -25,6 +25,8 @@
     "eval:benchmark:gate:dev": "tsx scripts/benchmark-gate.ts --profile=dev",
     "eval:benchmark:gate:preview": "tsx scripts/benchmark-gate.ts --profile=preview",
     "eval:benchmark:gate:prod": "tsx scripts/benchmark-gate.ts --profile=prod",
+    "eval:company-brain:gate": "tsx scripts/eval-company-brain-gate.ts",
+    "smoke:company-brain:prod": "tsx scripts/prod-smoke-company-brain.ts",
     "eval:compare": "tsx scripts/eval-compare.ts",
     "tune:retrieval": "tsx scripts/tune-retrieval.ts",
     "tune:apply": "tsx scripts/write-best-config.ts",

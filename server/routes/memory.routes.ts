@@ -20,7 +20,7 @@ import { listMemories, getMemoryForUser } from "../../lib/memory/listMemory";
 import { runContinueFlowLangGraph } from "../../lib/workflows/continueGraphLangGraph";
 import { runHandoffFlowLangGraph } from "../../lib/workflows/handoffGraphLangGraph";
 import { runResumeFlowLangGraph } from "../../lib/workflows/resumeGraphLangGraph";
-import { MEMORY_STATUS, MEMORY_TYPES, type Memory, type MemoryStatus, type MemoryType } from "../../lib/memory/types";
+import { MEMORY_STATUS, MEMORY_TYPES, type Memory, type MemoryStatus, type MemoryType, type OperationalTag } from "../../lib/memory/types";
 import { ensureMemoryStoreIntegrity } from "../../lib/memory/startupIntegrity";
 import {
   createApiKeyForUser,
@@ -81,6 +81,7 @@ const REVISION_STORE_PATH = path.join(DATA_DIR, "revision-events.json");
 const BEST_CONFIG_PATH = path.join(DATA_DIR, "eval", "best-config.json");
 const BASELINE_REPORT_PATH = path.join(DATA_DIR, "eval", "baseline-report.json");
 const BENCHMARK_REPORT_PATH = path.join(DATA_DIR, "eval", "benchmark-report.json");
+const COMPANY_BRAIN_EXPORTS_PATH = path.join(DATA_DIR, "company-brain-exports.json");
 
 const REQUEST_RANGE_DAYS = {
   "1d": 1,
@@ -106,6 +107,22 @@ type BaselineReport = {
   passRate: number;
   totalCases: number;
   updatedAt?: string;
+};
+
+type CompanyBrainExportRecord = {
+  id: string;
+  workspace: string;
+  generatedAt: string;
+  stats: {
+    activeMemoryCount: number;
+    totalTimelineEvents: number;
+    decisions: number;
+    constraints: number;
+    incidents: number;
+    runbooks: number;
+    openRisks: number;
+  };
+  skillsMarkdown: string;
 };
 
 type RequestRange = keyof typeof REQUEST_RANGE_DAYS;
@@ -224,6 +241,7 @@ type GovernanceReviewItem = {
     message?: string;
     contract?: unknown;
     governance: GovernancePolicy;
+    operationalTags?: string[];
   };
   state: "pending" | "approved" | "rejected";
   createdAt: string;
@@ -434,6 +452,50 @@ function isHighRiskWrite(input: {
   if (hasSensitiveSignals) return { highRisk: true, reason: "sensitive_data_signal" };
   if (hasLargeContract) return { highRisk: true, reason: "large_contract_payload" };
   return { highRisk: true, reason: "enterprise_policy_guardrail" };
+}
+
+function classifyOperationalTags(input: {
+  message?: string;
+  contract?: {
+    goal?: string;
+    constraints?: string[];
+    decisions?: string[];
+    open_risks?: string[];
+    next_actions?: string[];
+  };
+}): OperationalTag[] {
+  const tags = new Set<OperationalTag>();
+  const text = `${input.message ?? ""}\n${JSON.stringify(input.contract ?? {})}`.toLowerCase();
+  if (/\b(decision|decide|selected|approved|choice|pricing exception)\b/i.test(text)) tags.add("decision");
+  if (/\b(policy|compliance|legal|security|approval|required|guardrail)\b/i.test(text)) tags.add("policy");
+  if (/\b(incident|outage|sev|postmortem|rollback|failed deploy|production issue|bug)\b/i.test(text)) tags.add("incident");
+  if (/\b(runbook|playbook|procedure|step-by-step|checklist)\b/i.test(text)) tags.add("runbook");
+  if ((input.contract?.decisions?.length ?? 0) > 0) tags.add("decision");
+  if ((input.contract?.constraints?.length ?? 0) > 0) tags.add("policy");
+  if ((input.contract?.open_risks?.length ?? 0) > 0) tags.add("incident");
+  if ((input.contract?.next_actions?.length ?? 0) > 0) tags.add("runbook");
+  return Array.from(tags);
+}
+
+async function applyOperationalTagsToMemories(input: {
+  memories: Memory[];
+  tags: OperationalTag[];
+}): Promise<Memory[]> {
+  if (input.tags.length === 0 || input.memories.length === 0) return input.memories;
+  const memoryStore = getMemoryStoreAdapter();
+  const updated: Memory[] = [];
+  for (const memory of input.memories) {
+    const mergedTags = Array.from(new Set([...(memory.operationalTags ?? []), ...input.tags]));
+    const nextMemory: Memory = {
+      ...memory,
+      operationalTags: mergedTags,
+      updatedAt: new Date().toISOString(),
+    };
+    await memoryStore.saveMemory({ memory: nextMemory });
+    await upsertRecentMemory(nextMemory);
+    updated.push(nextMemory);
+  }
+  return updated;
 }
 
 function minimumContractFieldsForMode(mode: GovernancePolicy["mode"]): number {
@@ -1167,6 +1229,7 @@ memoryRouter.get("/governance/review-queue", asyncHandler(async (req, res) => {
 
 memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
   const traceId = createTraceId("governance_review");
+  const startedAt = Date.now();
   if (
     !isObjectRecord(req.body) ||
     typeof req.body.reviewItemId !== "string" ||
@@ -1203,10 +1266,80 @@ memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
   item.reviewNote = typeof req.body.note === "string" ? req.body.note : undefined;
   writeGovernanceReviewStore(store);
 
+  let appliedResult: {
+    acceptedCount: number;
+    rejectedCount: number;
+    timelineCount: number;
+    operationalTags: OperationalTag[];
+  } | null = null;
+
+  if (decision === "approve" && item.payload) {
+    const contract = isObjectRecord(item.payload.contract) ? item.payload.contract as {
+      goal?: string;
+      constraints?: string[];
+      decisions?: string[];
+      open_risks?: string[];
+      next_actions?: string[];
+    } : undefined;
+    const contractMessage = contract
+      ? [
+          typeof contract.goal === "string" && contract.goal.trim().length > 0 ? `Goal: ${contract.goal}` : undefined,
+          (contract.constraints?.length ?? 0) > 0 ? `Constraints: ${contract.constraints?.join(" | ")}` : undefined,
+          (contract.decisions?.length ?? 0) > 0 ? `Decisions: ${contract.decisions?.join(" | ")}` : undefined,
+          (contract.open_risks?.length ?? 0) > 0 ? `Open Risks: ${contract.open_risks?.join(" | ")}` : undefined,
+          (contract.next_actions?.length ?? 0) > 0 ? `Next Actions: ${contract.next_actions?.join(" | ")}` : undefined,
+        ]
+          .filter((part): part is string => Boolean(part))
+          .join("\n")
+      : "";
+    const tags = Array.isArray(item.payload.operationalTags)
+      ? item.payload.operationalTags.filter((tag): tag is OperationalTag =>
+          tag === "decision" || tag === "policy" || tag === "incident" || tag === "runbook",
+        )
+      : classifyOperationalTags({
+          message: item.payload.message,
+          contract: contract,
+        });
+    const message = [
+      tags.length > 0 ? `Operational Tags: ${tags.join(", ")}` : undefined,
+      item.payload.message,
+      contractMessage,
+    ]
+      .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
+      .join("\n");
+
+    if (message.trim().length > 0) {
+      if (!applyUsageOrReject({
+        req,
+        res,
+        startedAt,
+        tokenCost: estimateTokenCostFromText(message),
+      })) {
+        return;
+      }
+      const result = await runIngestFlowLangGraph({
+        userId: req.authUserId,
+        threadId: item.payload.threadId,
+        message,
+      });
+      const taggedAcceptedMemories = await applyOperationalTagsToMemories({
+        memories: result.acceptedMemories,
+        tags,
+      });
+      appliedResult = {
+        acceptedCount: taggedAcceptedMemories.length,
+        rejectedCount: result.rejectedMemories.length,
+        timelineCount: result.timelineEvents.length,
+        operationalTags: tags,
+      };
+    }
+  }
+
   res.status(200).json({
     traceId,
     item,
     status: item.state,
+    appliedResult,
   });
 }));
 
@@ -1427,6 +1560,138 @@ memoryRouter.patch("/settings", asyncHandler(async (req, res) => {
   });
 }));
 
+async function generateCompanyBrainSkillsForUser(input: {
+  userId: string;
+  persistExport: boolean;
+}): Promise<{
+  workspace: string;
+  generatedAt: string;
+  stats: CompanyBrainExportRecord["stats"];
+  skillsMarkdown: string;
+  exportId?: string;
+}> {
+  const workspace = getWorkspaceState(input.userId).workspaceName;
+  const memoryResult = await listMemories({ userId: input.userId, limit: 300 });
+  const timeline = await listTimelineEvents(input.userId);
+  const activeMemories = memoryResult.memories.filter((entry) => entry.status === "active");
+
+  const topByType = (type: MemoryType, limit = 5) =>
+    activeMemories
+      .filter((entry) => entry.type === type)
+      .slice(0, limit)
+      .map((entry) => entry.summary || entry.content);
+
+  const constraints = topByType("learning", 5);
+  const decisions = topByType("project", 6);
+  const incidents = activeMemories
+    .filter((entry) => /\b(incident|outage|bug|failure|rollback|postmortem)\b/i.test(`${entry.summary} ${entry.content}`))
+    .slice(0, 6)
+    .map((entry) => entry.summary || entry.content);
+  const runbooks = activeMemories
+    .filter((entry) => /\b(runbook|playbook|how to|procedure|steps)\b/i.test(`${entry.summary} ${entry.content}`))
+    .slice(0, 6)
+    .map((entry) => entry.summary || entry.content);
+  const openRisks = topByType("episodic", 5);
+  const recentSignals = timeline
+    .slice(-20)
+    .reverse()
+    .slice(0, 8)
+    .map((event) => `${event.eventType}: ${event.reason}`);
+
+  const skillsMarkdown = [
+    "# COMPANY_BRAIN.md",
+    "",
+    `workspace: ${workspace}`,
+    "schema: memoryos.company_brain.v1",
+    `generated_at: ${new Date().toISOString()}`,
+    "",
+    "## Operating Model",
+    "- purpose: turn fragmented company knowledge into executable agent skills",
+    "- default_mode: contract-first execution",
+    "- escalation: high-risk changes require human approval",
+    "",
+    "## Decisions",
+    ...(decisions.length > 0 ? decisions.map((item) => `- ${item}`) : ["- none captured yet"]),
+    "",
+    "## Constraints",
+    ...(constraints.length > 0 ? constraints.map((item) => `- ${item}`) : ["- none captured yet"]),
+    "",
+    "## Incident Memory",
+    ...(incidents.length > 0 ? incidents.map((item) => `- ${item}`) : ["- none captured yet"]),
+    "",
+    "## Runbooks",
+    ...(runbooks.length > 0 ? runbooks.map((item) => `- ${item}`) : ["- none captured yet"]),
+    "",
+    "## Open Risks",
+    ...(openRisks.length > 0 ? openRisks.map((item) => `- ${item}`) : ["- none captured yet"]),
+    "",
+    "## Recent Signals",
+    ...(recentSignals.length > 0 ? recentSignals.map((item) => `- ${item}`) : ["- no timeline signals yet"]),
+    "",
+    "## Agent Execution Rules",
+    "- always retrieve latest contract + decisions before acting",
+    "- if policy/compliance uncertainty exists, ask for approval before execution",
+    "- write outcomes back to memory after each meaningful step",
+  ].join("\n");
+
+  const generatedAt = new Date().toISOString();
+  const stats = {
+    activeMemoryCount: activeMemories.length,
+    totalTimelineEvents: timeline.length,
+    decisions: decisions.length,
+    constraints: constraints.length,
+    incidents: incidents.length,
+    runbooks: runbooks.length,
+    openRisks: openRisks.length,
+  };
+
+  if (!input.persistExport) {
+    return {
+      workspace,
+      generatedAt,
+      stats,
+      skillsMarkdown,
+    };
+  }
+
+  const exportRecord: CompanyBrainExportRecord = {
+    id: randomUUID(),
+    workspace,
+    generatedAt,
+    stats,
+    skillsMarkdown,
+  };
+  const existingExports = readCompanyBrainExports();
+  const nextExports = [exportRecord, ...existingExports].slice(0, 25);
+  writeCompanyBrainExports(nextExports);
+
+  return {
+    workspace,
+    generatedAt,
+    stats,
+    skillsMarkdown,
+    exportId: exportRecord.id,
+  };
+}
+
+memoryRouter.get("/company-brain/skills", asyncHandler(async (req, res) => {
+  const payload = await generateCompanyBrainSkillsForUser({
+    userId: req.authUserId,
+    persistExport: true,
+  });
+  res.json(payload);
+}));
+
+memoryRouter.get("/company-brain/exports", asyncHandler(async (_req, res) => {
+  const exportsList = readCompanyBrainExports().map((entry) => ({
+    id: entry.id,
+    workspace: entry.workspace,
+    generatedAt: entry.generatedAt,
+    stats: entry.stats,
+  }));
+  res.json({ exports: exportsList });
+}));
+
 
 function hasValidBaselineReport(): boolean {
   return hasValidJsonFile(BASELINE_REPORT_PATH, (value) => {
@@ -1557,6 +1822,36 @@ function readJsonFile<T>(filePath: string, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+function readCompanyBrainExports(): CompanyBrainExportRecord[] {
+  if (!existsSync(COMPANY_BRAIN_EXPORTS_PATH)) {
+    return [];
+  }
+  try {
+    const raw = readFileSync(COMPANY_BRAIN_EXPORTS_PATH, "utf8");
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed.filter((entry): entry is CompanyBrainExportRecord => {
+      if (!isObjectRecord(entry)) return false;
+      return (
+        typeof entry.id === "string" &&
+        typeof entry.workspace === "string" &&
+        typeof entry.generatedAt === "string" &&
+        isObjectRecord(entry.stats) &&
+        typeof entry.skillsMarkdown === "string"
+      );
+    });
+  } catch {
+    return [];
+  }
+}
+
+function writeCompanyBrainExports(records: CompanyBrainExportRecord[]): void {
+  mkdirSync(DATA_DIR, { recursive: true });
+  writeFileSync(COMPANY_BRAIN_EXPORTS_PATH, JSON.stringify(records, null, 2), "utf8");
 }
 
 function writeJsonFile(filePath: string, data: unknown): void {
@@ -2142,6 +2437,10 @@ memoryRouter.post(
       contract: normalizedContract,
       governance: governancePolicy,
     });
+    const operationalTags = classifyOperationalTags({
+      message: normalizedMessage,
+      contract: normalizedContract,
+    });
     if (governancePolicy.requireManualReviewForHighRisk && risk.highRisk) {
       const reviewItem: GovernanceReviewItem = {
         id: `gr_${randomUUID().slice(0, 10)}`,
@@ -2153,6 +2452,7 @@ memoryRouter.post(
           message: normalizedMessage,
           contract: normalizedContract,
           governance: governancePolicy,
+          operationalTags,
         },
         state: "pending",
         createdAt: new Date().toISOString(),
@@ -2167,7 +2467,11 @@ memoryRouter.post(
       return;
     }
 
-    const message = [normalizedMessage, contractMessage]
+    const message = [
+      operationalTags.length > 0 ? `Operational Tags: ${operationalTags.join(", ")}` : undefined,
+      normalizedMessage,
+      contractMessage,
+    ]
       .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
       .join("\n");
     if (message.trim().length === 0) {
@@ -2202,9 +2506,13 @@ memoryRouter.post(
       threadId: parsed.data.threadId,
       message,
     });
+    const taggedAcceptedMemories = await applyOperationalTagsToMemories({
+      memories: result.acceptedMemories,
+      tags: operationalTags,
+    });
 
     const existingBeforeIds = new Set(existingBefore.memories.map((memory) => memory.id));
-    const acceptedMemories = result.acceptedMemories.filter(
+    const acceptedMemories = taggedAcceptedMemories.filter(
       (memory) => !existingBeforeIds.has(memory.id),
     );
     const autoConflicts = detectAutoConflicts({
@@ -2217,12 +2525,13 @@ memoryRouter.post(
 
     res.status(200).json({
       traceId,
-      acceptedMemories: result.acceptedMemories,
+      acceptedMemories: taggedAcceptedMemories,
       rejectedMemories: result.rejectedMemories,
       timelineEvents: result.timelineEvents,
       contract: normalizedContract ?? null,
       contractFieldCount: contractFieldsCount,
       governance: governancePolicy,
+      operationalTags,
       autoConflictsQueued: autoConflicts.length,
     });
   }),
@@ -2473,6 +2782,18 @@ memoryRouter.post(
     const sanitizedUserMessage = governancePolicy.redactSecrets
       ? applySecretRedaction(parsed.data.message)
       : parsed.data.message;
+    const useCompanyBrain = parsed.data.useCompanyBrain !== false;
+    let companyBrainSkillsMarkdown = "";
+    if (useCompanyBrain) {
+      const companyBrain = await generateCompanyBrainSkillsForUser({
+        userId: req.authUserId,
+        persistExport: false,
+      });
+      companyBrainSkillsMarkdown = companyBrain.skillsMarkdown.slice(0, 4000);
+    }
+    const modelInputMessage = companyBrainSkillsMarkdown
+      ? `${sanitizedUserMessage}\n\n[COMPANY_BRAIN_SKILLS]\n${companyBrainSkillsMarkdown}\n[/COMPANY_BRAIN_SKILLS]`
+      : sanitizedUserMessage;
 
     const enrichedInjectedProjectState = {
       ...(parsed.data.injectedProjectState ?? {}),
@@ -2491,9 +2812,9 @@ memoryRouter.post(
     const ingestResult = await runIngestFlowLangGraph({
       userId: req.authUserId,
       threadId: resolvedThreadId,
-      message: formatAgentChatMemory({
-        speaker: "user",
-        message: sanitizedUserMessage,
+        message: formatAgentChatMemory({
+          speaker: "user",
+          message: modelInputMessage,
         sessionId: parsed.data.sessionId,
         threadId: resolvedThreadId,
         workspace: parsed.data.workspace,
@@ -2508,7 +2829,7 @@ memoryRouter.post(
     // 2. Generate memory-aware response + structured project state
     const chatResult = await generateMemoryAwareResponse({
       userId: req.authUserId,
-      message: sanitizedUserMessage,
+      message: modelInputMessage,
       sessionId: parsed.data.sessionId,
       threadId: resolvedThreadId,
       workspace: parsed.data.workspace,
@@ -2587,6 +2908,9 @@ memoryRouter.post(
         guaranteedTurnMemory.timelineEvent,
       ],
       governance: governancePolicy,
+      companyBrain: {
+        applied: useCompanyBrain,
+      },
       contractQuality,
     });
   }),

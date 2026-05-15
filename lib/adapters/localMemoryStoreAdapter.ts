@@ -48,6 +48,7 @@ function toSearchResult(memory: Memory, query: string): MemoryStoreSearchResult 
       updatedAt: memory.updatedAt,
       evidenceCount: memory.evidenceCount,
       developerSignals: memory.developerSignals,
+      operationalTags: memory.operationalTags,
     },
   };
 }
