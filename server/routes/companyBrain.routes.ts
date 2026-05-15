@@ -35,6 +35,7 @@ import {
   requestAuditReplayApproval,
   reviewAuditReplayApproval,
   listAuditReplayApprovals,
+  getExecutionEvidence,
 } from "../../lib/companyBrain/platform";
 
 export const companyBrainRouter = Router();
@@ -327,4 +328,8 @@ companyBrainRouter.get("/sre/runbook", asyncHandler(async (req, res) => {
 
 companyBrainRouter.post("/eval/run", asyncHandler(async (req, res) => {
   res.json(runEvalHarness(req.authUserId));
+}));
+
+companyBrainRouter.get("/validation/evidence", asyncHandler(async (req, res) => {
+  res.json(getExecutionEvidence(req.authUserId));
 }));

@@ -48,6 +48,24 @@ async function fetchJson(url: string, token?: string): Promise<{ status: number;
   return { status: response.status, json };
 }
 
+async function postJson(
+  url: string,
+  token: string,
+  body: Record<string, unknown>,
+): Promise<{ status: number; json: unknown }> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  const json = await response.json().catch(() => null);
+  return { status: response.status, json };
+}
+
 async function main(): Promise<void> {
   const baseUrl = getBaseUrl();
   const token = getAuthToken();
@@ -118,6 +136,50 @@ async function main(): Promise<void> {
     await check("audit_replay_approvals", async () => {
       const { status } = await fetchJson(`${baseUrl}/api/company-brain/audit/replay/approvals`, token);
       return { pass: status === 200, detail: `status=${status}` };
+    }),
+  );
+
+  checks.push(
+    await check("action_e2e_validation", async () => {
+      const requestRes = await postJson(`${baseUrl}/api/company-brain/actions/request`, token, {
+        name: "internal_noop_validation",
+        payload: { source: "prod-smoke", note: "e2e validation action" },
+      });
+      if (requestRes.status !== 200) {
+        return { pass: false, detail: `request status=${requestRes.status}` };
+      }
+      const requestJson = requestRes.json as { action?: { id?: string } };
+      const actionId = requestJson.action?.id;
+      if (!actionId) return { pass: false, detail: "missing actionId" };
+
+      const approveRes = await postJson(`${baseUrl}/api/company-brain/actions/review`, token, {
+        actionId,
+        decision: "approve",
+      });
+      if (approveRes.status !== 200) {
+        return { pass: false, detail: `approve status=${approveRes.status}` };
+      }
+
+      const execRes = await postJson(`${baseUrl}/api/company-brain/actions/execute`, token, { actionId });
+      if (execRes.status !== 200) {
+        return { pass: false, detail: `execute status=${execRes.status}` };
+      }
+
+      const evidenceRes = await fetchJson(`${baseUrl}/api/company-brain/validation/evidence`, token);
+      if (evidenceRes.status !== 200) {
+        return { pass: false, detail: `evidence status=${evidenceRes.status}` };
+      }
+      const evidence = evidenceRes.json as {
+        auditSummary?: { byType?: Record<string, number> };
+        actionSummary?: { executed?: number; failed?: number };
+      } | null;
+      const executed = Number(evidence?.actionSummary?.executed ?? 0);
+      const failed = Number(evidence?.actionSummary?.failed ?? 0);
+      const executedAudit = Number(evidence?.auditSummary?.byType?.["action.executed"] ?? 0);
+      return {
+        pass: executed > 0 || executedAudit > 0,
+        detail: `executed=${executed} failed=${failed} action.executed=${executedAudit}`,
+      };
     }),
   );
 

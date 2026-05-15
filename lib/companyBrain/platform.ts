@@ -1919,6 +1919,64 @@ export function replayAudit(userId: string, from?: string, to?: string): {
   });
 }
 
+export function getExecutionEvidence(userId: string): {
+  generatedAt: string;
+  actionSummary: {
+    total: number;
+    pending: number;
+    approved: number;
+    executed: number;
+    failed: number;
+    rejected: number;
+  };
+  auditSummary: {
+    total: number;
+    byType: Record<string, number>;
+  };
+  recentAudit: AuditEvent[];
+  recentActions: Array<{
+    id: string;
+    name: string;
+    risk: "low" | "medium" | "high";
+    status: "pending" | "approved" | "executed" | "rejected" | "failed";
+    updatedAt: string;
+    executionDetail?: string;
+  }>;
+} {
+  return mutateUser(userId, (state) => {
+    const byType: Record<string, number> = {};
+    for (const event of state.audit) {
+      byType[event.type] = (byType[event.type] ?? 0) + 1;
+    }
+    const actions = state.actions;
+    const actionSummary = {
+      total: actions.length,
+      pending: actions.filter((a) => a.status === "pending").length,
+      approved: actions.filter((a) => a.status === "approved").length,
+      executed: actions.filter((a) => a.status === "executed").length,
+      failed: actions.filter((a) => a.status === "failed").length,
+      rejected: actions.filter((a) => a.status === "rejected").length,
+    };
+    return {
+      generatedAt: nowIso(),
+      actionSummary,
+      auditSummary: {
+        total: state.audit.length,
+        byType,
+      },
+      recentAudit: state.audit.slice(0, 30),
+      recentActions: actions.slice(0, 20).map((action) => ({
+        id: action.id,
+        name: action.name,
+        risk: action.risk,
+        status: action.status,
+        updatedAt: action.updatedAt,
+        executionDetail: action.executionResult?.detail,
+      })),
+    };
+  });
+}
+
 export function requestAuditReplayApproval(
   userId: string,
   from?: string,
