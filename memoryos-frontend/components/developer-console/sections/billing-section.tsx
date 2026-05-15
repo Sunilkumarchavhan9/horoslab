@@ -219,8 +219,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       if (!response.ok) {
         const message = payload?.error ?? `Checkout failed (${response.status})`;
         if (message.toLowerCase().includes("not configured")) {
-          window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
-          return;
+          throw new Error("Polar checkout URL is not configured for this plan.");
         }
         throw new Error(message);
       }
@@ -229,7 +228,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       if (isUsableCheckoutUrl(checkoutUrl)) {
         window.open(checkoutUrl, "_blank", "noopener,noreferrer");
       } else {
-        window.location.href = `/pricing?plan=${nextPlan.toLowerCase()}`;
+        throw new Error("Polar checkout URL is missing or invalid.");
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to start checkout.");
