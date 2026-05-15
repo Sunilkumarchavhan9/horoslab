@@ -1771,6 +1771,80 @@ export function listWorkers(userId: string): UserState["sre"]["workers"] {
   return mutateUser(userId, (state) => state.sre.workers);
 }
 
+export function recoverFailedQueueJobs(userId: string): { recovered: number } {
+  ensureScope(userId, "governance.policy.write");
+  const recovered = mutateUser(userId, (state) => {
+    let count = 0;
+    for (const job of state.queue) {
+      if (job.status !== "failed") continue;
+      job.status = "queued";
+      job.updatedAt = nowIso();
+      job.error = undefined;
+      count += 1;
+    }
+    return count;
+  });
+  if (recovered > 0) {
+    pushAlert(userId, "warning", "Recovered failed queue jobs", { recovered });
+    audit(userId, "sre.queue.recovered", `recovered=${recovered}`);
+  }
+  return { recovered };
+}
+
+export function backfillDeadLetterSourceEvents(userId: string): { requeued: number } {
+  ensureScope(userId, "governance.policy.write");
+  const requeued = mutateUser(userId, (state) => {
+    let count = 0;
+    for (const event of state.sourceEvents) {
+      if (event.status !== "dead_letter") continue;
+      event.status = "pending";
+      event.attempts = 0;
+      event.error = undefined;
+      event.deadLetteredAt = undefined;
+      event.nextAttemptAt = nowIso();
+      event.updatedAt = nowIso();
+      count += 1;
+    }
+    return count;
+  });
+  if (requeued > 0) {
+    pushAlert(userId, "warning", "Backfilled dead-letter source events", { requeued });
+    audit(userId, "sre.source_events.backfilled", `requeued=${requeued}`);
+  }
+  return { requeued };
+}
+
+export function getSreRunbook(userId: string): {
+  queueBackendMode: "file" | "redis";
+  steps: string[];
+  warnings: string[];
+} {
+  const status = getStatus(userId);
+  const runtime = getRuntimeHealth();
+  const warnings: string[] = [];
+  if (status.queue.failed > 0) warnings.push(`queue failed jobs=${status.queue.failed}`);
+  if (status.sourceEvents.deadLetter > 0) warnings.push(`dead-letter events=${status.sourceEvents.deadLetter}`);
+  if (runtime.staleWorkers > 0) warnings.push(`stale workers=${runtime.staleWorkers}`);
+  if (!status.scheduler.enabled) warnings.push("scheduler disabled");
+
+  const steps = [
+    "Check Control Plane Health for queue/worker/dead-letter counters.",
+    "Run SRE Recover Queue to move failed jobs back to queued.",
+    "Run SRE Backfill Dead Letter to replay dead-letter source events.",
+    "Trigger worker run-once and verify queue failed count decreases.",
+    "Review alerts and audit timeline for repeated failures.",
+  ];
+  if (runtime.queueBackendMode === "file") {
+    steps.push("Switch COMPANY_BRAIN_QUEUE_BACKEND=redis in production for durable queue semantics.");
+  }
+
+  return {
+    queueBackendMode: runtime.queueBackendMode,
+    steps,
+    warnings,
+  };
+}
+
 export function getRuntimeHealth(): {
   activeSchedulers: number;
   bootstrappedUsers: number;

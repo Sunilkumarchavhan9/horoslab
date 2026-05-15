@@ -65,6 +65,12 @@ type CompanyBrainStatus = {
   sre: { alerts: number; workers: number };
 };
 
+type SreRunbook = {
+  queueBackendMode: "file" | "redis";
+  steps: string[];
+  warnings: string[];
+};
+
 type CompanyBrainSource = {
   id: string;
   type: "github" | "notion" | "local_files" | "slack" | "gmail" | "support" | "crm" | "db";
@@ -103,6 +109,7 @@ export function CompanyBrainSection() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [sreRunbook, setSreRunbook] = useState<SreRunbook | null>(null);
 
   async function authHeaders(): Promise<HeadersInit> {
     const token = await getOrCreateMemoryToken();
@@ -131,16 +138,18 @@ export function CompanyBrainSection() {
 
   async function loadCompanyBrainControlPlane(): Promise<void> {
     const headers = await authHeaders();
-    const [governanceRes, actionsRes, statusRes, sourcesRes] = await Promise.all([
+    const [governanceRes, actionsRes, statusRes, sourcesRes, runbookRes] = await Promise.all([
       fetch("/api/company-brain/governance", { headers, cache: "no-store" }),
       fetch("/api/company-brain/actions", { headers, cache: "no-store" }),
       fetch("/api/company-brain/status", { headers, cache: "no-store" }),
       fetch("/api/company-brain/sources", { headers, cache: "no-store" }),
+      fetch("/api/company-brain/sre/runbook", { headers, cache: "no-store" }),
     ]);
     const governanceJson = (await governanceRes.json().catch(() => null)) as { governance?: GovernancePolicy } | null;
     const actionsJson = (await actionsRes.json().catch(() => null)) as { actions?: ActionItem[] } | null;
     const statusJson = (await statusRes.json().catch(() => null)) as CompanyBrainStatus | null;
     const sourcesJson = (await sourcesRes.json().catch(() => null)) as { sources?: CompanyBrainSource[] } | null;
+    const runbookJson = (await runbookRes.json().catch(() => null)) as SreRunbook | null;
 
     if (governanceRes.ok && governanceJson?.governance) {
       setGovernance(governanceJson.governance);
@@ -153,6 +162,41 @@ export function CompanyBrainSection() {
     }
     if (sourcesRes.ok && Array.isArray(sourcesJson?.sources)) {
       setSources(sourcesJson.sources);
+    }
+    if (runbookRes.ok && runbookJson) {
+      setSreRunbook(runbookJson);
+    }
+  }
+
+  async function runSreRecoverQueue(): Promise<void> {
+    try {
+      const headers = await authHeaders();
+      const response = await fetch("/api/company-brain/sre/recover-queue", {
+        method: "POST",
+        headers,
+      });
+      const data = (await response.json().catch(() => null)) as { recovered?: number; error?: string } | null;
+      if (!response.ok) throw new Error(data?.error ?? "Failed to recover queue.");
+      setStatusMessage(`Recovered failed queue jobs: ${data?.recovered ?? 0}`);
+      await loadCompanyBrainControlPlane();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Failed to recover queue.");
+    }
+  }
+
+  async function runSreBackfillDeadLetter(): Promise<void> {
+    try {
+      const headers = await authHeaders();
+      const response = await fetch("/api/company-brain/sre/backfill-dead-letter", {
+        method: "POST",
+        headers,
+      });
+      const data = (await response.json().catch(() => null)) as { requeued?: number; error?: string } | null;
+      if (!response.ok) throw new Error(data?.error ?? "Failed to backfill dead-letter events.");
+      setStatusMessage(`Requeued dead-letter events: ${data?.requeued ?? 0}`);
+      await loadCompanyBrainControlPlane();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Failed to backfill dead-letter events.");
     }
   }
 
@@ -397,6 +441,32 @@ export function CompanyBrainSection() {
           <p>graph updated: {controlStatus?.graph.updatedAt ? new Date(controlStatus.graph.updatedAt).toLocaleString() : "n/a"}</p>
           <p>skills updated: {controlStatus?.skills.updatedAt ? new Date(controlStatus.skills.updatedAt).toLocaleString() : "n/a"}</p>
         </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => void runSreRecoverQueue()}
+            className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+          >
+            SRE Recover Queue
+          </button>
+          <button
+            type="button"
+            onClick={() => void runSreBackfillDeadLetter()}
+            className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+          >
+            SRE Backfill Dead Letter
+          </button>
+        </div>
+        {sreRunbook ? (
+          <div className="mt-3 rounded-[8px] border border-border bg-muted/30 px-3 py-2">
+            <p className="text-[11px] text-muted-foreground">runbook backend={sreRunbook.queueBackendMode}</p>
+            {sreRunbook.warnings.length > 0 ? (
+              <p className="mt-1 text-[11px] text-amber-500">warnings: {sreRunbook.warnings.join(" | ")}</p>
+            ) : (
+              <p className="mt-1 text-[11px] text-emerald-500">warnings: none</p>
+            )}
+          </div>
+        ) : null}
       </div>
 
       <div className="rounded-[10px] border border-border bg-card px-4 py-4">

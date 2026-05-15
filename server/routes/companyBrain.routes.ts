@@ -22,6 +22,9 @@ import {
   listWorkers,
   registerWorker,
   workerHeartbeat,
+  recoverFailedQueueJobs,
+  backfillDeadLetterSourceEvents,
+  getSreRunbook,
   replayAudit,
   executeApprovedAction,
   getGovernancePolicy,
@@ -308,6 +311,18 @@ companyBrainRouter.post("/workers/heartbeat", asyncHandler(async (req, res) => {
 companyBrainRouter.post("/workers/run-once", asyncHandler(async (req, res) => {
   const result = await processQueueOnce(req.authUserId);
   res.json(result);
+}));
+
+companyBrainRouter.post("/sre/recover-queue", asyncHandler(async (req, res) => {
+  res.json(recoverFailedQueueJobs(req.authUserId));
+}));
+
+companyBrainRouter.post("/sre/backfill-dead-letter", asyncHandler(async (req, res) => {
+  res.json(backfillDeadLetterSourceEvents(req.authUserId));
+}));
+
+companyBrainRouter.get("/sre/runbook", asyncHandler(async (req, res) => {
+  res.json(getSreRunbook(req.authUserId));
 }));
 
 companyBrainRouter.post("/eval/run", asyncHandler(async (req, res) => {
