@@ -1,0 +1,42 @@
+{
+  "scenarios": [
+    {
+      "id": "incident-response",
+      "name": "Incident response workflow",
+      "requiredChecks": [
+        "source_coverage",
+        "graph_materialized",
+        "skills_compiled",
+        "approval_pipeline",
+        "reliability_dead_letter"
+      ]
+    },
+    {
+      "id": "refund-decision",
+      "name": "Refund decision workflow",
+      "requiredChecks": [
+        "business_source_connectors",
+        "approval_pipeline",
+        "action_runner_execution"
+      ]
+    },
+    {
+      "id": "pricing-exception",
+      "name": "Pricing exception workflow",
+      "requiredChecks": [
+        "skills_compiled",
+        "approval_pipeline",
+        "scheduler_health"
+      ]
+    },
+    {
+      "id": "oncall-handoff",
+      "name": "On-call handoff workflow",
+      "requiredChecks": [
+        "graph_materialized",
+        "skills_compiled",
+        "scheduler_health"
+      ]
+    }
+  ]
+}
