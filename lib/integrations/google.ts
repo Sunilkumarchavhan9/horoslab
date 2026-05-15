@@ -8,6 +8,11 @@ export interface GoogleSyncOptions {
   accessToken: string;
 }
 
+export type GoogleOAuthTokens = {
+  accessToken: string;
+  refreshToken?: string;
+};
+
 /**
  * Google Drive integration client for fetching and processing developer signals from documents.
  */
@@ -93,7 +98,7 @@ export const GoogleClient = {
   /**
    * Exchanges an authorization code for an access token.
    */
-  async getAccessToken(code: string) {
+  async getAccessToken(code: string): Promise<GoogleOAuthTokens> {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
@@ -101,7 +106,10 @@ export const GoogleClient = {
     );
 
     const { tokens } = await oauth2Client.getToken(code);
-    return tokens.access_token as string;
+    return {
+      accessToken: tokens.access_token as string,
+      ...(tokens.refresh_token ? { refreshToken: tokens.refresh_token } : {}),
+    };
   },
 
   /**

@@ -769,6 +769,7 @@ export function RunDemoSection() {
   const [session, setSession] = useState<VoiceSession | null>(null);
   const [isSendingIdePacket, setIsSendingIdePacket] = useState(false);
   const [governancePolicy, setGovernancePolicy] = useState<GovernancePolicy>(DEFAULT_GOVERNANCE_POLICY);
+  const [applyCompanyBrainSkills, setApplyCompanyBrainSkills] = useState(true);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const transcriptRef = useRef("");
   const shouldSendTranscriptRef = useRef(false);
@@ -780,12 +781,13 @@ export function RunDemoSection() {
   const canStart = runState === "idle" || runState === "ended";
   const canEnd = hasActiveSession && runState !== "ending";
   const micEnabled = micState === "enabled" || micState === "requesting";
-  const hasRuntimeAgents = runtimeAgents.length > 0;
+  const availableRuntimeAgents = runtimeAgents.length > 0 ? runtimeAgents : [FALLBACK_RUNTIME_AGENT];
+  const hasRuntimeAgents = availableRuntimeAgents.length > 0;
   const activeAgentConfig =
-    runtimeAgents.find((agent) => agent.id === activeAgent) ?? runtimeAgents[0] ?? FALLBACK_RUNTIME_AGENT;
+    availableRuntimeAgents.find((agent) => agent.id === activeAgent) ?? availableRuntimeAgents[0] ?? FALLBACK_RUNTIME_AGENT;
   const nextAgent: AgentId =
-    runtimeAgents.length > 1
-      ? runtimeAgents[(runtimeAgents.findIndex((agent) => agent.id === activeAgent) + 1) % runtimeAgents.length]?.id ?? activeAgent
+    availableRuntimeAgents.length > 1
+      ? availableRuntimeAgents[(availableRuntimeAgents.findIndex((agent) => agent.id === activeAgent) + 1) % availableRuntimeAgents.length]?.id ?? activeAgent
       : activeAgent;
   const decisionGraph = useMemo(() => buildDecisionGraph(projectState), [projectState]);
   const visibleTimeline = useMemo(() => {
@@ -961,8 +963,8 @@ export function RunDemoSection() {
       const agent =
         runtimeAgents.find((entry) => entry.id === agentId) ??
         activeAgentConfig;
-      return withAuthorizedToken((token) =>
-        fetchMemoryApi<VoiceChatResponse>("/api/memory/voice/chat", token, {
+      return withAuthorizedToken(async (token) => {
+        return fetchMemoryApi<VoiceChatResponse>("/api/memory/voice/chat", token, {
           method: "POST",
           body: JSON.stringify({
             sessionId: activeSessionId,
@@ -973,14 +975,16 @@ export function RunDemoSection() {
             agentId,
             model: agent.model,
             mode,
+            useCompanyBrain: applyCompanyBrainSkills,
             injectedProjectState: projectState,
             governance: governancePolicy,
           }),
-        }),
-      );
+        });
+      });
     },
     [
       activeAgentConfig,
+      applyCompanyBrainSkills,
       governancePolicy,
       projectState,
       runtimeAgents,
@@ -1022,10 +1026,6 @@ export function RunDemoSection() {
   );
 
   async function startConversation(): Promise<void> {
-    if (!hasRuntimeAgents) {
-      setErrorMessage("No live agents connected. Connect an agent in the Agents section first.");
-      return;
-    }
     setErrorMessage(null);
     setMicError(null);
     setRunState("starting");
@@ -1034,7 +1034,7 @@ export function RunDemoSection() {
     setProjectState(EMPTY_PROJECT);
     setMutationHistory([]);
     setNextStep(null);
-    setActiveAgent(runtimeAgents[0]?.id ?? "");
+    setActiveAgent(availableRuntimeAgents[0]?.id ?? "");
 
     const nextSessionId = `session-${crypto.randomUUID().slice(0, 8)}`;
     const nextThreadId = `voice:${crypto.randomUUID().slice(0, 8)}`;
@@ -1512,7 +1512,7 @@ export function RunDemoSection() {
               <SelectValue placeholder={isRuntimeAgentsLoading ? "Loading live agents..." : "Select live agent runtime"} />
             </SelectTrigger>
             <SelectContent>
-              {runtimeAgents.map((agent) => (
+              {availableRuntimeAgents.map((agent) => (
                 <SelectItem key={agent.id} value={agent.id}>
                   {agent.label} - {agent.model}
                 </SelectItem>
@@ -1681,6 +1681,24 @@ export function RunDemoSection() {
                 <span className="font-semibold text-primary">
                   {hasActiveSession ? "Live" : "Start session"}
                 </span>
+              </div>
+
+              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-[11px]">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className={`inline-block h-2 w-2 rounded-full ${applyCompanyBrainSkills ? "bg-primary" : "bg-muted-foreground/50"}`} />
+                  <span>Apply Company Brain Skills (server-side)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setApplyCompanyBrainSkills((current) => !current)}
+                  className={`rounded-[6px] border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${
+                    applyCompanyBrainSkills
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-border bg-muted/40 text-muted-foreground"
+                  }`}
+                >
+                  {applyCompanyBrainSkills ? "On" : "Off"}
+                </button>
               </div>
 
               <div className="rounded-t-[18px] border-t border-border bg-background px-3 py-3">

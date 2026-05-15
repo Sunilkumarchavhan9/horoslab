@@ -117,7 +117,7 @@ export function LandingFooter() {
               <MemoryStarLogo />
             </div>
             <p className="text-[14px] text-[#61738d]">
-              © 2026 MemoryOS Inc. All rights reserved.
+              ©2026 memoryos™ Inc. All rights reserved.
             </p>
           </div>
         </div>

@@ -8,6 +8,8 @@ import axios from "axios";
 export interface NotionSyncOptions {
   userId: string;
   accessToken: string;
+  since?: string;
+  recentItemKeys?: string[];
 }
 
 /**
@@ -20,6 +22,8 @@ export const NotionClient = {
   async sync(options: NotionSyncOptions) {
     const notion = new Client({ auth: options.accessToken });
     const memoriesExtracted = [];
+    const seen = new Set(options.recentItemKeys ?? []);
+    const dedupeKeys: string[] = [];
 
     try {
       // 1. Search for pages/databases
@@ -31,6 +35,14 @@ export const NotionClient = {
 
       for (const page of results) {
         if (!("properties" in page)) continue;
+        const pageKey = `notion:page:${page.id}`;
+        if (seen.has(pageKey)) continue;
+        if (options.since && "last_edited_time" in page) {
+          const edited = typeof page.last_edited_time === "string" ? page.last_edited_time : "";
+          if (edited && new Date(edited).getTime() <= new Date(options.since).getTime()) {
+            continue;
+          }
+        }
 
         // 2. Fetch page blocks (the actual content)
         const response = await notion.blocks.children.list({
@@ -79,11 +91,14 @@ export const NotionClient = {
           });
           memoriesExtracted.push(candidate);
         }
+        dedupeKeys.push(pageKey);
       }
 
       return {
         success: true,
         extractedCount: memoriesExtracted.length,
+        checkpoint: new Date().toISOString(),
+        dedupeKeys,
       };
     } catch (error) {
       console.error("[NotionClient] Sync failed:", error);

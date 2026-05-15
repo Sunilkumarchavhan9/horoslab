@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 import { type BillingPlan } from "@/lib/plan-catalog";
 
@@ -32,7 +32,29 @@ type ConnectorDiagnostic = {
     lastFailureAt: string | null;
     lastFailureReason: string | null;
   };
+  checkpoints?: {
+    lastCheckpointAt: string | null;
+    recentItemKeysCount: number;
+    slackCursor: string | null;
+    slackLastMessageTs: string | null;
+    gmailLastMessageId: string | null;
+    gmailLastCheckpointEpochMs: number | null;
+  };
+  tokens?: {
+    hasRefreshToken: boolean;
+    lastTokenRefreshAt: string | null;
+    hasAccessToken: boolean;
+  };
   safety: { mcpSafeMetadata: boolean; policyCompatible: boolean };
+};
+
+type ConnectorSyncLog = {
+  id: string;
+  type: string;
+  status: "success" | "error";
+  extractedCount: number;
+  message: string;
+  at: string;
 };
 
 const INITIAL_CONNECTORS: ConnectorRow[] = [
@@ -160,6 +182,33 @@ function nextUpgradeLabel(currentPlan: BillingPlan, requiredPlan: BillingPlan): 
   return `Upgrade to ${requiredPlan}`;
 }
 
+function connectorSeverity(item: ConnectorDiagnostic): "good" | "watch" | "error" {
+  if (!item.transport.healthy || item.status === "error") return "error";
+  if ((item.retry.retryCount ?? 0) > 0 || Boolean(item.retry.lastFailureReason)) return "watch";
+  return "good";
+}
+
+async function unlockConnector(type: string, addActivity: (message: string, status?: string) => void): Promise<void> {
+  try {
+    const token = await getOrCreateMemoryToken();
+    if (!token) throw new Error("Missing auth token.");
+    const response = await fetch(`/api/connector/${type}/unlock`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const payload = await response.json().catch(() => null) as { data?: { message?: string }; error?: string; message?: string } | null;
+    if (!response.ok) {
+      throw new Error(payload?.error ?? payload?.message ?? `Unlock failed (${response.status})`);
+    }
+    addActivity(payload?.data?.message ?? `Unlocked ${type}`, "success");
+  } catch (error) {
+    addActivity(error instanceof Error ? error.message : `Failed to unlock ${type}`, "error");
+  }
+}
+
 export function ConnectorsSection({ 
   liveMemoryCount = 0, 
   liveRequestCount = 0 
@@ -169,8 +218,10 @@ export function ConnectorsSection({
 }) {
   const [connectors, setConnectors] = useState<ConnectorRow[]>(INITIAL_CONNECTORS);
   const [activity, setActivity] = useState(INITIAL_ACTIVITY);
-  const [internalRecords, setInternalRecords] = useState(0);
+  const [internalRecords] = useState(0);
   const [diagnostics, setDiagnostics] = useState<ConnectorDiagnostic[]>([]);
+  const [syncLogs, setSyncLogs] = useState<ConnectorSyncLog[]>([]);
+  const [showLogs, setShowLogs] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<BillingPlan>("Free");
 
   const connectedCount = connectors.filter((connector) => connector.status === "connected").length;
@@ -293,6 +344,36 @@ useEffect(() => {
 
 useEffect(() => {
   let cancelled = false;
+  async function loadSyncLogs() {
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) return;
+      const response = await fetch("/api/connector/logs", {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const payload = await response.json();
+      const logs = payload?.data?.logs;
+      if (!cancelled && Array.isArray(logs)) {
+        setSyncLogs(logs as ConnectorSyncLog[]);
+      }
+    } catch {
+      // non-blocking
+    }
+  }
+  void loadSyncLogs();
+  const timer = window.setInterval(() => {
+    void loadSyncLogs();
+  }, 12000);
+  return () => {
+    cancelled = true;
+    window.clearInterval(timer);
+  };
+}, [liveMemoryCount, liveRequestCount]);
+
+useEffect(() => {
+  let cancelled = false;
   async function loadCurrentPlan() {
     try {
       const token = await getOrCreateMemoryToken();
@@ -360,6 +441,7 @@ async function connectConnector(connectorId: string) {
   const typeMap: Record<string, string> = {
     github: "github",
     notion: "notion",
+    "local-files": "local_files",
     "google-drive": "google_drive",
     onedrive: "onedrive",
   };
@@ -367,13 +449,112 @@ async function connectConnector(connectorId: string) {
   const type = typeMap[connectorId];
   if (!type) return;
 
-  if (type === "github" || type === "notion") {
-    const apiOrigin =
-      process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN === "same-origin"
-        ? window.location.origin
-        : process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN || "";
+  if (connectorMeta.status === "connected") {
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) throw new Error("Missing auth token");
+      const response = await fetch(`/api/connector/${type}/sync`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json().catch(() => null) as { data?: { extractedCount?: number } } | null;
+      if (!response.ok) {
+        throw new Error("Sync failed");
+      }
+      const extractedCount = data?.data?.extractedCount ?? 0;
+      setConnectors((current) =>
+        current.map((connector) =>
+          connector.id === connectorId
+            ? {
+                ...connector,
+                status: "connected",
+                health: "good",
+                records: connector.records + extractedCount,
+                lastSync: "Just now",
+              }
+            : connector,
+        ),
+      );
+      addActivity(`${connectorMeta.name} synced ${extractedCount} memories`, "success");
+    } catch (error) {
+      addActivity(error instanceof Error ? error.message : `Failed to sync ${connectorMeta.name}`, "error");
+    }
+    return;
+  }
 
-    window.location.href = `${apiOrigin}/api/connector/${type}/authorize`;
+  if (type === "local_files") {
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) throw new Error("Missing auth token. Sign in again.");
+      const connectRes = await fetch("/api/connector/local_files/connect", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!connectRes.ok) {
+        throw new Error(`Failed to enable local files (${connectRes.status})`);
+      }
+      const syncRes = await fetch("/api/connector/local_files/sync", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const syncPayload = await syncRes.json().catch(() => null) as { data?: { extractedCount?: number } } | null;
+      if (!syncRes.ok) {
+        throw new Error(`Local files sync failed (${syncRes.status})`);
+      }
+      const extracted = syncPayload?.data?.extractedCount ?? 0;
+      setConnectors((current) =>
+        current.map((connector) =>
+          connector.id === connectorId
+            ? {
+                ...connector,
+                status: "connected",
+                health: "good",
+                records: extracted,
+                lastSync: "Just now",
+              }
+            : connector,
+        ),
+      );
+      addActivity(`Local Files connected and synced ${extracted} memories.`, "success");
+    } catch (error) {
+      addActivity(error instanceof Error ? error.message : "Failed to connect Local Files", "error");
+    }
+    return;
+  }
+
+  if (type === "github" || type === "notion" || type === "google_drive" || type === "onedrive") {
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) throw new Error("Missing auth token. Sign in again.");
+      const response = await fetch(`/api/connector/${type}/authorize`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | { data?: { authorizeUrl?: string }; error?: string; message?: string }
+        | null;
+      if (!response.ok) {
+        throw new Error(payload?.error ?? payload?.message ?? `OAuth authorize failed (${response.status})`);
+      }
+      const authorizeUrl = payload?.data?.authorizeUrl;
+      if (!authorizeUrl) {
+        throw new Error("Missing authorize URL from connector endpoint.");
+      }
+      window.location.href = authorizeUrl;
+    } catch (error) {
+      addActivity(error instanceof Error ? error.message : "Could not start connector OAuth", "error");
+    }
     return;
   }
 
@@ -534,7 +715,10 @@ function addActivity(message: string, status: string = "info") {
               >
                 Run Sync
               </button>
-              <button className="rounded-[4px] border border-border bg-muted px-4 py-1.5 text-[12px] font-bold text-foreground hover:bg-muted transition-colors">
+              <button
+                onClick={() => setShowLogs((current) => !current)}
+                className="rounded-[4px] border border-border bg-muted px-4 py-1.5 text-[12px] font-bold text-foreground hover:bg-muted transition-colors"
+              >
                 View Ingestion Logs
               </button>
             </div>
@@ -558,6 +742,27 @@ function addActivity(message: string, status: string = "info") {
         </div>
       </div>
 
+      {showLogs && (
+        <div className="rounded-[4px] border border-border bg-card p-5">
+          <h2 className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Connector Sync Logs</h2>
+          <div className="mt-3 space-y-2">
+            {syncLogs.length === 0 ? (
+              <p className="text-[12px] text-muted-foreground">No logs yet.</p>
+            ) : (
+              syncLogs.slice(0, 20).map((log) => (
+                <div key={log.id} className="rounded-[4px] border border-border bg-background/40 px-3 py-2">
+                  <p className="text-[12px] font-medium text-foreground">
+                    {log.type} · {log.status} · {log.extractedCount} extracted
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">{log.message}</p>
+                  <p className="mt-0.5 text-[10px] text-muted-foreground">{new Date(log.at).toLocaleString()}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="rounded-[4px] border border-border bg-card p-5">
         <h2 className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground">MCP Connector Health</h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -566,15 +771,75 @@ function addActivity(message: string, status: string = "info") {
           ) : (
             diagnostics.map((item) => (
               <div key={item.type} className="rounded-[4px] border border-border bg-background/40 p-3">
-                <p className="text-[12px] font-semibold text-foreground">{item.type}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[12px] font-semibold text-foreground">{item.type}</p>
+                  <span
+                    className={`rounded-full border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                      connectorSeverity(item) === "good"
+                        ? "border-chart-2/35 bg-chart-2/10 text-chart-2"
+                        : connectorSeverity(item) === "watch"
+                          ? "border-chart-5/35 bg-chart-5/10 text-chart-5"
+                          : "border-destructive/35 bg-destructive/10 text-destructive"
+                    }`}
+                  >
+                    {connectorSeverity(item)}
+                  </span>
+                </div>
                 <p className="mt-1 text-[11px] text-muted-foreground">auth={item.auth.mode} transport={item.transport.protocol}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">status={item.status} healthy={String(item.transport.healthy)}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">retries={item.retry.retryCount}</p>
+                {item.retry.lastFailureAt ? (
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    lastFailureAt={new Date(item.retry.lastFailureAt).toLocaleString()}
+                  </p>
+                ) : null}
                 {item.retry.lastFailureReason ? (
                   <p className="mt-1 text-[11px] text-destructive">{item.retry.lastFailureReason}</p>
                 ) : (
                   <p className="mt-1 text-[11px] text-chart-2">no sync failures</p>
                 )}
+                {item.checkpoints ? (
+                  <div className="mt-2 space-y-1 rounded-[4px] border border-border/60 bg-muted/30 p-2">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">checkpoints</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      lastCheckpointAt={item.checkpoints.lastCheckpointAt ? new Date(item.checkpoints.lastCheckpointAt).toLocaleString() : "none"}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">recentItemKeys={item.checkpoints.recentItemKeysCount}</p>
+                    {item.checkpoints.slackLastMessageTs ? (
+                      <p className="text-[11px] text-muted-foreground">slackLastTs={item.checkpoints.slackLastMessageTs}</p>
+                    ) : null}
+                    {item.checkpoints.slackCursor ? (
+                      <p className="text-[11px] text-muted-foreground">slackCursor=present</p>
+                    ) : null}
+                    {item.checkpoints.gmailLastMessageId ? (
+                      <p className="text-[11px] text-muted-foreground">gmailLastId={item.checkpoints.gmailLastMessageId}</p>
+                    ) : null}
+                    {item.checkpoints.gmailLastCheckpointEpochMs ? (
+                      <p className="text-[11px] text-muted-foreground">
+                        gmailCheckpoint={new Date(item.checkpoints.gmailLastCheckpointEpochMs).toLocaleString()}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+                {item.tokens ? (
+                  <div className="mt-2 space-y-1 rounded-[4px] border border-border/60 bg-muted/30 p-2">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">token state</p>
+                    <p className="text-[11px] text-muted-foreground">hasAccessToken={String(item.tokens.hasAccessToken)}</p>
+                    <p className="text-[11px] text-muted-foreground">hasRefreshToken={String(item.tokens.hasRefreshToken)}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      lastTokenRefreshAt={item.tokens.lastTokenRefreshAt ? new Date(item.tokens.lastTokenRefreshAt).toLocaleString() : "never"}
+                    </p>
+                  </div>
+                ) : null}
+                {item.status === "syncing" ? (
+                  <button
+                    type="button"
+                    onClick={() => void unlockConnector(item.type, addActivity)}
+                    className="mt-2 rounded-[4px] border border-chart-5/35 bg-chart-5/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-chart-5 hover:bg-chart-5/20"
+                  >
+                    Force Unlock Sync
+                  </button>
+                ) : null}
                 <p className="mt-1 text-[11px] text-muted-foreground">
                   mcpSafe={String(item.safety.mcpSafeMetadata)} policyCompat={String(item.safety.policyCompatible)}
                 </p>
@@ -650,7 +915,7 @@ function addActivity(message: string, status: string = "info") {
                           ) : connector.status === "connected" ? (
                             <>
                               <button 
-                                onClick={() => addActivity(`${connector.name} sync triggered`, "success")}
+                                onClick={() => void connectConnector(connector.id)}
                                 className="flex-1 rounded-[4px] bg-muted border border-border py-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground hover:bg-muted transition-colors"
                               >
                                 Sync Now

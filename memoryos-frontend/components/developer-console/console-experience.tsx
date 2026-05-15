@@ -36,6 +36,7 @@ import {
 } from "@/components/developer-console/sections/requests-section";
 import { SettingsSection } from "@/components/developer-console/sections/settings-section";
 import { TeamSection } from "@/components/developer-console/sections/team-section";
+import { CompanyBrainSection } from "@/components/developer-console/sections/company-brain-section";
 import { Icon, type IconName } from "@/components/ui/icon";
 
 import {
@@ -360,6 +361,7 @@ const DASHBOARD_NAV = [
       "Frameworks",
       "Ingestion Control Center",
       "Portability",
+      "Company Brain",
       "Governance",
       "Contract Console",
       "Context Inspector",
@@ -382,6 +384,7 @@ function dashboardItemIcon(item: string): IconName {
     Frameworks: "memory",
     "Ingestion Control Center": "send",
     Portability: "memory",
+    "Company Brain": "graph",
     Governance: "settings",
     "Contract Console": "terminal",
     "Context Inspector": "timeline",
@@ -1622,19 +1625,22 @@ export function DeveloperConsoleExperience() {
     setSupportSendState("sending");
     setSupportErrorMessage(null);
     try {
-      const authToken = await getConsoleAuthToken();
-      if (!authToken) {
-        throw new Error("Sign in first so we can send this support message.");
-      }
-
       const organizationName = currentOrganization?.name ?? "memoryos";
-      await fetchMemoryApi("/api/memory/process", authToken, {
-        method: "POST",
-        body: JSON.stringify({
-          message: `[Support request] Org: ${organizationName}\n${trimmedMessage}`,
-          threadId: "support-widget",
-        }),
-      });
+      const subject = encodeURIComponent(`MemoryOS Support: ${organizationName}`);
+      const body = encodeURIComponent(
+        `Organization: ${organizationName}\nUser: ${userEmail || "unknown"}\n\n${trimmedMessage}`,
+      );
+      const authToken = await getConsoleAuthToken();
+      if (authToken) {
+        await fetchMemoryApi("/api/memory/process", authToken, {
+          method: "POST",
+          body: JSON.stringify({
+            message: `[Support request] Org: ${organizationName}\nUser: ${userEmail || "unknown"}\n${trimmedMessage}`,
+            threadId: "support-widget",
+          }),
+        });
+      }
+      window.location.href = `mailto:chavhansunilkumar753@gmail.com?subject=${subject}&body=${body}`;
 
       setSupportMessage("");
       setSupportSendState("sent");
@@ -1828,6 +1834,10 @@ export function DeveloperConsoleExperience() {
           workspaceName={currentOrganization?.name ?? "MemoryOS"}
         />
       );
+    }
+
+    if (item === "Company Brain") {
+      return <CompanyBrainSection />;
     }
 
     if (item === "Governance") {
@@ -2035,7 +2045,6 @@ export function DeveloperConsoleExperience() {
           </div>
 
           <nav className="relative min-h-0 flex-1 space-y-[clamp(9px,1vh,13px)] overflow-y-auto px-0 pb-4 mt-4">
-            <div className="pointer-events-none absolute bottom-0 left-[38px] top-0 hidden w-px bg-sidebar-border lg:block" />
             {filteredDashboardNav.map((group) => (
               <div
                 key={group.section || "main"}
@@ -2196,6 +2205,10 @@ export function DeveloperConsoleExperience() {
                       </div>
                       <button
                         type="button"
+                        onClick={() => {
+                          setActiveDashboardItem("Settings");
+                          setShowAccountMenu(false);
+                        }}
                         className="flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left text-[16px] font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
                         Account settings

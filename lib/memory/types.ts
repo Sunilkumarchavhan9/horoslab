@@ -31,6 +31,8 @@ export interface DeveloperSignals {
   projectArea?: string[];
 }
 
+export type OperationalTag = "decision" | "policy" | "incident" | "runbook";
+
 export interface Memory {
     id: string;
     userId: string;
@@ -45,6 +47,7 @@ export interface Memory {
     updatedAt: IsoDateString;
     evidenceCount: number;
     developerSignals?: DeveloperSignals;
+    operationalTags?: OperationalTag[];
 
 }
 
@@ -57,6 +60,7 @@ export interface MemoryCandidate {
   source: MemorySource;
   threadId?: string;
   developerSignals?: DeveloperSignals;
+  operationalTags?: OperationalTag[];
 }
 
 

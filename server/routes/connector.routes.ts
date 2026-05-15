@@ -5,9 +5,11 @@ import { GitHubClient } from "../../lib/integrations/github";
 import { NotionClient } from "../../lib/integrations/notion";
 import { GoogleClient } from "../../lib/integrations/google";
 import { MicrosoftClient } from "../../lib/integrations/microsoft";
+import { appendConnectorSyncLog, listConnectorSyncLogs } from "../../lib/integrations/syncLogStore";
 import { prisma } from "../../lib/storage/prismaClient";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { sendApiSuccess, sendApiError, buildApiMeta } from "./api-response";
+import { randomUUID } from "crypto";
 
 import { requireAuth } from "../middleware/auth";
 
@@ -18,6 +20,7 @@ if (!process.env.CONNECTOR_OAUTH_STATE_SECRET) {
 }
 const STATE_SECRET = process.env.CONNECTOR_OAUTH_STATE_SECRET;
 const DB_RETRY_COOLDOWN_MS = 30_000;
+const CONNECTOR_SYNC_LOCK_MS = 5 * 60 * 1000;
 let dbUnavailableUntil = 0;
 
 function isDbUnavailableError(error: unknown): boolean {
@@ -39,6 +42,25 @@ function isInDbCooldown(): boolean {
 
 function markDbUnavailableNow(): void {
   dbUnavailableUntil = Date.now() + DB_RETRY_COOLDOWN_MS;
+}
+
+function getConnectorConfig(value: string | null | undefined): Record<string, unknown> {
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function toSingleString(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) {
+    const first = value[0];
+    return typeof first === "string" ? first : "";
+  }
+  return "";
 }
 
 
@@ -91,6 +113,16 @@ connectorRouter.get(
 );
 
 connectorRouter.get(
+  "/logs",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const logs = listConnectorSyncLogs(req.authUserId);
+    sendApiSuccess(res, 200, { logs }, buildApiMeta(req, startedAt));
+  }),
+);
+
+connectorRouter.get(
   "/health",
   requireAuth,
   asyncHandler(async (req, res) => {
@@ -110,15 +142,54 @@ connectorRouter.get(
       return;
     }
     try {
-      await prisma.connector.count({
+      const connectors = await prisma.connector.findMany({
         where: { userId: req.authUserId },
       });
       dbUnavailableUntil = 0;
+      const diagnostics = connectors.map((connector) => {
+        const config = connector.configJson ? JSON.parse(connector.configJson) : {};
+        return {
+          type: connector.type,
+          status: connector.status,
+          auth: {
+            configured: Boolean(config.accessToken || connector.type === "local_files"),
+            mode: connector.type === "local_files" ? "workspace" : "oauth2",
+          },
+          transport: {
+            protocol: connector.type === "local_files" ? "filesystem" : "https",
+            healthy: connector.status === "connected" || connector.status === "syncing",
+          },
+          retry: {
+            enabled: true,
+            retryCount: typeof config.retryCount === "number" ? config.retryCount : 0,
+            lastFailureAt: typeof config.lastFailureAt === "string" ? config.lastFailureAt : null,
+            lastFailureReason: typeof config.lastFailureReason === "string" ? config.lastFailureReason : null,
+          },
+          checkpoints: {
+            lastCheckpointAt: typeof config.lastCheckpointAt === "string" ? config.lastCheckpointAt : null,
+            recentItemKeysCount: Array.isArray(config.recentItemKeys) ? config.recentItemKeys.length : 0,
+            slackCursor: typeof config.cursor === "string" ? config.cursor : null,
+            slackLastMessageTs: typeof config.lastMessageTs === "string" ? config.lastMessageTs : null,
+            gmailLastMessageId: typeof config.lastMessageId === "string" ? config.lastMessageId : null,
+            gmailLastCheckpointEpochMs:
+              typeof config.lastCheckpointEpochMs === "number" ? config.lastCheckpointEpochMs : null,
+          },
+          tokens: {
+            hasRefreshToken: typeof config.refreshToken === "string" && config.refreshToken.length > 0,
+            lastTokenRefreshAt: typeof config.lastTokenRefreshAt === "string" ? config.lastTokenRefreshAt : null,
+            hasAccessToken: typeof config.accessToken === "string" && config.accessToken.length > 0,
+          },
+          safety: {
+            mcpSafeMetadata: true,
+            policyCompatible: true,
+          },
+        };
+      });
       sendApiSuccess(
         res,
         200,
         {
-          diagnostics: [],
+          diagnostics,
           backendAvailable: true,
         },
         buildApiMeta(req, startedAt),
@@ -212,6 +283,7 @@ connectorRouter.get(
       const { userId, type } = decoded;
 
       let accessToken = "";
+      let googleRefreshToken: string | undefined;
       if (code === "mock_demo_code") {
         accessToken = `mock_token_${type}_${Date.now()}`;
       } else if (type === "github") {
@@ -219,7 +291,9 @@ connectorRouter.get(
       } else if (type === "notion") {
         accessToken = await NotionClient.getAccessToken(code);
       } else if (type === "google_drive") {
-        accessToken = await GoogleClient.getAccessToken(code);
+        const tokens = await GoogleClient.getAccessToken(code);
+        accessToken = tokens.accessToken;
+        googleRefreshToken = tokens.refreshToken;
       } else if (type === "onedrive") {
         accessToken = await MicrosoftClient.getAccessToken(code);
       } else {
@@ -227,7 +301,12 @@ connectorRouter.get(
       }
 
       // 2. Store or update connector in DB
-      const connector = await prisma.connector.upsert({
+      const tokenConfig: Record<string, unknown> = { accessToken };
+      if (type === "google_drive" && googleRefreshToken) {
+        tokenConfig.refreshToken = googleRefreshToken;
+      }
+
+      await prisma.connector.upsert({
         where: { id: `${userId}_${type}` }, // Simplified ID for lookup
         create: {
           id: `${userId}_${type}`,
@@ -235,12 +314,12 @@ connectorRouter.get(
           type,
           name: type.charAt(0).toUpperCase() + type.slice(1),
           status: "connected",
-          configJson: JSON.stringify({ accessToken }), // In prod, encrypt this!
+          configJson: JSON.stringify(tokenConfig), // In prod, encrypt this!
           lastSyncAt: new Date().toISOString(),
         },
         update: {
           status: "connected",
-          configJson: JSON.stringify({ accessToken }),
+          configJson: JSON.stringify(tokenConfig),
           updatedAt: new Date(),
         },
       });
@@ -264,10 +343,89 @@ connectorRouter.get(
  * Trigger a real-time sync for a specific connector.
  */
 connectorRouter.post(
+  "/local_files/connect",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const userId = req.authUserId;
+    const startedAt = Date.now();
+
+    await prisma.connector.upsert({
+      where: { id: `${userId}_local_files` },
+      create: {
+        id: `${userId}_local_files`,
+        userId,
+        type: "local_files",
+        name: "Local Files",
+        status: "connected",
+        configJson: JSON.stringify({ mode: "workspace" }),
+        lastSyncAt: new Date().toISOString(),
+      },
+      update: {
+        status: "connected",
+        updatedAt: new Date(),
+      },
+    });
+
+    sendApiSuccess(
+      res,
+      200,
+      { message: "Local Files connector enabled." },
+      buildApiMeta(req, startedAt),
+    );
+  }),
+);
+
+connectorRouter.post(
+  "/:type/unlock",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const type = toSingleString(req.params.type);
+    const userId = req.authUserId;
+    const startedAt = Date.now();
+    const connectorId = `${userId}_${type}`;
+
+    const connector = await prisma.connector.findUnique({
+      where: { id: connectorId },
+    });
+    if (!connector) {
+      sendApiError(res, 404, {
+        code: "NOT_FOUND",
+        message: `Connector ${type} not found.`,
+      }, buildApiMeta(req, startedAt));
+      return;
+    }
+
+    const config = getConnectorConfig(connector.configJson);
+    await prisma.connector.update({
+      where: { id: connectorId },
+      data: {
+        status: "connected",
+        configJson: JSON.stringify({
+          ...config,
+          syncStartedAt: null,
+        }),
+      },
+    });
+
+    appendConnectorSyncLog({
+      id: randomUUID(),
+      userId,
+      type,
+      status: "success",
+      extractedCount: 0,
+      message: `Sync lock cleared for ${type}`,
+      at: new Date().toISOString(),
+    });
+
+    sendApiSuccess(res, 200, { message: `Unlocked ${type}.` }, buildApiMeta(req, startedAt));
+  }),
+);
+
+connectorRouter.post(
   "/:type/sync",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { type } = req.params;
+    const type = toSingleString(req.params.type);
     const userId = req.authUserId;
     const startedAt = Date.now();
 
@@ -276,7 +434,7 @@ connectorRouter.post(
         where: { id: `${userId}_${type}` },
       });
 
-      if (!connector || connector.status !== "connected" || !connector.configJson) {
+      if (!connector || (connector.status !== "connected" && connector.status !== "syncing" && connector.status !== "error")) {
         sendApiError(res, 400, {
           code: "NOT_CONNECTED",
           message: `${type} is not connected or requires re-authentication.`,
@@ -284,22 +442,95 @@ connectorRouter.post(
         return;
       }
 
-      const { accessToken } = JSON.parse(connector.configJson);
+      const config = getConnectorConfig(connector.configJson);
+      const accessToken = typeof config.accessToken === "string" ? config.accessToken : undefined;
+      const previousCheckpoint = typeof config.lastCheckpointAt === "string" ? config.lastCheckpointAt : undefined;
+      const recentItemKeys = Array.isArray(config.recentItemKeys)
+        ? config.recentItemKeys.filter((item): item is string => typeof item === "string")
+        : [];
+      const syncStartedAt = typeof config.syncStartedAt === "string" ? config.syncStartedAt : undefined;
+      const isLocked = connector.status === "syncing" &&
+        syncStartedAt &&
+        Date.now() - new Date(syncStartedAt).getTime() < CONNECTOR_SYNC_LOCK_MS;
+      if (isLocked) {
+        sendApiError(res, 409, {
+          code: "SYNC_IN_PROGRESS",
+          message: `${type} sync is already running.`,
+        }, buildApiMeta(req, startedAt));
+        return;
+      }
+
+      await prisma.connector.update({
+        where: { id: connector.id },
+        data: {
+          status: "syncing",
+          configJson: JSON.stringify({
+            ...config,
+            syncStartedAt: new Date().toISOString(),
+          }),
+        },
+      });
       
       let extractedCount = 0;
-      if (accessToken.startsWith("mock_token_")) {
-        extractedCount = Math.floor(Math.random() * 20) + 5;
-      } else {
-        const result = await ConnectorManager.triggerSync(userId, type as ConnectorType, accessToken);
+      let checkpoint: string | undefined;
+      let dedupeKeys: string[] = [];
+      let syncAttempts = 1;
+      if (type === "local_files") {
+        const result = await ConnectorManager.triggerSync(userId, "local_files", undefined, undefined, recentItemKeys);
         extractedCount = result.extractedCount;
+        dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
+        syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
+      } else if (accessToken && accessToken.startsWith("mock_token_")) {
+        extractedCount = Math.floor(Math.random() * 20) + 5;
+        checkpoint = new Date().toISOString();
+      } else {
+        if (!accessToken) {
+          sendApiError(res, 400, {
+            code: "NOT_CONNECTED",
+            message: `${type} access token missing. Reconnect this source.`,
+          }, buildApiMeta(req, startedAt));
+          return;
+        }
+        const result = await ConnectorManager.triggerSync(
+          userId,
+          type as ConnectorType,
+          accessToken,
+          previousCheckpoint,
+          recentItemKeys,
+        );
+        extractedCount = result.extractedCount;
+        checkpoint = typeof result.checkpoint === "string" ? result.checkpoint : undefined;
+        dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
+        syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
       }
+      const nextRecentItemKeys = Array.from(new Set([...recentItemKeys, ...dedupeKeys])).slice(-500);
       
       await prisma.connector.update({
         where: { id: connector.id },
         data: {
+          status: "connected",
           lastSyncAt: new Date().toISOString(),
           recordCount: { increment: extractedCount },
+          configJson: JSON.stringify({
+            ...config,
+            ...(checkpoint ? { lastCheckpointAt: checkpoint } : {}),
+            recentItemKeys: nextRecentItemKeys,
+            syncStartedAt: null,
+            retryCount: 0,
+            lastFailureAt: null,
+            lastFailureReason: null,
+          }),
         },
+      });
+
+      appendConnectorSyncLog({
+        id: randomUUID(),
+        userId,
+        type,
+        status: "success",
+        extractedCount,
+        message: `Sync completed for ${type} (attempts=${syncAttempts})`,
+        at: new Date().toISOString(),
       });
 
       sendApiSuccess(res, 200, {
@@ -307,6 +538,36 @@ connectorRouter.post(
         extractedCount
       }, buildApiMeta(req, startedAt));
     } catch (error) {
+      try {
+        const existing = await prisma.connector.findUnique({
+          where: { id: `${userId}_${type}` },
+        });
+        const config = getConnectorConfig(existing?.configJson);
+        await prisma.connector.update({
+          where: { id: `${userId}_${type}` },
+          data: {
+            status: "error",
+            configJson: JSON.stringify({
+              ...config,
+              syncStartedAt: null,
+              retryCount: typeof config.retryCount === "number" ? config.retryCount + 1 : 1,
+              lastFailureAt: new Date().toISOString(),
+              lastFailureReason: error instanceof Error ? error.message : "sync_failed",
+            }),
+          },
+        });
+      } catch {
+        // ignore retry bookkeeping failures
+      }
+      appendConnectorSyncLog({
+        id: randomUUID(),
+        userId,
+        type,
+        status: "error",
+        extractedCount: 0,
+        message: error instanceof Error ? error.message : "Failed to sync connector",
+        at: new Date().toISOString(),
+      });
       sendApiError(res, 500, {
         code: "SYNC_FAILED",
         message: error instanceof Error ? error.message : "Failed to sync connector"
