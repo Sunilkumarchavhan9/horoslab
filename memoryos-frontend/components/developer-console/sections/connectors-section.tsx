@@ -531,7 +531,14 @@ async function connectConnector(connectorId: string) {
     return;
   }
 
-  if (type === "github" || type === "notion" || type === "google_drive" || type === "onedrive") {
+  if (
+    type === "github"
+    || type === "notion"
+    || type === "google_drive"
+    || type === "onedrive"
+    || type === "gmail"
+    || type === "slack"
+  ) {
     try {
       const token = await getOrCreateMemoryToken();
       if (!token) throw new Error("Missing auth token. Sign in again.");

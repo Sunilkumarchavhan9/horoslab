@@ -112,6 +112,24 @@ export const GoogleClient = {
     };
   },
 
+  async refreshAccessToken(refreshToken: string): Promise<GoogleOAuthTokens> {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.NEXT_PUBLIC_CONNECTOR_CALLBACK_URL,
+    );
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+    const refreshed = await oauth2Client.refreshAccessToken();
+    const token = refreshed.credentials.access_token;
+    if (!token) {
+      throw new Error("Failed to refresh Google access token");
+    }
+    return {
+      accessToken: token,
+      ...(refreshed.credentials.refresh_token ? { refreshToken: refreshed.credentials.refresh_token } : {}),
+    };
+  },
+
   /**
    * Generates the Google OAuth authorization URL.
    */

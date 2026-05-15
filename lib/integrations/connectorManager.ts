@@ -6,9 +6,18 @@ import { NotionClient } from "./notion";
 import { GoogleClient } from "./google";
 import { MicrosoftClient } from "./microsoft";
 import { LocalFilesClient } from "./localFiles";
+import { GmailClient } from "./gmail";
+import { SlackClient } from "./slack";
 import { randomUUID } from "crypto";
 
-export type ConnectorType = "github" | "notion" | "google_drive" | "onedrive" | "local_files";
+export type ConnectorType =
+  | "github"
+  | "notion"
+  | "google_drive"
+  | "onedrive"
+  | "gmail"
+  | "slack"
+  | "local_files";
 
 export interface ConnectorPayload {
   userId: string;
@@ -174,6 +183,22 @@ export const ConnectorManager = {
       const { value, attempts } = await withRetry(
         () => MicrosoftClient.sync({ userId, accessToken }),
         "onedrive sync",
+      );
+      return { ...value, attempts };
+    }
+
+    if (type === "gmail") {
+      const { value, attempts } = await withRetry(
+        () => GmailClient.sync({ userId, accessToken, since, recentItemKeys }),
+        "gmail sync",
+      );
+      return { ...value, attempts };
+    }
+
+    if (type === "slack") {
+      const { value, attempts } = await withRetry(
+        () => SlackClient.sync({ userId, accessToken, since, recentItemKeys }),
+        "slack sync",
       );
       return { ...value, attempts };
     }

@@ -309,6 +309,51 @@ function sanitizeStrictPII(text: string): string {
     .replace(/\b(?:\d[ -]*?){13,16}\b/g, "[redacted-card]");
 }
 
+function hasSensitivePII(text: string): boolean {
+  return (
+    /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(text)
+    || /\b(?:\+?\d{1,3}[-\s]?)?(?:\d{3}[-\s]?){2}\d{4}\b/.test(text)
+    || /\b(?:\d[ -]*?){13,16}\b/.test(text)
+  );
+}
+
+function payloadHasSensitivePII(payload: Record<string, unknown>): boolean {
+  const stack: unknown[] = [payload];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (typeof current === "string") {
+      if (hasSensitivePII(current)) return true;
+      continue;
+    }
+    if (Array.isArray(current)) {
+      for (const item of current) stack.push(item);
+      continue;
+    }
+    if (current && typeof current === "object") {
+      for (const value of Object.values(current as Record<string, unknown>)) stack.push(value);
+    }
+  }
+  return false;
+}
+
+function sourceTypeFromActionName(name: string): SourceType | null {
+  const n = name.toLowerCase();
+  if (n.includes("github_")) return "github";
+  if (n.includes("notion_")) return "notion";
+  if (n.includes("slack_")) return "slack";
+  if (n.includes("gmail_")) return "gmail";
+  if (n.includes("support_")) return "support";
+  if (n.includes("crm_")) return "crm";
+  if (n.includes("db_")) return "db";
+  return null;
+}
+
+function ttlBoundsForClass(retentionClass: "short" | "standard" | "extended"): { min: number; max: number } {
+  if (retentionClass === "short") return { min: 24, max: 24 * 30 };
+  if (retentionClass === "standard") return { min: 24 * 30, max: 24 * 90 };
+  return { min: 24 * 90, max: 24 * 365 };
+}
+
 function sourcePolicy(userId: string, source: SourceType): UserState["compliance"]["sourcePolicies"][SourceType] {
   return mutateUser(userId, (state) => state.compliance.sourcePolicies[source]);
 }
@@ -1253,6 +1298,15 @@ async function executeActionExternally(userId: string, action: ActionRequest): P
 
 export function requestAction(userId: string, name: string, payload: Record<string, unknown>): ActionRequest {
   ensureScope(userId, "actions.execute");
+  const source = sourceTypeFromActionName(name);
+  const complianceBlockReason = source
+    ? mutateUser(userId, (state) => {
+      const policy = state.compliance.sourcePolicies[source];
+      if (!policy.redactPII) return null;
+      if (!payloadHasSensitivePII(payload)) return null;
+      return `Compliance block: PII-like payload detected for source=${source} with redactPII=true`;
+    })
+    : null;
   const action = mutateUser(userId, (state) => {
     const action: ActionRequest = {
       id: randomUUID(),
@@ -1270,6 +1324,16 @@ export function requestAction(userId: string, name: string, payload: Record<stri
     const policy = state.governance.riskPolicy[action.risk];
     action.requiredApprovals = policy.requiredApprovals;
     action.executionConstraints = inferExecutionConstraints(name, action.risk);
+
+    if (complianceBlockReason) {
+      action.status = "rejected";
+      action.executionResult = { ok: false, detail: complianceBlockReason };
+      action.updatedAt = nowIso();
+      audit(userId, "action.compliance_blocked", `${name} reason=${complianceBlockReason}`);
+      state.actions.unshift(action);
+      state.actions = state.actions.slice(0, 200);
+      return action;
+    }
 
     const role = getRoleForUser(state, userId);
     const canAutoApprove = role !== "viewer" && (policy.requiredApprovals.includes(role) || role === "owner");
@@ -1342,6 +1406,32 @@ export async function executeApprovedAction(userId: string, actionId: string): P
   const action = mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
   if (!action) return null;
   if (action.status !== "approved") return action;
+  const blockedByRiskGate = mutateUser(userId, (state) => {
+    const target = state.actions.find((entry) => entry.id === actionId);
+    if (!target) return null;
+    if (target.risk !== "high") return null;
+    const approvals = target.approvals ?? [];
+    const hasOwnerOrAdmin = approvals.some(
+      (entry) => entry.decision === "approve" && (entry.reviewerRole === "owner" || entry.reviewerRole === "admin"),
+    );
+    if (hasOwnerOrAdmin) return null;
+    target.status = "failed";
+    target.updatedAt = nowIso();
+    target.executionResult = {
+      ok: false,
+      detail: "Compliance gate: high-risk action requires owner/admin approval before execution.",
+    };
+    return target.executionResult.detail;
+  });
+  if (blockedByRiskGate) {
+    audit(userId, "action.execution_blocked", `${action.name} reason=${blockedByRiskGate}`);
+    pushAlert(userId, "warning", "Action execution blocked by compliance gate", {
+      actionId,
+      actionName: action.name,
+      detail: blockedByRiskGate,
+    });
+    return mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
+  }
   try {
     const result = await executeActionExternally(userId, action);
     const next = mutateUser(userId, (state) => {
@@ -1811,15 +1901,18 @@ export function updateCompliancePolicy(
       const next = patch[source];
       if (!next) continue;
       const current = state.compliance.sourcePolicies[source];
+      const retentionClass =
+        next.retentionClass === "short" || next.retentionClass === "standard" || next.retentionClass === "extended"
+          ? next.retentionClass
+          : current.retentionClass;
+      const bounds = ttlBoundsForClass(retentionClass);
+      const requestedTtl = typeof next.ttlHours === "number" && Number.isFinite(next.ttlHours)
+        ? Math.floor(next.ttlHours)
+        : current.ttlHours;
       state.compliance.sourcePolicies[source] = {
         redactPII: typeof next.redactPII === "boolean" ? next.redactPII : current.redactPII,
-        retentionClass:
-          next.retentionClass === "short" || next.retentionClass === "standard" || next.retentionClass === "extended"
-            ? next.retentionClass
-            : current.retentionClass,
-        ttlHours: typeof next.ttlHours === "number" && Number.isFinite(next.ttlHours)
-          ? Math.max(1, Math.floor(next.ttlHours))
-          : current.ttlHours,
+        retentionClass,
+        ttlHours: Math.max(bounds.min, Math.min(bounds.max, requestedTtl)),
         requireReplayApproval:
           typeof next.requireReplayApproval === "boolean" ? next.requireReplayApproval : current.requireReplayApproval,
       };
