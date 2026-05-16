@@ -895,6 +895,22 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
   const memories = (await listMemories({ userId, limit: 400 })).memories;
   const nodes = new Map<string, GraphNode>();
   const edges = new Map<string, GraphEdge>();
+  const inferSourceTypeFromMemory = (memory: {
+    source?: string;
+    content?: string;
+    summary?: string;
+  }): SourceType => {
+    if (memory.source === "import") return "local_files";
+    const corpus = `${memory.summary ?? ""} ${memory.content ?? ""}`.toLowerCase();
+    if (/\bgithub\b/.test(corpus)) return "github";
+    if (/\bnotion\b/.test(corpus)) return "notion";
+    if (/\bslack\b/.test(corpus)) return "slack";
+    if (/\bgmail\b/.test(corpus)) return "gmail";
+    if (/\bzendesk|freshdesk|support ticket|refund\b/.test(corpus)) return "support";
+    if (/\bhubspot|salesforce|crm\b/.test(corpus)) return "crm";
+    if (/\bpostgres|mysql|database|sql\b/.test(corpus)) return "db";
+    return "local_files";
+  };
 
   function ensureNode(
     id: string,
@@ -981,18 +997,7 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
     const raw = `${memory.summary} ${memory.content}`;
     const text = raw.toLowerCase();
     const idBase = memory.id;
-    const sourceType = (
-      memory.sourceType === "github"
-      || memory.sourceType === "notion"
-      || memory.sourceType === "local_files"
-      || memory.sourceType === "slack"
-      || memory.sourceType === "gmail"
-      || memory.sourceType === "support"
-      || memory.sourceType === "crm"
-      || memory.sourceType === "db"
-    )
-      ? memory.sourceType
-      : "local_files";
+    const sourceType = inferSourceTypeFromMemory(memory);
     const seenAt = typeof memory.updatedAt === "string"
       ? memory.updatedAt
       : typeof memory.createdAt === "string"
