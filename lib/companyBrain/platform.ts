@@ -206,6 +206,7 @@ const runtimeBootstrappedUsers = new Set<string>();
 const SOURCE_EVENT_MAX_ATTEMPTS = Number(process.env.COMPANY_BRAIN_SOURCE_EVENT_MAX_ATTEMPTS ?? 5);
 const SOURCE_EVENT_BASE_BACKOFF_SECONDS = Number(process.env.COMPANY_BRAIN_SOURCE_EVENT_BACKOFF_BASE_SECONDS ?? 20);
 const WORKER_STALE_SECONDS = Number(process.env.COMPANY_BRAIN_WORKER_STALE_SECONDS ?? 180);
+const REPLAY_APPROVAL_MAX_AGE_HOURS = Number(process.env.COMPANY_BRAIN_REPLAY_APPROVAL_MAX_AGE_HOURS ?? 24);
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -389,6 +390,53 @@ function isWithinOptionalWindow(atIso: string, from?: string, to?: string): bool
 
 function sourceTypeFromAction(action: ActionRequest): SourceType | null {
   return sourceTypeFromActionName(action.name);
+}
+
+function maxRetentionHoursForState(state: UserState): number {
+  const values = Object.values(state.compliance.sourcePolicies).map((policy) => Math.max(1, policy.ttlHours));
+  return values.length > 0 ? Math.max(...values) : 24 * 90;
+}
+
+function runComplianceRetentionSweep(userId: string, state: UserState): { pruned: number } {
+  const now = Date.now();
+  let pruned = 0;
+
+  const beforeSourceEvents = state.sourceEvents.length;
+  state.sourceEvents = state.sourceEvents.filter((event) => {
+    const policy = state.compliance.sourcePolicies[event.sourceType];
+    const ttlMs = Math.max(1, policy.ttlHours) * 60 * 60 * 1000;
+    const ageMs = now - new Date(event.createdAt).getTime();
+    return ageMs <= ttlMs;
+  });
+  pruned += beforeSourceEvents - state.sourceEvents.length;
+
+  const maxRetentionMs = maxRetentionHoursForState(state) * 60 * 60 * 1000;
+  const replayApprovalMaxAgeMs = Math.max(1, REPLAY_APPROVAL_MAX_AGE_HOURS) * 60 * 60 * 1000;
+
+  const beforeApprovals = state.auditReplayApprovals.length;
+  state.auditReplayApprovals = state.auditReplayApprovals.filter((item) => {
+    const createdAge = now - new Date(item.createdAt).getTime();
+    if (createdAge > maxRetentionMs) return false;
+    if (item.status === "approved" && item.reviewedAt) {
+      const reviewedAge = now - new Date(item.reviewedAt).getTime();
+      if (reviewedAge > replayApprovalMaxAgeMs) return false;
+    }
+    return true;
+  });
+  pruned += beforeApprovals - state.auditReplayApprovals.length;
+
+  const beforeActions = state.actions.length;
+  state.actions = state.actions.filter((action) => {
+    if (action.status === "pending" || action.status === "approved") return true;
+    const ageMs = now - new Date(action.updatedAt).getTime();
+    return ageMs <= maxRetentionMs;
+  });
+  pruned += beforeActions - state.actions.length;
+
+  if (pruned > 0) {
+    audit(userId, "compliance.retention_pruned", `records=${pruned}`);
+  }
+  return { pruned };
 }
 
 function sourcePolicy(userId: string, source: SourceType): UserState["compliance"]["sourcePolicies"][SourceType] {
@@ -1843,6 +1891,9 @@ async function runJob(userId: string, job: QueueJob): Promise<void> {
 }
 
 export async function processQueueOnce(userId: string): Promise<{ processed: number }> {
+  mutateUser(userId, (state) => {
+    runComplianceRetentionSweep(userId, state);
+  });
   const leased = await getQueueBackend().lease(userId, `worker:${process.pid}`, 5);
   if (leased.length > 0) {
     for (const job of leased) {
@@ -2127,6 +2178,9 @@ export function replayAudit(userId: string, from?: string, to?: string): {
     const approvedIdx = state.auditReplayApprovals.findIndex((item) =>
       item.status === "approved"
       && !item.usedAt
+      && item.reviewedAt
+      && (new Date(nowIso()).getTime() - new Date(item.reviewedAt).getTime())
+      <= Math.max(1, REPLAY_APPROVAL_MAX_AGE_HOURS) * 60 * 60 * 1000
       && isWithinOptionalWindow(nowIso(), item.from, item.to));
 
     if (approvedIdx < 0) {
