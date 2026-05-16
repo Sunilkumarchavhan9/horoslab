@@ -1,6 +1,6 @@
 # MemoryOS Startup Execution Status
 
-Last updated: 2026-05-11
+Last updated: 2026-05-16
 Owner: MemoryOS core build
 
 ## Done
@@ -30,6 +30,19 @@ Owner: MemoryOS core build
     - `evelyn.ns.cloudflare.com`
     - `maxim.ns.cloudflare.com`
   - Status currently in propagation/waiting state (normal)
+- Billing provider migrated to Polar-first checkout flows.
+- Company Brain control plane shipped with:
+  - governance policy + approval flow
+  - source configs
+  - action execution surface
+  - SRE recovery controls
+- Observability production wiring completed:
+  - Sentry frontend + backend integration
+  - Datadog frontend RUM + backend APM tracing
+  - Azure VM Datadog Agent bridge for backend trace intake
+- Secrets ops runbook added:
+  - `docs/ops-secrets-doppler-1password-runbook.md`
+ - Secrets ops next-actions added (Doppler + 1Password execution steps).
 
 ## In Progress
 - End-to-end product refactor from “feature dashboard” to “continuity operating system”
@@ -51,8 +64,8 @@ Owner: MemoryOS core build
    - wait for nameserver propagation to `Active`
    - set SSL/TLS mode `Full (strict)`
    - enable `Always Use HTTPS`
-5. Billing productionization (Paddle):
-   - finalize checkout URLs and plan mapping
+5. Billing productionization (Polar):
+   - verify checkout URLs and plan mapping
    - verify billing and invoice UI against live backend responses
 6. Portability + governance completion:
    - AGENTS.md export/import end-to-end
