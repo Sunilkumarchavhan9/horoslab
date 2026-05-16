@@ -50,6 +50,16 @@ type ActionItem = {
   createdAt: string;
 };
 
+type ActionSimulation = {
+  name: string;
+  risk: "low" | "medium" | "high";
+  requiredApprovals: Array<"owner" | "admin" | "operator">;
+  executionConstraints: string[];
+  complianceBlocked: boolean;
+  complianceBlockReason: string | null;
+  autoExecutable: boolean;
+};
+
 type CompanyBrainStatus = {
   scheduler: {
     enabled: boolean;
@@ -103,6 +113,8 @@ export function CompanyBrainSection() {
   const [sourceAuthHeader, setSourceAuthHeader] = useState("Authorization");
   const [newActionName, setNewActionName] = useState("github_create_issue");
   const [newActionPayload, setNewActionPayload] = useState('{"repo":"Sunilkumarchavhan9/MemoryOS","title":"Company Brain follow-up"}');
+  const [simulation, setSimulation] = useState<ActionSimulation | null>(null);
+  const [isSimulating, setIsSimulating] = useState(false);
   const [roleTargetUserId, setRoleTargetUserId] = useState("");
   const [roleValue, setRoleValue] = useState<"owner" | "admin" | "operator" | "viewer">("operator");
   const [roleScopes, setRoleScopes] = useState("actions.execute,actions.approve,governance.policy.write,governance.roles.write");
@@ -288,6 +300,28 @@ export function CompanyBrainSection() {
       await loadCompanyBrainControlPlane();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to create action.");
+    }
+  }
+
+  async function simulateCurrentAction(): Promise<void> {
+    try {
+      setIsSimulating(true);
+      setSimulation(null);
+      const headers = await authHeaders();
+      const parsedPayload = JSON.parse(newActionPayload || "{}") as Record<string, unknown>;
+      const response = await fetch("/api/company-brain/actions/simulate", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ name: newActionName, payload: parsedPayload }),
+      });
+      const data = (await response.json().catch(() => null)) as { simulation?: ActionSimulation; error?: string } | null;
+      if (!response.ok || !data?.simulation) throw new Error(data?.error ?? "Failed to simulate action");
+      setSimulation(data.simulation);
+      setStatusMessage(`Simulation ready: ${data.simulation.name} (${data.simulation.risk})`);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Failed to simulate action.");
+    } finally {
+      setIsSimulating(false);
     }
   }
 
@@ -698,14 +732,42 @@ export function CompanyBrainSection() {
             onChange={(event) => setNewActionPayload(event.target.value)}
             className="min-h-[90px] rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px] font-mono"
           />
-          <button
-            type="button"
-            onClick={() => void requestAction()}
-            className="w-fit rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary"
-          >
-            Create Action Request
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => void simulateCurrentAction()}
+              disabled={isSimulating}
+              className="w-fit rounded-[7px] border border-border bg-muted/50 px-2.5 py-1.5 text-[11px] text-muted-foreground disabled:opacity-50"
+            >
+              {isSimulating ? "Simulating..." : "Simulate Action"}
+            </button>
+            <button
+              type="button"
+              onClick={() => void requestAction()}
+              className="w-fit rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary"
+            >
+              Create Action Request
+            </button>
+          </div>
         </div>
+
+        {simulation ? (
+          <div className="mt-3 rounded-[8px] border border-border bg-muted/30 px-3 py-2">
+            <p className="text-[12px] font-medium">Simulation Result</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              risk={simulation.risk} · autoExecutable={simulation.autoExecutable ? "yes" : "no"} · complianceBlocked={simulation.complianceBlocked ? "yes" : "no"}
+            </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              required approvals: {simulation.requiredApprovals.length ? simulation.requiredApprovals.join(",") : "none"}
+            </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              constraints: {simulation.executionConstraints.join(" | ")}
+            </p>
+            {simulation.complianceBlockReason ? (
+              <p className="mt-1 text-[11px] text-amber-500">{simulation.complianceBlockReason}</p>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="mt-3 space-y-2">
           {actions.length === 0 ? (
