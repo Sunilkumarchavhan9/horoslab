@@ -30,14 +30,31 @@ type GraphNode = {
   label: string;
   confidence: number;
   evidenceMemoryIds: string[];
+  sourceTypes: SourceType[];
+  firstSeenAt: string;
+  lastSeenAt: string;
+  attributes?: Record<string, unknown>;
 };
 
 type GraphEdge = {
   id: string;
   from: string;
   to: string;
-  relation: "owns" | "depends_on" | "blocked_by" | "resolved_by" | "governed_by" | "implements";
+  relation:
+    | "owns"
+    | "depends_on"
+    | "blocked_by"
+    | "resolved_by"
+    | "governed_by"
+    | "implements"
+    | "escalates_to"
+    | "mitigates"
+    | "informs"
+    | "decides_for";
   confidence: number;
+  evidenceMemoryIds: string[];
+  firstSeenAt: string;
+  lastSeenAt: string;
 };
 
 type CompiledSkill = {
@@ -765,12 +782,25 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
     label: string,
     confidence: number,
     evidenceMemoryId: string,
+    sourceType: SourceType,
+    seenAt: string,
+    attributes?: Record<string, unknown>,
   ): void {
     const existing = nodes.get(id);
     if (existing) {
       existing.confidence = Math.max(existing.confidence, confidence);
       if (!existing.evidenceMemoryIds.includes(evidenceMemoryId)) {
         existing.evidenceMemoryIds.push(evidenceMemoryId);
+      }
+      if (!existing.sourceTypes.includes(sourceType)) {
+        existing.sourceTypes.push(sourceType);
+      }
+      existing.lastSeenAt = seenAt;
+      if (attributes) {
+        existing.attributes = {
+          ...(existing.attributes ?? {}),
+          ...attributes,
+        };
       }
       return;
     }
@@ -780,6 +810,10 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
       label,
       confidence,
       evidenceMemoryIds: [evidenceMemoryId],
+      sourceTypes: [sourceType],
+      firstSeenAt: seenAt,
+      lastSeenAt: seenAt,
+      ...(attributes ? { attributes } : {}),
     });
   }
 
@@ -788,12 +822,18 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
     to: string,
     relation: GraphEdge["relation"],
     confidence: number,
+    evidenceMemoryId: string,
+    seenAt: string,
   ): void {
     if (!nodes.has(from) || !nodes.has(to) || from === to) return;
     const key = `${from}|${relation}|${to}`;
     const existing = edges.get(key);
     if (existing) {
       existing.confidence = Math.max(existing.confidence, confidence);
+      if (!existing.evidenceMemoryIds.includes(evidenceMemoryId)) {
+        existing.evidenceMemoryIds.push(evidenceMemoryId);
+      }
+      existing.lastSeenAt = seenAt;
       return;
     }
     edges.set(key, {
@@ -802,6 +842,9 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
       to,
       relation,
       confidence,
+      evidenceMemoryIds: [evidenceMemoryId],
+      firstSeenAt: seenAt,
+      lastSeenAt: seenAt,
     });
   }
 
@@ -818,33 +861,59 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
     const raw = `${memory.summary} ${memory.content}`;
     const text = raw.toLowerCase();
     const idBase = memory.id;
+    const sourceType = (
+      memory.sourceType === "github"
+      || memory.sourceType === "notion"
+      || memory.sourceType === "local_files"
+      || memory.sourceType === "slack"
+      || memory.sourceType === "gmail"
+      || memory.sourceType === "support"
+      || memory.sourceType === "crm"
+      || memory.sourceType === "db"
+    )
+      ? memory.sourceType
+      : "local_files";
+    const seenAt = typeof memory.updatedAt === "string"
+      ? memory.updatedAt
+      : typeof memory.createdAt === "string"
+        ? memory.createdAt
+        : nowIso();
+
     if (memory.operationalTags?.includes("decision") || decisionPattern.test(text)) {
-      ensureNode(`decision:${idBase}`, "decision", memory.summary, 0.8, memory.id);
+      ensureNode(`decision:${idBase}`, "decision", memory.summary, 0.8, memory.id, sourceType, seenAt);
     }
     if (memory.operationalTags?.includes("policy") || policyPattern.test(text)) {
-      ensureNode(`policy:${idBase}`, "policy", memory.summary, 0.75, memory.id);
+      ensureNode(`policy:${idBase}`, "policy", memory.summary, 0.75, memory.id, sourceType, seenAt);
     }
     if (memory.operationalTags?.includes("incident") || incidentPattern.test(text)) {
-      ensureNode(`incident:${idBase}`, "incident", memory.summary, 0.78, memory.id);
+      ensureNode(`incident:${idBase}`, "incident", memory.summary, 0.78, memory.id, sourceType, seenAt);
     }
     if (memory.operationalTags?.includes("runbook") || runbookPattern.test(text)) {
-      ensureNode(`runbook:${idBase}`, "runbook", memory.summary, 0.74, memory.id);
+      ensureNode(`runbook:${idBase}`, "runbook", memory.summary, 0.74, memory.id, sourceType, seenAt);
     }
     if (/\brisk|risky|impact|blast radius\b/.test(text)) {
-      ensureNode(`risk:${idBase}`, "risk", memory.summary, 0.66, memory.id);
+      ensureNode(`risk:${idBase}`, "risk", memory.summary, 0.66, memory.id, sourceType, seenAt);
     }
 
     for (const match of raw.matchAll(teamPattern)) {
       const label = `${match[1].toLowerCase()} team`;
-      ensureNode(`team:${label.replace(/\s+/g, "_")}`, "team", label, 0.7, memory.id);
+      ensureNode(`team:${label.replace(/\s+/g, "_")}`, "team", label, 0.7, memory.id, sourceType, seenAt);
     }
     for (const match of raw.matchAll(systemPattern)) {
       const label = match[1].toLowerCase();
-      ensureNode(`system:${label}`, "system", label, 0.68, memory.id);
+      ensureNode(`system:${label}`, "system", label, 0.68, memory.id, sourceType, seenAt);
     }
     for (const match of raw.matchAll(personPattern)) {
       const label = match[1].trim();
-      ensureNode(`person:${label.toLowerCase().replace(/\s+/g, "_")}`, "person", label, 0.65, memory.id);
+      ensureNode(
+        `person:${label.toLowerCase().replace(/\s+/g, "_")}`,
+        "person",
+        label,
+        0.65,
+        memory.id,
+        sourceType,
+        seenAt,
+      );
     }
 
     const decisionId = `decision:${idBase}`;
@@ -853,23 +922,29 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
     const runbookId = `runbook:${idBase}`;
     const riskId = `risk:${idBase}`;
 
-    if (nodes.has(decisionId) && nodes.has(policyId)) addEdge(decisionId, policyId, "governed_by", 0.71);
-    if (nodes.has(decisionId) && nodes.has(runbookId)) addEdge(decisionId, runbookId, "implements", 0.69);
-    if (nodes.has(incidentId) && nodes.has(runbookId)) addEdge(incidentId, runbookId, "resolved_by", 0.72);
-    if (nodes.has(incidentId) && nodes.has(policyId)) addEdge(incidentId, policyId, "governed_by", 0.64);
-    if (nodes.has(incidentId) && nodes.has(riskId)) addEdge(incidentId, riskId, "depends_on", 0.62);
+    if (nodes.has(decisionId) && nodes.has(policyId)) addEdge(decisionId, policyId, "governed_by", 0.71, memory.id, seenAt);
+    if (nodes.has(decisionId) && nodes.has(runbookId)) addEdge(decisionId, runbookId, "implements", 0.69, memory.id, seenAt);
+    if (nodes.has(incidentId) && nodes.has(runbookId)) addEdge(incidentId, runbookId, "resolved_by", 0.72, memory.id, seenAt);
+    if (nodes.has(incidentId) && nodes.has(policyId)) addEdge(incidentId, policyId, "governed_by", 0.64, memory.id, seenAt);
+    if (nodes.has(incidentId) && nodes.has(riskId)) addEdge(incidentId, riskId, "depends_on", 0.62, memory.id, seenAt);
+    if (nodes.has(runbookId) && nodes.has(riskId)) addEdge(runbookId, riskId, "mitigates", 0.68, memory.id, seenAt);
+    if (nodes.has(policyId) && nodes.has(decisionId)) addEdge(policyId, decisionId, "informs", 0.63, memory.id, seenAt);
 
     if (relationPattern.test(text)) {
       if (text.includes("blocked by") && nodes.has(incidentId) && nodes.has(policyId)) {
-        addEdge(incidentId, policyId, "blocked_by", 0.67);
+        addEdge(incidentId, policyId, "blocked_by", 0.67, memory.id, seenAt);
       }
       if (text.includes("depends on") && nodes.has(decisionId) && nodes.has(runbookId)) {
-        addEdge(decisionId, runbookId, "depends_on", 0.66);
+        addEdge(decisionId, runbookId, "depends_on", 0.66, memory.id, seenAt);
       }
       if (text.includes("owned by")) {
         const firstTeam = Array.from(nodes.values()).find((n) => n.type === "team" && n.evidenceMemoryIds.includes(memory.id));
         const firstSystem = Array.from(nodes.values()).find((n) => n.type === "system" && n.evidenceMemoryIds.includes(memory.id));
-        if (firstTeam && firstSystem) addEdge(firstTeam.id, firstSystem.id, "owns", 0.7);
+        if (firstTeam && firstSystem) addEdge(firstTeam.id, firstSystem.id, "owns", 0.7, memory.id, seenAt);
+      }
+      if (text.includes("escalate") && nodes.has(incidentId)) {
+        const supportTeam = Array.from(nodes.values()).find((n) => n.type === "team" && n.label.includes("support"));
+        if (supportTeam) addEdge(incidentId, supportTeam.id, "escalates_to", 0.61, memory.id, seenAt);
       }
     }
   }
@@ -884,6 +959,70 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
   });
   audit(userId, "graph.rebuilt", `nodes=${nodeList.length} edges=${edgeList.length}`);
   return { nodes: nodeList.length, edges: edgeList.length };
+}
+
+export function getGraph(userId: string): {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  updatedAt: string | null;
+  summary: {
+    nodeTypes: Record<GraphNode["type"], number>;
+    relationTypes: Record<GraphEdge["relation"], number>;
+    avgNodeConfidence: number;
+    avgEdgeConfidence: number;
+  };
+} {
+  return mutateUser(userId, (state) => {
+    const nodeTypes: Record<GraphNode["type"], number> = {
+      person: 0,
+      team: 0,
+      system: 0,
+      policy: 0,
+      incident: 0,
+      decision: 0,
+      runbook: 0,
+      risk: 0,
+    };
+    const relationTypes: Record<GraphEdge["relation"], number> = {
+      owns: 0,
+      depends_on: 0,
+      blocked_by: 0,
+      resolved_by: 0,
+      governed_by: 0,
+      implements: 0,
+      escalates_to: 0,
+      mitigates: 0,
+      informs: 0,
+      decides_for: 0,
+    };
+    let nodeConfidenceSum = 0;
+    let edgeConfidenceSum = 0;
+
+    for (const node of state.graph.nodes) {
+      nodeTypes[node.type] += 1;
+      nodeConfidenceSum += node.confidence;
+    }
+    for (const edge of state.graph.edges) {
+      relationTypes[edge.relation] += 1;
+      edgeConfidenceSum += edge.confidence;
+    }
+
+    return {
+      nodes: state.graph.nodes,
+      edges: state.graph.edges,
+      updatedAt: state.graph.updatedAt,
+      summary: {
+        nodeTypes,
+        relationTypes,
+        avgNodeConfidence: state.graph.nodes.length
+          ? Number((nodeConfidenceSum / state.graph.nodes.length).toFixed(3))
+          : 0,
+        avgEdgeConfidence: state.graph.edges.length
+          ? Number((edgeConfidenceSum / state.graph.edges.length).toFixed(3))
+          : 0,
+      },
+    };
+  });
 }
 
 export function compileSkillsV2(userId: string): { skills: CompiledSkill[]; updatedAt: string } {
