@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
-import { randomUUID } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { listMemories } from "../memory/listMemory";
 import { ConnectorManager, type ConnectorType } from "../integrations/connectorManager";
 import { runIngestFlowLangGraph } from "../workflows/ingestGraphLangGraph";
@@ -635,6 +635,36 @@ async function syncGmailSource(userId: string, source: SourceConfig): Promise<nu
 
 type PullSourceType = "support" | "crm" | "db";
 
+function stablePullItemFingerprint(sourceType: PullSourceType, item: Record<string, unknown>): string {
+  const preferredId =
+    (typeof item.id === "string" && item.id)
+    || (typeof item.externalId === "string" && item.externalId)
+    || (typeof item.ticketId === "string" && item.ticketId)
+    || (typeof item.contactId === "string" && item.contactId)
+    || (typeof item.recordId === "string" && item.recordId)
+    || "";
+  const updatedAt =
+    (typeof item.updatedAt === "string" && item.updatedAt)
+    || (typeof item.modifiedAt === "string" && item.modifiedAt)
+    || (typeof item.timestamp === "string" && item.timestamp)
+    || "";
+  const createdAt = (typeof item.createdAt === "string" && item.createdAt) ? item.createdAt : "";
+  const canonical = preferredId
+    ? `${sourceType}|${preferredId}|${updatedAt}|${createdAt}`
+    : `${sourceType}|${JSON.stringify(item)}`;
+  return createHash("sha256").update(canonical).digest("hex");
+}
+
+function extractPullItemEpochMs(item: Record<string, unknown>): number | null {
+  const raw = item.updatedAt ?? item.modifiedAt ?? item.timestamp ?? item.createdAt;
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  if (typeof raw === "string") {
+    const ms = Date.parse(raw);
+    if (!Number.isNaN(ms)) return ms;
+  }
+  return null;
+}
+
 async function syncPullSource(userId: string, source: SourceConfig, sourceType: PullSourceType): Promise<number> {
   const provider = typeof source.config.provider === "string" ? source.config.provider.toLowerCase() : "";
   const endpoint = typeof source.config.apiUrl === "string" ? source.config.apiUrl.trim() : "";
@@ -665,8 +695,10 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
     const apiKey = typeof source.config.apiKey === "string" ? source.config.apiKey : "";
     const bearerToken = typeof source.config.bearerToken === "string" ? source.config.bearerToken : "";
     const authHeader = typeof source.config.authHeader === "string" ? source.config.authHeader : "Authorization";
+    const idempotencyKey = `${sourceType}:${cursor || sinceEpochMs || "initial"}`;
     if (apiKey) headers["x-api-key"] = apiKey;
     if (bearerToken) headers[authHeader] = bearerToken.startsWith("Bearer ") ? bearerToken : `Bearer ${bearerToken}`;
+    headers["x-idempotency-key"] = idempotencyKey;
     const response = await fetch(url, { method: "GET", headers });
     if (!response.ok) throw new Error(`${sourceType} generic pull sync failed (${response.status})`);
     const generic = await response.json() as {
@@ -682,14 +714,32 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
   }
 
   const items = payload.items;
+  const recentHashes = Array.isArray(source.config.recentItemHashes)
+    ? source.config.recentItemHashes.filter((value): value is string => typeof value === "string")
+    : [];
+  const seen = new Set(recentHashes);
+  const nextHashes: string[] = [];
   let accepted = 0;
+  let maxCheckpointEpochMs = Math.max(
+    typeof source.config.lastCheckpointEpochMs === "number" ? source.config.lastCheckpointEpochMs : 0,
+    payload.checkpointEpochMs,
+  );
   for (const item of items.slice(0, 40)) {
+    const fingerprint = stablePullItemFingerprint(sourceType, item);
+    if (seen.has(fingerprint)) continue;
+    seen.add(fingerprint);
+    nextHashes.push(fingerprint);
+    const itemEpoch = extractPullItemEpochMs(item);
+    if (typeof itemEpoch === "number") {
+      maxCheckpointEpochMs = Math.max(maxCheckpointEpochMs, itemEpoch);
+    }
     accepted += await ingestExternalText(userId, sourceType, JSON.stringify(item).slice(0, 5000));
   }
 
   updateSourceConfig(userId, sourceType, {
     cursor: typeof payload.nextCursor === "string" ? payload.nextCursor : "",
-    lastCheckpointEpochMs: payload.checkpointEpochMs,
+    lastCheckpointEpochMs: maxCheckpointEpochMs,
+    recentItemHashes: [...nextHashes, ...recentHashes].slice(0, 400),
     provider,
     lastSyncedAt: nowIso(),
   });
