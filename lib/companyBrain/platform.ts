@@ -161,6 +161,8 @@ type UserState = {
     reviewedBy?: string;
     createdAt: string;
     reviewedAt?: string;
+    usedAt?: string;
+    usedBy?: string;
     note?: string;
   }>;
   sourceEvents: Array<{
@@ -369,6 +371,24 @@ function ttlBoundsForClass(retentionClass: "short" | "standard" | "extended"): {
   if (retentionClass === "short") return { min: 24, max: 24 * 30 };
   if (retentionClass === "standard") return { min: 24 * 30, max: 24 * 90 };
   return { min: 24 * 90, max: 24 * 365 };
+}
+
+function isWithinOptionalWindow(atIso: string, from?: string, to?: string): boolean {
+  const ts = new Date(atIso).getTime();
+  if (!Number.isFinite(ts)) return false;
+  if (from) {
+    const fromTs = new Date(from).getTime();
+    if (Number.isFinite(fromTs) && ts < fromTs) return false;
+  }
+  if (to) {
+    const toTs = new Date(to).getTime();
+    if (Number.isFinite(toTs) && ts > toTs) return false;
+  }
+  return true;
+}
+
+function sourceTypeFromAction(action: ActionRequest): SourceType | null {
+  return sourceTypeFromActionName(action.name);
 }
 
 function sourcePolicy(userId: string, source: SourceType): UserState["compliance"]["sourcePolicies"][SourceType] {
@@ -1597,6 +1617,31 @@ export async function executeApprovedAction(userId: string, actionId: string): P
   const action = mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
   if (!action) return null;
   if (action.status !== "approved") return action;
+  const blockedByExecutionCompliance = mutateUser(userId, (state) => {
+    const target = state.actions.find((entry) => entry.id === actionId);
+    if (!target) return null;
+    const source = sourceTypeFromAction(target);
+    if (!source) return null;
+    const policy = state.compliance.sourcePolicies[source];
+    if (!policy.redactPII) return null;
+    if (!payloadHasSensitivePII(target.payload)) return null;
+    target.status = "failed";
+    target.updatedAt = nowIso();
+    target.executionResult = {
+      ok: false,
+      detail: `Compliance gate: execution blocked due to PII-like payload for source=${source}`,
+    };
+    return target.executionResult.detail;
+  });
+  if (blockedByExecutionCompliance) {
+    audit(userId, "action.execution_blocked", `${action.name} reason=${blockedByExecutionCompliance}`);
+    pushAlert(userId, "warning", "Action execution blocked by PII compliance gate", {
+      actionId,
+      actionName: action.name,
+      detail: blockedByExecutionCompliance,
+    });
+    return mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
+  }
   const blockedByRiskGate = mutateUser(userId, (state) => {
     const target = state.actions.find((entry) => entry.id === actionId);
     if (!target) return null;
@@ -2075,19 +2120,31 @@ export function replayAudit(userId: string, from?: string, to?: string): {
   events: AuditEvent[];
   summary: { total: number; byType: Record<string, number> };
 } {
-  const requiresApproval = mutateUser(userId, (state) =>
-    Object.values(state.compliance.sourcePolicies).some((policy) => policy.requireReplayApproval),
-  );
-  if (requiresApproval) {
-    const hasApproval = mutateUser(userId, (state) =>
-      state.auditReplayApprovals.some((item) => item.status === "approved"),
-    );
-    if (!hasApproval) {
+  const replayGuard = mutateUser(userId, (state) => {
+    const requiresApproval = Object.values(state.compliance.sourcePolicies).some((policy) => policy.requireReplayApproval);
+    if (!requiresApproval) return { allowed: true, reason: "not_required" } as const;
+
+    const approvedIdx = state.auditReplayApprovals.findIndex((item) =>
+      item.status === "approved"
+      && !item.usedAt
+      && isWithinOptionalWindow(nowIso(), item.from, item.to));
+
+    if (approvedIdx < 0) {
+      return { allowed: false, reason: "approval_required" } as const;
+    }
+
+    const approval = state.auditReplayApprovals[approvedIdx];
+    approval.usedAt = nowIso();
+    approval.usedBy = userId;
+    audit(userId, "audit.replay.approval_consumed", `${approval.id}`);
+    return { allowed: true, reason: "approved" } as const;
+  });
+
+  if (!replayGuard.allowed) {
       return {
         events: [],
         summary: { total: 0, byType: { replay_blocked_approval_required: 1 } },
       };
-    }
   }
   return mutateUser(userId, (state) => {
     const fromTs = from ? new Date(from).getTime() : Number.NEGATIVE_INFINITY;
