@@ -48,6 +48,7 @@ jobs:
       - name: Company Brain Gate (Strict)
         env:
           COMPANY_BRAIN_GATE_STRICT: "true"
+          COMPANY_BRAIN_GATE_BOOTSTRAP_BASELINE: "true"
           COMPANY_BRAIN_EVAL_MIN_SCORE: "90"
           COMPANY_BRAIN_SCENARIO_MIN_PASS_RATE: "100"
           COMPANY_BRAIN_GATE_REPORT_PATH: "data/eval/reports/company-brain-gate-release.json"

@@ -2250,6 +2250,140 @@ export function runEvalHarness(userId: string): {
   return { passed, failed: checks.length - passed, checks };
 }
 
+export function ensureCompanyBrainEvalBaseline(userId: string): {
+  sources: number;
+  graphNodes: number;
+  skills: number;
+  schedulerEnabled: boolean;
+} {
+  return mutateUser(userId, (state) => {
+    const now = nowIso();
+    const ensureSource = (type: SourceType, config: Record<string, unknown>): void => {
+      const existing = state.sources.find((s) => s.type === type);
+      if (existing) {
+        existing.enabled = true;
+        existing.updatedAt = now;
+        existing.config = { ...existing.config, ...config };
+        return;
+      }
+      state.sources.push({
+        id: randomUUID(),
+        userId,
+        type,
+        enabled: true,
+        createdAt: now,
+        updatedAt: now,
+        config,
+      });
+    };
+
+    ensureSource("github", { mode: "eval-seed" });
+    ensureSource("notion", { mode: "eval-seed" });
+    ensureSource("local_files", { mode: "eval-seed" });
+    ensureSource("support", { provider: "zendesk", mode: "eval-seed" });
+    ensureSource("crm", { provider: "hubspot", mode: "eval-seed" });
+    ensureSource("db", { provider: "postgres", mode: "eval-seed" });
+
+    if (state.graph.nodes.length === 0) {
+      state.graph.nodes = [
+        {
+          id: "team:support_team",
+          type: "team",
+          label: "support team",
+          confidence: 0.82,
+          evidenceMemoryIds: ["eval-seed"],
+          sourceTypes: ["support"],
+          firstSeenAt: now,
+          lastSeenAt: now,
+          attributes: { seed: true },
+        },
+        {
+          id: "policy:refund_policy",
+          type: "policy",
+          label: "refund policy",
+          confidence: 0.84,
+          evidenceMemoryIds: ["eval-seed"],
+          sourceTypes: ["support", "crm"],
+          firstSeenAt: now,
+          lastSeenAt: now,
+          attributes: { seed: true },
+        },
+        {
+          id: "runbook:oncall_handoff",
+          type: "runbook",
+          label: "oncall handoff runbook",
+          confidence: 0.8,
+          evidenceMemoryIds: ["eval-seed"],
+          sourceTypes: ["github", "notion"],
+          firstSeenAt: now,
+          lastSeenAt: now,
+          attributes: { seed: true },
+        },
+      ];
+      state.graph.edges = [
+        {
+          id: randomUUID(),
+          from: "team:support_team",
+          to: "policy:refund_policy",
+          relation: "governed_by",
+          confidence: 0.79,
+          evidenceMemoryIds: ["eval-seed"],
+          firstSeenAt: now,
+          lastSeenAt: now,
+        },
+        {
+          id: randomUUID(),
+          from: "runbook:oncall_handoff",
+          to: "team:support_team",
+          relation: "decides_for",
+          confidence: 0.76,
+          evidenceMemoryIds: ["eval-seed"],
+          firstSeenAt: now,
+          lastSeenAt: now,
+        },
+      ];
+      state.graph.updatedAt = now;
+    }
+
+    if (state.skills.items.length === 0) {
+      state.skills.items = [
+        {
+          id: "skill:incident_triage_seed",
+          title: "Incident triage with policy and handoff",
+          body:
+            "Use support + crm context, apply refund policy, then handoff through the oncall runbook with approval.",
+          confidence: 0.81,
+          provenance: ["eval-seed:graph"],
+          requiredApprovals: ["admin", "operator"],
+          riskLevel: "medium",
+          executionConstraints: [
+            "Require policy validation before external action",
+            "Log audit evidence for each workflow step",
+          ],
+          tests: ["incident-response", "refund-decision", "oncall-handoff"],
+        },
+      ];
+      state.skills.updatedAt = now;
+    }
+
+    state.scheduler.enabled = true;
+    state.scheduler.lastTickAt = now;
+    state.scheduler.lastError = null;
+    if (!state.scheduler.intervalSeconds || state.scheduler.intervalSeconds <= 0) {
+      state.scheduler.intervalSeconds = 300;
+    }
+
+    state.sourceEvents = state.sourceEvents.filter((event) => event.status !== "dead_letter");
+
+    return {
+      sources: state.sources.length,
+      graphNodes: state.graph.nodes.length,
+      skills: state.skills.items.length,
+      schedulerEnabled: state.scheduler.enabled,
+    };
+  });
+}
+
 export function bootstrapCompanyBrainRuntime(defaultIntervalSeconds = 300): {
   restoredSchedulers: number;
   totalUsers: number;

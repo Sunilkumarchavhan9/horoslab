@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { runEvalHarness } from "../lib/companyBrain/platform";
+import { ensureCompanyBrainEvalBaseline, runEvalHarness } from "../lib/companyBrain/platform";
 import { existsSync, readFileSync } from "fs";
 import { mkdirSync, writeFileSync } from "fs";
 import path from "path";
@@ -24,6 +24,13 @@ function isStrictMode(): boolean {
   return process.env.COMPANY_BRAIN_GATE_STRICT === "true";
 }
 
+function shouldBootstrapEvalBaseline(strictMode: boolean): boolean {
+  const raw = process.env.COMPANY_BRAIN_GATE_BOOTSTRAP_BASELINE;
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  return strictMode || process.env.GITHUB_ACTIONS === "true";
+}
+
 type Scenario = {
   id: string;
   name: string;
@@ -45,6 +52,13 @@ function loadScenarios(): Scenario[] {
 async function main(): Promise<void> {
   const userId = process.env.COMPANY_BRAIN_EVAL_USER_ID || "company_brain_gate_user";
   const strictMode = isStrictMode();
+  const bootstrapBaseline = shouldBootstrapEvalBaseline(strictMode);
+  if (bootstrapBaseline) {
+    const seeded = ensureCompanyBrainEvalBaseline(userId);
+    console.log(
+      `[CompanyBrain Gate] baseline seeded user=${userId} sources=${seeded.sources} graphNodes=${seeded.graphNodes} skills=${seeded.skills} scheduler=${seeded.schedulerEnabled}`,
+    );
+  }
   const threshold = process.env.COMPANY_BRAIN_EVAL_MIN_SCORE
     ? parseThreshold()
     : strictMode ? 90 : 0;
