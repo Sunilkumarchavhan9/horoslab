@@ -1,6 +1,7 @@
 import "dotenv/config";
-import { runEvalHarness } from "../lib/companyBrain/platform";
+import { ensureCompanyBrainEvalBaseline, runEvalHarness } from "../lib/companyBrain/platform";
 import { existsSync, readFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "fs";
 import path from "path";
 
 function parseThreshold(): number {
@@ -21,6 +22,13 @@ function parseScenarioThreshold(): number {
 
 function isStrictMode(): boolean {
   return process.env.COMPANY_BRAIN_GATE_STRICT === "true";
+}
+
+function shouldBootstrapEvalBaseline(strictMode: boolean): boolean {
+  const raw = process.env.COMPANY_BRAIN_GATE_BOOTSTRAP_BASELINE;
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  return strictMode || process.env.GITHUB_ACTIONS === "true";
 }
 
 type Scenario = {
@@ -44,6 +52,13 @@ function loadScenarios(): Scenario[] {
 async function main(): Promise<void> {
   const userId = process.env.COMPANY_BRAIN_EVAL_USER_ID || "company_brain_gate_user";
   const strictMode = isStrictMode();
+  const bootstrapBaseline = shouldBootstrapEvalBaseline(strictMode);
+  if (bootstrapBaseline) {
+    const seeded = ensureCompanyBrainEvalBaseline(userId);
+    console.log(
+      `[CompanyBrain Gate] baseline seeded user=${userId} sources=${seeded.sources} graphNodes=${seeded.graphNodes} skills=${seeded.skills} scheduler=${seeded.schedulerEnabled}`,
+    );
+  }
   const threshold = process.env.COMPANY_BRAIN_EVAL_MIN_SCORE
     ? parseThreshold()
     : strictMode ? 90 : 0;
@@ -84,6 +99,39 @@ async function main(): Promise<void> {
   const checkFailed = failedChecks.length > 0;
   const scenarioFailed = scenarioResults.length > 0 && scenarioPassRate < scenarioThreshold;
   const strictScenarioMissing = strictMode && scenarios.length === 0;
+  const passed = !(strictMode
+    ? (scoreFailed || checkFailed || scenarioFailed || strictScenarioMissing)
+    : (scoreFailed || scenarioFailed));
+
+  const reportPath = process.env.COMPANY_BRAIN_GATE_REPORT_PATH
+    ? path.resolve(process.cwd(), process.env.COMPANY_BRAIN_GATE_REPORT_PATH)
+    : path.resolve(process.cwd(), "data/eval/reports/company-brain-gate-latest.json");
+  try {
+    mkdirSync(path.dirname(reportPath), { recursive: true });
+    writeFileSync(
+      reportPath,
+      JSON.stringify(
+        {
+          at: new Date().toISOString(),
+          userId,
+          strictMode,
+          threshold,
+          scenarioThreshold,
+          score,
+          scenarioPassRate,
+          passed,
+          checks: evalResult.checks,
+          scenarioResults,
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+    console.log(`[CompanyBrain Gate] report=${reportPath}`);
+  } catch (error) {
+    console.warn(`[CompanyBrain Gate] unable to write report: ${error instanceof Error ? error.message : String(error)}`);
+  }
 
   if (strictMode && (scoreFailed || checkFailed || scenarioFailed || strictScenarioMissing)) {
     console.error("[CompanyBrain Gate] FAILED (strict mode)");

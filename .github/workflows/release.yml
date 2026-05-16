@@ -48,6 +48,15 @@ jobs:
       - name: Company Brain Gate (Strict)
         env:
           COMPANY_BRAIN_GATE_STRICT: "true"
+          COMPANY_BRAIN_GATE_BOOTSTRAP_BASELINE: "true"
           COMPANY_BRAIN_EVAL_MIN_SCORE: "90"
           COMPANY_BRAIN_SCENARIO_MIN_PASS_RATE: "100"
+          COMPANY_BRAIN_GATE_REPORT_PATH: "data/eval/reports/company-brain-gate-release.json"
         run: npm run eval:company-brain:gate
+
+      - name: Upload Company Brain Gate Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: company-brain-gate-release-report
+          path: data/eval/reports/company-brain-gate-release.json

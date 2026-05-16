@@ -2,6 +2,7 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
   compileSkillsV2,
+  getGraph,
   enqueueJob,
   getStatus,
   listActions,
@@ -141,6 +142,10 @@ companyBrainRouter.post("/scheduler/stop", asyncHandler(async (req, res) => {
 companyBrainRouter.post("/graph/rebuild", asyncHandler(async (req, res) => {
   const result = await rebuildGraph(req.authUserId);
   res.json(result);
+}));
+
+companyBrainRouter.get("/graph", asyncHandler(async (req, res) => {
+  res.json(getGraph(req.authUserId));
 }));
 
 companyBrainRouter.post("/skills/compile", asyncHandler(async (req, res) => {
