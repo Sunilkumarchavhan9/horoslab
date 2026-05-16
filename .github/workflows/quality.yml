@@ -45,6 +45,9 @@ jobs:
       - name: Benchmark Report Gate
         run: npm run eval:benchmark
 
+      - name: Company Brain Scenario Dataset Gate
+        run: npm run eval:company-brain:scenario-gate
+
       - name: Company Brain Gate
         env:
           COMPANY_BRAIN_GATE_STRICT: "true"

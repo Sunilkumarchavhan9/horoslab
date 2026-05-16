@@ -26,6 +26,7 @@
     "eval:benchmark:gate:preview": "tsx scripts/benchmark-gate.ts --profile=preview",
     "eval:benchmark:gate:prod": "tsx scripts/benchmark-gate.ts --profile=prod",
     "eval:company-brain:gate": "tsx scripts/eval-company-brain-gate.ts",
+    "eval:company-brain:scenario-gate": "tsx scripts/check-company-brain-scenarios.ts",
     "ops:check:observability": "tsx scripts/check-observability-env.ts",
     "ops:check:observability:backend": "tsx scripts/check-observability-env.ts",
     "ops:check:observability:frontend": "tsx scripts/check-observability-env-frontend.ts",
