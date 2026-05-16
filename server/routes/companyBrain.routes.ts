@@ -11,6 +11,7 @@ import {
   processQueueOnce,
   rebuildGraph,
   requestAction,
+  simulateAction,
   reviewAction,
   runEvalHarness,
   startScheduler,
@@ -166,6 +167,17 @@ companyBrainRouter.post("/actions/request", asyncHandler(async (req, res) => {
   }
   const action = requestAction(req.authUserId, name, payload);
   res.json({ action });
+}));
+
+companyBrainRouter.post("/actions/simulate", asyncHandler(async (req, res) => {
+  const name = typeof req.body?.name === "string" ? req.body.name : "";
+  const payload = req.body && typeof req.body.payload === "object" ? req.body.payload as Record<string, unknown> : {};
+  if (!name) {
+    res.status(400).json({ error: "name is required" });
+    return;
+  }
+  const simulation = simulateAction(req.authUserId, name, payload);
+  res.json({ simulation });
 }));
 
 companyBrainRouter.post("/actions/review", asyncHandler(async (req, res) => {
