@@ -2063,6 +2063,51 @@ export function listWorkers(userId: string): UserState["sre"]["workers"] {
   return mutateUser(userId, (state) => state.sre.workers);
 }
 
+export function simulateAction(
+  userId: string,
+  name: string,
+  payload: Record<string, unknown>,
+): {
+  name: string;
+  risk: "low" | "medium" | "high";
+  requiredApprovals: Array<"owner" | "admin" | "operator">;
+  executionConstraints: string[];
+  complianceBlocked: boolean;
+  complianceBlockReason: string | null;
+  autoExecutable: boolean;
+} {
+  ensureScope(userId, "actions.execute");
+  const source = sourceTypeFromActionName(name);
+  return mutateUser(userId, (state) => {
+    const risk = inferRisk(name, payload);
+    const policy = state.governance.riskPolicy[risk];
+    const role = getRoleForUser(state, userId);
+    const requiredApprovals = policy.requiredApprovals;
+    const executionConstraints = inferExecutionConstraints(name, risk);
+
+    let complianceBlockReason: string | null = null;
+    if (source) {
+      const sourcePolicy = state.compliance.sourcePolicies[source];
+      if (sourcePolicy.redactPII && payloadHasSensitivePII(payload)) {
+        complianceBlockReason = `Compliance block: PII-like payload detected for source=${source} with redactPII=true`;
+      }
+    }
+
+    const canAutoApprove = role !== "viewer" && (requiredApprovals.includes(role) || role === "owner");
+    const autoExecutable = policy.autoExecute && canAutoApprove && !complianceBlockReason;
+
+    return {
+      name,
+      risk,
+      requiredApprovals,
+      executionConstraints,
+      complianceBlocked: Boolean(complianceBlockReason),
+      complianceBlockReason,
+      autoExecutable,
+    };
+  });
+}
+
 export function recoverFailedQueueJobs(userId: string): { recovered: number } {
   ensureScope(userId, "governance.policy.write");
   const recovered = mutateUser(userId, (state) => {
