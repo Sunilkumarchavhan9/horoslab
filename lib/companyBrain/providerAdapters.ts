@@ -207,7 +207,40 @@ export async function fetchCrmProvider(config: SourceConfig): Promise<ProviderFe
     };
   }
 
-  throw new Error("unsupported crm provider; use hubspot");
+  if (provider === "salesforce") {
+    const baseUrl = asString(config.apiUrl).trim();
+    if (!baseUrl) {
+      throw new Error("salesforce requires apiUrl");
+    }
+    const params = new URLSearchParams();
+    if (!baseUrl.includes("nextRecordsUrl")) {
+      params.set("limit", "50");
+      if (sinceEpochMs > 0) params.set("since", new Date(sinceEpochMs).toISOString());
+      if (cursor) params.set("cursor", cursor);
+    }
+    const response = await fetch(
+      baseUrl.includes("nextRecordsUrl") ? baseUrl : withQuery(baseUrl, params),
+      { headers: authHeaders(config, freshAccessToken) },
+    );
+    if (!response.ok) throw new Error(`salesforce fetch failed (${response.status})`);
+    const payload = await response.json() as {
+      records?: Array<Record<string, unknown>>;
+      nextRecordsUrl?: string;
+      done?: boolean;
+    };
+    const items = Array.isArray(payload.records) ? payload.records : [];
+    const nextCursor = typeof payload.nextRecordsUrl === "string" && payload.nextRecordsUrl
+      ? payload.nextRecordsUrl
+      : undefined;
+    return {
+      items,
+      ...(nextCursor ? { nextCursor } : {}),
+      checkpointEpochMs: extractItemCheckpoint(items, Date.now()),
+      ...(Object.keys(tokenPatch).length ? { configPatch: tokenPatch } : {}),
+    };
+  }
+
+  throw new Error("unsupported crm provider; use hubspot or salesforce");
 }
 
 export async function fetchDbProvider(config: SourceConfig): Promise<ProviderFetchResult> {
