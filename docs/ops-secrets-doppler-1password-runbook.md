@@ -169,6 +169,7 @@ Rotation sequence:
 - Confirm all required env present in Doppler `prod`
 - Confirm DigitalOcean env matches Doppler
 - Confirm Sentry and Datadog ingestion active
+- Run `npm run ops:check:observability` before deploy
 
 ## Incident Response (Secrets Leak)
 
@@ -200,3 +201,6 @@ This runbook is considered implemented when:
    - Datadog
 4. Freeze manual ad-hoc env edits in DigitalOcean (except break-glass incident use).
 5. Route all secret updates through: Doppler change -> 1Password note -> redeploy.
+6. Use managed runs for local/prod-safe testing:
+   - `npm run ops:doppler:dev:full`
+   - `npm run ops:check:observability`

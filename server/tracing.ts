@@ -5,9 +5,9 @@ const datadogEnabled =
   (process.env.NODE_ENV === "production" || process.env.DD_ENV === "production");
 
 if (datadogEnabled) {
-  const agentUrl =
-    process.env.DD_TRACE_AGENT_URL ||
-    `${process.env.DD_AGENT_HOST || "127.0.0.1"}:${process.env.DD_TRACE_AGENT_PORT || "8126"}`;
+  const rawAgentUrl = process.env.DD_TRACE_AGENT_URL?.trim();
+  const defaultAgentUrl = `http://${process.env.DD_AGENT_HOST || "127.0.0.1"}:${process.env.DD_TRACE_AGENT_PORT || "8126"}`;
+  const agentUrl = rawAgentUrl || defaultAgentUrl;
   tracer.init({
     env: process.env.DD_ENV || process.env.NODE_ENV,
     service: process.env.DD_SERVICE || "memoryos-backend",
@@ -15,6 +15,7 @@ if (datadogEnabled) {
     logInjection: true,
     runtimeMetrics: true,
     profiling: process.env.DD_PROFILING_ENABLED === "true",
+    url: agentUrl,
   });
   console.log(`[Datadog] tracing enabled service=${process.env.DD_SERVICE || "memoryos-backend"} env=${process.env.DD_ENV || process.env.NODE_ENV} agent=${agentUrl}`);
 } else {
