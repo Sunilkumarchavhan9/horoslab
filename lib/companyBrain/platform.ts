@@ -676,6 +676,7 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
     items: Array<Record<string, unknown>>;
     nextCursor?: string;
     checkpointEpochMs: number;
+    configPatch?: Record<string, unknown>;
   };
   if (provider) {
     payload = sourceType === "support"
@@ -742,6 +743,7 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
     recentItemHashes: [...nextHashes, ...recentHashes].slice(0, 400),
     provider,
     lastSyncedAt: nowIso(),
+    ...(payload.configPatch ?? {}),
   });
 
   return accepted;
