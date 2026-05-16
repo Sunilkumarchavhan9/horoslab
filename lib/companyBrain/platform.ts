@@ -740,19 +740,15 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
     // If no pull provider configured, consume queued push/webhook events.
     return processQueuedSourceEvents(userId, sourceType);
   }
+  const MAX_PAGES = Number(process.env.COMPANY_BRAIN_PULL_SYNC_MAX_PAGES ?? 5);
+  const MAX_ITEMS = Number(process.env.COMPANY_BRAIN_PULL_SYNC_MAX_ITEMS ?? 200);
   let payload: {
     items: Array<Record<string, unknown>>;
     nextCursor?: string;
     checkpointEpochMs: number;
     configPatch?: Record<string, unknown>;
   };
-  if (provider) {
-    payload = sourceType === "support"
-      ? await fetchSupportProvider(source.config)
-      : sourceType === "crm"
-        ? await fetchCrmProvider(source.config)
-        : await fetchDbProvider(source.config);
-  } else {
+  const fetchGenericPage = async (): Promise<typeof payload> => {
     const cursor = typeof source.config.cursor === "string" ? source.config.cursor : "";
     const sinceEpochMs = typeof source.config.lastCheckpointEpochMs === "number" ? source.config.lastCheckpointEpochMs : 0;
     const params = new URLSearchParams();
@@ -775,25 +771,52 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
       nextCursor?: string | null;
       checkpointEpochMs?: number;
     };
-    payload = {
+    return {
       items: Array.isArray(generic.items) ? generic.items : [],
       ...(typeof generic.nextCursor === "string" ? { nextCursor: generic.nextCursor } : {}),
       checkpointEpochMs: typeof generic.checkpointEpochMs === "number" ? generic.checkpointEpochMs : Date.now(),
     };
+  };
+
+  const items: Array<Record<string, unknown>> = [];
+  let pageCount = 0;
+  let nextCursor = typeof source.config.cursor === "string" ? source.config.cursor : "";
+  let maxCheckpointEpochMs = typeof source.config.lastCheckpointEpochMs === "number" ? source.config.lastCheckpointEpochMs : 0;
+  let mergedPatch: Record<string, unknown> = {};
+
+  while (pageCount < MAX_PAGES && items.length < MAX_ITEMS) {
+    if (nextCursor) {
+      source.config.cursor = nextCursor;
+    } else if (pageCount > 0) {
+      // Do not restart from first page in the same sync once cursor chain ended.
+      break;
+    }
+    payload = provider
+      ? sourceType === "support"
+        ? await fetchSupportProvider(source.config)
+        : sourceType === "crm"
+          ? await fetchCrmProvider(source.config)
+          : await fetchDbProvider(source.config)
+      : await fetchGenericPage();
+    pageCount += 1;
+    items.push(...payload.items);
+    maxCheckpointEpochMs = Math.max(maxCheckpointEpochMs, payload.checkpointEpochMs);
+    mergedPatch = { ...mergedPatch, ...(payload.configPatch ?? {}) };
+    const candidate = typeof payload.nextCursor === "string" ? payload.nextCursor : "";
+    if (!candidate || candidate === nextCursor) {
+      nextCursor = "";
+      break;
+    }
+    nextCursor = candidate;
   }
 
-  const items = payload.items;
   const recentHashes = Array.isArray(source.config.recentItemHashes)
     ? source.config.recentItemHashes.filter((value): value is string => typeof value === "string")
     : [];
   const seen = new Set(recentHashes);
   const nextHashes: string[] = [];
   let accepted = 0;
-  let maxCheckpointEpochMs = Math.max(
-    typeof source.config.lastCheckpointEpochMs === "number" ? source.config.lastCheckpointEpochMs : 0,
-    payload.checkpointEpochMs,
-  );
-  for (const item of items.slice(0, 40)) {
+  for (const item of items.slice(0, MAX_ITEMS)) {
     const fingerprint = stablePullItemFingerprint(sourceType, item);
     if (seen.has(fingerprint)) continue;
     seen.add(fingerprint);
@@ -806,12 +829,12 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
   }
 
   updateSourceConfig(userId, sourceType, {
-    cursor: typeof payload.nextCursor === "string" ? payload.nextCursor : "",
+    cursor: nextCursor,
     lastCheckpointEpochMs: maxCheckpointEpochMs,
     recentItemHashes: [...nextHashes, ...recentHashes].slice(0, 400),
     provider,
     lastSyncedAt: nowIso(),
-    ...(payload.configPatch ?? {}),
+    ...mergedPatch,
   });
 
   return accepted;
