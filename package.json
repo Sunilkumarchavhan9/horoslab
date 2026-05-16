@@ -27,6 +27,7 @@
     "eval:benchmark:gate:prod": "tsx scripts/benchmark-gate.ts --profile=prod",
     "eval:company-brain:gate": "tsx scripts/eval-company-brain-gate.ts",
     "ops:check:observability": "tsx scripts/check-observability-env.ts",
+    "ops:doppler:bootstrap": "powershell -ExecutionPolicy Bypass -File scripts/ops/doppler-bootstrap.ps1",
     "ops:doppler:dev": "doppler run -- npm run dev",
     "ops:doppler:dev:full": "doppler run -- npm run dev:full",
     "ops:doppler:test": "doppler run -- npm run test",

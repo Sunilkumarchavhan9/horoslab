@@ -39,6 +39,9 @@ Recommended naming:
 - `memoryos_backend_prod`
 - `memoryos_frontend_prod`
 
+Repo helper:
+- `npm run ops:doppler:bootstrap`
+
 ### 2) Add secrets to Doppler
 
 Backend (minimum):
@@ -133,6 +136,10 @@ Rule:
 - Emergency rollback instructions
 
 Do not store only in chat history.
+
+Use templates from repo:
+- Rotation log CSV: `docs/templates/1password-rotation-log.csv`
+- Emergency runbook: `docs/templates/1password-emergency-runbook.md`
 
 ### 3) Rotation policy
 
