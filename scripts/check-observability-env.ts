@@ -23,7 +23,7 @@ const checks: Check[] = [
 ];
 
 let failed = 0;
-console.log("Observability env check:\n");
+console.log("Observability env check (backend):\n");
 for (const c of checks) {
   const status = c.pass ? "OK" : c.required ? "MISSING" : "SKIP";
   const suffix = c.notes ? ` (${c.notes})` : "";
@@ -33,8 +33,8 @@ for (const c of checks) {
 
 console.log("");
 if (failed > 0) {
-  console.error(`Missing ${failed} required observability env value(s).`);
+  console.error(`Missing ${failed} required backend observability env value(s).`);
   process.exit(1);
 }
 
-console.log("All required observability env values are present.");
+console.log("All required backend observability env values are present.");
