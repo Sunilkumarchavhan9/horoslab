@@ -10,6 +10,11 @@ export interface GitHubSyncOptions {
   recentItemKeys?: string[];
 }
 
+const GITHUB_REPO_PAGE_SIZE = Math.max(1, Math.min(100, Number(process.env.GITHUB_SYNC_REPO_PAGE_SIZE ?? 20)));
+const GITHUB_REPO_MAX_PAGES = Math.max(1, Number(process.env.GITHUB_SYNC_REPO_MAX_PAGES ?? 3));
+const GITHUB_ITEM_PAGE_SIZE = Math.max(1, Math.min(100, Number(process.env.GITHUB_SYNC_ITEM_PAGE_SIZE ?? 20)));
+const GITHUB_ITEM_MAX_PAGES = Math.max(1, Number(process.env.GITHUB_SYNC_ITEM_MAX_PAGES ?? 3));
+
 /**
  * GitHub integration client for fetching and processing real developer signals.
  */
@@ -22,104 +27,131 @@ export const GitHubClient = {
     const memoriesExtracted = [];
     const seen = new Set(options.recentItemKeys ?? []);
     const dedupeKeys: string[] = [];
+    const sinceMs = options.since ? new Date(options.since).getTime() : 0;
+    let newestCheckpointMs = sinceMs;
 
     try {
-      // 1. Fetch recent repositories
-      const { data: repos } = await octokit.repos.listForAuthenticatedUser({
-        sort: "updated",
-        per_page: 5,
-      });
-
-      for (const repo of repos) {
-        console.log(`[GitHubClient] Syncing repo: ${repo.full_name}`);
-
-        // 2. Fetch recent merged PRs
-        const { data: prs } = await octokit.pulls.list({
-          owner: repo.owner.login,
-          repo: repo.name,
-          state: "closed",
+      for (let repoPage = 1; repoPage <= GITHUB_REPO_MAX_PAGES; repoPage += 1) {
+        const { data: repos } = await octokit.repos.listForAuthenticatedUser({
           sort: "updated",
-          direction: "desc",
-          per_page: 5,
+          per_page: GITHUB_REPO_PAGE_SIZE,
+          page: repoPage,
         });
+        if (repos.length === 0) break;
 
-        for (const pr of prs) {
-          if (!pr.merged_at) continue;
-          if (options.since && pr.updated_at && new Date(pr.updated_at).getTime() <= new Date(options.since).getTime()) continue;
-          const prKey = `github:pr:${repo.full_name}:${pr.number}`;
-          if (seen.has(prKey)) continue;
+        for (const repo of repos) {
+          console.log(`[GitHubClient] Syncing repo: ${repo.full_name}`);
 
-          const content = `GitHub PR ${pr.title}: ${pr.body || "No description provided."}\nMerged at: ${pr.merged_at}`;
-          const candidates = extractMemory({
-            userId: options.userId,
-            message: content,
-          });
-
-          const now = new Date().toISOString();
-          for (const candidate of candidates) {
-            await upsertRecentMemory({
-              ...candidate,
-              id: randomUUID(),
-              source: "chat", // Only allowed types: chat, system, import
-              status: "active",
-              createdAt: now,
-              updatedAt: now,
-              importanceScore: 0.8,
-              confidence: 0.9,
-              evidenceCount: 1,
-              developerSignals: candidate.developerSignals,
+          // 2. Fetch recent merged PRs with pagination.
+          let reachedPrDeltaBoundary = false;
+          for (let prPage = 1; prPage <= GITHUB_ITEM_MAX_PAGES; prPage += 1) {
+            const { data: prs } = await octokit.pulls.list({
+              owner: repo.owner.login,
+              repo: repo.name,
+              state: "closed",
+              sort: "updated",
+              direction: "desc",
+              per_page: GITHUB_ITEM_PAGE_SIZE,
+              page: prPage,
             });
-            memoriesExtracted.push(candidate);
+            if (prs.length === 0) break;
+            for (const pr of prs) {
+              if (!pr.merged_at) continue;
+              const updatedMs = pr.updated_at ? new Date(pr.updated_at).getTime() : 0;
+              if (sinceMs > 0 && updatedMs > 0 && updatedMs <= sinceMs) {
+                reachedPrDeltaBoundary = true;
+                break;
+              }
+              if (updatedMs > newestCheckpointMs) newestCheckpointMs = updatedMs;
+
+              const prKey = `github:pr:${repo.full_name}:${pr.number}`;
+              if (seen.has(prKey)) continue;
+
+              const content = `GitHub PR ${pr.title}: ${pr.body || "No description provided."}\nMerged at: ${pr.merged_at}`;
+              const candidates = extractMemory({
+                userId: options.userId,
+                message: content,
+              });
+
+              const now = new Date().toISOString();
+              for (const candidate of candidates) {
+                await upsertRecentMemory({
+                  ...candidate,
+                  id: randomUUID(),
+                  source: "chat", // Only allowed types: chat, system, import
+                  status: "active",
+                  createdAt: now,
+                  updatedAt: now,
+                  importanceScore: 0.8,
+                  confidence: 0.9,
+                  evidenceCount: 1,
+                  developerSignals: candidate.developerSignals,
+                });
+                memoriesExtracted.push(candidate);
+              }
+              dedupeKeys.push(prKey);
+            }
+            if (reachedPrDeltaBoundary) break;
           }
-          dedupeKeys.push(prKey);
-        }
 
-        // 3. Fetch recent closed issues
-        const { data: issues } = await octokit.issues.listForRepo({
-          owner: repo.owner.login,
-          repo: repo.name,
-          state: "closed",
-          sort: "updated",
-          direction: "desc",
-          per_page: 5,
-        });
-
-        for (const issue of issues) {
-          if (issue.pull_request) continue; // Skip PRs (already handled)
-          if (options.since && issue.updated_at && new Date(issue.updated_at).getTime() <= new Date(options.since).getTime()) continue;
-          const issueKey = `github:issue:${repo.full_name}:${issue.number}`;
-          if (seen.has(issueKey)) continue;
-
-          const content = `GitHub Issue ${issue.title}: ${issue.body || "No description provided."}\nClosed at: ${issue.closed_at}`;
-          const candidates = extractMemory({
-            userId: options.userId,
-            message: content,
-          });
-
-          const now = new Date().toISOString();
-          for (const candidate of candidates) {
-            await upsertRecentMemory({
-              ...candidate,
-              id: randomUUID(),
-              source: "chat", // Only allowed types: chat, system, import
-              status: "active",
-              createdAt: now,
-              updatedAt: now,
-              importanceScore: 0.8,
-              confidence: 0.9,
-              evidenceCount: 1,
-              developerSignals: candidate.developerSignals,
+          // 3. Fetch recent closed issues with pagination.
+          let reachedIssueDeltaBoundary = false;
+          for (let issuePage = 1; issuePage <= GITHUB_ITEM_MAX_PAGES; issuePage += 1) {
+            const { data: issues } = await octokit.issues.listForRepo({
+              owner: repo.owner.login,
+              repo: repo.name,
+              state: "closed",
+              sort: "updated",
+              direction: "desc",
+              per_page: GITHUB_ITEM_PAGE_SIZE,
+              page: issuePage,
             });
-            memoriesExtracted.push(candidate);
+            if (issues.length === 0) break;
+            for (const issue of issues) {
+              if (issue.pull_request) continue; // Skip PRs (already handled)
+              const updatedMs = issue.updated_at ? new Date(issue.updated_at).getTime() : 0;
+              if (sinceMs > 0 && updatedMs > 0 && updatedMs <= sinceMs) {
+                reachedIssueDeltaBoundary = true;
+                break;
+              }
+              if (updatedMs > newestCheckpointMs) newestCheckpointMs = updatedMs;
+
+              const issueKey = `github:issue:${repo.full_name}:${issue.number}`;
+              if (seen.has(issueKey)) continue;
+
+              const content = `GitHub Issue ${issue.title}: ${issue.body || "No description provided."}\nClosed at: ${issue.closed_at}`;
+              const candidates = extractMemory({
+                userId: options.userId,
+                message: content,
+              });
+
+              const now = new Date().toISOString();
+              for (const candidate of candidates) {
+                await upsertRecentMemory({
+                  ...candidate,
+                  id: randomUUID(),
+                  source: "chat", // Only allowed types: chat, system, import
+                  status: "active",
+                  createdAt: now,
+                  updatedAt: now,
+                  importanceScore: 0.8,
+                  confidence: 0.9,
+                  evidenceCount: 1,
+                  developerSignals: candidate.developerSignals,
+                });
+                memoriesExtracted.push(candidate);
+              }
+              dedupeKeys.push(issueKey);
+            }
+            if (reachedIssueDeltaBoundary) break;
           }
-          dedupeKeys.push(issueKey);
         }
       }
 
       return {
         success: true,
         extractedCount: memoriesExtracted.length,
-        checkpoint: new Date().toISOString(),
+        checkpoint: newestCheckpointMs > 0 ? new Date(newestCheckpointMs).toISOString() : new Date().toISOString(),
         dedupeKeys,
       };
     } catch (error) {
