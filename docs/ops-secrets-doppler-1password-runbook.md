@@ -188,3 +188,15 @@ This runbook is considered implemented when:
 - DigitalOcean deploys are updated only from managed secret sources.
 - No real secrets are committed to repo.
 
+## Immediate Next Actions (Today)
+
+1. Create Doppler project `memoryos` with configs: `dev`, `staging`, `prod`.
+2. Import current DigitalOcean backend/frontend env values into Doppler `prod`.
+3. Save recovery ownership docs in 1Password for:
+   - DigitalOcean
+   - Cloudflare
+   - Polar
+   - Sentry
+   - Datadog
+4. Freeze manual ad-hoc env edits in DigitalOcean (except break-glass incident use).
+5. Route all secret updates through: Doppler change -> 1Password note -> redeploy.

@@ -42,6 +42,7 @@ Owner: MemoryOS core build
   - Azure VM Datadog Agent bridge for backend trace intake
 - Secrets ops runbook added:
   - `docs/ops-secrets-doppler-1password-runbook.md`
+ - Secrets ops next-actions added (Doppler + 1Password execution steps).
 
 ## In Progress
 - End-to-end product refactor from “feature dashboard” to “continuity operating system”
