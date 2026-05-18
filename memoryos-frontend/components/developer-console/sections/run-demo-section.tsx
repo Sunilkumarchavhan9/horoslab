@@ -1894,7 +1894,6 @@ export function RunDemoSection() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Current Understanding</p>
                 <div className="mt-1 space-y-1">
                   <p className="text-[13px]"><span className="font-medium text-foreground">Goal:</span> <span className="text-muted-foreground">{projectState.systemGoal ? "Defined" : "Not defined"}</span></p>
-                  <p className="text-[13px]"><span className="font-medium text-foreground">Status:</span> <span className="text-muted-foreground">{projectState.systemGoal ? "Ready for planning" : "Waiting for project goal"}</span></p>
                 </div>
               </div>
             </div>

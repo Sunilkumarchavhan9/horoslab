@@ -38,6 +38,9 @@ import { SettingsSection } from "@/components/developer-console/sections/setting
 import { TeamSection } from "@/components/developer-console/sections/team-section";
 import { CompanyBrainSection } from "@/components/developer-console/sections/company-brain-section";
 import { Icon, type IconName } from "@/components/ui/icon";
+import { ConsoleNavSearch } from "@/components/developer-console/console-ui";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 import {
   clearStoredMemoryTokens,
@@ -2023,56 +2026,46 @@ export function DeveloperConsoleExperience() {
 
   if (step === "dashboard") {
     return (
-      <div className="developer-console-root dark h-dvh overflow-hidden bg-background text-foreground lg:grid lg:grid-cols-[268px_1fr]">
-        <aside className="flex flex-col overflow-hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground lg:h-dvh lg:border-b-0 lg:border-r lg:border-r-sidebar-border">
-          <div className="flex items-center justify-between border-b border-sidebar-border px-4 pt-[clamp(9px,1vh,11px)] pb-[clamp(14px,1.5vh,18px)] sm:px-5 lg:px-4">
-            <Link href="/">
-              <div className="origin-left scale-100 w-full max-w-[210px]">
-                <MemoryStarLogo tone="white" />
-              </div>
+      <div className="developer-console-root dark h-dvh overflow-hidden bg-background text-foreground lg:grid lg:grid-cols-[260px_1fr]">
+        <aside className="flex flex-col overflow-hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground lg:h-dvh lg:border-b-0 lg:border-r">
+          <div className="flex items-center border-b border-sidebar-border px-4 py-4">
+            <Link href="/" className="block w-full max-w-[200px]">
+              <MemoryStarLogo tone="white" />
             </Link>
           </div>
 
-          <div className="px-4 pb-[clamp(7px,0.8vh,10px)] sm:px-5 lg:px-4 mt-5">
-            <div className="border-b border-sidebar-border pb-2">
-              <input
-                value={navSearchQuery}
-                onChange={(event) => setNavSearchQuery(event.target.value)}
-                placeholder="Search..."
-                className="w-full bg-transparent text-[14px] text-sidebar-foreground outline-none placeholder:text-muted-foreground"
-              />
-            </div>
+          <div className="px-3 py-3">
+            <ConsoleNavSearch
+              value={navSearchQuery}
+              onChange={setNavSearchQuery}
+              placeholder="Search…"
+            />
           </div>
 
-          <nav className="relative min-h-0 flex-1 space-y-[clamp(9px,1vh,13px)] overflow-y-auto px-0 pb-4 mt-4">
+          <nav className="relative min-h-0 flex-1 space-y-4 overflow-y-auto px-2 pb-4">
             {filteredDashboardNav.map((group) => (
-              <div
-                key={group.section || "main"}
-                className="px-4 sm:px-5 lg:px-4"
-              >
+              <div key={group.section || "main"}>
                 {group.section ? (
-                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  <p className="mb-1.5 px-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
                     {group.section}
                   </p>
                 ) : null}
-                <div className="space-y-[2px] -ml-4 -mr-4 lg:-ml-4 lg:-mr-4">
+                <div className="space-y-0.5">
                   {group.items.map((item) => (
                     <button
                       key={item}
                       type="button"
-                      onClick={() => {
-                        setActiveDashboardItem(item);
-                      }}
-                      className={`flex w-full items-center gap-2.5 py-[clamp(8px,0.9vh,10px)] px-4 text-left text-[14px] leading-[1.25] transition-all duration-300 ${
+                      onClick={() => setActiveDashboardItem(item)}
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors ${
                         item === activeDashboardItem
-                          ? "border-l-[3px] border-primary bg-transparent font-bold text-sidebar-foreground"
-                          : "border-l-[3px] border-transparent text-muted-foreground hover:border-sidebar-border hover:text-sidebar-foreground"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                          : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                       }`}
                       title={item}
                     >
                       <Icon
                         name={dashboardItemIcon(item)}
-                        className={`h-3.5 w-3.5 shrink-0 ${item === activeDashboardItem ? "text-sidebar-foreground" : "text-muted-foreground"}`}
+                        className={`size-4 shrink-0 ${item === activeDashboardItem ? "text-sidebar-accent-foreground" : "text-muted-foreground"}`}
                       />
                       {item}
                     </button>
@@ -2084,23 +2077,24 @@ export function DeveloperConsoleExperience() {
         </aside>
 
         <main className="flex min-w-0 flex-col overflow-hidden bg-background text-foreground">
-          <div className="border-b border-border bg-background px-4 py-[clamp(9px,1vh,11px)] sm:px-5 lg:px-6">
+          <div className="border-b border-border/80 bg-background/80 px-4 py-3 backdrop-blur-sm sm:px-5 lg:px-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="relative">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => {
                     setShowOrganizationMenu((current) => !current);
                     setShowAccountMenu(false);
                   }}
-                  className="flex items-center gap-2 rounded-[8px] px-2.5 py-1 transition hover:bg-transparent hover:text-foreground transition-colors duration-200"
+                  className="h-auto gap-2 rounded-lg px-2.5 py-1.5 text-foreground hover:bg-muted/60"
                 >
-                  <span className="text-[17px] font-semibold tracking-[-0.04em] uppercase">
-                    {currentOrganization?.name ?? "MEMORYOS"}
+                  <span className="text-base font-semibold tracking-tight">
+                    {currentOrganization?.name ?? "MemoryOS"}
                   </span>
-                  <span className="rounded-[6px] border-transparent px-2 py-0.5 text-[10px] tracking-[0.14em] text-muted-foreground">
-                    FREE
-                  </span>
+                  <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-[10px] font-medium normal-case">
+                    Free
+                  </Badge>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
@@ -2114,10 +2108,10 @@ export function DeveloperConsoleExperience() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </button>
+                </Button>
 
                 {showOrganizationMenu ? (
-                  <div className="absolute left-0 top-[calc(100%+8px)] z-20 w-[336px] overflow-hidden rounded-[8px] border border-border bg-popover text-popover-foreground shadow-lg">
+                  <div className="absolute left-0 top-[calc(100%+8px)] z-20 w-[336px] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl">
                     {organizations.map((organization) => (
                       <button
                         key={organization.id}
@@ -2153,36 +2147,32 @@ export function DeveloperConsoleExperience() {
                 ) : null}
               </div>
 
-              <div
-                className={`flex items-center gap-4 text-[13px] font-medium tracking-[0.08em] ${
-                  isLightTheme ? "text-black/70" : "text-muted-foreground"
-                }`}
-              >
-                <a href="#" className={isLightTheme ? "hover:text-black" : "hover:text-foreground"}>
-                  DOCS
-                </a>
-                <button
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" asChild className="text-muted-foreground">
+                  <a href="#">Docs</a>
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowSupportWidget(true)}
-                  className={isLightTheme ? "hover:text-black" : "hover:text-foreground"}
+                  className="text-muted-foreground"
                 >
-                  SUPPORT
-                </button>
+                  Support
+                </Button>
                 <div className="relative">
-                  <button
+                  <Button
                     type="button"
+                    variant="secondary"
+                    size="icon"
                     onClick={() => {
                       setShowAccountMenu((current) => !current);
                       setShowOrganizationMenu(false);
                     }}
-                    className={`grid h-10 w-10 place-items-center rounded-full text-[14px] font-semibold ${
-                      isLightTheme
-                        ? "bg-muted text-foreground"
-                        : "bg-secondary text-secondary-foreground"
-                    }`}
+                    className="size-9 rounded-full text-sm font-semibold"
                   >
                     {userInitial}
-                  </button>
+                  </Button>
                   {showAccountMenu ? (
                     <div
                       className={`absolute right-0 top-[calc(100%+10px)] z-20 w-[296px] overflow-hidden rounded-[8px] border shadow-lg ${

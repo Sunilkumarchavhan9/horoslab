@@ -184,12 +184,6 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Team</h1>
-          <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-            Manage team members, invitation flow, and workspace access controls for {workspaceLabel}.
-          </p>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            Status: {loading ? "Syncing team data..." : errorMessage ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
-          </p>
         </div>
 
         <div className="relative">

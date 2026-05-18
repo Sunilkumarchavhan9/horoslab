@@ -42,6 +42,10 @@ function cleanContractText(input: string): string {
   return input
     .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
     .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/,\s*"expected"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/"text"\s*:\s*/g, "")
+    .replace(/[\[\]\{\}"]/g, "")
+    .replace(/\s*,\s*/g, " · ")
     .replace(/\s{2,}/g, " ")
     .trim();
 }
@@ -54,9 +58,6 @@ function compactList(items: string[]): string {
 }
 
 export function ContractConsoleSection({ contract }: ContractConsoleSectionProps) {
-  const [status, setStatus] = useState("Syncing contract validation...");
-  const [lastUpdated, setLastUpdated] = useState<string>("-");
-  const [traceId, setTraceId] = useState<string>("-");
   const [validation, setValidation] = useState<ContractValidationResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -102,15 +103,11 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
         if (!hasMeaningfulContract) {
           if (!cancelled) {
             setValidation(null);
-            setTraceId("-");
-            setStatus("Waiting for contract input");
-            setLastUpdated(new Date().toISOString());
           }
           return;
         }
         const token = await getOrCreateMemoryToken();
         if (!token) {
-          if (!cancelled) setStatus("Missing auth token. Sign in again.");
           return;
         }
         const response = await fetch("/api/memory/contract/validate", {
@@ -128,25 +125,17 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
 
         if (!response.ok) {
           if (!cancelled) {
-            setStatus(result?.error ?? "Contract validation failed");
-            if (typeof result?.traceId === "string") {
-              setTraceId(result.traceId);
-            }
-            setLastUpdated(new Date().toISOString());
+            setValidation(null);
           }
           return;
         }
 
         if (!cancelled && result) {
           setValidation(result);
-          setTraceId(result.traceId ?? "-");
-          setLastUpdated(new Date().toISOString());
-          setStatus("Validation ready");
         }
       } catch (error) {
         if (!cancelled) {
-          setStatus(error instanceof Error ? error.message : "Contract validation failed");
-          setLastUpdated(new Date().toISOString());
+          setValidation(null);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -167,12 +156,6 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
   return (
     <section>
       <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Contract Console</h1>
-      <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-        Validate memory contract quality before execution and handoff.
-      </p>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        {loading ? "Validating contract..." : status}
-      </p>
 
       <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
         <Row label="Goal" value={cleanContractText(contract.goal) || "Missing"} />
@@ -199,10 +182,9 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
               <p key={item} className="rounded-[6px] border border-border px-2 py-1 text-[11px] text-muted-foreground">{item}</p>
             ))}
           </div>
-        ) : (
-          <p className="mt-2 text-[12px] text-muted-foreground">Awaiting live validation response...</p>
-        )}
-        <p className="mt-2 text-[10px] text-muted-foreground">Trace: {traceId} · Updated: {lastUpdated}</p>
+        ) : loading ? (
+          <p className="mt-2 text-[12px] text-muted-foreground">Validating...</p>
+        ) : null}
       </div>
     </section>
   );

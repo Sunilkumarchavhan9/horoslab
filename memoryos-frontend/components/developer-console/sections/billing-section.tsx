@@ -254,12 +254,6 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Billing</h1>
-          <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-            Manage plans, monitor usage, and review invoices for {labelWorkspace}.
-          </p>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            Status: {loading ? "Syncing billing..." : errorMessage ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
-          </p>
         </div>
       </div>
 

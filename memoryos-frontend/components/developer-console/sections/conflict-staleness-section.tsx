@@ -19,6 +19,19 @@ type ConflictQueueItem = {
   confidence: number;
 };
 
+function cleanTraceText(input: string): string {
+  if (!input) return "";
+  return input
+    .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
+    .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/,\s*"expected"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/"text"\s*:\s*/g, "")
+    .replace(/[\[\]\{\}"]/g, "")
+    .replace(/\s*,\s*/g, " · ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictStalenessSectionProps) {
   const errors = useMemo(
     () =>
@@ -58,8 +71,11 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
         setQueueError(`Queue fetch failed (${response.status})`);
         return;
       }
-      const payload = await response.json();
-      const nextItems: any[] = Array.isArray(payload?.items)
+      const payload = (await response.json()) as {
+        items?: unknown[];
+        data?: { items?: unknown[] };
+      };
+      const nextItems: unknown[] = Array.isArray(payload?.items)
         ? payload.items
         : Array.isArray(payload?.data?.items)
           ? payload.data.items
@@ -67,8 +83,14 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
       const deduped: ConflictQueueItem[] = Array.from(
         new Map(
           nextItems
-            .filter((item: any) => item && typeof item.id === "string")
-            .map((item: any) => [item.id, item as ConflictQueueItem]),
+            .filter(
+              (item): item is ConflictQueueItem =>
+                typeof item === "object" &&
+                item !== null &&
+                "id" in item &&
+                typeof (item as { id?: unknown }).id === "string",
+            )
+            .map((item) => [item.id, item]),
         ).values(),
       );
       setItems(deduped);
@@ -120,16 +142,13 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
   return (
     <section>
       <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Conflict &amp; Staleness</h1>
-      <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-        Resolve potential contradictions and stale memories before next execution.
-      </p>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <div className="rounded-[10px] border border-border bg-muted p-4">
           <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Open Loops</p>
           <ul className="mt-2 space-y-2 text-[13px] text-foreground">
             {(dedupedOpenLoops.length > 0 ? dedupedOpenLoops : ["No open loops detected"]).map((item, index) => (
-              <li key={`open-loop-${index}-${item}`} className="rounded-[6px] border border-border bg-muted px-3 py-2">{item}</li>
+              <li key={`open-loop-${index}-${item}`} className="rounded-[6px] border border-border bg-muted px-3 py-2">{cleanTraceText(item)}</li>
             ))}
           </ul>
         </div>

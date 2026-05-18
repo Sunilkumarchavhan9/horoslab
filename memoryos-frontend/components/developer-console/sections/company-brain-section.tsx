@@ -400,34 +400,17 @@ export function CompanyBrainSection() {
     <div className="space-y-3">
       <div>
         <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Company Brain</h1>
-        <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-          Generate executable company skills from live memory, incidents, decisions, and runbooks.
-        </p>
       </div>
 
       <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Thesis</p>
-        <p className="mt-2 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-          Models are ready. Company knowledge is the bottleneck. MemoryOS converts scattered operational knowledge
-          into a living map of decisions, constraints, incidents, and policies, then compiles that map into executable skills.
-        </p>
-        <div className="mt-3 grid gap-2 md:grid-cols-2">
-          <div className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground">What It Is</p>
-            <p className="mt-1 text-[12px] text-foreground">Evidence-backed skills + policy-gated execution + auditability.</p>
-          </div>
-          <div className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground">What It Is Not</p>
-            <p className="mt-1 text-[12px] text-foreground">Not a static document bot or simple keyword search.</p>
-          </div>
+        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Runtime</p>
+        <div className="mt-2 rounded-[8px] border border-border bg-muted/30 px-3 py-2 text-[12px] text-foreground">
+          Company Brain runtime
         </div>
       </div>
 
       <div className="rounded-[10px] border border-border bg-card px-4 py-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[12px] text-muted-foreground">
-            Status: {loading ? "Generating..." : errorMessage ? "Error" : "Live"}
-          </p>
           <div className="flex gap-2">
             <button
               type="button"

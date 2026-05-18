@@ -168,12 +168,6 @@ export function GovernanceSection() {
   return (
     <section>
       <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Governance</h1>
-      <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-        Policy controls for retention classes, redaction, review gates, and workspace trust mode.
-      </p>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Status: {loading ? "Syncing governance state..." : status} | Last updated: {lastUpdated}
-      </p>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-3">
         <div className="rounded-[10px] border border-border bg-muted p-4 xl:col-span-2">

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
-import { StructuredDataPanel } from "./_shared/structured-data-panel";
 import { EASE_OUT } from "@/lib/motion";
 
 type AgentStatus = "online" | "idle" | "offline";
@@ -95,7 +94,6 @@ export function AgentsSection() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>("-");
   const [selectedTemplateId, setSelectedTemplateId] = useState(
     AGENT_TEMPLATES[0]?.id ?? "mcp-agent",
   );
@@ -146,14 +144,6 @@ export function AgentsSection() {
     { label: "Threads 24h", value: totalThreads24h, tone: "hsl(var(--primary))" },
     { label: "Avg resume score", value: `${avgResumeScore}%`, tone: "hsl(var(--primary))" },
   ];
-  const backendStateLabel = errorMessage
-    ? "Connection issue"
-    : isRefreshing
-      ? "Syncing..."
-      : hasLoadedOnce
-        ? "Live sync enabled"
-        : "Waiting for first sync";
-
   const loadAgents = useCallback(async (background = false) => {
     if (!background) setIsRefreshing(true);
     try {
@@ -182,7 +172,6 @@ export function AgentsSection() {
       setConnectedAgents(deduped);
       setHasLoadedOnce(true);
       setErrorMessage(null);
-      setLastUpdated(new Date().toISOString());
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Failed to load agents.");
     } finally {
@@ -241,7 +230,6 @@ export function AgentsSection() {
       setConnectedAgents((current) =>
         Array.from(new Map([result.data.agent as ConnectedAgent, ...current].map((agent) => [agent.id, agent])).values()),
       );
-      setLastUpdated(new Date().toISOString());
       setActionMessage(`${template.name} connected.`);
       void loadAgents(true);
     } catch (err) {
@@ -267,26 +255,8 @@ export function AgentsSection() {
       setConnectedAgents((current) =>
         current.filter((agent) => agent.id !== agentId),
       );
-      setLastUpdated(new Date().toISOString());
     } catch (err) {
       console.error("Failed to disconnect agent", err);
-    }
-  }
-
-  async function handleCliQuickstart() {
-    const snippet = `# 1) export key
-export MEMORYOS_API_KEY="mkey_live_..."
-
-# 2) connect agent runtime
-memoryos agent connect --workspace acm --agent mcp-agent
-
-# 3) verify status
-memoryos agent status`;
-    try {
-      await navigator.clipboard.writeText(snippet);
-      setActionMessage("CLI quickstart copied.");
-    } catch {
-      setActionMessage("Could not copy. Use the Quickstart block below.");
     }
   }
 
@@ -313,12 +283,6 @@ memoryos agent status`;
             Agents
           </h1>
           </div>
-
-          <br />
-          <p className="mt-1 inline-block rounded-[6px] px-2 py-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-            Connect coding agents to MemoryOS so resume context and handoffs
-            persist across sessions.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -334,22 +298,8 @@ memoryos agent status`;
             + CONNECT AGENT
           </motion.button>
 
-          <motion.button
-            type="button"
-            whileHover={{ y: -1, scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.18, ease: EASE_OUT }}
-            onClick={handleCliQuickstart}
-            className="inline-flex items-center gap-2 rounded-[8px] border border-border bg-card px-3.5 py-2 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground shadow-md shadow-black/15 dark:shadow-black/30"
-          >
-            <span aria-hidden>⌘</span>
-            CLI QUICKSTART
-          </motion.button>
         </div>
         </div>
-        <p className="relative z-10 mt-2 text-[11px] text-muted-foreground">
-          {backendStateLabel} · Updated: {lastUpdated}
-        </p>
       </motion.div>
       {errorMessage ? (
         <div className="mt-2.5 rounded-[10px] border border-[hsl(var(--destructive))]/25 bg-card px-3.5 py-3 text-[12px] text-primary">
@@ -618,35 +568,6 @@ memoryos agent status`;
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 11 11"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M1.5 3L4 5.5 1.5 8M5.5 8.5h4" />
-              </svg>
-              Quickstart
-            </p>
-
-            <div className="mt-2.5">
-              <StructuredDataPanel title="CLI quickstart" value={`# 1) export key
-export MEMORYOS_API_KEY="mkey_live_..."
-
-# 2) connect agent runtime
-memoryos agent connect --workspace acm --agent mcp-agent
-
-# 3) verify status
-memoryos agent status`} maxHeightClassName="max-h-52" compactChars={900} />
             </div>
           </div>
 

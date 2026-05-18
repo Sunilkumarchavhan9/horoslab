@@ -1,5 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  ConsolePage,
+  ConsolePageHeader,
+  ConsoleStatCard,
+  ConsoleStatGrid,
+  ConsoleStatusBadge,
+} from "@/components/developer-console/console-ui";
+
 type ActionCardTitle = "Quick Start" | "Continuity Lab" | "Playground" | "Documentation";
 type OverviewActionHandlers = Partial<Record<ActionCardTitle, () => void>>;
 type InstallationVerificationStatus = "idle" | "waiting" | "connected" | "error";
@@ -152,13 +161,13 @@ export function OverviewSection({
   ].slice(0, 4);
 
   return (
-    <div className="dark bg-background pb-12 text-foreground">
+    <ConsolePage>
       <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
-        <div className="absolute inset-0 bg-gray " />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%)]" />
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <h1 className="text-[26px] font-bold tracking-tight text-foreground">Memory Command Center</h1>
-            <p className="mt-1.5 max-w-xl text-[14px] leading-relaxed text-muted-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Memory Command Center</h1>
+            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
               Live observability for agent memory, retrieval quality, and cross-session continuity.
             </p>
           </div>
@@ -175,7 +184,7 @@ export function OverviewSection({
         </div>
       </div>
 
-      <div className="px-6 mt-8 space-y-8 max-w-[1440px]">
+      <div className="space-y-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {metricCards.map((metric) => (
             <div
@@ -314,12 +323,9 @@ export function OverviewSection({
                 <p className="mt-1 text-[13px] font-medium text-primary">{nextAction}</p>
               </div>
             </div>
-            <button
-              onClick={actions?.["Playground"]}
-              className="w-full rounded-[8px] !border !border-primary/40 !bg-primary py-3 text-[12px] font-bold uppercase tracking-wider !text-primary-foreground shadow-md transition hover:!bg-primary/90"
-            >
+            <Button className="w-full" onClick={actions?.["Playground"]}>
               Open Memory Playground
-            </button>
+            </Button>
           </div>
 
           <div className="flex flex-col rounded-[12px] border border-border bg-card p-6">
@@ -387,6 +393,6 @@ export function OverviewSection({
           </div>
         ) : null}
       </div>
-    </div>
+    </ConsolePage>
   );
 }

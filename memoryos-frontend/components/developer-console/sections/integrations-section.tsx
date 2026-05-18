@@ -80,8 +80,7 @@ const SETUP_CARDS: SetupCard[] = [
     logoTone: "var(--color-primary)",
     install: "npm install @memoryostm/sdk",
     docsUrl: "https://www.npmjs.com/package/@memoryostm/sdk",
-    summary:
-      "Use this when you own the agent loop or product backend and can call MemoryOS before and after model turns.",
+    summary: "Agent runtime SDK path.",
     steps: [
       {
         title: "Install the SDK",
@@ -137,8 +136,7 @@ MEMORYOS_BASE_URL=${baseUrl}`,
     logoTone: "var(--color-chart-2)",
     install: "npx -y @memoryostm/mcp",
     docsUrl: "https://www.npmjs.com/package/@memoryostm/mcp",
-    summary:
-      "Use this when the user wants to connect MemoryOS to an MCP-compatible agent without writing integration code.",
+    summary: "MCP runtime path.",
     steps: [
       {
         title: "Add the MCP server",
@@ -181,8 +179,7 @@ MEMORYOS_BASE_URL=${baseUrl}`,
     logoTone: "var(--color-chart-5)",
     install: "No package required",
     docsUrl: "/docs/memory-api",
-    summary:
-      "Use this when you need direct MemoryOS calls from Python, Go, hosted platforms, automations, or custom agents.",
+    summary: "Direct HTTP path.",
     steps: [
       {
         title: "Send bearer auth",
@@ -690,7 +687,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             rel={selectedCard.docsUrl.startsWith("http") ? "noreferrer" : undefined}
             className="text-[12px] font-medium text-muted-foreground transition hover:text-foreground"
           >
-            Docs ↗
+            Open
           </a>
         </div>
       ) : null}
@@ -728,7 +725,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               <p className="mt-3 text-[12px] leading-5 text-muted-foreground">{card.summary}</p>
               {active ? (
                 <p className="mt-3 rounded-[7px] border border-primary/20 bg-primary/10 px-2.5 py-2 text-[11px] leading-5 text-primary">
-                  Selected setup path. Use this when this runtime owns the memory calls.
+                  Selected
                 </p>
               ) : null}
             </button>
@@ -865,7 +862,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
 
           <div className="rounded-[12px] border border-border bg-card px-4 py-4">
             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-              Live backend signal
+              Live metrics
             </p>
             <div className="mt-3 grid grid-cols-3 gap-2">
               <div className="rounded-[8px] border border-border bg-muted/50 px-2.5 py-2">
@@ -884,29 +881,6 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             <p className="mt-3 text-[11px] leading-5 text-muted-foreground">
               Last route: {liveSignals?.lastRequestRoute ?? "No request yet"}
             </p>
-            <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
-              Last updated: {liveSignals?.lastRequestAt ? new Date(liveSignals.lastRequestAt).toLocaleString() : "No live backend event yet"}
-            </p>
-          </div>
-
-          <div className="rounded-[12px] border border-border bg-card px-4 py-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-              End-to-end proof
-            </p>
-            <div className="mt-3 space-y-2 text-[12px] leading-6 text-muted-foreground">
-              <p>Security: snippets never expose live API keys. Copy your key from API Keys and paste locally.</p>
-              <p>1. Sign in so the token maps calls to this workspace.</p>
-              <p>2. Copy the placeholder setup and add your API key locally.</p>
-              <p>3. Save one real memory through SDK, MCP, or HTTP.</p>
-              <p>4. Open Memories and Requests to confirm live data moved.</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => void refreshToken()}
-              className="mt-4 w-full rounded-[8px] border border-primary/30 bg-primary/10 px-3 py-2 text-[11px] font-medium tracking-[0.08em] text-primary"
-            >
-              REFRESH AUTH STATUS
-            </button>
           </div>
         </aside>
       </div>

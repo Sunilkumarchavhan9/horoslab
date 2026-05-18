@@ -122,7 +122,10 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    border-radius: 0 !important;
+  }
+
+  :not(.developer-console-root):not(.developer-console-root *) {
+    border-radius: 0;
   }
 
   body {
@@ -136,55 +139,84 @@
   }
 }
 
-.developer-console-root *,
-.developer-console-root *::before,
-.developer-console-root *::after {
-  animation: none !important;
-  transition: none !important;
-}
-
-/* Force old dashboard styling to follow shadcn tokens.
-   Do not substring-match Tailwind palette utilities (e.g. border-zinc-*, text-zinc-*):
-   those must win for intentional gray UI. Use var() — theme tokens are oklch, not hsl(). */
+/* Premium developer console — Linear / Stripe–style sans UI on shadcn tokens */
 .developer-console-root {
-  color: var(--foreground) !important;
-  background: var(--background) !important;
+  font-family: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
 }
 
-.developer-console-root [class*="bg-["],
-.developer-console-root [class*="bg-white"] {
-  background-color: var(--card) !important;
+.developer-console-root.dark {
+  --background: oklch(0.12 0.004 286);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.16 0.006 286);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.17 0.006 286);
+  --popover-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.22 0.006 286);
+  --muted-foreground: oklch(0.68 0.01 286);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 11%);
+  --sidebar: oklch(0.14 0.005 286);
+  --sidebar-foreground: oklch(0.92 0 0);
+  --sidebar-accent: oklch(0.2 0.008 286);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --primary: oklch(0.62 0.19 264);
+  --primary-foreground: oklch(0.99 0.01 264);
 }
 
-.developer-console-root [class*="text-["],
-.developer-console-root [class*="text-white"],
-.developer-console-root [class*="text-black"] {
-  color: var(--card-foreground) !important;
+.developer-console-root .rounded-xl,
+.developer-console-root .rounded-lg,
+.developer-console-root .rounded-md,
+.developer-console-root .rounded-full,
+.developer-console-root [data-slot="card"],
+.developer-console-root [data-slot="button"],
+.developer-console-root [data-slot="input"],
+.developer-console-root [data-slot="badge"] {
+  border-radius: var(--radius) !important;
 }
 
-.developer-console-root [class*="border-["],
-.developer-console-root [class*="border-white"],
-.developer-console-root [class*="border-black"] {
-  border-color: var(--border) !important;
+.developer-console-root .rounded-xl {
+  border-radius: var(--radius-xl) !important;
 }
 
-/* Force legacy inline styles to obey shadcn preset tokens in existing console */
-.developer-console-root [style*="background"],
-.developer-console-root [style*="background-color"] {
-  background-image: none !important;
-  background-color: var(--card) !important;
+.developer-console-root .rounded-lg {
+  border-radius: var(--radius-lg) !important;
 }
 
-.developer-console-root [style*="color: #"],
-.developer-console-root [style*="color:#"] {
-  color: var(--card-foreground) !important;
+.developer-console-root .rounded-md {
+  border-radius: var(--radius-md) !important;
 }
 
-.developer-console-root [style*="border-color"],
-.developer-console-root [style*="borderColor"],
-.developer-console-root [style*="border-top-color"],
-.developer-console-root [style*="borderTopColor"] {
-  border-color: var(--border) !important;
+.developer-console-root .rounded-full {
+  border-radius: 9999px !important;
+}
+
+.developer-console-root :not(pre):not(code):not(.keep-mono).font-mono {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+.developer-console-root pre,
+.developer-console-root code,
+.developer-console-root .keep-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+.developer-console-sections > div > * {
+  animation: console-fade-in 0.28s ease-out;
+}
+
+@keyframes console-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer utilities {

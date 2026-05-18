@@ -142,16 +142,6 @@ export function PreflightSection() {
               <Icon name="terminal" className="h-6 w-6 text-primary" />
               Preflight Console
             </motion.h1>
-            <br/>
-            <motion.p
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.32, delay: 0.04 }}
-              className="mt-1.5 inline-flex max-w-xl items-center gap-2 rounded-[8px] bg-card px-3 py-1.5 text-[14px] leading-relaxed text-muted-foreground"
-            >
-            
-              Launchpad for AI agent continuity. Ensure every agent starts with exact project state, decisions, and blockers before continuing work.
-            </motion.p>
             {lastSessionId ? (
               <p className="mt-2 text-[12px] text-muted-foreground">
                 Session linked.
@@ -473,7 +463,6 @@ export function PreflightSection() {
                       {copiedState === "copy-cli" ? "Copied" : "Copy"}
                     </button>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-3">Run this CLI command to instantly output the context packet, next action, and token savings directly into your terminal environment.</p>
                 </div>
 
                 {/* File Rules */}
