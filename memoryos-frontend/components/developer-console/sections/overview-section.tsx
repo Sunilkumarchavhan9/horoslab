@@ -38,6 +38,28 @@ type OverviewSectionProps = {
   };
 };
 
+function cleanNoise(input: string | undefined | null): string {
+  if (!input) return "";
+  let text = input;
+
+  // Remove common noisy fragments leaking from serialized benchmark payloads.
+  text = text.replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "");
+  text = text.replace(/,\s*expectedType\s*:\s*"[^"]*"/g, "");
+  text = text.replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "");
+  text = text.replace(/,\s*input\s*:\s*\{[^}]*\}/g, "");
+  text = text.replace(/\{\s*"text"\s*:\s*"([^"]+)"\s*\}/g, "$1");
+  text = text.replace(/\s+/g, " ").trim();
+
+  return text;
+}
+
+function shortText(input: string | undefined | null, max = 180): string {
+  const cleaned = cleanNoise(input);
+  if (!cleaned) return "Not available yet.";
+  if (cleaned.length <= max) return cleaned;
+  return `${cleaned.slice(0, max).trimEnd()}...`;
+}
+
 export function OverviewSection({
   actions,
   stats = [],
@@ -72,17 +94,25 @@ export function OverviewSection({
     ],
   }));
 
-  const primaryProjectName = insights?.activeProjects?.[0] ?? "No active project";
-  const topMemory = memories[0]?.content ?? "No memory captured yet";
+  const primaryProjectName = shortText(
+    insights?.activeProjects?.[0] ?? "No active project",
+    80,
+  );
+  const topMemory = shortText(memories[0]?.content ?? "No memory captured yet", 200);
   const nextAction =
-    resumeData?.recommendedNextStep ??
-    handoffData?.openLoops?.[0] ??
+    shortText(
+      resumeData?.recommendedNextStep ?? handoffData?.openLoops?.[0],
+      180,
+    ) ??
     "No next action detected yet.";
   const detectedProblem =
-    [...(resumeData?.openLoops ?? []), ...(handoffData?.openLoops ?? [])].find((loop) =>
+    shortText(
+      [...(resumeData?.openLoops ?? []), ...(handoffData?.openLoops ?? [])].find((loop) =>
       loop.toLowerCase().includes("problem") ||
       loop.toLowerCase().includes("risk") ||
       loop.toLowerCase().includes("blocked"),
+      ),
+      180,
     ) ?? "No blocker detected from current live context.";
 
   const liveActivity = [
@@ -94,7 +124,7 @@ export function OverviewSection({
     ...memories.slice(0, 2).map((memory) => ({
       at: new Date(memory.updatedAt).toLocaleTimeString(),
       title: "Memory updated",
-      detail: memory.content,
+      detail: shortText(memory.content, 220),
     })),
   ].slice(0, 4);
 
@@ -159,17 +189,19 @@ export function OverviewSection({
               </div>
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Current Focus</p>
-                <p className="pl-3 text-[14px] leading-relaxed text-foreground/90">
-                  {resumeData?.summary ?? topMemory}
+                <p className="rounded-[8px] border border-border bg-muted/40 px-3 py-2 text-[14px] leading-relaxed text-foreground/90">
+                  {shortText(resumeData?.summary ?? topMemory, 260)}
                 </p>
               </div>
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-destructive">Detected Problem</p>
-                <p className="pl-3 text-[14px] leading-relaxed text-foreground/90">{detectedProblem}</p>
+                <p className="rounded-[8px] border border-destructive/25 bg-destructive/5 px-3 py-2 text-[14px] leading-relaxed text-foreground/90">
+                  {detectedProblem}
+                </p>
               </div>
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Next Action</p>
-                <p className="rounded-r bg-muted py-2 pl-3 pr-2 text-[14px] font-medium leading-relaxed text-primary">
+                <p className="rounded-[8px] border border-primary/20 bg-primary/5 px-3 py-2 text-[14px] font-medium leading-relaxed text-primary">
                   {nextAction}
                 </p>
               </div>
@@ -189,7 +221,7 @@ export function OverviewSection({
                   <div className="absolute left-[-4.5px] top-1.5 h-2 w-2 rounded-full bg-primary" />
                   <p className="mb-1 text-[10px] font-mono text-muted-foreground">{item.at}</p>
                   <p className="mb-0.5 text-[12px] font-bold text-foreground">{item.title}</p>
-                  <p className="text-[12px] text-muted-foreground">{item.detail}</p>
+                  <p className="break-words text-[12px] leading-relaxed text-muted-foreground">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -199,13 +231,23 @@ export function OverviewSection({
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="flex flex-col rounded-[12px] border border-border bg-card p-6">
             <h2 className="mb-6 text-[12px] font-bold uppercase tracking-widest text-primary">Continuity Graph</h2>
-            <div className="mb-6 flex-1 rounded-[8px] border border-border bg-muted/50 p-4 font-mono text-[12px] leading-6 text-muted-foreground">
-              <div className="text-foreground">User</div>
-              <div className="ml-2 text-primary"> └── Project: {primaryProjectName}</div>
-              <div className="ml-8 text-muted-foreground"> ├── Focus: {resumeData?.summary ?? "Not captured yet"}</div>
-              <div className="ml-8 text-destructive"> ├── Problem: {detectedProblem}</div>
-              <div className="ml-8 text-muted-foreground"> ├── Task: {topMemory}</div>
-              <div className="ml-8 text-primary"> └── Next Action: {nextAction}</div>
+            <div className="mb-6 grid flex-1 gap-3 rounded-[8px] border border-border bg-muted/40 p-4">
+              <div className="rounded-[8px] border border-primary/20 bg-primary/5 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Project</p>
+                <p className="mt-1 text-[13px] font-medium text-foreground">{primaryProjectName}</p>
+              </div>
+              <div className="rounded-[8px] border border-border bg-card p-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus</p>
+                <p className="mt-1 text-[13px] text-foreground/90">{shortText(resumeData?.summary, 190)}</p>
+              </div>
+              <div className="rounded-[8px] border border-destructive/25 bg-destructive/5 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-destructive">Problem</p>
+                <p className="mt-1 text-[13px] text-foreground/90">{detectedProblem}</p>
+              </div>
+              <div className="rounded-[8px] border border-border bg-card p-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Next Action</p>
+                <p className="mt-1 text-[13px] font-medium text-primary">{nextAction}</p>
+              </div>
             </div>
             <button
               onClick={actions?.["Playground"]}

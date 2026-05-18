@@ -59,6 +59,13 @@ type WorkflowRow = {
   progress: { current: number; total: number };
 };
 
+function shortenLog(input: string, max = 180): string {
+  if (!input) return "";
+  const cleaned = input.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= max) return cleaned;
+  return `${cleaned.slice(0, max).trimEnd()}...`;
+}
+
 /* ─── api helpers ────────────────────────────────────────────── */
 
 function unwrap<T>(payload: unknown): T {
@@ -1044,7 +1051,7 @@ export function WorkflowOsSection() {
                                       : "text-muted-foreground"
                                   }`}
                                 >
-                                  &gt; {log}
+                                  &gt; {shortenLog(log)}
                                 </div>
                               ))}
                             </div>
