@@ -64,9 +64,9 @@ const TOKEN_PLACEHOLDER = "YOUR_MEMORYOS_TOKEN";
 const LOGO_URLS = {
   mastra: "https://mastra.ai/brand/logo.svg",
   langgraph: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/langgraph.png",
-  agno: "https://imgs.search.brave.com/HxE4zsbLJ_4MKkNcOVQ5saUs05MOR2ap06VlNTf1V1c/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZWYwMTU5Njg4/N2I2ZTk0ZDY4OGQ3/ZWJmOGQ1NTVmZjg0/ZGRmNDA1MGE5NTA4/ZTBmNmQ5NmFkYWFh/ZDc0YzlmOC93d3cu/YWduby5jb20v",
+  agno: "https://www.google.com/s2/favicons?domain=agno.com&sz=64",
   pipecat: "https://raw.githubusercontent.com/pipecat-ai/pipecat/main/pipecat.png",
-  zapier: "https://imgs.search.brave.com/rUnpoLu5DfS-QakqnhSngX2XdXgncYahdOlqsqMhpO0/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGQ5Mzg2ZjM0/OWU3NGJmZmM4OWQ5/ZGU1OGIyOGNkZjli/MzI0ODg1OWNjZWQ3/OTVkZTczNTk2YzM1/NTQ3MTQ2Mi96YXBp/ZXIuY29tLw",
+  zapier: "https://cdn.simpleicons.org/zapier/ff4f00",
   n8n: "https://cdn.simpleicons.org/n8n/ffffff",
 } as const;
 

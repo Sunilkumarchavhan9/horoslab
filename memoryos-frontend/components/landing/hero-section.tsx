@@ -12,21 +12,26 @@ export function HeroSection() {
 
       <HeroAnnouncementStrip />
 
-      <div className="grid gap-6 px-5 py-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-7">
+      <div className="grid gap-6 px-5 py-8 lg:grid-cols-[1.28fr_0.72fr] lg:px-7">
         <Reveal>
           <p className="font-mono text-[11px] tracking-[0.22em] text-[#356acc]">
             COMPANY BRAIN INFRASTRUCTURE
           </p>
-          <h1 className="max-w-[620px] text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-slate-900 md:text-5xl lg:text-[56px]">
+          <h1 className="max-w-[760px] text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-slate-900 md:text-5xl lg:text-[56px]">
             Turn scattered company knowledge into executable agent skills
           </h1>
 
           <a
-            href="https://imgs.search.brave.com/UlQXVilZ_l6FSVfubfxggliCcQ5gCYHi7ewhFUhCOeI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOWVlZTFjZTAz/NTRlZTZlMGRiOWZj/Y2ZhZDc0ZTA5MGJl/NDVhOTQ3MzU3M2Fk/NDRmOWQyMjM5YWI4/NDU2Y2Y3OS9mLmlu/Yy8"
+            href="https://f.inc"
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-flex w-fit items-center gap-2 border border-[#c9d8ee] bg-white px-3 py-1.5 text-[12px] text-[#4f6481] transition hover:border-[#9db8e3] hover:text-[hsl(var(--primary))]"
           >
+            <img
+              src="https://www.google.com/s2/favicons?domain=f.inc&sz=64"
+              alt="Founders, Inc. logo"
+              className="h-4 w-4"
+            />
             <span>Part of Founders, Inc.</span>
           </a>
 
