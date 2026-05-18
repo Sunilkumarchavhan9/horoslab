@@ -1,9 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
+import { prisma } from "../storage/prismaClient";
 import { PLAN_CATALOG, type BillingPlan } from "../../shared/planCatalog";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const BILLING_STORE_PATH = path.join(DATA_DIR, "billing-state.json");
 
 type BillingInvoice = {
   id: string;
@@ -24,13 +20,8 @@ type UserBillingState = {
   subscriptionStatus: SubscriptionStatus;
   currentPeriodEnd: string | null;
   invoices: BillingInvoice[];
+  connectorSyncUsed: number;
   updatedAt: string;
-};
-
-type BillingStore = {
-  users: Record<string, UserBillingState>;
-  customerToUser: Record<string, string>;
-  events: BillingEvent[];
 };
 
 export type BillingEvent = {
@@ -52,101 +43,166 @@ function defaultUserBillingState(userId: string): UserBillingState {
     subscriptionStatus: "unknown",
     currentPeriodEnd: null,
     invoices: [],
+    connectorSyncUsed: 0,
     updatedAt: new Date().toISOString(),
   };
 }
 
-function ensureDataDir(): void {
-  if (!existsSync(DATA_DIR)) {
-    mkdirSync(DATA_DIR, { recursive: true });
-  }
+function toBillingPlan(input: string | null | undefined): BillingPlan {
+  if (input === "Free" || input === "Pro" || input === "Scale" || input === "Enterprise") return input;
+  return "Free";
 }
 
-function readStore(): BillingStore {
-  ensureDataDir();
-  if (!existsSync(BILLING_STORE_PATH)) {
-    return { users: {}, customerToUser: {}, events: [] };
+function toSubscriptionStatus(input: string | null | undefined): SubscriptionStatus {
+  if (input === "active" || input === "trialing" || input === "past_due" || input === "canceled" || input === "incomplete") {
+    return input;
   }
+  return "unknown";
+}
+
+export async function getBillingStateForUser(userId: string): Promise<UserBillingState> {
   try {
-    const parsed = JSON.parse(readFileSync(BILLING_STORE_PATH, "utf8")) as BillingStore;
+    const account = await prisma.billingAccount.findUnique({
+      where: { userId },
+      include: {
+        invoices: { orderBy: { issuedAt: "desc" }, take: 200 },
+      },
+    });
+
+    if (!account) {
+      return defaultUserBillingState(userId);
+    }
+
     return {
-      users: parsed.users ?? {},
-      customerToUser: parsed.customerToUser ?? {},
-      events: Array.isArray(parsed.events) ? parsed.events : [],
+      userId: account.userId,
+      plan: toBillingPlan(account.plan),
+      customerId: account.customerId,
+      subscriptionId: account.subscriptionId,
+      subscriptionStatus: toSubscriptionStatus(account.subscriptionStatus),
+      currentPeriodEnd: account.currentPeriodEnd,
+      invoices: account.invoices.map((row) => ({
+        id: row.id,
+        amountCents: row.amountCents,
+        currency: row.currency,
+        status: row.status as "paid" | "open" | "void",
+        issuedAt: row.issuedAt,
+        hostedInvoiceUrl: row.hostedInvoiceUrl,
+      })),
+      connectorSyncUsed: account.connectorSyncUsed,
+      updatedAt: account.updatedAt.toISOString(),
     };
   } catch {
-    return { users: {}, customerToUser: {}, events: [] };
+    return defaultUserBillingState(userId);
   }
 }
 
-function writeStore(store: BillingStore): void {
-  ensureDataDir();
-  writeFileSync(BILLING_STORE_PATH, JSON.stringify(store, null, 2), "utf8");
-}
-
-export function getBillingStateForUser(userId: string): UserBillingState {
-  const store = readStore();
-  return store.users[userId] ?? defaultUserBillingState(userId);
-}
-
-export function setUserBillingState(input: {
+export async function setUserBillingState(input: {
   userId: string;
   plan: BillingPlan;
   customerId?: string | null;
   subscriptionId?: string | null;
   subscriptionStatus?: SubscriptionStatus;
   currentPeriodEnd?: string | null;
-}): UserBillingState {
-  const store = readStore();
-  const existing = store.users[input.userId] ?? defaultUserBillingState(input.userId);
-  const next: UserBillingState = {
-    ...existing,
-    plan: input.plan,
-    customerId: input.customerId ?? existing.customerId,
-    subscriptionId: input.subscriptionId ?? existing.subscriptionId,
-    subscriptionStatus: input.subscriptionStatus ?? existing.subscriptionStatus,
-    currentPeriodEnd: input.currentPeriodEnd ?? existing.currentPeriodEnd,
-    updatedAt: new Date().toISOString(),
-  };
-  store.users[input.userId] = next;
-  if (next.customerId) {
-    store.customerToUser[next.customerId] = input.userId;
-  }
-  writeStore(store);
-  return next;
+}): Promise<UserBillingState> {
+  await prisma.billingAccount.upsert({
+    where: { userId: input.userId },
+    create: {
+      userId: input.userId,
+      plan: input.plan,
+      customerId: input.customerId ?? null,
+      subscriptionId: input.subscriptionId ?? null,
+      subscriptionStatus: input.subscriptionStatus ?? "unknown",
+      currentPeriodEnd: input.currentPeriodEnd ?? null,
+      connectorSyncUsed: 0,
+    },
+    update: {
+      plan: input.plan,
+      ...(input.customerId !== undefined ? { customerId: input.customerId } : {}),
+      ...(input.subscriptionId !== undefined ? { subscriptionId: input.subscriptionId } : {}),
+      ...(input.subscriptionStatus !== undefined ? { subscriptionStatus: input.subscriptionStatus } : {}),
+      ...(input.currentPeriodEnd !== undefined ? { currentPeriodEnd: input.currentPeriodEnd } : {}),
+    },
+  });
+
+  return getBillingStateForUser(input.userId);
 }
 
-export function appendInvoiceForUser(userId: string, invoice: BillingInvoice): UserBillingState {
-  const store = readStore();
-  const existing = store.users[userId] ?? defaultUserBillingState(userId);
-  const deduped = [invoice, ...existing.invoices.filter((row) => row.id !== invoice.id)].slice(0, 200);
-  const next: UserBillingState = {
-    ...existing,
-    invoices: deduped,
-    updatedAt: new Date().toISOString(),
-  };
-  store.users[userId] = next;
-  writeStore(store);
-  return next;
+export async function appendInvoiceForUser(userId: string, invoice: BillingInvoice): Promise<UserBillingState> {
+  await prisma.billingAccount.upsert({
+    where: { userId },
+    create: {
+      userId,
+      plan: "Free",
+      subscriptionStatus: "unknown",
+      connectorSyncUsed: 0,
+    },
+    update: {},
+  });
+
+  await prisma.billingInvoice.upsert({
+    where: { id: invoice.id },
+    create: {
+      id: invoice.id,
+      userId,
+      amountCents: invoice.amountCents,
+      currency: invoice.currency,
+      status: invoice.status,
+      issuedAt: invoice.issuedAt,
+      hostedInvoiceUrl: invoice.hostedInvoiceUrl,
+    },
+    update: {
+      userId,
+      amountCents: invoice.amountCents,
+      currency: invoice.currency,
+      status: invoice.status,
+      issuedAt: invoice.issuedAt,
+      hostedInvoiceUrl: invoice.hostedInvoiceUrl,
+    },
+  });
+
+  return getBillingStateForUser(userId);
 }
 
-export function resolveUserIdByCustomerId(customerId: string): string | null {
-  const store = readStore();
-  return store.customerToUser[customerId] ?? null;
+export async function resolveUserIdByCustomerId(customerId: string): Promise<string | null> {
+  const account = await prisma.billingAccount.findFirst({
+    where: { customerId },
+    select: { userId: true },
+  });
+  return account?.userId ?? null;
 }
 
-export function appendBillingEvent(event: BillingEvent): void {
-  const store = readStore();
-  store.events = [event, ...store.events].slice(0, 500);
-  writeStore(store);
+export async function appendBillingEvent(event: BillingEvent): Promise<void> {
+  await prisma.billingEvent.create({
+    data: {
+      id: event.id,
+      userId: event.userId,
+      provider: event.provider,
+      type: event.type,
+      status: event.status,
+      summary: event.summary,
+      createdAt: event.createdAt,
+    },
+  });
 }
 
-export function listBillingEventsForUser(userId: string, limit = 40): BillingEvent[] {
-  const store = readStore();
-  return store.events
-    .filter((entry) => entry.userId === userId || entry.userId === null)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, Math.max(1, Math.min(limit, 200)));
+export async function listBillingEventsForUser(userId: string, limit = 40): Promise<BillingEvent[]> {
+  const rows = await prisma.billingEvent.findMany({
+    where: {
+      OR: [{ userId }, { userId: null }],
+    },
+    orderBy: { createdAt: "desc" },
+    take: Math.max(1, Math.min(limit, 200)),
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    userId: row.userId,
+    provider: row.provider as "polar" | "custom",
+    type: row.type,
+    status: row.status as "processed" | "skipped" | "failed",
+    summary: row.summary,
+    createdAt: row.createdAt,
+  }));
 }
 
 export function applyPlanUsageLimits(plan: BillingPlan, usage: {
@@ -159,4 +215,43 @@ export function applyPlanUsageLimits(plan: BillingPlan, usage: {
   const planLimits = PLAN_CATALOG[plan];
   if (planLimits.tokenLimit) usage.tokenLimit = planLimits.tokenLimit;
   if (planLimits.searchLimit) usage.searchLimit = planLimits.searchLimit;
+}
+
+export async function canConsumeConnectorSyncRecords(input: { userId: string; amount: number }): Promise<{
+  allowed: boolean;
+  plan: BillingPlan;
+  used: number;
+  limit: number | null;
+}> {
+  const amount = Math.max(0, Math.floor(input.amount));
+  const state = await getBillingStateForUser(input.userId);
+  const planDef = PLAN_CATALOG[state.plan];
+  const used = Math.max(0, Math.floor(state.connectorSyncUsed ?? 0));
+  const limit = planDef.connectorSyncRecordLimit ?? null;
+  if (amount === 0) return { allowed: true, plan: state.plan, used, limit };
+  if (limit === null) return { allowed: true, plan: state.plan, used, limit };
+  return { allowed: used + amount <= limit, plan: state.plan, used, limit };
+}
+
+export async function consumeConnectorSyncRecords(input: { userId: string; amount: number }): Promise<{
+  plan: BillingPlan;
+  used: number;
+  limit: number | null;
+}> {
+  const amount = Math.max(0, Math.floor(input.amount));
+  await prisma.billingAccount.upsert({
+    where: { userId: input.userId },
+    create: {
+      userId: input.userId,
+      plan: "Free",
+      subscriptionStatus: "unknown",
+      connectorSyncUsed: amount,
+    },
+    update: {
+      connectorSyncUsed: { increment: amount },
+    },
+  });
+  const state = await getBillingStateForUser(input.userId);
+  const planDef = PLAN_CATALOG[state.plan];
+  return { plan: state.plan, used: state.connectorSyncUsed, limit: planDef.connectorSyncRecordLimit ?? null };
 }
