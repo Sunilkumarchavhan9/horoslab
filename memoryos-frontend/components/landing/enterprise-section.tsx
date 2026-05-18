@@ -37,7 +37,8 @@ export function EnterpriseSection() {
         </h2>
         <p className="mx-auto mt-5 max-w-[860px] text-[16px] leading-[1.7] text-[#6a778a] md:text-[19px]">
           MemoryOS is built for platform teams and agent products that need durable shared context,
-          interoperability, and governance without slowing engineering velocity.
+          interoperability, and governance without slowing engineering velocity. This is an execution
+          layer for agents, not a document chatbot or static search index.
         </p>
       </Reveal>
 
