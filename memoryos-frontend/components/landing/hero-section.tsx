@@ -22,7 +22,7 @@ export function HeroSection() {
           </h1>
 
           <a
-            href="https://f.inc/"
+            href="https://imgs.search.brave.com/UlQXVilZ_l6FSVfubfxggliCcQ5gCYHi7ewhFUhCOeI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOWVlZTFjZTAz/NTRlZTZlMGRiOWZj/Y2ZhZDc0ZTA5MGJl/NDVhOTQ3MzU3M2Fk/NDRmOWQyMjM5YWI4/NDU2Y2Y3OS9mLmlu/Yy8"
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-flex w-fit items-center gap-2 border border-[#c9d8ee] bg-white px-3 py-1.5 text-[12px] text-[#4f6481] transition hover:border-[#9db8e3] hover:text-[hsl(var(--primary))]"
@@ -57,43 +57,10 @@ export function HeroSection() {
             See the company brain thesis ↗
           </a>
 
-          <div className="mt-4 grid max-w-[620px] gap-2 sm:grid-cols-3">
-            {[
-              ["Top-3 retrieval precision", "100% (dev benchmark)"],
-              ["Resume success rate", "100% (dev benchmark)"],
-              ["Contradiction miss rate", "0% (dev benchmark)"],
-            ].map(([label, value]) => (
-              <div key={label} className="border border-[#c9d8ee] bg-white px-3 py-2.5">
-                <p className="text-[10px] uppercase tracking-[0.11em] text-[#667991]">{label}</p>
-                <p className="mt-1 text-[19px] font-semibold tracking-[-0.03em] text-slate-900">{value}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-2 text-[11px] text-[#7b8ca5]">
-            Benchmark snapshot from current development gate run. Production values vary by workload and deployment.
-          </p>
-
           <div className="mt-2.5 inline-flex w-fit items-center gap-2 border border-[#c9d8ee] bg-white px-3.5 py-2 font-mono text-[12px] text-[#5f6f86]">
             <span className="text-[#8a9ab1]">$</span>
             <span>npm install @memoryostm/sdk</span>
             <span className="text-[#a1b1c7]">TypeScript • Python • REST</span>
-          </div>
-
-          <div className="mt-4 flex max-w-[620px] flex-wrap gap-2">
-            {[
-              "Living company knowledge map",
-              "Evidence-backed skill generation",
-              "Timeline + revisions + explainability",
-              "Governance, approvals, and audit trails",
-              "SDK + MCP + agent integrations",
-            ].map((item) => (
-              <span
-                key={item}
-                className="border border-[#c7d7ee] bg-white px-3 py-1.5 text-[12px] text-[#456180]"
-              >
-                {item}
-              </span>
-            ))}
           </div>
         </Reveal>
 

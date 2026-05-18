@@ -29,7 +29,7 @@ const PLAN_CARDS = [
     overage: "Prompt to upgrade to Scale.",
     cta: "Get MemoryOS Pro →",
     secondary: "Install the SDK →",
-    ctaHref: polarProCheckoutUrl || "#pricing",
+    ctaHref: polarProCheckoutUrl || "/pricing",
     secondaryHref: "#developer-experience",
     featured: true,
   },
@@ -43,7 +43,7 @@ const PLAN_CARDS = [
     overage: "Contact support or move to Enterprise.",
     cta: "Upgrade to Scale →",
     secondary: "See platform details →",
-    ctaHref: polarScaleCheckoutUrl || "#pricing",
+    ctaHref: polarScaleCheckoutUrl || "/pricing",
     secondaryHref: "#enterprise",
     featured: false,
   },
@@ -54,6 +54,24 @@ const ENTERPRISE_POINTS = [
   "SSO/SAML",
   "Dedicated infra/security controls",
   "Onboarding + dedicated success/support",
+];
+const BILLING_FACTORS = [
+  {
+    title: "Usage",
+    detail: "Tokens processed + retrieval/search calls per billing month.",
+  },
+  {
+    title: "Plan tier",
+    detail: "Capability unlocks: memory workflows, governance, connectors, and support level.",
+  },
+  {
+    title: "Team seats",
+    detail: "Scale and Enterprise include team access. Seat-based expansion can be applied per workspace.",
+  },
+  {
+    title: "Add-ons",
+    detail: "Extra token packs, search packs, premium connectors, and priority SLA.",
+  },
 ];
 
 export function PricingSection() {
@@ -75,16 +93,20 @@ export function PricingSection() {
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[13px] text-slate-900 md:text-[14px]">
           <span className="inline-flex items-center gap-2">
             <span className="text-[#18b45b]">✓</span>
-            Timeline + revisions + explainability in paid plans
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <span className="text-[#18b45b]">✓</span>
             SDK + HTTP + MCP interoperability
           </span>
           <span className="inline-flex items-center gap-2">
             <span className="text-[#18b45b]">✓</span>
             Built for cross-agent engineering teams
           </span>
+        </div>
+        <div className="mt-6 grid gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
+          {BILLING_FACTORS.map((factor) => (
+            <div key={factor.title} className="border border-[#c9d8ee] bg-[#f9fbff] px-4 py-3">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-900">{factor.title}</p>
+              <p className="mt-1 text-[13px] leading-6 text-[#5f6f84]">{factor.detail}</p>
+            </div>
+          ))}
         </div>
       </Reveal>
 
