@@ -95,7 +95,6 @@ export function AgentsSection() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>("-");
   const [selectedTemplateId, setSelectedTemplateId] = useState(
     AGENT_TEMPLATES[0]?.id ?? "mcp-agent",
   );
@@ -146,14 +145,6 @@ export function AgentsSection() {
     { label: "Threads 24h", value: totalThreads24h, tone: "hsl(var(--primary))" },
     { label: "Avg resume score", value: `${avgResumeScore}%`, tone: "hsl(var(--primary))" },
   ];
-  const backendStateLabel = errorMessage
-    ? "Connection issue"
-    : isRefreshing
-      ? "Syncing..."
-      : hasLoadedOnce
-        ? "Live sync enabled"
-        : "Waiting for first sync";
-
   const loadAgents = useCallback(async (background = false) => {
     if (!background) setIsRefreshing(true);
     try {
@@ -182,7 +173,6 @@ export function AgentsSection() {
       setConnectedAgents(deduped);
       setHasLoadedOnce(true);
       setErrorMessage(null);
-      setLastUpdated(new Date().toISOString());
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Failed to load agents.");
     } finally {
@@ -241,7 +231,6 @@ export function AgentsSection() {
       setConnectedAgents((current) =>
         Array.from(new Map([result.data.agent as ConnectedAgent, ...current].map((agent) => [agent.id, agent])).values()),
       );
-      setLastUpdated(new Date().toISOString());
       setActionMessage(`${template.name} connected.`);
       void loadAgents(true);
     } catch (err) {
@@ -267,7 +256,6 @@ export function AgentsSection() {
       setConnectedAgents((current) =>
         current.filter((agent) => agent.id !== agentId),
       );
-      setLastUpdated(new Date().toISOString());
     } catch (err) {
       console.error("Failed to disconnect agent", err);
     }
@@ -313,12 +301,6 @@ memoryos agent status`;
             Agents
           </h1>
           </div>
-
-          <br />
-          <p className="mt-1 inline-block rounded-[6px] px-2 py-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-            Connect coding agents to MemoryOS so resume context and handoffs
-            persist across sessions.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -347,9 +329,6 @@ memoryos agent status`;
           </motion.button>
         </div>
         </div>
-        <p className="relative z-10 mt-2 text-[11px] text-muted-foreground">
-          {backendStateLabel} · Updated: {lastUpdated}
-        </p>
       </motion.div>
       {errorMessage ? (
         <div className="mt-2.5 rounded-[10px] border border-[hsl(var(--destructive))]/25 bg-card px-3.5 py-3 text-[12px] text-primary">

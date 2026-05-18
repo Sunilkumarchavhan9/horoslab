@@ -213,13 +213,7 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
   return (
     <section>
       <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Portability</h1>
-      <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-        Export/import workspace continuity as AGENTS.md and snapshot bundles.
-      </p>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Status: {liveConnected ? statusMessage : "Waiting for live portability events"}
-      </p>
-      <p className="mt-1 text-[11px] text-muted-foreground">Trace: {lastTraceId} | Last updated: {lastUpdated}</p>
+      {statusMessage ? <p className="mt-2 text-[11px] text-muted-foreground">{statusMessage}</p> : null}
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <div className="rounded-[10px] border border-border bg-muted p-4">

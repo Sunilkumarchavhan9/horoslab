@@ -273,9 +273,6 @@ export function ApiKeysSection() {
           </motion.button>
         </div>
         </div>
-        <p className="relative z-10 mt-2 text-[11px] text-muted-foreground">
-          Status: {isLoadingKeys ? "Syncing API keys..." : "Live backend connected"} | Last updated: {lastUpdated}
-        </p>
       </motion.div>
 
       {revealedToken ? (

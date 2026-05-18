@@ -203,10 +203,6 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
           Loading live connector status...
         </div>
       ) : null}
-      <p className="text-[11px] text-muted-foreground">
-        Last updated: {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Waiting for backend"}
-      </p>
-
       <div className="grid gap-2.5 md:grid-cols-3">
         {[
           { label: "Connected", value: connected.length, tone: "var(--color-chart-5)" },

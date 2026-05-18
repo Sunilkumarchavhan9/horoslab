@@ -884,9 +884,6 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             <p className="mt-3 text-[11px] leading-5 text-muted-foreground">
               Last route: {liveSignals?.lastRequestRoute ?? "No request yet"}
             </p>
-            <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
-              Last updated: {liveSignals?.lastRequestAt ? new Date(liveSignals.lastRequestAt).toLocaleString() : "No live backend event yet"}
-            </p>
           </div>
 
           <div className="rounded-[12px] border border-border bg-card px-4 py-4">

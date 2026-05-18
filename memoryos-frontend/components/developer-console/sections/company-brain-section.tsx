@@ -425,9 +425,6 @@ export function CompanyBrainSection() {
 
       <div className="rounded-[10px] border border-border bg-card px-4 py-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[12px] text-muted-foreground">
-            Status: {loading ? "Generating..." : errorMessage ? "Error" : "Live"}
-          </p>
           <div className="flex gap-2">
             <button
               type="button"

@@ -1607,7 +1607,6 @@ handoff = httpx.post(
               </button>
             </div>
             <div className={`mx-auto mt-2.5 flex max-w-[920px] flex-wrap items-center gap-3 text-[12px] ${lightMode ? "text-black/50" : "text-muted-foreground"}`}>
-              <span>Status: {statusLine}</span>
               <span>Mode: {selectedConfig.label}</span>
               <span>TopK: {topK}</span>
               <span>Workspace: {workspace}</span>
@@ -1805,7 +1804,6 @@ handoff = httpx.post(
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Legend</p>
               <div className="mt-2 space-y-2 text-[13px] text-muted-foreground">
                 <p>Nodes: Memory (latest), Memory (older), Document</p>
-                <p>Status: active, stale, contradicted, merged</p>
                 <p>Relations: updates, derives, extends</p>
               </div>
             </div> : null}

@@ -168,14 +168,8 @@ export function SettingsSection({ workspaceName, ownerName, ownerEmail, organiza
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Settings</h1>
-          <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-            Manage organization identity, connector credentials, and advanced workspace controls.
-          </p>
         </div>
       </div>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Status: {saving ? "Saving..." : "Live backend connected"} | Last updated: {lastUpdated ?? "-"}
-      </p>
       {errorMessage ? <div className="mt-2 rounded-[8px] border border-destructive/35 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">{errorMessage}</div> : null}
       {statusMessage ? <div className="mt-2 rounded-[8px] border border-border bg-card px-3 py-2 text-[12px] text-foreground">{statusMessage}</div> : null}
 
@@ -307,4 +301,3 @@ export function SettingsSection({ workspaceName, ownerName, ownerEmail, organiza
     </>
   );
 }
-

@@ -551,14 +551,6 @@ export function WorkflowOsSection() {
               Agent Workflow OS
             </h1>
             <br/>
-            <p className="mt-1.5 inline-flex max-w-xl items-center gap-2 rounded-[8px] px-3 py-1.5 text-[14px] leading-relaxed text-muted-foreground">
-             
-              Mission control for autonomous agents. Live sessions, paused
-              workflows, completed runs - all wired to the MemoryOS backend.
-            </p>
-            <p className="mt-2 text-[11px] text-muted-foreground">
-              Status: {loading || isRefreshing ? "Syncing live workflow data..." : error ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
-            </p>
           </div>
           
         </div>

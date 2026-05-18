@@ -73,26 +73,37 @@ export function RequestsSection({
         if (!response.ok) {
           throw new Error(`Could not refresh requests (${response.status})`);
         }
-        const payload = await response.json();
+        const payload = (await response.json()) as {
+          requests?: unknown[];
+          data?: { requests?: unknown[] };
+        };
         const rawList = Array.isArray(payload?.requests)
           ? payload.requests
           : Array.isArray(payload?.data?.requests)
             ? payload.data.requests
             : [];
-        const mapped: RequestSectionEvent[] = rawList.map((entry: any) => ({
-          id: String(entry.id),
-          createdAt: entry.createdAt,
-          type: entry.routeType ?? entry.type ?? "other",
-          status: entry.status >= 200 && entry.status < 400 ? "Success" : "Error",
-          latencyMs: entry.durationMs ?? entry.latencyMs ?? 0,
-          route: entry.path ?? entry.route ?? "",
-          method: entry.method ?? "GET",
-          statusCode: entry.statusCode ?? entry.status ?? 0,
-          agent: entry.agent,
-          payloadSummary: entry.payloadSummary,
-          responseSummary: entry.responseSummary,
-          errorDetails: entry.errorDetails,
-        }));
+        const mapped: RequestSectionEvent[] = rawList
+          .filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null)
+          .map((entry) => ({
+            id: String(entry.id ?? ""),
+            createdAt: String(entry.createdAt ?? new Date().toISOString()),
+            type: String(entry.routeType ?? entry.type ?? "other"),
+            status:
+              Number(entry.status) >= 200 && Number(entry.status) < 400
+                ? "Success"
+                : "Error",
+            latencyMs: Number(entry.durationMs ?? entry.latencyMs ?? 0),
+            route: String(entry.path ?? entry.route ?? ""),
+            method: String(entry.method ?? "GET"),
+            statusCode: Number(entry.statusCode ?? entry.status ?? 0),
+            agent: typeof entry.agent === "string" ? entry.agent : null,
+            payloadSummary:
+              typeof entry.payloadSummary === "string" ? entry.payloadSummary : null,
+            responseSummary:
+              typeof entry.responseSummary === "string" ? entry.responseSummary : null,
+            errorDetails:
+              typeof entry.errorDetails === "string" ? entry.errorDetails : null,
+          }));
         const deduped = Array.from(new Map(mapped.map((event) => [event.id, event])).values())
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         if (!cancelled) {
@@ -309,10 +320,6 @@ export function RequestsSection({
           </div>
         </div>
       </div>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Status: {isLoading ? "Syncing requests..." : (errorMessage || liveError) ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
-      </p>
-
       <div className="mt-3 grid gap-2.5 lg:grid-cols-3">
         <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">

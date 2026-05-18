@@ -163,6 +163,19 @@ function compactLabel(value: string, fallback: string): string {
   return normalized.length > 30 ? `${normalized.slice(0, 27)}...` : normalized;
 }
 
+function cleanMemoryText(input: string): string {
+  if (!input) return "";
+  return input
+    .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
+    .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/,\s*"expected"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/"text"\s*:\s*/g, "")
+    .replace(/[\[\]\{\}"]/g, "")
+    .replace(/\s*,\s*/g, " · ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function operationForEvent(
   event: MemorySessionEvent,
 ):
@@ -830,9 +843,6 @@ export function MemoriesSection({
             <h1 className="text-[26px] font-bold tracking-tight text-foreground shadow-black/50 drop-shadow-sm">
               Memory Intelligence Vault
             </h1>
-            <p className="mt-1.5 text-[14px] text-muted-foreground max-w-xl leading-relaxed">
-              Inspect, clean, debug, and evolve agent memory.
-            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
@@ -1470,7 +1480,7 @@ export function MemoriesSection({
                           </span>
                         </div>
                         <h2 className="text-[15px] font-medium leading-relaxed text-foreground">
-                          {memory.summary || "Agent context captured"}
+                          {cleanMemoryText(memory.summary || "Agent context captured")}
                         </h2>
                       </div>
                       <div className="text-right text-[10px] font-mono uppercase tracking-widest text-muted-foreground flex flex-col items-end gap-1 shrink-0">
@@ -1484,8 +1494,8 @@ export function MemoriesSection({
                       </div>
                     </div>
                     <ExpandedMemoryDetail
-                      content={memory.content}
-                      summary={memory.summary}
+                      content={cleanMemoryText(memory.content)}
+                      summary={cleanMemoryText(memory.summary)}
                     />
                   </div>
                   <div className="border-t border-border bg-background px-5 py-2.5 flex items-center justify-between gap-3">
