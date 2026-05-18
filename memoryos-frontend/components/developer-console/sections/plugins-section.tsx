@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { EASE_OUT } from "@/lib/motion";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 
 type PluginStatus = "available" | "installed";
 
@@ -393,16 +394,16 @@ export function PluginsSection() {
                 </div>
               </div>
 
-              <pre className="mt-3 overflow-x-auto rounded-[8px] border border-border bg-muted p-3 text-[11px] leading-6 text-muted-foreground">
-                <code>{`# install plugin
+              <div className="mt-3">
+                <StructuredDataPanel title="Plugin CLI" value={`# install plugin
 memoryos plugin install ${selectedPlugin.id}
 
 # enable for workspace
 memoryos plugin enable ${selectedPlugin.id} --workspace acm
 
 # verify health
-memoryos plugin status ${selectedPlugin.id}`}</code>
-              </pre>
+memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" compactChars={900} />
+              </div>
             </>
           ) : null}
         </div>

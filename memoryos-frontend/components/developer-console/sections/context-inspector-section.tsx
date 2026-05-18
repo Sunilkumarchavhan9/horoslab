@@ -2,16 +2,11 @@
 
 import { useMemo, useState } from "react";
 import type { RequestSectionEvent } from "@/components/developer-console/sections/requests-section";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 
 type ContextInspectorSectionProps = {
   requestEvents: RequestSectionEvent[];
 };
-
-function compactDisplay(value: unknown, maxChars = 2400): string {
-  const pretty = JSON.stringify(value, null, 2);
-  if (pretty.length <= maxChars) return pretty;
-  return `${pretty.slice(0, maxChars).trimEnd()}\n\n... truncated (${pretty.length - maxChars} chars hidden)`;
-}
 
 export function ContextInspectorSection({ requestEvents }: ContextInspectorSectionProps) {
   const liveEvents = useMemo(() => {
@@ -128,9 +123,9 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
               Copy JSON
             </button>
           </div>
-          <pre className="mt-2 max-h-80 overflow-auto rounded-[8px] border border-border bg-muted p-3 text-[12px] text-foreground">
-            {compactDisplay(latestPayload, 2200)}
-          </pre>
+          <div className="mt-2">
+            <StructuredDataPanel title="Latest payload" value={latestPayload} maxHeightClassName="max-h-72" />
+          </div>
         </div>
 
         <div className="rounded-[10px] border border-border bg-muted p-4">
@@ -144,9 +139,13 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
               Copy Diff
             </button>
           </div>
-          <pre className="mt-2 max-h-80 overflow-auto rounded-[8px] border border-border bg-muted p-3 text-[12px] text-foreground">
-            {diffLines.length > 0 ? compactDisplay(diffLines.join("\n\n"), 2200) : "No change from previous request."}
-          </pre>
+          <div className="mt-2">
+            <StructuredDataPanel
+              title="Payload diff"
+              value={diffLines.length > 0 ? diffLines.join("\n\n") : "No change from previous request."}
+              maxHeightClassName="max-h-72"
+            />
+          </div>
         </div>
       </div>
 

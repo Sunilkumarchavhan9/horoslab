@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 import { EASE_OUT } from "@/lib/motion";
 
 type AgentStatus = "online" | "idle" | "offline";
@@ -630,16 +631,16 @@ memoryos agent status`;
               Quickstart
             </p>
 
-            <pre className="mt-2.5 overflow-x-auto rounded-[8px] border border-border bg-card p-3 text-[11px] leading-6 text-muted-foreground">
-              <code>{`# 1) export key
+            <div className="mt-2.5">
+              <StructuredDataPanel title="CLI quickstart" value={`# 1) export key
 export MEMORYOS_API_KEY="mkey_live_..."
 
 # 2) connect agent runtime
 memoryos agent connect --workspace acm --agent mcp-agent
 
 # 3) verify status
-memoryos agent status`}</code>
-            </pre>
+memoryos agent status`} maxHeightClassName="max-h-52" compactChars={900} />
+            </div>
           </div>
 
           <div className="rounded-[10px] border border-border bg-card px-4 py-4">

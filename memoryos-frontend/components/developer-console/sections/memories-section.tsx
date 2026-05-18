@@ -9,6 +9,7 @@ const MotionG = motion.g;
 import { DitherBackground } from "@/components/ui/dither-background";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { EASE_OUT, SPRING } from "@/lib/motion";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 
 const INSPECT_DRAWER_CONTAINER = {
   hidden: {},
@@ -259,10 +260,13 @@ function ExpandedMemoryDetail({
         {expanded ? "Hide Raw Trace" : "Inspect Raw Trace"}
       </button>
       {expanded && (
-        <div className="mt-3 bg-background border border-transparent rounded-none p-4 overflow-x-auto max-h-[300px] overflow-y-auto custom-scrollbar">
-          <pre className="text-[11px] font-mono leading-relaxed text-muted-foreground">
-            {displayContent}
-          </pre>
+        <div className="mt-3">
+          <StructuredDataPanel
+            title="Raw trace"
+            value={displayContent}
+            maxHeightClassName="max-h-[300px]"
+            compactChars={2600}
+          />
         </div>
       )}
     </div>
@@ -2038,9 +2042,12 @@ export function MemoriesSection({
                       Copy JSON
                     </button>
                   </div>
-                  <pre className="bg-background border border-border p-4 rounded-none text-[11px] font-mono text-muted-foreground overflow-x-auto max-h-[300px] overflow-y-auto">
-                    {JSON.stringify(inspectMemory, null, 2)}
-                  </pre>
+                  <StructuredDataPanel
+                    title="Memory JSON"
+                    value={inspectMemory}
+                    maxHeightClassName="max-h-[300px]"
+                    compactChars={2600}
+                  />
                 </motion.div>
               </motion.div>
             </motion.div>

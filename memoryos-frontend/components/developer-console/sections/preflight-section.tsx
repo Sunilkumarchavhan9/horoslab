@@ -6,6 +6,7 @@ import { getOrCreateMemoryToken } from "../../../lib/memory-token";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { Icon } from "@/components/ui/icon";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 export function PreflightSection() {
   const [projectId, setProjectId] = useState("");
   const [agentId] = useState("agent-b");
@@ -298,11 +299,18 @@ export function PreflightSection() {
                         {copiedState === "copy-packet" ? "Copied!" : "Copy Raw"}
                       </button>
                     </div>
-                    <pre className="p-5 text-[12px] font-mono text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                      {showFullPacket
-                        ? preflightData.contextPacket
-                        : compactText(preflightData.contextPacket, 2400)}
-                    </pre>
+                    <div className="p-5">
+                      <StructuredDataPanel
+                        title="Context packet"
+                        value={
+                          showFullPacket
+                            ? preflightData.contextPacket
+                            : compactText(preflightData.contextPacket, 2400)
+                        }
+                        maxHeightClassName="max-h-[420px]"
+                        compactChars={2400}
+                      />
+                    </div>
                     <div className="px-5 pb-4">
                       <button
                         type="button"
@@ -506,11 +514,12 @@ export function PreflightSection() {
                              {copiedState === `copy-file-${i}` ? "Copied" : "Copy"}
                            </button>
                         </div>
-                        <pre className="text-[11px] font-mono text-muted-foreground bg-muted p-3 rounded-sm whitespace-pre-wrap">
-                          {showFullRules[file.name]
-                            ? file.content
-                            : compactText(file.content, 1200)}
-                        </pre>
+                        <StructuredDataPanel
+                          title={file.name}
+                          value={showFullRules[file.name] ? file.content : compactText(file.content, 1200)}
+                          maxHeightClassName="max-h-56"
+                          compactChars={1200}
+                        />
                         <button
                           type="button"
                           onClick={() =>
