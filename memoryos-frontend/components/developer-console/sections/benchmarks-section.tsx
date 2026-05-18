@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useBenchmarks } from "@/lib/useBenchmarks";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 
 const BENCHMARK_TIME_FILTERS = ["7d", "30d", "90d", "All"] as const;
 const BENCHMARK_SUITE_FILTERS = [
@@ -198,7 +199,6 @@ export function BenchmarksSection({
       generatedAt: string;
     }>
   >([]);
-
   const filteredRuns = useMemo(() => {
     const envRuns =
       envFilter === "All envs" ? runs : runs.filter((run) => run.mode === envFilter);
@@ -206,7 +206,14 @@ export function BenchmarksSection({
       return envRuns;
     }
 
-    const referenceTimeMs = Date.now();
+    const referenceTimeMs = envRuns.reduce((max, run) => {
+      const runAt = new Date(run.generatedAt).getTime();
+      return Number.isFinite(runAt) ? Math.max(max, runAt) : max;
+    }, 0);
+    if (referenceTimeMs <= 0) {
+      return envRuns;
+    }
+
     const days = timeFilter === "7d" ? 7 : timeFilter === "30d" ? 30 : 90;
     const cutoff = referenceTimeMs - days * ONE_DAY_MS;
     return envRuns.filter((run) => {
@@ -651,9 +658,14 @@ export function BenchmarksSection({
                 </button>
               ))}
             </div>
-            <pre className="mt-3 max-h-72 overflow-auto rounded-[8px] border border-border bg-muted p-3 text-[11px] text-muted-foreground">
-              {caseTraceText || "Select a case to inspect with/without-memory traces."}
-            </pre>
+            <div className="mt-3">
+              <StructuredDataPanel
+                title="Case trace"
+                value={caseTraceText || "Select a case to inspect with/without-memory traces."}
+                maxHeightClassName="max-h-72"
+                compactChars={2600}
+              />
+            </div>
           </div>
         </>
       )}
