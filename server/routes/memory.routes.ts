@@ -277,6 +277,13 @@ type WorkspaceState = {
 };
 
 type CheckoutProvider = "polar" | "custom";
+type PlanTier = "Free" | "Pro" | "Scale" | "Enterprise";
+const PLAN_RANK: Record<PlanTier, number> = {
+  Free: 0,
+  Pro: 1,
+  Scale: 2,
+  Enterprise: 3,
+};
 
 const WORKSPACE_STATE_BY_USER = new Map<string, WorkspaceState>();
 const PLUGIN_STORE_PATH = path.join(DATA_DIR, "plugins-state.json");
@@ -821,7 +828,7 @@ memoryRouter.post("/api-keys/:keyId/revoke", asyncHandler(async (req, res) => {
 
 memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   const state = getWorkspaceState(req.authUserId);
-  const billingState = getBillingStateForUser(req.authUserId);
+  const billingState = await getBillingStateForUser(req.authUserId);
   state.plan = billingState.plan;
   applyPlanUsageLimits(state.plan, state.usage);
   const checkoutConfigured = Boolean(
@@ -836,8 +843,17 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
     workspaceName: state.workspaceName,
     currentPlan: billingState.plan,
     usage: state.usage,
+    seats: {
+      activeMembers: state.members.filter((member) => member.status === "active").length,
+      pendingInvites: state.invites.filter((invite) => invite.state === "pending").length,
+      seatLimit: PLAN_CATALOG[billingState.plan].seatLimit,
+    },
+    connectorSyncUsage: {
+      used: billingState.connectorSyncUsed ?? 0,
+      limit: PLAN_CATALOG[billingState.plan].connectorSyncRecordLimit,
+    },
     invoices: billingState.invoices,
-    events: listBillingEventsForUser(req.authUserId, 30),
+    events: await listBillingEventsForUser(req.authUserId, 30),
     checkout: {
       configured: checkoutConfigured,
       provider: resolveCheckoutProvider(),
@@ -849,7 +865,7 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
 memoryRouter.get("/billing/events", asyncHandler(async (req, res) => {
   const limitRaw = typeof req.query.limit === "string" ? Number(req.query.limit) : 40;
   const limit = Number.isFinite(limitRaw) ? limitRaw : 40;
-  res.json({ events: listBillingEventsForUser(req.authUserId, limit) });
+  res.json({ events: await listBillingEventsForUser(req.authUserId, limit) });
 }));
 
 memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
@@ -872,7 +888,7 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
     return;
   }
   const state = getWorkspaceState(req.authUserId);
-  const billingState = getBillingStateForUser(req.authUserId);
+  const billingState = await getBillingStateForUser(req.authUserId);
   res.json({
     checkoutUrl,
     portalUrl: toBillingPortalUrl(),
@@ -893,6 +909,14 @@ memoryRouter.get("/team", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.post("/team/invites", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Pro"))) {
+    res.status(402).json({
+      error: "Team invites require Pro or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Pro", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   if (
     !isObjectRecord(req.body) ||
     typeof req.body.email !== "string" ||
@@ -918,6 +942,23 @@ memoryRouter.post("/team/invites", asyncHandler(async (req, res) => {
     return;
   }
   const state = getWorkspaceState(req.authUserId);
+  const currentPlan = (await getBillingStateForUser(req.authUserId)).plan;
+  const seatLimit = PLAN_CATALOG[currentPlan].seatLimit;
+  const activeMembers = state.members.filter((member) => member.status === "active").length;
+  const pendingInvites = state.invites.filter((invite) => invite.state === "pending").length;
+  if (seatLimit !== null && activeMembers + pendingInvites >= seatLimit) {
+    res.status(402).json({
+      error: `Seat limit reached for ${currentPlan}.`,
+      code: "SEAT_LIMIT_REACHED",
+      details: {
+        plan: currentPlan,
+        seatLimit,
+        activeMembers,
+        pendingInvites,
+      },
+    });
+    return;
+  }
   const invite: TeamInviteRecord = {
     id: randomUUID(),
     email,
@@ -931,11 +972,27 @@ memoryRouter.post("/team/invites", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.get("/plugins", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Pro"))) {
+    res.status(402).json({
+      error: "Plugin catalog requires Pro or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Pro", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   const { plugins, events } = buildPluginCatalog(req.authUserId);
   res.json({ plugins, events });
 }));
 
 memoryRouter.get("/governance-policy", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Scale"))) {
+    res.status(402).json({
+      error: "Governance policy requires Scale or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Scale", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   const savedAt = GOVERNANCE_POLICY_SAVED_AT_BY_USER.get(req.authUserId) ?? null;
   res.status(200).json({
     governance: getGovernancePolicyForUser(req.authUserId),
@@ -944,6 +1001,14 @@ memoryRouter.get("/governance-policy", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.post("/governance-policy", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Scale"))) {
+    res.status(402).json({
+      error: "Governance policy requires Scale or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Scale", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   if (!isObjectRecord(req.body)) {
     res.status(400).json({ error: "Invalid governance payload" });
     return;
@@ -1225,6 +1290,14 @@ memoryRouter.get("/conflicts/queue", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.get("/governance/review-queue", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Scale"))) {
+    res.status(402).json({
+      error: "Governance review queue requires Scale or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Scale", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   const traceId = createTraceId("governance_review_queue");
   const state = req.query.state === "approved" || req.query.state === "rejected" ? req.query.state : "pending";
   const store = readGovernanceReviewStore();
@@ -1240,6 +1313,14 @@ memoryRouter.get("/governance/review-queue", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Scale"))) {
+    res.status(402).json({
+      error: "Governance review actions require Scale or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Scale", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   const traceId = createTraceId("governance_review");
   const startedAt = Date.now();
   if (
@@ -1321,12 +1402,12 @@ memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
       .join("\n");
 
     if (message.trim().length > 0) {
-      if (!applyUsageOrReject({
+      if (!(await applyUsageOrReject({
         req,
         res,
         startedAt,
         tokenCost: estimateTokenCostFromText(message),
-      })) {
+      }))) {
         return;
       }
       const result = await runIngestFlowLangGraph({
@@ -1687,6 +1768,14 @@ async function generateCompanyBrainSkillsForUser(input: {
 }
 
 memoryRouter.get("/company-brain/skills", asyncHandler(async (req, res) => {
+  if (!(await hasMinimumPlan(req.authUserId, "Pro"))) {
+    res.status(402).json({
+      error: "Company Brain skills require Pro or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Pro", currentPlan: (await getBillingStateForUser(req.authUserId)).plan },
+    });
+    return;
+  }
   const payload = await generateCompanyBrainSkillsForUser({
     userId: req.authUserId,
     persistExport: true,
@@ -1695,6 +1784,14 @@ memoryRouter.get("/company-brain/skills", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.get("/company-brain/exports", asyncHandler(async (_req, res) => {
+  if (!(await hasMinimumPlan(_req.authUserId, "Scale"))) {
+    res.status(402).json({
+      error: "Company Brain exports require Scale or higher.",
+      code: "UPGRADE_REQUIRED",
+      details: { minimumPlan: "Scale", currentPlan: (await getBillingStateForUser(_req.authUserId)).plan },
+    });
+    return;
+  }
   const exportsList = readCompanyBrainExports().map((entry) => ({
     id: entry.id,
     workspace: entry.workspace,
@@ -2101,16 +2198,9 @@ function createDefaultWorkspaceState(userId: string): WorkspaceState {
 function getWorkspaceState(userId: string): WorkspaceState {
   const existing = WORKSPACE_STATE_BY_USER.get(userId);
   if (existing) {
-    const billingState = getBillingStateForUser(userId);
-    existing.plan = billingState.plan;
-    applyPlanUsageLimits(existing.plan, existing.usage);
     return existing;
   }
   const created = createDefaultWorkspaceState(userId);
-  const billingState = getBillingStateForUser(userId);
-  created.plan = billingState.plan;
-  applyPlanUsageLimits(created.plan, created.usage);
-  created.invoices = billingState.invoices;
   WORKSPACE_STATE_BY_USER.set(userId, created);
   return created;
 }
@@ -2125,6 +2215,11 @@ function toBillingPortalUrl(): string {
     return "https://dashboard.polar.sh";
   }
   return "";
+}
+
+async function hasMinimumPlan(userId: string, minimum: PlanTier): Promise<boolean> {
+  const plan = (await getBillingStateForUser(userId)).plan;
+  return PLAN_RANK[plan] >= PLAN_RANK[minimum];
 }
 
 type UsageMeter = "tokens" | "searches";
@@ -2166,14 +2261,17 @@ function sendUpgradeRequired(
   );
 }
 
-function applyUsageOrReject(params: {
+async function applyUsageOrReject(params: {
   req: { authUserId: string };
   res: Parameters<typeof sendApiError>[0];
   startedAt: number;
   tokenCost?: number;
   searchCost?: number;
-}): boolean {
+}): Promise<boolean> {
   const state = getWorkspaceState(params.req.authUserId);
+  const billingState = await getBillingStateForUser(params.req.authUserId);
+  state.plan = billingState.plan;
+  applyPlanUsageLimits(state.plan, state.usage);
   const tokenCost = Math.max(0, params.tokenCost ?? 0);
   const searchCost = Math.max(0, params.searchCost ?? 0);
 
@@ -2523,12 +2621,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!applyUsageOrReject({
+    if (!(await applyUsageOrReject({
       req,
       res,
       startedAt,
       tokenCost: estimateTokenCostFromText(message),
-    })) {
+    }))) {
       return;
     }
 
@@ -3195,13 +3293,13 @@ memoryRouter.post(
       return;
     }
 
-    if (!applyUsageOrReject({
+    if (!(await applyUsageOrReject({
       req,
       res,
       startedAt,
       tokenCost: estimateTokenCostFromText(parsed.data.question),
       searchCost: 1,
-    })) {
+    }))) {
       return;
     }
 
@@ -3250,13 +3348,13 @@ memoryRouter.get(
       return;
     }
 
-    if (!applyUsageOrReject({
+    if (!(await applyUsageOrReject({
       req,
       res,
       startedAt,
       tokenCost: estimateTokenCostFromText(question),
       searchCost: 1,
-    })) {
+    }))) {
       return;
     }
 
@@ -3374,13 +3472,13 @@ memoryRouter.post(
       return;
     }
 
-    if (!applyUsageOrReject({
+    if (!(await applyUsageOrReject({
       req,
       res,
       startedAt,
       tokenCost: estimateTokenCostFromText(parsed.data.question),
       searchCost: 1,
-    })) {
+    }))) {
       return;
     }
 
@@ -3426,13 +3524,13 @@ memoryRouter.post(
       return;
     }
 
-    if (!applyUsageOrReject({
+    if (!(await applyUsageOrReject({
       req,
       res,
       startedAt,
       tokenCost: estimateTokenCostFromText(parsed.data.question),
       searchCost: 1,
-    })) {
+    }))) {
       return;
     }
 
@@ -3476,13 +3574,13 @@ memoryRouter.post(
       return;
     }
 
-    if (!applyUsageOrReject({
+    if (!(await applyUsageOrReject({
       req,
       res,
       startedAt,
       tokenCost: estimateTokenCostFromText(parsed.data.question),
       searchCost: 1,
-    })) {
+    }))) {
       return;
     }
 
@@ -4109,13 +4207,13 @@ memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
     return;
   }
 
-  if (!applyUsageOrReject({
+  if (!(await applyUsageOrReject({
     req,
     res,
     startedAt,
     tokenCost: estimateTokenCostFromText(parsed.data.question),
     searchCost: 1,
-  })) {
+  }))) {
     return;
   }
 
@@ -4157,13 +4255,13 @@ memoryRouter.post("/retrieve/why-not", asyncHandler(async (req, res) => {
     return;
   }
 
-  if (!applyUsageOrReject({
+  if (!(await applyUsageOrReject({
     req,
     res,
     startedAt,
     tokenCost: estimateTokenCostFromText(parsed.data.question),
     searchCost: 1,
-  })) {
+  }))) {
     return;
   }
 

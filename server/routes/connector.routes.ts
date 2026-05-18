@@ -12,6 +12,11 @@ import { prisma } from "../../lib/storage/prismaClient";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { sendApiSuccess, sendApiError, buildApiMeta } from "./api-response";
 import { randomUUID } from "crypto";
+import {
+  canConsumeConnectorSyncRecords,
+  consumeConnectorSyncRecords,
+  getBillingStateForUser,
+} from "../../lib/billing/store";
 
 import { requireAuth } from "../middleware/auth";
 import { verifyAuthorizationHeader } from "../../lib/auth/verifyToken";
@@ -23,6 +28,14 @@ type ConnectorRealtimeEvent = {
   payload: Record<string, unknown>;
 };
 const CONNECTOR_STREAMS = new Map<string, Set<ExpressResponse>>();
+const PREMIUM_CONNECTORS = new Set<ConnectorType>([
+  "github",
+  "notion",
+  "google_drive",
+  "onedrive",
+  "gmail",
+  "slack",
+]);
 
 function emitConnectorEvent(event: ConnectorRealtimeEvent): void {
   const sinks = CONNECTOR_STREAMS.get(event.userId);
@@ -83,6 +96,13 @@ function toSingleString(value: unknown): string {
     return typeof first === "string" ? first : "";
   }
   return "";
+}
+
+async function isConnectorAllowedByPlan(userId: string, type: ConnectorType): Promise<boolean> {
+  const plan = (await getBillingStateForUser(userId)).plan;
+  if (type === "local_files") return true;
+  if (!PREMIUM_CONNECTORS.has(type)) return true;
+  return plan !== "Free";
 }
 
 
@@ -287,6 +307,16 @@ connectorRouter.get(
     const { type } = req.params;
     const userId = req.authUserId;
     const startedAt = Date.now();
+    const typed = type as ConnectorType;
+    if (!(await isConnectorAllowedByPlan(userId, typed))) {
+      const plan = (await getBillingStateForUser(userId)).plan;
+      sendApiError(res, 402, {
+        code: "UPGRADE_REQUIRED",
+        message: `${type} connector requires Pro or higher.`,
+        details: { connector: type, currentPlan: plan, minimumPlan: "Pro" },
+      }, buildApiMeta(req, startedAt));
+      return;
+    }
 
     // Create a secure state token to prevent CSRF and carry userId
     const state = jwt.sign({ userId, type }, STATE_SECRET, { expiresIn: "15m" });
@@ -533,6 +563,16 @@ connectorRouter.post(
     const type = toSingleString(req.params.type);
     const userId = req.authUserId;
     const startedAt = Date.now();
+    const typed = type as ConnectorType;
+    if (!(await isConnectorAllowedByPlan(userId, typed))) {
+      const plan = (await getBillingStateForUser(userId)).plan;
+      sendApiError(res, 402, {
+        code: "UPGRADE_REQUIRED",
+        message: `${type} connector requires Pro or higher.`,
+        details: { connector: type, currentPlan: plan, minimumPlan: "Pro" },
+      }, buildApiMeta(req, startedAt));
+      return;
+    }
 
     try {
       const connector = await prisma.connector.findUnique({
@@ -642,6 +682,22 @@ connectorRouter.post(
         }
       }
       const nextRecentItemKeys = Array.from(new Set([...recentItemKeys, ...dedupeKeys])).slice(-500);
+      const quota = await canConsumeConnectorSyncRecords({ userId, amount: extractedCount });
+      if (!quota.allowed) {
+        sendApiError(res, 402, {
+          code: "CONNECTOR_SYNC_LIMIT_REACHED",
+          message: `Connector sync record limit reached for ${quota.plan}.`,
+          details: {
+            plan: quota.plan,
+            used: quota.used,
+            limit: quota.limit,
+            requested: extractedCount,
+            minimumPlan: "Pro",
+          },
+        }, buildApiMeta(req, startedAt));
+        return;
+      }
+      const consumed = await consumeConnectorSyncRecords({ userId, amount: extractedCount });
       
       await prisma.connector.update({
         where: { id: connector.id },
@@ -694,7 +750,12 @@ connectorRouter.post(
 
       sendApiSuccess(res, 200, {
         message: `Successfully synced ${type}.`,
-        extractedCount
+        extractedCount,
+        connectorUsage: {
+          used: consumed.used,
+          limit: consumed.limit,
+          plan: consumed.plan,
+        },
       }, buildApiMeta(req, startedAt));
     } catch (error) {
       try {

@@ -50,13 +50,13 @@ function coerceSubscriptionStatus(value: unknown): SubscriptionStatus {
   return "unknown";
 }
 
-billingRouter.post("/webhooks/polar", (req, res) => {
+billingRouter.post("/webhooks/polar", async (req, res) => {
   const rawBody = typeof req.body === "string" ? req.body : "";
   const sigHeader = req.headers["x-polar-signature"];
   const signature = Array.isArray(sigHeader) ? sigHeader[0] : sigHeader;
 
   if (!verifyWebhookSignature(rawBody, signature)) {
-    appendBillingEvent({
+    await appendBillingEvent({
       id: randomUUID(),
       userId: null,
       provider: "polar",
@@ -73,7 +73,7 @@ billingRouter.post("/webhooks/polar", (req, res) => {
   try {
     payload = JSON.parse(rawBody) as PolarWebhookPayload;
   } catch {
-    appendBillingEvent({
+    await appendBillingEvent({
       id: randomUUID(),
       userId: null,
       provider: "polar",
@@ -91,10 +91,13 @@ billingRouter.post("/webhooks/polar", (req, res) => {
   const metadata = (data.metadata ?? {}) as Record<string, unknown>;
   const customerId = typeof data.customer_id === "string" ? data.customer_id : typeof data.customerId === "string" ? data.customerId : null;
   const userIdFromMetadata = typeof metadata.userId === "string" ? metadata.userId : null;
-  const userId = userIdFromMetadata ?? (customerId ? resolveUserIdByCustomerId(customerId) : null);
+  let userId: string | null = userIdFromMetadata;
+  if (!userId && customerId) {
+    userId = await resolveUserIdByCustomerId(customerId);
+  }
 
   if (!userId) {
-    appendBillingEvent({
+    await appendBillingEvent({
       id: randomUUID(),
       userId: null,
       provider: "polar",
@@ -110,7 +113,7 @@ billingRouter.post("/webhooks/polar", (req, res) => {
   if (eventType.includes("subscription")) {
     const plan = coercePlan(metadata.plan ?? data.planName ?? data.plan);
     if (plan) {
-      setUserBillingState({
+      await setUserBillingState({
         userId,
         plan,
         customerId,
@@ -128,7 +131,7 @@ billingRouter.post("/webhooks/polar", (req, res) => {
     const status = (typeof data.status === "string" ? data.status : "open") as "paid" | "open" | "void";
     const hostedInvoiceUrl = typeof data.hosted_invoice_url === "string" ? data.hosted_invoice_url : null;
     const issuedAt = typeof data.created_at === "string" ? data.created_at : new Date().toISOString();
-    appendInvoiceForUser(userId, {
+    await appendInvoiceForUser(userId, {
       id: invoiceId,
       amountCents,
       currency,
@@ -138,7 +141,7 @@ billingRouter.post("/webhooks/polar", (req, res) => {
     });
   }
 
-  appendBillingEvent({
+  await appendBillingEvent({
     id: randomUUID(),
     userId,
     provider: "polar",

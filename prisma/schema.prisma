@@ -167,3 +167,48 @@ model VerificationResult {
 
   session AgentSession @relation(fields: [sessionId], references: [id])
 }
+
+model BillingAccount {
+  userId              String   @id @map("user_id")
+  plan                String   @default("Free")
+  customerId          String?  @unique @map("customer_id")
+  subscriptionId      String?  @map("subscription_id")
+  subscriptionStatus  String   @default("unknown") @map("subscription_status")
+  currentPeriodEnd    String?  @map("current_period_end")
+  connectorSyncUsed   Int      @default(0) @map("connector_sync_used")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  invoices            BillingInvoice[]
+
+  @@index([plan], map: "idx_billing_account_plan")
+  @@map("billing_accounts")
+}
+
+model BillingInvoice {
+  id              String   @id
+  userId          String   @map("user_id")
+  amountCents     Int      @map("amount_cents")
+  currency        String
+  status          String
+  issuedAt        String   @map("issued_at")
+  hostedInvoiceUrl String? @map("hosted_invoice_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  account         BillingAccount @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId, issuedAt], map: "idx_billing_invoice_user_issued")
+  @@map("billing_invoices")
+}
+
+model BillingEvent {
+  id        String   @id
+  userId    String?  @map("user_id")
+  provider  String
+  type      String
+  status    String
+  summary   String
+  createdAt String   @map("created_at")
+
+  @@index([userId, createdAt], map: "idx_billing_event_user_created")
+  @@map("billing_events")
+}
