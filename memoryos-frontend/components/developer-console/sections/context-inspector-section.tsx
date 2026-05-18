@@ -1,22 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { RequestSectionEvent } from "@/components/developer-console/sections/requests-section";
 
 type ContextInspectorSectionProps = {
   requestEvents: RequestSectionEvent[];
 };
 
-export function ContextInspectorSection({ requestEvents }: ContextInspectorSectionProps) {
-  const [liveEvents, setLiveEvents] = useState<RequestSectionEvent[]>(requestEvents);
-  const [loading, setLoading] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<string>("-");
-  const [syncError, setSyncError] = useState<string | null>(null);
-  const last = liveEvents[0];
-  const previous = liveEvents[1];
-  const [status, setStatus] = useState("");
+function compactDisplay(value: unknown, maxChars = 2400): string {
+  const pretty = JSON.stringify(value, null, 2);
+  if (pretty.length <= maxChars) return pretty;
+  return `${pretty.slice(0, maxChars).trimEnd()}\n\n... truncated (${pretty.length - maxChars} chars hidden)`;
+}
 
-  useEffect(() => {
+export function ContextInspectorSection({ requestEvents }: ContextInspectorSectionProps) {
+  const liveEvents = useMemo(() => {
     const deduped = Array.from(
       new Map(
         requestEvents
@@ -25,10 +23,14 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
       ).values(),
     ) as RequestSectionEvent[];
     deduped.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    setLiveEvents(deduped);
-    setLastUpdated(new Date().toISOString());
-    setSyncError(null);
+    return deduped;
   }, [requestEvents]);
+
+  const [lastUpdated] = useState<string>(new Date().toISOString());
+  const syncError: string | null = null;
+  const last = liveEvents[0];
+  const previous = liveEvents[1];
+  const [status, setStatus] = useState("");
 
   const latestPayload = useMemo(
     () => ({
@@ -110,7 +112,7 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
       <p className="mt-2 text-[11px] text-muted-foreground">
         {syncError
           ? `Status: ${syncError}`
-          : `Status: ${loading ? "Syncing live request metadata..." : "Live request metadata connected"} | Last updated: ${lastUpdated}`}
+          : `Status: Live request metadata connected | Last updated: ${lastUpdated}`}
       </p>
       {!syncError && status ? <p className="mt-1 text-[11px] text-muted-foreground">{status}</p> : null}
 
@@ -127,7 +129,7 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
             </button>
           </div>
           <pre className="mt-2 max-h-80 overflow-auto rounded-[8px] border border-border bg-muted p-3 text-[12px] text-foreground">
-            {JSON.stringify(latestPayload, null, 2)}
+            {compactDisplay(latestPayload, 2200)}
           </pre>
         </div>
 
@@ -143,7 +145,7 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
             </button>
           </div>
           <pre className="mt-2 max-h-80 overflow-auto rounded-[8px] border border-border bg-muted p-3 text-[12px] text-foreground">
-            {diffLines.length > 0 ? diffLines.join("\n\n") : "No change from previous request."}
+            {diffLines.length > 0 ? compactDisplay(diffLines.join("\n\n"), 2200) : "No change from previous request."}
           </pre>
         </div>
       </div>

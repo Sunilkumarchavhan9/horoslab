@@ -22,6 +22,19 @@ export function PreflightSection() {
   const [copiedState, setCopiedState] = useState<string | null>(null);
   const [backendState, setBackendState] = useState<"idle" | "live" | "error">("idle");
   const [lastSessionId, setLastSessionId] = useState<string | null>(null);
+  const [showFullPacket, setShowFullPacket] = useState(false);
+  const [showFullRules, setShowFullRules] = useState<Record<string, boolean>>({});
+
+  const compactText = (input: string, maxChars = 2600) => {
+    if (!input) return "";
+    const compacted = input
+      .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
+      .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (compacted.length <= maxChars) return compacted;
+    return `${compacted.slice(0, maxChars).trimEnd()} ... [truncated]`;
+  };
 
   const handleRunPreflight = async () => {
     setLoading(true);
@@ -286,8 +299,19 @@ export function PreflightSection() {
                       </button>
                     </div>
                     <pre className="p-5 text-[12px] font-mono text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                      {preflightData.contextPacket}
+                      {showFullPacket
+                        ? preflightData.contextPacket
+                        : compactText(preflightData.contextPacket, 2400)}
                     </pre>
+                    <div className="px-5 pb-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowFullPacket((current) => !current)}
+                        className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground"
+                      >
+                        {showFullPacket ? "Show compact view" : "Show full packet"}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
@@ -483,8 +507,22 @@ export function PreflightSection() {
                            </button>
                         </div>
                         <pre className="text-[11px] font-mono text-muted-foreground bg-muted p-3 rounded-sm whitespace-pre-wrap">
-                          {file.content}
+                          {showFullRules[file.name]
+                            ? file.content
+                            : compactText(file.content, 1200)}
                         </pre>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowFullRules((prev) => ({
+                              ...prev,
+                              [file.name]: !prev[file.name],
+                            }))
+                          }
+                          className="mt-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground"
+                        >
+                          {showFullRules[file.name] ? "Show compact view" : "Show full rules"}
+                        </button>
                      </div>
                   ))}
                 </div>
