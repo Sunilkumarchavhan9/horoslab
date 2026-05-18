@@ -2,16 +2,14 @@
 
 import { useEffect, useRef } from "react";
 
-const ASCII_CHARS = " .,:;+*x234589";
+const ASCII_CHARS = " .:+*x234589";
 const BAYER_4X4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 
 const THEME = {
-  bg: "#f8fbff",
-  sparse: { r: 201, g: 216, b: 238 },
-  mid: { r: 106, g: 127, b: 154 },
-  body: { r: 81, g: 104, b: 130 },
-  accent: { r: 53, g: 106, b: 204 },
-  deep: { r: 47, g: 73, b: 104 },
+  blueLow: { r: 159, g: 191, b: 255 },
+  blueMid: { r: 95, g: 146, b: 255 },
+  blueHigh: { r: 53, g: 106, b: 204 },
+  white: { r: 248, g: 251, b: 255 },
 } as const;
 
 function clamp(value: number, min: number, max: number) {
@@ -71,6 +69,17 @@ function flowerIntensity(
   const ripple = 0.06 * Math.sin(dist * 0.22 - time * 2.4 + angle * 3);
   const grain = (hashNoise(x * 0.7, y * 0.7, time) - 0.5) * 0.08;
   return clamp(edge * 0.92 + ripple + grain, 0, 1);
+}
+
+function beamIntensity(x: number, y: number, width: number, height: number, t: number) {
+  const px = x / Math.max(1, width);
+  const py = y / Math.max(1, height);
+  const center = (t * 0.22) % 1;
+  const line = px * 0.92 + py * 0.08;
+  const d = Math.abs(line - center);
+  const main = Math.max(0, 1 - d * 14);
+  const tail = Math.max(0, 1 - d * 6) * 0.35;
+  return clamp(main + tail, 0, 1);
 }
 
 function mixColor(
@@ -137,8 +146,7 @@ export function CompanyBrainFlowerCanvas({
       const isIdle = idleRef.current && p >= 0.99;
       const shimmer = isIdle ? Math.sin(t * 1.6) * 0.04 : 0;
 
-      ctx.fillStyle = THEME.bg;
-      ctx.fillRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height);
 
       const cx = width * 0.5;
       const cy = height * 0.54;
@@ -162,14 +170,14 @@ export function CompanyBrainFlowerCanvas({
           );
           const ch = ASCII_CHARS[charIndex];
 
-          const color =
-            intensity < 0.35
-              ? mixColor(THEME.sparse, THEME.mid, intensity / 0.35)
-              : intensity < 0.72
-                ? mixColor(THEME.mid, THEME.body, (intensity - 0.35) / 0.37)
-                : mixColor(THEME.accent, THEME.deep, (intensity - 0.72) / 0.28);
+          const beam = beamIntensity(x + cell * 0.5, y + cell * 0.5, width, height, t);
+          const blue =
+            intensity < 0.44
+              ? mixColor(THEME.blueLow, THEME.blueMid, intensity / 0.44)
+              : mixColor(THEME.blueMid, THEME.blueHigh, (intensity - 0.44) / 0.56);
+          const color = mixColor(blue, THEME.white, beam * 0.88);
 
-          const alpha = clamp(0.35 + intensity * 0.58, 0.28, 0.96);
+          const alpha = clamp(0.34 + intensity * 0.56 + beam * 0.22, 0.24, 0.98);
           ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha.toFixed(3)})`;
           ctx.fillText(ch, x, y);
         }
