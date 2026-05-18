@@ -45,8 +45,7 @@ const NAV_DROPDOWNS = [
     items: [
       { label: "Core Engine", description: "High-performance memory ingestion and indexing", href: "#what-we-do" },
       { label: "Company Brain", description: "From scattered knowledge to executable agent skills", href: "#company-brain-thesis" },
-      { label: "Developer Experience", description: "Next-generation observability and control planes", href: "#developer-experience" },
-      { label: "Personal Memory", description: "Dedicated memory graph for individual workflows", href: "#personal-memory" }
+      { label: "Developer Experience", description: "Next-generation observability and control planes", href: "#developer-experience" }
     ]
   },
   {
@@ -76,11 +75,11 @@ const NAV_DROPDOWNS = [
     ]
   },
   {
-    label: "Consumer",
+    label: "Build",
     width: "w-[300px]",
     items: [
-      { label: "Personal App", description: "Page coming soon. We are actively building this.", href: PERSONAL_APP_COMING_SOON_HREF },
-      { label: "Plugins", description: "Extend capabilities with 3rd-party integrations", href: "#developer-experience" }
+      { label: "Personal App", description: "Personal memory workspace (coming soon)", href: PERSONAL_APP_COMING_SOON_HREF },
+      { label: "Plugins", description: "Extend agent workflows with integrations", href: "#developer-experience" }
     ]
   }
 ];
