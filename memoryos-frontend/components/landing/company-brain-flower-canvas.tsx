@@ -9,7 +9,7 @@ const THEME = {
   blueLow: { r: 159, g: 191, b: 255 },
   blueMid: { r: 95, g: 146, b: 255 },
   blueHigh: { r: 53, g: 106, b: 204 },
-  white: { r: 248, g: 251, b: 255 },
+  white: { r: 255, g: 255, b: 255 },
 } as const;
 
 function clamp(value: number, min: number, max: number) {
@@ -71,7 +71,15 @@ function flowerIntensity(
   return clamp(edge * 0.92 + ripple + grain, 0, 1);
 }
 
-function beamIntensity(x: number, y: number, width: number, height: number, t: number) {
+function beamIntensity(
+  x: number,
+  y: number,
+  flower: number,
+  width: number,
+  height: number,
+  t: number,
+) {
+  if (flower < 0.14) return 0;
   const px = x / Math.max(1, width);
   const py = y / Math.max(1, height);
   const center = (t * 0.22) % 1;
@@ -79,7 +87,7 @@ function beamIntensity(x: number, y: number, width: number, height: number, t: n
   const d = Math.abs(line - center);
   const main = Math.max(0, 1 - d * 14);
   const tail = Math.max(0, 1 - d * 6) * 0.35;
-  return clamp(main + tail, 0, 1);
+  return clamp((main + tail) * flower, 0, 1);
 }
 
 function mixColor(
@@ -146,7 +154,8 @@ export function CompanyBrainFlowerCanvas({
       const isIdle = idleRef.current && p >= 0.99;
       const shimmer = isIdle ? Math.sin(t * 1.6) * 0.04 : 0;
 
-      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
 
       const cx = width * 0.5;
       const cy = height * 0.54;
@@ -170,7 +179,7 @@ export function CompanyBrainFlowerCanvas({
           );
           const ch = ASCII_CHARS[charIndex];
 
-          const beam = beamIntensity(x + cell * 0.5, y + cell * 0.5, width, height, t);
+          const beam = beamIntensity(x + cell * 0.5, y + cell * 0.5, intensity, width, height, t);
           const blue =
             intensity < 0.44
               ? mixColor(THEME.blueLow, THEME.blueMid, intensity / 0.44)
