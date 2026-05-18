@@ -96,13 +96,13 @@ export function RequestsSection({
             route: String(entry.path ?? entry.route ?? ""),
             method: String(entry.method ?? "GET"),
             statusCode: Number(entry.statusCode ?? entry.status ?? 0),
-            agent: typeof entry.agent === "string" ? entry.agent : null,
+            agent: typeof entry.agent === "string" ? entry.agent : undefined,
             payloadSummary:
-              typeof entry.payloadSummary === "string" ? entry.payloadSummary : null,
+              typeof entry.payloadSummary === "string" ? entry.payloadSummary : undefined,
             responseSummary:
-              typeof entry.responseSummary === "string" ? entry.responseSummary : null,
+              typeof entry.responseSummary === "string" ? entry.responseSummary : undefined,
             errorDetails:
-              typeof entry.errorDetails === "string" ? entry.errorDetails : null,
+              typeof entry.errorDetails === "string" ? entry.errorDetails : undefined,
           }));
         const deduped = Array.from(new Map(mapped.map((event) => [event.id, event])).values())
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
