@@ -166,7 +166,13 @@
   --primary-foreground: oklch(0.99 0.01 264);
 }
 
-/* Dashboard-only shape lock: keep every console surface square */
+/* Dashboard-only rounded UI (landing/marketing remains square) */
+.developer-console-root {
+  --console-radius-sm: var(--radius-md);
+  --console-radius: var(--radius-lg);
+  --console-radius-lg: var(--radius-xl);
+}
+
 .developer-console-root [data-slot="card"],
 .developer-console-root [data-slot="button"],
 .developer-console-root [data-slot="input"],
@@ -179,14 +185,46 @@
 .developer-console-root .developer-console-sections article,
 .developer-console-root .developer-console-sections li,
 .developer-console-root .developer-console-sections [class*="border"],
-.developer-console-root [class*="rounded"],
 .developer-console-root pre,
 .developer-console-root code,
 .developer-console-root table,
 .developer-console-root tr,
 .developer-console-root th,
 .developer-console-root td {
-  border-radius: 0 !important;
+  border-radius: var(--console-radius) !important;
+}
+
+.developer-console-root .rounded-xl,
+.developer-console-root [class*="rounded-xl"] {
+  border-radius: var(--console-radius-lg) !important;
+}
+
+.developer-console-root .rounded-lg,
+.developer-console-root [class*="rounded-lg"] {
+  border-radius: var(--console-radius) !important;
+}
+
+.developer-console-root .rounded-md,
+.developer-console-root [class*="rounded-md"] {
+  border-radius: var(--console-radius-sm) !important;
+}
+
+.developer-console-root .rounded-sm,
+.developer-console-root [class*="rounded-sm"] {
+  border-radius: var(--radius-sm) !important;
+}
+
+.developer-console-root [class*="rounded-["] {
+  border-radius: var(--console-radius) !important;
+}
+
+.developer-console-root .rounded-full,
+.developer-console-root [class*="rounded-full"] {
+  border-radius: 9999px !important;
+}
+
+.developer-console-root .rounded-none {
+  border-radius: var(--console-radius-sm) !important;
 }
 
 .developer-console-root :not(pre):not(code):not(.keep-mono).font-mono {
