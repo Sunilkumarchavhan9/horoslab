@@ -3,9 +3,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
 import {
+  formatInsightDisplay,
+  formatMemoryForDisplay,
+} from "@/lib/memory-display-text";
+import {
+  clearPlaygroundSettings,
+  readPlaygroundSettings,
+  writePlaygroundSettings,
+} from "@/lib/playground-settings";
+import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,
   readMemoryTokenFromStorage,
+  writeMemoryTokenToStorage,
 } from "@/lib/memory-token";
 
 type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff";
@@ -189,7 +199,8 @@ function confidenceToPercent(value: number): number {
 }
 
 function compactGraphLabel(value: string, fallback: string): string {
-  const normalized = value
+  const readable = formatMemoryForDisplay(value);
+  const normalized = (readable || value)
     .replace(/[_-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -198,8 +209,15 @@ function compactGraphLabel(value: string, fallback: string): string {
     return fallback;
   }
 
-  const words = normalized.split(" ").slice(0, 4).join(" ");
-  return words.length > 28 ? `${words.slice(0, 25)}...` : words;
+  const words = normalized.split(" ").slice(0, 5).join(" ");
+  return words.length > 32 ? `${words.slice(0, 29)}…` : words;
+}
+
+function memoryRecordText(record: unknown): string {
+  if (!isRecord(record)) return "";
+  const summary = typeof record.summary === "string" ? record.summary : "";
+  const content = typeof record.content === "string" ? record.content : "";
+  return formatMemoryForDisplay(summary || content);
 }
 
 function responseSnippet(payload: unknown, mode: PlaygroundMode): string {
@@ -208,14 +226,22 @@ function responseSnippet(payload: unknown, mode: PlaygroundMode): string {
   }
 
   if (mode === "process") {
-    const accepted = Array.isArray(payload.acceptedMemories) ? payload.acceptedMemories.length : 0;
+    const accepted = Array.isArray(payload.acceptedMemories) ? payload.acceptedMemories : [];
     const timeline = Array.isArray(payload.timelineEvents) ? payload.timelineEvents.length : 0;
-    return `Stored update. Accepted memories: ${accepted}. Timeline events: ${timeline}.`;
+    const headline = memoryRecordText(accepted[0]);
+    if (headline) {
+      return `Saved to memory: ${headline}${accepted.length > 1 ? ` (+${accepted.length - 1} more)` : ""}.`;
+    }
+    return `Stored update. ${accepted.length} memories accepted, ${timeline} timeline events.`;
   }
 
   if (mode === "retrieve") {
-    const memories = Array.isArray(payload.memories) ? payload.memories.length : 0;
-    return `Retrieved ${memories} ranked memories for current question.`;
+    const memories = Array.isArray(payload.memories) ? payload.memories : [];
+    const headline = memoryRecordText(memories[0]);
+    if (headline) {
+      return `Top match: ${headline}${memories.length > 1 ? ` (+${memories.length - 1} more)` : ""}.`;
+    }
+    return `Retrieved ${memories.length} ranked memories for your question.`;
   }
 
   if (mode === "resume") {
@@ -412,6 +438,14 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   }, [billing]);
 
   useEffect(() => {
+    const saved = readPlaygroundSettings();
+    if (saved?.apiOrigin) setApiOrigin(saved.apiOrigin);
+    if (saved?.workspace) setWorkspace(saved.workspace);
+    if (saved?.project) setProject(saved.project);
+    if (saved?.threadId) setThreadId(saved.threadId);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function bootstrap() {
@@ -422,7 +456,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
           await refreshLiveData(effectiveToken);
         });
         if (!cancelled) {
-          setStatusLine("Live data loaded");
+          setStatusLine("Live · connected");
         }
       } catch (error) {
         if (!cancelled) {
@@ -439,12 +473,78 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     };
   }, [refreshLiveData, withAuthorizedToken]);
 
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      void withAuthorizedToken(async (effectiveToken) => {
+        await refreshLiveData(effectiveToken);
+        setStatusLine((current) =>
+          current.startsWith("Running ") ? current : "Live · syncing",
+        );
+      }).catch(() => {
+        // background refresh stays quiet
+      });
+    }, 12_000);
+
+    return () => window.clearInterval(interval);
+  }, [refreshLiveData, withAuthorizedToken]);
+
+  const applyPlaygroundSettings = useCallback(async () => {
+    writePlaygroundSettings({
+      apiOrigin: apiOrigin.trim() || "http://localhost:3001",
+      workspace: workspace.trim() || "memoryostm",
+      project: project.trim() || "memoryos-playground",
+      threadId: threadId.trim() || "playground-thread-1",
+    });
+
+    const trimmedToken = token.trim();
+    if (trimmedToken) {
+      writeMemoryTokenToStorage(trimmedToken);
+    }
+
+    setSettingsOpen(false);
+    setStatusLine("Applying settings…");
+    setErrorMessage(null);
+
+    try {
+      await withAuthorizedToken(async (effectiveToken) => {
+        await refreshLiveData(effectiveToken);
+      });
+      setStatusLine("Live · settings applied");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Could not apply settings");
+      setStatusLine("Settings saved · sync failed");
+    }
+  }, [apiOrigin, workspace, project, threadId, token, withAuthorizedToken, refreshLiveData]);
+
   const profileCards = useMemo(() => {
     return memories.slice(0, 4).map((memory) => ({
       id: memory.id,
-      text: memory.summary || memory.content,
+      text: formatMemoryForDisplay(memory.summary || memory.content) || "Memory updated",
     }));
   }, [memories]);
+
+  const graphInsightLines = useMemo(() => {
+    const lines: string[] = [];
+    for (const skill of insights?.topSkills ?? []) {
+      const label = formatInsightDisplay(skill);
+      if (label) lines.push(label);
+    }
+    for (const project of insights?.activeProjects ?? []) {
+      const label = formatInsightDisplay(project);
+      if (label) lines.push(`Project: ${label}`);
+    }
+    for (const milestone of insights?.recentMilestones ?? []) {
+      const label = formatMemoryForDisplay(milestone);
+      if (label) lines.push(label);
+    }
+    return lines.slice(0, 6);
+  }, [insights]);
+
+  const latestAssistantSummary = useMemo(() => {
+    const last = messages.filter((entry) => entry.role === "assistant").slice(-1)[0];
+    if (!last?.text) return null;
+    return formatMemoryForDisplay(last.text) || last.text;
+  }, [messages]);
 
   const recentSessions = useMemo(() => {
     return requests.slice(0, 4).map((request) => ({
@@ -1470,7 +1570,7 @@ const answer = await model.generate({
                               ? "text-foreground"
                               : "text-foreground/92"
                         }`}>
-                          {message.text}
+                          {formatMemoryForDisplay(message.text) || message.text}
                         </p>
                         <p className={`mt-2 text-[11px] uppercase tracking-[0.1em] ${lightMode ? "text-black/34" : "text-muted-foreground"}`}>
                           {message.role} | {formatTs(message.createdAt)}
@@ -1812,22 +1912,22 @@ handoff = httpx.post(
             <div className="absolute left-5 right-5 top-5 rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Insights</p>
               <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground">
-                {(insights?.topSkills?.slice(0, 4) ?? []).map((skill) => (
-                  <li key={skill}>- {skill}</li>
-                ))}
-                {(insights?.activeProjects?.slice(0, 2) ?? []).map((p) => (
-                  <li key={p}>- Project: {p}</li>
-                ))}
-                {insights && insights.topSkills.length === 0 && insights.activeProjects.length === 0 ? (
-                  <li>-</li>
-                ) : null}
+                {graphInsightLines.length > 0 ? (
+                  graphInsightLines.map((line) => (
+                    <li key={line} className="list-disc pl-4 marker:text-primary">
+                      {line}
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-muted-foreground">No insights yet — run Process or Retrieve to populate live data.</li>
+                )}
               </ul>
             </div>
 
             <div className="absolute left-5 right-5 top-[150px] rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Latest Response Summary</p>
               <p className="mt-2 text-[13px] text-muted-foreground">
-                {messages.filter((entry) => entry.role === "assistant").slice(-1)[0]?.text ?? "No response yet."}
+                {latestAssistantSummary ?? "No response yet. Send a message in the chat tab."}
               </p>
             </div>
           </div>
@@ -1903,13 +2003,16 @@ handoff = httpx.post(
               <button
                 type="button"
                 onClick={() => {
+                  clearPlaygroundSettings();
                   setApiOrigin("http://localhost:3001");
                   setToken("");
                   setShowApiKey(false);
                   setWorkspace("memoryostm");
+                  setProject("memoryos-playground");
+                  setThreadId(`playground-thread-${Date.now().toString().slice(-6)}`);
                   setStatusLine("Settings cleared");
                 }}
-                className="h-11 rounded-[8px] border border-border px-4 text-[14px] font-semibold text-foreground transition hover:text-foreground"
+                className="h-11 rounded-lg border border-border px-4 text-[14px] font-semibold text-foreground transition hover:bg-muted/50"
               >
                 Clear
               </button>
@@ -1917,19 +2020,16 @@ handoff = httpx.post(
                 <button
                   type="button"
                   onClick={() => setSettingsOpen(false)}
-                  className="h-11 rounded-[8px] border border-border px-4 text-[14px] font-semibold text-foreground transition hover:text-foreground"
+                  className="h-11 rounded-lg border border-border px-4 text-[14px] font-semibold text-foreground transition hover:bg-muted/50"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSettingsOpen(false);
-                    setStatusLine("Settings saved");
-                  }}
-                  className="h-11 rounded-[8px] bg-primary px-5 text-[14px] font-semibold text-foreground transition hover:bg-primary/90"
+                  onClick={() => void applyPlaygroundSettings()}
+                  className="h-11 rounded-lg bg-primary px-5 text-[14px] font-semibold text-primary-foreground transition hover:bg-primary/90"
                 >
-                  Save
+                  Save & sync
                 </button>
               </div>
             </div>

@@ -2,6 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { RequestSectionEvent } from "@/components/developer-console/sections/requests-section";
+import {
+  Badge,
+  Button,
+  ConsoleAlert,
+  ConsolePage,
+  ConsolePageHeader,
+  ConsoleSectionCard,
+} from "@/components/developer-console/console-ui";
+import { formatMemoryForDisplay } from "@/lib/memory-display-text";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
 type ConflictStalenessSectionProps = {
@@ -19,17 +28,10 @@ type ConflictQueueItem = {
   confidence: number;
 };
 
-function cleanTraceText(input: string): string {
-  if (!input) return "";
-  return input
-    .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
-    .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
-    .replace(/,\s*"expected"\s*:\s*\{[^}]*\}/g, "")
-    .replace(/"text"\s*:\s*/g, "")
-    .replace(/[\[\]\{\}"]/g, "")
-    .replace(/\s*,\s*/g, " · ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
+function severityVariant(severity: ConflictQueueItem["severity"]) {
+  if (severity === "high") return "destructive" as const;
+  if (severity === "medium") return "outline" as const;
+  return "secondary" as const;
 }
 
 export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictStalenessSectionProps) {
@@ -46,10 +48,15 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
         .slice(0, 5),
     [requestEvents],
   );
-  const dedupedOpenLoops = useMemo(
-    () => Array.from(new Set(openLoops.map((item) => item.trim()).filter(Boolean))),
+
+  const formattedOpenLoops = useMemo(
+    () =>
+      Array.from(new Set(openLoops.map((item) => item.trim()).filter(Boolean)))
+        .map((item) => formatMemoryForDisplay(item))
+        .filter(Boolean),
     [openLoops],
   );
+
   const [items, setItems] = useState<ConflictQueueItem[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [loadingQueue, setLoadingQueue] = useState(false);
@@ -112,7 +119,10 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
     return () => window.clearInterval(timer);
   }, []);
 
-  async function resolveItem(queueItemId: string, action: "replace" | "merge" | "pin_old" | "deprecate"): Promise<void> {
+  async function resolveItem(
+    queueItemId: string,
+    action: "replace" | "merge" | "pin_old" | "deprecate",
+  ): Promise<void> {
     const token = await getOrCreateMemoryToken();
     if (!token) return;
     setBusyId(queueItemId);
@@ -140,85 +150,99 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
   }
 
   return (
-    <section>
-      <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Conflict &amp; Staleness</h1>
+    <ConsolePage>
+      <ConsolePageHeader
+        title="Conflict & Staleness"
+        description="Open loops, runtime errors, and memory conflicts that need resolution."
+        actions={
+          <Button type="button" variant="outline" size="sm" onClick={() => void loadQueue()}>
+            Refresh queue
+          </Button>
+        }
+      />
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-[10px] border border-border bg-muted p-4">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Open Loops</p>
-          <ul className="mt-2 space-y-2 text-[13px] text-foreground">
-            {(dedupedOpenLoops.length > 0 ? dedupedOpenLoops : ["No open loops detected"]).map((item, index) => (
-              <li key={`open-loop-${index}-${item}`} className="rounded-[6px] border border-border bg-muted px-3 py-2">{cleanTraceText(item)}</li>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ConsoleSectionCard title="Open loops" description="Unresolved continuity items from live workspace data.">
+          <ul className="space-y-2">
+            {(formattedOpenLoops.length > 0 ? formattedOpenLoops : ["No open loops detected"]).map(
+              (item, index) => (
+                <li
+                  key={`open-loop-${index}-${item.slice(0, 24)}`}
+                  className="rounded-lg border border-border/80 bg-muted/30 px-3 py-2.5 text-sm leading-relaxed text-foreground"
+                >
+                  {item}
+                </li>
+              ),
+            )}
+          </ul>
+        </ConsoleSectionCard>
+
+        <ConsoleSectionCard title="Recent errors" description="Latest failed API calls in this workspace.">
+          <ul className="space-y-2">
+            {(errors.length > 0
+              ? errors.map((e) => `${e.method} ${e.route}`)
+              : ["No runtime conflicts detected"]
+            ).map((item, index) => (
+              <li
+                key={`runtime-error-${index}-${item}`}
+                className="keep-mono rounded-lg border border-border/80 bg-muted/30 px-3 py-2 text-xs text-foreground"
+              >
+                {item}
+              </li>
             ))}
           </ul>
-        </div>
-        <div className="rounded-[10px] border border-border bg-muted p-4">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Recent Errors</p>
-          <ul className="mt-2 space-y-2 text-[13px] text-foreground">
-            {(errors.length > 0 ? errors.map((e) => `${e.method} ${e.route}`) : ["No runtime conflicts detected"]).map((item, index) => (
-              <li key={`runtime-error-${index}-${item}`} className="rounded-[6px] border border-border bg-muted px-3 py-2">{item}</li>
-            ))}
-          </ul>
-        </div>
+        </ConsoleSectionCard>
       </div>
 
-      <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
-        <div className="flex items-center justify-between">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Conflict Queue</p>
-          <button
-            type="button"
-            onClick={() => void loadQueue()}
-            className="rounded-[6px] border border-border px-2 py-1 text-[10px] text-muted-foreground"
-          >
-            Refresh
-          </button>
-        </div>
-        <div className="mt-2 space-y-2">
-          {queueError ? (
-            <div className="rounded-[6px] border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
-              {queueError}
-            </div>
-          ) : null}
-          {loadingQueue && items.length === 0 ? (
-            <div className="rounded-[6px] border border-border bg-muted px-3 py-2 text-[12px] text-muted-foreground">
-              Loading conflict queue...
-            </div>
-          ) : null}
-          {items.length === 0 ? (
-            <div className="rounded-[6px] border border-border bg-muted px-3 py-2 text-[12px] text-muted-foreground">
-              No open conflicts detected.
-            </div>
-          ) : (
-            items.map((item) => (
-              <div key={item.id} className="rounded-[8px] border border-border bg-muted px-3 py-3">
-                <p className="text-[12px] text-foreground">
-                  {item.reason}
+      <ConsoleSectionCard
+        title="Conflict queue"
+        description="Memories flagged as conflicting — choose how to resolve each item."
+      >
+        {queueError ? <ConsoleAlert className="mb-3">{queueError}</ConsoleAlert> : null}
+        {loadingQueue && items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Loading conflict queue…</p>
+        ) : null}
+        {items.length === 0 && !loadingQueue ? (
+          <p className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-4 py-6 text-center text-sm text-muted-foreground">
+            No open conflicts detected.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-lg border border-border/80 bg-card/50 p-4 shadow-sm"
+              >
+                <p className="text-sm leading-relaxed text-foreground">
+                  {formatMemoryForDisplay(item.reason) || item.reason}
                 </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  severity={item.severity} confidence={(item.confidence * 100).toFixed(0)}%
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <Badge variant={severityVariant(item.severity)} className="capitalize">
+                    {item.severity}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    Confidence {(item.confidence * 100).toFixed(0)}%
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {(["replace", "merge", "pin_old", "deprecate"] as const).map((action) => (
-                    <button
+                    <Button
                       key={action}
                       type="button"
+                      size="sm"
+                      variant={action === item.suggestedAction ? "default" : "outline"}
                       disabled={busyId === item.id}
                       onClick={() => void resolveItem(item.id, action)}
-                      className={`rounded-[6px] border px-2 py-1 text-[10px] ${
-                        action === item.suggestedAction
-                          ? "border-primary/50 text-primary"
-                          : "border-border text-muted-foreground"
-                      } disabled:opacity-50`}
                     >
-                      {busyId === item.id ? "..." : action}
-                    </button>
+                      {busyId === item.id ? "…" : action.replace("_", " ")}
+                    </Button>
                   ))}
                 </div>
               </div>
-            ))
-          )}
-        </div>
-      </div>
-    </section>
+            ))}
+          </div>
+        )}
+      </ConsoleSectionCard>
+    </ConsolePage>
   );
 }

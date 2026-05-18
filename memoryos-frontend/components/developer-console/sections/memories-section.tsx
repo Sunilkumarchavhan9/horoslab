@@ -27,6 +27,10 @@ const INSPECT_DRAWER_ITEM = {
     transition: { duration: 0.3, ease: EASE_OUT },
   },
 } as const;
+import {
+  formatMemoryForDisplay,
+  hasRawMemoryPayload,
+} from "@/lib/memory-display-text";
 import { getOrCreateMemoryToken } from "../../../lib/memory-token";
 
 type MemoryRelation = {
@@ -163,19 +167,6 @@ function compactLabel(value: string, fallback: string): string {
   return normalized.length > 30 ? `${normalized.slice(0, 27)}...` : normalized;
 }
 
-function cleanMemoryText(input: string): string {
-  if (!input) return "";
-  return input
-    .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
-    .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
-    .replace(/,\s*"expected"\s*:\s*\{[^}]*\}/g, "")
-    .replace(/"text"\s*:\s*/g, "")
-    .replace(/[\[\]\{\}"]/g, "")
-    .replace(/\s*,\s*/g, " · ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
-}
-
 function operationForEvent(
   event: MemorySessionEvent,
 ):
@@ -241,48 +232,51 @@ function CountUp({ to, duration = 0.9 }: { to: number; duration?: number }) {
 }
 
 function ExpandedMemoryDetail({
-  content,
-  summary,
+  rawContent,
+  rawSummary,
 }: {
-  content: string;
-  summary: string;
+  rawContent: string;
+  rawSummary: string;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const isRawJson = content.trim().startsWith("{");
-  let displayContent = content;
 
-  if (isRawJson) {
+  if (!hasRawMemoryPayload(rawContent, rawSummary)) return null;
+
+  let displayContent = rawContent.trim() || rawSummary.trim();
+  if (displayContent.startsWith("{")) {
     try {
-      displayContent = JSON.stringify(JSON.parse(content), null, 2);
-    } catch {}
+      displayContent = JSON.stringify(JSON.parse(displayContent), null, 2);
+    } catch {
+      // keep original string
+    }
   }
 
-  if (!content || content === summary) return null;
-
   return (
-    <div className="mt-4 border-t border-border pt-4">
+    <motion.div className="mt-4 border-t border-border/60 pt-4">
       <button
+        type="button"
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
         <span
-          className={`transition-transform duration-300 ${expanded ? "rotate-90" : ""}`}
+          className={`inline-block transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}
+          aria-hidden
         >
-          ?
+          ›
         </span>
-        {expanded ? "Hide Raw Trace" : "Inspect Raw Trace"}
+        {expanded ? "Hide raw trace" : "Inspect raw trace"}
       </button>
-      {expanded && (
-        <div className="mt-3">
+      {expanded ? (
+        <motion.div className="mt-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <StructuredDataPanel
             title="Raw trace"
             value={displayContent}
             maxHeightClassName="max-h-[300px]"
             compactChars={2600}
           />
-        </div>
-      )}
-    </div>
+        </motion.div>
+      ) : null}
+    </motion.div>
   );
 }
 
@@ -1479,11 +1473,28 @@ export function MemoriesSection({
                             {memory.status || "active"}
                           </span>
                         </div>
-                        <h2 className="text-[15px] font-medium leading-relaxed text-foreground">
-                          {cleanMemoryText(memory.summary || "Agent context captured")}
-                        </h2>
+                        {(() => {
+                          const displayText = formatMemoryForDisplay(
+                            memory.summary || memory.content,
+                          );
+                          const detailText = formatMemoryForDisplay(memory.content);
+                          const showDetail =
+                            detailText.length > 0 && detailText !== displayText;
+                          return (
+                            <>
+                              <p className="text-[15px] font-medium leading-relaxed text-foreground">
+                                {displayText || "Agent context captured"}
+                              </p>
+                              {showDetail ? (
+                                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                                  {detailText}
+                                </p>
+                              ) : null}
+                            </>
+                          );
+                        })()}
                       </div>
-                      <div className="text-right text-[10px] font-mono uppercase tracking-widest text-muted-foreground flex flex-col items-end gap-1 shrink-0">
+                      <div className="text-right text-xs text-muted-foreground flex flex-col items-end gap-1 shrink-0">
                         <div className="flex items-center gap-1.5">
                           <span>Conf</span>
                           <span className="font-bold text-foreground">
@@ -1494,8 +1505,8 @@ export function MemoriesSection({
                       </div>
                     </div>
                     <ExpandedMemoryDetail
-                      content={cleanMemoryText(memory.content)}
-                      summary={cleanMemoryText(memory.summary)}
+                      rawContent={memory.content}
+                      rawSummary={memory.summary}
                     />
                   </div>
                   <div className="border-t border-border bg-background px-5 py-2.5 flex items-center justify-between gap-3">
@@ -2002,27 +2013,31 @@ export function MemoriesSection({
                     {inspectMemory.id}
                   </p>
                 </motion.div>
-                {inspectMemory.summary && (
+                {formatMemoryForDisplay(inspectMemory.summary || inspectMemory.content) ? (
                   <motion.div variants={INSPECT_DRAWER_ITEM}>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                       Summary
                     </p>
                     <p className="text-[13px] text-foreground/90 leading-relaxed">
-                      {inspectMemory.summary}
+                      {formatMemoryForDisplay(inspectMemory.summary || inspectMemory.content)}
                     </p>
                   </motion.div>
-                )}
-                {inspectMemory.content &&
-                  inspectMemory.content !== inspectMemory.summary && (
+                ) : null}
+                {(() => {
+                  const body = formatMemoryForDisplay(inspectMemory.content);
+                  const headline = formatMemoryForDisplay(inspectMemory.summary);
+                  if (!body || body === headline) return null;
+                  return (
                     <motion.div variants={INSPECT_DRAWER_ITEM}>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
-                        Content
+                        Details
                       </p>
-                      <p className="text-[13px] text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                        {inspectMemory.content}
+                      <p className="text-[13px] text-muted-foreground leading-relaxed">
+                        {body}
                       </p>
                     </motion.div>
-                  )}
+                  );
+                })()}
                 <motion.div variants={INSPECT_DRAWER_ITEM}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
