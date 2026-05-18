@@ -48,9 +48,22 @@ function cleanNoise(input: string | undefined | null): string {
   text = text.replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "");
   text = text.replace(/,\s*input\s*:\s*\{[^}]*\}/g, "");
   text = text.replace(/\{\s*"text"\s*:\s*"([^"]+)"\s*\}/g, "$1");
+  text = text.replace(/["{}[\]]/g, "");
+  text = text.replace(/,\s*id\s*:\s*[^,]+/gi, "");
+  text = text.replace(/\bmustMention\b\s*:\s*[^,]+/gi, "");
   text = text.replace(/\s+/g, " ").trim();
 
   return text;
+}
+
+function toSentenceChunks(input: string | undefined | null, maxItems = 4): string[] {
+  const cleaned = cleanNoise(input);
+  if (!cleaned) return [];
+  const parts = cleaned
+    .split(/(?:\s+-\s+|[.]\s+|,\s+(?=[A-Z]))/g)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 16 && !/^input\b/i.test(part));
+  return parts.slice(0, maxItems);
 }
 
 function shortText(input: string | undefined | null, max = 180): string {
@@ -99,6 +112,8 @@ export function OverviewSection({
     80,
   );
   const topMemory = shortText(memories[0]?.content ?? "No memory captured yet", 200);
+  const summarySentence = shortText(resumeData?.summary ?? memories[0]?.content ?? "No active summary yet.", 150);
+  const focusPoints = toSentenceChunks(resumeData?.summary ?? topMemory, 3);
   const nextAction =
     shortText(
       resumeData?.recommendedNextStep ?? handoffData?.openLoops?.[0],
@@ -114,6 +129,14 @@ export function OverviewSection({
       ),
       180,
     ) ?? "No blocker detected from current live context.";
+  const problemPoints = toSentenceChunks(detectedProblem, 2);
+  const evidenceItems = memories
+    .slice(0, 3)
+    .map((memory) => ({
+      text: shortText(memory.content, 110),
+      updatedAt: new Date(memory.updatedAt).toLocaleTimeString(),
+      type: (memory.type ?? "memory").toUpperCase(),
+    }));
 
   const liveActivity = [
     ...requestEvents.slice(0, 3).map((event) => ({
@@ -186,24 +209,66 @@ export function OverviewSection({
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Project</p>
                 <p className="text-[15px] font-medium text-foreground">{primaryProjectName}</p>
+                <p className="mt-1 text-[12px] text-muted-foreground">{summarySentence}</p>
               </div>
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Current Focus</p>
-                <p className="rounded-[8px] border border-border bg-muted/40 px-3 py-2 text-[14px] leading-relaxed text-foreground/90">
-                  {shortText(resumeData?.summary ?? topMemory, 260)}
-                </p>
+                <div className="rounded-[8px] border border-border bg-muted/40 px-3 py-2">
+                  <ul className="space-y-1.5 text-[13px] leading-relaxed text-foreground/90">
+                    {(focusPoints.length > 0 ? focusPoints : [shortText(resumeData?.summary ?? topMemory, 260)]).map((point, idx) => (
+                      <li key={`${idx}-${point}`} className="flex items-start gap-2">
+                        <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-destructive">Detected Problem</p>
-                <p className="rounded-[8px] border border-destructive/25 bg-destructive/5 px-3 py-2 text-[14px] leading-relaxed text-foreground/90">
-                  {detectedProblem}
-                </p>
+                <div className="rounded-[8px] border border-destructive/25 bg-destructive/5 px-3 py-2">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-destructive">
+                      Open Loop
+                    </span>
+                    <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      Severity: Medium
+                    </span>
+                  </div>
+                  <ul className="space-y-1.5 text-[13px] leading-relaxed text-foreground/90">
+                    {(problemPoints.length > 0 ? problemPoints : [detectedProblem]).map((point, idx) => (
+                      <li key={`${idx}-${point}`} className="flex items-start gap-2">
+                        <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-destructive" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               <div>
                 <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Next Action</p>
-                <p className="rounded-[8px] border border-primary/20 bg-primary/5 px-3 py-2 text-[14px] font-medium leading-relaxed text-primary">
-                  {nextAction}
-                </p>
+                <div className="rounded-[8px] border border-primary/20 bg-primary/5 px-3 py-2">
+                  <p className="text-[14px] font-medium leading-relaxed text-primary">{nextAction}</p>
+                  <p className="mt-1 text-[11px] uppercase tracking-widest text-primary/80">Estimated time: 2-5 min</p>
+                </div>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Evidence</p>
+                <div className="space-y-2">
+                  {evidenceItems.length === 0 ? (
+                    <p className="rounded-[8px] border border-border bg-muted/30 px-3 py-2 text-[12px] text-muted-foreground">
+                      No evidence items yet.
+                    </p>
+                  ) : evidenceItems.map((item, idx) => (
+                    <div key={`${item.updatedAt}-${idx}`} className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
+                      <div className="mb-1 flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{item.type}</span>
+                        <span className="text-[10px] font-mono text-muted-foreground">{item.updatedAt}</span>
+                      </div>
+                      <p className="text-[12px] leading-relaxed text-foreground/90">{item.text}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
