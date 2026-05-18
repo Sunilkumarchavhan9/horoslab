@@ -22,11 +22,16 @@ export function HeroSection() {
           </h1>
 
           <a
-            href="https://imgs.search.brave.com/UlQXVilZ_l6FSVfubfxggliCcQ5gCYHi7ewhFUhCOeI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOWVlZTFjZTAz/NTRlZTZlMGRiOWZj/Y2ZhZDc0ZTA5MGJl/NDVhOTQ3MzU3M2Fk/NDRmOWQyMjM5YWI4/NDU2Y2Y3OS9mLmlu/Yy8"
+            href="https://f.inc"
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-flex w-fit items-center gap-2 border border-[#c9d8ee] bg-white px-3 py-1.5 text-[12px] text-[#4f6481] transition hover:border-[#9db8e3] hover:text-[hsl(var(--primary))]"
           >
+            <img
+              src="https://www.google.com/s2/favicons?domain=f.inc&sz=64"
+              alt="Founders, Inc. logo"
+              className="h-4 w-4"
+            />
             <span>Part of Founders, Inc.</span>
           </a>
 

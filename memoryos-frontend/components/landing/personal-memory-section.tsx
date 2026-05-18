@@ -113,7 +113,7 @@ function MoreMark() {
 const LOGO_URLS = {
   mastra: "https://mastra.ai/brand/logo.svg",
   langgraph: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/langgraph.png",
-  zapier: "https://imgs.search.brave.com/rUnpoLu5DfS-QakqnhSngX2XdXgncYahdOlqsqMhpO0/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGQ5Mzg2ZjM0/OWU3NGJmZmM4OWQ5/ZGU1OGIyOGNkZjli/MzI0ODg1OWNjZWQ3/OTVkZTczNTk2YzM1/NTQ3MTQ2Mi96YXBp/ZXIuY29tLw",
+  zapier: "https://cdn.simpleicons.org/zapier/ff4f00",
   n8n: "https://cdn.simpleicons.org/n8n/ffffff",
 };
 
