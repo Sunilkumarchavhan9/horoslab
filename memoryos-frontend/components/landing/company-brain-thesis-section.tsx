@@ -89,7 +89,7 @@ export function CompanyBrainThesisSection() {
       className="border-b border-[#c9d8ee] bg-[#f8fbff] px-5 py-8 lg:px-7"
     >
       <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-        <div className="border border-[#c9d8ee] bg-white p-4 md:p-6">
+        <div className="p-0 md:p-0">
           <div className="h-[320px] w-full md:h-[420px]">
             <CompanyBrainFlowerCanvas progress={bloomProgress} idle className="h-full w-full" />
           </div>
