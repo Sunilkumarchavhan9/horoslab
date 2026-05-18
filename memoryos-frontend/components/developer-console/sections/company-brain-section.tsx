@@ -400,13 +400,10 @@ export function CompanyBrainSection() {
     <div className="space-y-3">
       <div>
         <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Company Brain</h1>
-        <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
-          Generate executable company skills from live memory, incidents, decisions, and runbooks.
-        </p>
       </div>
 
       <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Thesis</p>
+        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Runtime</p>
         <div className="mt-2 rounded-[8px] border border-border bg-muted/30 px-3 py-2 text-[12px] text-foreground">
           Company Brain runtime
         </div>

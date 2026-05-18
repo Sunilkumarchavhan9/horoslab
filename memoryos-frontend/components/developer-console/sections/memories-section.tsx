@@ -1632,18 +1632,7 @@ export function MemoriesSection({
                       </p>
                     </div>
                   </div>
-                  <p className="text-[12px] text-muted-foreground leading-relaxed border-l-2 border-border pl-3">
-                    No analysis yet. Run{" "}
-                    <span className="text-primary font-semibold">
-                      Memory Autopilot
-                    </span>{" "}
-                    to detect duplicates, low-confidence, and missing project
-                    goals — or{" "}
-                    <span className="text-foreground font-semibold">
-                      Compile Raw Memories
-                    </span>{" "}
-                    to merge episodic noise into clean intelligence.
-                  </p>
+                  <p className="text-[12px] text-muted-foreground leading-relaxed border-l-2 border-border pl-3">-</p>
                 </div>
               ) : (
                 <div className="space-y-4">

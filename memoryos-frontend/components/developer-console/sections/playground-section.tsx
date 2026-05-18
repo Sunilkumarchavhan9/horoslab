@@ -946,7 +946,7 @@ const answer = await model.generate({
               <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Free</span>
             </div>
             <div className="flex items-center gap-8 text-[13px] font-semibold uppercase tracking-[0.08em]">
-              <a className="text-foreground transition hover:text-primary" href="/developer-console">Docs ↗</a>
+              <a className="text-foreground transition hover:text-primary" href="/developer-console">Console</a>
               <a className="text-foreground transition hover:text-primary" href="/developer-console">Support</a>
               <button
                 type="button"
@@ -1249,7 +1249,7 @@ const answer = await model.generate({
                     o
                   </div>
                   <p className={`text-[13px] ${lightMode ? "text-black/60" : "text-muted-foreground"}`}>No profile memories yet</p>
-                  <p className={`mt-1 text-[12px] ${lightMode ? "text-black/42" : "text-foreground/35"}`}>Run a Process call to create live user data.</p>
+                  <p className={`mt-1 text-[12px] ${lightMode ? "text-black/42" : "text-foreground/35"}`}>No data yet.</p>
                 </div>
               )}
             </div>
@@ -1810,7 +1810,7 @@ handoff = httpx.post(
             </div>
 
             <div className="absolute left-5 right-5 top-5 rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Memory Insights</p>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Insights</p>
               <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground">
                 {(insights?.topSkills?.slice(0, 4) ?? []).map((skill) => (
                   <li key={skill}>- {skill}</li>
@@ -1819,7 +1819,7 @@ handoff = httpx.post(
                   <li key={p}>- Project: {p}</li>
                 ))}
                 {insights && insights.topSkills.length === 0 && insights.activeProjects.length === 0 ? (
-                  <li>- No insights yet. Run Process to generate signals.</li>
+                  <li>-</li>
                 ) : null}
               </ul>
             </div>
@@ -1827,7 +1827,7 @@ handoff = httpx.post(
             <div className="absolute left-5 right-5 top-[150px] rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Latest Response Summary</p>
               <p className="mt-2 text-[13px] text-muted-foreground">
-                {messages.filter((entry) => entry.role === "assistant").slice(-1)[0]?.text ?? "Run a query to see response summary."}
+                {messages.filter((entry) => entry.role === "assistant").slice(-1)[0]?.text ?? "No response yet."}
               </p>
             </div>
           </div>

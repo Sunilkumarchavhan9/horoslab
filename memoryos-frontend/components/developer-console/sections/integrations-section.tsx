@@ -687,7 +687,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             rel={selectedCard.docsUrl.startsWith("http") ? "noreferrer" : undefined}
             className="text-[12px] font-medium text-muted-foreground transition hover:text-foreground"
           >
-            Docs ↗
+            Open
           </a>
         </div>
       ) : null}
@@ -725,7 +725,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               <p className="mt-3 text-[12px] leading-5 text-muted-foreground">{card.summary}</p>
               {active ? (
                 <p className="mt-3 rounded-[7px] border border-primary/20 bg-primary/10 px-2.5 py-2 text-[11px] leading-5 text-primary">
-                  Selected setup path.
+                  Selected
                 </p>
               ) : null}
             </button>
@@ -862,7 +862,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
 
           <div className="rounded-[12px] border border-border bg-card px-4 py-4">
             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-              Live backend signal
+              Live metrics
             </p>
             <div className="mt-3 grid grid-cols-3 gap-2">
               <div className="rounded-[8px] border border-border bg-muted/50 px-2.5 py-2">
