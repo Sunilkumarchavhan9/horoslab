@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { EASE_OUT } from "@/lib/motion";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
-import { StructuredDataPanel } from "./_shared/structured-data-panel";
 
 type PermissionMode = "full" | "scoped";
 
@@ -277,10 +276,6 @@ export function ApiKeysSection() {
 
       {revealedToken ? (
         <div className="mt-2.5 rounded-[10px] border border-primary/30 bg-primary/10 px-3.5 py-3.5">
-          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-primary">Copy now</p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
-            This key is shown once. Copy and store it securely in your secrets manager.
-          </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <code className="rounded-[7px] border border-border bg-muted px-2.5 py-1.5 text-[11px] text-muted-foreground">
               {revealedToken}
@@ -357,7 +352,7 @@ export function ApiKeysSection() {
 
           {isLoadingKeys ? (
             <div className="mt-3 grid min-h-[260px] place-items-center rounded-[10px] border border-dashed border-border bg-muted text-center text-[13px] text-muted-foreground">
-              Loading live API keys...
+              Loading API keys...
             </div>
           ) : keys.length === 0 ? (
             <div className="mt-3 grid min-h-[260px] place-items-center rounded-[10px] border border-dashed border-border bg-muted text-center">
@@ -445,22 +440,6 @@ export function ApiKeysSection() {
         </div>
 
         <div className="space-y-3">
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1.5 3L4 5.5 1.5 8M5.5 8.5h4" />
-              </svg>
-              Quickstart
-            </p>
-            <div className="mt-2.5">
-              <StructuredDataPanel title="API quickstart" value={`export MEMORYOS_API_KEY="mkey_live_..."
-
-curl -X POST "$MEMORYOS_BASE_URL/v1/retrieve" \\
-  -H "Authorization: Bearer $MEMORYOS_API_KEY" \\
-  -H "Content-Type: application/json"`} maxHeightClassName="max-h-52" compactChars={800} />
-            </div>
-          </div>
-
           <div className="rounded-[10px] border border-border bg-card px-4 py-4">
             <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

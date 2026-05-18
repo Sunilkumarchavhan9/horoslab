@@ -218,7 +218,6 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <div className="rounded-[10px] border border-border bg-muted p-4">
           <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Export</p>
-          <p className="mt-2 text-[13px] text-muted-foreground">Generate portability artifacts for {workspaceName}.</p>
           <div className="mt-3 space-y-2">
             <label className="block text-[11px] text-muted-foreground">Project</label>
             <input
@@ -238,7 +237,6 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
         </div>
         <div className="rounded-[10px] border border-border bg-muted p-4">
           <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Import</p>
-          <p className="mt-2 text-[13px] text-muted-foreground">Validate and ingest external continuity snapshots.</p>
           <div className="mt-3 flex items-center gap-2">
             <input
               id="dry-run"
@@ -323,9 +321,7 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
               </p>
             ))}
           </div>
-        ) : (
-          <p className="mt-2 text-[12px] text-muted-foreground">Run export or import validation to see compatibility and schema checks.</p>
-        )}
+        ) : null}
       </div>
     </section>
   );

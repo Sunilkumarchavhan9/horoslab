@@ -463,7 +463,6 @@ export function PreflightSection() {
                       {copiedState === "copy-cli" ? "Copied" : "Copy"}
                     </button>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-3">Run this CLI command to instantly output the context packet, next action, and token savings directly into your terminal environment.</p>
                 </div>
 
                 {/* File Rules */}
