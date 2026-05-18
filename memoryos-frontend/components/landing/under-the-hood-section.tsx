@@ -25,8 +25,8 @@ export function UnderTheHoodSection() {
       </Reveal>
 
       <Reveal className="mt-6">
-        <div className="overflow-hidden border border-[#c9d8ee] bg-white">
-          <div className="flex items-center justify-between border-b border-[#c9d8ee] bg-white px-5 py-4">
+        <div className="bg-white">
+          <div className="flex items-center justify-between px-2 py-4 sm:px-4">
             <h2 className="font-mono text-[12px] font-bold uppercase tracking-[0.22em] text-[#356acc]">
               Live Brain Map
             </h2>
@@ -42,10 +42,10 @@ export function UnderTheHoodSection() {
             ) : null}
           </div>
 
-          <div className="relative min-h-[640px] overflow-hidden bg-white">
+          <div className="relative min-h-[min(72vh,780px)] overflow-hidden bg-white">
             {hasGraphData ? (
               <LiveBrainMapDitherCanvas
-                className="absolute inset-0 h-full min-h-[640px] w-full"
+                className="absolute inset-0 h-full min-h-[min(72vh,780px)] w-full"
                 graph={memoryGraph}
                 selectedItem={selectedGraphItem}
                 onSelectNode={(id) => setSelectedGraphItem({ kind: "node", id })}

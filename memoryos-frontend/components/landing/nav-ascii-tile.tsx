@@ -274,7 +274,7 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
       width = Math.max(1, Math.floor(canvas.clientWidth));
       height = Math.max(1, Math.floor(canvas.clientHeight));
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cell = width > 64 ? 5 : 4;
+      cell = width > 120 ? 6 : width > 64 ? 5 : 4;
 
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
