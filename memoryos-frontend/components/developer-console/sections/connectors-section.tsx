@@ -223,6 +223,7 @@ export function ConnectorsSection({
   const [syncLogs, setSyncLogs] = useState<ConnectorSyncLog[]>([]);
   const [showLogs, setShowLogs] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<BillingPlan>("Free");
+  const [realtimeTick, setRealtimeTick] = useState(0);
 
   const connectedCount = connectors.filter((connector) => connector.status === "connected").length;
   const totalRecords = liveMemoryCount + internalRecords;
@@ -308,7 +309,7 @@ useEffect(() => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [liveMemoryCount]);
+}, [liveMemoryCount, realtimeTick]);
 
 useEffect(() => {
   let cancelled = false;
@@ -340,7 +341,7 @@ useEffect(() => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [liveMemoryCount, liveRequestCount]);
+}, [liveMemoryCount, liveRequestCount, realtimeTick]);
 
 useEffect(() => {
   let cancelled = false;
@@ -370,7 +371,36 @@ useEffect(() => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [liveMemoryCount, liveRequestCount]);
+}, [liveMemoryCount, liveRequestCount, realtimeTick]);
+
+useEffect(() => {
+  let stream: EventSource | null = null;
+  let disposed = false;
+
+  async function openStream() {
+    try {
+      const token = await getOrCreateMemoryToken();
+      if (!token || disposed) return;
+      const url = `/api/connector/events?token=${encodeURIComponent(token)}`;
+      stream = new EventSource(url);
+      stream.onmessage = () => {
+        if (disposed) return;
+        setRealtimeTick((value) => value + 1);
+      };
+      stream.onerror = () => {
+        // Polling fallback remains active.
+      };
+    } catch {
+      // Polling fallback remains active.
+    }
+  }
+
+  void openStream();
+  return () => {
+    disposed = true;
+    if (stream) stream.close();
+  };
+}, []);
 
 useEffect(() => {
   let cancelled = false;

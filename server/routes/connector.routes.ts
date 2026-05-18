@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Response as ExpressResponse } from "express";
 import jwt from "jsonwebtoken";
 import { ConnectorManager, type ConnectorType } from "../../lib/integrations/connectorManager";
 import { GitHubClient } from "../../lib/integrations/github";
@@ -14,8 +14,28 @@ import { sendApiSuccess, sendApiError, buildApiMeta } from "./api-response";
 import { randomUUID } from "crypto";
 
 import { requireAuth } from "../middleware/auth";
+import { verifyAuthorizationHeader } from "../../lib/auth/verifyToken";
 
 export const connectorRouter = Router();
+type ConnectorRealtimeEvent = {
+  kind: "connector_update" | "sync_log";
+  userId: string;
+  payload: Record<string, unknown>;
+};
+const CONNECTOR_STREAMS = new Map<string, Set<ExpressResponse>>();
+
+function emitConnectorEvent(event: ConnectorRealtimeEvent): void {
+  const sinks = CONNECTOR_STREAMS.get(event.userId);
+  if (!sinks || sinks.size === 0) return;
+  const line = `data: ${JSON.stringify(event)}\n\n`;
+  for (const res of sinks) {
+    try {
+      res.write(line);
+    } catch {
+      // stale connection; cleanup happens on close handler.
+    }
+  }
+}
 
 if (!process.env.CONNECTOR_OAUTH_STATE_SECRET) {
   throw new Error("CONNECTOR_OAUTH_STATE_SECRET is required");
@@ -69,6 +89,47 @@ function toSingleString(value: unknown): string {
 /**
  * List all connectors for the current user.
  */
+connectorRouter.get(
+  "/events",
+  asyncHandler(async (req, res) => {
+    const token = toSingleString(req.query.token);
+    const verified = await verifyAuthorizationHeader(token ? `Bearer ${token}` : req.header("authorization"));
+    if (!verified) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const userId = verified.userId;
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders?.();
+    res.write(`event: ready\ndata: ${JSON.stringify({ ok: true, userId })}\n\n`);
+
+    const existingSinks = CONNECTOR_STREAMS.get(userId);
+    const sinks: Set<ExpressResponse> = existingSinks ?? new Set<ExpressResponse>();
+    if (!existingSinks) {
+      CONNECTOR_STREAMS.set(userId, sinks);
+    }
+    sinks.add(res);
+
+    const heartbeat = setInterval(() => {
+      try {
+        res.write(`event: ping\ndata: {"ts":"${new Date().toISOString()}"}\n\n`);
+      } catch {
+        // ignored
+      }
+    }, 15000);
+
+    req.on("close", () => {
+      clearInterval(heartbeat);
+      const current = CONNECTOR_STREAMS.get(userId);
+      if (!current) return;
+      current.delete(res);
+      if (current.size === 0) CONNECTOR_STREAMS.delete(userId);
+    });
+  }),
+);
+
 connectorRouter.get(
   "/",
   requireAuth,
@@ -344,6 +405,15 @@ connectorRouter.get(
       if (!accessToken.startsWith("mock_token_")) {
         await ConnectorManager.triggerSync(userId, type as ConnectorType, accessToken);
       }
+      emitConnectorEvent({
+        kind: "connector_update",
+        userId,
+        payload: {
+          type,
+          status: "connected",
+          at: new Date().toISOString(),
+        },
+      });
 
       // 4. Redirect back to frontend
       const frontendUrl = process.env.OPENROUTER_HTTP_REFERER || "http://localhost:3000";
@@ -388,6 +458,15 @@ connectorRouter.post(
       { message: "Local Files connector enabled." },
       buildApiMeta(req, startedAt),
     );
+    emitConnectorEvent({
+      kind: "connector_update",
+      userId,
+      payload: {
+        type: "local_files",
+        status: "connected",
+        at: new Date().toISOString(),
+      },
+    });
   }),
 );
 
@@ -431,6 +510,16 @@ connectorRouter.post(
       extractedCount: 0,
       message: `Sync lock cleared for ${type}`,
       at: new Date().toISOString(),
+    });
+    emitConnectorEvent({
+      kind: "sync_log",
+      userId,
+      payload: {
+        type,
+        status: "success",
+        message: `Sync lock cleared for ${type}`,
+        at: new Date().toISOString(),
+      },
     });
 
     sendApiSuccess(res, 200, { message: `Unlocked ${type}.` }, buildApiMeta(req, startedAt));
@@ -581,6 +670,27 @@ connectorRouter.post(
         message: `Sync completed for ${type} (attempts=${syncAttempts})`,
         at: new Date().toISOString(),
       });
+      emitConnectorEvent({
+        kind: "connector_update",
+        userId,
+        payload: {
+          type,
+          status: "connected",
+          extractedCount,
+          at: new Date().toISOString(),
+        },
+      });
+      emitConnectorEvent({
+        kind: "sync_log",
+        userId,
+        payload: {
+          type,
+          status: "success",
+          extractedCount,
+          message: `Sync completed for ${type} (attempts=${syncAttempts})`,
+          at: new Date().toISOString(),
+        },
+      });
 
       sendApiSuccess(res, 200, {
         message: `Successfully synced ${type}.`,
@@ -616,6 +726,27 @@ connectorRouter.post(
         extractedCount: 0,
         message: error instanceof Error ? error.message : "Failed to sync connector",
         at: new Date().toISOString(),
+      });
+      emitConnectorEvent({
+        kind: "connector_update",
+        userId,
+        payload: {
+          type,
+          status: "error",
+          error: error instanceof Error ? error.message : "sync_failed",
+          at: new Date().toISOString(),
+        },
+      });
+      emitConnectorEvent({
+        kind: "sync_log",
+        userId,
+        payload: {
+          type,
+          status: "error",
+          extractedCount: 0,
+          message: error instanceof Error ? error.message : "Failed to sync connector",
+          at: new Date().toISOString(),
+        },
       });
       sendApiError(res, 500, {
         code: "SYNC_FAILED",

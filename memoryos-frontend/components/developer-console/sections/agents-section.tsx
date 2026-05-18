@@ -146,6 +146,13 @@ export function AgentsSection() {
     { label: "Threads 24h", value: totalThreads24h, tone: "hsl(var(--primary))" },
     { label: "Avg resume score", value: `${avgResumeScore}%`, tone: "hsl(var(--primary))" },
   ];
+  const backendStateLabel = errorMessage
+    ? "Connection issue"
+    : isRefreshing
+      ? "Syncing..."
+      : hasLoadedOnce
+        ? "Live sync enabled"
+        : "Waiting for first sync";
 
   const loadAgents = useCallback(async (background = false) => {
     if (!background) setIsRefreshing(true);
@@ -341,7 +348,7 @@ memoryos agent status`;
         </div>
         </div>
         <p className="relative z-10 mt-2 text-[11px] text-muted-foreground">
-          Status: {isRefreshing ? "Syncing live agents..." : "Live backend connected"} | Last updated: {lastUpdated}
+          {backendStateLabel} · Updated: {lastUpdated}
         </p>
       </motion.div>
       {errorMessage ? (

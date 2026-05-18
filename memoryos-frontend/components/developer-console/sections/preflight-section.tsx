@@ -21,7 +21,6 @@ export function PreflightSection() {
 
   const [activeTab, setActiveTab] = useState<"packet" | "memories" | "decisions" | "blockers" | "files" | "missing_context" | "agent_rules">("packet");
   const [copiedState, setCopiedState] = useState<string | null>(null);
-  const [backendState, setBackendState] = useState<"idle" | "live" | "error">("idle");
   const [lastSessionId, setLastSessionId] = useState<string | null>(null);
   const [showFullPacket, setShowFullPacket] = useState(false);
   const [showFullRules, setShowFullRules] = useState<Record<string, boolean>>({});
@@ -70,10 +69,8 @@ export function PreflightSection() {
 
       const { data } = await response.json();
       setPreflightData(data);
-      setBackendState("live");
     } catch (err: any) {
       setError(err.message || "An unknown error occurred.");
-      setBackendState("error");
     } finally {
       setLoading(false);
     }
@@ -117,10 +114,8 @@ export function PreflightSection() {
       const sessionId = (payload?.data?.id ?? payload?.id) as string | undefined;
       if (sessionId) {
         setLastSessionId(sessionId);
-        setBackendState("live");
       }
     } catch {
-      setBackendState("error");
     }
   };
 
@@ -157,16 +152,11 @@ export function PreflightSection() {
             
               Launchpad for AI agent continuity. Ensure every agent starts with exact project state, decisions, and blockers before continuing work.
             </motion.p>
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.1em]">
-              <span className={`inline-flex items-center rounded-[6px] border border-border px-2 py-1 ${backendState === "live" ? "bg-card text-chart-2" : backendState === "error" ? "bg-card text-destructive" : "bg-card text-muted-foreground"}`}>
-                {backendState === "live" ? "Backend live" : backendState === "error" ? "Backend issue" : "Awaiting run"}
-              </span>
-              {lastSessionId ? (
-                <span className="rounded-[6px] border border-border bg-card px-2 py-1 text-muted-foreground">
-                  session {lastSessionId.slice(0, 12)}
-                </span>
-              ) : null}
-            </div>
+            {lastSessionId ? (
+              <p className="mt-2 text-[12px] text-muted-foreground">
+                Session linked.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

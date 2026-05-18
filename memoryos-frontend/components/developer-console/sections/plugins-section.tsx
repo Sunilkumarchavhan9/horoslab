@@ -49,6 +49,7 @@ export function PluginsSection() {
   const [activeCategory, setActiveCategory] = useState<"All" | "Runtime" | "MCP" | "Workflow">("All");
   const [selectedPluginId, setSelectedPluginId] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [backendReachable, setBackendReachable] = useState(false);
 
   const loadPlugins = useCallback(async (options?: { keepSelection?: boolean }) => {
     if (!options?.keepSelection) setIsLoading(true);
@@ -71,6 +72,7 @@ export function PluginsSection() {
     setEvents(dedupedEvents);
     setLastUpdated(new Date().toISOString());
     setErrorMessage(null);
+    setBackendReachable(true);
     if (!options?.keepSelection && dedupedPlugins.length > 0) {
       setSelectedPluginId(dedupedPlugins[0].id);
       setIsLoading(false);
@@ -98,6 +100,7 @@ export function PluginsSection() {
             error instanceof Error ? error.message : "Could not load plugins.",
           );
           setIsLoading(false);
+          setBackendReachable(false);
         }
       }
     };
@@ -149,6 +152,7 @@ export function PluginsSection() {
       setPlugins(payload.plugins);
       setEvents(payload.events ?? []);
       setErrorMessage(null);
+      setBackendReachable(true);
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Could not install plugin.",
@@ -172,6 +176,7 @@ export function PluginsSection() {
       setPlugins(payload.plugins);
       setEvents(payload.events ?? []);
       setErrorMessage(null);
+      setBackendReachable(true);
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Could not uninstall plugin.",
@@ -226,7 +231,13 @@ export function PluginsSection() {
           </div>
         </div>
         <p className="relative z-10 mt-2 text-[11px] text-muted-foreground">
-          Status: {isLoading ? "Syncing live plugin catalog..." : errorMessage ? "Sync error" : "Live backend connected"} | Last updated: {lastUpdated}
+          {isLoading
+            ? "Loading plugin state..."
+            : errorMessage
+              ? "Connection issue"
+              : backendReachable
+                ? "Workspace plugin state loaded"
+                : "Waiting for backend"} · Updated: {lastUpdated}
         </p>
       </motion.div>
       {errorMessage ? (
@@ -444,7 +455,7 @@ memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" comp
           </div>
 
           <div className="rounded-[10px] border border-border bg-card px-4 py-4 text-[12px] text-muted-foreground">
-            Plugin status and versions are loaded from local project packages and persisted installation state.
+            Source of truth: package manifests + persisted workspace install state. Marketplace listing is external.
           </div>
         </div>
       </div>
