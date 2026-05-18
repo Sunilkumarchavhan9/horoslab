@@ -308,7 +308,8 @@ connectorRouter.get(
     const userId = req.authUserId;
     const startedAt = Date.now();
     const typed = type as ConnectorType;
-    if (!(await isConnectorAllowedByPlan(userId, typed))) {
+    const bypassPlanGate = typed === "github";
+    if (!bypassPlanGate && !(await isConnectorAllowedByPlan(userId, typed))) {
       const plan = (await getBillingStateForUser(userId)).plan;
       sendApiError(res, 402, {
         code: "UPGRADE_REQUIRED",
@@ -564,7 +565,8 @@ connectorRouter.post(
     const userId = req.authUserId;
     const startedAt = Date.now();
     const typed = type as ConnectorType;
-    if (!(await isConnectorAllowedByPlan(userId, typed))) {
+    const bypassPlanGate = typed === "github";
+    if (!bypassPlanGate && !(await isConnectorAllowedByPlan(userId, typed))) {
       const plan = (await getBillingStateForUser(userId)).plan;
       sendApiError(res, 402, {
         code: "UPGRADE_REQUIRED",
