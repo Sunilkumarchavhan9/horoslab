@@ -518,6 +518,19 @@ export function IntegrationsSection({ installationVerification, liveSignals }: I
         : verificationStatus === "error"
           ? "bg-destructive/20 text-destructive"
           : "bg-primary/20 text-primary";
+  const runtimeConnected = verificationStatus === "connected" || hasLiveSignals;
+  const runtimeStatusLabel =
+    verificationStatus === "waiting"
+      ? "Waiting for live event"
+      : runtimeConnected
+        ? "Connected"
+        : "Not connected";
+  const runtimeStatusDotClass =
+    verificationStatus === "waiting"
+      ? "bg-chart-5"
+      : runtimeConnected
+        ? "bg-chart-2"
+        : "bg-destructive";
 
   const apiBaseUrl = DEFAULT_API_BASE_URL;
   const displayToken = tokenForCode(memoryToken);
@@ -580,19 +593,14 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
         <div className="rounded-[10px] border border-border bg-muted/50 px-3 py-2 text-right">
           
           <div className="mt-1 flex items-center justify-end gap-2">
-            <span
-              className={`h-2 w-2 rounded-full ${
-                tokenStatus === "ready"
-                  ? "bg-chart-2"
-                  : tokenStatus === "checking"
-                    ? "bg-chart-5"
-                    : "bg-destructive"
-              }`}
-            />
+            <span className={`h-2 w-2 rounded-full ${runtimeStatusDotClass}`} />
             <span className="text-[11px] text-muted-foreground">
-              {tokenStatus === "ready" ? "Connected" : tokenStatus === "checking" ? "Checking" : "Missing"}
+              {runtimeStatusLabel}
             </span>
           </div>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Token: {tokenStatus === "ready" ? "ready" : tokenStatus === "checking" ? "checking" : "missing"}
+          </p>
         </div>
       </div>
 

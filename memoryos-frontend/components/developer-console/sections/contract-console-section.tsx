@@ -37,6 +37,22 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
+function cleanContractText(input: string): string {
+  if (!input) return "";
+  return input
+    .replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "")
+    .replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function compactList(items: string[]): string {
+  if (items.length === 0) return "None";
+  const cleaned = items.map((item) => cleanContractText(item)).filter(Boolean);
+  const joined = cleaned.join(" · ");
+  return joined.length > 360 ? `${joined.slice(0, 360).trimEnd()} ...` : joined;
+}
+
 export function ContractConsoleSection({ contract }: ContractConsoleSectionProps) {
   const [status, setStatus] = useState("Syncing contract validation...");
   const [lastUpdated, setLastUpdated] = useState<string>("-");
@@ -125,7 +141,7 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
           setValidation(result);
           setTraceId(result.traceId ?? "-");
           setLastUpdated(new Date().toISOString());
-          setStatus("Live contract validation connected");
+          setStatus("Validation ready");
         }
       } catch (error) {
         if (!cancelled) {
@@ -155,15 +171,15 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
         Validate memory contract quality before execution and handoff.
       </p>
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Status: {loading ? "Syncing contract validation..." : status} | Trace: {traceId} | Last updated: {lastUpdated}
+        {loading ? "Validating contract..." : status}
       </p>
 
       <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
-        <Row label="Goal" value={contract.goal || "Missing"} />
-        <Row label="Constraints" value={contract.constraints.join(" · ") || "None"} />
-        <Row label="Decisions" value={contract.decisions.join(" · ") || "None"} />
-        <Row label="Open Risks" value={contract.openRisks.join(" · ") || "None"} />
-        <Row label="Next Actions" value={contract.nextActions.join(" · ") || "None"} />
+        <Row label="Goal" value={cleanContractText(contract.goal) || "Missing"} />
+        <Row label="Constraints" value={compactList(contract.constraints)} />
+        <Row label="Decisions" value={compactList(contract.decisions)} />
+        <Row label="Open Risks" value={compactList(contract.openRisks)} />
+        <Row label="Next Actions" value={compactList(contract.nextActions)} />
       </div>
 
       <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
@@ -186,6 +202,7 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
         ) : (
           <p className="mt-2 text-[12px] text-muted-foreground">Awaiting live validation response...</p>
         )}
+        <p className="mt-2 text-[10px] text-muted-foreground">Trace: {traceId} · Updated: {lastUpdated}</p>
       </div>
     </section>
   );
