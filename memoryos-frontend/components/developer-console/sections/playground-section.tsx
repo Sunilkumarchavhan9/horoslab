@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
-import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,
@@ -61,6 +60,17 @@ type TimelineResponse = {
 
 type RequestHistoryResponse = {
   requests: RequestEvent[];
+};
+
+type BillingSnapshot = {
+  currentPlan: "Free" | "Pro" | "Scale" | "Enterprise";
+  usage: {
+    tokenLimit: number;
+    tokenUsed: number;
+    searchLimit: number;
+    searchUsed: number;
+    resetInDays: number;
+  };
 };
 
 type ChatMessage = {
@@ -293,7 +303,6 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
       createdAt: new Date().toISOString(),
     },
   ]);
-  const [rawResponse, setRawResponse] = useState("{\n  \"status\": \"ready\"\n}");
   const [statusLine, setStatusLine] = useState("Ready");
   const [isRunning, setIsRunning] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -311,13 +320,13 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   const [selectedGraphNodeId, setSelectedGraphNodeId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
+  const [billing, setBilling] = useState<BillingSnapshot | null>(null);
   const lightMode = false;
   const [selectedContainerTag, setSelectedContainerTag] = useState(
     isEmbedded ? "" : "memoryostm",
   );
   const [setupTab, setSetupTab] = useState<SetupTab>("configure");
   const [importText, setImportText] = useState("");
-  const planLimitsLine = `Free ${formatLimit(PLAN_CATALOG.Free.tokenLimit ?? 0)} tokens / ${formatLimit(PLAN_CATALOG.Free.searchLimit ?? 0)} searches · Pro ${formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} / ${formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)} · Scale ${formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} / ${formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} per month`;
 
   const selectedConfig = useMemo(
     () => MODE_CONFIG.find((item) => item.mode === mode) ?? MODE_CONFIG[0],
@@ -375,20 +384,32 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
 
   const refreshLiveData = useCallback(
     async (effectiveToken: string): Promise<void> => {
-      const [memoryPayload, insightPayload, timelinePayload, requestPayload] = await Promise.all([
+      const [memoryPayload, insightPayload, timelinePayload, requestPayload, billingPayload] = await Promise.all([
         fetchMemoryApi<MemoryListResponse>("/api/memory/list?limit=40", effectiveToken, undefined, apiOrigin),
         fetchMemoryApi<InsightsResponse>("/api/memory/insights", effectiveToken, undefined, apiOrigin),
         fetchMemoryApi<TimelineResponse>("/api/memory/timeline?limit=40", effectiveToken, undefined, apiOrigin),
         fetchMemoryApi<RequestHistoryResponse>("/api/memory/requests?limit=30&range=all", effectiveToken, undefined, apiOrigin),
+        fetchMemoryApi<BillingSnapshot>("/api/memory/billing", effectiveToken, undefined, apiOrigin),
       ]);
 
       setMemories(memoryPayload.memories);
       setInsights(insightPayload);
       setTimeline(timelinePayload.events);
       setRequests(requestPayload.requests);
+      setBilling(billingPayload);
     },
     [apiOrigin],
   );
+
+  const tokenUsageLine = useMemo(() => {
+    if (!billing) return "Tokens: --";
+    return `Tokens: ${billing.usage.tokenUsed.toLocaleString()} / ${billing.usage.tokenLimit.toLocaleString()}`;
+  }, [billing]);
+
+  const searchUsageLine = useMemo(() => {
+    if (!billing) return "Searches: --";
+    return `Searches: ${billing.usage.searchUsed.toLocaleString()} / ${billing.usage.searchLimit.toLocaleString()}`;
+  }, [billing]);
 
   useEffect(() => {
     let cancelled = false;
@@ -709,7 +730,6 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
       };
 
       setMessages((current) => [...current, assistantMessage]);
-      setRawResponse(JSON.stringify(payload, null, 2));
       setStatusLine(`${selectedConfig.label} completed`);
       setInput("");
     } catch (error) {
@@ -741,7 +761,6 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     ]);
     setThreadId(`playground-thread-${Date.now().toString().slice(-6)}`);
     setInput("");
-    setRawResponse("{\n  \"status\": \"new chat\"\n}");
     setErrorMessage(null);
     setStatusLine("New chat session created");
   }
@@ -1592,7 +1611,9 @@ handoff = httpx.post(
               <span>Mode: {selectedConfig.label}</span>
               <span>TopK: {topK}</span>
               <span>Workspace: {workspace}</span>
-              <span>Limits: {planLimitsLine}</span>
+              <span>Plan: {billing?.currentPlan ?? "Free"}</span>
+              <span>{tokenUsageLine}</span>
+              <span>{searchUsageLine}</span>
             </div>
           </div>
         </section>
@@ -1790,8 +1811,8 @@ handoff = httpx.post(
             </div> : null}
             </div>
 
-            <div className="absolute left-5 right-5 top-5 rounded-[12px] border border-border bg-card/80 p-3.5 backdrop-blur">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">What I found out</p>
+            <div className="absolute left-5 right-5 top-5 rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Memory Insights</p>
               <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground">
                 {(insights?.topSkills?.slice(0, 4) ?? []).map((skill) => (
                   <li key={skill}>- {skill}</li>
@@ -1805,14 +1826,12 @@ handoff = httpx.post(
               </ul>
             </div>
 
-            <details className="absolute left-5 right-5 top-[150px] rounded-[12px] border border-border bg-card/80 p-3.5 backdrop-blur">
-              <summary className="cursor-pointer text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                Raw API Response
-              </summary>
-              <pre className="mt-3 max-h-[220px] overflow-auto rounded-[8px] border border-border bg-muted p-3 text-[11px] leading-5 text-muted-foreground">
-                {rawResponse}
-              </pre>
-            </details>
+            <div className="absolute left-5 right-5 top-[150px] rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Latest Response Summary</p>
+              <p className="mt-2 text-[13px] text-muted-foreground">
+                {messages.filter((entry) => entry.role === "assistant").slice(-1)[0]?.text ?? "Run a query to see response summary."}
+              </p>
+            </div>
           </div>
         </aside>
       </div>

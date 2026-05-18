@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { EASE_OUT } from "@/lib/motion";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { StructuredDataPanel } from "./_shared/structured-data-panel";
 
 type PermissionMode = "full" | "scoped";
 
@@ -454,13 +455,13 @@ export function ApiKeysSection() {
               </svg>
               Quickstart
             </p>
-            <pre className="mt-2.5 overflow-x-auto rounded-[8px] border border-border bg-muted p-3 text-[11px] leading-6 text-muted-foreground">
-              <code>{`export MEMORYOS_API_KEY="mkey_live_..."
+            <div className="mt-2.5">
+              <StructuredDataPanel title="API quickstart" value={`export MEMORYOS_API_KEY="mkey_live_..."
 
 curl -X POST "$MEMORYOS_BASE_URL/v1/retrieve" \\
   -H "Authorization: Bearer $MEMORYOS_API_KEY" \\
-  -H "Content-Type: application/json"`}</code>
-            </pre>
+  -H "Content-Type: application/json"`} maxHeightClassName="max-h-52" compactChars={800} />
+            </div>
           </div>
 
           <div className="rounded-[10px] border border-border bg-card px-4 py-4">
