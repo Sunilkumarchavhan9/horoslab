@@ -301,3 +301,4 @@ export function SettingsSection({ workspaceName, ownerName, ownerEmail, organiza
     </>
   );
 }
+

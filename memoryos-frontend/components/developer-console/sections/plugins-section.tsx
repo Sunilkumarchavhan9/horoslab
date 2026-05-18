@@ -3,6 +3,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
+import {
+  Button,
+  ConsoleAlert,
+  ConsolePage,
+  ConsolePageHeader,
+  ConsoleStatCard,
+  ConsoleStatGrid,
+  ConsoleToolbar,
+  ConsoleToolbarButton,
+} from "@/components/developer-console/console-ui";
 import { EASE_OUT } from "@/lib/motion";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 import { StructuredDataPanel } from "./_shared/structured-data-panel";
@@ -185,7 +195,7 @@ export function PluginsSection() {
   }
 
   return (
-    <>
+    <ConsolePage>
       <motion.div
         className="relative overflow-hidden border border-border bg-background px-4 py-4 sm:px-5"
         initial={{ opacity: 0, y: 6 }}
@@ -459,6 +469,6 @@ memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" comp
           </div>
         </div>
       </div>
-    </>
+    </ConsolePage>
   );
 }
