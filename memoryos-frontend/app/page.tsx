@@ -15,7 +15,7 @@ import { WhatWeDoSection } from "@/components/landing/what-we-do-section";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white pb-0 pt-[72px]">
+    <main className="landing-root min-h-screen bg-white pb-0 pt-[72px]">
       <div className="fixed left-1/2 top-0 z-[80] w-full max-w-[1240px] -translate-x-1/2 border-x border-b border-[#c9d8ee] bg-white">
         <LandingNav />
       </div>

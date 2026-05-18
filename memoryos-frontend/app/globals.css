@@ -139,6 +139,14 @@
   }
 }
 
+/* Landing-only hard square corners */
+.landing-root,
+.landing-root *:not(.rounded-full):not([class*="rounded-full"]),
+.landing-root *::before,
+.landing-root *::after {
+  border-radius: 0 !important;
+}
+
 /* Premium developer console — Linear / Stripe–style sans UI on shadcn tokens */
 .developer-console-root {
   font-family: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
