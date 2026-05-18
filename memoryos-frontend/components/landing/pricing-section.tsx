@@ -93,10 +93,6 @@ export function PricingSection() {
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[13px] text-slate-900 md:text-[14px]">
           <span className="inline-flex items-center gap-2">
             <span className="text-[#18b45b]">✓</span>
-            Timeline + revisions + explainability in paid plans
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <span className="text-[#18b45b]">✓</span>
             SDK + HTTP + MCP interoperability
           </span>
           <span className="inline-flex items-center gap-2">
