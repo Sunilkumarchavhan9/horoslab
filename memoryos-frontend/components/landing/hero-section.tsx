@@ -12,12 +12,12 @@ export function HeroSection() {
 
       <HeroAnnouncementStrip />
 
-      <div className="grid gap-6 px-5 py-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-7">
+      <div className="grid gap-6 px-5 py-8 lg:grid-cols-[1.28fr_0.72fr] lg:px-7">
         <Reveal>
           <p className="font-mono text-[11px] tracking-[0.22em] text-[#356acc]">
             COMPANY BRAIN INFRASTRUCTURE
           </p>
-          <h1 className="max-w-[620px] text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-slate-900 md:text-5xl lg:text-[56px]">
+          <h1 className="max-w-[760px] text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-slate-900 md:text-5xl lg:text-[56px]">
             Turn scattered company knowledge into executable agent skills
           </h1>
 
