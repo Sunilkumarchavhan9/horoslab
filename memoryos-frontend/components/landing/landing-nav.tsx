@@ -1,52 +1,19 @@
 import { MemoryStarLogo } from "./memory-star-logo";
 import { PLAN_CATALOG } from "@/lib/plan-catalog";
-import { NavDropdownLink } from "./nav-dropdown-link";
+import { LandingNavDropdown, LandingNavLoginDropdown } from "./landing-nav-dropdown";
 
 const PERSONAL_APP_COMING_SOON_HREF = "/personal-app-coming-soon";
 
-const NAV_DROPDOWNS = [
+const LOGIN_ITEMS = [
   {
-    label: "Platform",
-    width: "w-[480px]",
-    items: [
-      { label: "Core Engine", description: "High-performance memory ingestion and indexing", href: "#what-we-do" },
-      { label: "Company Brain", description: "From scattered knowledge to executable agent skills", href: "#company-brain-thesis" },
-      { label: "Developer Experience", description: "Next-generation observability and control planes", href: "#developer-experience" },
-    ],
+    label: "Developer Console",
+    description: "API keys, usage limits, and documentation",
+    href: "/developer-console/sign-in",
   },
   {
-    label: "Integrate",
-    width: "w-[480px]",
-    items: [
-      { label: "API Reference", description: "Complete documentation for REST and GraphQL endpoints", href: "#developer-experience" },
-      { label: "Client SDKs", description: "Native libraries for TypeScript, Python, and Go", href: "#developer-experience" },
-      { label: "Context Stack", description: "Connect your existing agents and swarms easily", href: "#context-stack" },
-    ],
-  },
-  {
-    label: "Proof",
-    width: "w-[400px]",
-    items: [
-      { label: "Benchmarks", description: "See our zero-miss-rate test results in action", href: "#benchmarks" },
-      { label: "Case Studies", description: "Learn how top teams scale with MemoryOS", href: "#benchmarks" },
-    ],
-  },
-  {
-    label: "Pricing",
-    width: "w-[500px]",
-    items: [
-      { label: "Starter (Free)", description: "For individual developers validating workflows", href: "/developer-console/sign-in?plan=starter" },
-      { label: `Pro ($${PLAN_CATALOG.Pro.monthlyPriceUsd}/mo)`, description: "For active builders running multi-agent workflows", href: "/developer-console/sign-in?plan=pro" },
-      { label: `Scale ($${PLAN_CATALOG.Scale.monthlyPriceUsd}/mo)`, description: "For teams running shared company memory", href: "/developer-console/sign-in?plan=scale" },
-    ],
-  },
-  {
-    label: "Build",
-    width: "w-[400px]",
-    items: [
-      { label: "Personal App", description: "Personal memory workspace (coming soon)", href: PERSONAL_APP_COMING_SOON_HREF },
-      { label: "Plugins", description: "Extend agent workflows with integrations", href: "#developer-experience" },
-    ],
+    label: "Personal App",
+    description: "Page coming soon. We are actively building this.",
+    href: PERSONAL_APP_COMING_SOON_HREF,
   },
 ] as const;
 
@@ -74,10 +41,16 @@ function DiscordIcon() {
   );
 }
 
-function Chevron() {
+function LoginChevron() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6 9L12 15L18 9"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -90,33 +63,50 @@ export function LandingNav() {
           <MemoryStarLogo />
         </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-8 text-[15px] text-[#101827]">
-          {NAV_DROPDOWNS.map((dropdown) => (
-            <div key={dropdown.label} className="group relative -my-6 py-6">
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 text-[15px] text-[#101827] transition hover:text-blue-600"
-              >
-                {dropdown.label}
-                <Chevron />
-              </button>
-
-              <div
-                className={`invisible absolute left-1/2 top-full z-[100] ${dropdown.width} -translate-x-1/2 translate-y-2 rounded-xl border border-[#c9d8ee] bg-white p-2 opacity-0 shadow-[0_20px_40px_rgba(15,23,42,0.12)] transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100`}
-              >
-                <div className="flex flex-col gap-0.5">
-                  {dropdown.items.map((item) => (
-                    <NavDropdownLink
-                      key={item.label}
-                      href={item.href}
-                      label={item.label}
-                      description={item.description}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
+        <nav className="flex flex-wrap items-center justify-center gap-6 text-[15px] text-[#101827] lg:gap-8">
+          <LandingNavDropdown
+            label="Platform"
+            columns={3}
+            items={[
+              { label: "Core Engine", description: "High-performance memory ingestion and indexing", href: "#what-we-do" },
+              { label: "Company Brain", description: "From scattered knowledge to executable agent skills", href: "#company-brain-thesis" },
+              { label: "Developer Experience", description: "Next-generation observability and control planes", href: "#developer-experience" },
+            ]}
+          />
+          <LandingNavDropdown
+            label="Integrate"
+            columns={3}
+            items={[
+              { label: "API Reference", description: "Complete documentation for REST and GraphQL endpoints", href: "#developer-experience" },
+              { label: "Client SDKs", description: "Native libraries for TypeScript, Python, and Go", href: "#developer-experience" },
+              { label: "Context Stack", description: "Connect your existing agents and swarms easily", href: "#context-stack" },
+            ]}
+          />
+          <LandingNavDropdown
+            label="Proof"
+            columns={2}
+            items={[
+              { label: "Benchmarks", description: "See our zero-miss-rate test results in action", href: "#benchmarks" },
+              { label: "Case Studies", description: "Learn how top teams scale with MemoryOS", href: "#benchmarks" },
+            ]}
+          />
+          <LandingNavDropdown
+            label="Pricing"
+            columns={3}
+            items={[
+              { label: "Starter (Free)", description: "For individual developers validating workflows", href: "/developer-console/sign-in?plan=starter" },
+              { label: `Pro ($${PLAN_CATALOG.Pro.monthlyPriceUsd}/mo)`, description: "For active builders running multi-agent workflows", href: "/developer-console/sign-in?plan=pro" },
+              { label: `Scale ($${PLAN_CATALOG.Scale.monthlyPriceUsd}/mo)`, description: "For teams running shared company memory", href: "/developer-console/sign-in?plan=scale" },
+            ]}
+          />
+          <LandingNavDropdown
+            label="Build"
+            columns={2}
+            items={[
+              { label: "Personal App", description: "Personal memory workspace (coming soon)", href: PERSONAL_APP_COMING_SOON_HREF },
+              { label: "Plugins", description: "Extend agent workflows with integrations", href: "#developer-experience" },
+            ]}
+          />
         </nav>
 
         <div className="flex flex-wrap items-center justify-end gap-4 text-[14px] text-[#111827]">
@@ -148,27 +138,16 @@ export function LandingNav() {
             <span>0</span>
           </a>
 
-          <div className="group relative -my-6 py-6">
+          <LandingNavLoginDropdown items={LOGIN_ITEMS}>
             <button
               type="button"
               className="inline-flex items-center gap-2 rounded-md border border-[#bfd1ee] bg-white px-5 py-2.5 text-[14px] font-medium transition hover:border-[#9db8e3] hover:text-blue-600"
             >
               Login
-              <Chevron />
+              <LoginChevron />
             </button>
-            <div className="invisible absolute right-0 top-full z-[100] w-[380px] translate-y-2 rounded-xl border border-[#c9d8ee] bg-white p-2 opacity-0 shadow-[0_20px_40px_rgba(15,23,42,0.12)] transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-              <NavDropdownLink
-                href="/developer-console/sign-in"
-                label="Developer Console"
-                description="API keys, usage limits, and documentation"
-              />
-              <NavDropdownLink
-                href={PERSONAL_APP_COMING_SOON_HREF}
-                label="Personal App"
-                description="Page coming soon. We are actively building this."
-              />
-            </div>
-          </div>
+          </LandingNavLoginDropdown>
+
           <a
             href="/developer-console/sign-in"
             className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-blue-700 lg:hidden"

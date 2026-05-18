@@ -35,3 +35,11 @@ export function getNavAsciiVariant(label: string): NavAsciiVariant {
   if (label.startsWith("Scale (")) return "mesh";
   return "grid";
 }
+
+/** Developer experience feature cards (01–04). */
+export const DEV_FEATURE_ASCII: Record<string, NavAsciiVariant> = {
+  "01": "pulse",
+  "02": "mesh",
+  "03": "orbit",
+  "04": "console",
+};
