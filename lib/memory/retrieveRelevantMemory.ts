@@ -224,6 +224,27 @@ const VALID_MEMORY_STATUSES: MemoryStatus[] = [
 ];
 const PROJECT_MILESTONE_REGEX =
   /\b(shipped|deployed|implemented|completed|added)\b/i;
+const MEMORY_STORE_SEARCH_TIMEOUT_MS = 1200;
+const CONTEXT_SEARCH_TIMEOUT_MS = 1200;
+const TIMELINE_LOOKUP_LIMIT = 500;
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          reject(new Error("timeout"));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+}
 
 function parseNumericMetadataValue(value: unknown, fallback: number): number {
   if (typeof value === "number" && !Number.isNaN(value)) {
@@ -769,20 +790,32 @@ async function fetchCandidatePool(
   input: RetrieveRelevantMemoryInput,
 ): Promise<MemoryStoreSearchResult[]> {
   const candidateTopK = Math.max(input.topK ?? 10, 10);
-  const memoryStoreSearchPromise = getMemoryStoreAdapter().searchMemory({
-    userId: input.userId,
-    query: input.question,
-    topK: candidateTopK,
+  const memoryStoreSearchPromise = withTimeout(
+    getMemoryStoreAdapter().searchMemory({
+      userId: input.userId,
+      query: input.question,
+      topK: candidateTopK,
+    }),
+    MEMORY_STORE_SEARCH_TIMEOUT_MS,
+  ).catch((error: unknown) => {
+    const message =
+      error instanceof Error ? error.message : "Unknown memory store error";
+    console.warn(
+      `[memory.retrieval] Memory store search failed for user=${input.userId}; continuing with fallback candidates. ${message}`,
+    );
+    return [] as MemoryStoreSearchResult[];
   });
-  const contextSearchPromise = getContextAdapter()
-    .searchContext({
+  const contextSearchPromise = withTimeout(
+    getContextAdapter().searchContext({
       userId: input.userId,
       query: input.question,
       topK: candidateTopK,
       ...(input.workspace ? { workspace: input.workspace } : {}),
       ...(input.project ? { project: input.project } : {}),
       ...(input.threadId ? { threadId: input.threadId } : {}),
-    })
+    }),
+    CONTEXT_SEARCH_TIMEOUT_MS,
+  )
     .catch((error: unknown) => {
       const message =
         error instanceof Error ? error.message : "Unknown context adapter error";
@@ -949,7 +982,7 @@ export async function analyzeRetrieval(
   input: RetrieveRelevantMemoryInput,
 ): Promise<RetrievalAnalysisResult> {
   const candidates = await fetchCandidatePool(input);
-  const lifecycleEvents = await listTimelineEvents(input.userId);
+  const lifecycleEvents = await listTimelineEvents(input.userId, TIMELINE_LOOKUP_LIMIT);
   const timelineByMemoryId = new Map<string, typeof lifecycleEvents>();
 
   for (const event of lifecycleEvents) {

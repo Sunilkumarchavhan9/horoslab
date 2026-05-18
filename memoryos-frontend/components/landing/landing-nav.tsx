@@ -12,7 +12,6 @@ import {
   Gauge,
   GraduationCap,
   Layers,
-  Package,
   PlugZap,
   Rocket,
   Settings2,

@@ -1,7 +1,20 @@
 # MemoryOS Startup Execution Status
 
-Last updated: 2026-05-16
+Last updated: 2026-05-18
 Owner: MemoryOS core build
+
+## Company Brain Completion Snapshot
+- Completion estimate against the "Company Brain" thesis: **~85%**
+- Status: Core architecture shipped, production hardening in progress.
+- Completed core layers:
+  - Multi-source ingestion + normalization into structured memory.
+  - Executable skills path for agents via API + SDK + MCP.
+  - Governance and trust controls (risk policy, approvals, audit replay, compliance).
+  - Company Brain control plane (sources, sync, graph, action simulation/execution).
+- Remaining gap to 100%:
+  - Reliability hardening under load for request/timeline paths.
+  - Final removal of static or placeholder UI behavior when live API is healthy.
+  - Release discipline: benchmark gate artifacts, smoke runbook, and launch rollback notes.
 
 ## Done
 - Landing page messaging updated to new core idea:
@@ -96,6 +109,12 @@ This order is now the execution source of truth.
 - [ ] Confirm Cloudflare status is `Active` and HTTPS policies are enabled
 - [ ] Run full benchmark + gate and capture artifact in docs
 - [ ] Prepare founder demo script using only organic live data
+
+## Deployment Validation Notes (2026-05-18)
+- `eval:benchmark:gate:dev` passes locally.
+- Production domain `https://memoryostm.live` serves frontend (`200` on `/`) but returns `404` on `/api/health`, `/api/v1/health`, and `/health`.
+- This indicates API routing/base URL mismatch in deployment (backend not exposed on the tested domain/path).
+- `scripts/perf-smoke.ts` updated to support `PERF_HEALTH_PATH` and fail when non-2xx responses are present.
 
 ## Rule For Work
 - No random UI tweaks.
