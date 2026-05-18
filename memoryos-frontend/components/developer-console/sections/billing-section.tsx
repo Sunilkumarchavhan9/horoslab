@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
-type BillingTab = "Plans" | "Usage" | "Invoices";
+type BillingTab = "Plans" | "Usage" | "Invoices" | "Events";
 type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
 
 type BillingSectionProps = {
@@ -32,6 +32,14 @@ type BillingResponse = {
     resetInDays: number;
   };
   invoices: BillingInvoice[];
+  events?: {
+    id: string;
+    provider: "polar" | "custom";
+    type: string;
+    status: "processed" | "skipped" | "failed";
+    summary: string;
+    createdAt: string;
+  }[];
   checkout?: {
     configured: boolean;
     provider: "polar" | "custom";
@@ -48,7 +56,7 @@ type PlanCard = {
   highlight?: boolean;
 };
 
-const TABS: BillingTab[] = ["Plans", "Usage", "Invoices"];
+const TABS: BillingTab[] = ["Plans", "Usage", "Invoices", "Events"];
 const FOUNDER_EMAIL = "chavhansunilkumar753@gmail.com";
 
 const PLAN_CARDS: PlanCard[] = [
@@ -141,6 +149,10 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       ),
     [billing?.invoices],
   );
+  const events = useMemo(
+    () => (billing?.events ?? []).slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [billing?.events],
+  );
 
   const tokenPercent = usagePercent(usage.tokenUsed, usage.tokenLimit);
   const searchPercent = usagePercent(usage.searchUsed, usage.searchLimit);
@@ -188,7 +200,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
           }
         }
       })();
-    }, 12000);
+    }, 4000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);
@@ -374,6 +386,33 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
                       Open invoice
                     </a>
                   ) : null}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : null}
+
+      {activeTab === "Events" ? (
+        <div className="mt-3 rounded-[10px] border border-border bg-card px-4 py-4">
+          {events.length === 0 ? (
+            <div className="grid min-h-[220px] place-items-center text-center">
+              <p className="text-[15px] leading-7 text-muted-foreground">
+                No billing events yet. Webhook and checkout activity appears here in real time.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {events.map((event) => (
+                <div key={event.id} className="rounded-[8px] border border-border bg-muted/40 px-3 py-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[12px] font-semibold text-foreground">{event.type}</p>
+                    <span className="text-[11px] text-muted-foreground">{event.status}</span>
+                  </div>
+                  <p className="mt-1 text-[12px] text-muted-foreground">{event.summary}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {event.provider.toUpperCase()} · {new Date(event.createdAt).toLocaleString()}
+                  </p>
                 </div>
               ))}
             </div>

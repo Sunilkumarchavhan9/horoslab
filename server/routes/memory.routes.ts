@@ -71,6 +71,7 @@ import { getMemoryStoreAdapter } from "../../lib/adapters/registry";
 import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
 import { randomUUID } from "crypto";
 import { PLAN_CATALOG, type BillingPlan } from "../../shared/planCatalog";
+import { applyPlanUsageLimits, getBillingStateForUser, listBillingEventsForUser } from "../../lib/billing/store";
 
 export const memoryRouter = Router();
 
@@ -820,6 +821,9 @@ memoryRouter.post("/api-keys/:keyId/revoke", asyncHandler(async (req, res) => {
 
 memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   const state = getWorkspaceState(req.authUserId);
+  const billingState = getBillingStateForUser(req.authUserId);
+  state.plan = billingState.plan;
+  applyPlanUsageLimits(state.plan, state.usage);
   const checkoutConfigured = Boolean(
     process.env.CHECKOUT_URL_PRO?.trim() ||
       process.env.CHECKOUT_URL_SCALE?.trim() ||
@@ -830,15 +834,22 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   );
   res.json({
     workspaceName: state.workspaceName,
-    currentPlan: state.plan,
+    currentPlan: billingState.plan,
     usage: state.usage,
-    invoices: state.invoices,
+    invoices: billingState.invoices,
+    events: listBillingEventsForUser(req.authUserId, 30),
     checkout: {
       configured: checkoutConfigured,
       provider: resolveCheckoutProvider(),
       portalUrl: toBillingPortalUrl(),
     },
   });
+}));
+
+memoryRouter.get("/billing/events", asyncHandler(async (req, res) => {
+  const limitRaw = typeof req.query.limit === "string" ? Number(req.query.limit) : 40;
+  const limit = Number.isFinite(limitRaw) ? limitRaw : 40;
+  res.json({ events: listBillingEventsForUser(req.authUserId, limit) });
 }));
 
 memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
@@ -861,12 +872,13 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
     return;
   }
   const state = getWorkspaceState(req.authUserId);
+  const billingState = getBillingStateForUser(req.authUserId);
   res.json({
     checkoutUrl,
     portalUrl: toBillingPortalUrl(),
     pendingPlan: requestedPlan,
     pendingActivation: true,
-    currentPlan: state.plan,
+    currentPlan: billingState.plan ?? state.plan,
   });
 }));
 
@@ -2089,9 +2101,16 @@ function createDefaultWorkspaceState(userId: string): WorkspaceState {
 function getWorkspaceState(userId: string): WorkspaceState {
   const existing = WORKSPACE_STATE_BY_USER.get(userId);
   if (existing) {
+    const billingState = getBillingStateForUser(userId);
+    existing.plan = billingState.plan;
+    applyPlanUsageLimits(existing.plan, existing.usage);
     return existing;
   }
   const created = createDefaultWorkspaceState(userId);
+  const billingState = getBillingStateForUser(userId);
+  created.plan = billingState.plan;
+  applyPlanUsageLimits(created.plan, created.usage);
+  created.invoices = billingState.invoices;
   WORKSPACE_STATE_BY_USER.set(userId, created);
   return created;
 }

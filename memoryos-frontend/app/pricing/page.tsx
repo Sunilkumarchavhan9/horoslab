@@ -167,6 +167,24 @@ export default function PricingPage() {
           Pro: {formatLimit(PLAN_CATALOG.Pro.tokenLimit ?? 0)} + {formatLimit(PLAN_CATALOG.Pro.searchLimit ?? 0)}.
           Scale: {formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} + {formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} per month.
         </p>
+        <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Usage</p>
+            <p className="mt-1 text-sm text-slate-700">Billed by monthly tokens and retrieval/search calls.</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Plan tier</p>
+            <p className="mt-1 text-sm text-slate-700">Feature unlocks by plan: workflows, governance, connectors.</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Team seats</p>
+            <p className="mt-1 text-sm text-slate-700">Scale/Enterprise can include seat bundles for team expansion.</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Add-ons</p>
+            <p className="mt-1 text-sm text-slate-700">Extra token/search packs, premium connectors, and SLA support.</p>
+          </div>
+        </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <PlanCard

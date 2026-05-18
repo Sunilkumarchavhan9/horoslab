@@ -17,6 +17,7 @@ import { preflightRouter } from "./routes/preflight.routes";
 import { agentRouter } from "./routes/agent.routes";
 import { agentSessionRouter } from "./routes/agent-session.routes";
 import { companyBrainRouter } from "./routes/companyBrain.routes";
+import { billingRouter } from "./routes/billing.routes";
 import { getMetricsContentType, observeHttpMetrics, renderMetrics } from "./observability/metrics";
 import { bootstrapCompanyBrainRuntime } from "../lib/companyBrain/platform";
 
@@ -31,6 +32,7 @@ export function createMemoryOsApp(): Express {
   const app: Express = express();
 
   app.use(corsMiddleware);
+  app.use("/api/billing", billingRouter);
   app.use(express.json());
   app.use(requestIdMiddleware);
   app.use(requestLogger);
