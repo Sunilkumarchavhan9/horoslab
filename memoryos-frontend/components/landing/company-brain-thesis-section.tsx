@@ -86,7 +86,7 @@ export function CompanyBrainThesisSection() {
     <section
       ref={sectionRef}
       id="company-brain-thesis"
-      className="border-b border-[#c9d8ee] bg-[#f8fbff] px-5 py-8 lg:px-7"
+      className="border-b border-slate-200/80 bg-white px-5 py-8 lg:px-7"
     >
       <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
         <div className="p-0 md:p-0">
@@ -107,7 +107,7 @@ export function CompanyBrainThesisSection() {
             We ingest context from real systems, structure it as decisions and policies, and make it safe to execute with governance.
           </p>
 
-          <div className={`${fade(reveal.is)} border border-[#c9d8ee] bg-white p-4`}>
+          <div className={fade(reveal.is)}>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#6a7f9a]">What MemoryOS Is</p>
             <ul className="mt-3 space-y-2 text-[14px] text-[#2f4968]">
               <li>- Living map of incidents, decisions, workflows, and constraints</li>
@@ -116,7 +116,7 @@ export function CompanyBrainThesisSection() {
             </ul>
           </div>
 
-          <div className={`${fade(reveal.not)} border border-[#c9d8ee] bg-white p-4`}>
+          <div className={fade(reveal.not)}>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#6a7f9a]">What It Is Not</p>
             <ul className="mt-3 space-y-2 text-[14px] text-[#2f4968]">
               <li>- Not a simple document chatbot</li>
