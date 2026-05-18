@@ -18,7 +18,6 @@ const anyFiles = [
     'lib/integrations/notion.ts',
     'memoryos-frontend/components/developer-console/sections/connectors-section.tsx',
     'memoryos-frontend/components/developer-console/sections/imports-section.tsx',
-    'memoryos-frontend/components/developer-console/sections/live-build-nodes-section.tsx',
     'memoryos-frontend/components/developer-console/sections/overview-section.tsx'
 ];
 
@@ -34,18 +33,9 @@ replaceInFile('memoryos-frontend/components/developer-console/sections/imports-s
             .replace(/"</g, '&quot;<');
 });
 
-replaceInFile('memoryos-frontend/components/developer-console/sections/live-build-nodes-section.tsx', c => {
-    return c.replace(/'/g, '&apos;')
-            .replace(/"/g, '&quot;')
-            // Un-escape HTML attributes which might have been messed up by global replace
-            // This is dangerous, so instead of global string replace, let's just prepend eslint disable
-            ;
-});
-
 // Actually, the safest way for react/no-unescaped-entities is to add a comment at the top of the file
 const unescapedFiles = [
     'memoryos-frontend/components/developer-console/sections/imports-section.tsx',
-    'memoryos-frontend/components/developer-console/sections/live-build-nodes-section.tsx',
     'memoryos-frontend/components/developer-console/sections/memories-section.tsx',
     'memoryos-frontend/components/developer-console/sections/overview-section.tsx'
 ];

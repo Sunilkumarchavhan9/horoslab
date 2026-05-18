@@ -49,6 +49,25 @@ const retrieveGraph = new StateGraph(RetrieveGraphStateAnnotation)
   .addEdge("buildDebugPayload", END);
 
 const compiledRetrieveGraph = retrieveGraph.compile();
+const CHECKPOINT_IO_TIMEOUT_MS = 500;
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          reject(new Error("timeout"));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+}
 
 function buildWorkflowKey(input: RetrieveRelevantMemoryInput): string {
   const workspace = input.workspace ?? "default";
@@ -62,9 +81,12 @@ export async function runRetrieveFlowLangGraph(
 ): Promise<RetrieveRelevantMemoryResult> {
   const stateAdapter = getWorkflowStateAdapter();
   const workflowKey = buildWorkflowKey(input);
-  const previousCheckpoint = await stateAdapter.loadCheckpoint({
-    key: workflowKey,
-  });
+  const previousCheckpoint = await withTimeout(
+    stateAdapter.loadCheckpoint({
+      key: workflowKey,
+    }),
+    CHECKPOINT_IO_TIMEOUT_MS,
+  ).catch(() => null);
 
   const result = await compiledRetrieveGraph.invoke({
     input,
@@ -78,15 +100,18 @@ export async function runRetrieveFlowLangGraph(
     debug: result.debug,
   };
 
-  await stateAdapter.saveCheckpoint({
-    key: workflowKey,
-    state: {
-      updatedAt: new Date().toISOString(),
-      input,
-      previousCheckpoint,
-      result: response,
-    },
-  });
+  void withTimeout(
+    stateAdapter.saveCheckpoint({
+      key: workflowKey,
+      state: {
+        updatedAt: new Date().toISOString(),
+        input,
+        previousCheckpoint,
+        result: response,
+      },
+    }),
+    CHECKPOINT_IO_TIMEOUT_MS,
+  ).catch(() => undefined);
 
   return response;
 }

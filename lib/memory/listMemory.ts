@@ -16,6 +16,26 @@ export interface ListMemoryResult {
   count: number;
 }
 
+const PROVIDER_ENRICHMENT_TIMEOUT_MS = 1200;
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          reject(new Error("provider_enrichment_timeout"));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+}
+
 export async function listMemories(input: ListMemoryInput): Promise<ListMemoryResult> {
   const effectiveLimit = Math.min(Math.max(input.limit ?? 50, 1), 200);
 
@@ -31,11 +51,14 @@ export async function listMemories(input: ListMemoryInput): Promise<ListMemoryRe
   // Some providers reject empty queries; swallow provider errors and keep local results.
   try {
     const memoryStore = getMemoryStoreAdapter();
-    const candidates = await memoryStore.searchMemory({
-      userId: input.userId,
-      query: "recent memory context",
-      topK: 200,
-    });
+    const candidates = await withTimeout(
+      memoryStore.searchMemory({
+        userId: input.userId,
+        query: "recent memory context",
+        topK: 200,
+      }),
+      PROVIDER_ENRICHMENT_TIMEOUT_MS,
+    );
 
     const mapped = candidates
       .map((result) => ({

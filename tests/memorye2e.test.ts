@@ -97,8 +97,8 @@ describe("MemoryOS E2E", () => {
     const timeline = await listTimelineEvents("u_test_e2e");
     expect(timeline).toHaveLength(2);
     expect(timeline.map((event) => event.eventType)).toEqual([
-      "memory_created",
       "memory_evolved",
+      "memory_created",
     ]);
 
     const revisions = await listRevisionEvents({ userId: "u_test_e2e" });

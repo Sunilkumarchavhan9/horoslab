@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const sectionsDir = String.raw`c:\projects\MemoryOS\memoryos-frontend\components\developer-console\sections`;
-const filesToUpdate = ['memories-section.tsx', 'live-build-nodes-section.tsx'];
+const filesToUpdate = ['memories-section.tsx'];
 
 filesToUpdate.forEach(file => {
   const filepath = path.join(sectionsDir, file);

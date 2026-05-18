@@ -27,6 +27,25 @@ const IngestGraphStateAnnotation = Annotation.Root({
 });
 
 type IngestGraphState = typeof IngestGraphStateAnnotation.State;
+const EXTERNAL_CONTEXT_INGEST_TIMEOUT_MS = 1200;
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeoutHandle: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          reject(new Error("timeout"));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+}
 
 function extractNode(state: IngestGraphState): Partial<IngestGraphState> {
   const candidates = extractMemory({
@@ -84,23 +103,26 @@ async function ingestExternalContextNode(
   }
 
   try {
-    await getContextAdapter().ingestContext({
-      userId: state.input.userId,
-      source: "memoryos_ingest",
-      ...(state.input.threadId ? { threadId: state.input.threadId } : {}),
-      payload: {
-        message: state.input.message,
-        acceptedMemories: state.acceptedMemories.map((memory) => ({
-          id: memory.id,
-          type: memory.type,
-          summary: memory.summary,
-          content: memory.content,
-          status: memory.status,
-          importanceScore: memory.importanceScore,
-          updatedAt: memory.updatedAt,
-        })),
-      },
-    });
+    await withTimeout(
+      getContextAdapter().ingestContext({
+        userId: state.input.userId,
+        source: "memoryos_ingest",
+        ...(state.input.threadId ? { threadId: state.input.threadId } : {}),
+        payload: {
+          message: state.input.message,
+          acceptedMemories: state.acceptedMemories.map((memory) => ({
+            id: memory.id,
+            type: memory.type,
+            summary: memory.summary,
+            content: memory.content,
+            status: memory.status,
+            importanceScore: memory.importanceScore,
+            updatedAt: memory.updatedAt,
+          })),
+        },
+      }),
+      EXTERNAL_CONTEXT_INGEST_TIMEOUT_MS,
+    );
   } catch {
     // External context enrichments should not make the core ingest flow fail.
   }

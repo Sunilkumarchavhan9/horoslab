@@ -1337,7 +1337,7 @@ memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
 
   res.status(200).json({
     traceId,
-    item,
+    item,   
     status: item.state,
     appliedResult,
   });
@@ -1811,6 +1811,24 @@ function parseRequestRange(raw: unknown): RequestRange {
   }
 
   return "30d";
+}
+
+function parseRequestStatus(raw: unknown): (typeof REQUEST_STATUSES)[number] | undefined {
+  if (typeof raw !== "string") {
+    return undefined;
+  }
+  const normalized = raw.trim().toLowerCase();
+  if (normalized === "success") return "Success";
+  if (normalized === "error") return "Error";
+  return undefined;
+}
+
+function toTimestampMs(raw: unknown): number {
+  if (typeof raw !== "string") {
+    return 0;
+  }
+  const value = new Date(raw).getTime();
+  return Number.isFinite(value) ? value : 0;
 }
 
 function readJsonFile<T>(filePath: string, fallback: T): T {
@@ -3631,7 +3649,24 @@ memoryRouter.get("/revisions", asyncHandler(async (req, res) => {
 }));
 
 memoryRouter.get("/timeline", asyncHandler(async (req, res) => {
-  const events = await listTimelineEvents(req.authUserId);
+  const limitRaw =
+    typeof req.query.limit === "string" && req.query.limit.length > 0
+      ? req.query.limit
+      : undefined;
+  let limit = 200;
+  if (limitRaw !== undefined) {
+    const parsedLimit = Number.parseInt(limitRaw, 10);
+    if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
+      res.status(400).json({
+        error: "Invalid query",
+        details: { limit: "limit must be a positive integer" },
+      });
+      return;
+    }
+    limit = Math.min(parsedLimit, 500);
+  }
+
+  const events = await listTimelineEvents(req.authUserId, limit);
 
   res.status(200).json({
     events,
@@ -3940,96 +3975,81 @@ memoryRouter.get("/list", asyncHandler(async (req, res) => {
 memoryRouter.get(
   "/requests",
   asyncHandler(async (req, res) => {
-    try {
-      const limitRaw =
-        typeof req.query.limit === "string" && req.query.limit.length > 0
-          ? req.query.limit
-          : undefined;
-      const typeFilter =
-        typeof req.query.type === "string" && req.query.type.length > 0
-          ? req.query.type.trim()
-          : undefined;
-      const statusFilter =
-        typeof req.query.status === "string" && req.query.status.length > 0
-          ? req.query.status.trim()
-          : undefined;
-      const rangeFilter = parseRequestRange(req.query.range);
+    const limitRaw =
+      typeof req.query.limit === "string" && req.query.limit.length > 0
+        ? req.query.limit
+        : undefined;
+    const typeFilter =
+      typeof req.query.type === "string" && req.query.type.length > 0
+        ? req.query.type.trim()
+        : undefined;
+    const statusRaw =
+      typeof req.query.status === "string" && req.query.status.length > 0
+        ? req.query.status
+        : undefined;
+    const rangeFilter = parseRequestRange(req.query.range);
 
-      let limit = 100;
-      if (limitRaw !== undefined) {
-        const parsedLimit = Number.parseInt(limitRaw, 10);
-        if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
-          res.status(400).json({
-            error: "Invalid query",
-            details: { limit: "limit must be a positive integer" },
-          });
-          return;
-        }
-        limit = Math.min(parsedLimit, 400);
-      }
-
-      if (
-        statusFilter !== undefined &&
-        !(REQUEST_STATUSES as readonly string[]).includes(statusFilter)
-      ) {
+    let limit = 100;
+    if (limitRaw !== undefined) {
+      const parsedLimit = Number.parseInt(limitRaw, 10);
+      if (!Number.isFinite(parsedLimit) || parsedLimit <= 0) {
         res.status(400).json({
           error: "Invalid query",
-          details: { status: "status must be Success or Error" },
+          details: { limit: "limit must be a positive integer" },
         });
         return;
       }
-
-      const requestHistory = listRequestHistory({
-        userId: req.authUserId,
-        limit: 400,
-        memoryOnly: true,
-      });
-
-      const rangeDays = REQUEST_RANGE_DAYS[rangeFilter];
-      const rangeThresholdMs =
-        rangeDays === null ? null : Date.now() - rangeDays * 24 * 60 * 60 * 1000;
-
-      const filtered = requestHistory
-        .filter((entry) => {
-          if (typeFilter && entry.routeType !== typeFilter) {
-            return false;
-          }
-          if (statusFilter && entry.status !== statusFilter) {
-            return false;
-          }
-          if (rangeThresholdMs !== null) {
-            const createdAtMs = new Date(entry.createdAt).getTime();
-            if (!Number.isFinite(createdAtMs) || createdAtMs < rangeThresholdMs) {
-              return false;
-            }
-          }
-          return true;
-        })
-        .slice(0, limit);
-
-      res.status(200).json({
-        requests: filtered,
-        count: filtered.length,
-        filters: {
-          type: typeFilter ?? "all",
-          status: statusFilter ?? "All",
-          range: rangeFilter,
-          limit,
-        },
-      });
-    } catch {
-      res.status(200).json({
-        requests: [],
-        count: 0,
-        filters: {
-          type: "all",
-          status: "All",
-          range: "all",
-          limit: 200,
-        },
-        warning: "request_history_unavailable",
-      });
+      limit = Math.min(parsedLimit, 400);
     }
+
+    const statusFilter = parseRequestStatus(statusRaw);
+    if (statusRaw !== undefined && !statusFilter) {
+      res.status(400).json({
+        error: "Invalid query",
+        details: { status: "status must be Success or Error" },
+      });
+      return;
+    }
+
+    const requestHistory = listRequestHistory({
+      userId: req.authUserId,
+      limit: 400,
+      memoryOnly: true,
+    });
+
+    const rangeDays = REQUEST_RANGE_DAYS[rangeFilter];
+    const rangeThresholdMs =
+      rangeDays === null ? null : Date.now() - rangeDays * 24 * 60 * 60 * 1000;
+
+    const filtered = requestHistory
+      .filter((entry) => {
+        if (typeFilter && entry.routeType !== typeFilter) {
+          return false;
+        }
+        if (statusFilter && entry.status !== statusFilter) {
+          return false;
+        }
+        if (rangeThresholdMs !== null) {
+          const createdAtMs = toTimestampMs(entry.createdAt);
+          if (createdAtMs <= 0 || createdAtMs < rangeThresholdMs) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .sort((a, b) => toTimestampMs(b.createdAt) - toTimestampMs(a.createdAt))
+      .slice(0, limit);
+
+    res.status(200).json({
+      requests: filtered,
+      count: filtered.length,
+      filters: {
+        type: typeFilter ?? "all",
+        status: statusFilter ?? "All",
+        range: rangeFilter,
+        limit,
+      },
+    });
   }),
 );
 

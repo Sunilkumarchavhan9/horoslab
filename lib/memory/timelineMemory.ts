@@ -142,18 +142,42 @@ export function recordMemoryUpdatedEvent(
   return createTimelineEvent(memory, "memory_updated", reason);
 }
 
-export async function listTimelineEvents(userId?: string): Promise<TimelineEvent[]> {
+export async function listTimelineEvents(
+  userId?: string,
+  limit?: number,
+): Promise<TimelineEvent[]> {
+  const normalizedLimit =
+    typeof limit === "number" && Number.isFinite(limit)
+      ? Math.max(1, Math.floor(limit))
+      : undefined;
+
   if (isRelationalRuntimeStore()) {
-    return listTimelineEventsFromDb(userId);
+    const events = await listTimelineEventsFromDb(userId);
+    if (!normalizedLimit) {
+      return events;
+    }
+    return events.slice(0, normalizedLimit);
   }
 
   const timelineStore = readTimelineStore();
 
-  if (!userId) {
+  if (!userId && !normalizedLimit) {
     return [...timelineStore];
   }
 
-  return timelineStore.filter((event) => event.userId === userId);
+  const result: TimelineEvent[] = [];
+  for (let index = timelineStore.length - 1; index >= 0; index -= 1) {
+    const event = timelineStore[index];
+    if (userId && event.userId !== userId) {
+      continue;
+    }
+    result.push(event);
+    if (normalizedLimit && result.length >= normalizedLimit) {
+      break;
+    }
+  }
+
+  return result;
 }
 
 export function getLatestLifecycleSnapshot(

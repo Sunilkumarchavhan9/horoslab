@@ -58,24 +58,28 @@ export function listRequestHistory(options?: {
   limit?: number;
   memoryOnly?: boolean;
 }): RequestHistoryEntry[] {
-  const requestedLimit = options?.limit ?? 100;
-  const limit = Math.min(Math.max(requestedLimit, 1), MAX_REQUEST_LOG_ENTRIES);
-  const userId = options?.userId;
-  const memoryOnly = options?.memoryOnly ?? true;
+  try {
+    const requestedLimit = options?.limit ?? 100;
+    const limit = Math.min(Math.max(requestedLimit, 1), MAX_REQUEST_LOG_ENTRIES);
+    const userId = options?.userId;
+    const memoryOnly = options?.memoryOnly ?? true;
 
-  return requestHistory
-    .filter((entry) => {
-      if (userId && entry.userId !== userId) return false;
-      if (
-        memoryOnly &&
-        !entry.path.startsWith("/api/memory") &&
-        !entry.path.startsWith("/api/v1/memory")
-      ) {
-        return false;
-      }
-      return true;
-    })
-    .slice(0, limit);
+    return requestHistory
+      .filter((entry) => {
+        if (userId && entry.userId !== userId) return false;
+        if (
+          memoryOnly &&
+          !entry.path.startsWith("/api/memory") &&
+          !entry.path.startsWith("/api/v1/memory")
+        ) {
+          return false;
+        }
+        return true;
+      })
+      .slice(0, limit);
+  } catch {
+    return [];
+  }
 }
 
 function redactPayload(payload: any): any {
