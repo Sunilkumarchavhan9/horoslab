@@ -301,6 +301,12 @@ export function NavAsciiTile({
     let lastPaintTime = 0;
     let frameIntervalMs = smoothMotionRef.current ? 1000 / 60 : 1000 / 30;
 
+    const scheduleLoop = () => {
+      if (!raf && !reducedMotionRef.current && visibleRef.current && activeRef.current) {
+        raf = window.requestAnimationFrame(loop);
+      }
+    };
+
     const resize = () => {
       width = Math.max(1, Math.floor(canvas.clientWidth));
       height = Math.max(1, Math.floor(canvas.clientHeight));
@@ -401,6 +407,7 @@ export function NavAsciiTile({
     reducedMotionRef.current = reduced.matches;
     const onReducedChange = (event: MediaQueryListEvent) => {
       reducedMotionRef.current = event.matches;
+      if (!event.matches) scheduleLoop();
     };
     reduced.addEventListener("change", onReducedChange);
 
@@ -413,6 +420,7 @@ export function NavAsciiTile({
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         visibleRef.current = !!entry?.isIntersecting;
+        if (visibleRef.current) scheduleLoop();
       },
       { threshold: 0.05 },
     );
@@ -421,9 +429,7 @@ export function NavAsciiTile({
     resize();
     paint(performance.now());
 
-    if (active && !reduced.matches) {
-      raf = window.requestAnimationFrame(loop);
-    }
+    scheduleLoop();
 
     return () => {
       window.cancelAnimationFrame(raf);
