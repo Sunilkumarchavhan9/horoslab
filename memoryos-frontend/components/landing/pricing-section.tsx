@@ -99,19 +99,19 @@ function BillingTwoLineStrip() {
         className="absolute left-0 top-[3px] h-[2px] w-full"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(to right, rgba(53,106,204,0.55) 0 3px, transparent 3px 8px)",
+            "repeating-linear-gradient(to right, rgba(53,106,204,0.85) 0 3px, transparent 3px 8px)",
         }}
         animate={{ x: ["0%", "-8%"] }}
-        transition={{ duration: 3.6, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
+        transition={{ duration: 4.6, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
       />
       <motion.div
         className="absolute left-0 top-[12px] h-[2px] w-full"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(to right, rgba(53,106,204,0.42) 0 3px, transparent 3px 8px)",
+            "repeating-linear-gradient(to right, rgba(53,106,204,0.68) 0 3px, transparent 3px 8px)",
         }}
         animate={{ x: ["-8%", "0%"] }}
-        transition={{ duration: 3.2, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
+        transition={{ duration: 4.2, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
       />
     </div>
   );
