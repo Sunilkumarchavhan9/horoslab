@@ -1,5 +1,6 @@
 import { Reveal } from "./motion";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
+import { motion } from "framer-motion";
 
 const polarProCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_PRO?.trim() || process.env.NEXT_PUBLIC_CHECKOUT_URL_PRO?.trim() || "";
 const polarScaleCheckoutUrl = process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_SCALE?.trim() || process.env.NEXT_PUBLIC_CHECKOUT_URL_SCALE?.trim() || "";
@@ -74,6 +75,48 @@ const BILLING_FACTORS = [
   },
 ];
 
+function BillingSquaresBg({ opacity = 0.22 }: { opacity?: number }) {
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0"
+      style={{
+        opacity,
+        backgroundImage:
+          "linear-gradient(to right, rgba(53,106,204,0.14) 1px, transparent 1px), linear-gradient(to bottom, rgba(53,106,204,0.14) 1px, transparent 1px)",
+        backgroundSize: "14px 14px",
+      }}
+      animate={{ backgroundPosition: ["0px 0px", "14px 14px", "0px 0px"] }}
+      transition={{ duration: 14, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
+    />
+  );
+}
+
+function BillingTwoLineStrip() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none relative mb-4 h-5 overflow-hidden">
+      <motion.div
+        className="absolute left-0 top-[3px] h-[2px] w-full"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(to right, rgba(53,106,204,0.55) 0 3px, transparent 3px 8px)",
+        }}
+        animate={{ x: ["0%", "-8%"] }}
+        transition={{ duration: 3.6, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
+      />
+      <motion.div
+        className="absolute left-0 top-[12px] h-[2px] w-full"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(to right, rgba(53,106,204,0.42) 0 3px, transparent 3px 8px)",
+        }}
+        animate={{ x: ["-8%", "0%"] }}
+        transition={{ duration: 3.2, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
+      />
+    </div>
+  );
+}
+
 export function PricingSection() {
   return (
     <section className="border-b border-[#c9d8ee] bg-white">
@@ -102,9 +145,12 @@ export function PricingSection() {
         </div>
         <div className="mt-6 grid gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
           {BILLING_FACTORS.map((factor) => (
-            <div key={factor.title} className="border border-[#c9d8ee] bg-[#f9fbff] px-4 py-3">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-900">{factor.title}</p>
-              <p className="mt-1 text-[13px] leading-6 text-[#5f6f84]">{factor.detail}</p>
+            <div key={factor.title} className="relative overflow-hidden border border-[#c9d8ee] bg-[#f9fbff] px-4 py-3">
+              <BillingSquaresBg opacity={0.18} />
+              <div className="relative z-[1]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-900">{factor.title}</p>
+                <p className="mt-1 text-[13px] leading-6 text-[#5f6f84]">{factor.detail}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -117,7 +163,10 @@ export function PricingSection() {
             delay={0.03 * index}
             className={index < 2 ? "border-b border-[#c9d8ee] lg:border-b-0 lg:border-r" : "border-b border-[#c9d8ee] lg:border-b-0"}
           >
-            <div className="flex h-full flex-col px-7 py-7">
+            <div className="relative flex h-full flex-col overflow-hidden px-7 py-7">
+              <BillingSquaresBg opacity={0.16} />
+              <div className="relative z-[1]">
+              <BillingTwoLineStrip />
               <p className="font-mono text-[11px] tracking-[0.2em] text-[hsl(var(--primary))]">{plan.tier}</p>
               <div className="mt-4 flex items-end gap-1 text-slate-900">
                 <span className="text-[38px] font-semibold tracking-[-0.05em] md:text-[42px]">{plan.price}</span>
@@ -159,13 +208,16 @@ export function PricingSection() {
                   {plan.secondary}
                 </a>
               </div>
+              </div>
             </div>
           </Reveal>
         ))}
       </div>
 
       <div className="grid border-t border-[#c9d8ee] lg:grid-cols-[1.1fr_0.9fr]">
-        <Reveal className="border-b border-[#c9d8ee] px-7 py-7 lg:border-b-0 lg:border-r">
+        <Reveal className="relative overflow-hidden border-b border-[#c9d8ee] px-7 py-7 lg:border-b-0 lg:border-r">
+          <BillingSquaresBg opacity={0.14} />
+          <div className="relative z-[1]">
           <p className="font-mono text-[11px] tracking-[0.2em] text-[hsl(var(--primary))]">ENTERPRISE</p>
           <h3 className="mt-4 text-[32px] font-semibold tracking-[-0.05em] text-slate-900 md:text-[36px]">
             Custom
@@ -188,26 +240,35 @@ export function PricingSection() {
           >
             Talk to founder →
           </a>
+          </div>
         </Reveal>
 
-        <Reveal delay={0.05} className="px-7 py-7">
+        <Reveal delay={0.05} className="relative overflow-hidden px-7 py-7">
+          <BillingSquaresBg opacity={0.12} />
+          <div className="relative z-[1]">
           <p className="font-mono text-[11px] tracking-[0.2em] text-[hsl(var(--primary))]">
             PLATFORM NOTES
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="border border-[#c9d8ee] bg-white px-5 py-4">
+            <div className="relative overflow-hidden border border-[#c9d8ee] bg-white px-5 py-4">
+              <BillingSquaresBg opacity={0.13} />
+              <div className="relative z-[1]">
               <p className="text-[14px] text-[#61738d]">Overage</p>
               <p className="mt-2 text-[26px] font-semibold tracking-[-0.04em] text-slate-900">
                 Usage-based
               </p>
               <p className="text-[13px] text-[#61738d]">Scales with storage, retrieval, and team load.</p>
+              </div>
             </div>
-            <div className="border border-[#c9d8ee] bg-white px-5 py-4">
+            <div className="relative overflow-hidden border border-[#c9d8ee] bg-white px-5 py-4">
+              <BillingSquaresBg opacity={0.13} />
+              <div className="relative z-[1]">
               <p className="text-[14px] text-[#61738d]">Support</p>
               <p className="mt-2 text-[26px] font-semibold tracking-[-0.04em] text-slate-900">
                 Human
               </p>
               <p className="text-[13px] text-[#61738d]">Direct onboarding help for production teams.</p>
+              </div>
             </div>
           </div>
 
@@ -216,7 +277,9 @@ export function PricingSection() {
             until reset or upgrade. On downgrade, new plan limits apply immediately.
           </p>
 
-          <div className="mt-5 border border-[#c9d8ee]  px-5 py-4">
+          <div className="relative mt-5 overflow-hidden border border-[#c9d8ee] px-5 py-4">
+            <BillingSquaresBg opacity={0.15} />
+            <div className="relative z-[1]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-[18px] font-semibold tracking-[-0.03em] text-slate-900 md:text-[20px]">
@@ -233,6 +296,8 @@ export function PricingSection() {
                 Apply now →
               </a>
             </div>
+            </div>
+          </div>
           </div>
         </Reveal>
       </div>
