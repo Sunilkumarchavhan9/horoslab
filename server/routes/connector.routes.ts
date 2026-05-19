@@ -7,6 +7,8 @@ import { GoogleClient } from "../../lib/integrations/google";
 import { MicrosoftClient } from "../../lib/integrations/microsoft";
 import { GmailClient } from "../../lib/integrations/gmail";
 import { SlackClient } from "../../lib/integrations/slack";
+import { ZendeskClient } from "../../lib/integrations/zendesk";
+import { JiraClient } from "../../lib/integrations/jira";
 import { appendConnectorSyncLog, listConnectorSyncLogs } from "../../lib/integrations/syncLogStore";
 import { prisma } from "../../lib/storage/prismaClient";
 import { asyncHandler } from "../middleware/asyncHandler";
@@ -35,6 +37,8 @@ const PREMIUM_CONNECTORS = new Set<ConnectorType>([
   "onedrive",
   "gmail",
   "slack",
+  "zendesk",
+  "jira",
 ]);
 
 function emitConnectorEvent(event: ConnectorRealtimeEvent): void {
@@ -354,6 +358,14 @@ connectorRouter.get(
       authorizeUrl = process.env.SLACK_CLIENT_ID
         ? SlackClient.getAuthorizeUrl(state)
         : getMockCallbackUrl();
+    } else if (type === "zendesk") {
+      authorizeUrl = process.env.ZENDESK_CLIENT_ID
+        ? ZendeskClient.getAuthorizeUrl(state)
+        : getMockCallbackUrl();
+    } else if (type === "jira") {
+      authorizeUrl = process.env.JIRA_CLIENT_ID
+        ? JiraClient.getAuthorizeUrl(state)
+        : getMockCallbackUrl();
     } else {
       sendApiError(res, 400, {
         code: "INVALID_CONNECTOR",
@@ -404,6 +416,10 @@ connectorRouter.get(
         accessToken = await MicrosoftClient.getAccessToken(code);
       } else if (type === "slack") {
         accessToken = await SlackClient.getAccessToken(code);
+      } else if (type === "zendesk") {
+        accessToken = await ZendeskClient.getAccessToken(code);
+      } else if (type === "jira") {
+        accessToken = await JiraClient.getAccessToken(code);
       } else {
         throw new Error(`Unsupported connector type: ${type}`);
       }

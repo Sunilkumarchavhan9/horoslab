@@ -132,6 +132,30 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     category: "Communication",
   },
   {
+    id: "zendesk",
+    name: "Zendesk",
+    purpose: "Support tickets, incident handling, and customer escalation memory",
+    description: "Tickets, incidents, runbooks, escalation signals",
+    requiredPlan: "Pro",
+    status: "not_connected",
+    health: "offline",
+    records: 0,
+    lastSync: "Never",
+    category: "Knowledge Sources",
+  },
+  {
+    id: "jira",
+    name: "Jira",
+    purpose: "Engineering tickets, triage decisions, and execution history",
+    description: "Issues, triage, assignment, resolution history",
+    requiredPlan: "Pro",
+    status: "not_connected",
+    health: "offline",
+    records: 0,
+    lastSync: "Never",
+    category: "Knowledge Sources",
+  },
+  {
     id: "web-crawler",
     name: "Web Crawler",
     purpose: "Capture public docs and release notes",
@@ -474,6 +498,10 @@ async function connectConnector(connectorId: string) {
     "local-files": "local_files",
     "google-drive": "google_drive",
     onedrive: "onedrive",
+    gmail: "gmail",
+    slack: "slack",
+    zendesk: "zendesk",
+    jira: "jira",
   };
 
   const type = typeMap[connectorId];
@@ -568,6 +596,8 @@ async function connectConnector(connectorId: string) {
     || type === "onedrive"
     || type === "gmail"
     || type === "slack"
+    || type === "zendesk"
+    || type === "jira"
   ) {
     try {
       const token = await getOrCreateMemoryToken();

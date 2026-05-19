@@ -8,6 +8,8 @@ import { MicrosoftClient } from "./microsoft";
 import { LocalFilesClient } from "./localFiles";
 import { GmailClient } from "./gmail";
 import { SlackClient } from "./slack";
+import { ZendeskClient } from "./zendesk";
+import { JiraClient } from "./jira";
 import { randomUUID } from "crypto";
 
 export type ConnectorType =
@@ -17,7 +19,9 @@ export type ConnectorType =
   | "onedrive"
   | "gmail"
   | "slack"
-  | "local_files";
+  | "local_files"
+  | "zendesk"
+  | "jira";
 
 export interface ConnectorPayload {
   userId: string;
@@ -199,6 +203,22 @@ export const ConnectorManager = {
       const { value, attempts } = await withRetry(
         () => SlackClient.sync({ userId, accessToken, since, recentItemKeys }),
         "slack sync",
+      );
+      return { ...value, attempts };
+    }
+
+    if (type === "zendesk") {
+      const { value, attempts } = await withRetry(
+        () => ZendeskClient.sync({ userId, accessToken, since, recentItemKeys }),
+        "zendesk sync",
+      );
+      return { ...value, attempts };
+    }
+
+    if (type === "jira") {
+      const { value, attempts } = await withRetry(
+        () => JiraClient.sync({ userId, accessToken, since, recentItemKeys }),
+        "jira sync",
       );
       return { ...value, attempts };
     }

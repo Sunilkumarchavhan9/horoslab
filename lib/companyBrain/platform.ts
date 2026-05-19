@@ -12,7 +12,17 @@ import { Client as NotionClient } from "@notionhq/client";
 import { Octokit } from "@octokit/rest";
 import { fetchCrmProvider, fetchDbProvider, fetchSupportProvider } from "./providerAdapters";
 
-type SourceType = "github" | "notion" | "local_files" | "slack" | "gmail" | "support" | "crm" | "db";
+type SourceType =
+  | "github"
+  | "notion"
+  | "local_files"
+  | "slack"
+  | "gmail"
+  | "zendesk"
+  | "jira"
+  | "support"
+  | "crm"
+  | "db";
 
 type SourceConfig = {
   id: string;
@@ -261,6 +271,8 @@ function defaultUserState(): UserState {
         local_files: { redactPII: true, retentionClass: "extended", ttlHours: 24 * 180, requireReplayApproval: false },
         slack: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 30, requireReplayApproval: true },
         gmail: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 30, requireReplayApproval: true },
+        zendesk: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 30, requireReplayApproval: true },
+        jira: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 60, requireReplayApproval: true },
         support: { redactPII: true, retentionClass: "short", ttlHours: 24 * 30, requireReplayApproval: true },
         crm: { redactPII: true, retentionClass: "extended", ttlHours: 24 * 180, requireReplayApproval: true },
         db: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 90, requireReplayApproval: true },
@@ -362,6 +374,8 @@ function sourceTypeFromActionName(name: string): SourceType | null {
   if (n.includes("notion_")) return "notion";
   if (n.includes("slack_")) return "slack";
   if (n.includes("gmail_")) return "gmail";
+  if (n.includes("zendesk_")) return "zendesk";
+  if (n.includes("jira_")) return "jira";
   if (n.includes("support_")) return "support";
   if (n.includes("crm_")) return "crm";
   if (n.includes("db_")) return "db";
@@ -497,8 +511,17 @@ export function upsertSource(userId: string, input: {
 
 async function syncOneSource(userId: string, source: SourceConfig): Promise<number> {
   if (!source.enabled) return 0;
-  if (source.type === "github" || source.type === "notion" || source.type === "local_files") {
-    const result = await ConnectorManager.triggerSync(userId, source.type as ConnectorType);
+  if (
+    source.type === "github"
+    || source.type === "notion"
+    || source.type === "local_files"
+    || source.type === "slack"
+    || source.type === "gmail"
+    || source.type === "zendesk"
+    || source.type === "jira"
+  ) {
+    const accessToken = typeof source.config.accessToken === "string" ? source.config.accessToken : undefined;
+    const result = await ConnectorManager.triggerSync(userId, source.type as ConnectorType, accessToken);
     return result.extractedCount ?? 0;
   }
   // External enterprise sources ingest via push API/webhooks into memory; keep as 0 pull count.

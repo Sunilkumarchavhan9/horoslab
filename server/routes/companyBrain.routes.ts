@@ -77,7 +77,7 @@ companyBrainRouter.post("/sources", asyncHandler(async (req, res) => {
     return;
   }
   const source = upsertSource(req.authUserId, {
-    type: type as "github" | "notion" | "local_files" | "slack" | "gmail" | "support" | "crm" | "db",
+    type: type as "github" | "notion" | "local_files" | "slack" | "gmail" | "zendesk" | "jira" | "support" | "crm" | "db",
     enabled,
     config,
   });
@@ -93,14 +93,14 @@ companyBrainRouter.post("/source-events/:type", asyncHandler(async (req, res) =>
   const rawType = req.params.type;
   const type = Array.isArray(rawType) ? rawType[0] : rawType;
   const payload = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
-  const acceptedTypes = new Set(["support", "crm", "db", "slack", "gmail"]);
+  const acceptedTypes = new Set(["support", "crm", "db", "slack", "gmail", "zendesk", "jira"]);
   if (!acceptedTypes.has(type)) {
     res.status(400).json({ error: "unsupported source event type" });
     return;
   }
   const event = enqueueSourceEvent(
     req.authUserId,
-    type as "support" | "crm" | "db" | "slack" | "gmail",
+    type as "support" | "crm" | "db" | "slack" | "gmail" | "zendesk" | "jira",
     payload,
   );
   res.json(event);
@@ -110,7 +110,7 @@ companyBrainRouter.post("/source-events/process", asyncHandler(async (req, res) 
   const rawType = typeof req.body?.type === "string" ? req.body.type : undefined;
   const processed = await processQueuedSourceEvents(
     req.authUserId,
-    rawType as "support" | "crm" | "db" | "slack" | "gmail" | undefined,
+    rawType as "support" | "crm" | "db" | "slack" | "gmail" | "zendesk" | "jira" | undefined,
   );
   res.json({ accepted: processed });
 }));
