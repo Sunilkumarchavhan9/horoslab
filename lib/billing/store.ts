@@ -82,6 +82,7 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const FALLBACK_USAGE_BY_USER = new Map<string, UsageSnapshot>();
 
 function hasDatabaseUrl(): boolean {
+  if (process.env.NODE_ENV === "test") return false;
   return typeof process.env.DATABASE_URL === "string" && process.env.DATABASE_URL.trim().length > 0;
 }
 
