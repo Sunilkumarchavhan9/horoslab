@@ -246,6 +246,10 @@ type NavAsciiTileProps = {
   active?: boolean;
   className?: string;
   speed?: number;
+  /** Floating search / API terms drawn over the ASCII field */
+  searchTerms?: string[];
+  /** 60fps paint loop with gentler phase stepping */
+  smoothMotion?: boolean;
 };
 
 export function NavAsciiTile({
@@ -253,12 +257,16 @@ export function NavAsciiTile({
   active = false,
   className,
   speed = 1,
+  searchTerms,
+  smoothMotion = false,
 }: NavAsciiTileProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activeRef = useRef(active);
   const variantRef = useRef(variant);
   const visibleRef = useRef(true);
   const reducedMotionRef = useRef(false);
+  const searchTermsRef = useRef(searchTerms);
+  const smoothMotionRef = useRef(smoothMotion);
 
   useEffect(() => {
     activeRef.current = active;
@@ -267,6 +275,14 @@ export function NavAsciiTile({
   useEffect(() => {
     variantRef.current = variant;
   }, [variant]);
+
+  useEffect(() => {
+    searchTermsRef.current = searchTerms;
+  }, [searchTerms]);
+
+  useEffect(() => {
+    smoothMotionRef.current = smoothMotion;
+  }, [smoothMotion]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -283,7 +299,7 @@ export function NavAsciiTile({
     let phase = 0.32;
     let lastTime = 0;
     let lastPaintTime = 0;
-    const frameIntervalMs = 1000 / 30;
+    let frameIntervalMs = smoothMotionRef.current ? 1000 / 60 : 1000 / 30;
 
     const resize = () => {
       width = Math.max(1, Math.floor(canvas.clientWidth));
@@ -306,7 +322,8 @@ export function NavAsciiTile({
       const currentVariant = variantRef.current;
 
       if (isActive) {
-        phase = (phase + dt * 0.45 * speed) % 1;
+        const phaseRate = smoothMotionRef.current ? 0.32 : 0.45;
+        phase = (phase + dt * phaseRate * speed) % 1;
       } else {
         phase = 0.34;
         lastTime = 0;
@@ -346,9 +363,24 @@ export function NavAsciiTile({
           ctx.fillText(ch, x, y);
         }
       }
+
+      const terms = searchTermsRef.current;
+      if (terms && terms.length > 0) {
+        const termFont = Math.max(cell + 1, 9);
+        ctx.font = `${termFont}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+        for (let i = 0; i < terms.length; i += 1) {
+          const term = terms[i];
+          const driftX = hashNoise(i * 3.1, 0.5, t * 0.55) * width * 0.72 + width * 0.1;
+          const driftY = hashNoise(0.5, i * 2.7, t * 0.48) * height * 0.62 + height * 0.14;
+          const pulse = 0.42 + 0.28 * Math.sin(t * 1.35 + i * 1.1);
+          ctx.fillStyle = `rgba(41, 100, 206, ${pulse.toFixed(3)})`;
+          ctx.fillText(term, driftX, driftY);
+        }
+      }
     };
 
     const loop = (time: number) => {
+      frameIntervalMs = smoothMotionRef.current ? 1000 / 60 : 1000 / 30;
       if (
         !reducedMotionRef.current &&
         visibleRef.current &&
@@ -399,7 +431,7 @@ export function NavAsciiTile({
       visibilityObserver.disconnect();
       reduced.removeEventListener("change", onReducedChange);
     };
-  }, [active, speed]);
+  }, [active, speed, smoothMotion]);
 
   return (
     <canvas
