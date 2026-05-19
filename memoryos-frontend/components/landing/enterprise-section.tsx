@@ -81,7 +81,7 @@ export function EnterpriseSection() {
             <div className="h-full px-7 py-8">
               <div className="relative mb-5 border border-[#d8e3f5] bg-white p-3">
                 <div className="h-[116px] w-full">
-                  <NavAsciiTile variant={card.variant} active className="h-full w-full" />
+                  <NavAsciiTile variant={card.variant} active speed={1.9} className="h-full w-full" />
                 </div>
                 <div className="pointer-events-none absolute left-3 top-3 border border-[#d8e3f5] bg-white px-2 py-1 font-mono text-[11px] tracking-[0.12em] text-[#356acc]">
                   {card.id} ENTERPRISE
