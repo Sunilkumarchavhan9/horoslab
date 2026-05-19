@@ -1,3 +1,5 @@
+"use client";
+
 import { Reveal } from "./motion";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 import { motion } from "framer-motion";
@@ -46,7 +48,7 @@ const PLAN_CARDS = [
     secondary: "See platform details →",
     ctaHref: polarScaleCheckoutUrl || "/pricing",
     secondaryHref: "#enterprise",
-    featured: false,
+    featured: false,  
   },
 ];
 
