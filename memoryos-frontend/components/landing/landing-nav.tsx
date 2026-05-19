@@ -120,7 +120,7 @@ export function LandingNav() {
             <span>0</span>
           </a>
           <a
-            href="https://x.com"
+            href="https://x.com/memoryostm"
             target="_blank"
             rel="noreferrer"
             className="hidden items-center gap-1.5 transition hover:text-blue-600 xl:inline-flex"
@@ -129,7 +129,7 @@ export function LandingNav() {
             <span>0</span>
           </a>
           <a
-            href="https://discord.com"
+            href="https://discord.gg/JtwaRJaeR"
             target="_blank"
             rel="noreferrer"
             className="hidden items-center gap-1.5 transition hover:text-blue-600 xl:inline-flex"
