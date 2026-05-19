@@ -251,9 +251,16 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activeRef = useRef(active);
   const variantRef = useRef(variant);
+  const visibleRef = useRef(true);
+  const reducedMotionRef = useRef(false);
 
-  activeRef.current = active;
-  variantRef.current = variant;
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  useEffect(() => {
+    variantRef.current = variant;
+  }, [variant]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -269,6 +276,8 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
     let raf = 0;
     let phase = 0.32;
     let lastTime = 0;
+    let lastPaintTime = 0;
+    const frameIntervalMs = 1000 / 30;
 
     const resize = () => {
       width = Math.max(1, Math.floor(canvas.clientWidth));
@@ -334,8 +343,16 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
     };
 
     const loop = (time: number) => {
-      paint(time);
-      if (activeRef.current) {
+      if (
+        !reducedMotionRef.current &&
+        visibleRef.current &&
+        activeRef.current &&
+        time - lastPaintTime >= frameIntervalMs
+      ) {
+        lastPaintTime = time;
+        paint(time);
+      }
+      if (!reducedMotionRef.current && visibleRef.current && activeRef.current) {
         raf = window.requestAnimationFrame(loop);
       } else {
         raf = 0;
@@ -343,11 +360,26 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
     };
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reducedMotionRef.current = reduced.matches;
+    const onReducedChange = (event: MediaQueryListEvent) => {
+      reducedMotionRef.current = event.matches;
+    };
+    reduced.addEventListener("change", onReducedChange);
+
     const observer = new ResizeObserver(() => {
       resize();
       paint(performance.now());
     });
     observer.observe(canvas);
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        visibleRef.current = !!entry?.isIntersecting;
+      },
+      { threshold: 0.05 },
+    );
+    visibilityObserver.observe(canvas);
+
     resize();
     paint(performance.now());
 
@@ -358,6 +390,8 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
     return () => {
       window.cancelAnimationFrame(raf);
       observer.disconnect();
+      visibilityObserver.disconnect();
+      reduced.removeEventListener("change", onReducedChange);
     };
   }, [active]);
 
