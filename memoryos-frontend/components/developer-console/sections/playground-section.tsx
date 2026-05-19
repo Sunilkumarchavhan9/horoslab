@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
 import {
-  formatInsightDisplay,
   formatMemoryForDisplay,
 } from "@/lib/memory-display-text";
 import {
@@ -522,29 +521,6 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
       text: formatMemoryForDisplay(memory.summary || memory.content) || "Memory updated",
     }));
   }, [memories]);
-
-  const graphInsightLines = useMemo(() => {
-    const lines: string[] = [];
-    for (const skill of insights?.topSkills ?? []) {
-      const label = formatInsightDisplay(skill);
-      if (label) lines.push(label);
-    }
-    for (const project of insights?.activeProjects ?? []) {
-      const label = formatInsightDisplay(project);
-      if (label) lines.push(`Project: ${label}`);
-    }
-    for (const milestone of insights?.recentMilestones ?? []) {
-      const label = formatMemoryForDisplay(milestone);
-      if (label) lines.push(label);
-    }
-    return lines.slice(0, 6);
-  }, [insights]);
-
-  const latestAssistantSummary = useMemo(() => {
-    const last = messages.filter((entry) => entry.role === "assistant").slice(-1)[0];
-    if (!last?.text) return null;
-    return formatMemoryForDisplay(last.text) || last.text;
-  }, [messages]);
 
   const recentSessions = useMemo(() => {
     return requests.slice(0, 4).map((request) => ({
@@ -1909,27 +1885,6 @@ handoff = httpx.post(
             </div> : null}
             </div>
 
-            <div className="absolute left-5 right-5 top-5 rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Insights</p>
-              <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground">
-                {graphInsightLines.length > 0 ? (
-                  graphInsightLines.map((line) => (
-                    <li key={line} className="list-disc pl-4 marker:text-primary">
-                      {line}
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-muted-foreground">No insights yet — run Process or Retrieve to populate live data.</li>
-                )}
-              </ul>
-            </div>
-
-            <div className="absolute left-5 right-5 top-[150px] rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Latest Response Summary</p>
-              <p className="mt-2 text-[13px] text-muted-foreground">
-                {latestAssistantSummary ?? "No response yet. Send a message in the chat tab."}
-              </p>
-            </div>
           </div>
         </aside>
       </div>
