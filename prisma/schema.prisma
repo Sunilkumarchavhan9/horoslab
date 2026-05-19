@@ -176,6 +176,9 @@ model BillingAccount {
   subscriptionStatus  String   @default("unknown") @map("subscription_status")
   currentPeriodEnd    String?  @map("current_period_end")
   connectorSyncUsed   Int      @default(0) @map("connector_sync_used")
+  tokenUsed           Int      @default(0) @map("token_used")
+  searchUsed          Int      @default(0) @map("search_used")
+  usagePeriodStart    String?  @map("usage_period_start")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
   invoices            BillingInvoice[]

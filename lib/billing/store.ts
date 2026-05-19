@@ -21,7 +21,16 @@ type UserBillingState = {
   currentPeriodEnd: string | null;
   invoices: BillingInvoice[];
   connectorSyncUsed: number;
+  usage: UsageSnapshot;
   updatedAt: string;
+};
+
+export type UsageSnapshot = {
+  tokenLimit: number;
+  tokenUsed: number;
+  searchLimit: number;
+  searchUsed: number;
+  resetInDays: number;
 };
 
 export type BillingEvent = {
@@ -35,6 +44,7 @@ export type BillingEvent = {
 };
 
 function defaultUserBillingState(userId: string): UserBillingState {
+  const defaultPlan = PLAN_CATALOG.Free;
   return {
     userId,
     plan: "Free",
@@ -44,6 +54,13 @@ function defaultUserBillingState(userId: string): UserBillingState {
     currentPeriodEnd: null,
     invoices: [],
     connectorSyncUsed: 0,
+    usage: {
+      tokenLimit: defaultPlan.tokenLimit ?? 0,
+      tokenUsed: 0,
+      searchLimit: defaultPlan.searchLimit ?? 0,
+      searchUsed: 0,
+      resetInDays: 30,
+    },
     updatedAt: new Date().toISOString(),
   };
 }
@@ -60,8 +77,62 @@ function toSubscriptionStatus(input: string | null | undefined): SubscriptionSta
   return "unknown";
 }
 
+const USAGE_RESET_DAYS = 30;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+function parseIsoOrNow(value: string | null | undefined): Date {
+  if (typeof value !== "string" || value.trim().length === 0) return new Date();
+  const dt = new Date(value);
+  return Number.isNaN(dt.getTime()) ? new Date() : dt;
+}
+
+function computeResetInDays(periodStartIso: string | null | undefined): number {
+  const periodStart = parseIsoOrNow(periodStartIso);
+  const resetAt = periodStart.getTime() + USAGE_RESET_DAYS * MS_PER_DAY;
+  const remaining = Math.ceil((resetAt - Date.now()) / MS_PER_DAY);
+  return Math.max(0, remaining);
+}
+
+async function ensureUsagePeriodWindow(userId: string): Promise<void> {
+  const account = await prisma.billingAccount.findUnique({
+    where: { userId },
+    select: { usagePeriodStart: true },
+  });
+  if (!account) return;
+
+  const now = new Date();
+  const periodStart = parseIsoOrNow(account.usagePeriodStart);
+  const shouldReset = now.getTime() - periodStart.getTime() >= USAGE_RESET_DAYS * MS_PER_DAY;
+  if (!shouldReset) return;
+
+  await prisma.billingAccount.update({
+    where: { userId },
+    data: {
+      tokenUsed: 0,
+      searchUsed: 0,
+      connectorSyncUsed: 0,
+      usagePeriodStart: now.toISOString(),
+    },
+  });
+}
+
 export async function getBillingStateForUser(userId: string): Promise<UserBillingState> {
   try {
+    await prisma.billingAccount.upsert({
+      where: { userId },
+      create: {
+        userId,
+        plan: "Free",
+        subscriptionStatus: "unknown",
+        connectorSyncUsed: 0,
+        tokenUsed: 0,
+        searchUsed: 0,
+        usagePeriodStart: new Date().toISOString(),
+      },
+      update: {},
+    });
+    await ensureUsagePeriodWindow(userId);
+
     const account = await prisma.billingAccount.findUnique({
       where: { userId },
       include: {
@@ -73,6 +144,7 @@ export async function getBillingStateForUser(userId: string): Promise<UserBillin
       return defaultUserBillingState(userId);
     }
 
+    const planDef = PLAN_CATALOG[toBillingPlan(account.plan)];
     return {
       userId: account.userId,
       plan: toBillingPlan(account.plan),
@@ -89,6 +161,13 @@ export async function getBillingStateForUser(userId: string): Promise<UserBillin
         hostedInvoiceUrl: row.hostedInvoiceUrl,
       })),
       connectorSyncUsed: account.connectorSyncUsed,
+      usage: {
+        tokenLimit: planDef.tokenLimit ?? Number.MAX_SAFE_INTEGER,
+        tokenUsed: account.tokenUsed,
+        searchLimit: planDef.searchLimit ?? Number.MAX_SAFE_INTEGER,
+        searchUsed: account.searchUsed,
+        resetInDays: computeResetInDays(account.usagePeriodStart),
+      },
       updatedAt: account.updatedAt.toISOString(),
     };
   } catch {
@@ -114,6 +193,9 @@ export async function setUserBillingState(input: {
       subscriptionStatus: input.subscriptionStatus ?? "unknown",
       currentPeriodEnd: input.currentPeriodEnd ?? null,
       connectorSyncUsed: 0,
+      tokenUsed: 0,
+      searchUsed: 0,
+      usagePeriodStart: new Date().toISOString(),
     },
     update: {
       plan: input.plan,
@@ -135,6 +217,9 @@ export async function appendInvoiceForUser(userId: string, invoice: BillingInvoi
       plan: "Free",
       subscriptionStatus: "unknown",
       connectorSyncUsed: 0,
+      tokenUsed: 0,
+      searchUsed: 0,
+      usagePeriodStart: new Date().toISOString(),
     },
     update: {},
   });
@@ -246,6 +331,9 @@ export async function consumeConnectorSyncRecords(input: { userId: string; amoun
       plan: "Free",
       subscriptionStatus: "unknown",
       connectorSyncUsed: amount,
+      tokenUsed: 0,
+      searchUsed: 0,
+      usagePeriodStart: new Date().toISOString(),
     },
     update: {
       connectorSyncUsed: { increment: amount },
@@ -254,4 +342,98 @@ export async function consumeConnectorSyncRecords(input: { userId: string; amoun
   const state = await getBillingStateForUser(input.userId);
   const planDef = PLAN_CATALOG[state.plan];
   return { plan: state.plan, used: state.connectorSyncUsed, limit: planDef.connectorSyncRecordLimit ?? null };
+}
+
+export async function tryConsumeUsage(input: {
+  userId: string;
+  tokenCost?: number;
+  searchCost?: number;
+}): Promise<{
+  allowed: boolean;
+  plan: BillingPlan;
+  usage: UsageSnapshot;
+  meter?: "tokens" | "searches";
+}> {
+  const tokenCost = Math.max(0, Math.floor(input.tokenCost ?? 0));
+  const searchCost = Math.max(0, Math.floor(input.searchCost ?? 0));
+
+  await prisma.billingAccount.upsert({
+    where: { userId: input.userId },
+    create: {
+      userId: input.userId,
+      plan: "Free",
+      subscriptionStatus: "unknown",
+      connectorSyncUsed: 0,
+      tokenUsed: 0,
+      searchUsed: 0,
+      usagePeriodStart: new Date().toISOString(),
+    },
+    update: {},
+  });
+  await ensureUsagePeriodWindow(input.userId);
+
+  const account = await prisma.billingAccount.findUnique({
+    where: { userId: input.userId },
+    select: { plan: true, tokenUsed: true, searchUsed: true, usagePeriodStart: true },
+  });
+  if (!account) {
+    const fallback = await getBillingStateForUser(input.userId);
+    return { allowed: false, plan: fallback.plan, usage: fallback.usage };
+  }
+
+  const plan = toBillingPlan(account.plan);
+  const planDef = PLAN_CATALOG[plan];
+  const tokenLimit = planDef.tokenLimit ?? Number.MAX_SAFE_INTEGER;
+  const searchLimit = planDef.searchLimit ?? Number.MAX_SAFE_INTEGER;
+
+  const nextTokenUsed = account.tokenUsed + tokenCost;
+  const nextSearchUsed = account.searchUsed + searchCost;
+  if (nextTokenUsed > tokenLimit) {
+    return {
+      allowed: false,
+      plan,
+      meter: "tokens",
+      usage: {
+        tokenLimit,
+        tokenUsed: account.tokenUsed,
+        searchLimit,
+        searchUsed: account.searchUsed,
+        resetInDays: computeResetInDays(account.usagePeriodStart),
+      },
+    };
+  }
+  if (nextSearchUsed > searchLimit) {
+    return {
+      allowed: false,
+      plan,
+      meter: "searches",
+      usage: {
+        tokenLimit,
+        tokenUsed: account.tokenUsed,
+        searchLimit,
+        searchUsed: account.searchUsed,
+        resetInDays: computeResetInDays(account.usagePeriodStart),
+      },
+    };
+  }
+
+  await prisma.billingAccount.update({
+    where: { userId: input.userId },
+    data: {
+      tokenUsed: { increment: tokenCost },
+      searchUsed: { increment: searchCost },
+    },
+  });
+
+  return {
+    allowed: true,
+    plan,
+    usage: {
+      tokenLimit,
+      tokenUsed: nextTokenUsed,
+      searchLimit,
+      searchUsed: nextSearchUsed,
+      resetInDays: computeResetInDays(account.usagePeriodStart),
+    },
+  };
 }
