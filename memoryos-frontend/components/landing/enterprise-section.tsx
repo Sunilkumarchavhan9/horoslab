@@ -54,14 +54,6 @@ const ENTERPRISE_TILES = [
   },
 ];
 
-function AsciiBadge({ id }: { id: string }) {
-  return (
-    <div className="pointer-events-none absolute left-3 top-3 border border-[#d8e3f5] bg-white px-2 py-1 font-mono text-[11px] tracking-[0.12em] text-[#356acc]">
-      {id} ENTERPRISE
-    </div>
-  );
-}
-
 export function EnterpriseSection() {
   return (
     <section className="border-b border-[#c9d8ee] bg-white">
@@ -105,18 +97,15 @@ export function EnterpriseSection() {
       {/* Wireframe layout: hero ASCII → three tiles → three text columns */}
       <div className="border-t border-[#c9d8ee]">
         <Reveal delay={0.06} className="border-b border-[#c9d8ee] px-5 py-6 lg:px-7 lg:py-8">
-          <div className="relative border border-[#d8e3f5] bg-white p-3">
-            <div className="h-[200px] w-full sm:h-[240px] md:h-[280px] lg:h-[300px]">
-              <NavAsciiTile
-                variant={HERO_ASCII.variant}
-                active
-                smoothMotion
-                speed={1.15}
-                searchTerms={HERO_ASCII.searchTerms}
-                className="h-full w-full"
-              />
-            </div>
-            <AsciiBadge id={HERO_ASCII.id} />
+          <div className="h-[200px] w-full sm:h-[240px] md:h-[280px] lg:h-[300px]">
+            <NavAsciiTile
+              variant={HERO_ASCII.variant}
+              active
+              smoothMotion
+              speed={1.15}
+              searchTerms={HERO_ASCII.searchTerms}
+              className="h-full w-full"
+            />
           </div>
         </Reveal>
 
@@ -128,18 +117,15 @@ export function EnterpriseSection() {
               className={index < 2 ? "border-b border-[#c9d8ee] lg:border-b-0 lg:border-r" : ""}
             >
               <div className="px-5 py-6 lg:px-7 lg:py-7">
-                <div className="relative border border-[#d8e3f5] bg-white p-3">
-                  <div className="h-[120px] w-full sm:h-[132px]">
-                    <NavAsciiTile
-                      variant={tile.variant}
-                      active
-                      smoothMotion
-                      speed={1.65 + index * 0.12}
-                      searchTerms={tile.searchTerms}
-                      className="h-full w-full"
-                    />
-                  </div>
-                  <AsciiBadge id={tile.id} />
+                <div className="h-[120px] w-full sm:h-[132px]">
+                  <NavAsciiTile
+                    variant={tile.variant}
+                    active
+                    smoothMotion
+                    speed={1.65 + index * 0.12}
+                    searchTerms={tile.searchTerms}
+                    className="h-full w-full"
+                  />
                 </div>
               </div>
             </Reveal>
