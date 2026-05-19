@@ -24,7 +24,7 @@ export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(49,75,244,0.16),rgba(255,255,255,0)_34%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,9,59,0.36)_0%,rgba(10,43,167,0.16)_28%,rgba(8,9,12,0)_58%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_78%,rgba(9,40,145,0.3),rgba(8,9,12,0)_44%)]" />
-      <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(rgba(255,255,255,0.8)_0.55px,transparent_0.55px)] [background-size:7px_7px]" />
+      <div className="absolute inset-0 opacity-[0.06] [background-image:repeating-linear-gradient(180deg,rgba(255,255,255,0.05)_0,rgba(255,255,255,0.05)_1px,transparent_1px,transparent_10px),repeating-linear-gradient(135deg,rgba(255,255,255,0.025)_0,rgba(255,255,255,0.025)_1px,transparent_1px,transparent_16px)] [background-size:100%_100%,100%_100%] [background-repeat:repeat]" />
       <div className="absolute -bottom-18 left-1/2 h-[220px] w-[320px] -translate-x-1/2 rounded-full bg-[#314bf4]/24 blur-[88px] sm:h-[270px] sm:w-[460px] sm:blur-[108px]" />
       <div className="absolute -bottom-28 left-[16%] h-[220px] w-[220px] rounded-full bg-[#0a2ba7]/26 blur-[108px] sm:h-[300px] sm:w-[320px] sm:blur-[132px]" />
       <div className="absolute -bottom-28 right-[14%] h-[220px] w-[240px] rounded-full bg-[#092891]/26 blur-[110px] sm:h-[320px] sm:w-[340px] sm:blur-[138px]" />
