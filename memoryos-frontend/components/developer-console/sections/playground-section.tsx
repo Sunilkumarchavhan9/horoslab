@@ -352,6 +352,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   );
   const [setupTab, setSetupTab] = useState<SetupTab>("configure");
   const [importText, setImportText] = useState("");
+  const [expandedProfileIds, setExpandedProfileIds] = useState<Record<string, boolean>>({});
 
   const selectedConfig = useMemo(
     () => MODE_CONFIG.find((item) => item.mode === mode) ?? MODE_CONFIG[0],
@@ -521,6 +522,13 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
       text: formatMemoryForDisplay(memory.summary || memory.content) || "Memory updated",
     }));
   }, [memories]);
+
+  const toggleProfileCard = useCallback((id: string) => {
+    setExpandedProfileIds((current) => ({
+      ...current,
+      [id]: !current[id],
+    }));
+  }, []);
 
   const recentSessions = useMemo(() => {
     return requests.slice(0, 4).map((request) => ({
@@ -1306,14 +1314,21 @@ const answer = await model.generate({
             <div className="mt-3 space-y-2.5">
               {profileCards.length > 0 ? (
                 profileCards.map((card) => (
-                  <div
+                  <button
                     key={card.id}
+                    type="button"
+                    onClick={() => toggleProfileCard(card.id)}
                     className={`rounded-[8px] border px-3 py-3 text-[14px] leading-6 shadow-lg shadow-black/10 ${
                       lightMode ? "border-black/10 bg-white text-foreground" : "border-border bg-background text-foreground"
-                    }`}
+                    } w-full cursor-pointer text-left transition hover:border-primary/40`}
                   >
-                    {card.text}
-                  </div>
+                    <div className={`${expandedProfileIds[card.id] ? "max-h-none" : "max-h-[168px] overflow-hidden"}`}>
+                      {card.text}
+                    </div>
+                    <div className="mt-2 text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+                      {expandedProfileIds[card.id] ? "Collapse" : "Expand"}
+                    </div>
+                  </button>
                 ))
               ) : (
                 <div className={`flex min-h-[160px] flex-col items-center justify-center rounded-[10px] border border-dashed px-3 py-3 text-center ${
