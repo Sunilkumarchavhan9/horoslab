@@ -80,7 +80,7 @@ export function BlueBandAsciiCanvas({ className }: BlueBandAsciiCanvasProps) {
           const threshold = (BAYER_4X4[((gridY & 3) * 4) + (gridX & 3)] + 0.5) / 16;
           intensity = clamp(intensity + ((threshold - 0.5) * 0.28), 0, 1);
 
-          if (intensity < 0.13) {
+          if (intensity < 0.1) {
             continue;
           }
 
@@ -89,8 +89,8 @@ export function BlueBandAsciiCanvas({ className }: BlueBandAsciiCanvasProps) {
             Math.floor(intensity * (ASCII_CHARS.length - 1)),
           );
           const ch = ASCII_CHARS[charIndex];
-          const alpha = clamp(0.24 + (intensity * 0.62), 0.2, 0.94);
-          const lift = Math.floor(214 + (intensity * 26));
+          const alpha = clamp(0.34 + (intensity * 0.6), 0.3, 1);
+          const lift = Math.floor(220 + (intensity * 30));
           ctx.fillStyle = `rgba(${lift}, ${lift + 6}, 255, ${alpha.toFixed(3)})`;
           ctx.fillText(ch, x, y);
         }
