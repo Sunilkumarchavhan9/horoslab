@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Reveal } from "./motion";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare, GitPullRequest, Activity, FileText, Shield, Database, GitBranch, Hash, Terminal, Cloud, Brain } from "lucide-react";
 import { MemoryStarLogo } from "./memory-star-logo";
+import { NavAsciiTile } from "./nav-ascii-tile";
+import { DEV_FEATURE_ASCII } from "@/lib/nav-ascii-variants";
 
 function ClaudeMark() {
   return (
@@ -292,98 +294,122 @@ const PM_FEATURES = [
 
 function PersonalMemoryFeaturesGrid() {
   const [activeTab, setActiveTab] = useState("01");
+  const activeFeature = PM_FEATURES.find((feature) => feature.num === activeTab) ?? PM_FEATURES[0];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = PM_FEATURES.map(f => document.getElementById(`pm-feature-${f.num}`));
-      let current = "01";
-      for (const section of sections) {
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= window.innerHeight / 2) {
-            current = section.id.replace("pm-feature-", "");
-          }
-        }
-      }
-      setActiveTab(current);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const metrics: Record<string, Array<{ label: string; value: string }>> = {
+    "01": [
+      { label: "Events / month", value: "12.4M" },
+      { label: "Ingest latency", value: "84ms" },
+      { label: "Sources online", value: "18" },
+    ],
+    "02": [
+      { label: "Knowledge nodes", value: "3.8M" },
+      { label: "Relations", value: "12.9M" },
+      { label: "Contradiction checks", value: "99.2%" },
+    ],
+    "03": [
+      { label: "Search p95", value: "176ms" },
+      { label: "Top-3 precision", value: "96.8%" },
+      { label: "Explainable traces", value: "100%" },
+    ],
+    "04": [
+      { label: "Workspaces", value: "240" },
+      { label: "Policy rules", value: "1.2k" },
+      { label: "Audit events / day", value: "480k" },
+    ],
+  };
 
   return (
-    <div className="dark bg-background text-foreground py-24 w-full border-t border-border mt-24">
-      <div className="mx-auto max-w-[1400px]">
-        {/* Two Column Layout */}
-        <div className="flex flex-col lg:flex-row relative gap-8 lg:gap-16 items-start px-6">
-          {/* Left Sidebar (Sticky Tabs) */}
-          <div className="hidden lg:block w-[280px] shrink-0 relative">
-             <div className="sticky top-32 flex flex-col gap-2">
-                {PM_FEATURES.map(feature => (
-                  <a 
-                    key={feature.num} 
-                    href={`#pm-feature-${feature.num}`}
-                    className={`flex items-center gap-4 px-6 py-4 rounded-xl transition-all ${activeTab === feature.num ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'}`}
-                  >
-                     <span className={`font-mono text-[11px] px-2 py-1 rounded transition-colors ${activeTab === feature.num ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'}`}>
-                        {feature.num}
-                     </span>
-                     <span className="font-sans text-[12px] font-bold tracking-widest uppercase">{feature.tab}</span>
-                  </a>
-                ))}
-             </div>
-          </div>
-
-          {/* Right Content Area (Stacked Cards) */}
-          <div className="flex-1 flex flex-col pb-[50vh] relative border-t border-border xl:border-t-0">
-             {PM_FEATURES.map((feature, i) => (
-                <div 
-                  key={feature.num} 
-                  id={`pm-feature-${feature.num}`} 
-                  className={`sticky flex flex-col xl:flex-row bg-card border-b border-border`}
-                  style={{ 
-                    top: '6rem', 
-                    minHeight: '480px',
-                    zIndex: i,
-                  }}
-                >
-                   {/* Left Visual Pane */}
-                   <div className={`w-full xl:w-[55%] p-8 xl:p-16 relative flex items-center justify-center overflow-hidden border-b xl:border-b-0 xl:border-r border-border ${feature.bgClass}`}>
-                      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-                      <div className="relative z-10 w-full max-w-lg shadow-2xl rounded-xl transition-transform duration-500 hover:scale-[1.02]">
-                         {feature.visualContent}
-                      </div>
-                   </div>
-
-                   {/* Right Text Pane */}
-                   <div className="w-full xl:w-[45%] p-8 xl:p-16 flex flex-col justify-center bg-card">
-                      <span className="font-mono text-[11px] bg-muted text-muted-foreground border border-border px-2 py-1 rounded w-fit mb-8">
-                         {feature.num}
-                      </span>
-                      <h3 className="text-[32px] font-semibold tracking-tight text-foreground mb-4 leading-[1.1]">
-                         {feature.heading}
-                      </h3>
-                      <p className="text-[16px] leading-relaxed text-muted-foreground mb-10">
-                         {feature.description}
-                      </p>
-                      
-                      <div className="flex flex-col gap-5 pl-5 border-l-2 border-border">
-                         {feature.bullets.map(bullet => (
-                            <p key={bullet} className="text-[14px] text-foreground/80 leading-relaxed font-medium">
-                               {bullet}
-                            </p>
-                         ))}
-                      </div>
-                   </div>
-                </div>
-             ))}
-          </div>
+    <section className="mt-20 border-t border-[#c9d8ee] bg-white px-5 py-14">
+      <div className="mx-auto max-w-[1240px]">
+        <div className="mb-8 grid gap-4 md:grid-cols-[1.3fr_1fr]">
+          <h3 className="font-sans text-[36px] leading-[0.96] tracking-[-0.03em] text-[#101827] md:text-[56px]">
+            How we scale company memory infrastructure.
+          </h3>
+          <p className="max-w-[44ch] self-start pt-2 font-mono text-[13px] leading-6 text-[#516882]">
+            Click each surface to inspect deeper capacity, retrieval performance, and workspace governance at production scale.
+          </p>
         </div>
+
+        <div className="grid gap-5 xl:grid-cols-4">
+          {PM_FEATURES.map((feature) => {
+            const isActive = feature.num === activeTab;
+            return (
+              <motion.button
+                key={feature.num}
+                type="button"
+                onClick={() => setActiveTab(feature.num)}
+                className="group border border-[#c9d8ee] bg-white text-left"
+                initial={false}
+                animate={{ y: isActive ? -3 : 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+              >
+                <div className="relative h-[220px] border-b border-[#dbe6f7] bg-white p-3">
+                  <div className="absolute left-3 top-3 z-10 border border-[#c9d8ee] bg-white px-2 py-1 font-mono text-[10px] tracking-[0.2em] text-[#356acc]">
+                    {feature.num}
+                  </div>
+                  <div className="h-full w-full border border-[#dbe6f7] bg-white">
+                    <NavAsciiTile
+                      variant={DEV_FEATURE_ASCII[feature.num] ?? "grid"}
+                      active={isActive}
+                      className="h-full w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-[#0b0f17] p-4">
+                  <p className="font-mono text-[11px] tracking-[0.2em] text-[#8ca5cc]">{feature.tab}</p>
+                  <h4 className="mt-2 font-sans text-[20px] leading-tight text-white">{feature.heading}</h4>
+                  <p className="mt-3 font-mono text-[12px] leading-6 text-[#9fb2cf] line-clamp-3">{feature.description}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {feature.bullets.slice(0, 3).map((bullet) => (
+                      <span
+                        key={`${feature.num}-${bullet}`}
+                        className="border border-[#334766] bg-[#0f1728] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.13em] text-[#c7d6f0]"
+                      >
+                        {bullet}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeFeature.num}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22 }}
+            className="mt-6 border border-[#c9d8ee] bg-white p-5"
+          >
+            <div className="grid gap-6 md:grid-cols-[1.15fr_1fr]">
+              <div>
+                <p className="font-mono text-[11px] tracking-[0.2em] text-[#356acc]">{activeFeature.num} / {activeFeature.tab}</p>
+                <h4 className="mt-2 font-sans text-[30px] leading-[1.03] tracking-[-0.02em] text-[#101827]">
+                  {activeFeature.heading}
+                </h4>
+                <p className="mt-3 max-w-[70ch] font-mono text-[14px] leading-7 text-[#516882]">
+                  {activeFeature.description}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-1">
+                {(metrics[activeFeature.num] ?? []).map((metric) => (
+                  <div key={metric.label} className="border border-[#d5e2f5] bg-[#f8fbff] px-4 py-3">
+                    <p className="font-mono text-[11px] tracking-[0.14em] text-[#6a7f9a]">{metric.label}</p>
+                    <p className="mt-1 font-sans text-[26px] font-semibold tracking-[-0.02em] text-[#101827]">{metric.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </div>
-  )
+    </section>
+  );
 }
 
 export function PersonalMemorySection() {

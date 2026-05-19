@@ -6,9 +6,9 @@ const ASCII_CHARS = " .:+*x234589";
 const BAYER_4X4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 
 const THEME = {
-  blueLow: { r: 159, g: 191, b: 255 },
-  blueMid: { r: 95, g: 146, b: 255 },
-  blueHigh: { r: 53, g: 106, b: 204 },
+  blueLow: { r: 142, g: 179, b: 246 },
+  blueMid: { r: 86, g: 141, b: 238 },
+  blueHigh: { r: 41, g: 100, b: 206 },
   white: { r: 255, g: 255, b: 255 },
 } as const;
 
@@ -175,7 +175,7 @@ export function CompanyBrainFlowerCanvas({
           const threshold = (BAYER_4X4[((gridY & 3) * 4) + (gridX & 3)] + 0.5) / 16;
           intensity = clamp(intensity + (threshold - 0.5) * 0.22, 0, 1);
 
-          if (intensity < 0.1) continue;
+          if (intensity < 0.08) continue;
 
           const charIndex = Math.min(
             ASCII_CHARS.length - 1,
@@ -190,7 +190,7 @@ export function CompanyBrainFlowerCanvas({
               : mixColor(THEME.blueMid, THEME.blueHigh, (intensity - 0.44) / 0.56);
           const color = mixColor(blue, THEME.white, beam * 0.88);
 
-          const alpha = clamp(0.34 + intensity * 0.56 + beam * 0.22, 0.24, 0.98);
+          const alpha = clamp(0.48 + intensity * 0.46 + beam * 0.24, 0.36, 1);
           ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha.toFixed(3)})`;
           ctx.fillText(ch, x, y);
         }
