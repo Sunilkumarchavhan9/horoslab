@@ -245,9 +245,15 @@ type NavAsciiTileProps = {
   variant: NavAsciiVariant;
   active?: boolean;
   className?: string;
+  speed?: number;
 };
 
-export function NavAsciiTile({ variant, active = false, className }: NavAsciiTileProps) {
+export function NavAsciiTile({
+  variant,
+  active = false,
+  className,
+  speed = 1,
+}: NavAsciiTileProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activeRef = useRef(active);
   const variantRef = useRef(variant);
@@ -300,7 +306,7 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
       const currentVariant = variantRef.current;
 
       if (isActive) {
-        phase = (phase + dt * 0.45) % 1;
+        phase = (phase + dt * 0.45 * speed) % 1;
       } else {
         phase = 0.34;
         lastTime = 0;
@@ -393,7 +399,7 @@ export function NavAsciiTile({ variant, active = false, className }: NavAsciiTil
       visibilityObserver.disconnect();
       reduced.removeEventListener("change", onReducedChange);
     };
-  }, [active]);
+  }, [active, speed]);
 
   return (
     <canvas
