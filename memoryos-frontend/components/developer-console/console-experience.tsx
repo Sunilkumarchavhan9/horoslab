@@ -2175,18 +2175,18 @@ export function DeveloperConsoleExperience() {
                   </Button>
                   {showAccountMenu ? (
                     <div
-                      className={`absolute right-0 top-[calc(100%+10px)] z-20 w-[296px] overflow-hidden rounded-[8px] border shadow-lg ${
+                      className={`absolute right-0 top-[calc(100%+10px)] z-20 w-[296px] rounded-[8px] border shadow-lg ${
                         isLightTheme
                           ? "border-black/10 bg-white text-foreground"
                           : "border-border bg-popover text-popover-foreground"
-                      }`}
+                      } isolate`}
                     >
-                      <div className="border-b border-border px-4 py-4">
-                        <p className="text-[22px] font-semibold">
+                      <div className="relative z-10 border-b border-border px-4 py-4">
+                        <p className="truncate text-[22px] font-semibold">
                           {userDisplayName}
                         </p>
                         <p
-                          className={`mt-1 text-[14px] ${
+                          className={`mt-1 truncate text-[14px] ${
                             isLightTheme ? "text-black/45" : "text-muted-foreground"
                           }`}
                         >
