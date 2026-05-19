@@ -71,7 +71,7 @@ import { getMemoryStoreAdapter } from "../../lib/adapters/registry";
 import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
 import { randomUUID } from "crypto";
 import { PLAN_CATALOG, type BillingPlan } from "../../shared/planCatalog";
-import { applyPlanUsageLimits, getBillingStateForUser, listBillingEventsForUser } from "../../lib/billing/store";
+import { getBillingStateForUser, listBillingEventsForUser, tryConsumeUsage, type UsageSnapshot } from "../../lib/billing/store";
 
 export const memoryRouter = Router();
 
@@ -830,7 +830,6 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   const state = getWorkspaceState(req.authUserId);
   const billingState = await getBillingStateForUser(req.authUserId);
   state.plan = billingState.plan;
-  applyPlanUsageLimits(state.plan, state.usage);
   const checkoutConfigured = Boolean(
     process.env.CHECKOUT_URL_PRO?.trim() ||
       process.env.CHECKOUT_URL_SCALE?.trim() ||
@@ -842,7 +841,7 @@ memoryRouter.get("/billing", asyncHandler(async (req, res) => {
   res.json({
     workspaceName: state.workspaceName,
     currentPlan: billingState.plan,
-    usage: state.usage,
+    usage: billingState.usage,
     seats: {
       activeMembers: state.members.filter((member) => member.status === "active").length,
       pendingInvites: state.invites.filter((invite) => invite.state === "pending").length,
@@ -2236,20 +2235,21 @@ function sendUpgradeRequired(
   startedAt: number,
   req: { authUserId: string },
   meter: UsageMeter,
-  state: WorkspaceState,
+  plan: BillingPlan,
+  usage: UsageSnapshot,
 ): void {
-  const used = meter === "tokens" ? state.usage.tokenUsed : state.usage.searchUsed;
-  const limit = meter === "tokens" ? state.usage.tokenLimit : state.usage.searchLimit;
+  const used = meter === "tokens" ? usage.tokenUsed : usage.searchUsed;
+  const limit = meter === "tokens" ? usage.tokenLimit : usage.searchLimit;
   const unit = meter === "tokens" ? "tokens" : "search queries";
   sendApiError(
     res,
     402,
     {
       code: "UPGRADE_REQUIRED",
-      message: `Your ${unit} limit for the ${state.plan} plan has been reached.`,
+      message: `Your ${unit} limit for the ${plan} plan has been reached.`,
       details: {
         meter,
-        plan: state.plan,
+        plan,
         used,
         limit,
         upgradePlans: ["Pro", "Scale"],
@@ -2268,24 +2268,22 @@ async function applyUsageOrReject(params: {
   tokenCost?: number;
   searchCost?: number;
 }): Promise<boolean> {
-  const state = getWorkspaceState(params.req.authUserId);
-  const billingState = await getBillingStateForUser(params.req.authUserId);
-  state.plan = billingState.plan;
-  applyPlanUsageLimits(state.plan, state.usage);
-  const tokenCost = Math.max(0, params.tokenCost ?? 0);
-  const searchCost = Math.max(0, params.searchCost ?? 0);
-
-  if (tokenCost > 0 && state.usage.tokenUsed + tokenCost > state.usage.tokenLimit) {
-    sendUpgradeRequired(params.res, params.startedAt, params.req, "tokens", state);
+  const usageResult = await tryConsumeUsage({
+    userId: params.req.authUserId,
+    tokenCost: params.tokenCost,
+    searchCost: params.searchCost,
+  });
+  if (!usageResult.allowed) {
+    sendUpgradeRequired(
+      params.res,
+      params.startedAt,
+      params.req,
+      usageResult.meter ?? "tokens",
+      usageResult.plan,
+      usageResult.usage,
+    );
     return false;
   }
-  if (searchCost > 0 && state.usage.searchUsed + searchCost > state.usage.searchLimit) {
-    sendUpgradeRequired(params.res, params.startedAt, params.req, "searches", state);
-    return false;
-  }
-
-  state.usage.tokenUsed += tokenCost;
-  state.usage.searchUsed += searchCost;
   return true;
 }
 
