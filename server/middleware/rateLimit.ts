@@ -9,11 +9,23 @@ function getBucketKey(req: Request): string {
   return req.authUserId || "anonymous";
 }
 
+/** Lightweight billing reads are polled by the console; do not count toward the API burst limit. */
+function isBillingReadRequest(req: Request): boolean {
+  if (req.method !== "GET") return false;
+  const path = (req.path || req.url || "").split("?")[0] ?? "";
+  return /\/billing(\/events)?$/i.test(path);
+}
+
 export function rateLimitMemoryApi(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
+  if (isBillingReadRequest(req)) {
+    next();
+    return;
+  }
+
   const now = Date.now();
   const key = getBucketKey(req);
   const existing = requestBuckets.get(key) ?? [];

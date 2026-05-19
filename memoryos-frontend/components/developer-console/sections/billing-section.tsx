@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { UsageMeter } from "@/components/developer-console/usage-meter";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { usagePercent } from "@/lib/billing-usage";
 import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
 
 type BillingTab = "Plans" | "Usage" | "Invoices" | "Events";
@@ -105,11 +107,6 @@ const PLAN_CARDS: PlanCard[] = [
   },
 ];
 
-function usagePercent(used: number, limit: number) {
-  if (limit <= 0) return 0;
-  return Math.max(0, Math.min(100, Math.round((used / limit) * 100)));
-}
-
 function formatMoney(cents: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -200,7 +197,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
           }
         }
       })();
-    }, 4000);
+    }, 15_000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);
