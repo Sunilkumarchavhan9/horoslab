@@ -1100,10 +1100,11 @@ export function MemoriesSection({
                 </motion.div>
               ) : null}
             </AnimatePresence>
-            <div className="relative flex-1 bg-white overflow-hidden shadow-none group min-h-[520px]">
+            <div className="relative flex-1 bg-black overflow-hidden shadow-none group min-h-[520px]">
               {hasGraphData ? (
                 <LiveBrainMapDitherCanvas
                   graph={memoryGraph}
+                  theme="dark"
                   selectedItem={selectedGraphItem}
                   onSelectNode={(id) => setSelectedGraphItem({ kind: "node", id })}
                   onSelectEdge={(id) => setSelectedGraphItem({ kind: "edge", id })}

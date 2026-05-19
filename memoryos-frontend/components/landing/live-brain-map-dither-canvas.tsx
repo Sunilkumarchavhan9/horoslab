@@ -8,7 +8,7 @@ const VIEW_H = 560;
 const ASCII_CHARS = " .,:;+*x234589#";
 const BAYER_4X4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 
-const THEME = {
+const LIGHT_THEME = {
   bg: "#ffffff",
   grid: "#e8f0fc",
   faint: { r: 201, g: 216, b: 238 },
@@ -17,6 +17,17 @@ const THEME = {
   deep: { r: 30, g: 58, b: 95 },
   label: "#356acc",
   labelMuted: "#6a7f9a",
+} as const;
+
+const DARK_THEME = {
+  bg: "#05070d",
+  grid: "#17243d",
+  faint: { r: 88, g: 126, b: 198 },
+  mid: { r: 118, g: 167, b: 250 },
+  accent: { r: 153, g: 196, b: 255 },
+  deep: { r: 224, g: 238, b: 255 },
+  label: "#d8e9ff",
+  labelMuted: "#9fbeeb",
 } as const;
 
 const COLUMN_HEADERS = [
@@ -137,6 +148,7 @@ function beamBoostAlongEdge(
 type LiveBrainMapDitherCanvasProps = {
   className?: string;
   graph: BrainMapGraph;
+  theme?: "light" | "dark";
   selectedItem?: BrainMapSelection;
   onSelectNode?: (id: string) => void;
   onSelectEdge?: (id: string) => void;
@@ -145,6 +157,7 @@ type LiveBrainMapDitherCanvasProps = {
 export function LiveBrainMapDitherCanvas({
   className,
   graph,
+  theme = "light",
   selectedItem = null,
   onSelectNode,
   onSelectEdge,
@@ -189,6 +202,7 @@ export function LiveBrainMapDitherCanvas({
     };
 
     const drawFrame = (time: number) => {
+      const palette = theme === "dark" ? DARK_THEME : LIGHT_THEME;
       const t = time * 0.001;
       const currentGraph = graphRef.current;
       const selected = selectedRef.current;
@@ -209,7 +223,7 @@ export function LiveBrainMapDitherCanvas({
         y: offsetY + vy * scale,
       });
 
-      ctx.fillStyle = THEME.bg;
+      ctx.fillStyle = palette.bg;
       ctx.fillRect(0, 0, width, height);
 
       // Light grid (blue dither dots only)
@@ -220,7 +234,10 @@ export function LiveBrainMapDitherCanvas({
           const gyCell = Math.floor(p.y / cell);
           const threshold = (BAYER_4X4[((gyCell & 3) * 4) + (gxCell & 3)] + 0.5) / 16;
           if (threshold > 0.72) {
-            ctx.fillStyle = "rgba(201, 216, 238, 0.55)";
+            ctx.fillStyle =
+              theme === "dark"
+                ? "rgba(159, 190, 235, 0.55)"
+                : "rgba(201, 216, 238, 0.55)";
             ctx.fillText(".", Math.floor(p.x / cell) * cell, Math.floor(p.y / cell) * cell);
           }
         }
@@ -328,12 +345,14 @@ export function LiveBrainMapDitherCanvas({
 
           const color =
             intensity < 0.35
-              ? mixColor(THEME.faint, THEME.mid, intensity / 0.35)
+              ? mixColor(palette.faint, palette.mid, intensity / 0.35)
               : intensity < 0.7
-                ? mixColor(THEME.mid, THEME.accent, (intensity - 0.35) / 0.35)
-                : mixColor(THEME.accent, THEME.deep, (intensity - 0.7) / 0.3);
+                ? mixColor(palette.mid, palette.accent, (intensity - 0.35) / 0.35)
+                : mixColor(palette.accent, palette.deep, (intensity - 0.7) / 0.3);
 
-          const alpha = clamp(0.32 + intensity * 0.58 + shimmer, 0.25, 0.95);
+          const alpha = theme === "dark"
+            ? clamp(0.58 + intensity * 0.5 + shimmer, 0.45, 1)
+            : clamp(0.32 + intensity * 0.58 + shimmer, 0.25, 0.95);
           ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha.toFixed(3)})`;
           ctx.fillText(ch, x, y);
         }
@@ -343,9 +362,9 @@ export function LiveBrainMapDitherCanvas({
       ctx.font = `600 ${Math.max(10, cell + 4)}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
       for (const header of COLUMN_HEADERS) {
         const p = toScreen(header.x, 22);
-        ctx.fillStyle = THEME.labelMuted;
+        ctx.fillStyle = palette.labelMuted;
         ctx.fillText("●", p.x - 2, p.y + 2);
-        ctx.fillStyle = THEME.label;
+        ctx.fillStyle = palette.label;
         ctx.fillText(header.label.toUpperCase(), p.x + 10, p.y);
       }
 
@@ -356,7 +375,9 @@ export function LiveBrainMapDitherCanvas({
         if (node.kind === "session" && !selectedNode) continue;
 
         const p = toScreen(node.x + node.r + 8, node.y + 3);
-        ctx.fillStyle = dimmed ? "rgba(106, 127, 154, 0.45)" : `rgb(${THEME.deep.r}, ${THEME.deep.g}, ${THEME.deep.b})`;
+        ctx.fillStyle = dimmed
+          ? "rgba(106, 127, 154, 0.45)"
+          : `rgb(${palette.deep.r}, ${palette.deep.g}, ${palette.deep.b})`;
         const label =
           node.label.length > 28 ? `${node.label.slice(0, 26)}…` : node.label;
         ctx.fillText(label, p.x, p.y);
@@ -451,7 +472,7 @@ export function LiveBrainMapDitherCanvas({
       reduced.removeEventListener("change", onReducedChange);
       canvas.removeEventListener("click", handleClick);
     };
-  }, [onSelectNode, onSelectEdge]);
+  }, [onSelectNode, onSelectEdge, theme]);
 
   return (
     <canvas
