@@ -267,7 +267,7 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
       <div className="relative min-h-svh overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_84%,rgba(53,78,237,0.42),rgba(8,10,16,0)_40%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_64%,rgba(12,51,177,0.28),rgba(8,10,16,0)_43%)]" />
-        <div className="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(rgba(255,255,255,0.7)_0.5px,transparent_0.5px)] [background-size:6px_6px]" />
+        <div className="absolute inset-0 opacity-[0.08] [background-image:repeating-linear-gradient(180deg,rgba(255,255,255,0.06)_0,rgba(255,255,255,0.06)_1px,transparent_1px,transparent_10px),repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_16px)] [background-size:100%_100%,100%_100%] [background-repeat:repeat]" />
 
         <div className="relative z-10 px-4 pb-6 pt-4 sm:px-6 lg:px-8">
           <header className="flex flex-wrap items-center justify-between gap-3">
