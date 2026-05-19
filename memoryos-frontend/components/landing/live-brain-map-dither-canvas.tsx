@@ -152,9 +152,13 @@ export function LiveBrainMapDitherCanvas({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const graphRef = useRef(graph);
   const selectedRef = useRef(selectedItem);
+  const visibleRef = useRef(true);
+  const reducedMotionRef = useRef(false);
 
-  graphRef.current = graph;
-  selectedRef.current = selectedItem;
+  useEffect(() => {
+    graphRef.current = graph;
+    selectedRef.current = selectedItem;
+  }, [graph, selectedItem]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -168,6 +172,8 @@ export function LiveBrainMapDitherCanvas({
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let cell = 6;
     let raf = 0;
+    let lastPaintTime = 0;
+    const frameIntervalMs = 1000 / 24;
 
     const resize = () => {
       width = Math.max(1, Math.floor(canvas.clientWidth));
@@ -356,7 +362,6 @@ export function LiveBrainMapDitherCanvas({
         ctx.fillText(label, p.x, p.y);
       }
 
-      raf = window.requestAnimationFrame(drawFrame);
     };
 
     const handleClick = (event: MouseEvent) => {
@@ -409,13 +414,41 @@ export function LiveBrainMapDitherCanvas({
 
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        visibleRef.current = !!entry?.isIntersecting;
+      },
+      { threshold: 0.05 },
+    );
+    visibilityObserver.observe(canvas);
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reducedMotionRef.current = reduced.matches;
+    const onReducedChange = (event: MediaQueryListEvent) => {
+      reducedMotionRef.current = event.matches;
+    };
+    reduced.addEventListener("change", onReducedChange);
+
     canvas.addEventListener("click", handleClick);
     resize();
-    raf = window.requestAnimationFrame(drawFrame);
+    const loop = (time: number) => {
+      if (!visibleRef.current) {
+        raf = window.requestAnimationFrame(loop);
+        return;
+      }
+      if (reducedMotionRef.current || time - lastPaintTime >= frameIntervalMs) {
+        lastPaintTime = time;
+        drawFrame(time);
+      }
+      raf = window.requestAnimationFrame(loop);
+    };
+    raf = window.requestAnimationFrame(loop);
 
     return () => {
       window.cancelAnimationFrame(raf);
       observer.disconnect();
+      visibilityObserver.disconnect();
+      reduced.removeEventListener("change", onReducedChange);
       canvas.removeEventListener("click", handleClick);
     };
   }, [onSelectNode, onSelectEdge]);
