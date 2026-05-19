@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
 import {
-  formatInsightDisplay,
   formatMemoryForDisplay,
 } from "@/lib/memory-display-text";
 import {
@@ -353,6 +352,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   );
   const [setupTab, setSetupTab] = useState<SetupTab>("configure");
   const [importText, setImportText] = useState("");
+  const [expandedProfileIds, setExpandedProfileIds] = useState<Record<string, boolean>>({});
 
   const selectedConfig = useMemo(
     () => MODE_CONFIG.find((item) => item.mode === mode) ?? MODE_CONFIG[0],
@@ -523,28 +523,12 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     }));
   }, [memories]);
 
-  const graphInsightLines = useMemo(() => {
-    const lines: string[] = [];
-    for (const skill of insights?.topSkills ?? []) {
-      const label = formatInsightDisplay(skill);
-      if (label) lines.push(label);
-    }
-    for (const project of insights?.activeProjects ?? []) {
-      const label = formatInsightDisplay(project);
-      if (label) lines.push(`Project: ${label}`);
-    }
-    for (const milestone of insights?.recentMilestones ?? []) {
-      const label = formatMemoryForDisplay(milestone);
-      if (label) lines.push(label);
-    }
-    return lines.slice(0, 6);
-  }, [insights]);
-
-  const latestAssistantSummary = useMemo(() => {
-    const last = messages.filter((entry) => entry.role === "assistant").slice(-1)[0];
-    if (!last?.text) return null;
-    return formatMemoryForDisplay(last.text) || last.text;
-  }, [messages]);
+  const toggleProfileCard = useCallback((id: string) => {
+    setExpandedProfileIds((current) => ({
+      ...current,
+      [id]: !current[id],
+    }));
+  }, []);
 
   const recentSessions = useMemo(() => {
     return requests.slice(0, 4).map((request) => ({
@@ -1330,14 +1314,21 @@ const answer = await model.generate({
             <div className="mt-3 space-y-2.5">
               {profileCards.length > 0 ? (
                 profileCards.map((card) => (
-                  <div
+                  <button
                     key={card.id}
+                    type="button"
+                    onClick={() => toggleProfileCard(card.id)}
                     className={`rounded-[8px] border px-3 py-3 text-[14px] leading-6 shadow-lg shadow-black/10 ${
                       lightMode ? "border-black/10 bg-white text-foreground" : "border-border bg-background text-foreground"
-                    }`}
+                    } w-full cursor-pointer text-left transition hover:border-primary/40`}
                   >
-                    {card.text}
-                  </div>
+                    <div className={`${expandedProfileIds[card.id] ? "max-h-none" : "max-h-[168px] overflow-hidden"}`}>
+                      {card.text}
+                    </div>
+                    <div className="mt-2 text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+                      {expandedProfileIds[card.id] ? "Collapse" : "Expand"}
+                    </div>
+                  </button>
                 ))
               ) : (
                 <div className={`flex min-h-[160px] flex-col items-center justify-center rounded-[10px] border border-dashed px-3 py-3 text-center ${
@@ -1909,27 +1900,6 @@ handoff = httpx.post(
             </div> : null}
             </div>
 
-            <div className="absolute left-5 right-5 top-5 rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Insights</p>
-              <ul className="mt-2 space-y-1.5 text-[13px] text-muted-foreground">
-                {graphInsightLines.length > 0 ? (
-                  graphInsightLines.map((line) => (
-                    <li key={line} className="list-disc pl-4 marker:text-primary">
-                      {line}
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-muted-foreground">No insights yet — run Process or Retrieve to populate live data.</li>
-                )}
-              </ul>
-            </div>
-
-            <div className="absolute left-5 right-5 top-[150px] rounded-[12px] border border-border bg-card/90 p-3.5 backdrop-blur">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Latest Response Summary</p>
-              <p className="mt-2 text-[13px] text-muted-foreground">
-                {latestAssistantSummary ?? "No response yet. Send a message in the chat tab."}
-              </p>
-            </div>
           </div>
         </aside>
       </div>
