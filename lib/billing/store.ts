@@ -79,6 +79,11 @@ function toSubscriptionStatus(input: string | null | undefined): SubscriptionSta
 
 const USAGE_RESET_DAYS = 30;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const FALLBACK_USAGE_BY_USER = new Map<string, UsageSnapshot>();
+
+function hasDatabaseUrl(): boolean {
+  return typeof process.env.DATABASE_URL === "string" && process.env.DATABASE_URL.trim().length > 0;
+}
 
 function parseIsoOrNow(value: string | null | undefined): Date {
   if (typeof value !== "string" || value.trim().length === 0) return new Date();
@@ -91,6 +96,20 @@ function computeResetInDays(periodStartIso: string | null | undefined): number {
   const resetAt = periodStart.getTime() + USAGE_RESET_DAYS * MS_PER_DAY;
   const remaining = Math.ceil((resetAt - Date.now()) / MS_PER_DAY);
   return Math.max(0, remaining);
+}
+
+function getFallbackUsageForPlan(userId: string, plan: BillingPlan): UsageSnapshot {
+  const existing = FALLBACK_USAGE_BY_USER.get(userId);
+  const planDef = PLAN_CATALOG[plan];
+  const next: UsageSnapshot = {
+    tokenLimit: planDef.tokenLimit ?? Number.MAX_SAFE_INTEGER,
+    tokenUsed: existing?.tokenUsed ?? 0,
+    searchLimit: planDef.searchLimit ?? Number.MAX_SAFE_INTEGER,
+    searchUsed: existing?.searchUsed ?? 0,
+    resetInDays: existing?.resetInDays ?? USAGE_RESET_DAYS,
+  };
+  FALLBACK_USAGE_BY_USER.set(userId, next);
+  return next;
 }
 
 async function ensureUsagePeriodWindow(userId: string): Promise<void> {
@@ -117,6 +136,11 @@ async function ensureUsagePeriodWindow(userId: string): Promise<void> {
 }
 
 export async function getBillingStateForUser(userId: string): Promise<UserBillingState> {
+  if (!hasDatabaseUrl()) {
+    const fallback = defaultUserBillingState(userId);
+    fallback.usage = getFallbackUsageForPlan(userId, fallback.plan);
+    return fallback;
+  }
   try {
     await prisma.billingAccount.upsert({
       where: { userId },
@@ -357,83 +381,115 @@ export async function tryConsumeUsage(input: {
   const tokenCost = Math.max(0, Math.floor(input.tokenCost ?? 0));
   const searchCost = Math.max(0, Math.floor(input.searchCost ?? 0));
 
-  await prisma.billingAccount.upsert({
-    where: { userId: input.userId },
-    create: {
-      userId: input.userId,
-      plan: "Free",
-      subscriptionStatus: "unknown",
-      connectorSyncUsed: 0,
-      tokenUsed: 0,
-      searchUsed: 0,
-      usagePeriodStart: new Date().toISOString(),
-    },
-    update: {},
-  });
-  await ensureUsagePeriodWindow(input.userId);
-
-  const account = await prisma.billingAccount.findUnique({
-    where: { userId: input.userId },
-    select: { plan: true, tokenUsed: true, searchUsed: true, usagePeriodStart: true },
-  });
-  if (!account) {
-    const fallback = await getBillingStateForUser(input.userId);
-    return { allowed: false, plan: fallback.plan, usage: fallback.usage };
-  }
-
-  const plan = toBillingPlan(account.plan);
-  const planDef = PLAN_CATALOG[plan];
-  const tokenLimit = planDef.tokenLimit ?? Number.MAX_SAFE_INTEGER;
-  const searchLimit = planDef.searchLimit ?? Number.MAX_SAFE_INTEGER;
-
-  const nextTokenUsed = account.tokenUsed + tokenCost;
-  const nextSearchUsed = account.searchUsed + searchCost;
-  if (nextTokenUsed > tokenLimit) {
-    return {
-      allowed: false,
-      plan,
-      meter: "tokens",
-      usage: {
-        tokenLimit,
-        tokenUsed: account.tokenUsed,
-        searchLimit,
-        searchUsed: account.searchUsed,
-        resetInDays: computeResetInDays(account.usagePeriodStart),
-      },
-    };
-  }
-  if (nextSearchUsed > searchLimit) {
-    return {
-      allowed: false,
-      plan,
-      meter: "searches",
-      usage: {
-        tokenLimit,
-        tokenUsed: account.tokenUsed,
-        searchLimit,
-        searchUsed: account.searchUsed,
-        resetInDays: computeResetInDays(account.usagePeriodStart),
-      },
-    };
-  }
-
-  await prisma.billingAccount.update({
-    where: { userId: input.userId },
-    data: {
-      tokenUsed: { increment: tokenCost },
-      searchUsed: { increment: searchCost },
-    },
-  });
-
-  return {
-    allowed: true,
-    plan,
-    usage: {
-      tokenLimit,
+  if (!hasDatabaseUrl()) {
+    const state = defaultUserBillingState(input.userId);
+    const usage = getFallbackUsageForPlan(input.userId, state.plan);
+    const nextTokenUsed = usage.tokenUsed + tokenCost;
+    const nextSearchUsed = usage.searchUsed + searchCost;
+    if (nextTokenUsed > usage.tokenLimit) {
+      return { allowed: false, plan: state.plan, meter: "tokens", usage };
+    }
+    if (nextSearchUsed > usage.searchLimit) {
+      return { allowed: false, plan: state.plan, meter: "searches", usage };
+    }
+    const updated: UsageSnapshot = {
+      ...usage,
       tokenUsed: nextTokenUsed,
-      searchLimit,
       searchUsed: nextSearchUsed,
-      resetInDays: computeResetInDays(account.usagePeriodStart),
-    },
-  };
+    };
+    FALLBACK_USAGE_BY_USER.set(input.userId, updated);
+    return { allowed: true, plan: state.plan, usage: updated };
+  }
+
+  try {
+    await prisma.billingAccount.upsert({
+      where: { userId: input.userId },
+      create: {
+        userId: input.userId,
+        plan: "Free",
+        subscriptionStatus: "unknown",
+        connectorSyncUsed: 0,
+        tokenUsed: 0,
+        searchUsed: 0,
+        usagePeriodStart: new Date().toISOString(),
+      },
+      update: {},
+    });
+    await ensureUsagePeriodWindow(input.userId);
+
+    const account = await prisma.billingAccount.findUnique({
+      where: { userId: input.userId },
+      select: { plan: true, tokenUsed: true, searchUsed: true, usagePeriodStart: true },
+    });
+    if (!account) {
+      const fallback = await getBillingStateForUser(input.userId);
+      return { allowed: false, plan: fallback.plan, usage: fallback.usage };
+    }
+
+    const plan = toBillingPlan(account.plan);
+    const planDef = PLAN_CATALOG[plan];
+    const tokenLimit = planDef.tokenLimit ?? Number.MAX_SAFE_INTEGER;
+    const searchLimit = planDef.searchLimit ?? Number.MAX_SAFE_INTEGER;
+
+    const nextTokenUsed = account.tokenUsed + tokenCost;
+    const nextSearchUsed = account.searchUsed + searchCost;
+    if (nextTokenUsed > tokenLimit) {
+      return {
+        allowed: false,
+        plan,
+        meter: "tokens",
+        usage: {
+          tokenLimit,
+          tokenUsed: account.tokenUsed,
+          searchLimit,
+          searchUsed: account.searchUsed,
+          resetInDays: computeResetInDays(account.usagePeriodStart),
+        },
+      };
+    }
+    if (nextSearchUsed > searchLimit) {
+      return {
+        allowed: false,
+        plan,
+        meter: "searches",
+        usage: {
+          tokenLimit,
+          tokenUsed: account.tokenUsed,
+          searchLimit,
+          searchUsed: account.searchUsed,
+          resetInDays: computeResetInDays(account.usagePeriodStart),
+        },
+      };
+    }
+
+    await prisma.billingAccount.update({
+      where: { userId: input.userId },
+      data: {
+        tokenUsed: { increment: tokenCost },
+        searchUsed: { increment: searchCost },
+      },
+    });
+
+    return {
+      allowed: true,
+      plan,
+      usage: {
+        tokenLimit,
+        tokenUsed: nextTokenUsed,
+        searchLimit,
+        searchUsed: nextSearchUsed,
+        resetInDays: computeResetInDays(account.usagePeriodStart),
+      },
+    };
+  } catch {
+    const state = defaultUserBillingState(input.userId);
+    const usage = getFallbackUsageForPlan(input.userId, state.plan);
+    const updated: UsageSnapshot = {
+      ...usage,
+      tokenUsed: usage.tokenUsed + tokenCost,
+      searchUsed: usage.searchUsed + searchCost,
+    };
+    FALLBACK_USAGE_BY_USER.set(input.userId, updated);
+    return { allowed: true, plan: state.plan, usage: updated };
+  }
 }
