@@ -263,7 +263,7 @@ export function AgentsSection() {
   return (
     <>
       <motion.div
-        className="relative overflow-hidden border border-[hsl(var(--primary))]/20 bg-card px-4 py-4 sm:px-5"
+        className="relative overflow-hidden bg-card px-4 py-4 sm:px-5"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.28, ease: EASE_OUT }}
@@ -326,7 +326,7 @@ export function AgentsSection() {
             key={card.label}
             whileHover={{ y: -2, scale: 1.01 }}
             transition={{ duration: 0.2, ease: EASE_OUT }}
-            className="relative overflow-hidden rounded-[10px] border border-border bg-card bg-gradient-to-br from-card to-muted/25 px-3.5 py-3"
+            className="relative overflow-hidden rounded-[10px] border border-transparent bg-card bg-gradient-to-br from-card to-muted/25 px-3.5 py-3"
             style={{ borderTopColor: card.tone, borderTopWidth: "2px" }}
           >
             <DitherBackground
