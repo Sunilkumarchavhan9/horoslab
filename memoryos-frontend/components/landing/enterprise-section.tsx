@@ -1,4 +1,5 @@
 import { Reveal } from "./motion";
+import { NavAsciiTile } from "./nav-ascii-tile";
 
 const LOGO_PLACEHOLDERS = [
   "Design partner slot",
@@ -9,18 +10,24 @@ const LOGO_PLACEHOLDERS = [
 
 const ENTERPRISE_CARDS = [
   {
+    id: "01",
+    variant: "stack" as const,
     title: "Deploy in your stack",
     body:
       "Run MemoryOS behind cloud agents, local model runners, agent frameworks, and internal tools with workspace-level control over memory scope and retention.",
     tags: ["VPC-ready", "workspace isolation", "self-host options"],
   },
   {
+    id: "02",
+    variant: "orbit" as const,
     title: "Audit every memory decision",
     body:
       "Timeline, revisions, and memory explainability give teams a clear record of what changed, why it changed, and what was surfaced to agents.",
     tags: ["timeline", "revisions", "memory explain"],
   },
   {
+    id: "03",
+    variant: "bloom" as const,
     title: "Own your company brain",
     body:
       "Keep developer knowledge inside your product stack. Project memory stays searchable, exportable, and visible to the teams that rely on it.",
@@ -71,11 +78,16 @@ export function EnterpriseSection() {
       <div className="grid border-t border-[#c9d8ee] lg:grid-cols-3">
         {ENTERPRISE_CARDS.map((card, index) => (
           <Reveal key={card.title} delay={0.08 + index * 0.04} className={index < 2 ? "border-b border-[#c9d8ee] lg:border-b-0 lg:border-r" : "border-b border-[#c9d8ee] lg:border-b-0"}>
-            <div className="h-full px-7 py-9">
-              <div className="grid h-12 w-12 place-items-center bg-white text-[hsl(var(--primary))]">
-                <span className="text-[22px]">{index === 0 ? "⌂" : index === 1 ? "◎" : "↓"}</span>
+            <div className="h-full px-7 py-8">
+              <div className="relative mb-5 border border-[#d8e3f5] bg-white p-3">
+                <div className="h-[116px] w-full">
+                  <NavAsciiTile variant={card.variant} active className="h-full w-full" />
+                </div>
+                <div className="pointer-events-none absolute left-3 top-3 border border-[#d8e3f5] bg-white px-2 py-1 font-mono text-[11px] tracking-[0.12em] text-[#356acc]">
+                  {card.id} ENTERPRISE
+                </div>
               </div>
-              <h3 className="mt-5 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">
+              <h3 className="text-[22px] font-semibold tracking-[-0.03em] text-slate-900">
                 {card.title}
               </h3>
               <p className="mt-3 max-w-[320px] text-[15px] leading-7 text-[#6a778a]">
@@ -97,15 +109,14 @@ export function EnterpriseSection() {
       </div>
 
       <Reveal delay={0.14} className="border-t border-[#c9d8ee] px-5 py-7 lg:px-7">
-        <div className="mx-auto grid max-w-[1040px] gap-4 border border-[#c9d8ee] bg-[#f6f9ff] p-5 md:grid-cols-[1fr_auto] md:items-center">
+        <div className="mx-auto grid max-w-[1120px] gap-4 border border-[#c9d8ee] bg-[#f6f9ff] p-5 md:grid-cols-[1fr_auto] md:items-center">
           <div>
             <p className="font-mono text-[11px] tracking-[0.18em] text-[#356acc]">ENTERPRISE ROLLOUT</p>
             <p className="mt-2 text-[22px] font-semibold tracking-[-0.03em] text-slate-900">
               Launch MemoryOS with your platform team
             </p>
             <p className="mt-2 text-[14px] leading-6 text-[#61738d]">
-              We help teams scope memory contracts, rollout sequence, governance policies, and first
-              continuity benchmark baselines.
+              We help teams scope memory contracts, rollout sequence, governance policies, and first continuity benchmark baselines.
             </p>
           </div>
           <a
