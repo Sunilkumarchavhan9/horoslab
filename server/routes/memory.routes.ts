@@ -1628,6 +1628,8 @@ memoryRouter.get("/settings", asyncHandler(async (req, res) => {
       googleDrive: "available",
       oneDrive: "available",
       gmail: "available",
+      zendesk: "available",
+      jira: "available",
       s3: "available",
       webCrawler: "available",
     },
