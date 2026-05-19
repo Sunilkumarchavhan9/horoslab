@@ -9,11 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UsageMeter } from "@/components/developer-console/usage-meter";
 import {
   fetchMemoryTokenFromBridge,
   getOrCreateMemoryTokenWithRetry,
   readMemoryTokenFromStorage,
 } from "@/lib/memory-token";
+import type { BillingPlan } from "@/lib/plan-catalog";
 
 type VoiceSpeaker = "user" | "assistant" | "system";
 type MicState = "disabled" | "requesting" | "enabled" | "error";
@@ -23,6 +25,17 @@ type AgentModel = string;
 type ChatMode = "chat" | "handoff" | "next_step" | "execute";
 type RetentionClass = "short" | "standard" | "long";
 type GovernanceMode = "balanced" | "strict" | "enterprise";
+
+type BillingSnapshot = {
+  currentPlan: BillingPlan;
+  usage: {
+    tokenLimit: number;
+    tokenUsed: number;
+    searchLimit: number;
+    searchUsed: number;
+    resetInDays: number;
+  };
+};
 
 type DemoMessage = {
   speaker: VoiceSpeaker;
@@ -768,6 +781,7 @@ export function RunDemoSection() {
   const [isSendingIdePacket, setIsSendingIdePacket] = useState(false);
   const [governancePolicy, setGovernancePolicy] = useState<GovernancePolicy>(DEFAULT_GOVERNANCE_POLICY);
   const [applyCompanyBrainSkills, setApplyCompanyBrainSkills] = useState(true);
+  const [billing, setBilling] = useState<BillingSnapshot | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const transcriptRef = useRef("");
   const shouldSendTranscriptRef = useRef(false);
@@ -909,6 +923,25 @@ export function RunDemoSection() {
     },
     [authToken],
   );
+
+  const refreshBilling = useCallback(async (): Promise<void> => {
+    try {
+      const payload = await withAuthorizedToken((token) =>
+        fetchMemoryApi<BillingSnapshot>("/api/memory/billing", token),
+      );
+      setBilling(payload);
+    } catch {
+      // billing meter is best-effort in the lab UI
+    }
+  }, [withAuthorizedToken]);
+
+  useEffect(() => {
+    void refreshBilling();
+    const timer = window.setInterval(() => {
+      void refreshBilling();
+    }, 15_000);
+    return () => window.clearInterval(timer);
+  }, [refreshBilling]);
 
   useEffect(() => {
     let mounted = true;
@@ -1131,6 +1164,7 @@ export function RunDemoSection() {
       ]);
     } finally {
       setIsChatLoading(false);
+      void refreshBilling();
     }
   }
 
@@ -1696,6 +1730,8 @@ export function RunDemoSection() {
               </div>
 
               <div className="rounded-t-[18px] border-t border-border bg-background px-3 py-3">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
+                <div className="min-w-0 flex-1">
                 <Input
                   value={chatInput}
                   onChange={(event) => {
@@ -1753,6 +1789,13 @@ export function RunDemoSection() {
                   >
                     <SendIcon />
                   </button>
+                </div>
+                </div>
+                {billing ? (
+                  <div className="w-full shrink-0 lg:max-w-[300px]">
+                    <UsageMeter usage={billing.usage} currentPlan={billing.currentPlan} compact />
+                  </div>
+                ) : null}
                 </div>
               </div>
             </div>

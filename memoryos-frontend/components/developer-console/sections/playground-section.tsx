@@ -16,6 +16,7 @@ import {
   readMemoryTokenFromStorage,
   writeMemoryTokenToStorage,
 } from "@/lib/memory-token";
+import { UsageMeter } from "@/components/developer-console/usage-meter";
 
 type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff";
 type CenterTab = "chat" | "code" | "python";
@@ -408,34 +409,42 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     [token],
   );
 
+  const refreshBilling = useCallback(
+    async (effectiveToken: string): Promise<void> => {
+      const billingPayload = await fetchMemoryApi<BillingSnapshot>(
+        "/api/memory/billing",
+        effectiveToken,
+        undefined,
+        apiOrigin,
+      );
+      setBilling(billingPayload);
+    },
+    [apiOrigin],
+  );
+
   const refreshLiveData = useCallback(
     async (effectiveToken: string): Promise<void> => {
-      const [memoryPayload, insightPayload, timelinePayload, requestPayload, billingPayload] = await Promise.all([
+      const [memoryPayload, insightPayload, timelinePayload, requestPayload] = await Promise.all([
         fetchMemoryApi<MemoryListResponse>("/api/memory/list?limit=40", effectiveToken, undefined, apiOrigin),
         fetchMemoryApi<InsightsResponse>("/api/memory/insights", effectiveToken, undefined, apiOrigin),
         fetchMemoryApi<TimelineResponse>("/api/memory/timeline?limit=40", effectiveToken, undefined, apiOrigin),
         fetchMemoryApi<RequestHistoryResponse>("/api/memory/requests?limit=30&range=all", effectiveToken, undefined, apiOrigin),
-        fetchMemoryApi<BillingSnapshot>("/api/memory/billing", effectiveToken, undefined, apiOrigin),
       ]);
 
       setMemories(memoryPayload.memories);
       setInsights(insightPayload);
       setTimeline(timelinePayload.events);
       setRequests(requestPayload.requests);
-      setBilling(billingPayload);
     },
     [apiOrigin],
   );
 
-  const tokenUsageLine = useMemo(() => {
-    if (!billing) return "Tokens: --";
-    return `Tokens: ${billing.usage.tokenUsed.toLocaleString()} / ${billing.usage.tokenLimit.toLocaleString()}`;
-  }, [billing]);
-
-  const searchUsageLine = useMemo(() => {
-    if (!billing) return "Searches: --";
-    return `Searches: ${billing.usage.searchUsed.toLocaleString()} / ${billing.usage.searchLimit.toLocaleString()}`;
-  }, [billing]);
+  const refreshAllLiveData = useCallback(
+    async (effectiveToken: string): Promise<void> => {
+      await Promise.all([refreshLiveData(effectiveToken), refreshBilling(effectiveToken)]);
+    },
+    [refreshBilling, refreshLiveData],
+  );
 
   useEffect(() => {
     const saved = readPlaygroundSettings();
@@ -453,7 +462,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
         setStatusLine("Syncing live memory data...");
         await withAuthorizedToken(async (effectiveToken) => {
           if (cancelled) return;
-          await refreshLiveData(effectiveToken);
+          await refreshAllLiveData(effectiveToken);
         });
         if (!cancelled) {
           setStatusLine("Live · connected");
@@ -471,10 +480,10 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     return () => {
       cancelled = true;
     };
-  }, [refreshLiveData, withAuthorizedToken]);
+  }, [refreshAllLiveData, withAuthorizedToken]);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
+    const memoryInterval = window.setInterval(() => {
       void withAuthorizedToken(async (effectiveToken) => {
         await refreshLiveData(effectiveToken);
         setStatusLine((current) =>
@@ -483,10 +492,21 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
       }).catch(() => {
         // background refresh stays quiet
       });
-    }, 12_000);
+    }, 20_000);
 
-    return () => window.clearInterval(interval);
-  }, [refreshLiveData, withAuthorizedToken]);
+    const billingInterval = window.setInterval(() => {
+      void withAuthorizedToken(async (effectiveToken) => {
+        await refreshBilling(effectiveToken);
+      }).catch(() => {
+        // background refresh stays quiet
+      });
+    }, 15_000);
+
+    return () => {
+      window.clearInterval(memoryInterval);
+      window.clearInterval(billingInterval);
+    };
+  }, [refreshBilling, refreshLiveData, withAuthorizedToken]);
 
   const applyPlaygroundSettings = useCallback(async () => {
     writePlaygroundSettings({
@@ -507,14 +527,14 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
 
     try {
       await withAuthorizedToken(async (effectiveToken) => {
-        await refreshLiveData(effectiveToken);
+        await refreshAllLiveData(effectiveToken);
       });
       setStatusLine("Live · settings applied");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Could not apply settings");
       setStatusLine("Settings saved · sync failed");
     }
-  }, [apiOrigin, workspace, project, threadId, token, withAuthorizedToken, refreshLiveData]);
+  }, [apiOrigin, workspace, project, threadId, token, withAuthorizedToken, refreshAllLiveData]);
 
   const profileCards = useMemo(() => {
     return memories.slice(0, 4).map((memory) => ({
@@ -802,7 +822,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
           apiOrigin,
         );
 
-        await refreshLiveData(effectiveToken);
+        await Promise.all([refreshLiveData(effectiveToken), refreshBilling(effectiveToken)]);
         return response;
       });
 
@@ -1669,7 +1689,8 @@ handoff = httpx.post(
                 aria-label="Top K"
               />
             </div>
-            <div className="mx-auto flex max-w-[920px] items-end gap-2">
+            <div className="mx-auto flex max-w-[920px] flex-col gap-3 lg:flex-row lg:items-end">
+              <div className="flex min-w-0 flex-1 items-end gap-2">
               <textarea
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
@@ -1696,14 +1717,18 @@ handoff = httpx.post(
                   </svg>
                 )}
               </button>
+              </div>
+              {billing ? (
+                <div className="w-full shrink-0 lg:max-w-[340px]">
+                  <UsageMeter usage={billing.usage} currentPlan={billing.currentPlan} compact />
+                </div>
+              ) : null}
             </div>
             <div className={`mx-auto mt-2.5 flex max-w-[920px] flex-wrap items-center gap-3 text-[12px] ${lightMode ? "text-black/50" : "text-muted-foreground"}`}>
               <span>Mode: {selectedConfig.label}</span>
               <span>TopK: {topK}</span>
               <span>Workspace: {workspace}</span>
               <span>Plan: {billing?.currentPlan ?? "Free"}</span>
-              <span>{tokenUsageLine}</span>
-              <span>{searchUsageLine}</span>
             </div>
           </div>
         </section>
