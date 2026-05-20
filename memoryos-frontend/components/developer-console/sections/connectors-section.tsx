@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 import { type BillingPlan } from "@/lib/plan-catalog";
 
-type ConnectorStatus = "connected" | "not_connected" | "pending";
+type ConnectorStatus = "connected" | "not_connected" | "pending" | "syncing";
 type HealthStatus = "good" | "watch" | "error" | "offline";
 
 type ConnectorRow = {
