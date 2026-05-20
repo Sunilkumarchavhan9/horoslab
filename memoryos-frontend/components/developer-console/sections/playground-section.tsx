@@ -18,7 +18,7 @@ import {
 } from "@/lib/memory-token";
 import { UsageMeter } from "@/components/developer-console/usage-meter";
 
-type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff";
+type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff" | "prompt";
 type CenterTab = "chat" | "code" | "python";
 type SetupTab = "configure" | "import";
 
@@ -142,6 +142,12 @@ const MODE_CONFIG: ModeConfig[] = [
     endpoint: "/api/memory/handoff",
     description: "Generate handoff payload for another agent/human.",
   },
+  {
+    mode: "prompt",
+    label: "Prompt",
+    endpoint: "/api/memory/resume/prompt",
+    description: "Generate Cursor/Codex/Claude Code prompt from continuity memory.",
+  },
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -256,6 +262,14 @@ function responseSnippet(payload: unknown, mode: PlaygroundMode): string {
       return payload.summary;
     }
     return "Handoff generated for active project.";
+  }
+
+  if (mode === "prompt") {
+    const maybeData = isRecord(payload) && isRecord(payload.data) ? payload.data : payload;
+    if (isRecord(maybeData) && isRecord(maybeData.prompts) && typeof maybeData.prompts.cursor === "string") {
+      return `Prompt bundle generated. Cursor prompt preview: ${maybeData.prompts.cursor.slice(0, 220)}${maybeData.prompts.cursor.length > 220 ? "..." : ""}`;
+    }
+    return "Prompt bundle generated.";
   }
 
   return "Response received.";
@@ -802,6 +816,14 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
             project,
             workspace,
           };
+        } else if (mode === "resume" || mode === "handoff") {
+          body = {
+            question: text,
+            project,
+            topK,
+            threadId,
+            workspace,
+          };
         } else {
           body = {
             question: text,
@@ -809,6 +831,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
             topK,
             threadId,
             workspace,
+            target: "cursor",
           };
         }
 

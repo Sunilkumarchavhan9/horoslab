@@ -35,6 +35,30 @@ export type RetrieveResponseData = RetrieveRelevantMemoryResult;
 export type ContinueResponseData = ContinuityPlannerResult;
 export type HandoffResponseData = HandoffPlannerResult;
 export type ResumeResponseData = ResumePlannerResult;
+export type ContinueProjectBriefResponseData = {
+  whatChangedRecently: string[];
+  currentGoal: string;
+  keyDecisions: string[];
+  openBlockers: string[];
+  riskyFiles: string[];
+  nextBestAction: string;
+  mustKnowContextForAgent: string[];
+};
+export type ResumePromptResponseData = {
+  target: "cursor" | "codex" | "claude_code";
+  brief: ContinueProjectBriefResponseData;
+  prompts: {
+    cursor: string;
+    codex: string;
+    claudeCode: string;
+  };
+  trace: Array<{
+    memoryId: string;
+    source: string;
+    confidence: number;
+    whySelected: string;
+  }>;
+};
 export type McpToolsResponseData = {
   tools: MemoryToolDescriptor[];
 };

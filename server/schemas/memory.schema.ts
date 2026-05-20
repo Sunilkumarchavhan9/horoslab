@@ -116,6 +116,10 @@ export const ResumeMemorySchema = z.object({
   threadId: z.string().min(1).optional(),
 });
 
+export const ResumePromptSchema = ResumeMemorySchema.extend({
+  target: z.enum(["cursor", "codex", "claude_code"]).optional(),
+});
+
 export const HandoffMemorySchema = z.object({
   project: z.string().min(1, "project is required"),
   question: z.string().min(1, "question is required"),
