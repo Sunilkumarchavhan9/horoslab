@@ -538,25 +538,9 @@ async function connectConnector(connectorId: string) {
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json().catch(() => null) as { data?: { extractedCount?: number; queued?: boolean } } | null;
+      const data = await response.json().catch(() => null) as { data?: { extractedCount?: number } } | null;
       if (!response.ok) {
         throw new Error("Sync failed");
-      }
-      if (response.status === 202 || data?.data?.queued) {
-        setConnectors((current) =>
-          current.map((connector) =>
-            connector.id === connectorId
-              ? {
-                  ...connector,
-                  status: "syncing",
-                  health: "good",
-                  lastSync: "Queued",
-                }
-              : connector,
-          ),
-        );
-        addActivity(`${connectorMeta.name} sync queued`, "info");
-        return;
       }
       const extractedCount = data?.data?.extractedCount ?? 0;
       setConnectors((current) =>
