@@ -18,7 +18,7 @@ import {
 } from "@/lib/memory-token";
 import { UsageMeter } from "@/components/developer-console/usage-meter";
 
-type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff";
+type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff" | "prompt";
 type CenterTab = "chat" | "code" | "python";
 type SetupTab = "configure" | "import";
 
@@ -83,6 +83,36 @@ type BillingSnapshot = {
   };
 };
 
+type ContinueProjectBrief = {
+  whatChangedRecently: string[];
+  currentGoal: string;
+  keyDecisions: string[];
+  openBlockers: string[];
+  riskyFiles: string[];
+  nextBestAction: string;
+  mustKnowContextForAgent: string[];
+};
+
+type PromptTraceItem = {
+  memoryId: string;
+  source: string;
+  confidence: number;
+  whySelected: string;
+};
+
+type PromptBundle = {
+  cursor: string;
+  codex: string;
+  claudeCode: string;
+};
+
+type ResumePromptPayload = {
+  target: "cursor" | "codex" | "claude_code";
+  brief: ContinueProjectBrief;
+  prompts: PromptBundle;
+  trace: PromptTraceItem[];
+};
+
 type ChatMessage = {
   id: string;
   role: "user" | "assistant" | "system";
@@ -141,6 +171,12 @@ const MODE_CONFIG: ModeConfig[] = [
     label: "Handoff",
     endpoint: "/api/memory/handoff",
     description: "Generate handoff payload for another agent/human.",
+  },
+  {
+    mode: "prompt",
+    label: "Prompt",
+    endpoint: "/api/memory/resume/prompt",
+    description: "Generate Cursor/Codex/Claude Code prompt from continuity memory.",
   },
 ];
 
@@ -258,6 +294,14 @@ function responseSnippet(payload: unknown, mode: PlaygroundMode): string {
     return "Handoff generated for active project.";
   }
 
+  if (mode === "prompt") {
+    const maybeData = isRecord(payload) && isRecord(payload.data) ? payload.data : payload;
+    if (isRecord(maybeData) && isRecord(maybeData.prompts) && typeof maybeData.prompts.cursor === "string") {
+      return `Prompt bundle generated. Cursor prompt preview: ${maybeData.prompts.cursor.slice(0, 220)}${maybeData.prompts.cursor.length > 220 ? "..." : ""}`;
+    }
+    return "Prompt bundle generated.";
+  }
+
   return "Response received.";
 }
 
@@ -332,6 +376,9 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   const [statusLine, setStatusLine] = useState("Ready");
   const [isRunning, setIsRunning] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [latestBrief, setLatestBrief] = useState<ContinueProjectBrief | null>(null);
+  const [latestPrompt, setLatestPrompt] = useState<ResumePromptPayload | null>(null);
+  const [selectedPromptTab, setSelectedPromptTab] = useState<keyof PromptBundle>("cursor");
 
   const [memories, setMemories] = useState<MemoryRecord[]>([]);
   const [insights, setInsights] = useState<InsightsResponse | null>(null);
@@ -802,6 +849,14 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
             project,
             workspace,
           };
+        } else if (mode === "resume" || mode === "handoff") {
+          body = {
+            question: text,
+            project,
+            topK,
+            threadId,
+            workspace,
+          };
         } else {
           body = {
             question: text,
@@ -809,6 +864,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
             topK,
             threadId,
             workspace,
+            target: "cursor",
           };
         }
 
@@ -832,6 +888,76 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
         text: responseSnippet(payload, mode),
         createdAt: new Date().toISOString(),
       };
+
+      if (mode === "resume") {
+        const responseData = isRecord(payload) && isRecord(payload.data) ? payload.data : payload;
+        if (isRecord(responseData)) {
+          const brief: ContinueProjectBrief = {
+            whatChangedRecently: Array.isArray(responseData.whatChangedRecently) ? responseData.whatChangedRecently.filter((x): x is string => typeof x === "string") : [],
+            currentGoal: typeof responseData.currentGoal === "string" ? responseData.currentGoal : "",
+            keyDecisions: Array.isArray(responseData.keyDecisions) ? responseData.keyDecisions.filter((x): x is string => typeof x === "string") : [],
+            openBlockers: Array.isArray(responseData.openBlockers) ? responseData.openBlockers.filter((x): x is string => typeof x === "string") : [],
+            riskyFiles: Array.isArray(responseData.riskyFiles) ? responseData.riskyFiles.filter((x): x is string => typeof x === "string") : [],
+            nextBestAction: typeof responseData.nextBestAction === "string" ? responseData.nextBestAction : "",
+            mustKnowContextForAgent: Array.isArray(responseData.mustKnowContextForAgent) ? responseData.mustKnowContextForAgent.filter((x): x is string => typeof x === "string") : [],
+          };
+          setLatestBrief(brief);
+        }
+      }
+
+      if (mode === "prompt") {
+        const responseData = isRecord(payload) && isRecord(payload.data) ? payload.data : payload;
+        if (
+          isRecord(responseData) &&
+          isRecord(responseData.prompts) &&
+          typeof responseData.prompts.cursor === "string" &&
+          typeof responseData.prompts.codex === "string" &&
+          typeof responseData.prompts.claudeCode === "string"
+        ) {
+          const nextPrompt: ResumePromptPayload = {
+            target:
+              responseData.target === "codex" || responseData.target === "claude_code" || responseData.target === "cursor"
+                ? responseData.target
+                : "cursor",
+            brief: isRecord(responseData.brief)
+              ? {
+                  whatChangedRecently: Array.isArray(responseData.brief.whatChangedRecently) ? responseData.brief.whatChangedRecently.filter((x): x is string => typeof x === "string") : [],
+                  currentGoal: typeof responseData.brief.currentGoal === "string" ? responseData.brief.currentGoal : "",
+                  keyDecisions: Array.isArray(responseData.brief.keyDecisions) ? responseData.brief.keyDecisions.filter((x): x is string => typeof x === "string") : [],
+                  openBlockers: Array.isArray(responseData.brief.openBlockers) ? responseData.brief.openBlockers.filter((x): x is string => typeof x === "string") : [],
+                  riskyFiles: Array.isArray(responseData.brief.riskyFiles) ? responseData.brief.riskyFiles.filter((x): x is string => typeof x === "string") : [],
+                  nextBestAction: typeof responseData.brief.nextBestAction === "string" ? responseData.brief.nextBestAction : "",
+                  mustKnowContextForAgent: Array.isArray(responseData.brief.mustKnowContextForAgent) ? responseData.brief.mustKnowContextForAgent.filter((x): x is string => typeof x === "string") : [],
+                }
+              : {
+                  whatChangedRecently: [],
+                  currentGoal: "",
+                  keyDecisions: [],
+                  openBlockers: [],
+                  riskyFiles: [],
+                  nextBestAction: "",
+                  mustKnowContextForAgent: [],
+                },
+            prompts: {
+              cursor: responseData.prompts.cursor,
+              codex: responseData.prompts.codex,
+              claudeCode: responseData.prompts.claudeCode,
+            },
+            trace: Array.isArray(responseData.trace)
+              ? responseData.trace
+                  .filter((item): item is Record<string, unknown> => isRecord(item))
+                  .map((item) => ({
+                    memoryId: typeof item.memoryId === "string" ? item.memoryId : "unknown",
+                    source: typeof item.source === "string" ? item.source : "general",
+                    confidence: typeof item.confidence === "number" ? item.confidence : 0,
+                    whySelected: typeof item.whySelected === "string" ? item.whySelected : "",
+                  }))
+              : [],
+          };
+          setLatestPrompt(nextPrompt);
+          setLatestBrief(nextPrompt.brief);
+        }
+      }
 
       setMessages((current) => [...current, assistantMessage]);
       setStatusLine(`${selectedConfig.label} completed`);
@@ -1655,6 +1781,62 @@ handoff = httpx.post(
             {errorMessage ? (
               <div className="mt-4 rounded-[10px] border border-destructive/40 bg-destructive/15 px-3.5 py-2.5 text-[13px] text-destructive">
                 {errorMessage}
+              </div>
+            ) : null}
+
+            {latestBrief ? (
+              <div className="mt-4 rounded-[10px] border border-border bg-card p-4">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Resume Project Brief</p>
+                <p className="mt-2 text-[14px]"><span className="font-semibold">Goal:</span> {latestBrief.currentGoal || "n/a"}</p>
+                <p className="mt-2 text-[14px]"><span className="font-semibold">Next:</span> {latestBrief.nextBestAction || "n/a"}</p>
+                {latestBrief.riskyFiles.length > 0 ? (
+                  <p className="mt-2 text-[14px]"><span className="font-semibold">Risky files:</span> {latestBrief.riskyFiles.join(", ")}</p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {latestPrompt ? (
+              <div className="mt-4 rounded-[10px] border border-border bg-card p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">IDE Prompt</p>
+                  <button
+                    type="button"
+                    onClick={() => void navigator.clipboard.writeText(latestPrompt.prompts[selectedPromptTab])}
+                    className="rounded-[7px] border border-border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground transition hover:text-foreground"
+                  >
+                    Copy {selectedPromptTab}
+                  </button>
+                </div>
+                <div className="mt-2 flex gap-2">
+                  {(["cursor", "codex", "claudeCode"] as const).map((tabName) => (
+                    <button
+                      key={tabName}
+                      type="button"
+                      onClick={() => setSelectedPromptTab(tabName)}
+                      className={`rounded-[7px] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${
+                        selectedPromptTab === tabName ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground"
+                      }`}
+                    >
+                      {tabName}
+                    </button>
+                  ))}
+                </div>
+                <pre className="mt-3 max-h-[220px] overflow-auto rounded-[8px] border border-border bg-background p-3 text-[12px] leading-5">
+                  {latestPrompt.prompts[selectedPromptTab]}
+                </pre>
+                {latestPrompt.trace.length > 0 ? (
+                  <div className="mt-3">
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Trace Evidence</p>
+                    <div className="mt-2 space-y-2">
+                      {latestPrompt.trace.slice(0, 4).map((item) => (
+                        <div key={item.memoryId} className="rounded-[8px] border border-border bg-background px-3 py-2 text-[12px]">
+                          <p><span className="font-semibold">Source:</span> {item.source} <span className="ml-2 font-semibold">Confidence:</span> {item.confidence}</p>
+                          <p className="mt-1 text-muted-foreground">{item.whySelected}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>

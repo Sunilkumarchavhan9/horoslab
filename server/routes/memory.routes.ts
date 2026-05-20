@@ -40,6 +40,7 @@ import {
   VoiceSessionEndSchema,
   VoiceSessionStartSchema,
   ResumeMemorySchema,
+  ResumePromptSchema,
   MemoryContractSchema,
   MemoryStatusPatchSchema,
   RetrievalWeightsSchema,
@@ -54,7 +55,9 @@ function normalizeAgentId(value: unknown): AgentId {
 import { asyncHandler } from "../middleware/asyncHandler";
 import {
   type ContinueResponseData,
+  type ContinueProjectBriefResponseData,
   type HandoffResponseData,
+  type ResumePromptResponseData,
   type ResumeResponseData,
   type RetrieveExplainResponseData,
   type RetrieveResponseData,
@@ -2333,6 +2336,82 @@ function buildWhyTop1(top?: {
   return `Top memory ranked highest because it matched intent/type (${top.memoryType ?? "unknown"}), had semantic relevance ${top.semanticScore.toFixed(2)}, and reached final score ${top.finalScore.toFixed(2)} with continuity boost ${top.continuityBoost.toFixed(2)}.${reasonPart}`;
 }
 
+function toContinueProjectBrief(result: ResumeResponseData): ContinueProjectBriefResponseData {
+  const memories = result.usedMemories ?? [];
+  const whatChangedRecently = memories
+    .slice(0, 3)
+    .map((memory) => memory.summary ?? memory.content)
+    .filter((value): value is string => Boolean(value && value.trim().length > 0));
+
+  const keyDecisions = memories
+    .map((memory) => memory.summary ?? memory.content)
+    .filter((text) => /\b(decision|decided|we chose|choose|approved)\b/i.test(text))
+    .slice(0, 3);
+
+  const openBlockers = result.openLoops
+    .filter((text) => /\b(block|blocked|risk|issue|debug|fix)\b/i.test(text))
+    .slice(0, 3);
+
+  const riskyFiles = Array.from(
+    new Set(
+      memories
+        .flatMap((memory) => {
+          const text = `${memory.summary ?? ""} ${memory.content ?? ""}`;
+          const fileMatches = text.match(/[A-Za-z0-9_/.-]+\.(ts|tsx|js|jsx|py|go|rs|java|rb|json|yaml|yml)/g) ?? [];
+          return fileMatches;
+        }),
+    ),
+  ).slice(0, 5);
+
+  const mustKnowContextForAgent = memories
+    .slice(0, 5)
+    .map((memory) => memory.summary ?? memory.content)
+    .filter((value): value is string => Boolean(value && value.trim().length > 0));
+
+  return {
+    whatChangedRecently: whatChangedRecently.length > 0 ? whatChangedRecently : [result.lastKnownState],
+    currentGoal: result.summary,
+    keyDecisions,
+    openBlockers,
+    riskyFiles,
+    nextBestAction: result.recommendedNextStep,
+    mustKnowContextForAgent,
+  };
+}
+
+function toPromptBundle(input: {
+  project: string;
+  brief: ContinueProjectBriefResponseData;
+}): ResumePromptResponseData["prompts"] {
+  const riskyFilesText = input.brief.riskyFiles.length > 0
+    ? input.brief.riskyFiles.join(", ")
+    : "none explicitly identified";
+  const decisionsText = input.brief.keyDecisions.length > 0
+    ? input.brief.keyDecisions.join(" | ")
+    : "No explicit decisions captured yet.";
+  const blockersText = input.brief.openBlockers.length > 0
+    ? input.brief.openBlockers.join(" | ")
+    : "No explicit blockers captured.";
+
+  const base = [
+    `You are continuing project ${input.project}.`,
+    `Current goal: ${input.brief.currentGoal}`,
+    `Key decisions: ${decisionsText}`,
+    `Open blockers: ${blockersText}`,
+    `Risky files: ${riskyFilesText}`,
+    `Next best action: ${input.brief.nextBestAction}`,
+    "Only make the minimum safe change to complete the next action.",
+    "Do not rewrite unrelated modules.",
+    "After changes, explain what changed and why.",
+  ].join("\n");
+
+  return {
+    cursor: `${base}\nFormat your plan first, then execute edits.`,
+    codex: `${base}\nUse concise reasoning, then apply focused code edits.`,
+    claudeCode: `${base}\nPrioritize clear patch safety and explicit assumptions.`,
+  };
+}
+
 function labelForVoiceSpeaker(
   speaker: "user" | "assistant" | "system" | undefined,
 ): string | null {
@@ -3598,6 +3677,122 @@ memoryRouter.post(
       res,
       200,
       result,
+      buildApiMeta(req, startedAt, {
+        intent: "resume_project",
+      }),
+    );
+  }),
+);
+
+memoryRouter.post(
+  "/resume/brief",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const parsed = ResumeMemorySchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      sendApiError<ContinueProjectBriefResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "Invalid request body",
+          details: parsed.error.flatten(),
+        },
+        buildApiMeta(req, startedAt),
+      );
+      return;
+    }
+
+    if (!(await applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    }))) {
+      return;
+    }
+
+    const result = await runResumeFlowLangGraph({
+      userId: req.authUserId,
+      project: parsed.data.project,
+      question: parsed.data.question,
+      topK: parsed.data.topK,
+      includeArchived: parsed.data.includeArchived,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+    });
+
+    const brief = toContinueProjectBrief(result);
+    sendApiSuccess<ContinueProjectBriefResponseData>(
+      res,
+      200,
+      brief,
+      buildApiMeta(req, startedAt, {
+        intent: "resume_project",
+      }),
+    );
+  }),
+);
+
+memoryRouter.post(
+  "/resume/prompt",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const parsed = ResumePromptSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      sendApiError<ResumePromptResponseData>(
+        res,
+        400,
+        {
+          code: "BAD_REQUEST",
+          message: "Invalid request body",
+          details: parsed.error.flatten(),
+        },
+        buildApiMeta(req, startedAt),
+      );
+      return;
+    }
+
+    if (!(await applyUsageOrReject({
+      req,
+      res,
+      startedAt,
+      tokenCost: estimateTokenCostFromText(parsed.data.question),
+      searchCost: 1,
+    }))) {
+      return;
+    }
+
+    const result = await runResumeFlowLangGraph({
+      userId: req.authUserId,
+      project: parsed.data.project,
+      question: parsed.data.question,
+      topK: parsed.data.topK,
+      includeArchived: parsed.data.includeArchived,
+      ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
+      ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+    });
+
+    const brief = toContinueProjectBrief(result);
+    const prompts = toPromptBundle({ project: parsed.data.project, brief });
+    const trace = result.usedMemories.slice(0, 6).map((memory) => ({
+      memoryId: memory.id,
+      source: memory.memoryType ?? "general",
+      confidence: Number(memory.finalScore.toFixed(3)),
+      whySelected: memory.summary ?? memory.content,
+    }));
+
+    const response: ResumePromptResponseData = {
+      target: parsed.data.target ?? "cursor",
+      brief,
+      prompts,
+      trace,
+    };
+    sendApiSuccess<ResumePromptResponseData>(
+      res,
+      200,
+      response,
       buildApiMeta(req, startedAt, {
         intent: "resume_project",
       }),

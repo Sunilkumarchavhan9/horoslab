@@ -485,12 +485,7 @@ export async function tryConsumeUsage(input: {
   } catch {
     const state = defaultUserBillingState(input.userId);
     const usage = getFallbackUsageForPlan(input.userId, state.plan);
-    const updated: UsageSnapshot = {
-      ...usage,
-      tokenUsed: usage.tokenUsed + tokenCost,
-      searchUsed: usage.searchUsed + searchCost,
-    };
-    FALLBACK_USAGE_BY_USER.set(input.userId, updated);
-    return { allowed: true, plan: state.plan, usage: updated };
+    const meter = tokenCost > 0 ? "tokens" : "searches";
+    return { allowed: false, plan: state.plan, usage, meter };
   }
 }

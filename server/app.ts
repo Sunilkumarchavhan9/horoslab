@@ -3,7 +3,11 @@ import express, { type Express, type Request, type Response } from "express";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { requireAuth } from "./middleware/auth";
 import { corsMiddleware } from "./middleware/cors";
-import { rateLimitMemoryApi } from "./middleware/rateLimit";
+import {
+  rateLimitMemoryApi,
+  rateLimitModerateApi,
+  rateLimitStrictApi,
+} from "./middleware/rateLimit";
 import { requestIdMiddleware } from "./middleware/requestId";
 import { requestLogger } from "./middleware/requestLogger";
 import { setApiVersionHeaders } from "./middleware/apiVersion";
@@ -63,12 +67,15 @@ export function createMemoryOsApp(): Express {
   app.use(
     "/api/connector",
     setApiVersionHeaders,
+    requireAuth,
+    rateLimitModerateApi,
     connectorRouter,
   );
   app.use(
     "/api/benchmarks",
     setApiVersionHeaders,
     requireAuth,
+    rateLimitStrictApi,
     benchmarkRouter,
   );
   // Backward-compatible singular alias for older clients.
@@ -76,6 +83,7 @@ export function createMemoryOsApp(): Express {
     "/api/benchmark",
     setApiVersionHeaders,
     requireAuth,
+    rateLimitStrictApi,
     benchmarkRouter,
   );
   // IMPORTANT: mount the more-specific `/api/memory/doctor` router BEFORE the
@@ -121,24 +129,28 @@ export function createMemoryOsApp(): Express {
     "/api/preflight",
     setApiVersionHeaders,
     requireAuth,
+    rateLimitStrictApi,
     preflightRouter,
   );
   app.use(
     "/api/company-brain",
     setApiVersionHeaders,
     requireAuth,
+    rateLimitModerateApi,
     companyBrainRouter,
   );
   app.use(
     "/api/agents",
     setApiVersionHeaders,
     requireAuth,
+    rateLimitModerateApi,
     agentRouter,
   );
   app.use(
     "/api/agent-sessions",
     setApiVersionHeaders,
     requireAuth,
+    rateLimitModerateApi,
     agentSessionRouter,
   );
 

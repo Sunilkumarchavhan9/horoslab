@@ -8,9 +8,11 @@ import {
   setUserBillingState,
 } from "../../lib/billing/store";
 import { randomUUID } from "crypto";
+import { rateLimitWebhookIp } from "../middleware/rateLimit";
 
 export const billingRouter = Router();
 billingRouter.use("/webhooks/polar", express.text({ type: "*/*" }));
+billingRouter.use("/webhooks/polar", rateLimitWebhookIp);
 
 type PolarWebhookPayload = {
   type?: string;
