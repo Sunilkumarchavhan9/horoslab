@@ -3,9 +3,6 @@
 import { Button } from "@/components/ui/button";
 import {
   ConsolePage,
-  ConsolePageHeader,
-  ConsoleStatCard,
-  ConsoleStatGrid,
   ConsoleStatusBadge,
 } from "@/components/developer-console/console-ui";
 
@@ -160,6 +157,41 @@ export function OverviewSection({
     })),
   ].slice(0, 4);
 
+  const funnelSteps = [
+    {
+      id: "connect",
+      label: "Connect GitHub Source",
+      done: memories.length > 0 || requestEvents.length > 0,
+      action: actions?.["Quick Start"],
+      actionLabel: "Open Integrations",
+      detail: "Connect at least one source so continuity memory has real project context.",
+    },
+    {
+      id: "brief",
+      label: "Continue Project Brief",
+      done: Boolean(resumeData?.summary),
+      action: actions?.["Continuity Lab"],
+      actionLabel: "Open Continuity Lab",
+      detail: "Generate structured output: recent changes, goal, blockers, risky files, next action.",
+    },
+    {
+      id: "prompt",
+      label: "Generate IDE Prompt",
+      done: requestEvents.some((event) => event.route.includes("/resume/prompt")),
+      action: actions?.["Playground"],
+      actionLabel: "Open Playground",
+      detail: "Create Cursor/Codex/Claude Code ready prompts from the brief.",
+    },
+    {
+      id: "trace",
+      label: "Trace Proof Panel",
+      done: timelineCount > 0 || memories.length > 1,
+      action: actions?.["Playground"],
+      actionLabel: "Inspect Trace",
+      detail: "Show memory used, source, confidence, and why each item was selected.",
+    },
+  ];
+
   return (
     <ConsolePage>
       <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
@@ -185,6 +217,36 @@ export function OverviewSection({
       </div>
 
       <div className="space-y-8">
+        <div className="rounded-[12px] border border-border bg-card p-6">
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">Engineering Continuity Funnel</h2>
+              <p className="mt-1 text-[12px] text-muted-foreground">
+                Ship the wedge first: source connect, continue brief, IDE prompt, and trace proof.
+              </p>
+            </div>
+            <ConsoleStatusBadge
+              label={`${funnelSteps.filter((step) => step.done).length}/${funnelSteps.length} complete`}
+              active={funnelSteps.every((step) => step.done)}
+            />
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {funnelSteps.map((step, index) => (
+              <div key={step.id} className="rounded-[10px] border border-border bg-muted/30 p-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Step {index + 1}</p>
+                  <ConsoleStatusBadge label={step.done ? "Done" : "Pending"} active={step.done} />
+                </div>
+                <p className="text-[14px] font-semibold text-foreground">{step.label}</p>
+                <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">{step.detail}</p>
+                <Button className="mt-3 w-full" variant={step.done ? "secondary" : "default"} onClick={step.action}>
+                  {step.actionLabel}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {metricCards.map((metric) => (
             <div

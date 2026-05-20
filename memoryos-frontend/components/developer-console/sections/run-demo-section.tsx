@@ -258,7 +258,16 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
       return `${payload.error.message} Upgrade in Developer Console > Billing to continue.`;
     }
     if (typeof payload.error === "string") return payload.error;
-    if (isRecord(payload.error) && typeof payload.error.message === "string") return payload.error.message;
+    if (isRecord(payload.error) && typeof payload.error.message === "string") {
+      const details = payload.error.details;
+      if (details && typeof details === "object") {
+        const compact = JSON.stringify(details);
+        if (compact && compact !== "{}") {
+          return `${payload.error.message} | details: ${compact}`;
+        }
+      }
+      return payload.error.message;
+    }
     if (typeof payload.message === "string") return payload.message;
   }
   return fallback;
@@ -984,6 +993,12 @@ export function RunDemoSection() {
   }, [refreshBilling]);
 
   useEffect(() => {
+    const canLoadGovernancePolicy =
+      billing?.currentPlan === "Scale" || billing?.currentPlan === "Enterprise";
+    if (!canLoadGovernancePolicy) {
+      return;
+    }
+
     let mounted = true;
     async function loadGovernancePolicy(): Promise<void> {
       try {
@@ -1010,7 +1025,7 @@ export function RunDemoSection() {
     return () => {
       mounted = false;
     };
-  }, [withAuthorizedToken]);
+  }, [billing?.currentPlan, withAuthorizedToken]);
 
   const appendSystemMessage = useCallback((text: string): void => {
     setConversation((current) => [

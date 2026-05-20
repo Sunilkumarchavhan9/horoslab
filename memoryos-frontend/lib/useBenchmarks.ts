@@ -188,7 +188,8 @@ export interface UseBenchmarksResult {
 
 // ─── Implementation ──────────────────────────────────────────────────────────
 
-const POLL_INTERVAL_MS = 10_000;
+const POLL_INTERVAL_MS = 30_000;
+const RATE_LIMIT_COOLDOWN_MS = 60_000;
 
 function getApiOrigin(): string {
   const configured = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim();
@@ -241,6 +242,9 @@ export function useBenchmarks(): UseBenchmarksResult {
   const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
+  const historyRef = useRef<BenchmarkHistoryItem[]>([]);
+  const historyPollModuloRef = useRef(0);
+  const cooldownUntilRef = useRef(0);
 
   const fetchData = useCallback(async () => {
     const token = await getOrCreateMemoryToken();
@@ -251,10 +255,20 @@ export function useBenchmarks(): UseBenchmarksResult {
     }
 
     try {
-      const [latestData, historyData] = await Promise.all([
-        fetchBenchmarkApi<BenchmarkLatestRun | null>("/api/benchmarks/latest", token),
-        fetchBenchmarkApi<BenchmarkHistoryItem[]>("/api/benchmarks/history?range=all", token),
-      ]);
+      const now = Date.now();
+      if (now < cooldownUntilRef.current) {
+        setConnectionStatus("offline");
+        setIsLoading(false);
+        return;
+      }
+
+      historyPollModuloRef.current = (historyPollModuloRef.current + 1) % 3;
+      const shouldFetchHistory = historyPollModuloRef.current === 0 || historyRef.current.length === 0;
+      const latestPromise = fetchBenchmarkApi<BenchmarkLatestRun | null>("/api/benchmarks/latest", token);
+      const historyPromise = shouldFetchHistory
+        ? fetchBenchmarkApi<BenchmarkHistoryItem[]>("/api/benchmarks/history?range=all", token)
+        : Promise.resolve(historyRef.current);
+      const [latestData, historyData] = await Promise.all([latestPromise, historyPromise]);
 
       if (!mountedRef.current) return;
 
@@ -266,6 +280,7 @@ export function useBenchmarks(): UseBenchmarksResult {
           new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime(),
       );
       setHistory(dedupedHistory);
+      historyRef.current = dedupedHistory;
       setConnectionStatus("live");
       setErrorMessage(null);
       setLastUpdatedAt(new Date());
@@ -279,6 +294,9 @@ export function useBenchmarks(): UseBenchmarksResult {
     } catch (error) {
       if (!mountedRef.current) return;
       const msg = error instanceof Error ? error.message : "Failed to fetch benchmarks";
+      if (msg.includes("(429)") || msg.toLowerCase().includes("rate limit")) {
+        cooldownUntilRef.current = Date.now() + RATE_LIMIT_COOLDOWN_MS;
+      }
       if (msg.includes("not reachable") || msg.includes("Failed to fetch")) {
         setConnectionStatus("offline");
       } else {

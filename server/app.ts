@@ -67,7 +67,15 @@ export function createMemoryOsApp(): Express {
   app.use(
     "/api/connector",
     setApiVersionHeaders,
-    requireAuth,
+    (req, res, next) => {
+      // OAuth providers redirect back here without our bearer token.
+      // We authenticate callback integrity via signed `state` in the route handler.
+      if (req.path === "/callback" || req.path.startsWith("/callback/")) {
+        next();
+        return;
+      }
+      void requireAuth(req, res, next);
+    },
     rateLimitModerateApi,
     connectorRouter,
   );

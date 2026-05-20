@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 type ConnectorRouteContext = {
   params: Promise<{ connectorPath?: string[] }>;
 };
-const UPSTREAM_TIMEOUT_MS = 8_000;
+const UPSTREAM_TIMEOUT_MS = 45_000;
 
 function isRetriableProxyError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
@@ -64,6 +64,13 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
   const headers = new Headers(request.headers);
   headers.set("host", new URL(backendUrl).host);
   headers.set("origin", url.origin);
+  const normalizedPath = `/${pathArray.join("/")}`;
+  if (normalizedPath === "/events" && !headers.get("authorization")) {
+    const eventToken = url.searchParams.get("token");
+    if (eventToken && eventToken.trim().length > 0) {
+      headers.set("authorization", `Bearer ${eventToken.trim()}`);
+    }
+  }
   if (userId) {
     headers.set("x-user-id", userId);
   }
@@ -111,7 +118,6 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
     });
   } catch (error) {
     console.error("[Connector Proxy] Error:", error);
-    const normalizedPath = `/${pathArray.join("/")}`;
     const isGet = request.method === "GET";
     if (isGet && (normalizedPath === "/" || normalizedPath === "")) {
       return new Response(
