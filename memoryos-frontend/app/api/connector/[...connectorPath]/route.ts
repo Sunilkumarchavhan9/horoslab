@@ -86,6 +86,30 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
     init.body = await request.clone().arrayBuffer();
   }
 
+  const isSyncRequest = request.method === "POST" && normalizedPath.endsWith("/sync");
+  if (isSyncRequest) {
+    void fetch(url.toString(), init).catch((error) => {
+      console.error("[Connector Proxy] Background sync dispatch failed:", error);
+    });
+
+    return new Response(
+      JSON.stringify({
+        data: {
+          queued: true,
+          message: `Sync queued for ${pathArray[0] || "connector"}.`,
+        },
+        meta: {
+          proxyQueued: true,
+          target: url.toString(),
+        },
+      }),
+      {
+        status: 202,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
   try {
     const runFetch = async () => {
       const controller = new AbortController();
