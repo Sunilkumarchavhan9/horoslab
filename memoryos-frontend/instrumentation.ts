@@ -1,3 +1,4 @@
+import { resolveBackendOrigin } from "./app/api/_lib/backend-origin";
 /**
  * Next.js instrumentation hook — runs once when the server starts.
  * https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
@@ -39,8 +40,7 @@ export async function register() {
     }
   }
 
-  const backendOrigin =
-    process.env.MEMORYOS_API_ORIGIN?.trim() || "http://localhost:3001";
+  const backendOrigin = resolveBackendOrigin();
 
   if (process.env.NODE_ENV === "development") {
     console.log(`[MemoryOS] API proxy target → ${backendOrigin}`);

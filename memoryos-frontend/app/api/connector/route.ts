@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { resolveBackendOrigin } from "../_lib/backend-origin";
 
 export async function GET(request: NextRequest) {
-  const backendUrl = process.env.MEMORYOS_API_ORIGIN || "http://localhost:3001";
+  const backendUrl = resolveBackendOrigin();
   const targetPath = `/api/connector`;
   const url = new URL(request.url);
   url.href = `${backendUrl}${targetPath}${url.search}`;

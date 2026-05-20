@@ -485,9 +485,54 @@ connectorRouter.get(
         },
       });
 
-      // 3. Trigger initial sync
+      // 3. Trigger initial sync in background (never block OAuth callback response)
       if (!accessToken.startsWith("mock_token_")) {
-        await ConnectorManager.triggerSync(userId, type as ConnectorType, accessToken);
+        void (async () => {
+          try {
+            await ConnectorManager.triggerSync(userId, type as ConnectorType, accessToken);
+            await prisma.connector.update({
+              where: { id: `${userId}_${type}` },
+              data: {
+                status: "connected",
+                lastSyncAt: new Date().toISOString(),
+              },
+            });
+            emitConnectorEvent({
+              kind: "sync_log",
+              userId,
+              payload: {
+                type,
+                status: "success",
+                message: `${type} initial sync completed`,
+                at: new Date().toISOString(),
+              },
+            });
+          } catch (error) {
+            console.error(`[ConnectorRouter] Initial ${type} sync failed:`, error);
+            const message = error instanceof Error ? error.message : "Initial sync failed";
+            await prisma.connector.update({
+              where: { id: `${userId}_${type}` },
+              data: {
+                status: "connected",
+                configJson: JSON.stringify({
+                  ...tokenConfig,
+                  lastFailureAt: new Date().toISOString(),
+                  lastFailureReason: message,
+                }),
+              },
+            }).catch(() => undefined);
+            emitConnectorEvent({
+              kind: "sync_log",
+              userId,
+              payload: {
+                type,
+                status: "error",
+                message,
+                at: new Date().toISOString(),
+              },
+            });
+          }
+        })();
       }
       emitConnectorEvent({
         kind: "connector_update",
@@ -643,16 +688,27 @@ connectorRouter.post(
       return;
     }
 
-    try {
+    // Return immediately so frontend/proxy never waits on connector sync work.
+    sendApiSuccess(res, 202, {
+      message: `Sync queued for ${type}.`,
+    }, buildApiMeta(req, startedAt));
+
+    void (async () => {
+      try {
       const connector = await prisma.connector.findUnique({
         where: { id: `${userId}_${type}` },
       });
 
       if (!connector || (connector.status !== "connected" && connector.status !== "syncing" && connector.status !== "error")) {
-        sendApiError(res, 400, {
-          code: "NOT_CONNECTED",
+        appendConnectorSyncLog({
+          id: randomUUID(),
+          userId,
+          type,
+          status: "error",
+          extractedCount: 0,
           message: `${type} is not connected or requires re-authentication.`,
-        }, buildApiMeta(req, startedAt));
+          at: new Date().toISOString(),
+        });
         return;
       }
 
@@ -667,10 +723,15 @@ connectorRouter.post(
         syncStartedAt &&
         Date.now() - new Date(syncStartedAt).getTime() < CONNECTOR_SYNC_LOCK_MS;
       if (isLocked) {
-        sendApiError(res, 409, {
-          code: "SYNC_IN_PROGRESS",
+        appendConnectorSyncLog({
+          id: randomUUID(),
+          userId,
+          type,
+          status: "error",
+          extractedCount: 0,
           message: `${type} sync is already running.`,
-        }, buildApiMeta(req, startedAt));
+          at: new Date().toISOString(),
+        });
         return;
       }
 
@@ -685,204 +746,191 @@ connectorRouter.post(
         },
       });
       
-      let extractedCount = 0;
-      let checkpoint: string | undefined;
-      let dedupeKeys: string[] = [];
-      let syncAttempts = 1;
-      if (type === "local_files") {
-        const result = await ConnectorManager.triggerSync(userId, "local_files", undefined, undefined, recentItemKeys);
-        extractedCount = result.extractedCount;
-        dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
-        syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
-      } else if (accessToken && accessToken.startsWith("mock_token_")) {
-        extractedCount = Math.floor(Math.random() * 20) + 5;
-        checkpoint = new Date().toISOString();
-      } else {
-        if (!accessToken) {
-          sendApiError(res, 400, {
-            code: "NOT_CONNECTED",
-            message: `${type} access token missing. Reconnect this source.`,
-          }, buildApiMeta(req, startedAt));
-          return;
-        }
-        let syncToken = accessToken;
-        if ((type === "google_drive" || type === "gmail") && typeof config.refreshToken === "string" && config.refreshToken.length > 0) {
-          try {
-            const refreshed = type === "gmail"
-              ? await GmailClient.refreshAccessToken(config.refreshToken)
-              : await GoogleClient.refreshAccessToken(config.refreshToken);
-            if (type === "gmail") {
-              syncToken = refreshed.accessToken;
-              config.accessToken = refreshed.accessToken;
-              if (refreshed.refreshToken) config.refreshToken = refreshed.refreshToken;
-              config.lastTokenRefreshAt = new Date().toISOString();
-            } else {
-              syncToken = refreshed.accessToken;
-              config.accessToken = refreshed.accessToken;
-              if (refreshed.refreshToken) config.refreshToken = refreshed.refreshToken;
-              config.lastTokenRefreshAt = new Date().toISOString();
-            }
-          } catch {
-            // fall back to existing token; sync path will surface auth error if expired
-          }
-        }
-        const result = await ConnectorManager.triggerSync(
-          userId,
-          type as ConnectorType,
-          syncToken,
-          previousCheckpoint,
-          recentItemKeys,
-        );
-        extractedCount = result.extractedCount;
-        checkpoint = typeof result.checkpoint === "string" ? result.checkpoint : undefined;
-        dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
-        syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
-        if (type === "slack") {
-          const slackCursor = (result as unknown as { cursor?: unknown }).cursor;
-          const slackLastMessageTs = (result as unknown as { lastMessageTs?: unknown }).lastMessageTs;
-          if (typeof slackCursor === "string" && slackCursor.length > 0) config.cursor = slackCursor;
-          if (typeof slackLastMessageTs === "string" && slackLastMessageTs.length > 0) config.lastMessageTs = slackLastMessageTs;
-        }
-        if (type === "gmail") {
-          const gmailLastMessageId = (result as unknown as { lastMessageId?: unknown }).lastMessageId;
-          const gmailLastCheckpointEpochMs = (result as unknown as { lastCheckpointEpochMs?: unknown }).lastCheckpointEpochMs;
-          if (typeof gmailLastMessageId === "string" && gmailLastMessageId.length > 0) config.lastMessageId = gmailLastMessageId;
-          if (typeof gmailLastCheckpointEpochMs === "number") config.lastCheckpointEpochMs = gmailLastCheckpointEpochMs;
-        }
-      }
-      const nextRecentItemKeys = Array.from(new Set([...recentItemKeys, ...dedupeKeys])).slice(-500);
-      const quota = await canConsumeConnectorSyncRecords({ userId, amount: extractedCount });
-      if (!quota.allowed) {
-        sendApiError(res, 402, {
-          code: "CONNECTOR_SYNC_LIMIT_REACHED",
-          message: `Connector sync record limit reached for ${quota.plan}.`,
-          details: {
-            plan: quota.plan,
-            used: quota.used,
-            limit: quota.limit,
-            requested: extractedCount,
-            minimumPlan: "Pro",
-          },
-        }, buildApiMeta(req, startedAt));
-        return;
-      }
-      const consumed = await consumeConnectorSyncRecords({ userId, amount: extractedCount });
-      
-      await prisma.connector.update({
-        where: { id: connector.id },
-        data: {
-          status: "connected",
-          lastSyncAt: new Date().toISOString(),
-          recordCount: { increment: extractedCount },
-          configJson: JSON.stringify({
-            ...config,
-            ...(checkpoint ? { lastCheckpointAt: checkpoint } : {}),
-            recentItemKeys: nextRecentItemKeys,
-            syncStartedAt: null,
-            retryCount: 0,
-            lastFailureAt: null,
-            lastFailureReason: null,
-          }),
-        },
-      });
-
-      appendConnectorSyncLog({
-        id: randomUUID(),
-        userId,
-        type,
-        status: "success",
-        extractedCount,
-        message: `Sync completed for ${type} (attempts=${syncAttempts})`,
-        at: new Date().toISOString(),
-      });
-      emitConnectorEvent({
-        kind: "connector_update",
-        userId,
-        payload: {
-          type,
-          status: "connected",
-          extractedCount,
-          at: new Date().toISOString(),
-        },
-      });
-      emitConnectorEvent({
-        kind: "sync_log",
-        userId,
-        payload: {
-          type,
-          status: "success",
-          extractedCount,
-          message: `Sync completed for ${type} (attempts=${syncAttempts})`,
-          at: new Date().toISOString(),
-        },
-      });
-
-      sendApiSuccess(res, 200, {
-        message: `Successfully synced ${type}.`,
-        extractedCount,
-        connectorUsage: {
-          used: consumed.used,
-          limit: consumed.limit,
-          plan: consumed.plan,
-        },
-      }, buildApiMeta(req, startedAt));
-    } catch (error) {
       try {
-        const existing = await prisma.connector.findUnique({
-          where: { id: `${userId}_${type}` },
-        });
-        const config = getConnectorConfig(existing?.configJson);
-        await prisma.connector.update({
-          where: { id: `${userId}_${type}` },
-          data: {
+          let extractedCount = 0;
+          let checkpoint: string | undefined;
+          let dedupeKeys: string[] = [];
+          let syncAttempts = 1;
+          if (type === "local_files") {
+            const result = await ConnectorManager.triggerSync(userId, "local_files", undefined, undefined, recentItemKeys);
+            extractedCount = result.extractedCount;
+            dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
+            syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
+          } else if (accessToken && accessToken.startsWith("mock_token_")) {
+            extractedCount = Math.floor(Math.random() * 20) + 5;
+            checkpoint = new Date().toISOString();
+          } else {
+            if (!accessToken) {
+              throw new Error(`${type} access token missing. Reconnect this source.`);
+            }
+            let syncToken = accessToken;
+            if ((type === "google_drive" || type === "gmail") && typeof config.refreshToken === "string" && config.refreshToken.length > 0) {
+              try {
+                const refreshed = type === "gmail"
+                  ? await GmailClient.refreshAccessToken(config.refreshToken)
+                  : await GoogleClient.refreshAccessToken(config.refreshToken);
+                if (type === "gmail") {
+                  syncToken = refreshed.accessToken;
+                  config.accessToken = refreshed.accessToken;
+                  if (refreshed.refreshToken) config.refreshToken = refreshed.refreshToken;
+                  config.lastTokenRefreshAt = new Date().toISOString();
+                } else {
+                  syncToken = refreshed.accessToken;
+                  config.accessToken = refreshed.accessToken;
+                  if (refreshed.refreshToken) config.refreshToken = refreshed.refreshToken;
+                  config.lastTokenRefreshAt = new Date().toISOString();
+                }
+              } catch {
+                // fall back to existing token; sync path will surface auth error if expired
+              }
+            }
+            const result = await ConnectorManager.triggerSync(
+              userId,
+              type as ConnectorType,
+              syncToken,
+              previousCheckpoint,
+              recentItemKeys,
+            );
+            extractedCount = result.extractedCount;
+            checkpoint = typeof result.checkpoint === "string" ? result.checkpoint : undefined;
+            dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
+            syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
+            if (type === "slack") {
+              const slackCursor = (result as unknown as { cursor?: unknown }).cursor;
+              const slackLastMessageTs = (result as unknown as { lastMessageTs?: unknown }).lastMessageTs;
+              if (typeof slackCursor === "string" && slackCursor.length > 0) config.cursor = slackCursor;
+              if (typeof slackLastMessageTs === "string" && slackLastMessageTs.length > 0) config.lastMessageTs = slackLastMessageTs;
+            }
+            if (type === "gmail") {
+              const gmailLastMessageId = (result as unknown as { lastMessageId?: unknown }).lastMessageId;
+              const gmailLastCheckpointEpochMs = (result as unknown as { lastCheckpointEpochMs?: unknown }).lastCheckpointEpochMs;
+              if (typeof gmailLastMessageId === "string" && gmailLastMessageId.length > 0) config.lastMessageId = gmailLastMessageId;
+              if (typeof gmailLastCheckpointEpochMs === "number") config.lastCheckpointEpochMs = gmailLastCheckpointEpochMs;
+            }
+          }
+          const nextRecentItemKeys = Array.from(new Set([...recentItemKeys, ...dedupeKeys])).slice(-500);
+          const quota = await canConsumeConnectorSyncRecords({ userId, amount: extractedCount });
+          if (!quota.allowed) {
+            throw new Error(`Connector sync record limit reached for ${quota.plan}.`);
+          }
+          const consumed = await consumeConnectorSyncRecords({ userId, amount: extractedCount });
+
+          await prisma.connector.update({
+            where: { id: connector.id },
+            data: {
+              status: "connected",
+              lastSyncAt: new Date().toISOString(),
+              recordCount: { increment: extractedCount },
+              configJson: JSON.stringify({
+                ...config,
+                ...(checkpoint ? { lastCheckpointAt: checkpoint } : {}),
+                recentItemKeys: nextRecentItemKeys,
+                syncStartedAt: null,
+                retryCount: 0,
+                lastFailureAt: null,
+                lastFailureReason: null,
+              }),
+            },
+          });
+
+          appendConnectorSyncLog({
+            id: randomUUID(),
+            userId,
+            type,
+            status: "success",
+            extractedCount,
+            message: `Sync completed for ${type} (attempts=${syncAttempts})`,
+            at: new Date().toISOString(),
+          });
+          emitConnectorEvent({
+            kind: "connector_update",
+            userId,
+            payload: {
+              type,
+              status: "connected",
+              extractedCount,
+              at: new Date().toISOString(),
+            },
+          });
+          emitConnectorEvent({
+            kind: "sync_log",
+            userId,
+            payload: {
+              type,
+              status: "success",
+              extractedCount,
+              message: `Sync completed for ${type} (attempts=${syncAttempts})`,
+              at: new Date().toISOString(),
+            },
+          });
+          console.log(`[ConnectorRouter] ${type} async sync complete user=${userId} extracted=${extractedCount} used=${consumed.used}/${consumed.limit}`);
+      } catch (error) {
+          try {
+            const existing = await prisma.connector.findUnique({
+              where: { id: `${userId}_${type}` },
+            });
+            const currentConfig = getConnectorConfig(existing?.configJson);
+            await prisma.connector.update({
+              where: { id: `${userId}_${type}` },
+              data: {
+                status: "connected",
+                configJson: JSON.stringify({
+                  ...currentConfig,
+                  syncStartedAt: null,
+                  retryCount: typeof currentConfig.retryCount === "number" ? currentConfig.retryCount + 1 : 1,
+                  lastFailureAt: new Date().toISOString(),
+                  lastFailureReason: error instanceof Error ? error.message : "sync_failed",
+                }),
+              },
+            });
+          } catch {
+            // ignore retry bookkeeping failures
+          }
+          appendConnectorSyncLog({
+            id: randomUUID(),
+            userId,
+            type,
             status: "error",
-            configJson: JSON.stringify({
-              ...config,
-              syncStartedAt: null,
-              retryCount: typeof config.retryCount === "number" ? config.retryCount + 1 : 1,
-              lastFailureAt: new Date().toISOString(),
-              lastFailureReason: error instanceof Error ? error.message : "sync_failed",
-            }),
-          },
-        });
-      } catch {
-        // ignore retry bookkeeping failures
+            extractedCount: 0,
+            message: error instanceof Error ? error.message : "Failed to sync connector",
+            at: new Date().toISOString(),
+          });
+          emitConnectorEvent({
+            kind: "connector_update",
+            userId,
+            payload: {
+              type,
+              status: "error",
+              error: error instanceof Error ? error.message : "sync_failed",
+              at: new Date().toISOString(),
+            },
+          });
+          emitConnectorEvent({
+            kind: "sync_log",
+            userId,
+            payload: {
+              type,
+              status: "error",
+              extractedCount: 0,
+              message: error instanceof Error ? error.message : "Failed to sync connector",
+              at: new Date().toISOString(),
+            },
+          });
       }
+    } catch (error) {
+      console.error(`[ConnectorRouter] Failed to queue sync for ${type}:`, error);
       appendConnectorSyncLog({
         id: randomUUID(),
         userId,
         type,
         status: "error",
         extractedCount: 0,
-        message: error instanceof Error ? error.message : "Failed to sync connector",
+        message: error instanceof Error ? error.message : "Failed to queue connector sync",
         at: new Date().toISOString(),
       });
-      emitConnectorEvent({
-        kind: "connector_update",
-        userId,
-        payload: {
-          type,
-          status: "error",
-          error: error instanceof Error ? error.message : "sync_failed",
-          at: new Date().toISOString(),
-        },
-      });
-      emitConnectorEvent({
-        kind: "sync_log",
-        userId,
-        payload: {
-          type,
-          status: "error",
-          extractedCount: 0,
-          message: error instanceof Error ? error.message : "Failed to sync connector",
-          at: new Date().toISOString(),
-        },
-      });
-      sendApiError(res, 500, {
-        code: "SYNC_FAILED",
-        message: error instanceof Error ? error.message : "Failed to sync connector"
-      }, buildApiMeta(req, Date.now()));
     }
+    })();
+    return;
   })
 );
 

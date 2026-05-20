@@ -14,6 +14,8 @@ const GITHUB_REPO_PAGE_SIZE = Math.max(1, Math.min(100, Number(process.env.GITHU
 const GITHUB_REPO_MAX_PAGES = Math.max(1, Number(process.env.GITHUB_SYNC_REPO_MAX_PAGES ?? 3));
 const GITHUB_ITEM_PAGE_SIZE = Math.max(1, Math.min(100, Number(process.env.GITHUB_SYNC_ITEM_PAGE_SIZE ?? 20)));
 const GITHUB_ITEM_MAX_PAGES = Math.max(1, Number(process.env.GITHUB_SYNC_ITEM_MAX_PAGES ?? 3));
+const GITHUB_SYNC_BUDGET_MS = Math.max(5_000, Number(process.env.GITHUB_SYNC_BUDGET_MS ?? 25_000));
+const GITHUB_REQUEST_TIMEOUT_MS = Math.max(3_000, Number(process.env.GITHUB_REQUEST_TIMEOUT_MS ?? 10_000));
 
 /**
  * GitHub integration client for fetching and processing real developer signals.
@@ -23,15 +25,27 @@ export const GitHubClient = {
    * Fetches recent PRs and Issues from the user's repositories and extracts memories.
    */
   async sync(options: GitHubSyncOptions) {
-    const octokit = new Octokit({ auth: options.accessToken });
+    const octokit = new Octokit({
+      auth: options.accessToken,
+      request: {
+        timeout: GITHUB_REQUEST_TIMEOUT_MS,
+      },
+    });
     const memoriesExtracted = [];
     const seen = new Set(options.recentItemKeys ?? []);
     const dedupeKeys: string[] = [];
     const sinceMs = options.since ? new Date(options.since).getTime() : 0;
     let newestCheckpointMs = sinceMs;
+    const startedAt = Date.now();
+    const deadline = startedAt + GITHUB_SYNC_BUDGET_MS;
+    const budgetExceeded = () => Date.now() >= deadline;
 
     try {
       for (let repoPage = 1; repoPage <= GITHUB_REPO_MAX_PAGES; repoPage += 1) {
+        if (budgetExceeded()) {
+          console.warn("[GitHubClient] Sync time budget reached while listing repositories.");
+          break;
+        }
         const { data: repos } = await octokit.repos.listForAuthenticatedUser({
           sort: "updated",
           per_page: GITHUB_REPO_PAGE_SIZE,
@@ -40,11 +54,20 @@ export const GitHubClient = {
         if (repos.length === 0) break;
 
         for (const repo of repos) {
+          if (budgetExceeded()) {
+            console.warn("[GitHubClient] Sync time budget reached before finishing repositories.");
+            break;
+          }
           console.log(`[GitHubClient] Syncing repo: ${repo.full_name}`);
 
           // 2. Fetch recent merged PRs with pagination.
           let reachedPrDeltaBoundary = false;
           for (let prPage = 1; prPage <= GITHUB_ITEM_MAX_PAGES; prPage += 1) {
+            if (budgetExceeded()) {
+              console.warn(`[GitHubClient] Sync time budget reached in PR loop for ${repo.full_name}.`);
+              reachedPrDeltaBoundary = true;
+              break;
+            }
             const { data: prs } = await octokit.pulls.list({
               owner: repo.owner.login,
               repo: repo.name,
@@ -56,6 +79,10 @@ export const GitHubClient = {
             });
             if (prs.length === 0) break;
             for (const pr of prs) {
+              if (budgetExceeded()) {
+                reachedPrDeltaBoundary = true;
+                break;
+              }
               if (!pr.merged_at) continue;
               const updatedMs = pr.updated_at ? new Date(pr.updated_at).getTime() : 0;
               if (sinceMs > 0 && updatedMs > 0 && updatedMs <= sinceMs) {
@@ -97,6 +124,11 @@ export const GitHubClient = {
           // 3. Fetch recent closed issues with pagination.
           let reachedIssueDeltaBoundary = false;
           for (let issuePage = 1; issuePage <= GITHUB_ITEM_MAX_PAGES; issuePage += 1) {
+            if (budgetExceeded()) {
+              console.warn(`[GitHubClient] Sync time budget reached in issue loop for ${repo.full_name}.`);
+              reachedIssueDeltaBoundary = true;
+              break;
+            }
             const { data: issues } = await octokit.issues.listForRepo({
               owner: repo.owner.login,
               repo: repo.name,
@@ -108,6 +140,10 @@ export const GitHubClient = {
             });
             if (issues.length === 0) break;
             for (const issue of issues) {
+              if (budgetExceeded()) {
+                reachedIssueDeltaBoundary = true;
+                break;
+              }
               if (issue.pull_request) continue; // Skip PRs (already handled)
               const updatedMs = issue.updated_at ? new Date(issue.updated_at).getTime() : 0;
               if (sinceMs > 0 && updatedMs > 0 && updatedMs <= sinceMs) {
