@@ -27,6 +27,9 @@ const FORWARDED_HEADER_ALLOWLIST = new Set([
   "x-request-id",
 ]);
 const DEFAULT_UPSTREAM_TIMEOUT_MS = 20_000;
+const METERED_GET_PATHS = new Set<string>([
+  "/retrieve/explain",
+]);
 
 function resolveTimeoutMs(pathSegments: string[], method: string): number {
   const path = `/${pathSegments.join("/")}`;
@@ -81,12 +84,15 @@ async function forwardMemoryRequestWithRetry(
   headers: Headers,
   body: BodyInit | undefined,
   timeoutMs: number,
+  pathSegments: string[],
 ): Promise<globalThis.Response> {
   try {
     return await forwardMemoryRequest(request, url, headers, body, timeoutMs);
   } catch (error) {
     const isIdempotent = request.method === "GET" || request.method === "HEAD";
-    if (isIdempotent && isRetriableProxyError(error)) {
+    const normalizedPath = `/${pathSegments.join("/")}`;
+    const isMeteredGetPath = METERED_GET_PATHS.has(normalizedPath);
+    if (isIdempotent && !isMeteredGetPath && isRetriableProxyError(error)) {
       return forwardMemoryRequest(request, url, headers, body, timeoutMs);
     }
     throw error;
@@ -116,7 +122,7 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
   try {
     const hasBody = request.method !== "GET" && request.method !== "HEAD";
     const body = hasBody ? new Uint8Array(await request.arrayBuffer()) : undefined;
-    response = await forwardMemoryRequestWithRetry(request, url, headers, body, timeoutMs);
+    response = await forwardMemoryRequestWithRetry(request, url, headers, body, timeoutMs, memoryPath);
   } catch (error) {
     const normalizedPath = `/${memoryPath.join("/")}`;
     const isGet = request.method === "GET";
