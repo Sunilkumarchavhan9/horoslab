@@ -203,6 +203,18 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
   return fallback;
 }
 
+class ApiRequestError extends Error {
+  status: number;
+  payload: unknown;
+
+  constructor(message: string, status: number, payload: unknown) {
+    super(message);
+    this.name = "ApiRequestError";
+    this.status = status;
+    this.payload = payload;
+  }
+}
+
 function isUnauthorized(error: unknown): boolean {
   if (!(error instanceof Error)) {
     return false;
@@ -342,7 +354,11 @@ async function fetchMemoryApi<T>(
   }
 
   if (!response.ok) {
-    throw new Error(extractErrorMessage(payload, `Request failed with status ${response.status} at ${url}`));
+    throw new ApiRequestError(
+      extractErrorMessage(payload, `Request failed with status ${response.status} at ${url}`),
+      response.status,
+      payload,
+    );
   }
 
   return payload as T;
@@ -963,6 +979,25 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
       setStatusLine(`${selectedConfig.label} completed`);
       setInput("");
     } catch (error) {
+      if (error instanceof ApiRequestError && isRecord(error.payload) && isRecord(error.payload.error) && error.payload.error.code === "UPGRADE_REQUIRED") {
+        const details = isRecord(error.payload.error.details) ? error.payload.error.details : null;
+        if (details) {
+          const meter = details.meter === "searches" ? "searches" : "tokens";
+          const used = typeof details.used === "number" ? details.used : 0;
+          const limit = typeof details.limit === "number" ? details.limit : 0;
+          const plan = details.plan === "Pro" || details.plan === "Scale" || details.plan === "Enterprise" ? details.plan : "Free";
+          setBilling((current) => ({
+            currentPlan: plan,
+            usage: {
+              tokenLimit: meter === "tokens" ? limit : current?.usage.tokenLimit ?? 1_000_000,
+              tokenUsed: meter === "tokens" ? used : current?.usage.tokenUsed ?? 0,
+              searchLimit: meter === "searches" ? limit : current?.usage.searchLimit ?? 10_000,
+              searchUsed: meter === "searches" ? used : current?.usage.searchUsed ?? 0,
+              resetInDays: current?.usage.resetInDays ?? 30,
+            },
+          }));
+        }
+      }
       const message = error instanceof Error ? error.message : "Request failed";
       setErrorMessage(message);
       setStatusLine("Request failed");
@@ -1871,7 +1906,7 @@ handoff = httpx.post(
                 aria-label="Top K"
               />
             </div>
-            <div className="mx-auto flex max-w-[920px] flex-col gap-3 lg:flex-row lg:items-end">
+            <div className="mx-auto flex max-w-[920px] flex-col gap-3">
               <div className="flex min-w-0 flex-1 items-end gap-2">
               <textarea
                 value={input}
@@ -1901,7 +1936,7 @@ handoff = httpx.post(
               </button>
               </div>
               {billing ? (
-                <div className="w-full shrink-0 lg:max-w-[340px]">
+                <div className="w-full">
                   <UsageMeter usage={billing.usage} currentPlan={billing.currentPlan} compact />
                 </div>
               ) : null}

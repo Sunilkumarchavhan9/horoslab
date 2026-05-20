@@ -264,6 +264,18 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
   return fallback;
 }
 
+class ApiRequestError extends Error {
+  status: number;
+  payload: unknown;
+
+  constructor(message: string, status: number, payload: unknown) {
+    super(message);
+    this.name = "ApiRequestError";
+    this.status = status;
+    this.payload = payload;
+  }
+}
+
 async function fetchMemoryApi<T>(routePath: string, token: string, init?: RequestInit): Promise<T> {
   const configuredOrigin = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim();
   const origin =
@@ -289,7 +301,11 @@ async function fetchMemoryApi<T>(routePath: string, token: string, init?: Reques
   }
 
   if (!response.ok) {
-    throw new Error(extractErrorMessage(payload, `Request failed (${response.status}) for ${path}`));
+    throw new ApiRequestError(
+      extractErrorMessage(payload, `Request failed (${response.status}) for ${path}`),
+      response.status,
+      payload,
+    );
   }
 
   return normalizeApiPayload<T>(payload);
@@ -935,6 +951,30 @@ export function RunDemoSection() {
     }
   }, [withAuthorizedToken]);
 
+  const syncBillingFromUpgradeError = useCallback((error: unknown): void => {
+    if (!(error instanceof ApiRequestError)) return;
+    if (!isRecord(error.payload) || !isRecord(error.payload.error)) return;
+    if (error.payload.error.code !== "UPGRADE_REQUIRED") return;
+    const details = isRecord(error.payload.error.details) ? error.payload.error.details : null;
+    if (!details) return;
+
+    const meter = details.meter === "searches" ? "searches" : "tokens";
+    const used = typeof details.used === "number" ? details.used : 0;
+    const limit = typeof details.limit === "number" ? details.limit : 0;
+    const plan = details.plan === "Pro" || details.plan === "Scale" || details.plan === "Enterprise" ? details.plan : "Free";
+
+    setBilling((current) => ({
+      currentPlan: plan,
+      usage: {
+        tokenLimit: meter === "tokens" ? limit : current?.usage.tokenLimit ?? 1_000_000,
+        tokenUsed: meter === "tokens" ? used : current?.usage.tokenUsed ?? 0,
+        searchLimit: meter === "searches" ? limit : current?.usage.searchLimit ?? 10_000,
+        searchUsed: meter === "searches" ? used : current?.usage.searchUsed ?? 0,
+        resetInDays: current?.usage.resetInDays ?? 30,
+      },
+    }));
+  }, []);
+
   useEffect(() => {
     void refreshBilling();
     const timer = window.setInterval(() => {
@@ -1147,6 +1187,7 @@ export function RunDemoSection() {
       const payload = await callAgent(text, "chat", activeAgent);
       applyAgentResponse(payload, activeAgent);
     } catch (error) {
+      syncBillingFromUpgradeError(error);
       const message = error instanceof Error ? error.message : "Agent reply failed.";
       setErrorMessage(message);
       if (/goal intake required/i.test(message)) {
@@ -1730,7 +1771,7 @@ export function RunDemoSection() {
               </div>
 
               <div className="rounded-t-[18px] border-t border-border bg-background px-3 py-3">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
+                <div className="flex flex-col gap-3">
                 <div className="min-w-0 flex-1">
                 <Input
                   value={chatInput}
@@ -1792,7 +1833,7 @@ export function RunDemoSection() {
                 </div>
                 </div>
                 {billing ? (
-                  <div className="w-full shrink-0 lg:max-w-[300px]">
+                  <div className="w-full">
                     <UsageMeter usage={billing.usage} currentPlan={billing.currentPlan} compact />
                   </div>
                 ) : null}
