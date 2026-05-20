@@ -228,12 +228,12 @@ function formatTs(value: string): string {
   if (!Number.isFinite(date.getTime())) {
     return "--";
   }
-  return date.toLocaleString([], {
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  const hh = String(date.getUTCHours()).padStart(2, "0");
+  const mm = String(date.getUTCMinutes()).padStart(2, "0");
+  return `${y}-${m}-${d} ${hh}:${mm} UTC`;
 }
 
 function confidenceToPercent(value: number): number {

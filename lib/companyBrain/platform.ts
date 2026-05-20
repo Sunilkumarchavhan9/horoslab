@@ -511,6 +511,18 @@ export function upsertSource(userId: string, input: {
 
 async function syncOneSource(userId: string, source: SourceConfig): Promise<number> {
   if (!source.enabled) return 0;
+  const needsOAuthToken =
+    source.type === "github"
+    || source.type === "notion"
+    || source.type === "slack"
+    || source.type === "gmail"
+    || source.type === "zendesk"
+    || source.type === "jira";
+  const accessToken = typeof source.config.accessToken === "string" ? source.config.accessToken : undefined;
+  if (needsOAuthToken && (!accessToken || accessToken.trim().length === 0)) {
+    audit(userId, "sync.skipped", `${source.type} skipped (missing access token)`);
+    return 0;
+  }
   if (
     source.type === "github"
     || source.type === "notion"
@@ -520,7 +532,6 @@ async function syncOneSource(userId: string, source: SourceConfig): Promise<numb
     || source.type === "zendesk"
     || source.type === "jira"
   ) {
-    const accessToken = typeof source.config.accessToken === "string" ? source.config.accessToken : undefined;
     const result = await ConnectorManager.triggerSync(userId, source.type as ConnectorType, accessToken);
     return result.extractedCount ?? 0;
   }
@@ -2647,6 +2658,8 @@ export function bootstrapCompanyBrainRuntime(defaultIntervalSeconds = 300): {
   restoredSchedulers: number;
   totalUsers: number;
 } {
+  const schedulerEnabledRaw = process.env.COMPANY_BRAIN_SCHEDULER_ENABLED?.trim().toLowerCase();
+  const schedulerEnabled = schedulerEnabledRaw !== "false" && schedulerEnabledRaw !== "0";
   const safeInterval = Math.max(30, Math.min(3600, Math.floor(defaultIntervalSeconds)));
   const store = readStore();
   const userIds = Object.keys(store.users);
@@ -2657,6 +2670,7 @@ export function bootstrapCompanyBrainRuntime(defaultIntervalSeconds = 300): {
     if (!state) continue;
     const hasEnabledSource = state.sources.some((source) => source.enabled);
     if (!hasEnabledSource) continue;
+    if (!schedulerEnabled) continue;
     const interval = state.scheduler.enabled ? state.scheduler.intervalSeconds : safeInterval;
     startScheduler(userId, interval);
     runtimeBootstrappedUsers.add(userId);

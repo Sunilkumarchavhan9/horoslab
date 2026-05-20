@@ -84,18 +84,6 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     category: "Recommended",
   },
   {
-    id: "notion",
-    name: "Notion",
-    purpose: "Product notes, specs, and team decisions",
-    description: "Docs, Specs, and Team decisions",
-    requiredPlan: "Pro",
-    status: "not_connected",
-    health: "offline",
-    records: 0,
-    lastSync: "Never",
-    category: "Knowledge Sources",
-  },
-  {
     id: "google-drive",
     name: "Google Drive",
     purpose: "Shared documents and project specs",
@@ -276,6 +264,7 @@ useEffect(() => {
 useEffect(() => {
   let cancelled = false;
   async function loadConnectors() {
+    if (cancelled) return;
     try {
       const token = await getOrCreateMemoryToken();
       if (!token) return;
@@ -287,41 +276,54 @@ useEffect(() => {
         cache: "no-store",
       });
 
-      if (response.ok) {
-        const { data } = (await response.json()) as {
-          data?: {
-            connectors?: Array<{
-              type: string;
-              status: ConnectorStatus;
-              recordCount: number;
-              lastSyncAt: string | null;
-            }>;
-          };
+      const payload = await response.json().catch(() => null) as {
+        data?: {
+          connectors?: Array<{
+            type: string;
+            status: ConnectorStatus;
+            recordCount: number;
+            lastSyncAt: string | null;
+          }>;
         };
-        const dbConnectors = data?.connectors || [];
+      } | null;
 
-        if (cancelled) return;
-        setConnectors((prev) =>
-          prev.map((c) => {
-            const dbMatch = dbConnectors.find((dbc) => dbc.type === c.id.replace("-", "_"));
-
-            if (dbMatch) {
-              return {
-                ...c,
-                status: dbMatch.status as ConnectorStatus,
-                records: dbMatch.recordCount,
-                lastSync: dbMatch.lastSyncAt
-                  ? new Date(dbMatch.lastSyncAt).toLocaleString()
-                  : "Never",
-              };
-            }
-
-            return c;
-          }),
-        );
+      if (!response.ok) {
+        return;
       }
+
+      const dbConnectors = payload?.data?.connectors || [];
+
+      if (cancelled) return;
+      setConnectors((prev) =>
+        prev.map((c) => {
+          const dbMatch = dbConnectors.find((dbc) => dbc.type === c.id.replace("-", "_"));
+
+          if (dbMatch) {
+            const allowed = canUseConnector(currentPlan, c.requiredPlan);
+            return {
+              ...c,
+              status: allowed ? (dbMatch.status as ConnectorStatus) : "not_connected",
+              records: dbMatch.recordCount,
+              lastSync: allowed
+                ? (dbMatch.lastSyncAt
+                    ? new Date(dbMatch.lastSyncAt).toLocaleString()
+                    : "Connected (not synced yet)")
+                : `Locked on ${currentPlan} plan`,
+            };
+          }
+
+          return c;
+        }),
+      );
     } catch (err) {
-      console.error("Failed to load real connectors:", err);
+      const message = err instanceof Error ? err.message.toLowerCase() : "";
+      const transient =
+        message.includes("failed to fetch") ||
+        message.includes("networkerror") ||
+        message.includes("network request failed");
+      if (!transient) {
+        console.error("Failed to load real connectors:", err);
+      }
     }
   }
 
@@ -333,7 +335,7 @@ useEffect(() => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [liveMemoryCount, realtimeTick]);
+}, [currentPlan, liveMemoryCount, realtimeTick]);
 
 useEffect(() => {
   let cancelled = false;
@@ -400,6 +402,8 @@ useEffect(() => {
 useEffect(() => {
   let stream: EventSource | null = null;
   let disposed = false;
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  let reconnectAttempts = 0;
 
   async function openStream() {
     try {
@@ -407,12 +411,22 @@ useEffect(() => {
       if (!token || disposed) return;
       const url = `/api/connector/events?token=${encodeURIComponent(token)}`;
       stream = new EventSource(url);
+      reconnectAttempts = 0;
       stream.onmessage = () => {
         if (disposed) return;
         setRealtimeTick((value) => value + 1);
       };
       stream.onerror = () => {
-        // Polling fallback remains active.
+        if (stream) {
+          stream.close();
+          stream = null;
+        }
+        if (disposed) return;
+        const nextDelay = Math.min(15000, 1000 * Math.max(1, reconnectAttempts + 1));
+        reconnectAttempts += 1;
+        reconnectTimer = setTimeout(() => {
+          void openStream();
+        }, nextDelay);
       };
     } catch {
       // Polling fallback remains active.
@@ -422,6 +436,7 @@ useEffect(() => {
   void openStream();
   return () => {
     disposed = true;
+    if (reconnectTimer) window.clearTimeout(reconnectTimer);
     if (stream) stream.close();
   };
 }, []);
@@ -494,7 +509,6 @@ async function connectConnector(connectorId: string) {
 
   const typeMap: Record<string, string> = {
     github: "github",
-    notion: "notion",
     "local-files": "local_files",
     "google-drive": "google_drive",
     onedrive: "onedrive",
@@ -591,7 +605,6 @@ async function connectConnector(connectorId: string) {
 
   if (
     type === "github"
-    || type === "notion"
     || type === "google_drive"
     || type === "onedrive"
     || type === "gmail"
@@ -1043,15 +1056,15 @@ function addActivity(message: string, status: string = "info") {
               </>
             ) : (
               <>
-                <h4 className="text-[18px] font-bold text-foreground mb-2">Configure Notion</h4>
+                <h4 className="text-[18px] font-bold text-foreground mb-2">Run GitHub Sync</h4>
                 <p className="text-[13px] text-muted-foreground leading-relaxed mb-6">
-                  Connect Notion to give your agents access to product specs, meeting notes, and team decisions.
+                  GitHub is connected. Run sync to refresh PRs, issues, commits, and decisions into MemoryOS.
                 </p>
-                <button 
-                  onClick={() => connectConnector("notion")}
+                <button
+                  onClick={() => connectConnector("github")}
                   className="w-full rounded-[4px] bg-chart-5 py-2 text-[12px] font-bold text-background hover:bg-chart-5/90 transition-colors"
                 >
-                  Connect Notion
+                  Sync GitHub Now
                 </button>
               </>
             )}

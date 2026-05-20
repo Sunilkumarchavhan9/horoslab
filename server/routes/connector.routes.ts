@@ -2,7 +2,6 @@ import { Router, type Response as ExpressResponse } from "express";
 import jwt from "jsonwebtoken";
 import { ConnectorManager, type ConnectorType } from "../../lib/integrations/connectorManager";
 import { GitHubClient } from "../../lib/integrations/github";
-import { NotionClient } from "../../lib/integrations/notion";
 import { GoogleClient } from "../../lib/integrations/google";
 import { MicrosoftClient } from "../../lib/integrations/microsoft";
 import { GmailClient } from "../../lib/integrations/gmail";
@@ -32,7 +31,6 @@ type ConnectorRealtimeEvent = {
 const CONNECTOR_STREAMS = new Map<string, Set<ExpressResponse>>();
 const PREMIUM_CONNECTORS = new Set<ConnectorType>([
   "github",
-  "notion",
   "google_drive",
   "onedrive",
   "gmail",
@@ -109,6 +107,26 @@ async function isConnectorAllowedByPlan(userId: string, type: ConnectorType): Pr
   return plan !== "Free";
 }
 
+async function maskConnectorByPlan(
+  userId: string,
+  connector: {
+    type: string;
+    status: string;
+    configJson: string | null;
+  } & Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  const typed = connector.type as ConnectorType;
+  const allowed = await isConnectorAllowedByPlan(userId, typed);
+  if (allowed) {
+    return connector;
+  }
+  return {
+    ...connector,
+    status: "not_connected",
+    configJson: JSON.stringify({ lockedByPlan: true }),
+  };
+}
+
 
 /**
  * List all connectors for the current user.
@@ -177,8 +195,17 @@ connectorRouter.get(
       const connectors = await prisma.connector.findMany({
         where: { userId: req.authUserId },
       });
+      const visibleConnectors = connectors.filter((connector) => connector.type !== "notion");
+      const planAwareConnectors = await Promise.all(
+        visibleConnectors.map((connector) => maskConnectorByPlan(req.authUserId, connector)),
+      );
       dbUnavailableUntil = 0;
-      sendApiSuccess(res, 200, { connectors, backendAvailable: true }, buildApiMeta(req, startedAt));
+      sendApiSuccess(
+        res,
+        200,
+        { connectors: planAwareConnectors, backendAvailable: true },
+        buildApiMeta(req, startedAt),
+      );
     } catch (error) {
       if (isDbUnavailableError(error)) {
         markDbUnavailableNow();
@@ -233,18 +260,20 @@ connectorRouter.get(
         where: { userId: req.authUserId },
       });
       dbUnavailableUntil = 0;
-      const diagnostics = connectors.map((connector) => {
+      const visibleConnectors = connectors.filter((connector) => connector.type !== "notion");
+      const diagnostics = await Promise.all(visibleConnectors.map(async (connector) => {
+        const allowed = await isConnectorAllowedByPlan(req.authUserId, connector.type as ConnectorType);
         const config = connector.configJson ? JSON.parse(connector.configJson) : {};
         return {
           type: connector.type,
-          status: connector.status,
+          status: allowed ? connector.status : "not_connected",
           auth: {
-            configured: Boolean(config.accessToken || connector.type === "local_files"),
+            configured: allowed && Boolean(config.accessToken || connector.type === "local_files"),
             mode: connector.type === "local_files" ? "workspace" : "oauth2",
           },
           transport: {
             protocol: connector.type === "local_files" ? "filesystem" : "https",
-            healthy: connector.status === "connected" || connector.status === "syncing",
+            healthy: allowed && (connector.status === "connected" || connector.status === "syncing"),
           },
           retry: {
             enabled: true,
@@ -262,16 +291,19 @@ connectorRouter.get(
               typeof config.lastCheckpointEpochMs === "number" ? config.lastCheckpointEpochMs : null,
           },
           tokens: {
-            hasRefreshToken: typeof config.refreshToken === "string" && config.refreshToken.length > 0,
-            lastTokenRefreshAt: typeof config.lastTokenRefreshAt === "string" ? config.lastTokenRefreshAt : null,
-            hasAccessToken: typeof config.accessToken === "string" && config.accessToken.length > 0,
+            hasRefreshToken:
+              allowed && typeof config.refreshToken === "string" && config.refreshToken.length > 0,
+            lastTokenRefreshAt:
+              allowed && typeof config.lastTokenRefreshAt === "string" ? config.lastTokenRefreshAt : null,
+            hasAccessToken:
+              allowed && typeof config.accessToken === "string" && config.accessToken.length > 0,
           },
           safety: {
             mcpSafeMetadata: true,
             policyCompatible: true,
           },
         };
-      });
+      }));
       sendApiSuccess(
         res,
         200,
@@ -311,6 +343,13 @@ connectorRouter.get(
     const { type } = req.params;
     const userId = req.authUserId;
     const startedAt = Date.now();
+    if (type === "notion") {
+      sendApiError(res, 410, {
+        code: "CONNECTOR_DISABLED",
+        message: "Notion connector is currently disabled.",
+      }, buildApiMeta(req, startedAt));
+      return;
+    }
     const typed = type as ConnectorType;
     const bypassPlanGate = typed === "github";
     if (!bypassPlanGate && !(await isConnectorAllowedByPlan(userId, typed))) {
@@ -337,10 +376,6 @@ connectorRouter.get(
     if (type === "github") {
       authorizeUrl = process.env.GITHUB_CLIENT_ID 
         ? GitHubClient.getAuthorizeUrl(state) 
-        : getMockCallbackUrl();
-    } else if (type === "notion") {
-      authorizeUrl = process.env.NOTION_CLIENT_ID 
-        ? NotionClient.getAuthorizeUrl(state) 
         : getMockCallbackUrl();
     } else if (type === "google_drive") {
       authorizeUrl = process.env.GOOGLE_CLIENT_ID 
@@ -395,6 +430,10 @@ connectorRouter.get(
       // 1. Verify state
       const decoded = jwt.verify(state, STATE_SECRET) as { userId: string; type: string };
       const { userId, type } = decoded;
+      if (type === "notion") {
+        res.status(410).send("Notion connector is currently disabled.");
+        return;
+      }
 
       let accessToken = "";
       let googleRefreshToken: string | undefined;
@@ -402,8 +441,6 @@ connectorRouter.get(
         accessToken = `mock_token_${type}_${Date.now()}`;
       } else if (type === "github") {
         accessToken = await GitHubClient.getAccessToken(code);
-      } else if (type === "notion") {
-        accessToken = await NotionClient.getAccessToken(code);
       } else if (type === "google_drive") {
         const tokens = await GoogleClient.getAccessToken(code);
         accessToken = tokens.accessToken;
@@ -524,6 +561,13 @@ connectorRouter.post(
     const type = toSingleString(req.params.type);
     const userId = req.authUserId;
     const startedAt = Date.now();
+    if (type === "notion") {
+      sendApiError(res, 410, {
+        code: "CONNECTOR_DISABLED",
+        message: "Notion connector is currently disabled.",
+      }, buildApiMeta(req, startedAt));
+      return;
+    }
     const connectorId = `${userId}_${type}`;
 
     const connector = await prisma.connector.findUnique({
@@ -580,6 +624,13 @@ connectorRouter.post(
     const type = toSingleString(req.params.type);
     const userId = req.authUserId;
     const startedAt = Date.now();
+    if (type === "notion") {
+      sendApiError(res, 410, {
+        code: "CONNECTOR_DISABLED",
+        message: "Notion connector is currently disabled.",
+      }, buildApiMeta(req, startedAt));
+      return;
+    }
     const typed = type as ConnectorType;
     const bypassPlanGate = typed === "github";
     if (!bypassPlanGate && !(await isConnectorAllowedByPlan(userId, typed))) {

@@ -9,6 +9,18 @@ export function DatadogRumInit() {
     const applicationId = process.env.NEXT_PUBLIC_DD_APPLICATION_ID;
 
     if (!clientToken || !applicationId) return;
+    if (typeof window === "undefined") return;
+
+    const rumWindow = window as typeof window & { __MEMORYOS_DD_RUM_INITIALIZED__?: boolean };
+    if (rumWindow.__MEMORYOS_DD_RUM_INITIALIZED__) return;
+    try {
+      if (datadogRum.getInitConfiguration()) {
+        rumWindow.__MEMORYOS_DD_RUM_INITIALIZED__ = true;
+        return;
+      }
+    } catch {
+      // Continue to init when SDK does not expose current state.
+    }
 
     datadogRum.init({
       applicationId,
@@ -24,8 +36,8 @@ export function DatadogRumInit() {
       trackLongTasks: true,
       defaultPrivacyLevel: "mask-user-input",
     });
+    rumWindow.__MEMORYOS_DD_RUM_INITIALIZED__ = true;
   }, []);
 
   return null;
 }
-
