@@ -531,6 +531,13 @@ async function connectConnector(connectorId: string) {
     try {
       const token = await getOrCreateMemoryToken();
       if (!token) throw new Error("Missing auth token");
+      setConnectors((current) =>
+        current.map((connector) =>
+          connector.id === connectorId
+            ? { ...connector, status: "syncing" as const, health: "good" }
+            : connector,
+        ),
+      );
       const response = await fetch(`/api/connector/${type}/sync`, {
         method: "POST",
         headers: {
@@ -538,11 +545,12 @@ async function connectConnector(connectorId: string) {
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json().catch(() => null) as { data?: { extractedCount?: number } } | null;
+      const data = await response.json().catch(() => null) as { data?: { extractedCount?: number; message?: string } } | null;
       if (!response.ok) {
         throw new Error("Sync failed");
       }
       const extractedCount = data?.data?.extractedCount ?? 0;
+      const queued = response.status === 202 || Boolean(data?.data?.message);
       setConnectors((current) =>
         current.map((connector) =>
           connector.id === connectorId
@@ -556,8 +564,20 @@ async function connectConnector(connectorId: string) {
             : connector,
         ),
       );
-      addActivity(`${connectorMeta.name} synced ${extractedCount} memories`, "success");
+      addActivity(
+        queued
+          ? `${connectorMeta.name} sync queued`
+          : `${connectorMeta.name} synced ${extractedCount} memories`,
+        "success",
+      );
     } catch (error) {
+      setConnectors((current) =>
+        current.map((connector) =>
+          connector.id === connectorId
+            ? { ...connector, status: "connected" as const, health: "watch" }
+            : connector,
+        ),
+      );
       addActivity(error instanceof Error ? error.message : `Failed to sync ${connectorMeta.name}`, "error");
     }
     return;
@@ -703,8 +723,8 @@ async function connectConnector(connectorId: string) {
         connector.id === connectorId
           ? {
               ...connector,
-              status: "not_connected",
-              health: "error",
+              status: connector.status === "syncing" ? "connected" : "not_connected",
+              health: connector.status === "syncing" ? "watch" : "error",
             }
           : connector,
       ),
