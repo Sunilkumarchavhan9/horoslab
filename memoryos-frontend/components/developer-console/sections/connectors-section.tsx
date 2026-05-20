@@ -237,9 +237,10 @@ export function ConnectorsSection({
   const [currentPlan, setCurrentPlan] = useState<BillingPlan>("Free");
   const [realtimeTick, setRealtimeTick] = useState(0);
 
-  const connectedCount = connectors.filter((connector) => connector.status === "connected").length;
+  const connectedCount = connectors.filter((connector) => connector.status === "connected" || connector.status === "syncing").length;
   const totalRecords = liveMemoryCount + internalRecords;
-  const githubConnected = connectors.find((c) => c.id === "github")?.status === "connected";
+  const githubStatus = connectors.find((c) => c.id === "github")?.status;
+  const githubConnected = githubStatus === "connected" || githubStatus === "syncing";
 // Simulation Engine removed for real implementation
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -520,6 +521,11 @@ async function connectConnector(connectorId: string) {
 
   const type = typeMap[connectorId];
   if (!type) return;
+
+  if (connectorMeta.status === "syncing") {
+    addActivity(`${connectorMeta.name} sync already in progress`, "info");
+    return;
+  }
 
   if (connectorMeta.status === "connected") {
     try {
@@ -971,8 +977,8 @@ function addActivity(message: string, status: string = "info") {
                       <div className="space-y-3">
                         <div className="flex justify-between items-center text-[11px]">
                           <span className="text-muted-foreground uppercase tracking-wider">Status</span>
-                          <span className={`font-medium ${connector.status === "connected" ? "text-chart-2" : "text-muted-foreground"}`}>
-                            {connector.status === "connected" ? "Active" : "Not connected"}
+                          <span className={`font-medium ${(connector.status === "connected" || connector.status === "syncing") ? "text-chart-2" : "text-muted-foreground"}`}>
+                            {connector.status === "syncing" ? "Syncing" : connector.status === "connected" ? "Active" : "Not connected"}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-[11px]">
@@ -992,13 +998,14 @@ function addActivity(message: string, status: string = "info") {
                             >
                               {nextUpgradeLabel(currentPlan, connector.requiredPlan)}
                             </button>
-                          ) : connector.status === "connected" ? (
+                          ) : (connector.status === "connected" || connector.status === "syncing") ? (
                             <>
                               <button 
                                 onClick={() => void connectConnector(connector.id)}
-                                className="flex-1 rounded-[4px] bg-muted border border-border py-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground hover:bg-muted transition-colors"
+                                disabled={connector.status === "syncing"}
+                                className="flex-1 rounded-[4px] bg-muted border border-border py-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground hover:bg-muted transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                               >
-                                Sync Now
+                                {connector.status === "syncing" ? "Syncing..." : "Sync Now"}
                               </button>
                               <button 
                                 onClick={() => disconnectConnector(connector.id)}
@@ -1062,9 +1069,10 @@ function addActivity(message: string, status: string = "info") {
                 </p>
                 <button
                   onClick={() => connectConnector("github")}
-                  className="w-full rounded-[4px] bg-chart-5 py-2 text-[12px] font-bold text-background hover:bg-chart-5/90 transition-colors"
+                  disabled={githubStatus === "syncing"}
+                  className="w-full rounded-[4px] bg-chart-5 py-2 text-[12px] font-bold text-background hover:bg-chart-5/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Sync GitHub Now
+                  {githubStatus === "syncing" ? "GitHub Syncing..." : "Sync GitHub Now"}
                 </button>
               </>
             )}

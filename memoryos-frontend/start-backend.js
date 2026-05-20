@@ -15,15 +15,8 @@ const path = require("node:path");
 
 const rootDir = path.resolve(__dirname, "..");
 const isWin = process.platform === "win32";
-
-// tsx binary from the root's node_modules.
-const tsxBin = path.join(rootDir, "node_modules", ".bin", "tsx");
-const entry = path.join(rootDir, "server", "index.ts");
-
-// On Windows, .cmd shims in node_modules/.bin cannot be spawned directly.
-// Use cmd /c as the executable and pass the tsx path + entry as arguments;
-// that avoids the DEP0190 "shell: true with args" deprecation warning.
-const [cmd, args] = isWin ? ["cmd", ["/c", tsxBin, entry]] : [tsxBin, [entry]];
+const cmd = isWin ? "cmd" : "npm";
+const args = isWin ? ["/c", "npm", "run", "dev"] : ["run", "dev"];
 
 const proc = spawn(cmd, args, {
   cwd: rootDir, // <-- critical: dotenv reads .env relative to this

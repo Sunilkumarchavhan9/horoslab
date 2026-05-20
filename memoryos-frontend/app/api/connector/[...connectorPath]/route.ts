@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 type ConnectorRouteContext = {
   params: Promise<{ connectorPath?: string[] }>;
@@ -51,7 +52,7 @@ export async function DELETE(
 }
 
 async function proxyRequest(request: NextRequest, pathArray: string[]) {
-  const backendUrl = process.env.MEMORYOS_API_ORIGIN || "http://localhost:3001";
+  const backendUrl = resolveBackendOrigin();
   
   // pathArray might be something like ['callback'] or ['notion', 'authorize']
   const targetPath = `/api/connector/${pathArray.join("/")}`;
