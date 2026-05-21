@@ -38,8 +38,7 @@ import { SettingsSection } from "@/components/developer-console/sections/setting
 import { TeamSection } from "@/components/developer-console/sections/team-section";
 import { CompanyBrainSection } from "@/components/developer-console/sections/company-brain-section";
 import { Icon, type IconName } from "@/components/ui/icon";
-import { ConsoleNavSearch } from "@/components/developer-console/console-ui";
-import { Badge } from "@/components/ui/badge";
+import { Badge, ConsoleNavSearch } from "@/components/developer-console/console-ui";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -510,7 +509,7 @@ function previousWizardStep(step: WizardStep, entryPath: EntryPath) {
 
 function IconBadge({ label }: { label: string }) {
   return (
-    <div className="grid h-11 w-11 place-items-center rounded-lg border-transparent bg-background text-[13px] font-semibold tracking-[0.08em] text-foreground/90">
+    <div className="grid h-11 w-11 place-items-center rounded-lg border-transparent bg-background text-sm font-semibold tracking-wider text-foreground/90">
       {label}
     </div>
   );
@@ -596,7 +595,7 @@ function HoverGlitchAsciiBackground() {
       }
     >
       <div className="absolute inset-0 bg-background" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.03),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_40%,rgba(255,255,255,0.01))]" />
+      <div className="absolute inset-0 bg-muted/30" />
       <div className="glitch-reveal absolute inset-0">
         <div className="glitch-halo absolute inset-0" />
         <div className="glitch-layer glitch-layer-a">
@@ -616,16 +615,16 @@ function HoverGlitchAsciiBackground() {
           opacity: 1;
           -webkit-mask-image: radial-gradient(
             circle var(--cursor-r) at var(--cursor-x) var(--cursor-y),
-            rgba(0, 0, 0, 1) 0%,
-            rgba(0, 0, 0, 0.92) 42%,
-            rgba(0, 0, 0, 0.18) 66%,
+            var(--foreground) 0%,
+            color-mix(in oklch, var(--foreground) 92%, transparent) 42%,
+            color-mix(in oklch, var(--foreground) 18%, transparent) 66%,
             transparent 78%
           );
           mask-image: radial-gradient(
             circle var(--cursor-r) at var(--cursor-x) var(--cursor-y),
-            rgba(0, 0, 0, 1) 0%,
-            rgba(0, 0, 0, 0.92) 42%,
-            rgba(0, 0, 0, 0.18) 66%,
+            var(--foreground) 0%,
+            color-mix(in oklch, var(--foreground) 92%, transparent) 42%,
+            color-mix(in oklch, var(--foreground) 18%, transparent) 66%,
             transparent 78%
           );
         }
@@ -634,13 +633,13 @@ function HoverGlitchAsciiBackground() {
           background:
             radial-gradient(
               circle at var(--cursor-x) var(--cursor-y),
-              rgba(255, 255, 255, 0.14),
-              rgba(255, 255, 255, 0.03) 42%,
+              color-mix(in oklch, var(--foreground) 14%, transparent),
+              color-mix(in oklch, var(--foreground) 3%, transparent) 42%,
               transparent 72%
             ),
             radial-gradient(
               circle at var(--cursor-x) var(--cursor-y),
-              rgba(114, 164, 255, 0.16),
+              color-mix(in oklch, var(--primary) 16%, transparent),
               transparent 58%
             );
           filter: blur(18px);
@@ -650,7 +649,7 @@ function HoverGlitchAsciiBackground() {
           position: absolute;
           inset: -6%;
           overflow: hidden;
-          color: rgba(255, 255, 255, 0.92);
+          color: color-mix(in oklch, var(--foreground) 92%, transparent);
           white-space: pre;
           font-family:
             "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -658,8 +657,8 @@ function HoverGlitchAsciiBackground() {
           line-height: 1.4;
           letter-spacing: 0.16em;
           text-shadow:
-            0 0 8px rgba(255, 255, 255, 0.16),
-            0 0 20px rgba(255, 255, 255, 0.08);
+            0 0 8px color-mix(in oklch, var(--foreground) 16%, transparent),
+            0 0 20px color-mix(in oklch, var(--foreground) 8%, transparent);
           opacity: var(--glitch-flicker);
         }
 
@@ -673,15 +672,15 @@ function HoverGlitchAsciiBackground() {
           opacity: calc(var(--glitch-flicker) * 0.95);
           -webkit-mask-image: repeating-linear-gradient(
             180deg,
-            black 0 12px,
+            var(--foreground) 0 12px,
             transparent 12px 16px,
-            black 16px 28px
+            var(--foreground) 16px 28px
           );
           mask-image: repeating-linear-gradient(
             180deg,
-            black 0 12px,
+            var(--foreground) 0 12px,
             transparent 12px 16px,
-            black 16px 28px
+            var(--foreground) 16px 28px
           );
         }
 
@@ -692,16 +691,16 @@ function HoverGlitchAsciiBackground() {
           -webkit-mask-image: repeating-linear-gradient(
             180deg,
             transparent 0 6px,
-            black 6px 15px,
+            var(--foreground) 6px 15px,
             transparent 15px 19px,
-            black 19px 30px
+            var(--foreground) 19px 30px
           );
           mask-image: repeating-linear-gradient(
             180deg,
             transparent 0 6px,
-            black 6px 15px,
+            var(--foreground) 6px 15px,
             transparent 15px 19px,
-            black 19px 30px
+            var(--foreground) 19px 30px
           );
         }
 
@@ -715,13 +714,13 @@ function HoverGlitchAsciiBackground() {
           background:
             repeating-linear-gradient(
               180deg,
-              rgba(255, 255, 255, 0.04) 0 1px,
+              color-mix(in oklch, var(--foreground) 4%, transparent) 0 1px,
               transparent 1px 8px
             ),
             linear-gradient(
               90deg,
               transparent,
-              rgba(255, 255, 255, 0.05),
+              color-mix(in oklch, var(--foreground) 5%, transparent),
               transparent
             );
           mix-blend-mode: screen;
@@ -745,26 +744,26 @@ function ProgressHeader({
 
   return (
     <header className="border-b border-transparent">
-      <div className="mx-auto flex w-full max-w-[1440px] items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0">
-          <MemoryStarLogo tone="white" />
+          <MemoryStarLogo tone="black" />
         </Link>
-        <div className="mx-auto hidden w-full max-w-[410px] items-center gap-3 sm:flex">
-          <div className="h-1.5 flex-1 rounded-full bg-white/12">
+        <div className="mx-auto hidden w-full max-w-md items-center gap-3 sm:flex">
+          <div className="h-1.5 flex-1 rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-primary transition-[width] duration-300"
+              className="h-full rounded-full bg-primary transition-all duration-300"
               style={{ width: progress }}
             />
           </div>
         </div>
-        <div className="ml-auto text-[13px] font-medium tracking-[0.14em] text-foreground">
+        <div className="ml-auto text-sm font-medium tracking-widest text-foreground">
           {currentStep}/{totalSteps}
         </div>
       </div>
       <div className="px-4 pb-4 sm:hidden">
-        <div className="h-1.5 rounded-full bg-white/12">
+        <div className="h-1.5 rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-primary transition-[width] duration-300"
+            className="h-full rounded-full bg-primary transition-all duration-300"
             style={{ width: progress }}
           />
         </div>
@@ -1928,11 +1927,11 @@ export function DeveloperConsoleExperience() {
 
     return (
       <>
-        <h1 className="text-[22px] font-semibold tracking-[-0.05em]">
+        <h1 className="text-xl font-semibold tracking-tighter">
             {item}
         </h1>
-        <div className="mt-4 rounded-[10px] border border-dashed border-transparent bg-background px-6 py-8">
-          <p className="text-[15px] leading-7 text-muted-foreground">
+        <div className="mt-4 rounded-lg border border-dashed border-transparent bg-background px-6 py-8">
+          <p className="text-sm leading-7 text-muted-foreground">
             {item} is next in the console buildout. We&apos;ve
             wired the navigation now, and this section can be filled with
             MemoryOS-specific workflows after the live data surfaces are stable.
@@ -1970,16 +1969,15 @@ export function DeveloperConsoleExperience() {
     organizations.length > 0
   ) {
     return (
-      <div className="developer-console-root dark relative min-h-svh overflow-hidden bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
-        <HoverGlitchAsciiBackground />
-        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-80px)] max-w-[760px] flex-col items-center justify-center">
+      <div className="developer-console-root relative min-h-svh overflow-hidden bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center">
           <div className="mb-8">
-            <MemoryStarLogo tone="white" />
+            <MemoryStarLogo tone="black" />
           </div>
-          <h1 className="text-center text-[34px] font-semibold tracking-[-0.05em] sm:text-[44px]">
+          <h1 className="text-center text-4xl font-semibold tracking-tighter sm:text-5xl">
             Select an organization
           </h1>
-          <p className="mt-3 text-center text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+          <p className="mt-3 text-center text-base leading-7 text-muted-foreground sm:text-lg">
             Choose which organization you&apos;d like to work with.
           </p>
 
@@ -1989,23 +1987,23 @@ export function DeveloperConsoleExperience() {
                 key={organization.id}
                 type="button"
                 onClick={() => selectOrganization(organization.id)}
-                className="flex w-full items-center justify-between gap-4 rounded-[8px] border-transparent bg-background px-5 py-5 text-left transition hover:border-border hover:bg-muted"
+                className="flex w-full items-center justify-between gap-4 rounded-md border-transparent bg-background px-5 py-5 text-left transition hover:border-border hover:bg-muted"
               >
                 <div className="flex items-center gap-4">
-                  <div className="grid h-12 w-12 place-items-center rounded-[8px] bg-primary text-[22px] font-semibold">
+                  <div className="grid h-12 w-12 place-items-center rounded-md bg-primary text-xl font-semibold">
                     {organization.name.slice(0, 1).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-[26px] font-semibold tracking-[-0.04em]">
+                    <p className="text-2xl font-semibold tracking-tighter">
                       {organization.name}
                     </p>
-                    <p className="mt-1 text-[15px] text-muted-foreground">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       {organization.connectors} data sources ·{" "}
                       {organization.docs} docs · {organization.tags} tags
                     </p>
                   </div>
                 </div>
-                <span className="rounded-[6px] bg-secondary px-3 py-2 font-mono text-[13px] text-muted-foreground">
+                <span className="rounded-md bg-secondary px-3 py-2 font-mono text-sm text-muted-foreground">
                   {organization.plan}
                 </span>
               </button>
@@ -2015,7 +2013,7 @@ export function DeveloperConsoleExperience() {
           <button
             type="button"
             onClick={startNewOrganization}
-            className="mt-10 rounded-[8px] border-transparent px-6 py-4 text-[18px] font-medium tracking-[0.06em] text-foreground transition hover:border-border hover:bg-transparent hover:text-foreground transition-colors duration-200"
+            className="mt-10 rounded-md border-transparent px-6 py-4 text-lg font-medium tracking-wide text-foreground transition hover:border-border hover:bg-transparent hover:text-foreground transition-colors duration-200"
           >
             + CREATE NEW ORGANIZATION
           </button>
@@ -2026,11 +2024,11 @@ export function DeveloperConsoleExperience() {
 
   if (step === "dashboard") {
     return (
-      <div className="developer-console-root dark h-dvh overflow-hidden bg-background text-foreground lg:grid lg:grid-cols-[260px_1fr]">
-        <aside className="flex flex-col overflow-hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground lg:h-dvh lg:border-b-0 lg:border-r">
+      <div className="developer-console-root h-dvh overflow-hidden bg-background text-foreground lg:flex">
+        <aside className="flex flex-col overflow-hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground lg:h-dvh lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
           <div className="flex items-center border-b border-sidebar-border px-4 py-4">
-            <Link href="/" className="block w-full max-w-[200px]">
-              <MemoryStarLogo tone="white" />
+            <Link href="/" className="block w-full max-w-xs">
+              <MemoryStarLogo tone="black" />
             </Link>
           </div>
 
@@ -2046,7 +2044,7 @@ export function DeveloperConsoleExperience() {
             {filteredDashboardNav.map((group) => (
               <div key={group.section || "main"}>
                 {group.section ? (
-                  <p className="mb-1.5 px-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+                  <p className="mb-1.5 px-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     {group.section}
                   </p>
                 ) : null}
@@ -2056,9 +2054,9 @@ export function DeveloperConsoleExperience() {
                       key={item}
                       type="button"
                       onClick={() => setActiveDashboardItem(item)}
-                      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] font-medium transition-colors ${
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-colors ${
                         item === activeDashboardItem
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
                           : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                       }`}
                       title={item}
@@ -2076,10 +2074,10 @@ export function DeveloperConsoleExperience() {
           </nav>
         </aside>
 
-        <main className="flex min-w-0 flex-col overflow-hidden bg-background text-foreground">
-          <div className="border-b border-border/80 bg-background/80 px-4 py-3 backdrop-blur-sm sm:px-5 lg:px-6">
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
+          <div className="relative z-40 overflow-visible border-b border-border/80 bg-background px-4 py-3 sm:px-5 lg:px-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="relative">
+              <div className="relative z-50">
                 <Button
                   type="button"
                   variant="ghost"
@@ -2092,7 +2090,7 @@ export function DeveloperConsoleExperience() {
                   <span className="text-base font-semibold tracking-tight">
                     {currentOrganization?.name ?? "MemoryOS"}
                   </span>
-                  <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-[10px] font-medium normal-case">
+                  <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-xs font-medium normal-case">
                     Free
                   </Badge>
                   <svg
@@ -2111,7 +2109,7 @@ export function DeveloperConsoleExperience() {
                 </Button>
 
                 {showOrganizationMenu ? (
-                  <div className="absolute left-0 top-[calc(100%+8px)] z-20 w-[336px] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl">
+                  <div className="absolute left-0 top-full mt-2 z-50 w-80 overflow-hidden rounded-none border border-transparent bg-popover text-popover-foreground">
                     {organizations.map((organization) => (
                       <button
                         key={organization.id}
@@ -2120,14 +2118,14 @@ export function DeveloperConsoleExperience() {
                         className="flex w-full items-center justify-between gap-4 border-b border-border px-4 py-4 text-left transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-[14px] font-semibold text-secondary-foreground">
+                          <div className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
                             {organization.name.slice(0, 1).toUpperCase()}
                           </div>
                           <div>
-                            <p className="text-[17px] font-semibold">
+                            <p className="text-base font-semibold">
                               {organization.name}
                             </p>
-                            <p className="text-[13px] text-muted-foreground">Free</p>
+                            <p className="text-sm text-muted-foreground">Free</p>
                           </div>
                         </div>
                         {organization.id === currentOrganizationId ? (
@@ -2138,9 +2136,9 @@ export function DeveloperConsoleExperience() {
                     <button
                       type="button"
                       onClick={startNewOrganization}
-                      className="flex w-full items-center gap-3 px-4 py-4 text-left text-[16px] font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
+                      className="flex w-full items-center gap-3 px-4 py-4 text-left text-base font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                     >
-                      <span className="text-[22px] leading-none">+</span>
+                      <span className="text-xl leading-none">+</span>
                       Create organization
                     </button>
                   </div>
@@ -2160,7 +2158,7 @@ export function DeveloperConsoleExperience() {
                 >
                   Support
                 </Button>
-                <div className="relative">
+                <div className="relative z-50">
                   <Button
                     type="button"
                     variant="secondary"
@@ -2175,19 +2173,19 @@ export function DeveloperConsoleExperience() {
                   </Button>
                   {showAccountMenu ? (
                     <div
-                      className={`absolute right-0 top-[calc(100%+10px)] z-20 w-[296px] rounded-[8px] border shadow-lg ${
+                      className={`absolute right-0 top-full mt-2 z-50 w-72 rounded-none border ${
                         isLightTheme
-                          ? "border-black/10 bg-white text-foreground"
-                          : "border-border bg-popover text-popover-foreground"
+                          ? "border-transparent bg-popover text-popover-foreground"
+                          : "border-transparent bg-popover text-popover-foreground"
                       } isolate`}
                     >
                       <div className="relative z-10 border-b border-border px-4 py-4">
-                        <p className="truncate text-[22px] font-semibold">
+                        <p className="truncate text-xl font-semibold">
                           {userDisplayName}
                         </p>
                         <p
-                          className={`mt-1 truncate text-[14px] ${
-                            isLightTheme ? "text-black/45" : "text-muted-foreground"
+                          className={`mt-1 truncate text-sm ${
+                            isLightTheme ? "text-muted-foreground" : "text-muted-foreground"
                           }`}
                         >
                           {userEmail}
@@ -2199,14 +2197,14 @@ export function DeveloperConsoleExperience() {
                           setActiveDashboardItem("Settings");
                           setShowAccountMenu(false);
                         }}
-                        className="flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left text-[16px] font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
+                        className="flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left text-base font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
                         Account settings
                       </button>
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="flex w-full items-center gap-3 px-4 py-4 text-left text-[16px] font-medium text-destructive transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
+                        className="flex w-full items-center gap-3 px-4 py-4 text-left text-base font-medium text-destructive transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
                       >
                         Sign out
                       </button>
@@ -2217,8 +2215,8 @@ export function DeveloperConsoleExperience() {
             </div>
           </div>
 
-          <div className="memoryos-console-scroll min-h-0 flex-1 overflow-y-auto bg-background px-4 py-4 sm:px-5 lg:px-6">
-            <div className="developer-console-sections mx-auto w-full max-w-[1360px] bg-background">
+          <div className="memoryos-console-scroll relative z-0 min-h-0 flex-1 overflow-y-auto bg-background px-4 py-4 sm:px-5 lg:px-6">
+            <div className="developer-console-sections mx-auto w-full max-w-7xl bg-background">
               {mountedDashboardItems.map((item) => (
                 <div key={item} className={item === activeDashboardItem ? "block" : "hidden"}>
                   {renderDashboardMain(item)}
@@ -2229,20 +2227,20 @@ export function DeveloperConsoleExperience() {
         </main>
 
         {showSupportWidget ? (
-          <div className="fixed bottom-5 right-5 z-30 w-[min(560px,calc(100vw-24px))] overflow-hidden rounded-[8px] border border-border bg-card shadow-2xl shadow-black/30 dark:shadow-black/50">
+          <div className="fixed bottom-5 right-5 z-30 w-full max-w-xl overflow-hidden rounded-md border border-border bg-card">
             {!showSupportComposer ? (
               <div className="p-7 sm:p-8">
                 <button
                   type="button"
                   onClick={() => setShowSupportWidget(false)}
-                  className="absolute right-5 top-4 text-[28px] leading-none text-muted-foreground transition hover:text-foreground"
+                  className="absolute right-5 top-4 text-3xl leading-none text-muted-foreground transition hover:text-foreground"
                 >
                   ×
                 </button>
                 <div className="grid h-16 w-16 place-items-center ">
-                  <MemoryStarLogo tone="white" />
+                  <MemoryStarLogo tone="black" />
                 </div>
-                <h3 className="mt-9 text-balance text-[44px] font-semibold leading-[1.02] tracking-[-0.045em]">
+                <h3 className="mt-9 text-balance text-5xl font-semibold leading-tight tracking-tighter">
                   Hey {currentOrganization?.name ?? "there"}
                   <br />
                   How can we help?
@@ -2253,7 +2251,7 @@ export function DeveloperConsoleExperience() {
                     setActiveDashboardItem("Integrations");
                     setShowSupportWidget(false);
                   }}
-                  className="mt-8 text-[20px] font-medium text-foreground transition hover:text-foreground"
+                  className="mt-8 text-xl font-medium text-foreground transition hover:text-foreground"
                 >
                   View documentation
                 </button>
@@ -2264,11 +2262,11 @@ export function DeveloperConsoleExperience() {
                     setSupportErrorMessage(null);
                     setShowSupportComposer(true);
                   }}
-                  className="mt-8 flex h-20 w-full items-center rounded-[8px] border border-primary/50 bg-primary/15 px-6 text-[22px] font-medium text-foreground transition hover:bg-primary/20"
+                  className="mt-8 flex h-20 w-full items-center rounded-md border border-primary/50 bg-primary/15 px-6 text-xl font-medium text-foreground transition hover:bg-primary/20"
                 >
                   Start a conversation
                 </button>
-                <p className="mt-3 text-center text-[14px] text-muted-foreground">
+                <p className="mt-3 text-center text-sm text-muted-foreground">
                   Powered by  memoryOS support system
                 </p>
               </div>
@@ -2282,11 +2280,11 @@ export function DeveloperConsoleExperience() {
                       setSupportErrorMessage(null);
                       setShowSupportComposer(false);
                     }}
-                    className="text-[28px] text-muted-foreground transition hover:text-foreground"
+                    className="text-3xl text-muted-foreground transition hover:text-foreground"
                   >
                     ‹
                   </button>
-                  <p className="text-[28px] font-semibold tracking-[-0.03em]">
+                  <p className="text-3xl font-semibold tracking-tight">
                     Send us a message
                   </p>
                   <button
@@ -2297,16 +2295,16 @@ export function DeveloperConsoleExperience() {
                       setShowSupportComposer(false);
                       setShowSupportWidget(false);
                     }}
-                    className="text-[28px] text-muted-foreground transition hover:text-foreground"
+                    className="text-3xl text-muted-foreground transition hover:text-foreground"
                   >
                     ×
                   </button>
                 </div>
-                <p className="mx-auto mt-12 max-w-[420px] text-center text-[17px] leading-8 text-muted-foreground">
+                <p className="mx-auto mt-12 max-w-md text-center text-base leading-8 text-muted-foreground">
                   We&apos;re happy to help. Message us whenever you need and
                   we&apos;ll get back to you as soon as possible.
                 </p>
-                <div className="mt-10 rounded-[8px] border border-primary/35 bg-muted/50 p-4">
+                <div className="mt-10 rounded-md border border-primary/35 bg-muted/50 p-4">
                   <textarea
                     value={supportMessage}
                     onChange={(event) => {
@@ -2317,10 +2315,10 @@ export function DeveloperConsoleExperience() {
                       }
                     }}
                     placeholder="Start typing"
-                    className="min-h-[130px] w-full resize-none bg-transparent text-[18px] text-foreground outline-none placeholder:text-muted-foreground"
+                    className="min-h-32 w-full resize-none bg-transparent text-lg text-foreground outline-none placeholder:text-muted-foreground"
                   />
                   <div className="mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-[22px] text-muted-foreground">
+                    <div className="flex items-center gap-4 text-xl text-muted-foreground">
                       <span>⌂</span>
                       <span className="font-semibold">B</span>
                       <span className="italic">I</span>
@@ -2329,7 +2327,7 @@ export function DeveloperConsoleExperience() {
                     <button
                       type="button"
                       onClick={sendSupportMessage}
-                      className="rounded-[8px] bg-primary px-6 py-3 text-[17px] font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-md bg-primary px-6 py-3 text-base font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={!supportMessage.trim() || supportSendState === "sending"}
                     >
                       {supportSendState === "sending" ? "Sending..." : "Send"}
@@ -2337,16 +2335,16 @@ export function DeveloperConsoleExperience() {
                   </div>
                 </div>
                 {supportSendState === "error" && supportErrorMessage ? (
-                  <p className="mt-3 text-[13px] text-destructive">
+                  <p className="mt-3 text-sm text-destructive">
                     {supportErrorMessage}
                   </p>
                 ) : null}
                 {supportSendState === "sent" ? (
-                  <p className="mt-3 text-[13px] text-chart-2">
+                  <p className="mt-3 text-sm text-chart-2">
                     Message sent. Thank you.
                   </p>
                 ) : null}
-                <p className="mt-4 text-center text-[14px] text-muted-foreground">
+                <p className="mt-4 text-center text-sm text-muted-foreground">
                   Powered by Plain
                 </p>
               </div>
@@ -2370,7 +2368,7 @@ export function DeveloperConsoleExperience() {
 
           .memoryos-console-scroll::-webkit-scrollbar-thumb {
             background: var(--muted);
-            border-radius: 999px;
+            border-radius: 0;
             border: 2px solid var(--background);
           }
 
@@ -2394,32 +2392,32 @@ export function DeveloperConsoleExperience() {
     >
       <ProgressHeader step={step} entryPath={entryPath} />
 
-      <div className="mx-auto flex min-h-[calc(100svh-89px)] w-full max-w-[1440px] flex-col px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
         <div className="flex-1 py-8 sm:py-10 lg:py-14">
           {step === "org" ? (
-            <section className="mx-auto max-w-[920px]">
+            <section className="mx-auto max-w-5xl">
               <div className="text-center">
-                <h1 className="text-balance text-[36px] font-semibold tracking-[-0.05em] sm:text-[44px]">
+                <h1 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl">
                   Create Your Organization
                 </h1>
-                <p className="mt-3 text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+                <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
                   Set up your team&apos;s workspace in MemoryOS.
                 </p>
               </div>
 
-              <div className="mx-auto mt-12 max-w-[760px]">
-                <label className="block text-[15px] font-medium text-foreground">
+              <div className="mx-auto mt-12 max-w-3xl">
+                <label className="block text-sm font-medium text-foreground">
                   Organization name <span className="text-destructive">*</span>
                 </label>
                 <input
                   value={orgName}
                   onChange={(event) => setOrgName(event.target.value)}
                   placeholder="Acme Inc."
-                  className="mt-4 h-14 w-full rounded-[8px] border-transparent bg-background px-5 text-[18px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+                  className="mt-4 h-14 w-full rounded-md border-transparent bg-background px-5 text-lg text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                 />
 
                 <div className="mt-9">
-                  <p className="text-[15px] font-medium text-foreground">
+                  <p className="text-sm font-medium text-foreground">
                     Company size
                   </p>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -2428,7 +2426,7 @@ export function DeveloperConsoleExperience() {
                         key={size}
                         type="button"
                         onClick={() => setCompanySize(size)}
-                        className={`rounded-[8px] border px-4 py-4 text-[18px] transition ${
+                        className={`rounded-md border px-4 py-4 text-lg transition ${
                           companySize === size
                             ? "border-primary bg-primary/15 text-foreground"
                             : "border-transparent bg-card text-foreground hover:border-border"
@@ -2444,18 +2442,18 @@ export function DeveloperConsoleExperience() {
           ) : null}
 
           {step === "entry" ? (
-            <section className="mx-auto max-w-[920px]">
+            <section className="mx-auto max-w-5xl">
               <div className="text-center">
-                <h1 className="text-balance text-[34px] font-semibold tracking-[-0.05em] sm:text-[42px]">
+                <h1 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl">
                   What brings you here?
                 </h1>
-                <p className="mt-3 text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+                <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
                   This helps us tailor your experience. You can always change
                   this later.
                 </p>
               </div>
 
-              <div className="mx-auto mt-12 grid max-w-[760px] gap-4 md:grid-cols-2">
+              <div className="mx-auto mt-12 grid max-w-3xl gap-4 md:grid-cols-2">
                 {ENTRY_OPTIONS.map((option) => (
                   <button
                     key={option.id}
@@ -2464,19 +2462,19 @@ export function DeveloperConsoleExperience() {
                       setEntryPath(option.id);
                       setSelectedIntegration(null);
                     }}
-                    className={`rounded-[8px] border p-6 text-left transition ${
+                    className={`rounded-md border p-6 text-left transition ${
                       entryPath === option.id
                         ? "border-primary bg-primary/15"
                         : "border-transparent bg-card hover:border-border"
                     }`}
                   >
-                    <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
                       {option.eyebrow}
                     </p>
-                    <p className="mt-5 text-[30px] font-semibold tracking-[-0.04em]">
+                    <p className="mt-5 text-3xl font-semibold tracking-tighter">
                       {option.title}
                     </p>
-                    <p className="mt-3 max-w-[260px] text-[18px] leading-8 text-muted-foreground">
+                    <p className="mt-3 max-w-xs text-lg leading-8 text-muted-foreground">
                       {option.description}
                     </p>
                   </button>
@@ -2486,12 +2484,12 @@ export function DeveloperConsoleExperience() {
           ) : null}
 
           {step === "category" ? (
-            <section className="mx-auto max-w-[1240px]">
+            <section className="mx-auto max-w-6xl">
               <div className="text-center">
-                <h1 className="text-balance text-[34px] font-semibold tracking-[-0.05em] sm:text-[42px]">
+                <h1 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl">
                   What are you building?
                 </h1>
-                <p className="mt-3 text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+                <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
                   Choose the category that best describes your use case with
                   MemoryOS.
                 </p>
@@ -2506,16 +2504,16 @@ export function DeveloperConsoleExperience() {
                       setUseCaseId(item.id);
                       setTemplateTab(item.category as TemplateTab);
                     }}
-                    className={`rounded-[8px] border p-6 text-left transition ${
+                    className={`rounded-md border p-6 text-left transition ${
                       useCaseId === item.id
                         ? "border-primary bg-primary/15"
                         : "border-transparent bg-card hover:border-border"
                     }`}
                   >
-                    <p className="text-[30px] font-semibold tracking-[-0.04em]">
+                    <p className="text-3xl font-semibold tracking-tighter">
                       {item.title}
                     </p>
-                    <p className="mt-3 max-w-[300px] text-[18px] leading-8 text-muted-foreground">
+                    <p className="mt-3 max-w-sm text-lg leading-8 text-muted-foreground">
                       {item.description}
                     </p>
                   </button>
@@ -2525,39 +2523,39 @@ export function DeveloperConsoleExperience() {
           ) : null}
 
           {step === "context" ? (
-            <section className="mx-auto max-w-[1240px]">
+            <section className="mx-auto max-w-6xl">
               <div className="text-center">
-                <h1 className="text-balance text-[34px] font-semibold tracking-[-0.05em] sm:text-[42px]">
+                <h1 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl">
                   Set Up Organization Context
                 </h1>
-                <p className="mt-3 text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+                <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
                   Define how content should be filtered and processed for your
                   use case.
                 </p>
               </div>
 
               <div className="mt-12">
-                <label className="block text-[15px] font-medium text-foreground">
+                <label className="block text-sm font-medium text-foreground">
                   Organizational Context
                 </label>
                 <textarea
                   value={orgContext}
                   onChange={(event) => setOrgContext(event.target.value)}
                   placeholder={`Describe how content should be processed for your organization${selectedUseCase ? ` and ${selectedUseCase.title.toLowerCase()} use case` : ""}...`}
-                  className="mt-4 min-h-[210px] w-full rounded-[8px] border-transparent bg-card px-5 py-5 text-[18px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+                  className="mt-4 min-h-52 w-full rounded-md border-transparent bg-card px-5 py-5 text-lg text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                 />
               </div>
 
-              <div className="mt-8 max-w-[380px]">
+              <div className="mt-8 max-w-md">
                 <input
                   value={templateQuery}
                   onChange={(event) => setTemplateQuery(event.target.value)}
                   placeholder="Search templates..."
-                  className="h-14 w-full rounded-[8px] border-transparent bg-background px-5 text-[18px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+                  className="h-14 w-full rounded-md border-transparent bg-background px-5 text-lg text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                 />
               </div>
 
-              <div className="mt-7 flex gap-6 overflow-x-auto pb-2 text-[16px]">
+              <div className="mt-7 flex gap-6 overflow-x-auto pb-2 text-base">
                 {TEMPLATE_TABS.map((tab) => (
                   <button
                     key={tab}
@@ -2587,14 +2585,14 @@ export function DeveloperConsoleExperience() {
                           : `${orgName || "Your company"} uses ${card.title.toLowerCase()} with continuity retrieval, trusted memory recall, and clear handoff context.`,
                       );
                     }}
-                    className={`rounded-[8px] border p-5 text-left transition ${
+                    className={`rounded-md border p-5 text-left transition ${
                       selectedTemplate === card.id
                         ? "border-primary bg-primary/10"
                         : "border-transparent bg-muted/30 hover:border-border"
                     }`}
                   >
-                    <p className="text-[18px] font-semibold">{card.title}</p>
-                    <p className="mt-3 text-[15px] leading-7 text-muted-foreground">
+                    <p className="text-lg font-semibold">{card.title}</p>
+                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
                       {card.preview}
                     </p>
                   </button>
@@ -2604,14 +2602,14 @@ export function DeveloperConsoleExperience() {
           ) : null}
 
           {step === "integration" ? (
-            <section className="mx-auto max-w-[1240px]">
+            <section className="mx-auto max-w-6xl">
               <div className="text-center">
-                <h1 className="text-balance text-[34px] font-semibold tracking-[-0.05em] sm:text-[42px]">
+                <h1 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl">
                   {entryPath === "plugins"
                     ? "Choose your plugin"
                     : "What are you building?"}
                 </h1>
-                <p className="mt-3 text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+                <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
                   {entryPath === "plugins"
                     ? "Select the plugin you'd like to set up first."
                     : "Choose a MemoryOS surface to launch first."}
@@ -2620,18 +2618,18 @@ export function DeveloperConsoleExperience() {
 
               {entryPath === "plugins" ? null : (
                 <>
-                  <div className="mt-12 max-w-[380px]">
+                  <div className="mt-12 max-w-md">
                     <input
                       value={integrationQuery}
                       onChange={(event) =>
                         setIntegrationQuery(event.target.value)
                       }
                       placeholder="Search solutions..."
-                      className="h-14 w-full rounded-[8px] border-transparent bg-background px-5 text-[18px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+                      className="h-14 w-full rounded-md border-transparent bg-background px-5 text-lg text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
                     />
                   </div>
 
-                  <div className="mt-7 flex gap-6 overflow-x-auto pb-2 text-[16px]">
+                  <div className="mt-7 flex gap-6 overflow-x-auto pb-2 text-base">
                     {PRODUCT_TABS.map((tab) => (
                       <button
                         key={tab}
@@ -2651,25 +2649,25 @@ export function DeveloperConsoleExperience() {
               )}
 
               <div
-                className={`mt-6 grid gap-4 ${entryPath === "plugins" ? "mx-auto max-w-[640px] md:grid-cols-2" : "md:grid-cols-2 xl:grid-cols-4"}`}
+                className={`mt-6 grid gap-4 ${entryPath === "plugins" ? "mx-auto max-w-2xl md:grid-cols-2" : "md:grid-cols-2 xl:grid-cols-4"}`}
               >
                 {integrationCards.map((card) => (
                   <button
                     key={card.id}
                     type="button"
                     onClick={() => setSelectedIntegration(card.id)}
-                    className={`rounded-[8px] border p-5 text-left transition ${
+                    className={`rounded-md border p-5 text-left transition ${
                       selectedIntegration === card.id
                         ? "border-primary bg-primary/10"
                         : "border-transparent bg-muted/30 hover:border-border"
                     }`}
                   >
                     <IconBadge label={card.accent} />
-                    <p className="mt-8 text-[18px] font-semibold">
+                    <p className="mt-8 text-lg font-semibold">
                       {card.title}
                     </p>
                     {entryPath === "plugins" ? null : (
-                      <p className="mt-3 text-[15px] leading-7 text-muted-foreground">
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">
                         {card.subtitle}
                       </p>
                     )}
@@ -2680,40 +2678,40 @@ export function DeveloperConsoleExperience() {
           ) : null}
 
           {step === "setup" ? (
-            <section className="mx-auto max-w-[1240px]">
+            <section className="mx-auto max-w-6xl">
               <div className="text-center">
-                <h1 className="text-balance text-[34px] font-semibold tracking-[-0.05em] sm:text-[42px]">
+                <h1 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl">
                   {entryPath === "plugins"
                     ? `Set up ${selectedIntegrationDetails.title}`
                     : `Set up your ${selectedIntegrationDetails.title} integration`}
                 </h1>
-                <p className="mt-3 text-[16px] leading-7 text-muted-foreground sm:text-[18px]">
+                <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
                   {entryPath === "plugins"
                     ? "Follow the docs to connect your plugin."
                     : "Follow these steps to connect."}
                 </p>
               </div>
 
-              <div className="mt-12 flex flex-wrap items-center justify-between gap-4 rounded-[8px] border border-border bg-card px-5 py-5">
+              <div className="mt-12 flex flex-wrap items-center justify-between gap-4 rounded-md border border-border bg-card px-5 py-5">
                 <div className="flex items-center gap-4">
                   <IconBadge label={selectedIntegrationDetails.accent} />
                   <div>
                     <div className="flex flex-wrap items-center gap-3">
-                      <p className="text-[20px] font-semibold">
+                      <p className="text-xl font-semibold">
                         {selectedIntegrationDetails.title}
                       </p>
-                      <span className="rounded-[6px] bg-chart-2/15 px-3 py-1 text-[12px] font-medium uppercase tracking-[0.12em] text-chart-2">
+                      <span className="rounded-md bg-chart-2/15 px-3 py-1 text-xs font-medium uppercase tracking-widest text-chart-2">
                         {entryPath === "plugins" ? "TypeScript" : "MemoryOS"}
                       </span>
                     </div>
-                    <p className="mt-1 text-[16px] text-muted-foreground">
+                    <p className="mt-1 text-base text-muted-foreground">
                       {selectedIntegrationDetails.subtitle}
                     </p>
                   </div>
                 </div>
                 <a
                   href="#"
-                  className="text-[14px] font-medium tracking-[0.06em] text-muted-foreground hover:text-foreground"
+                  className="text-sm font-medium tracking-wide text-muted-foreground hover:text-foreground"
                 >
                   Docs
                 </a>
@@ -2759,31 +2757,31 @@ export function DeveloperConsoleExperience() {
                       key={section.id}
                       type="button"
                       onClick={() => setExpandedSetupSection(section.id)}
-                      className="w-full rounded-[8px] border border-border bg-muted/40 p-5 text-left transition hover:bg-muted/60"
+                      className="w-full rounded-md border border-border bg-muted/40 p-5 text-left transition hover:bg-muted/60"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
-                          <div className="grid h-10 w-10 place-items-center rounded-full bg-muted text-[16px] font-semibold text-muted-foreground">
+                          <div className="grid h-10 w-10 place-items-center rounded-full bg-muted text-base font-semibold text-muted-foreground">
                             {section.id}
                           </div>
                           <div>
-                            <p className="text-[20px] font-semibold">
+                            <p className="text-xl font-semibold">
                               {section.title}
                             </p>
                             {!expanded ? (
-                              <p className="mt-1 text-[15px] text-muted-foreground">
+                              <p className="mt-1 text-sm text-muted-foreground">
                                 {section.copy}
                               </p>
                             ) : null}
                           </div>
                         </div>
-                        <span className="text-[22px] text-muted-foreground">
+                        <span className="text-xl text-muted-foreground">
                           {expanded ? "−" : "+"}
                         </span>
                       </div>
                       {expanded ? (
                         <div className="mt-5 border-t border-transparent pt-5">
-                          <p className="text-[15px] leading-7 text-muted-foreground">
+                          <p className="text-sm leading-7 text-muted-foreground">
                             {entryPath === "plugins"
                               ? section.copy
                               : section.id === 1
@@ -2793,7 +2791,7 @@ export function DeveloperConsoleExperience() {
                                   : "Run a test command to confirm setup:"}
                           </p>
                           <div
-                            className={`mt-4 rounded-[8px] border border-border bg-muted/50 px-5 py-5 ${entryPath === "plugins" ? "text-[16px] leading-7 text-foreground" : "font-mono text-[15px] text-foreground/92"}`}
+                            className={`mt-4 rounded-md border border-border bg-muted/50 px-5 py-5 ${entryPath === "plugins" ? "text-base leading-7 text-foreground" : "font-mono text-sm text-foreground/92"}`}
                           >
                             {entryPath === "plugins"
                               ? section.copy
@@ -2811,7 +2809,7 @@ export function DeveloperConsoleExperience() {
               </div>
 
               {entryPath === "plugins" ? (
-                <div className="mt-10 text-[18px] leading-9 text-muted-foreground">
+                <div className="mt-10 text-lg leading-9 text-muted-foreground">
                   <p className="font-medium text-muted-foreground">What you get</p>
                   <ul className="mt-4 list-disc space-y-1 pl-6">
                     {(pluginIntegrationDetails?.benefits ?? []).map(
@@ -2832,7 +2830,7 @@ export function DeveloperConsoleExperience() {
 
         <footer className="border-t border-transparent py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <p className="text-[15px] leading-7 text-muted-foreground">
+            <p className="text-sm leading-7 text-muted-foreground">
               {step === "org"
                 ? "This creates your workspace for your organisation."
                 : step === "entry"
@@ -2851,7 +2849,7 @@ export function DeveloperConsoleExperience() {
                 type="button"
                 onClick={goBack}
                 disabled={step === "org" || isSaving}
-                className="rounded-[8px] px-4 py-3 text-[15px] font-medium text-foreground/92 transition hover:bg-transparent hover:text-foreground transition-colors duration-200 disabled:cursor-not-allowed disabled:text-muted-foreground"
+                className="rounded-md px-4 py-3 text-sm font-medium text-foreground/92 transition hover:bg-transparent hover:text-foreground transition-colors duration-200 disabled:cursor-not-allowed disabled:text-muted-foreground"
               >
                 PREVIOUS
               </button>
@@ -2865,7 +2863,7 @@ export function DeveloperConsoleExperience() {
                     step === "setup" ? completeOnboarding() : advance(true)
                   }
                   disabled={isSaving}
-                  className="rounded-[8px] px-4 py-3 text-[15px] font-medium text-muted-foreground transition hover:bg-transparent hover:text-foreground transition-colors duration-200 disabled:cursor-not-allowed disabled:text-muted-foreground"
+                  className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-transparent hover:text-foreground transition-colors duration-200 disabled:cursor-not-allowed disabled:text-muted-foreground"
                 >
                   SKIP
                 </button>
@@ -2877,7 +2875,7 @@ export function DeveloperConsoleExperience() {
                   step === "setup" ? completeOnboarding() : advance()
                 }
                 disabled={(!canContinue && step !== "setup") || isSaving}
-                className="rounded-[8px] bg-primary px-5 py-3 text-[15px] font-semibold tracking-[0.06em] text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
+                className="rounded-md bg-primary px-5 py-3 text-sm font-semibold tracking-wide text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
               >
                 {isSaving
                   ? "SAVING..."

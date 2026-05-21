@@ -4,7 +4,8 @@ import type {
 } from "../adapters/adapters";
 import { getContextAdapter, getMemoryStoreAdapter } from "../adapters/registry";
 import { getRecentMemories } from "./recentMemoryStore";
-import type { DeveloperSignals, Memory, MemoryStatus, MemoryType } from "./types";
+import type { DeveloperSignals, Memory, MemoryContractCategory, MemoryStatus, MemoryType } from "./types";
+import { MEMORY_CONTRACT_CATEGORIES } from "./types";
 import { MEMORY_RULES, type RetrievalIntent } from "../config/memoryRules";
 import { getRetrievalWeights } from "../config/retrievalWeights";
 import {
@@ -26,6 +27,7 @@ export interface RetrieveRelevantMemoryInput {
 
 export interface RankedMemory extends MemoryStoreSearchResult {
   memoryType?: MemoryType;
+  contractCategory?: MemoryContractCategory;
   importanceScore: number; // 0..1
   recencyScore: number; // 0..1
   typeRelevanceScore: number; // 0..1
@@ -100,6 +102,7 @@ interface RankedMemoryInternal extends RankedMemory {
 
 type ParsedCandidateMetadata = {
   memoryType?: MemoryType;
+  contractCategory?: MemoryContractCategory;
   status?: MemoryStatus;
   importanceScore: number;
   updatedAt?: string;
@@ -345,6 +348,7 @@ function memoryToSearchResult(
       createdAt: memory.createdAt,
       updatedAt: memory.updatedAt,
       evidenceCount: String(memory.evidenceCount),
+      contractCategory: memory.contractCategory,
       developerSignals: memory.developerSignals,
     },
   };
@@ -394,6 +398,7 @@ function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata
   const metadata = result?.metadata;
 
   let memoryType: MemoryType | undefined = undefined;
+  let contractCategory: MemoryContractCategory | undefined = undefined;
   let status: MemoryStatus | undefined = undefined;
   let importanceScore = 0.5;
   let updatedAt: string | undefined = undefined;
@@ -403,6 +408,7 @@ function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata
   if (!metadata || typeof metadata !== "object") {
     return {
       memoryType,
+      contractCategory,
       status,
       importanceScore,
       updatedAt,
@@ -416,6 +422,13 @@ function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata
     VALID_MEMORY_TYPES.includes(metadata.type as MemoryType)
   ) {
     memoryType = metadata.type as MemoryType;
+  }
+
+  if (
+    typeof metadata.contractCategory === "string" &&
+    MEMORY_CONTRACT_CATEGORIES.includes(metadata.contractCategory as MemoryContractCategory)
+  ) {
+    contractCategory = metadata.contractCategory as MemoryContractCategory;
   }
 
   if (
@@ -446,6 +459,7 @@ function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata
 
   return {
     memoryType,
+    contractCategory,
     status,
     importanceScore,
     updatedAt,
@@ -964,6 +978,7 @@ function buildRankedCandidate(input: {
       ...input.item,
       logicalKey: getLogicalMemoryKey(input.item),
       memoryType: effectiveMemoryType,
+      contractCategory: meta.contractCategory,
       importanceScore: meta.importanceScore,
       recencyScore,
       typeRelevanceScore,

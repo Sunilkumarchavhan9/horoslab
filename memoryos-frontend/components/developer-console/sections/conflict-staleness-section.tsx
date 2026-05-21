@@ -211,7 +211,7 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
             {items.map((item) => (
               <div
                 key={item.id}
-                className="rounded-lg border border-border/80 bg-card/50 p-4 shadow-sm"
+                className="rounded-lg border border-border/80 bg-card/50 p-4"
               >
                 <p className="text-sm leading-relaxed text-foreground">
                   {formatMemoryForDisplay(item.reason) || item.reason}

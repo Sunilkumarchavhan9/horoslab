@@ -10,6 +10,7 @@ export type ConnectorSyncLog = {
   type: string;
   status: "success" | "error";
   extractedCount: number;
+  contractCounts?: Record<string, number>;
   message: string;
   at: string;
 };

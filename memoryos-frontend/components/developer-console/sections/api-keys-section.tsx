@@ -239,11 +239,11 @@ export function ApiKeysSection() {
         </motion.div>
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="inline-block rounded-[6px] bg-card px-2 py-1 text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">
+          <h1 className="inline-block rounded-md bg-card px-2 py-1 text-base font-semibold tracking-tighter sm:text-lg">
             API Keys
           </h1>
           <br />
-          <p className="mt-1 inline-block rounded-[6px] bg-card px-2 py-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
+          <p className="mt-1 inline-block rounded-md bg-card px-2 py-1 text-xs leading-6 text-muted-foreground sm:text-sm">
             Create and manage secure keys for retrieve, resume, continue, and handoff APIs.
           </p>
         </div>
@@ -254,7 +254,7 @@ export function ApiKeysSection() {
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.18, ease: EASE_OUT }}
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-[8px] border border-primary/50 !bg-primary px-3.5 py-2 text-[11px] font-semibold tracking-[0.08em] !text-primary-foreground shadow-md transition hover:!bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-md border border-primary/50 bg-primary px-3.5 py-2 text-xs font-semibold tracking-wider text-primary-foreground transition hover:bg-primary/90"
           >
             <span aria-hidden>+</span>
              CREATE KEY
@@ -265,7 +265,7 @@ export function ApiKeysSection() {
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.18, ease: EASE_OUT }}
             onClick={() => void loadKeys()}
-            className="inline-flex items-center gap-2 rounded-[8px] border border-border bg-secondary px-3.5 py-2 text-[11px] font-semibold tracking-[0.08em] text-secondary-foreground shadow-sm"
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3.5 py-2 text-xs font-semibold tracking-wider text-secondary-foreground"
           >
             <span aria-hidden>↻</span>
             REFRESH
@@ -275,22 +275,22 @@ export function ApiKeysSection() {
       </motion.div>
 
       {revealedToken ? (
-        <div className="mt-2.5 rounded-[10px] border border-primary/30 bg-primary/10 px-3.5 py-3.5">
+        <div className="mt-2.5 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-3.5">
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <code className="rounded-[7px] border border-border bg-muted px-2.5 py-1.5 text-[11px] text-muted-foreground">
+            <code className="rounded-md border border-border bg-muted px-2.5 py-1.5 text-xs text-muted-foreground">
               {revealedToken}
             </code>
             <button
               type="button"
               onClick={copyToken}
-              className="rounded-[7px] border border-border bg-popover px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground"
+              className="rounded-md border border-border bg-popover px-2.5 py-1.5 text-xs font-medium text-muted-foreground"
             >
               COPY
             </button>
             <button
               type="button"
               onClick={() => setRevealedToken(null)}
-              className="rounded-[7px] border border-border bg-popover px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground"
+              className="rounded-md border border-border bg-popover px-2.5 py-1.5 text-xs font-medium text-muted-foreground"
             >
               I SAVED IT
             </button>
@@ -299,7 +299,7 @@ export function ApiKeysSection() {
       ) : null}
 
       {errorMessage ? (
-        <div className="mt-2.5 rounded-[10px] border border-destructive/30 bg-destructive/10 px-3.5 py-3 text-[12px] leading-5 text-destructive">
+        <div className="mt-2.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-3 text-xs leading-5 text-destructive">
           {errorMessage}
         </div>
       ) : null}
@@ -313,7 +313,7 @@ export function ApiKeysSection() {
         ].map((card) => (
           <div
             key={card.label}
-            className="relative overflow-hidden rounded-[10px] border border-border bg-card px-3.5 py-3"
+            className="relative overflow-hidden rounded-lg border border-border bg-card px-3.5 py-3"
             style={{ borderTopColor: card.tone, borderTopWidth: "2px" }}
           >
             <DitherBackground
@@ -325,12 +325,12 @@ export function ApiKeysSection() {
               className="pointer-events-none absolute inset-0"
             />
             <p className="relative">
-              <span className="inline-block rounded-[4px] bg-card px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-foreground">
+              <span className="inline-block rounded-sm bg-card px-1.5 py-0.5 text-xs font-semibold uppercase tracking-widest text-foreground">
                 {card.label}
               </span>
             </p>
             <p className="relative mt-1">
-              <span className="inline-block rounded-[4px] bg-card px-1.5 py-0.5 text-[20px] font-semibold tracking-[-0.03em] text-foreground">
+              <span className="inline-block rounded-sm bg-card px-1.5 py-0.5 text-xl font-semibold tracking-tight text-foreground">
                 {card.value}
               </span>
             </p>
@@ -338,39 +338,39 @@ export function ApiKeysSection() {
         ))}
       </div>
 
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-[minmax(0,1fr)_330px]">
-        <div className="rounded-[10px] border border-border bg-card px-4 py-4">
+      <div className="mt-2.5 grid gap-3 xl:grid-cols-2">
+        <div className="rounded-lg border border-border bg-card px-4 py-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="7.5" cy="4" r="2.5" /><path d="M5 6.5L1.5 10v.5H3l.5-.5V9h1.5" />
               </svg>
               Key Inventory
             </p>
-            <span className="text-[11px] text-muted-foreground">{keys.length} total</span>
+            <span className="text-xs text-muted-foreground">{keys.length} total</span>
           </div>
 
           {isLoadingKeys ? (
-            <div className="mt-3 grid min-h-[260px] place-items-center rounded-[10px] border border-dashed border-border bg-muted text-center text-[13px] text-muted-foreground">
+            <div className="mt-3 grid min-h-64 place-items-center rounded-lg border border-dashed border-border bg-muted text-center text-sm text-muted-foreground">
               Loading API keys...
             </div>
           ) : keys.length === 0 ? (
-            <div className="mt-3 grid min-h-[260px] place-items-center rounded-[10px] border border-dashed border-border bg-muted text-center">
-              <div className="max-w-[360px] px-4">
+            <div className="mt-3 grid min-h-64 place-items-center rounded-lg border border-dashed border-border bg-muted text-center">
+              <div className="max-w-sm px-4">
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-border text-muted-foreground">
                   <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="15" cy="8" r="4.5" />
                     <path d="M10.5 12.5l-7.5 7.5v1.5H5l.5-.5V20h2.5l.5-.5V18h1.5" />
                   </svg>
                 </div>
-                <h2 className="mt-3 text-[28px] font-semibold tracking-[-0.04em]">No API keys yet</h2>
-                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
+                <h2 className="mt-3 text-3xl font-semibold tracking-tighter">No API keys yet</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
                   Create your first key to run MemoryOS APIs programmatically from apps, agents, and MCP tools.
                 </p>
                 <button
                   type="button"
                   onClick={openCreateModal}
-                  className="mt-3 rounded-[8px] border border-primary/30 bg-primary/10 px-3.5 py-2 text-[11px] font-medium tracking-[0.08em] text-primary"
+                  className="mt-3 rounded-md border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-medium tracking-wider text-primary"
                 >
                   + CREATE KEY
                 </button>
@@ -379,18 +379,18 @@ export function ApiKeysSection() {
           ) : (
             <div className="mt-3 space-y-2.5">
               {keys.map((key) => (
-                <div key={key.id} className="rounded-[8px] border border-border bg-card px-3.5 py-3">
+                <div key={key.id} className="rounded-md border border-border bg-card px-3.5 py-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-[13px] font-semibold tracking-[-0.02em]">{key.name}</p>
-                      <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">{key.prefix}••••••••••••</p>
+                      <p className="text-sm font-semibold tracking-tight">{key.name}</p>
+                      <p className="mt-0.5 font-mono text-xs text-muted-foreground">{key.prefix}••••••••••••</p>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span
                         className={
                           key.mode === "full"
-                            ? "rounded-[6px] border border-chart-5/40 bg-chart-5/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-chart-5"
-                            : "rounded-[6px] border border-chart-2/40 bg-chart-2/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-chart-2"
+                            ? "rounded-md border border-chart-5/40 bg-chart-5/15 px-2 py-0.5 text-xs uppercase tracking-widest text-chart-5"
+                            : "rounded-md border border-chart-2/40 bg-chart-2/15 px-2 py-0.5 text-xs uppercase tracking-widest text-chart-2"
                         }
                       >
                         {key.mode}
@@ -398,15 +398,15 @@ export function ApiKeysSection() {
                       <span
                         className={
                           key.status === "active"
-                            ? "rounded-[6px] border border-chart-2/40 bg-chart-2/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-chart-2"
-                            : "rounded-[6px] border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-destructive"
+                            ? "rounded-md border border-chart-2/40 bg-chart-2/15 px-2 py-0.5 text-xs uppercase tracking-widest text-chart-2"
+                            : "rounded-md border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-xs uppercase tracking-widest text-destructive"
                         }
                       >
                         {key.status}
                       </span>
                     </div>
                   </div>
-                  <div className="mt-2 grid gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
+                  <div className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-4">
                     <p>Created: {key.createdAt}</p>
                     <p>Last used: {formatDate(key.lastUsedAt)}</p>
                     <p>Expires: {formatDate(key.expiresAt)}</p>
@@ -417,7 +417,7 @@ export function ApiKeysSection() {
                       {key.endpoints.slice(0, 6).map((endpoint, endpointIndex) => (
                         <span
                           key={`${key.id}-endpoint-${endpointIndex}-${endpoint}`}
-                          className="rounded-[6px] border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground"
+                          className="rounded-md border border-border bg-card px-2 py-1 text-xs text-muted-foreground"
                         >
                           {endpoint}
                         </span>
@@ -427,7 +427,7 @@ export function ApiKeysSection() {
                       <button
                         type="button"
                         onClick={() => void revokeKey(key.id)}
-                        className="rounded-[7px] border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-destructive"
+                        className="rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-xs font-medium uppercase tracking-wider text-destructive"
                       >
                         Revoke
                       </button>
@@ -440,8 +440,8 @@ export function ApiKeysSection() {
         </div>
 
         <div className="space-y-3">
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M1.5 3h8M1.5 5.5h8M1.5 8h5" />
               </svg>
@@ -449,7 +449,7 @@ export function ApiKeysSection() {
             </p>
             <div className="mt-2.5 space-y-2">
               {keys.slice(0, 4).map((key) => (
-                <div key={key.id} className="rounded-[8px] border border-border bg-card px-3 py-2.5">
+                <div key={key.id} className="rounded-md border border-border bg-card px-3 py-2.5">
                   <div className="flex items-start gap-2">
                     <span
                       className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${
@@ -457,14 +457,14 @@ export function ApiKeysSection() {
                       }`}
                     />
                     <div>
-                      <p className="text-[12px] text-muted-foreground">{key.status === "active" ? "API key active" : "API key revoked"}: {key.name}</p>
-                      <p className="mt-1 text-[11px] text-muted-foreground">Created {formatDate(key.createdAt)}</p>
+                      <p className="text-xs text-muted-foreground">{key.status === "active" ? "API key active" : "API key revoked"}: {key.name}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Created {formatDate(key.createdAt)}</p>
                     </div>
                   </div>
                 </div>
               ))}
               {keys.length === 0 ? (
-                <p className="rounded-[8px] border border-border bg-card px-3 py-2.5 text-[12px] text-muted-foreground">
+                <p className="rounded-md border border-border bg-card px-3 py-2.5 text-xs text-muted-foreground">
                   No key events yet.
                 </p>
               ) : null}
@@ -474,41 +474,41 @@ export function ApiKeysSection() {
       </div>
 
       {showCreateModal ? (
-        <div className="fixed inset-0 z-[70] grid place-items-center bg-background/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-[560px] overflow-hidden rounded-[12px] border border-border bg-popover shadow-lg">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xl overflow-hidden rounded-lg border border-border bg-popover">
             <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-4">
               <div>
-                <h2 className="text-[24px] font-semibold tracking-[-0.04em]">Create New API Key</h2>
-                <p className="mt-1 text-[13px] text-muted-foreground">
+                <h2 className="text-2xl font-semibold tracking-tighter">Create New API Key</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
                   Configure access for MemoryOS retrieve, resume, continue, and handoff flows.
                 </p>
               </div>
-              <button type="button" onClick={closeCreateModal} className="text-[18px] text-muted-foreground">
+              <button type="button" onClick={closeCreateModal} className="text-lg text-muted-foreground">
                 ×
               </button>
             </div>
 
             <div className="space-y-4 px-4 py-4">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Key Name</p>
+                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Key Name</p>
                 <input
                   value={keyName}
                   onChange={(event) => setKeyName(event.target.value)}
                   placeholder="helpful-context-key"
-                  className="mt-1.5 w-full rounded-[8px] border border-border bg-card px-3 py-2.5 text-[13px] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-1.5 w-full rounded-md border border-border bg-card px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Expires</p>
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Expires</p>
                   <div className="mt-1.5 grid grid-cols-2 gap-1.5">
                     {KEY_EXPIRY_OPTIONS.map((option) => (
                       <button
                         key={option}
                         type="button"
                         onClick={() => setExpires(option)}
-                        className={`rounded-[7px] border px-2.5 py-2 text-[11px] transition ${
+                        className={`rounded-md border px-2.5 py-2 text-xs transition ${
                           expires === option
                             ? "border-primary/45 bg-primary/10 text-primary"
                             : "border-border bg-card text-muted-foreground hover:border-ring"
@@ -521,12 +521,12 @@ export function ApiKeysSection() {
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Permissions</p>
-                  <div className="mt-1.5 flex items-center overflow-hidden rounded-[8px] border border-border bg-muted">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Permissions</p>
+                  <div className="mt-1.5 flex items-center overflow-hidden rounded-md border border-border bg-muted">
                     <button
                       type="button"
                       onClick={() => setPermissionMode("full")}
-                      className={`flex-1 px-3 py-2 text-[12px] font-medium transition ${
+                      className={`flex-1 px-3 py-2 text-xs font-medium transition ${
                         permissionMode === "full" ? "bg-muted text-foreground" : "text-muted-foreground"
                       }`}
                     >
@@ -535,7 +535,7 @@ export function ApiKeysSection() {
                     <button
                       type="button"
                       onClick={() => setPermissionMode("scoped")}
-                      className={`flex-1 px-3 py-2 text-[12px] font-medium transition ${
+                      className={`flex-1 px-3 py-2 text-xs font-medium transition ${
                         permissionMode === "scoped" ? "bg-muted text-foreground" : "text-muted-foreground"
                       }`}
                     >
@@ -548,16 +548,16 @@ export function ApiKeysSection() {
               {permissionMode === "scoped" ? (
                 <>
                   <div>
-                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Content Tag</p>
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Content Tag</p>
                     <input
                       value={contentTag}
                       onChange={(event) => setContentTag(event.target.value)}
                       placeholder="continuity"
-                      className="mt-1.5 w-full rounded-[8px] border border-border bg-card px-3 py-2.5 text-[13px] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="mt-1.5 w-full rounded-md border border-border bg-card px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     />
                   </div>
                   <div>
-                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Allowed Endpoints</p>
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Allowed Endpoints</p>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {KEY_ENDPOINTS.map((endpoint) => {
                         const selected = selectedEndpoints.includes(endpoint);
@@ -566,7 +566,7 @@ export function ApiKeysSection() {
                             key={endpoint}
                             type="button"
                             onClick={() => toggleEndpoint(endpoint)}
-                            className={`rounded-[7px] border px-2.5 py-1.5 text-[11px] transition ${
+                            className={`rounded-md border px-2.5 py-1.5 text-xs transition ${
                               selected
                                 ? "border-primary/45 bg-primary/10 text-primary"
                                 : "border-border bg-card text-muted-foreground hover:border-ring"
@@ -580,7 +580,7 @@ export function ApiKeysSection() {
                   </div>
                 </>
               ) : (
-                <div className="rounded-[8px] border border-chart-5/30 bg-muted px-3 py-2 text-[12px] text-chart-5">
+                <div className="rounded-md border border-chart-5/30 bg-muted px-3 py-2 text-xs text-chart-5">
                   This key grants full access to all MemoryOS endpoints. Use scoped keys in production where possible.
                 </div>
               )}
@@ -590,7 +590,7 @@ export function ApiKeysSection() {
               <button
                 type="button"
                 onClick={closeCreateModal}
-                className="rounded-[8px] border border-border bg-card px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-muted-foreground"
+                className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-muted-foreground"
               >
                 CANCEL
               </button>
@@ -598,7 +598,7 @@ export function ApiKeysSection() {
                 type="button"
                 disabled={!keyName.trim() || (permissionMode === "scoped" && selectedEndpoints.length === 0)}
                 onClick={() => void createKey()}
-                className="rounded-[8px] border border-primary/30 bg-primary/10 px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-primary disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium tracking-wider text-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSavingKey ? "CREATING..." : "CREATE KEY"}
               </button>

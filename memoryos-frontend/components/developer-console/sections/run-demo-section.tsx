@@ -3,10 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Badge, Card, CardContent, CardHeader, CardTitle, Input } from "@/components/developer-console/console-ui";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UsageMeter } from "@/components/developer-console/usage-meter";
@@ -475,25 +473,25 @@ function renderDecisionGraphCanvas(
   return (
     <div className="min-h-full space-y-8 px-1 py-1 text-foreground">
       <div>
-        <h2 className="flex items-center gap-2 text-[20px] font-bold text-foreground">
+        <h2 className="flex items-center gap-2 text-xl font-bold text-foreground">
           <svg viewBox="0 0 24 24" className="h-5 w-5 text-foreground" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
           Decision Intelligence: {isBlocked ? <span className="text-destructive">BLOCKED</span> : <span className="text-primary">ACTIVE</span>}
         </h2>
-        {isBlocked && <p className="mt-1 text-[13px] text-muted-foreground">No goal &rarr; no decisions &rarr; no execution possible</p>}
+        {isBlocked && <p className="mt-1 text-sm text-muted-foreground">No goal &rarr; no decisions &rarr; no execution possible</p>}
       </div>
 
       {isBlocked && (
-        <div className="rounded-[8px] border-2 border-destructive/40 bg-destructive/10 p-5 shadow-sm">
+        <div className="rounded-md border-2 border-destructive/40 bg-destructive/10 p-5">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-destructive text-destructive">
               <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
             </span>
-            <p className="font-mono text-[14px] font-bold uppercase tracking-[0.08em] text-destructive">Primary Blocker</p>
+            <p className="font-mono text-sm font-bold uppercase tracking-wider text-destructive">Primary Blocker</p>
           </div>
-          <p className="mt-2 text-[16px] font-semibold text-destructive">Define the project goal</p>
+          <p className="mt-2 text-base font-semibold text-destructive">Define the project goal</p>
           <div className="mt-4 border-t border-destructive/20 pt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-destructive">Impact:</p>
-            <ul className="mt-2 space-y-1.5 text-[14px] text-destructive/90">
+            <p className="text-xs font-semibold uppercase tracking-wide text-destructive">Impact:</p>
+            <ul className="mt-2 space-y-1.5 text-sm text-destructive/90">
               <li className="flex items-center gap-2"><span>•</span> Decision system inactive</li>
               <li className="flex items-center gap-2"><span>•</span> Planning disabled</li>
               <li className="flex items-center gap-2"><span>•</span> Execution blocked</li>
@@ -503,76 +501,76 @@ function renderDecisionGraphCanvas(
       )}
 
       <div>
-        <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-muted-foreground">
+        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
           <svg className="inline-block h-4 w-4 mr-1 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           Decision Diagnostics
         </p>
         <div className="mt-3 space-y-3">
-          <div className="rounded-[6px] bg-background p-3 shadow-sm">
-            <p className="flex items-center gap-2 text-[14px] font-semibold text-card-foreground">
+          <div className="rounded-md bg-background p-3">
+            <p className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
               {projectState.systemGoal ? (
                 <span className="flex items-center text-primary">
                   <svg className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   Goal defined
                 </span>
               ) : (
-                <span className="flex items-center text-amber-600 dark:text-amber-500">
+                <span className="flex items-center text-chart-2">
                   <svg className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                   Goal missing
                 </span>
               )}
             </p>
-            <p className="ml-6 mt-1 text-[13px] text-muted-foreground">
+            <p className="ml-6 mt-1 text-sm text-muted-foreground">
               &rarr; {projectState.systemGoal ? "Decision foundation active" : "No decisions possible"}
             </p>
           </div>
-          <div className="rounded-[6px] bg-background p-3 shadow-sm">
-            <p className="flex items-center gap-2 text-[14px] font-semibold text-card-foreground">
+          <div className="rounded-md bg-background p-3">
+            <p className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
               {(projectState.activeConstraints ?? []).length > 0 ? (
                 <span className="flex items-center text-primary">
                   <svg className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   Constraints active
                 </span>
               ) : (
-                <span className="flex items-center text-amber-600 dark:text-amber-500">
+                <span className="flex items-center text-chart-2">
                   <svg className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                   No constraints
                 </span>
               )}
             </p>
-            <p className="ml-6 mt-1 text-[13px] text-muted-foreground">
+            <p className="ml-6 mt-1 text-sm text-muted-foreground">
               &rarr; {(projectState.activeConstraints ?? []).length > 0 ? "System optimization enabled" : "Cannot optimize system"}
             </p>
           </div>
-          <div className="rounded-[6px] bg-background p-3 shadow-sm">
-            <p className="flex items-center gap-2 text-[14px] font-semibold text-card-foreground">
+          <div className="rounded-md bg-background p-3">
+            <p className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
               {(projectState.preferences ?? []).length > 0 ? (
                 <span className="flex items-center text-primary">
                   <svg className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   Decisions recorded
                 </span>
               ) : (
-                <span className="flex items-center text-amber-600 dark:text-amber-500">
+                <span className="flex items-center text-chart-2">
                   <svg className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                   No decisions
                 </span>
               )}
             </p>
-            <p className="ml-6 mt-1 text-[13px] text-muted-foreground">
+            <p className="ml-6 mt-1 text-sm text-muted-foreground">
               &rarr; {(projectState.preferences ?? []).length > 0 ? "Execution plan building" : "Execution plan empty"}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-[8px] bg-background p-5 shadow-sm">
+      <div className="rounded-md bg-background p-5">
         <div className="mb-4">
-          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-muted-foreground">📉 Decision Progression</p>
-          <p className="mt-1 text-[13px] text-muted-foreground">
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">📉 Decision Progression</p>
+          <p className="mt-1 text-sm text-muted-foreground">
             {isBlocked ? "Decision system stalled due to missing goal" : "Tracking structural context over time"}
           </p>
         </div>
-        <div className="relative h-[200px] border-b border-border bg-background">
+        <div className="relative h-52 border-b border-border bg-background">
           <div className="absolute inset-0 flex flex-col justify-between pb-6">
             {[0, 1, 2, 3].map((line) => (
               <span key={line} className="h-px w-full bg-border" />
@@ -583,7 +581,7 @@ function renderDecisionGraphCanvas(
             {bars.map((bar, barIndex) => (
               <div key={barIndex} className="group relative flex h-full flex-1 items-end">
                 <div
-                  className="flex w-full origin-bottom animate-pulse flex-col-reverse overflow-hidden rounded-t-[3px] transition-all duration-700"
+                  className="flex w-full origin-bottom animate-pulse flex-col-reverse overflow-hidden rounded-t-sm transition-all duration-700"
                   style={{ animationDelay: `${barIndex * 70}ms`, animationDuration: "1800ms" }}
                 >
                   {bar.map((height, signalIndex) => (
@@ -604,12 +602,12 @@ function renderDecisionGraphCanvas(
           </div>
           {isBlocked && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/60">
-              <span className="rounded-md border border-destructive/50 bg-background px-3 py-1.5 text-[12px] font-semibold text-destructive shadow-sm">
+              <span className="rounded-md border border-destructive/50 bg-background px-3 py-1.5 text-xs font-semibold text-destructive">
                 No decision progression detected
               </span>
             </div>
           )}
-          <div className="absolute bottom-0 left-0 right-0 grid grid-cols-4 px-2 font-mono text-[10px] text-muted-foreground">
+          <div className="absolute bottom-0 left-0 right-0 grid grid-cols-4 px-2 font-mono text-xs text-muted-foreground">
             <span>Start</span>
             <span>Constraints</span>
             <span>Decisions</span>
@@ -620,20 +618,20 @@ function renderDecisionGraphCanvas(
 
       <div>
         <div className="mb-3">
-          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-muted-foreground">Memory Signal Activity</p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Memory Signal Activity</p>
+          <p className="mt-1 text-xs text-muted-foreground">
             <span className="mr-1 inline-block h-2 w-2 rounded-full bg-destructive" />
             Missing structure &nbsp;
             <span className="ml-2 mr-1 inline-block h-2 w-2 rounded-full bg-primary" />
             Strong decision signals
           </p>
         </div>
-        <div className="grid grid-cols-9 gap-1 rounded-[6px] bg-background p-3">
+        <div className="grid grid-cols-9 gap-1 rounded-md bg-background p-3">
           {heatCells.slice(0, 45).map((cell) => (
             <span
               key={cell.id}
               title={`${isBlocked ? "Missing structure signal" : (cell.label || "Signal active")}`}
-              className="h-4 rounded-[3px] transition-all duration-700 hover:scale-110"
+              className="h-4 rounded-sm transition-all duration-700 hover:scale-110"
               style={{
                 backgroundColor: cell.color,
                 opacity: 0.2 + cell.intensity * 0.8,
@@ -1441,17 +1439,17 @@ export function RunDemoSection() {
 
   const brandHeader = (
     <div className="flex min-w-0 flex-wrap items-center gap-3 font-mono">
-      <span className="inline-flex scale-[0.9] origin-left">
+      <span className="inline-flex scale-90 origin-left">
         <MemoryStarLogo tone="white" />
       </span>
-      <span className="ml-2 text-[14px] text-muted-foreground">x</span>
-      <span className="inline-flex h-8 w-[116px] items-center">
+      <span className="ml-2 text-sm text-muted-foreground">x</span>
+      <span className="inline-flex h-8 w-28 items-center">
         <Image
           src="/pipecat.png"
           alt="Pipecat"
           width={116}
           height={32}
-          className="h-8 w-[116px] object-contain object-left"
+          className="h-8 w-28 object-contain object-left"
           priority
         />
       </span>
@@ -1461,54 +1459,54 @@ export function RunDemoSection() {
   const contrastOverrideStyles = (
     <style jsx global>{`
       .run-demo-dark {
-        background: #000 !important;
-        color: #fff !important;
+        background: var(--background) !important;
+        color: var(--foreground) !important;
       }
 
       .run-demo-dark,
       .run-demo-dark .bg-background,
       .run-demo-dark .bg-card,
       .run-demo-dark .bg-muted {
-        background-color: #000 !important;
+        background-color: var(--background) !important;
       }
 
       .run-demo-dark .text-muted-foreground {
-        color: rgba(255, 255, 255, 0.78) !important;
+        color: var(--muted-foreground) !important;
       }
 
       .run-demo-dark .text-foreground,
       .run-demo-dark .text-card-foreground {
-        color: #fff !important;
+        color: var(--foreground) !important;
       }
 
       .run-demo-dark .border,
       .run-demo-dark [class*="border-"] {
-        border-color: rgba(255, 255, 255, 0.22) !important;
+        border-color: var(--border) !important;
       }
 
       .run-demo-dark button,
       .run-demo-dark [role="tab"],
       .run-demo-dark [data-slot="select-trigger"] {
-        color: #fff !important;
+        color: var(--foreground) !important;
       }
 
       .run-demo-dark [role="tab"],
       .run-demo-dark [data-slot="tabs-list"],
       .run-demo-dark [data-slot="tabs-trigger"] {
-        background-color: #000 !important;
-        color: #fff !important;
+        background-color: var(--background) !important;
+        color: var(--foreground) !important;
       }
 
       .run-demo-dark [data-slot="tabs-trigger"][data-state="active"] {
-        background-color: #1d4ed8 !important;
-        color: #fff !important;
+        background-color: var(--primary) !important;
+        color: var(--primary-foreground) !important;
       }
 
       .run-demo-dark [data-slot="select-content"],
       .run-demo-dark [data-slot="select-item"] {
-        background-color: #000 !important;
-        color: #fff !important;
-        border-color: rgba(255, 255, 255, 0.22) !important;
+        background-color: var(--background) !important;
+        color: var(--foreground) !important;
+        border-color: var(--border) !important;
       }
 
       .run-demo-dark button:disabled {
@@ -1519,35 +1517,35 @@ export function RunDemoSection() {
 
   if (canStart) {
     return (
-      <div className="run-demo-dark grid min-h-screen place-items-center bg-black px-5 py-10 text-white">
+      <div className="run-demo-dark grid min-h-screen place-items-center bg-background px-5 py-10 text-primary-foreground">
         {contrastOverrideStyles}
-        <div className="w-full max-w-[980px] text-center">
+        <div className="w-full max-w-5xl text-center">
           <div className="flex justify-center">{brandHeader}</div>
-          <div className="mx-auto mt-12 max-w-[760px]">
-            <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-foreground">
+          <div className="mx-auto mt-12 max-w-3xl">
+            <p className="font-mono text-xs uppercase tracking-widest text-foreground">
               {statusLabel(runState)} / {micLabel(micState)}
             </p>
-            <h1 className="mt-5 font-mono text-[36px] font-bold uppercase leading-[1.05] tracking-[0.08em] text-foreground [text-shadow:2px_2px_0_color-mix(in_oklab,var(--foreground)_14%,transparent)] sm:text-[54px]">
+            <h1 className="mt-5 font-mono text-4xl font-bold uppercase leading-tight tracking-wider text-foreground sm:text-5xl">
               Living memory agent workspace
             </h1>
-            <p className="mx-auto mt-5 max-w-[640px] text-[16px] leading-7 text-foreground">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-foreground">
               MemoryOS tracks how projects evolve, structures decisions, and lets another model continue instantly
               without retraining or repeated context.
             </p>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-[760px] gap-3 text-left sm:grid-cols-3">
+          <div className="mx-auto mt-10 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
             <div className="bg-background p-4">
-              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Step 1</p>
-              <p className="mt-2 text-[14px] text-foreground">Type your real project goal</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Step 1</p>
+              <p className="mt-2 text-sm text-foreground">Type your real project goal</p>
             </div>
             <div className="bg-background p-4">
-              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Step 2</p>
-              <p className="mt-2 text-[14px] text-foreground">Add constraints or decisions</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Step 2</p>
+              <p className="mt-2 text-sm text-foreground">Add constraints or decisions</p>
             </div>
             <div className="bg-background p-4">
-              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Step 3</p>
-              <p className="mt-2 text-[14px] text-foreground">Next Step, Execute, handoff in chat bar</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Step 3</p>
+              <p className="mt-2 text-sm text-foreground">Next Step, Execute, handoff in chat bar</p>
             </div>
           </div>
 
@@ -1556,7 +1554,7 @@ export function RunDemoSection() {
               type="button"
               onClick={() => void startConversation()}
               disabled={isStarting || !hasRuntimeAgents}
-              className="rounded-[8px] bg-primary px-7 py-3 text-[13px] font-semibold uppercase tracking-[0.1em] text-primary-foreground shadow-lg shadow-primary/35 ring-1 ring-border/50 transition hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/45"
+              className="rounded-md bg-primary px-7 py-3 text-sm font-semibold uppercase tracking-widest text-primary-foreground ring-1 ring-border/50 transition hover:bg-primary/90 hover: hover:"
             >
               {isStarting ? "Starting" : "Start live proof"}
             </Button>
@@ -1565,14 +1563,14 @@ export function RunDemoSection() {
               onClick={() => void enableMic()}
               disabled={micEnabled || !hasRuntimeAgents}
               variant="outline"
-              className="rounded-[8px] border border-transparent bg-primary px-4 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-primary-foreground shadow-lg shadow-primary/35 ring-1 ring-border/50"
+              className="rounded-md border border-transparent bg-primary px-4 py-3 text-xs font-semibold uppercase tracking-widest text-primary-foreground ring-1 ring-border/50"
             >
               Enable mic
             </Button>
           </div>
 
           {micError || errorMessage ? (
-            <p className="mx-auto mt-5 max-w-[760px] border border-destructive/40 bg-destructive/10 px-5 py-4 text-[13px] text-destructive">
+            <p className="mx-auto mt-5 max-w-3xl border border-destructive/40 bg-destructive/10 px-5 py-4 text-sm text-destructive">
               {micError ?? errorMessage}
             </p>
           ) : null}
@@ -1582,21 +1580,21 @@ export function RunDemoSection() {
   }
 
   return (
-    <div className="run-demo-dark flex h-screen min-h-[680px] flex-col overflow-hidden bg-black text-white">
+    <div className="run-demo-dark flex h-screen min-h-screen flex-col overflow-hidden bg-background text-primary-foreground">
       {contrastOverrideStyles}
-      <header className="grid shrink-0 border-b border-border bg-background lg:grid-cols-[32%_1fr_32%]">
+      <header className="grid shrink-0 border-b border-border bg-background lg:grid-cols-3">
         <div className="border-b border-border px-5 py-4 lg:border-b-0 lg:border-r">{brandHeader}</div>
         <div className="border-b border-border bg-background p-2 lg:border-b-0">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "timeline" | "graph")}>
             <TabsList className="grid w-full grid-cols-2 border border-border bg-background">
-              <TabsTrigger value="timeline" className="font-mono text-[12px] uppercase tracking-[0.08em]">Timeline</TabsTrigger>
-              <TabsTrigger value="graph" className="font-mono text-[12px] uppercase tracking-[0.08em]">Decision Intelligence</TabsTrigger>
+              <TabsTrigger value="timeline" className="font-mono text-xs uppercase tracking-wider">Timeline</TabsTrigger>
+              <TabsTrigger value="graph" className="font-mono text-xs uppercase tracking-wider">Decision Intelligence</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
         <div className="flex flex-wrap items-center justify-start gap-2 px-5 py-3 lg:justify-end">
           <Select value={activeAgent} onValueChange={(value) => setActiveAgent(value)}>
-            <SelectTrigger className="h-8 w-[250px] border-border bg-background text-[11px]" disabled={!hasRuntimeAgents || isRuntimeAgentsLoading}>
+            <SelectTrigger className="h-8 w-64 border-border bg-background text-xs" disabled={!hasRuntimeAgents || isRuntimeAgentsLoading}>
               <SelectValue placeholder={isRuntimeAgentsLoading ? "Loading live agents..." : "Select live agent runtime"} />
             </SelectTrigger>
             <SelectContent>
@@ -1607,7 +1605,7 @@ export function RunDemoSection() {
               ))}
             </SelectContent>
           </Select>
-          <Badge variant="outline" className="border-border bg-background px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
+          <Badge variant="outline" className="border-border bg-background px-3 py-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
             {statusLabel(runState)}
           </Badge>
           <Button
@@ -1615,7 +1613,7 @@ export function RunDemoSection() {
             onClick={() => void enableMic()}
             disabled={micEnabled || !hasRuntimeAgents}
             variant="outline"
-            className="px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-primary"
+            className="px-3 py-2 font-mono text-xs uppercase tracking-widest text-primary"
           >
             Enable mic
           </Button>
@@ -1624,7 +1622,7 @@ export function RunDemoSection() {
             onClick={disableMic}
             disabled={!micEnabled}
             variant="outline"
-            className="px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground"
+            className="px-3 py-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
           >
             Disable mic
           </Button>
@@ -1633,37 +1631,37 @@ export function RunDemoSection() {
             onClick={() => void endConversation()}
             disabled={!canEnd || isEnding}
             variant="outline"
-            className="border-destructive/50 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-destructive"
+            className="border-destructive/50 px-3 py-2 font-mono text-xs uppercase tracking-widest text-destructive"
           >
             {isEnding ? "Ending" : "End"}
           </Button>
         </div>
       </header>
       {micError || errorMessage ? (
-        <div className="shrink-0 border-b border-amber-500/30 bg-amber-500/10 px-5 py-3 text-[13px] text-amber-800 dark:text-amber-200">
+        <div className="shrink-0 border-b border-chart-2/30 bg-chart-2/10 px-5 py-3 text-sm text-chart-2">
           {micError ?? errorMessage}
         </div>
       ) : null}
 
-      <main className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[32%_36%_32%]">
+      <main className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-3">
         <section className="flex min-h-0 flex-col border-b border-border bg-background lg:border-b-0 lg:border-r">
           <div className="shrink-0 border-b border-border bg-background px-5 py-4">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
+                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
                   {isChatLoading ? "Thinking" : isVoiceRecording ? "Listening" : "Conversation"}
                 </p>
-                <p className="mt-1 truncate text-[14px] font-semibold text-foreground">
+                <p className="mt-1 truncate text-sm font-semibold text-foreground">
                   {projectState.systemGoal || "Waiting for project context"}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <span
-                  className={`h-10 w-10 rounded-[8px] transition ${
+                  className={`h-10 w-10 rounded-md transition ${
                     isChatLoading
-                      ? "animate-pulse bg-primary shadow-lg shadow-primary/40"
+                      ? "animate-pulse bg-primary"
                       : isVoiceRecording
-                        ? "bg-primary/90 shadow-md shadow-primary/30"
+                        ? "bg-primary/90"
                         : "bg-muted-foreground/40"
                   }`}
                 />
@@ -1678,7 +1676,7 @@ export function RunDemoSection() {
                   if (message.speaker === "system") {
                     return (
                       <div key={`${message.text}-${index}`} className="flex justify-center py-2">
-                        <span className="max-w-full rounded-full bg-muted px-3 py-1 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                        <span className="max-w-full rounded-full bg-muted px-3 py-1 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
                           {message.text}
                         </span>
                       </div>
@@ -1691,27 +1689,27 @@ export function RunDemoSection() {
                   return (
                     <div key={`${message.text}-${index}`} className={`flex ${fromAssistant ? "justify-start" : "justify-end"}`}>
                       <div
-                        className={`max-w-[92%] rounded-[14px] px-4 py-3 text-left shadow-sm ${
+                        className={`max-w-full rounded-xl px-4 py-3 text-left ${
                           fromAssistant
-                            ? `rounded-bl-[4px] border bg-background ${
+                            ? `rounded-bl-sm border bg-background ${
                                 isLatestAssistant
-                                  ? "border-primary/50 shadow-md shadow-primary/15"
+                                  ? "border-primary/50"
                                   : "border-border"
                               }`
                             : "rounded-br-[4px] border border-primary/30 bg-primary/10"
                         }`}
                       >
-                        <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                        <div className="mb-1 flex items-center justify-between gap-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
                           <span>{fromAssistant ? "AI reply" : "User"}</span>
                           <span>{formatTime(message.createdAt)}</span>
                         </div>
-                        <p className="whitespace-pre-wrap text-[14px] leading-6 text-card-foreground">{message.text}</p>
+                        <p className="whitespace-pre-wrap text-sm leading-6 text-card-foreground">{message.text}</p>
                         <div className="mt-3 flex flex-wrap gap-2 border-t border-border pt-2">
-                          <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+                          <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-xs uppercase tracking-wide text-muted-foreground">
                             {fromAssistant ? "model reply stored" : "user input stored"}
                           </span>
                           {message.tags?.map((tag) => (
-                            <span key={tag} className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.06em] text-primary">
+                            <span key={tag} className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-xs uppercase tracking-wide text-primary">
                               {tag}
                             </span>
                           ))}
@@ -1722,12 +1720,12 @@ export function RunDemoSection() {
                 })}
                 {isChatLoading ? (
                   <div className="flex justify-start">
-                    <div className="max-w-[92%] animate-pulse rounded-[14px] rounded-bl-[4px] border border-primary/40 bg-background px-4 py-3 text-left shadow-md shadow-primary/20">
-                      <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                    <div className="max-w-full animate-pulse rounded-xl rounded-bl-sm border border-primary/40 bg-background px-4 py-3 text-left">
+                      <div className="mb-1 flex items-center justify-between gap-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
                         <span>AI reply</span>
                         <span>thinking</span>
                       </div>
-                      <p className="text-[14px] leading-5 text-card-foreground">
+                      <p className="text-sm leading-5 text-card-foreground">
                         Storing your turn in MemoryOS, retrieving context, then asking the model...
                       </p>
                       <div className="mt-3 grid grid-cols-3 gap-1">
@@ -1741,7 +1739,7 @@ export function RunDemoSection() {
               </>
             ) : (
               <div className="grid h-full place-items-center text-center">
-                <p className="max-w-[320px] font-mono text-[13px] leading-6 text-muted-foreground">
+                <p className="max-w-xs font-mono text-sm leading-6 text-muted-foreground">
                   Start by telling MemoryOS what you are building.
                 </p>
               </div>
@@ -1750,11 +1748,11 @@ export function RunDemoSection() {
 
           <div className="shrink-0 border-t border-border bg-background p-4">
             <div
-              className={`overflow-hidden rounded-[20px] border bg-background shadow-md transition ${
-                isChatLoading ? "border-primary/50 shadow-primary/15" : "border-border"
+              className={`overflow-hidden rounded-2xl border bg-background transition ${
+                isChatLoading ? "border-primary/50" : "border-border"
               }`}
             >
-              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-[12px] text-muted-foreground">
+              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-xs text-muted-foreground">
                 <span>
                   {isChatLoading
                     ? "MemoryOS updating"
@@ -1767,7 +1765,7 @@ export function RunDemoSection() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-[11px]">
+              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-xs">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <span className={`inline-block h-2 w-2 rounded-full ${applyCompanyBrainSkills ? "bg-primary" : "bg-muted-foreground/50"}`} />
                   <span>Apply Company Brain Skills (server-side)</span>
@@ -1775,7 +1773,7 @@ export function RunDemoSection() {
                 <button
                   type="button"
                   onClick={() => setApplyCompanyBrainSkills((current) => !current)}
-                  className={`rounded-[6px] border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${
+                  className={`rounded-md border px-2 py-1 text-xs font-semibold uppercase tracking-wider ${
                     applyCompanyBrainSkills
                       ? "border-primary/40 bg-primary/10 text-primary"
                       : "border-border bg-muted/40 text-muted-foreground"
@@ -1785,7 +1783,7 @@ export function RunDemoSection() {
                 </button>
               </div>
 
-              <div className="rounded-t-[18px] border-t border-border bg-background px-3 py-3">
+              <div className="rounded-t-xl border-t border-border bg-background px-3 py-3">
                 <div className="flex flex-col gap-3">
                 <div className="min-w-0 flex-1">
                 <Input
@@ -1802,7 +1800,7 @@ export function RunDemoSection() {
                   }}
                   disabled={!hasActiveSession || isEnding || isChatLoading}
                   placeholder={isChatLoading ? "MemoryOS is updating..." : "What do you want to do today?"}
-                  className="h-11 border-0 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground shadow-none focus-visible:ring-0 disabled:cursor-not-allowed"
+                  className="h-11 border-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-0 disabled:cursor-not-allowed"
                 />
 
                 <div className="mt-2 flex items-center justify-between gap-3">
@@ -1841,7 +1839,7 @@ export function RunDemoSection() {
                     aria-label="Send message"
                     onClick={() => void sendTextMessage()}
                     disabled={!chatInput.trim() || !hasActiveSession || isEnding || isChatLoading}
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:bg-primary/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-45"
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition hover:bg-primary/90 hover: disabled:cursor-not-allowed disabled:opacity-45"
                   >
                     <SendIcon />
                   </button>
@@ -1860,7 +1858,7 @@ export function RunDemoSection() {
 
         <section className="flex min-h-0 flex-col border-b border-border bg-background lg:border-b-0 lg:border-r">
           <div className="shrink-0 border-b border-border bg-background px-5 py-4">
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-foreground">
+            <p className="font-mono text-xs uppercase tracking-wider text-foreground">
               {activeTab === "timeline" ? "Timeline" : "Decision Intelligence"}
             </p>
           </div>
@@ -1872,14 +1870,14 @@ export function RunDemoSection() {
                   visibleTimeline.map((event) => (
                     <div key={event.id} className="border-l-2 border-primary py-1 pl-4">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-primary">{event.eventType}</span>
-                        <span className="font-mono text-[10px] text-muted-foreground">{formatTime(event.timestamp)}</span>
+                        <span className="font-mono text-xs uppercase tracking-wider text-primary">{event.eventType}</span>
+                        <span className="font-mono text-xs text-muted-foreground">{formatTime(event.timestamp)}</span>
                       </div>
-                      <p className="mt-1 text-[14px] leading-5 text-foreground">{event.reason}</p>
+                      <p className="mt-1 text-sm leading-5 text-foreground">{event.reason}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-[13px] text-muted-foreground">Timeline will fill when MemoryOS stores turns, detects goals, constraints, and decisions.</p>
+                  <p className="text-sm text-muted-foreground">Timeline will fill when MemoryOS stores turns, detects goals, constraints, and decisions.</p>
                 )}
               </div>
             ) : (
@@ -1889,20 +1887,20 @@ export function RunDemoSection() {
 
           <div
             className={`shrink-0 space-y-3 border-t border-border p-5 transition-all duration-500 ${
-              activeTab === "graph" ? "bg-destructive/5 shadow-md shadow-destructive/10" : "bg-background"
+              activeTab === "graph" ? "bg-destructive/5" : "bg-background"
             }`}
           >
             {activeTab === "graph" && (
               <div className="mb-4 text-center">
-                <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-destructive">Required Action</p>
-                <p className="mt-1 text-[13px] font-semibold text-destructive">{projectState.systemGoal ? "Continue Execution" : "Define project goal"}</p>
+                <p className="font-mono text-xs uppercase tracking-wider text-destructive">Required Action</p>
+                <p className="mt-1 text-sm font-semibold text-destructive">{projectState.systemGoal ? "Continue Execution" : "Define project goal"}</p>
               </div>
             )}
             <button
               type="button"
               onClick={() => void generateNextStep()}
               disabled={!hasActiveSession || isNextStepLoading}
-              className={`w-full rounded-[8px] border bg-background py-3 text-[12px] font-semibold uppercase tracking-[0.1em] transition disabled:opacity-50 ${
+              className={`w-full rounded-md border bg-background py-3 text-xs font-semibold uppercase tracking-widest transition disabled:opacity-50 ${
                 activeTab === "graph"
                   ? "border-destructive/50 text-destructive hover:bg-destructive/10"
                   : "border-border text-foreground hover:bg-accent"
@@ -1914,9 +1912,9 @@ export function RunDemoSection() {
               type="button"
               onClick={() => void executeNextStep()}
               disabled={!hasActiveSession || isExecuting}
-              className={`w-full rounded-[8px] py-3 text-[12px] font-semibold uppercase tracking-[0.1em] transition disabled:opacity-50 ${
+              className={`w-full rounded-md py-3 text-xs font-semibold uppercase tracking-widest transition disabled:opacity-50 ${
                 activeTab === "graph"
-                  ? "bg-destructive text-destructive-foreground shadow-md shadow-destructive/25 hover:bg-destructive/90"
+                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   : "bg-primary text-primary-foreground hover:bg-primary/90"
               }`}
             >
@@ -1929,49 +1927,49 @@ export function RunDemoSection() {
           <div className="shrink-0 border-b border-border px-5 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="border-l-4 border-primary pl-3 font-mono text-[12px] uppercase tracking-[0.08em] text-foreground">
+                <p className="border-l-4 border-primary pl-3 font-mono text-xs uppercase tracking-wider text-foreground">
                   Project Intelligence
                 </p>
-                <p className="ml-4 mt-1 text-[11px] text-muted-foreground">Live state used by agents</p>
+                <p className="ml-4 mt-1 text-xs text-muted-foreground">Live state used by agents</p>
               </div>
               {projectState.systemGoal ? (
-                <span className="rounded-full bg-primary/15 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-primary">
+                <span className="rounded-full bg-primary/15 px-2 py-1 font-mono text-xs uppercase tracking-widest text-primary">
                   Ready
                 </span>
               ) : (
-                <span className="rounded-full bg-destructive/10 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-destructive">
+                <span className="rounded-full bg-destructive/10 px-2 py-1 font-mono text-xs uppercase tracking-widest text-destructive">
                   Incomplete · Needs Goal
                 </span>
               )}
             </div>
-            <div className="mt-4 rounded-[6px] bg-background p-2.5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">System Status</p>
-              <div className="mt-1.5 flex items-center gap-2 text-[12px] font-medium">
+            <div className="mt-4 rounded-md bg-background p-2.5">
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">System Status</p>
+              <div className="mt-1.5 flex items-center gap-2 text-xs font-medium">
                 {projectState.systemGoal ? (
                   <span className="text-primary">🟢 Goal Defined &rarr; Planning Ready &rarr; Execution Unlocked</span>
                 ) : (
-                  <span className="text-amber-600 dark:text-amber-500">🟡 Waiting for Goal &rarr; Planning Disabled &rarr; Execution Blocked</span>
+                  <span className="text-chart-2">🟡 Waiting for Goal &rarr; Planning Disabled &rarr; Execution Blocked</span>
                 )}
               </div>
             </div>
           </div>
 
           <div className="shrink-0 border-b border-border bg-background px-5 py-2">
-            <div className="flex flex-wrap items-center gap-4 font-mono text-[10px] text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 font-mono text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
-                <span className="uppercase tracking-[0.08em]">User:</span>
+                <span className="uppercase tracking-wider">User:</span>
                 <span className="text-foreground" title={displayUserId}>{compactId(displayUserId)}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="uppercase tracking-[0.08em]">Session:</span>
+                <span className="uppercase tracking-wider">Session:</span>
                 <span className="text-foreground" title={sessionIdentity.sessionId}>{compactId(sessionIdentity.sessionId)}</span>
               </div>
             </div>
           </div>
 
           <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-5">
-            <div className="flex items-center gap-5 rounded-[8px] bg-background p-4">
-              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-background shadow-sm">
+            <div className="flex items-center gap-5 rounded-md bg-background p-4">
+              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-background">
                 <svg className="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
                   <circle cx="18" cy="18" r="16" fill="none" className="stroke-border" strokeWidth="3" />
                   <circle
@@ -1986,59 +1984,59 @@ export function RunDemoSection() {
                   />
                 </svg>
                 <div className="text-center">
-                  <span className="block font-mono text-[14px] font-bold text-foreground">{projectState.confidence ?? 0}%</span>
+                  <span className="block font-mono text-sm font-bold text-foreground">{projectState.confidence ?? 0}%</span>
                 </div>
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Current Understanding</p>
+                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Current Understanding</p>
                 <div className="mt-1 space-y-1">
-                  <p className="text-[13px]"><span className="font-medium text-foreground">Goal:</span> <span className="text-muted-foreground">{projectState.systemGoal ? "Defined" : "Not defined"}</span></p>
+                  <p className="text-sm"><span className="font-medium text-foreground">Goal:</span> <span className="text-muted-foreground">{projectState.systemGoal ? "Defined" : "Not defined"}</span></p>
                 </div>
               </div>
             </div>
 
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">Progress Flow</p>
-              <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.05em] text-muted-foreground">
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Progress Flow</p>
+              <div className="mt-3 flex items-center justify-between font-mono text-xs uppercase tracking-wide text-muted-foreground">
                 <div className={`flex flex-col items-center gap-1.5 ${projectState.systemGoal ? "text-primary" : ""}`}>
-                  <span className="text-[14px]">{projectState.systemGoal ? "●" : "○"}</span>
+                  <span className="text-sm">{projectState.systemGoal ? "●" : "○"}</span>
                   <span>Goal</span>
                 </div>
                 <div className="mx-2 h-px flex-1 bg-border" />
                 <div className={`flex flex-col items-center gap-1.5 ${(projectState.activeConstraints ?? []).length > 0 ? "text-primary" : ""}`}>
-                  <span className="text-[14px]">{(projectState.activeConstraints ?? []).length > 0 ? "●" : "○"}</span>
+                  <span className="text-sm">{(projectState.activeConstraints ?? []).length > 0 ? "●" : "○"}</span>
                   <span>Constraints</span>
                 </div>
                 <div className="mx-2 h-px flex-1 bg-border" />
                 <div className={`flex flex-col items-center gap-1.5 ${(projectState.preferences ?? []).length > 0 ? "text-primary" : ""}`}>
-                  <span className="text-[14px]">{(projectState.preferences ?? []).length > 0 ? "●" : "○"}</span>
+                  <span className="text-sm">{(projectState.preferences ?? []).length > 0 ? "●" : "○"}</span>
                   <span>Decisions</span>
                 </div>
                 <div className="mx-2 h-px flex-1 bg-border" />
                 <div className={`flex flex-col items-center gap-1.5 ${(projectState.executionPlan ?? []).length > 0 ? "text-primary" : ""}`}>
-                  <span className="text-[14px]">{(projectState.executionPlan ?? []).length > 0 ? "●" : "○"}</span>
+                  <span className="text-sm">{(projectState.executionPlan ?? []).length > 0 ? "●" : "○"}</span>
                   <span>Plan</span>
                 </div>
                 <div className="mx-2 h-px flex-1 bg-border" />
                 <div className="flex flex-col items-center gap-1.5 text-muted-foreground">
-                  <span className="text-[14px]">○</span>
+                  <span className="text-sm">○</span>
                   <span>Execute</span>
                 </div>
               </div>
             </div>
 
             {(projectState.missingInfo ?? []).length > 0 && (
-              <div className="rounded-[8px] border-2 border-destructive/50 bg-destructive/10 p-4 shadow-sm" title="This missing information blocks progression">
+              <div className="rounded-md border-2 border-destructive/50 bg-destructive/10 p-4" title="This missing information blocks progression">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground">
                     <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
                   </span>
-                  <p className="font-mono text-[12px] font-bold uppercase tracking-[0.08em] text-destructive">Blocker</p>
+                  <p className="font-mono text-xs font-bold uppercase tracking-wider text-destructive">Blocker</p>
                 </div>
-                <p className="mt-2 text-[15px] font-semibold text-destructive">{projectState.missingInfo?.[0]}</p>
+                <p className="mt-2 text-sm font-semibold text-destructive">{projectState.missingInfo?.[0]}</p>
                 <div className="mt-3 border-t border-destructive/20 pt-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-destructive">Impact:</p>
-                  <ul className="mt-1 space-y-1 text-[13px] text-destructive/90">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-destructive">Impact:</p>
+                  <ul className="mt-1 space-y-1 text-sm text-destructive/90">
                     <li className="flex items-center gap-2"><span>•</span> Planning disabled</li>
                     <li className="flex items-center gap-2"><span>•</span> Execution blocked</li>
                     <li className="flex items-center gap-2"><span>•</span> Agents lack direction</li>
@@ -2048,9 +2046,9 @@ export function RunDemoSection() {
             )}
 
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Agent Context Packet</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">Injected into next agent run</p>
-              <div className="mt-2 rounded-[6px] bg-background p-4 font-mono text-[12px] leading-6 text-primary shadow-inner">
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Agent Context Packet</p>
+              <p className="mt-1 text-xs text-muted-foreground">Injected into next agent run</p>
+              <div className="mt-2 rounded-md bg-background p-4 font-mono text-xs leading-6 text-primary">
                 <p>&gt; goal: {projectState.systemGoal ? `"${projectState.systemGoal}"` : "null"}</p>
                 <p>&gt; confidence: {(projectState.confidence ?? 0) / 100}</p>
                 <p>&gt; primary_gap: {(projectState.missingInfo ?? []).length > 0 ? `"${projectState.missingInfo?.[0]}"` : "null"}</p>
@@ -2061,39 +2059,39 @@ export function RunDemoSection() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">Constraints</p>
+                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Constraints</p>
                 {(projectState.activeConstraints ?? []).length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {projectState.activeConstraints?.map((constraint) => (
-                      <span key={constraint} className="rounded border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive">
+                      <span key={constraint} className="rounded border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
                         {constraint}
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <p className="mt-1 text-[12px] italic text-muted-foreground">None detected</p>
+                  <p className="mt-1 text-xs italic text-muted-foreground">None detected</p>
                 )}
               </div>
 
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">Decisions</p>
+                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Decisions</p>
                 {(projectState.preferences ?? []).length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {projectState.preferences?.map((preference) => (
-                      <span key={preference} className="rounded border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      <span key={preference} className="rounded border border-primary/25 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                         {preference}
                       </span>
                     ))}
                   </div>    
                 ) : (
-                  <p className="mt-1 text-[12px] italic text-muted-foreground">None recorded</p>
+                  <p className="mt-1 text-xs italic text-muted-foreground">None recorded</p>
                 )}
               </div>
             </div>
 
             <Card className="border-0 bg-background ring-0">
               <CardHeader className="pb-2">
-                <CardTitle className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                <CardTitle className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                   Goal Intake Gate
                 </CardTitle>
               </CardHeader>
@@ -2127,37 +2125,37 @@ export function RunDemoSection() {
               </CardContent>
             </Card>
 
-            <div className="rounded-[6px] p-3">
-              <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">Confidence Breakdown</p>
-              <ul className="mt-2 space-y-1.5 text-[12px]">
+            <div className="rounded-md p-3">
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Confidence Breakdown</p>
+              <ul className="mt-2 space-y-1.5 text-xs">
                 <li className="flex items-center gap-2 text-primary"><span>+</span> Session context detected</li>
                 {projectState.systemGoal ? (
                   <li className="flex items-center gap-2 text-primary"><span>+</span> Goal defined</li>
                 ) : (
-                  <li className="flex items-center gap-2 text-amber-600 dark:text-amber-500"><span>-</span> Goal missing</li>
+                  <li className="flex items-center gap-2 text-chart-2"><span>-</span> Goal missing</li>
                 )}
                 {(projectState.activeConstraints ?? []).length > 0 ? (
                   <li className="flex items-center gap-2 text-primary"><span>+</span> Constraints added</li>
                 ) : (
-                  <li className="flex items-center gap-2 text-amber-600 dark:text-amber-500"><span>-</span> No constraints</li>
+                  <li className="flex items-center gap-2 text-chart-2"><span>-</span> No constraints</li>
                 )}
                 {(projectState.preferences ?? []).length > 0 ? (
                   <li className="flex items-center gap-2 text-primary"><span>+</span> Decisions recorded</li>
                 ) : (
-                  <li className="flex items-center gap-2 text-amber-600 dark:text-amber-500"><span>-</span> No decisions</li>
+                  <li className="flex items-center gap-2 text-chart-2"><span>-</span> No decisions</li>
                 )}
               </ul>
             </div>
 
             <Card className="border-0 bg-background ring-0">
               <CardHeader className="pb-2">
-                <CardTitle className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                <CardTitle className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                   Contract Quality
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-[13px] font-semibold text-foreground">
+                  <p className="text-sm font-semibold text-foreground">
                     {lastContractQuality ? `${lastContractQuality.score}/100` : "Not scored yet"}
                   </p>
                   <Badge variant="outline">
@@ -2165,27 +2163,27 @@ export function RunDemoSection() {
                   </Badge>
                 </div>
                 {lastContractQuality?.reasons?.length ? (
-                  <ul className="mt-2 list-disc pl-4 text-[11px] text-muted-foreground">
+                  <ul className="mt-2 list-disc pl-4 text-xs text-muted-foreground">
                     {lastContractQuality.reasons.slice(0, 2).map((reason) => (
                       <li key={reason}>{reason}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-2 text-[11px] text-muted-foreground">Send a turn to compute contract quality.</p>
+                  <p className="mt-2 text-xs text-muted-foreground">Send a turn to compute contract quality.</p>
                 )}
               </CardContent>
             </Card>
           </div>
 
-          <Card className="relative z-10 shrink-0 rounded-none border-x-0 border-b-0 border-t border-border bg-background shadow-md">
+          <Card className="relative z-10 shrink-0 rounded-none border-x-0 border-b-0 border-t border-border bg-background">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-[0.08em] text-foreground">
+              <CardTitle className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-foreground">
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12h16M12 4v16"/></svg>
                 Next Best Action
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <p className="text-[14px] font-medium text-foreground" title="This action drives the system forward">
+              <p className="text-sm font-medium text-foreground" title="This action drives the system forward">
                 {projectState.systemGoal ? "Generate execution plan" : "Define the project goal"}
               </p>
               <div className="mt-4">
@@ -2193,7 +2191,7 @@ export function RunDemoSection() {
                   type="button"
                   onClick={() => void setChatInput(projectState.systemGoal ? "Generate an execution plan based on the current state." : "What are you trying to build?")}
                   title="This will unlock planning + execution"
-                  className="w-full rounded-[8px] bg-blue-700 py-3 text-[13px] font-semibold text-white hover:bg-blue-600"
+                  className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                 >
                   {projectState.systemGoal ? "Generate Starter Plan" : "Define Goal"}
                 </Button>
@@ -2203,12 +2201,12 @@ export function RunDemoSection() {
                   type="button"
                   onClick={() => void sendToIdeAgent()}
                   disabled={!hasActiveSession || isSendingIdePacket}
-                  className="w-full rounded-[8px] bg-blue-700 font-mono text-[12px] uppercase tracking-[0.08em] text-white hover:bg-blue-600"
+                  className="w-full rounded-md bg-primary font-mono text-xs uppercase tracking-wider text-primary-foreground hover:bg-primary/90"
                 >
                   {isSendingIdePacket ? "Sending..." : "Send to IDE Agent"}
                 </Button>
               </div>
-              <p className="mt-3 text-center font-mono text-[10px] text-muted-foreground">
+              <p className="mt-3 text-center font-mono text-xs text-muted-foreground">
                 Copy handoff packet into your coding assistant context.
               </p>
             </CardContent>

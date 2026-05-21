@@ -44,13 +44,13 @@ export function StructuredDataPanel({
     <Card className="border-border bg-card">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-3">
-          <CardTitle className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{title}</CardTitle>
+          <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground">{title}</CardTitle>
           {isTruncated ? (
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="h-7 px-2 text-[10px] uppercase tracking-[0.08em]"
+              className="h-7 px-2 text-xs uppercase tracking-wider"
               onClick={() => setShowFull((current) => !current)}
             >
               {showFull ? "Compact" : "Full"}
@@ -60,7 +60,7 @@ export function StructuredDataPanel({
       </CardHeader>
       <CardContent className="pt-0">
         <ScrollArea className={`w-full rounded-md border border-border bg-muted/40 p-3 ${maxHeightClassName}`}>
-          <pre className="whitespace-pre-wrap break-words text-[12px] leading-6 text-foreground">
+          <pre className="whitespace-pre-wrap break-words text-xs leading-6 text-foreground">
             {isEmpty ? emptyMessage : display}
           </pre>
         </ScrollArea>

@@ -2,9 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import {
+  ConsoleGrid,
   ConsolePage,
+  ConsolePageHeader,
+  ConsoleSurface,
   ConsoleStatusBadge,
 } from "@/components/developer-console/console-ui";
+import type { RequestSectionEvent } from "@/components/developer-console/sections/requests-section";
 
 type ActionCardTitle = "Quick Start" | "Continuity Lab" | "Playground" | "Documentation";
 type OverviewActionHandlers = Partial<Record<ActionCardTitle, () => void>>;
@@ -16,15 +20,7 @@ type OverviewSectionProps = {
   isLoading?: boolean;
   errorMessage?: string | null;
   memories?: Array<{ content: string; type?: string; updatedAt: string }>;
-  requestEvents?: Array<{
-    id: string;
-    createdAt: string;
-    type: string;
-    status: "Success" | "Error";
-    route: string;
-    latencyMs: number;
-    method?: string;
-  }>;
+  requestEvents?: RequestSectionEvent[];
   insights?: {
     activeProjects?: string[];
   } | null;
@@ -79,6 +75,31 @@ function shortText(input: string | undefined | null, max = 180): string {
   return `${cleaned.slice(0, max).trimEnd()}...`;
 }
 
+function isCompletionSignal(input: string | undefined | null): boolean {
+  const cleaned = cleanNoise(input).toLowerCase();
+  if (!cleaned) return false;
+  return /\b(shipped|completed|complete|done|solved|resolved|fixed|closed|delivered|released|validated|merged)\b/.test(
+    cleaned,
+  );
+}
+
+function isPendingLoop(input: string | undefined | null): boolean {
+  const cleaned = cleanNoise(input).toLowerCase();
+  if (!cleaned || isCompletionSignal(cleaned)) return false;
+  return /\b(problem|risk|blocked|blocker|todo|next|continue|open|pending|needs|follow[- ]?up)\b/.test(
+    cleaned,
+  );
+}
+
+function isSuccessfulRoute(event: RequestSectionEvent, fragment: string): boolean {
+  return event.status === "Success" && event.route.includes(fragment);
+}
+
+function eventHasTraceProofSignal(event: RequestSectionEvent): boolean {
+  const text = `${event.responseSummary ?? ""} ${event.payloadSummary ?? ""}`;
+  return /\b(traceProof|trace proof|contractCategory|memoryUsedCount|whySelected|confidence)\b/i.test(text);
+}
+
 export function OverviewSection({
   actions,
   stats = [],
@@ -94,12 +115,41 @@ export function OverviewSection({
 }: OverviewSectionProps) {
   const verificationStatus = installationVerification?.status ?? "idle";
   const isConnected = verificationStatus === "connected";
+  const successfulEvents = requestEvents.filter((event) => event.status === "Success");
+  const hasSourceConnected =
+    memories.length > 0 ||
+    successfulEvents.some(
+      (event) =>
+        isSuccessfulRoute(event, "/api/connector") ||
+        isSuccessfulRoute(event, "/api/memory/process") ||
+        isSuccessfulRoute(event, "/api/memory/list"),
+    );
+  const hasContinueBrief =
+    Boolean(resumeData?.summary) ||
+    successfulEvents.some(
+      (event) =>
+        isSuccessfulRoute(event, "/api/memory/resume") &&
+        !event.route.includes("/resume/prompt"),
+    );
+  const hasIdePrompt = successfulEvents.some((event) =>
+    isSuccessfulRoute(event, "/api/memory/resume/prompt"),
+  );
+  const hasTraceProof =
+    hasIdePrompt &&
+    (successfulEvents.some(
+      (event) =>
+        isSuccessfulRoute(event, "/api/memory/resume/prompt") &&
+        eventHasTraceProofSignal(event),
+    ) ||
+      timelineCount > 0 ||
+      memories.length > 1);
+  const graphSynced = timelineCount > 0 || memories.length > 0;
 
   const statusPills = [
-    { label: "Workspace Active", active: memories.length > 0 || requestEvents.length > 0, dotClass: "bg-primary" },
-    { label: "SDK Connected", active: isConnected, dotClass: "bg-primary" },
-    { label: "Graph Synced", active: timelineCount > 0, dotClass: "bg-primary" },
-    { label: "Handoff Ready", active: (handoffData?.openLoops?.length ?? 0) > 0, dotClass: "bg-primary" },
+    { label: "Workspace Active", active: hasSourceConnected },
+    { label: "SDK Connected", active: isConnected },
+    { label: "Graph Synced", active: graphSynced },
+    { label: "Trace Proof Ready", active: hasTraceProof },
   ];
 
   const metricCards = stats.map((entry) => ({
@@ -126,12 +176,31 @@ export function OverviewSection({
       180,
     ) ??
     "No next action detected yet.";
+  const pendingLoops = [
+    ...(resumeData?.openLoops ?? []),
+    ...(handoffData?.openLoops ?? []),
+  ].filter(isPendingLoop);
+  const completedSignals = [
+    primaryProjectName,
+    topMemory,
+    resumeData?.summary,
+    resumeData?.recommendedNextStep,
+    ...(resumeData?.openLoops ?? []),
+    ...(handoffData?.openLoops ?? []),
+    ...memories.slice(0, 5).map((memory) => memory.content),
+  ].filter(isCompletionSignal);
+  const projectCompleted = completedSignals.length > 0 && pendingLoops.length === 0;
+  const completionSummary = shortText(
+    completedSignals[0] ?? primaryProjectName,
+    180,
+  );
   const detectedProblem =
     shortText(
-      [...(resumeData?.openLoops ?? []), ...(handoffData?.openLoops ?? [])].find((loop) =>
-      loop.toLowerCase().includes("problem") ||
-      loop.toLowerCase().includes("risk") ||
-      loop.toLowerCase().includes("blocked"),
+      pendingLoops.find((loop) =>
+        loop.toLowerCase().includes("problem") ||
+        loop.toLowerCase().includes("risk") ||
+        loop.toLowerCase().includes("blocked") ||
+        loop.toLowerCase().includes("pending"),
       ),
       180,
     ) ?? "No blocker detected from current live context.";
@@ -161,15 +230,15 @@ export function OverviewSection({
     {
       id: "connect",
       label: "Connect GitHub Source",
-      done: memories.length > 0 || requestEvents.length > 0,
+      done: hasSourceConnected,
       action: actions?.["Quick Start"],
       actionLabel: "Open Integrations",
-      detail: "Connect at least one source so continuity memory has real project context.",
+      detail: "Connect at least one source and ingest real project context.",
     },
     {
       id: "brief",
       label: "Continue Project Brief",
-      done: Boolean(resumeData?.summary),
+      done: hasContinueBrief,
       action: actions?.["Continuity Lab"],
       actionLabel: "Open Continuity Lab",
       detail: "Generate structured output: recent changes, goal, blockers, risky files, next action.",
@@ -177,7 +246,7 @@ export function OverviewSection({
     {
       id: "prompt",
       label: "Generate IDE Prompt",
-      done: requestEvents.some((event) => event.route.includes("/resume/prompt")),
+      done: hasIdePrompt,
       action: actions?.["Playground"],
       actionLabel: "Open Playground",
       detail: "Create Cursor/Codex/Claude Code ready prompts from the brief.",
@@ -185,44 +254,40 @@ export function OverviewSection({
     {
       id: "trace",
       label: "Trace Proof Panel",
-      done: timelineCount > 0 || memories.length > 1,
+      done: hasTraceProof,
       action: actions?.["Playground"],
       actionLabel: "Inspect Trace",
       detail: "Show memory used, source, confidence, and why each item was selected.",
     },
   ];
+  const missingFunnelSteps = funnelSteps.filter((step) => !step.done).map((step) => step.label);
 
   return (
     <ConsolePage>
-      <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%)]" />
-        <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Memory Command Center</h1>
-            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Live observability for agent memory, retrieval quality, and cross-session continuity.
-            </p>
-          </div>
+      <ConsolePageHeader
+        title="Memory Command Center"
+        description="Live observability for agent memory, retrieval quality, and cross-session continuity."
+        actions={
           <div className="flex flex-wrap gap-2">
             {statusPills.map((pill) => (
-              <div key={pill.label} className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
-                <span className={`h-2 w-2 rounded-full ${pill.active ? `${pill.dotClass} animate-pulse` : "bg-muted-foreground/40"}`} />
-                <span className={`text-[10px] font-bold uppercase tracking-widest ${pill.active ? "text-foreground/90" : "text-muted-foreground"}`}>
-                  {pill.label}
-                </span>
-              </div>
+              <ConsoleStatusBadge key={pill.label} label={pill.label} active={pill.active} />
             ))}
           </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="space-y-8">
-        <div className="rounded-[12px] border border-border bg-card p-6">
+        <ConsoleSurface>
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">Engineering Continuity Funnel</h2>
-              <p className="mt-1 text-[12px] text-muted-foreground">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Engineering Continuity Funnel</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
                 Ship the wedge first: source connect, continue brief, IDE prompt, and trace proof.
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {missingFunnelSteps.length === 0
+                  ? "Wedge shipped for this workspace."
+                  : `Still needed: ${missingFunnelSteps.join(", ")}.`}
               </p>
             </div>
             <ConsoleStatusBadge
@@ -230,35 +295,35 @@ export function OverviewSection({
               active={funnelSteps.every((step) => step.done)}
             />
           </div>
-          <div className="grid gap-3 lg:grid-cols-2">
+          <ConsoleGrid columns="two">
             {funnelSteps.map((step, index) => (
-              <div key={step.id} className="rounded-[10px] border border-border bg-muted/30 p-4">
+              <ConsoleSurface key={step.id} tone="muted" className="console-funnel-step-card">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Step {index + 1}</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Step {index + 1}</p>
                   <ConsoleStatusBadge label={step.done ? "Done" : "Pending"} active={step.done} />
                 </div>
-                <p className="text-[14px] font-semibold text-foreground">{step.label}</p>
-                <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">{step.detail}</p>
+                <p className="text-sm font-semibold text-foreground">{step.label}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.detail}</p>
                 <Button className="mt-3 w-full" variant={step.done ? "secondary" : "default"} onClick={step.action}>
                   {step.actionLabel}
                 </Button>
-              </div>
+              </ConsoleSurface>
             ))}
-          </div>
-        </div>
+          </ConsoleGrid>
+        </ConsoleSurface>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <ConsoleGrid columns="five">
           {metricCards.map((metric) => (
-            <div
+            <ConsoleSurface
               key={metric.title}
-              className="relative overflow-hidden rounded-[10px] border border-border bg-card p-5 shadow-sm"
+              className="relative overflow-hidden"
             >
-              <p className="mb-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{metric.title}</p>
+              <p className="mb-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">{metric.title}</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-[32px] font-bold tracking-tight text-foreground">{metric.value}</span>
-                {metric.delta ? <span className={`text-[12px] font-medium ${metric.accentClass}`}>{metric.delta}</span> : null}
+                <span className="text-3xl font-bold tracking-tight text-foreground">{metric.value}</span>
+                {metric.delta ? <span className={`text-xs font-medium ${metric.accentClass}`}>{metric.delta}</span> : null}
               </div>
-              <div className="mt-4 space-y-1 text-[11px] font-mono text-muted-foreground">
+              <div className="mt-4 space-y-1 text-xs font-mono text-muted-foreground">
                 {metric.rows.map((row) => (
                   <div key={row.label} className="flex justify-between">
                     <span>{row.label}</span>
@@ -266,26 +331,26 @@ export function OverviewSection({
                   </div>
                 ))}
               </div>
-            </div>
+            </ConsoleSurface>
           ))}
-        </div>
+        </ConsoleGrid>
 
-        <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-          <div className="flex flex-col overflow-hidden rounded-[12px] border border-border bg-card">
+        <ConsoleGrid columns="two" className="gap-6">
+          <ConsoleSurface className="flex flex-col overflow-hidden p-0">
             <div className="flex items-center justify-between border-b border-border bg-card px-5 py-4">
-              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">Active Project State</h2>
-              <span className="text-[10px] font-mono text-muted-foreground">Confidence: live</span>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Active Project State</h2>
+              <span className="text-xs font-mono text-muted-foreground">Confidence: live</span>
             </div>
             <div className="flex-1 space-y-6 p-6">
               <div>
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Project</p>
-                <p className="text-[15px] font-medium text-foreground">{primaryProjectName}</p>
-                <p className="mt-1 text-[12px] text-muted-foreground">{summarySentence}</p>
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">Project</p>
+                <p className="text-sm font-medium text-foreground">{primaryProjectName}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{summarySentence}</p>
               </div>
               <div>
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Current Focus</p>
-                <div className="rounded-[8px] border border-border bg-muted/40 px-3 py-2">
-                  <ul className="space-y-1.5 text-[13px] leading-relaxed text-foreground/90">
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-primary">Current Focus</p>
+                <ConsoleSurface tone="muted" className="px-3 py-2">
+                  <ul className="space-y-1.5 text-sm leading-relaxed text-foreground/90">
                     {(focusPoints.length > 0 ? focusPoints : [shortText(resumeData?.summary ?? topMemory, 260)]).map((point, idx) => (
                       <li key={`${idx}-${point}`} className="flex items-start gap-2">
                         <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-primary" />
@@ -293,105 +358,111 @@ export function OverviewSection({
                       </li>
                     ))}
                   </ul>
-                </div>
+                </ConsoleSurface>
               </div>
               <div>
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-destructive">Detected Problem</p>
-                <div className="rounded-[8px] border border-destructive/25 bg-destructive/5 px-3 py-2">
+                <p className={`mb-1.5 text-xs font-bold uppercase tracking-widest ${projectCompleted ? "text-primary" : "text-destructive"}`}>
+                  {projectCompleted ? "Completed State" : "Detected Problem"}
+                </p>
+                <ConsoleSurface tone={projectCompleted ? "primary" : "destructive"} className="px-3 py-2">
                   <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-destructive">
-                      Open Loop
+                    <span className={`rounded-full border px-2 py-0.5 text-xs font-bold uppercase tracking-widest ${projectCompleted ? "border-primary/30 bg-primary/10 text-primary" : "border-destructive/30 bg-destructive/10 text-destructive"}`}>
+                      {projectCompleted ? "Shipped" : "Open Loop"}
                     </span>
-                    <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      Severity: Medium
+                    <span className="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      {projectCompleted ? "Status: Complete" : "Severity: Medium"}
                     </span>
                   </div>
-                  <ul className="space-y-1.5 text-[13px] leading-relaxed text-foreground/90">
-                    {(problemPoints.length > 0 ? problemPoints : [detectedProblem]).map((point, idx) => (
+                  <ul className="space-y-1.5 text-sm leading-relaxed text-foreground/90">
+                    {(projectCompleted ? [completionSummary] : problemPoints.length > 0 ? problemPoints : [detectedProblem]).map((point, idx) => (
                       <li key={`${idx}-${point}`} className="flex items-start gap-2">
-                        <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-destructive" />
+                        <span className={`mt-1 inline-block h-1.5 w-1.5 rounded-full ${projectCompleted ? "bg-primary" : "bg-destructive"}`} />
                         <span>{point}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </ConsoleSurface>
               </div>
               <div>
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">Next Action</p>
-                <div className="rounded-[8px] border border-primary/20 bg-primary/5 px-3 py-2">
-                  <p className="text-[14px] font-medium leading-relaxed text-primary">{nextAction}</p>
-                  <p className="mt-1 text-[11px] uppercase tracking-widest text-primary/80">Estimated time: 2-5 min</p>
-                </div>
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-primary">Next Action</p>
+                <ConsoleSurface tone="primary" className="px-3 py-2">
+                  <p className="text-sm font-medium leading-relaxed text-primary">{nextAction}</p>
+                  <p className="mt-1 text-xs uppercase tracking-widest text-primary/80">Estimated time: 2-5 min</p>
+                </ConsoleSurface>
               </div>
               <div>
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Evidence</p>
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">Evidence</p>
                 <div className="space-y-2">
                   {evidenceItems.length === 0 ? (
-                    <p className="rounded-[8px] border border-border bg-muted/30 px-3 py-2 text-[12px] text-muted-foreground">
+                    <ConsoleSurface tone="muted" className="px-3 py-2 text-xs text-muted-foreground">
                       No evidence items yet.
-                    </p>
+                    </ConsoleSurface>
                   ) : evidenceItems.map((item, idx) => (
-                    <div key={`${item.updatedAt}-${idx}`} className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
+                    <ConsoleSurface key={`${item.updatedAt}-${idx}`} tone="muted" className="px-3 py-2">
                       <div className="mb-1 flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{item.type}</span>
-                        <span className="text-[10px] font-mono text-muted-foreground">{item.updatedAt}</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{item.type}</span>
+                        <span className="text-xs font-mono text-muted-foreground">{item.updatedAt}</span>
                       </div>
-                      <p className="text-[12px] leading-relaxed text-foreground/90">{item.text}</p>
-                    </div>
+                      <p className="text-xs leading-relaxed text-foreground/90">{item.text}</p>
+                    </ConsoleSurface>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
+          </ConsoleSurface>
 
-          <div className="flex h-full flex-col overflow-hidden rounded-[12px] border border-border bg-card">
+          <ConsoleSurface className="flex h-full flex-col overflow-hidden p-0">
             <div className="flex items-center justify-between border-b border-border bg-card px-5 py-4">
-              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">Live Memory Activity</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Live Memory Activity</h2>
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
             </div>
             <div className="flex-1 space-y-5 overflow-y-auto p-5">
               {liveActivity.length === 0 ? (
-                <p className="text-[12px] text-muted-foreground">No live events yet.</p>
+                <p className="text-xs text-muted-foreground">No live events yet.</p>
               ) : liveActivity.map((item, idx) => (
                 <div key={`${item.at}-${idx}`} className="relative border-l border-border pl-4">
-                  <div className="absolute left-[-4.5px] top-1.5 h-2 w-2 rounded-full bg-primary" />
-                  <p className="mb-1 text-[10px] font-mono text-muted-foreground">{item.at}</p>
-                  <p className="mb-0.5 text-[12px] font-bold text-foreground">{item.title}</p>
-                  <p className="break-words text-[12px] leading-relaxed text-muted-foreground">{item.detail}</p>
+                  <div className="absolute -left-1 top-1.5 h-2 w-2 rounded-full bg-primary" />
+                  <p className="mb-1 text-xs font-mono text-muted-foreground">{item.at}</p>
+                  <p className="mb-0.5 text-xs font-bold text-foreground">{item.title}</p>
+                  <p className="break-words text-xs leading-relaxed text-muted-foreground">{item.detail}</p>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
+          </ConsoleSurface>
+        </ConsoleGrid>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="flex flex-col rounded-[12px] border border-border bg-card p-6">
-            <h2 className="mb-6 text-[12px] font-bold uppercase tracking-widest text-primary">Continuity Graph</h2>
-            <div className="mb-6 grid flex-1 gap-3 rounded-[8px] border border-border bg-muted/40 p-4">
-              <div className="rounded-[8px] border border-primary/20 bg-primary/5 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Project</p>
-                <p className="mt-1 text-[13px] font-medium text-foreground">{primaryProjectName}</p>
-              </div>
-              <div className="rounded-[8px] border border-border bg-card p-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus</p>
-                <p className="mt-1 text-[13px] text-foreground/90">{shortText(resumeData?.summary, 190)}</p>
-              </div>
-              <div className="rounded-[8px] border border-destructive/25 bg-destructive/5 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-destructive">Problem</p>
-                <p className="mt-1 text-[13px] text-foreground/90">{detectedProblem}</p>
-              </div>
-              <div className="rounded-[8px] border border-border bg-card p-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Next Action</p>
-                <p className="mt-1 text-[13px] font-medium text-primary">{nextAction}</p>
-              </div>
-            </div>
+        <ConsoleGrid columns="two" className="gap-6">
+          <ConsoleSurface className="flex flex-col p-6">
+            <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-primary">Continuity Graph</h2>
+            <ConsoleGrid className="mb-6 flex-1 rounded-md border border-border bg-muted p-4">
+              <ConsoleSurface tone="primary" className="p-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-primary">Project</p>
+                <p className="mt-1 text-sm font-medium text-foreground">{primaryProjectName}</p>
+              </ConsoleSurface>
+              <ConsoleSurface className="p-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Focus</p>
+                <p className="mt-1 text-sm text-foreground/90">{shortText(resumeData?.summary, 190)}</p>
+              </ConsoleSurface>
+              <ConsoleSurface tone={projectCompleted ? "primary" : "destructive"} className="p-3">
+                <p className={`text-xs font-bold uppercase tracking-widest ${projectCompleted ? "text-primary" : "text-destructive"}`}>
+                  {projectCompleted ? "Completed" : "Problem"}
+                </p>
+                <p className="mt-1 text-sm text-foreground/90">
+                  {projectCompleted ? completionSummary : detectedProblem}
+                </p>
+              </ConsoleSurface>
+              <ConsoleSurface className="p-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Next Action</p>
+                <p className="mt-1 text-sm font-medium text-primary">{nextAction}</p>
+              </ConsoleSurface>
+            </ConsoleGrid>
             <Button className="w-full" onClick={actions?.["Playground"]}>
               Open Memory Playground
             </Button>
-          </div>
+          </ConsoleSurface>
 
-          <div className="flex flex-col rounded-[12px] border border-border bg-card p-6">
-            <h2 className="mb-6 text-[12px] font-bold uppercase tracking-widest text-foreground">Recommended Actions</h2>
+          <ConsoleSurface className="flex flex-col p-6">
+            <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-foreground">Recommended Actions</h2>
             <div className="space-y-3 flex-1">
               {[
                 { title: "Test memory extraction in Playground", impact: "High", time: "2 min", status: "Ready", accent: "text-primary", action: actions?.["Playground"] },
@@ -399,46 +470,46 @@ export function OverviewSection({
                 { title: "Connect your first source", impact: "Med", time: "5 min", status: "Not started", accent: "text-muted-foreground", action: undefined },
                 { title: "Generate SDK integration code", impact: "High", time: "3 min", status: "Ready", accent: "text-primary", action: actions?.["Quick Start"] },
               ].map((item, i) => (
-                <div key={i} className="flex cursor-pointer items-center justify-between rounded-[8px] border border-border bg-muted/40 p-3 transition hover:bg-accent/40" onClick={item.action}>
+                <ConsoleSurface key={i} tone="muted" className="flex cursor-pointer items-center justify-between p-3 transition hover:bg-accent" onClick={item.action}>
                   <div className="flex items-center gap-3">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background text-[10px] text-muted-foreground">{i + 1}</span>
-                    <span className="text-[13px] font-medium text-foreground">{item.title}</span>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background text-xs text-muted-foreground">{i + 1}</span>
+                    <span className="text-sm font-medium text-foreground">{item.title}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest">
+                  <div className="flex items-center gap-4 text-xs font-mono uppercase tracking-widest">
                     <span className="hidden text-muted-foreground sm:inline-block">Impact: {item.impact}</span>
                     <span className="hidden text-muted-foreground sm:inline-block">Time: {item.time}</span>
                     <span className={`${item.accent} font-bold`}>{item.status}</span>
                   </div>
-                </div>
+                </ConsoleSurface>
               ))}
             </div>
-          </div>
-        </div>
+          </ConsoleSurface>
+        </ConsoleGrid>
 
         <div>
-          <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Build with MemoryOS</h2>
-          <div className="grid gap-4 lg:grid-cols-4">
-            <button onClick={actions?.["Quick Start"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
-              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Quick Start</p>
-              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">Add MemoryOS to your agent loop in under 5 minutes.</p>
-              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Install SDK →</span>
+          <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Build with MemoryOS</h2>
+          <ConsoleGrid columns="four">
+            <button onClick={actions?.["Quick Start"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
+              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Quick Start</p>
+              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Add MemoryOS to your agent loop in under 5 minutes.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">Install SDK →</span>
             </button>
-            <button onClick={actions?.["Continuity Lab"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
-              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Continuity Lab</p>
-              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">Watch retrieve, resume, and handoff work with live workspace data.</p>
-              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Open Continuity Lab →</span>
+            <button onClick={actions?.["Continuity Lab"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
+              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Continuity Lab</p>
+              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Watch retrieve, resume, and handoff work with live workspace data.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">Open Continuity Lab →</span>
             </button>
-            <button onClick={actions?.["Playground"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
-              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Playground</p>
-              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">Inspect what your agent remembers and why.</p>
-              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Open Memory Playground →</span>
+            <button onClick={actions?.["Playground"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
+              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Playground</p>
+              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Inspect what your agent remembers and why.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">Open Memory Playground →</span>
             </button>
-            <button onClick={actions?.["Documentation"]} className="group rounded-[10px] !border !border-primary/25 !bg-primary/10 p-5 text-left shadow-sm transition-colors hover:!bg-primary/20">
-              <p className="mb-2 text-[14px] font-bold !text-primary transition-colors group-hover:!text-primary">Docs</p>
-              <p className="mb-4 text-[12px] leading-relaxed text-muted-foreground">SDK, MCP, REST API, and LangGraph examples.</p>
-              <span className="text-[10px] font-bold uppercase tracking-widest !text-primary">Read Integration Guide →</span>
+            <button onClick={actions?.["Documentation"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
+              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Docs</p>
+              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">SDK, MCP, REST API, and LangGraph examples.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">Read Integration Guide →</span>
             </button>
-          </div>
+          </ConsoleGrid>
         </div>
 
         {isLoading ? (

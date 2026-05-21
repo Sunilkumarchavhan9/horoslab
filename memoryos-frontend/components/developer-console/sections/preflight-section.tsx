@@ -137,13 +137,13 @@ export function PreflightSection() {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.28 }}
-              className="inline-flex items-center gap-2 rounded-[8px] bg-card px-3 py-1.5 text-[26px] font-bold tracking-tight text-foreground"
+              className="inline-flex items-center gap-2 rounded-md bg-card px-3 py-1.5 text-2xl font-bold tracking-tight text-foreground"
             >
               <Icon name="terminal" className="h-6 w-6 text-primary" />
               Preflight Console
             </motion.h1>
             {lastSessionId ? (
-              <p className="mt-2 text-[12px] text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground">
                 Session linked.
               </p>
             ) : null}
@@ -161,54 +161,54 @@ export function PreflightSection() {
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-muted-foreground"><path d="M12 2L2 22h20L12 2z"/></svg>
           </div>
-          <h2 className="mb-6 text-[14px] font-semibold uppercase tracking-widest text-muted-foreground">Run Preflight Checklist</h2>
+          <h2 className="mb-6 text-sm font-semibold uppercase tracking-widest text-muted-foreground">Run Preflight Checklist</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 relative z-10">
             <div>
-              <label className="mb-2 block text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Project ID</label>
-              <input value={projectId} onChange={e => setProjectId(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-[12px] text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Project ID</label>
+              <input value={projectId} onChange={e => setProjectId(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
             </div>
             <div>
-              <label className="mb-2 block text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Target Agent/Tool</label>
-              <select value={toolTarget} onChange={e => setToolTarget(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-[12px] text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Target Agent/Tool</label>
+              <select value={toolTarget} onChange={e => setToolTarget(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <option>Cursor</option><option>Claude Code</option><option>OpenCode</option>
                 <option>LangGraph</option><option>MCP Agent</option><option>Generic</option>
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Mode</label>
-              <select value={mode} onChange={e => setMode(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-[12px] text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Mode</label>
+              <select value={mode} onChange={e => setMode(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <option>coding</option><option>planning</option><option>debugging</option>
                 <option>pr-review</option><option>handoff</option><option>onboarding</option>
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Task Goal</label>
-              <input value={taskDescription} onChange={e => setTaskDescription(e.target.value)} placeholder="What are we doing?" className="w-full rounded-md border border-input bg-background px-3 py-2 text-[12px] text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Task Goal</label>
+              <input value={taskDescription} onChange={e => setTaskDescription(e.target.value)} placeholder="What are we doing?" className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
             </div>
             <div>
-              <label className="mb-2 block text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Open Files (Comma separated)</label>
-              <input value={currentFiles} onChange={e => setCurrentFiles(e.target.value)} placeholder="src/app.ts, etc." className="w-full rounded-md border border-input bg-background px-3 py-2 text-[12px] text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Open Files (Comma separated)</label>
+              <input value={currentFiles} onChange={e => setCurrentFiles(e.target.value)} placeholder="src/app.ts, etc." className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
             </div>
           </div>
           
           <div className="flex justify-between items-center relative z-10">
-            <div className="font-mono text-[11px] text-muted-foreground">memoryos.preflight()</div>
+            <div className="font-mono text-xs text-muted-foreground">memoryos.preflight()</div>
             <motion.button 
               onClick={handleRunPreflight} 
               disabled={loading}
               whileHover={{ y: -1, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`px-6 py-2.5 text-[12px] font-bold uppercase tracking-widest transition-colors border ${
+              className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors border ${
                 loading
                   ? "border-border bg-muted text-muted-foreground cursor-not-allowed"
-                  : "border-primary/35 bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
+                  : "border-primary/35 bg-primary text-primary-foreground hover:bg-primary/90"
               }`}
             >
               {loading ? "Generating Context..." : "Run Preflight"}
             </motion.button>
           </div>
-          {error && <div className="mt-4 border border-destructive/30 bg-destructive/10 px-4 py-2 text-[12px] text-destructive">{error}</div>}
+          {error && <div className="mt-4 border border-destructive/30 bg-destructive/10 px-4 py-2 text-xs text-destructive">{error}</div>}
         </motion.div>
 
         {/* Preflight Results Area */}
@@ -218,26 +218,26 @@ export function PreflightSection() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-muted">
               <motion.div whileHover={{ y: -2 }} className="relative overflow-hidden bg-card p-5 border-t-2 border-t-chart-2">
                 <DitherBackground className="pointer-events-none absolute inset-0 opacity-15" accent="var(--color-chart-2)" density={0.45} cols={80} rows={24} />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Next Recommended Action</p>
-                <p className="mt-2 text-[14px] text-foreground font-medium">{preflightData.nextAction?.title || "Ready"}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Next Recommended Action</p>
+                <p className="mt-2 text-sm text-foreground font-medium">{preflightData.nextAction?.title || "Ready"}</p>
               </motion.div>
               <motion.div whileHover={{ y: -2 }} className="relative overflow-hidden bg-card p-5 border-t-2 border-t-primary">
                 <DitherBackground className="pointer-events-none absolute inset-0 opacity-15" accent="var(--color-primary)" density={0.45} cols={80} rows={24} />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Tokens Saved</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Tokens Saved</p>
                 <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-[24px] font-bold tracking-tight text-primary">{preflightData.tokenSavings?.percentSaved}%</span>
-                  <span className="text-[12px] text-muted-foreground">({preflightData.tokenSavings?.savedTokens}t)</span>
+                  <span className="text-2xl font-bold tracking-tight text-primary">{preflightData.tokenSavings?.percentSaved}%</span>
+                  <span className="text-xs text-muted-foreground">({preflightData.tokenSavings?.savedTokens}t)</span>
                 </div>
               </motion.div>
               <motion.div whileHover={{ y: -2 }} className="relative overflow-hidden bg-card p-5 border-t-2 border-t-chart-5">
                 <DitherBackground className="pointer-events-none absolute inset-0 opacity-15" accent="var(--color-chart-5)" density={0.45} cols={80} rows={24} />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Active Blockers</p>
-                <p className="mt-2 text-[24px] font-bold tracking-tight">{preflightData.blockers?.length || 0}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Active Blockers</p>
+                <p className="mt-2 text-2xl font-bold tracking-tight">{preflightData.blockers?.length || 0}</p>
               </motion.div>
               <motion.div whileHover={{ y: -2 }} className="relative overflow-hidden bg-card p-5 border-t-2 border-t-chart-4">
                 <DitherBackground className="pointer-events-none absolute inset-0 opacity-15" accent="var(--color-chart-4)" density={0.45} cols={80} rows={24} />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Confidence</p>
-                <p className="mt-2 text-[24px] font-bold tracking-tight">{(preflightData.confidence * 100).toFixed(0)}%</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Confidence</p>
+                <p className="mt-2 text-2xl font-bold tracking-tight">{(preflightData.confidence * 100).toFixed(0)}%</p>
               </motion.div>
             </div>
 
@@ -257,7 +257,7 @@ export function PreflightSection() {
                   onClick={() => setActiveTab(tab.id as any)}
                   whileHover={{ y: -1 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`px-4 py-2 text-[12px] font-bold uppercase tracking-widest transition-colors ${
+                  className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${
                     activeTab === tab.id
                       ? "border-b-2 border-primary text-primary bg-primary/10"
                       : "border-b-2 border-transparent text-muted-foreground hover:text-foreground"
@@ -274,8 +274,8 @@ export function PreflightSection() {
                 <div className="lg:col-span-2 space-y-4">
                   <div className="bg-card border border-border overflow-hidden">
                     <div className="px-5 py-3 border-b border-border flex justify-between items-center bg-muted/40">
-                      <h3 className="text-[12px] font-bold uppercase tracking-widest text-foreground">Compiled Packet</h3>
-                      <button onClick={() => handleCopy(preflightData.contextPacket, "copy-packet")} className="text-[10px] uppercase font-bold text-muted-foreground hover:text-foreground transition-colors bg-muted border border-border px-3 py-1">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">Compiled Packet</h3>
+                      <button onClick={() => handleCopy(preflightData.contextPacket, "copy-packet")} className="text-xs uppercase font-bold text-muted-foreground hover:text-foreground transition-colors bg-muted border border-border px-3 py-1">
                         {copiedState === "copy-packet" ? "Copied!" : "Copy Raw"}
                       </button>
                     </div>
@@ -287,7 +287,7 @@ export function PreflightSection() {
                             ? preflightData.contextPacket
                             : compactText(preflightData.contextPacket, 2400)
                         }
-                        maxHeightClassName="max-h-[420px]"
+                        maxHeightClassName="max-h-96"
                         compactChars={2400}
                       />
                     </div>
@@ -295,7 +295,7 @@ export function PreflightSection() {
                       <button
                         type="button"
                         onClick={() => setShowFullPacket((current) => !current)}
-                        className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground"
+                        className="text-xs font-bold uppercase tracking-widest text-primary hover:text-foreground"
                       >
                         {showFullPacket ? "Show compact view" : "Show full packet"}
                       </button>
@@ -305,25 +305,25 @@ export function PreflightSection() {
                 
                 <div className="space-y-4">
                   <div className="bg-card border border-border p-5">
-                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Start Session in Agent</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Start Session in Agent</h3>
                     <div className="space-y-2">
                       {["Cursor", "Claude Code", "OpenCode", "LangGraph", "MCP Agent", "Generic Agent"].map(agent => (
                         <button key={agent} onClick={() => handleCopy(`[MemoryOS Context for ${agent}]\n${preflightData.contextPacket}`, `copy-${agent.toLowerCase().replace(' ', '-')}`)} className="w-full text-left px-4 py-3 bg-muted hover:bg-muted/80 transition-colors border border-border flex justify-between items-center group">
-                          <span className="text-[12px] font-medium text-foreground group-hover:text-foreground">{agent}</span>
-                          <span className="text-[10px] uppercase tracking-widest text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-xs font-medium text-foreground group-hover:text-foreground">{agent}</span>
+                          <span className="text-xs uppercase tracking-widest text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                             {copiedState === `copy-${agent.toLowerCase().replace(' ', '-')}` ? "Copied" : "Copy"}
                           </span>
                         </button>
                       ))}
                     </div>
                     <div className="mt-4 pt-4 border-t border-border">
-                       <h3 className="text-[11px] font-bold uppercase tracking-widest text-destructive mb-3">Do Not Do Rules</h3>
+                       <h3 className="text-xs font-bold uppercase tracking-widest text-destructive mb-3">Do Not Do Rules</h3>
                        <ul className="space-y-2">
                          {preflightData.doNotDo?.map((rule: string, i: number) => (
-                           <li key={i} className="text-[11px] text-destructive/80 flex gap-2"><span className="text-destructive font-bold">×</span> {rule}</li>
+                           <li key={i} className="text-xs text-destructive/80 flex gap-2"><span className="text-destructive font-bold">×</span> {rule}</li>
                          ))}
                          {(!preflightData.doNotDo || preflightData.doNotDo.length === 0) && (
-                           <li className="text-[11px] text-muted-foreground">No critical restrictions found.</li>
+                           <li className="text-xs text-muted-foreground">No critical restrictions found.</li>
                          )}
                        </ul>
                     </div>
@@ -335,7 +335,7 @@ export function PreflightSection() {
             {/* TAB: Memories */}
             {activeTab === "memories" && (
               <div className="bg-card border border-border">
-                <table className="w-full text-left text-[12px]">
+                <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="bg-muted text-muted-foreground uppercase tracking-widest">
                       <th className="px-5 py-3 font-medium">Type</th>
@@ -347,14 +347,14 @@ export function PreflightSection() {
                   <tbody className="divide-y divide-border">
                     {preflightData.relevantMemories?.map((m: any, i: number) => (
                       <tr key={i} className="hover:bg-muted transition-colors">
-                        <td className="px-5 py-4 whitespace-nowrap"><span className="text-[10px] uppercase tracking-widest font-bold bg-muted px-2 py-1 text-foreground">{m.type}</span></td>
+                        <td className="px-5 py-4 whitespace-nowrap"><span className="text-xs uppercase tracking-widest font-bold bg-muted px-2 py-1 text-foreground">{m.type}</span></td>
                         <td className="px-5 py-4 text-foreground truncate max-w-md">{m.content}</td>
                         <td className="px-5 py-4 text-muted-foreground">{m.whySelected}</td>
                         <td className="px-5 py-4 text-right flex justify-end gap-2">
-                          <button className="text-[10px] uppercase font-bold text-muted-foreground hover:text-foreground transition-colors px-2 py-1">Inspect</button>
-                          <button className="text-[10px] uppercase font-bold text-muted-foreground hover:text-foreground transition-colors px-2 py-1">Promote</button>
-                          <button className="text-[10px] uppercase font-bold text-muted-foreground hover:text-foreground transition-colors px-2 py-1 border-r border-border pr-3 mr-1">Explore in Graph</button>
-                          <button className="text-[10px] uppercase font-bold text-primary hover:text-foreground transition-colors border border-border px-2 py-1">Explain</button>
+                          <button className="text-xs uppercase font-bold text-muted-foreground hover:text-foreground transition-colors px-2 py-1">Inspect</button>
+                          <button className="text-xs uppercase font-bold text-muted-foreground hover:text-foreground transition-colors px-2 py-1">Promote</button>
+                          <button className="text-xs uppercase font-bold text-muted-foreground hover:text-foreground transition-colors px-2 py-1 border-r border-border pr-3 mr-1">Explore in Graph</button>
+                          <button className="text-xs uppercase font-bold text-primary hover:text-foreground transition-colors border border-border px-2 py-1">Explain</button>
                         </td>
                       </tr>
                     ))}
@@ -372,8 +372,8 @@ export function PreflightSection() {
                 <div className="space-y-4">
                   {preflightData.decisions?.map((d: any, i: number) => (
                     <div key={i} className="p-4 border-l-2 border-chart-2 bg-muted">
-                      <div className="text-[14px] text-foreground font-medium mb-2">{d.decision}</div>
-                      <div className="text-[11px] text-muted-foreground font-mono">Source: {d.source} • Confidence: {d.confidence * 100}%</div>
+                      <div className="text-sm text-foreground font-medium mb-2">{d.decision}</div>
+                      <div className="text-xs text-muted-foreground font-mono">Source: {d.source} • Confidence: {d.confidence * 100}%</div>
                     </div>
                   ))}
                   {(!preflightData.decisions || preflightData.decisions.length === 0) && (
@@ -390,11 +390,11 @@ export function PreflightSection() {
                   {preflightData.blockers?.map((b: any, i: number) => (
                     <div key={i} className="p-4 border-l-2 border-destructive bg-muted">
                       <div className="flex justify-between items-start mb-2">
-                         <div className="text-[14px] text-foreground font-medium">{b.blocker}</div>
-                         <span className="text-[10px] uppercase tracking-widest font-bold bg-destructive/20 text-destructive px-2 py-0.5">{b.severity}</span>
+                         <div className="text-sm text-foreground font-medium">{b.blocker}</div>
+                         <span className="text-xs uppercase tracking-widest font-bold bg-destructive/20 text-destructive px-2 py-0.5">{b.severity}</span>
                       </div>
-                      <div className="text-[12px] text-muted-foreground mb-2">Suggested Fix: {b.suggestedResolution}</div>
-                      <div className="text-[11px] text-muted-foreground font-mono">Source: {b.source}</div>
+                      <div className="text-xs text-muted-foreground mb-2">Suggested Fix: {b.suggestedResolution}</div>
+                      <div className="text-xs text-muted-foreground font-mono">Source: {b.source}</div>
                     </div>
                   ))}
                   {(!preflightData.blockers || preflightData.blockers.length === 0) && (
@@ -407,7 +407,7 @@ export function PreflightSection() {
             {/* TAB: Relevant Files */}
             {activeTab === "files" && (
               <div className="bg-card border border-border">
-                <table className="w-full text-left text-[12px]">
+                <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="bg-muted text-muted-foreground uppercase tracking-widest">
                       <th className="px-5 py-3 font-medium">File Path</th>
@@ -437,9 +437,9 @@ export function PreflightSection() {
                 <div className="space-y-4">
                   {preflightData.missingContext?.map((mc: any, i: number) => (
                     <div key={i} className="p-4 border-l-2 border-chart-5 bg-muted">
-                      <div className="text-[14px] text-foreground font-medium mb-2">Missing: {mc.gap ?? mc.topic ?? "Unknown context gap"}</div>
-                      <div className="text-[12px] text-muted-foreground mb-2">Impact: {mc.impact ?? mc.reason ?? "Not specified"}</div>
-                      <div className="text-[11px] text-chart-5 font-mono mt-2">Suggestion: {mc.suggestion ?? "Add this context to memory contract before execution."}</div>
+                      <div className="text-sm text-foreground font-medium mb-2">Missing: {mc.gap ?? mc.topic ?? "Unknown context gap"}</div>
+                      <div className="text-xs text-muted-foreground mb-2">Impact: {mc.impact ?? mc.reason ?? "Not specified"}</div>
+                      <div className="text-xs text-chart-5 font-mono mt-2">Suggestion: {mc.suggestion ?? "Add this context to memory contract before execution."}</div>
                     </div>
                   ))}
                   {(!preflightData.missingContext || preflightData.missingContext.length === 0) && (
@@ -454,12 +454,12 @@ export function PreflightSection() {
               <div className="space-y-6">
                 {/* CLI Snippet */}
                 <div className="bg-muted border border-border p-5 relative">
-                  <h3 className="text-[11px] font-bold uppercase tracking-widest text-chart-2 mb-3">CLI Prep Command</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-chart-2 mb-3">CLI Prep Command</h3>
                   <div className="flex justify-between items-center bg-background border border-border px-4 py-3">
-                    <code className="text-[12px] font-mono text-foreground">
+                    <code className="text-xs font-mono text-foreground">
                       {`memoryos preflight --project ${projectId} --tool ${toolTarget.toLowerCase().replace(" ", "-")} --mode ${mode} --task "${taskDescription}"`}
                     </code>
-                    <button onClick={() => handleCopy(`memoryos preflight --project ${projectId} --tool ${toolTarget.toLowerCase().replace(' ', '-')} --mode ${mode} --task "${taskDescription}"`, "copy-cli")} className="text-[10px] uppercase font-bold text-muted-foreground hover:text-foreground transition-colors ml-4 shrink-0">
+                    <button onClick={() => handleCopy(`memoryos preflight --project ${projectId} --tool ${toolTarget.toLowerCase().replace(' ', '-')} --mode ${mode} --task "${taskDescription}"`, "copy-cli")} className="text-xs uppercase font-bold text-muted-foreground hover:text-foreground transition-colors ml-4 shrink-0">
                       {copiedState === "copy-cli" ? "Copied" : "Copy"}
                     </button>
                   </div>
@@ -488,8 +488,8 @@ export function PreflightSection() {
                   ).map((file, i) => (
                      <div key={i} className="bg-card border border-border p-5">
                         <div className="flex justify-between items-center mb-3">
-                           <h3 className="text-[12px] font-bold font-mono text-foreground">{file.name}</h3>
-                           <button onClick={() => handleCopy(file.content, `copy-file-${i}`)} className="text-[10px] uppercase font-bold text-primary hover:text-foreground transition-colors bg-muted border border-border px-3 py-1">
+                           <h3 className="text-xs font-bold font-mono text-foreground">{file.name}</h3>
+                           <button onClick={() => handleCopy(file.content, `copy-file-${i}`)} className="text-xs uppercase font-bold text-primary hover:text-foreground transition-colors bg-muted border border-border px-3 py-1">
                              {copiedState === `copy-file-${i}` ? "Copied" : "Copy"}
                            </button>
                         </div>
@@ -507,7 +507,7 @@ export function PreflightSection() {
                               [file.name]: !prev[file.name],
                             }))
                           }
-                          className="mt-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground"
+                          className="mt-2 text-xs font-bold uppercase tracking-widest text-primary hover:text-foreground"
                         >
                           {showFullRules[file.name] ? "Show compact view" : "Show full rules"}
                         </button>

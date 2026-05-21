@@ -65,6 +65,11 @@ function pickFiles(rootPath: string): string[] {
   return results;
 }
 
+function incrementContractCount(counts: Record<string, number>, category?: string): void {
+  if (!category) return;
+  counts[category] = (counts[category] ?? 0) + 1;
+}
+
 export const LocalFilesClient = {
   async sync(options: LocalFilesSyncOptions) {
     const rootPath = options.rootPath && options.rootPath.trim().length > 0
@@ -78,6 +83,7 @@ export const LocalFilesClient = {
     const files = pickFiles(rootPath);
     const seen = new Set(options.recentItemKeys ?? []);
     const dedupeKeys: string[] = [];
+    const contractCounts: Record<string, number> = {};
     let extractedCount = 0;
     const now = new Date().toISOString();
 
@@ -108,6 +114,7 @@ export const LocalFilesClient = {
           developerSignals: candidate.developerSignals,
         });
         extractedCount += 1;
+        incrementContractCount(contractCounts, candidate.contractCategory);
       }
       dedupeKeys.push(dedupeKey);
     }
@@ -116,6 +123,7 @@ export const LocalFilesClient = {
       success: true,
       extractedCount,
       dedupeKeys,
+      contractCounts,
       scannedFiles: files.length,
       rootPath,
     };

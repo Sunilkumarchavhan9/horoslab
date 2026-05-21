@@ -32,7 +32,7 @@ function UsageBar({
 
   return (
     <div className={compact ? "min-w-0 flex-1" : "w-full"}>
-      <div className={`flex items-center justify-between gap-2 ${compact ? "text-[11px]" : "text-[14px]"}`}>
+      <div className={`flex items-center justify-between gap-2 ${compact ? "text-xs" : "text-sm"}`}>
         <span className="font-medium text-foreground">{label}</span>
         <span className="shrink-0 text-muted-foreground">
           {used.toLocaleString()} / {limit.toLocaleString()} ({percent}%)
@@ -47,7 +47,7 @@ function UsageBar({
         aria-label={`${label} usage`}
       >
         <div
-          className="h-full rounded-full bg-primary transition-[width] duration-500 ease-out"
+          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -115,12 +115,12 @@ export function UsageMeter({ usage, currentPlan = "Free", compact = false, class
       </div>
 
       {!compact && usage.resetInDays != null ? (
-        <p className="mt-2 text-[12px] text-muted-foreground">Resets in {usage.resetInDays} days</p>
+        <p className="mt-2 text-xs text-muted-foreground">Resets in {usage.resetInDays} days</p>
       ) : null}
 
       {showUpgrade && upgradePlans.length > 0 ? (
-        <div className="mt-3 rounded-[10px] border border-primary/35 bg-primary/10 px-3 py-2.5">
-          <p className="text-[13px] font-semibold text-foreground">
+        <div className="mt-3 rounded-lg border border-primary/35 bg-primary/10 px-3 py-2.5">
+          <p className="text-sm font-semibold text-foreground">
             Monthly limit reached on {currentPlan}. Upgrade to keep using MemoryOS.
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -130,19 +130,19 @@ export function UsageMeter({ usage, currentPlan = "Free", compact = false, class
                 type="button"
                 disabled={checkoutPlan !== null}
                 onClick={() => void handleUpgrade(plan)}
-                className="rounded-[8px] bg-primary px-3 py-1.5 text-[12px] font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
               >
                 {checkoutPlan === plan ? "Opening checkout…" : `Upgrade to ${plan}`}
               </button>
             ))}
             <a
               href="/developer-console?section=billing"
-              className="rounded-[8px] border border-border px-3 py-1.5 text-[12px] font-semibold text-foreground transition hover:bg-muted/50"
+              className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-muted/50"
             >
               View billing
             </a>
           </div>
-          {checkoutError ? <p className="mt-2 text-[12px] text-destructive">{checkoutError}</p> : null}
+          {checkoutError ? <p className="mt-2 text-xs text-destructive">{checkoutError}</p> : null}
         </div>
       ) : null}
     </div>

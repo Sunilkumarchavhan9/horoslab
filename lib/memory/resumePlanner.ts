@@ -1,7 +1,17 @@
 import { retrieveRelevantMemory, type RankedMemory } from "./retrieveRelevantMemory";
 import type { ContinuityScope } from "../adapters/adapters";
 import { getRecentMemories } from "./recentMemoryStore";
-import type { Memory, MemoryType } from "./types";
+import type { Memory, MemoryContractCategory, MemoryType } from "./types";
+
+export type ContinueProjectBrief = {
+  whatChangedRecently: string[];
+  currentGoal: string;
+  keyDecisions: string[];
+  openBlockers: string[];
+  riskyFiles: string[];
+  nextBestAction: string;
+  mustKnowContextForAgent: string[];
+};
 
 export interface ResumePlannerInput {
   userId: string;
@@ -20,6 +30,7 @@ export interface ResumeUsedMemory {
   id: string;
   content: string;
   memoryType?: MemoryType;
+  contractCategory?: MemoryContractCategory;
   summary?: string;
   finalScore: number;
   importanceScore: number;
@@ -31,6 +42,7 @@ export interface ResumePlannerResult {
   lastKnownState: string;
   openLoops: string[];
   recommendedNextStep: string;
+  brief: ContinueProjectBrief;
   usedMemories: ResumeUsedMemory[];
   debug: {
     project: string;
@@ -72,6 +84,7 @@ function toUsedMemory(memory: RankedMemory): ResumeUsedMemory {
     id: memory.id,
     content: memory.memory ?? fallbackSummary ?? "No memory content",
     memoryType: memory.memoryType,
+    contractCategory: memory.contractCategory,
     summary: fallbackSummary,
     finalScore: memory.finalScore,
     importanceScore: memory.importanceScore,
@@ -84,6 +97,7 @@ function toUsedMemoryFromRecent(memory: Memory): ResumeUsedMemory {
     id: memory.id,
     content: memory.content,
     memoryType: memory.type,
+    contractCategory: memory.contractCategory,
     summary: memory.summary,
     finalScore: memory.importanceScore,
     importanceScore: memory.importanceScore,
@@ -114,22 +128,124 @@ async function buildProjectRecentOpenLoops(
     .map(toUsedMemoryFromRecent);
 }
 
+function cleanText(value: string | undefined): string | undefined {
+  const trimmed = value?.replace(/\s+/g, " ").trim();
+  if (!trimmed) return undefined;
+  return trimmed.length > 260 ? `${trimmed.slice(0, 257)}...` : trimmed;
+}
+
+function memoryText(memory: ResumeUsedMemory): string {
+  return cleanText(memory.summary ?? memory.content) ?? "No memory content";
+}
+
+function uniqueNonEmpty(values: Array<string | undefined>, limit: number): string[] {
+  return Array.from(
+    new Set(values.map(cleanText).filter((value): value is string => Boolean(value))),
+  ).slice(0, limit);
+}
+
+function textMatches(text: string, pattern: RegExp): boolean {
+  return pattern.test(text);
+}
+
+function getMemoriesByCategory(
+  memories: ResumeUsedMemory[],
+  categories: MemoryContractCategory[],
+): ResumeUsedMemory[] {
+  const wanted = new Set<MemoryContractCategory>(categories);
+  return memories.filter((memory) => memory.contractCategory && wanted.has(memory.contractCategory));
+}
+
+function buildRiskyFiles(memories: ResumeUsedMemory[]): string[] {
+  return Array.from(
+    new Set(
+      memories.flatMap((memory) => {
+        const text = `${memory.summary ?? ""} ${memory.content ?? ""}`;
+        return text.match(/[A-Za-z0-9_/.-]+\.(ts|tsx|js|jsx|py|go|rs|java|rb|json|yaml|yml|md|mdx)/g) ?? [];
+      }),
+    ),
+  ).slice(0, 5);
+}
+
+function buildContinueProjectBrief(input: {
+  project: string;
+  summary: string;
+  lastKnownState: string;
+  openLoops: string[];
+  recommendedNextStep: string;
+  usedMemories: ResumeUsedMemory[];
+}): ContinueProjectBrief {
+  const memories = input.usedMemories;
+  const byText = (pattern: RegExp) =>
+    memories.filter((memory) => textMatches(`${memory.summary ?? ""} ${memory.content ?? ""}`, pattern));
+
+  const decisionMemories = [
+    ...getMemoriesByCategory(memories, ["decision", "architecture_note", "policy"]),
+    ...byText(/\b(decision|decided|we chose|chosen|approved|architecture|policy)\b/i),
+  ];
+  const blockerMemories = [
+    ...getMemoriesByCategory(memories, ["blocker", "bug", "incident"]),
+    ...byText(/\b(blocked|blocker|bug|incident|risk|issue|debug|fix|failed)\b/i),
+  ];
+  const nextActionMemories = [
+    ...getMemoriesByCategory(memories, ["next_action"]),
+    ...byText(/\b(next action|next step|todo|need to|ship|finish|validate)\b/i),
+  ];
+
+  const whatChangedRecently = uniqueNonEmpty(memories.slice(0, 4).map(memoryText), 4);
+  const keyDecisions = uniqueNonEmpty(decisionMemories.map(memoryText), 5);
+  const openBlockers = uniqueNonEmpty([
+    ...blockerMemories.map(memoryText),
+    ...input.openLoops.filter((loop) => /\b(block|risk|issue|debug|fix|failed)\b/i.test(loop)),
+  ], 5);
+  const mustKnowContextForAgent = uniqueNonEmpty([
+    ...memories.slice(0, 6).map(memoryText),
+    input.lastKnownState,
+  ], 6);
+  const nextActions = uniqueNonEmpty([
+    ...nextActionMemories.map(memoryText),
+    input.recommendedNextStep,
+  ], 2);
+
+  return {
+    whatChangedRecently: whatChangedRecently.length > 0 ? whatChangedRecently : [input.lastKnownState],
+    currentGoal: cleanText(input.summary) ?? `Continue ${input.project} using the latest retrieved memory.`,
+    keyDecisions,
+    openBlockers,
+    riskyFiles: buildRiskyFiles(memories),
+    nextBestAction: nextActions[0] ?? input.recommendedNextStep,
+    mustKnowContextForAgent,
+  };
+}
+
 function buildFallbackResult(
   input: ResumePlannerInput,
   previousContext?: PreviousResumeContext,
 ): ResumePlannerResult {
+  const summary =
+    previousContext?.previousSummary ??
+    `No strong saved context found for ${input.project} yet.`;
+  const lastKnownState =
+    previousContext?.previousLastKnownState ??
+    "No prior project progress memory was retrieved.";
+  const openLoops = [
+    `Capture your latest ${input.project} progress as a memory update.`,
+    "Add one concrete milestone and one blocker.",
+  ];
+  const recommendedNextStep = `Post a fresh update like: "I am building ${input.project} and currently working on ...".`;
   return {
-    summary:
-      previousContext?.previousSummary ??
-      `No strong saved context found for ${input.project} yet.`,
-    lastKnownState:
-      previousContext?.previousLastKnownState ??
-      "No prior project progress memory was retrieved.",
-    openLoops: [
-      `Capture your latest ${input.project} progress as a memory update.`,
-      "Add one concrete milestone and one blocker.",
-    ],
-    recommendedNextStep: `Post a fresh update like: "I am building ${input.project} and currently working on ...".`,
+    summary,
+    lastKnownState,
+    openLoops,
+    recommendedNextStep,
+    brief: buildContinueProjectBrief({
+      project: input.project,
+      summary,
+      lastKnownState,
+      openLoops,
+      recommendedNextStep,
+      usedMemories: [],
+    }),
     usedMemories: [],
     debug: {
       project: input.project,
@@ -239,19 +355,31 @@ export async function planResume(
     secondaryAnchors.length > 0
       ? ` Supporting context: ${secondaryAnchors.join("; ")}.`
       : "";
+  const summary = previousContext.previousSummary
+    ? `${previousContext.previousSummary} Latest retrieved context: ${topAnchor}.${secondaryContext}`
+    : `You last worked on ${input.project} around this context: ${topAnchor}.${secondaryContext}`;
+  const lastKnownState = previousContext.previousLastKnownState
+    ? `${previousContext.previousLastKnownState} Refreshed with top memory ${top.memoryType ?? "general"} scored ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`
+    : `Top memory is ${top.memoryType ?? "general"} with score ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`;
+  const openLoops = buildOpenLoopsFromUsedMemories(input.project, usedMemories);
+  const recommendedNextStep =
+    secondaryAnchors.length > 0
+      ? `Resume by executing one concrete task from: ${topAnchor}. Then validate progress against: ${secondaryAnchors.join("; ")}.`
+      : `Resume by executing one concrete task from: ${topAnchor}.`;
 
   return {
-    summary: previousContext.previousSummary
-      ? `${previousContext.previousSummary} Latest retrieved context: ${topAnchor}.${secondaryContext}`
-      : `You last worked on ${input.project} around this context: ${topAnchor}.${secondaryContext}`,
-    lastKnownState: previousContext.previousLastKnownState
-      ? `${previousContext.previousLastKnownState} Refreshed with top memory ${top.memoryType ?? "general"} scored ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`
-      : `Top memory is ${top.memoryType ?? "general"} with score ${top.finalScore.toFixed(3)} (updated ${topUpdatedAt}).`,
-    openLoops: buildOpenLoopsFromUsedMemories(input.project, usedMemories),
-    recommendedNextStep:
-      secondaryAnchors.length > 0
-        ? `Resume by executing one concrete task from: ${topAnchor}. Then validate progress against: ${secondaryAnchors.join("; ")}.`
-        : `Resume by executing one concrete task from: ${topAnchor}.`,
+    summary,
+    lastKnownState,
+    openLoops,
+    recommendedNextStep,
+    brief: buildContinueProjectBrief({
+      project: input.project,
+      summary,
+      lastKnownState,
+      openLoops,
+      recommendedNextStep,
+      usedMemories,
+    }),
     usedMemories,
     debug: {
       project: input.project,

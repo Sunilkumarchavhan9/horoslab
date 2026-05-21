@@ -36,7 +36,7 @@ const AGENT_TEMPLATES: AgentTemplate[] = [
     name: "MCP Agent",
     runtime: "MCP",
     category: "Any compatible agent",
-    accent: "hsl(var(--primary))",
+    accent: "var(--primary)",
     setup: "Run npx -y @memoryostm/mcp and set MEMORYOS_API_KEY",
   },
   {
@@ -44,7 +44,7 @@ const AGENT_TEMPLATES: AgentTemplate[] = [
     name: "GPT Agent",
     runtime: "SDK / HTTP",
     category: "Cloud model agent",
-    accent: "hsl(var(--primary))",
+    accent: "var(--primary)",
     setup: "Wrap model calls with beforeModel() and afterModel()",
   },
   {
@@ -52,7 +52,7 @@ const AGENT_TEMPLATES: AgentTemplate[] = [
     name: "Local Model Agent",
     runtime: "Ollama / Qwen / DeepSeek",
     category: "Local model runner",
-    accent: "hsl(var(--primary))",
+    accent: "var(--primary)",
     setup: "Connect through MCP or HTTP before each generation",
   },
   {
@@ -60,25 +60,25 @@ const AGENT_TEMPLATES: AgentTemplate[] = [
     name: "Custom Worker",
     runtime: "HTTP / SDK",
     category: "Backend agent",
-    accent: "hsl(var(--primary))",
+    accent: "var(--primary)",
     setup: "Use afterModel() and handoff endpoint integration",
   },
 ];
 
 function statusTone(status: AgentStatus) {
-  if (status === "online") return "hsl(var(--primary))";
-  if (status === "idle") return "hsl(var(--primary))";
-  return "hsl(var(--destructive))";
+  if (status === "online") return "var(--primary)";
+  if (status === "idle") return "var(--primary)";
+  return "var(--destructive)";
 }
 
 function runtimeTone(runtime: string) {
   const value = runtime.toLowerCase();
 
-  if (value.includes("mcp")) return "hsl(var(--primary))";
-  if (value.includes("local") || value.includes("ollama")) return "hsl(var(--primary))";
-  if (value.includes("sdk") || value.includes("http")) return "hsl(var(--primary))";
+  if (value.includes("mcp")) return "var(--primary)";
+  if (value.includes("local") || value.includes("ollama")) return "var(--primary)";
+  if (value.includes("sdk") || value.includes("http")) return "var(--primary)";
 
-  return "hsl(var(--primary))";
+  return "var(--primary)";
 }
 
 function getApiOrigin() {
@@ -139,10 +139,10 @@ export function AgentsSection() {
   }, [connectedAgents]);
 
   const statCards = [
-    { label: "Connected agents", value: connectedCount, tone: "hsl(var(--primary))" },
-    { label: "Online now", value: onlineCount, tone: "hsl(var(--primary))" },
-    { label: "Threads 24h", value: totalThreads24h, tone: "hsl(var(--primary))" },
-    { label: "Avg resume score", value: `${avgResumeScore}%`, tone: "hsl(var(--primary))" },
+    { label: "Connected agents", value: connectedCount, tone: "var(--primary)" },
+    { label: "Online now", value: onlineCount, tone: "var(--primary)" },
+    { label: "Threads 24h", value: totalThreads24h, tone: "var(--primary)" },
+    { label: "Avg resume score", value: `${avgResumeScore}%`, tone: "var(--primary)" },
   ];
   const loadAgents = useCallback(async (background = false) => {
     if (!background) setIsRefreshing(true);
@@ -268,18 +268,18 @@ export function AgentsSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.28, ease: EASE_OUT }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-chart-2/10 via-transparent to-primary/8" />
+        <div className="absolute inset-0 bg-muted/30" />
         <motion.div
           className="pointer-events-none absolute inset-0"
           animate={{ x: [0, 3, -3, 0], y: [0, 1, -1, 0] }}
           transition={{ duration: 11, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
         >
-          <DitherBackground className="h-full w-full opacity-30" accent="hsl(var(--primary))" density={0.58} cols={280} rows={78} />
+          <DitherBackground className="h-full w-full opacity-30" accent="var(--primary)" density={0.58} cols={280} rows={78} />
         </motion.div>
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-3">
           <div>
-          <div className="inline-block rounded-[6px] px-2 py-1">
-          <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">
+          <div className="inline-block rounded-md px-2 py-1">
+          <h1 className="text-base font-semibold tracking-tighter sm:text-lg">
             Agents
           </h1>
           </div>
@@ -292,7 +292,7 @@ export function AgentsSection() {
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.18, ease: EASE_OUT }}
             onClick={() => connectTemplate(selectedTemplate)}
-            className="inline-flex items-center gap-2 rounded-[8px] border border-primary/50 bg-primary px-3.5 py-2 text-[11px] font-semibold tracking-[0.08em] text-primary-foreground shadow-md shadow-primary/25 transition hover:border-primary hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-md border border-primary/50 bg-primary px-3.5 py-2 text-xs font-semibold tracking-wider text-primary-foreground transition hover:border-primary hover:bg-primary/90"
           >
             <span aria-hidden>+</span>
             + CONNECT AGENT
@@ -302,12 +302,12 @@ export function AgentsSection() {
         </div>
       </motion.div>
       {errorMessage ? (
-        <div className="mt-2.5 rounded-[10px] border border-[hsl(var(--destructive))]/25 bg-card px-3.5 py-3 text-[12px] text-primary">
+        <div className="mt-2.5 rounded-lg border border-destructive/25 bg-card px-3.5 py-3 text-xs text-primary">
           {errorMessage}
         </div>
       ) : null}
       {actionMessage ? (
-        <div className="mt-2.5 rounded-[10px] border border-border bg-card px-3.5 py-3 text-[12px] text-foreground">
+        <div className="mt-2.5 rounded-lg border border-border bg-card px-3.5 py-3 text-xs text-foreground">
           {actionMessage}
         </div>
       ) : null}
@@ -315,7 +315,7 @@ export function AgentsSection() {
       {!hasLoadedOnce ? (
         <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-[10px] border border-border bg-card" />
+            <div key={i} className="h-20 animate-pulse rounded-lg border border-border bg-card" />
           ))}
         </div>
       ) : null}
@@ -326,7 +326,7 @@ export function AgentsSection() {
             key={card.label}
             whileHover={{ y: -2, scale: 1.01 }}
             transition={{ duration: 0.2, ease: EASE_OUT }}
-            className="relative overflow-hidden rounded-[10px] border border-transparent bg-card bg-gradient-to-br from-card to-muted/25 px-3.5 py-3"
+            className="relative overflow-hidden rounded-lg border border-transparent bg-card px-3.5 py-3"
             style={{ borderTopColor: card.tone, borderTopWidth: "2px" }}
           >
             <DitherBackground
@@ -338,18 +338,18 @@ export function AgentsSection() {
               className="pointer-events-none absolute inset-0"
             />
             <div className="pointer-events-none absolute -right-10 -top-10 h-24 w-24 rounded-full bg-card blur-2xl" />
-            <p className="relative text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+            <p className="relative text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               {card.label}
             </p>
-            <p className="relative mt-1 text-[20px] font-semibold tracking-[-0.03em] text-foreground">
+            <p className="relative mt-1 text-xl font-semibold tracking-tight text-foreground">
               {card.value}
             </p>
           </motion.div>
         ))}
       </div>
 
-      <div className="mt-2.5 rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="mt-2.5 rounded-lg border border-border bg-card px-4 py-4">
+        <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
           <svg
             width="11"
             height="11"
@@ -377,10 +377,10 @@ export function AgentsSection() {
             return (
               <div
                 key={template.id}
-                className="rounded-[10px] border border-border bg-card px-3.5 py-3.5"
+                className="rounded-lg border border-border bg-card px-3.5 py-3.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[13px] font-semibold tracking-[-0.02em]">
+                  <p className="text-sm font-semibold tracking-tight">
                     {template.name}
                   </p>
 
@@ -390,11 +390,11 @@ export function AgentsSection() {
                   />
                 </div>
 
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {template.runtime}
                 </p>
 
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {template.setup}
                 </p>
 
@@ -402,9 +402,9 @@ export function AgentsSection() {
                   <button
                     type="button"
                     onClick={() => setSelectedTemplateId(template.id)}
-                    className={`rounded-[7px] border px-2.5 py-1 text-[10px] tracking-[0.08em] transition ${
+                    className={`rounded-md border px-2.5 py-1 text-xs tracking-wider transition ${
                       selectedTemplateId === template.id
-                        ? "border-[hsl(var(--primary))]/45 bg-[hsl(var(--primary))]/8 text-primary"
+                        ? "border-primary/45 bg-primary/10 text-primary"
                         : "border-border bg-card text-muted-foreground hover:border-border"
                     }`}
                   >
@@ -415,7 +415,7 @@ export function AgentsSection() {
                     type="button"
                     onClick={() => connectTemplate(template)}
                     disabled={isConnected}
-                    className="rounded-[7px] border border-border bg-card px-2.5 py-1 text-[10px] tracking-[0.08em] text-muted-foreground disabled:cursor-not-allowed disabled:opacity-45"
+                    className="rounded-md border border-border bg-card px-2.5 py-1 text-xs tracking-wider text-muted-foreground disabled:cursor-not-allowed disabled:opacity-45"
                   >
                     {isConnected ? "CONNECTED" : "CONNECT"}
                   </button>
@@ -426,9 +426,9 @@ export function AgentsSection() {
         </div>
       </div>
 
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-[minmax(0,1fr)_330px]">
-        <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-          <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="mt-2.5 grid gap-3 xl:grid-cols-2">
+        <div className="rounded-lg border border-border bg-card px-4 py-4">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
             <svg
               width="11"
               height="11"
@@ -449,7 +449,7 @@ export function AgentsSection() {
 
           <div className="mt-2.5 space-y-2">
             {connectedAgents.length === 0 ? (
-              <div className="rounded-[8px] border border-dashed border-border bg-card px-5 py-6 text-center">
+              <div className="rounded-md border border-dashed border-border bg-card px-5 py-6 text-center">
                 <div className="mx-auto grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground">
                   <svg
                     width="20"
@@ -468,11 +468,11 @@ export function AgentsSection() {
                   </svg>
                 </div>
 
-                <p className="mt-2.5 text-[13px] font-medium text-muted-foreground">
+                <p className="mt-2.5 text-sm font-medium text-muted-foreground">
                   No active agents yet
                 </p>
 
-                <p className="mt-1 text-[12px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Connect your first runtime to start tracking continuity.
                 </p>
               </div>
@@ -480,22 +480,22 @@ export function AgentsSection() {
               connectedAgents.map((agent) => (
                 <div
                   key={agent.id}
-                  className="rounded-[8px] border border-border bg-card px-3 py-2.5"
+                  className="rounded-md border border-border bg-card px-3 py-2.5"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <p className="text-[12px] font-semibold tracking-[-0.02em]">
+                      <p className="text-xs font-semibold tracking-tight">
                         {agent.name}
                       </p>
 
-                      <p className="mt-0.5 text-[11px] text-muted-foreground">
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {agent.category} · {agent.runtime}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       <span
-                        className="rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em]"
+                        className="rounded-md border px-2 py-0.5 text-xs uppercase tracking-widest"
                         style={{
                           borderColor: `${statusTone(agent.status)}55`,
                           color: statusTone(agent.status),
@@ -508,14 +508,14 @@ export function AgentsSection() {
                       <button
                         type="button"
                         onClick={() => disconnectAgent(agent.id)}
-                        className="rounded-[6px] border border-border bg-card px-2 py-0.5 text-[10px] tracking-[0.08em] text-muted-foreground"
+                        className="rounded-md border border-border bg-card px-2 py-0.5 text-xs tracking-wider text-muted-foreground"
                       >
                         DISCONNECT
                       </button>
                     </div>
                   </div>
 
-                  <div className="mt-2 grid gap-2 text-[11px] text-muted-foreground sm:grid-cols-4">
+                  <div className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-4">
                     <p>Connected: {agent.connectedAt}</p>
                     <p>Heartbeat: {agent.lastHeartbeat}</p>
                     <p>Threads 24h: {agent.threads24h}</p>
@@ -528,8 +528,8 @@ export function AgentsSection() {
         </div>
 
         <div className="space-y-3">
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg
                 width="11"
                 height="11"
@@ -549,7 +549,7 @@ export function AgentsSection() {
               {events.map((event) => (
                 <div
                   key={event.id}
-                  className="rounded-[8px] border border-border bg-card px-3 py-2.5"
+                  className="rounded-md border border-border bg-card px-3 py-2.5"
                 >
                   <div className="flex items-start gap-2">
                     <span
@@ -558,10 +558,10 @@ export function AgentsSection() {
                     />
 
                     <div>
-                      <p className="text-[12px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {event.message}
                       </p>
-                      <p className="mt-1 text-[11px] text-muted-foreground">
+                      <p className="mt-1 text-xs text-muted-foreground">
                         {event.at}
                       </p>
                     </div>
@@ -571,8 +571,8 @@ export function AgentsSection() {
             </div>
           </div>
 
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg
                 width="11"
                 height="11"
@@ -599,10 +599,10 @@ export function AgentsSection() {
               ].map(([metricLabel, value]) => (
                 <div
                   key={metricLabel}
-                  className="rounded-[8px] border border-border bg-card px-3 py-2.5"
+                  className="rounded-md border border-border bg-card px-3 py-2.5"
                 >
-                  <p className="text-[11px] text-muted-foreground">{metricLabel}</p>
-                  <p className="mt-1 text-[16px] font-semibold tracking-[-0.02em]">
+                  <p className="text-xs text-muted-foreground">{metricLabel}</p>
+                  <p className="mt-1 text-base font-semibold tracking-tight">
                     {value}
                   </p>
                 </div>

@@ -1,21 +1,78 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { motion } from "framer-motion";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-import { Badge } from "@/components/ui/badge";
+import { Badge as ShadcnBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+  Card as ShadcnCard,
+  CardContent as ShadcnCardContent,
+  CardDescription as ShadcnCardDescription,
+  CardFooter as ShadcnCardFooter,
+  CardHeader as ShadcnCardHeader,
+  CardTitle as ShadcnCardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { Input as ShadcnInput } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+
+type DivProps = ComponentProps<"div">;
+
+function Card({ className, size = "default", ...props }: DivProps & { size?: "default" | "sm" }) {
+  return (
+    <ShadcnCard
+      size={size}
+      className={cn(
+        "console-surface border-border bg-card text-card-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function CardHeader({ className, ...props }: DivProps) {
+  return <ShadcnCardHeader className={className} {...props} />;
+}
+
+function CardContent({ className, ...props }: DivProps) {
+  return <ShadcnCardContent className={className} {...props} />;
+}
+
+function CardFooter({ className, ...props }: DivProps) {
+  return <ShadcnCardFooter className={className} {...props} />;
+}
+
+function CardTitle({ className, ...props }: DivProps) {
+  return <ShadcnCardTitle className={cn("text-foreground", className)} {...props} />;
+}
+
+function CardDescription({ className, ...props }: DivProps) {
+  return <ShadcnCardDescription className={className} {...props} />;
+}
+
+function Badge({
+  className,
+  variant = "default",
+  ...props
+}: ComponentProps<typeof ShadcnBadge>) {
+  return (
+    <ShadcnBadge
+      variant={variant}
+      className={cn("font-medium tracking-normal", className)}
+      {...props}
+    />
+  );
+}
+
+function Input({ className, ...props }: ComponentProps<typeof ShadcnInput>) {
+  return (
+    <ShadcnInput
+      className={cn("bg-background text-foreground", className)}
+      {...props}
+    />
+  );
+}
 
 export function ConsolePage({
   children,
@@ -56,17 +113,10 @@ export function ConsolePageHeader({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border/80 bg-card/40 px-5 py-5 shadow-sm backdrop-blur-sm sm:px-6 sm:py-6",
+        "console-premium-panel relative overflow-hidden border border-border bg-card px-5 py-5 sm:px-6 sm:py-6",
         className,
       )}
     >
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_12%,transparent),transparent_55%)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-      />
       <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
         <div>
           <motion.div
@@ -121,6 +171,50 @@ export function ConsoleStatGrid({
   );
 }
 
+export function ConsoleGrid({
+  children,
+  className,
+  columns = "auto",
+}: {
+  children: ReactNode;
+  className?: string;
+  columns?: "auto" | "two" | "three" | "four" | "five";
+}) {
+  const columnClass = {
+    auto: "grid-cols-1",
+    two: "grid-cols-1 lg:grid-cols-2",
+    three: "grid-cols-1 md:grid-cols-2 xl:grid-cols-3",
+    four: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+    five: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5",
+  }[columns];
+
+  return <div className={cn("grid gap-4", columnClass, className)}>{children}</div>;
+}
+
+export function ConsoleSurface({
+  children,
+  className,
+  tone = "default",
+  ...props
+}: DivProps & {
+  children: ReactNode;
+  className?: string;
+  tone?: "default" | "muted" | "primary" | "destructive";
+}) {
+  const toneClass = {
+    default: "border-border bg-card text-card-foreground",
+    muted: "border-border bg-muted text-foreground",
+    primary: "border-primary/20 bg-primary/10 text-foreground",
+    destructive: "border-destructive/25 bg-destructive/10 text-foreground",
+  }[tone];
+
+  return (
+    <div className={cn("rounded-lg border p-4", toneClass, className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
 export function ConsoleStatCard({
   label,
   value,
@@ -142,12 +236,12 @@ export function ConsoleStatCard({
       <Card
         size="sm"
         className={cn(
-          "rounded-xl border-border/80 bg-card/80 shadow-sm ring-1 ring-foreground/[0.04]",
+          "console-stat-surface border-border bg-card",
           className,
         )}
       >
         <CardHeader className="pb-1">
-          <CardDescription className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+          <CardDescription className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {label}
           </CardDescription>
         </CardHeader>
@@ -180,11 +274,11 @@ export function ConsoleSectionCard({
   return (
     <Card
       className={cn(
-        "rounded-xl border-border/80 bg-card shadow-sm ring-1 ring-foreground/[0.04]",
+        "console-section-surface border-border bg-card",
         className,
       )}
     >
-      <CardHeader className="border-b border-border/60 [.border-b]:pb-4">
+      <CardHeader className="pb-1">
         <motion.div
           className="flex items-start justify-between gap-3"
           initial={{ opacity: 0 }}
@@ -202,7 +296,7 @@ export function ConsoleSectionCard({
         </motion.div>
       </CardHeader>
       <CardContent className="pt-4">{children}</CardContent>
-      {footer ? <CardFooter className="border-t border-border/60">{footer}</CardFooter> : null}
+      {footer ? <CardFooter>{footer}</CardFooter> : null}
     </Card>
   );
 }
@@ -220,10 +314,10 @@ export function ConsoleStatusBadge({
     <Badge
       variant="outline"
       className={cn(
-        "gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium normal-case tracking-normal",
+        "gap-1.5 px-2.5 py-1 text-xs font-medium normal-case tracking-normal",
         active
-          ? "border-primary/30 bg-primary/10 text-foreground"
-          : "border-border bg-muted/30 text-muted-foreground",
+          ? "border-primary/40 bg-primary/10 text-foreground"
+          : "border-border bg-muted/20 text-muted-foreground",
         className,
       )}
     >
@@ -259,7 +353,7 @@ export function ConsoleNavSearch({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-9 rounded-lg border-border/80 bg-sidebar-accent/50 pl-8 text-sm shadow-none"
+        className="h-9 border-border bg-sidebar-accent/70 pl-8 text-sm"
       />
     </div>
   );
@@ -277,10 +371,10 @@ export function ConsoleAlert({
   return (
     <div
       className={cn(
-        "rounded-lg border px-3.5 py-3 text-sm",
+        "border px-3.5 py-3 text-sm",
         variant === "destructive"
           ? "border-destructive/25 bg-destructive/10 text-destructive"
-          : "border-border bg-muted/40 text-muted-foreground",
+          : "border-border bg-muted/25 text-muted-foreground",
         className,
       )}
     >
@@ -299,7 +393,7 @@ export function ConsoleToolbar({
   return (
     <motion.div
       className={cn(
-        "flex flex-wrap items-center gap-1 rounded-lg border border-border/80 bg-muted/30 p-1",
+        "console-toolbar flex flex-wrap items-center gap-1 bg-muted/20 p-1",
         className,
       )}
       initial={{ opacity: 0, y: 4 }}
@@ -327,8 +421,8 @@ export function ConsoleToolbarButton({
       size="sm"
       onClick={onClick}
       className={cn(
-        "h-8 rounded-md px-3 text-xs font-medium",
-        active && "bg-background shadow-sm",
+        "h-8 px-3 text-xs font-medium",
+        active && "bg-card text-foreground",
       )}
     >
       {children}
@@ -346,7 +440,7 @@ export function ConsoleEmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 px-6 py-12 text-center">
+    <div className="console-empty-state flex flex-col items-center justify-center bg-muted/10 px-6 py-12 text-center">
       <p className="text-sm font-medium text-foreground">{title}</p>
       {description ? (
         <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>
@@ -357,7 +451,7 @@ export function ConsoleEmptyState({
 }
 
 export function ConsoleDivider() {
-  return <Separator className="bg-border/60" />;
+  return <div className="h-px w-full bg-border/60" />;
 }
 
 export { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input };

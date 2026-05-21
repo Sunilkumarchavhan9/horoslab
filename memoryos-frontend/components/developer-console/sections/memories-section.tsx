@@ -4,7 +4,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { LiveBrainMapDitherCanvas } from "@/components/landing/live-brain-map-dither-canvas";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { EASE_OUT, SPRING } from "@/lib/motion";
@@ -86,34 +85,6 @@ type MemoriesSectionProps = {
   onToggleTag: (tag: string) => void;
 };
 
-type MemoryGraphNode = {
-  id: string;
-  memoryId?: string;
-  eventId?: string;
-  x: number;
-  y: number;
-  r: number;
-  label: string;
-  detail: string;
-  color: string;
-  kind: "session" | "operation" | "memory" | "agent";
-  group: string;
-};
-
-type MemoryGraphEdge = {
-  id: string;
-  from: string;
-  to: string;
-  label: string;
-  detail: string;
-  color: string;
-  opacity: number;
-};
-
-type MemoryGraphSelection =
-  | { kind: "node"; id: string }
-  | { kind: "edge"; id: string };
-
 function hashString(value: string): number {
   let hash = 0;
   for (let index = 0; index < value.length; index += 1) {
@@ -154,61 +125,6 @@ function iconForMemoryType(type: string | undefined): IconName {
   if (t === "handoff") return "handoff";
   if (t === "insights") return "search";
   return "vault";
-}
-
-function colorForMemory(memory: MemoryRow): string {
-  return accentForMemoryType(memory.type);
-}
-
-function compactLabel(value: string, fallback: string): string {
-  const normalized = value.replace(/\s+/g, " ").trim();
-  if (!normalized) return fallback;
-  return normalized.length > 30 ? `${normalized.slice(0, 27)}...` : normalized;
-}
-
-function operationForEvent(
-  event: MemorySessionEvent,
-):
-  | "process"
-  | "retrieve"
-  | "resume"
-  | "handoff"
-  | "timeline"
-  | "insights"
-  | "other" {
-  if (event.route.includes("/process")) return "process";
-  if (event.route.includes("/retrieve")) return "retrieve";
-  if (event.route.includes("/resume")) return "resume";
-  if (event.route.includes("/handoff")) return "handoff";
-  if (event.route.includes("/timeline")) return "timeline";
-  if (event.route.includes("/insights")) return "insights";
-  return event.type === "memory_list" ? "timeline" : "other";
-}
-
-function operationCopy(operation: string): string {
-  switch (operation) {
-    case "process":
-      return "Saved new context from a playground, SDK, MCP, or HTTP agent turn.";
-    case "retrieve":
-      return "Asked MemoryOS to recall relevant memory before a model response.";
-    case "resume":
-      return "Asked MemoryOS what to continue next from previous project context.";
-    case "handoff":
-      return "Generated a handoff summary for a human or another agent.";
-    case "timeline":
-      return "Loaded historical memory activity for this workspace.";
-    case "insights":
-      return "Loaded derived workspace insights and active project signals.";
-    default:
-      return "Live MemoryOS API event from this signed-in workspace.";
-  }
-}
-
-function shortTime(value: string): string {
-  const date = new Date(value);
-  return Number.isFinite(date.getTime())
-    ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    : value;
 }
 
 function CountUp({ to, duration = 0.9 }: { to: number; duration?: number }) {
@@ -270,7 +186,7 @@ function ExpandedMemoryDetail({
           <StructuredDataPanel
             title="Raw trace"
             value={displayContent}
-            maxHeightClassName="max-h-[300px]"
+            maxHeightClassName="max-h-72"
             compactChars={2600}
           />
         </motion.div>
@@ -283,17 +199,11 @@ export function MemoriesSection({
   selectedMemoryTags,
   workspaceName,
   showMemoryTagFilter,
-  memoryLegendExpanded,
   memoryTagQuery,
   filteredMemoryTagOptions,
-  memoryStats,
-  memoryRelations,
-  memoryStatuses,
   memories,
-  requestEvents = [],
   isLoading = false,
   errorMessage = null,
-  onToggleLegend,
   onOpenTagFilter,
   onCloseTagFilter,
   onApplyTagFilter,
@@ -302,9 +212,6 @@ export function MemoriesSection({
   onToggleTag,
 }: MemoriesSectionProps) {
   const hasMemories = memories.length > 0;
-  const hasGraphData = memories.length > 0 || requestEvents.length > 0;
-  const [selectedGraphItem, setSelectedGraphItem] =
-    useState<MemoryGraphSelection | null>(null);
   const [activeFilter, setActiveFilter] = useState("All");
 
   // ─── Memory Doctor state ───────────────────────────────────────────────────
@@ -503,239 +410,6 @@ export function MemoriesSection({
     });
   }, [memories, activeFilter]);
 
-  const memoryGraph = useMemo(() => {
-    const visibleMemories = memories.slice(0, 10);
-    const visibleEvents = requestEvents.slice(0, 12);
-    const nodes: MemoryGraphNode[] = [];
-    const edges: MemoryGraphEdge[] = [];
-    const operationColors: Record<string, string> = {
-      process: "var(--color-primary)",
-      retrieve: "var(--color-primary)",
-      resume: "var(--color-primary)",
-      handoff: "var(--muted-foreground)",
-      timeline: "var(--muted-foreground)",
-      insights: "var(--color-primary)",
-      other: "var(--muted-foreground)",
-    };
-    const inferredMemoryOperation = (memory: MemoryRow) =>
-      memory.type === "project"
-        ? "resume"
-        : memory.type === "preference"
-          ? "timeline"
-          : memory.type === "handoff"
-            ? "handoff"
-            : memory.type === "insights"
-              ? "insights"
-              : "process";
-    const liveOperations = Array.from(
-      new Set([
-        ...visibleEvents.map((event) => operationForEvent(event)),
-        ...visibleMemories.map((memory) => inferredMemoryOperation(memory)),
-      ]),
-    );
-    const operationNodes = liveOperations.map((operation, index) => ({
-      operation,
-      x: 360,
-      y:
-        liveOperations.length === 1
-          ? 285
-          : 120 +
-            index * Math.min(92, 360 / Math.max(1, liveOperations.length - 1)),
-      color: operationColors[operation] ?? operationColors.other,
-    }));
-    const operationNodeByName = new Map(
-      operationNodes.map((node) => [node.operation, node]),
-    );
-
-    visibleEvents.forEach((event, index) => {
-      const operation = operationForEvent(event);
-      const y = 105 + (index % 6) * 76;
-      const x = 92 + Math.floor(index / 6) * 82;
-      const nodeId = `session-${event.id}`;
-      const operationNodeId = `operation-${operation}`;
-      const operationNodeExists = operationNodeByName.has(operation);
-
-      nodes.push({
-        id: nodeId,
-        eventId: event.id,
-        x,
-        y,
-        r: event.status === "Success" ? 8 : 9,
-        label: `${event.method} ${operation}`,
-        detail: `${event.status} ${event.statusCode} | ${event.latencyMs}ms | ${shortTime(event.createdAt)}`,
-        color: event.status === "Success" ? "var(--color-primary)" : "var(--destructive)",
-        kind: "session",
-        group: "Live sessions",
-      });
-
-      if (operationNodeExists) {
-        edges.push({
-          id: `${nodeId}-${operationNodeId}`,
-          from: nodeId,
-          to: operationNodeId,
-          label: operation,
-          detail: `${event.method} ${event.route} triggered the ${operation} memory operation.`,
-          color: event.status === "Success" ? "var(--color-primary)" : "var(--destructive)",
-          opacity: 0.85,
-        });
-      }
-    });
-
-    operationNodes.forEach(({ operation, x, y, color }) => {
-      nodes.push({
-        id: `operation-${operation}`,
-        x,
-        y,
-        r: 14,
-        label: operation,
-        detail: operationCopy(operation),
-        color,
-        kind: "operation",
-        group: "Memory operations",
-      });
-    });
-
-    visibleMemories.forEach((memory, memoryIndex) => {
-      const color = colorForMemory(memory);
-      const memoryNodeId = `memory-${memory.id}`;
-      const x = 580;
-      const y = 80 + memoryIndex * 45;
-
-      nodes.push({
-        id: memoryNodeId,
-        memoryId: memory.id,
-        x,
-        y,
-        r:
-          8 +
-          Math.min(
-            8,
-            Math.max(
-              0,
-              memory.confidence <= 1
-                ? memory.confidence * 8
-                : memory.confidence / 14,
-            ),
-          ),
-        label: compactLabel(
-          memory.summary || memory.content,
-          memory.type || "memory",
-        ),
-        detail: `${memory.type || "memory"} | ${memory.status || "active"} | confidence ${memory.confidence <= 1 ? memory.confidence.toFixed(2) : `${Math.round(memory.confidence)}%`}`,
-        color,
-        kind: "memory",
-        group: memory.type || "Memory facts",
-      });
-
-      const primaryOperation = inferredMemoryOperation(memory);
-
-      if (operationNodeByName.has(primaryOperation)) {
-        edges.push({
-          id: `operation-${primaryOperation}-${memoryNodeId}`,
-          from: `operation-${primaryOperation}`,
-          to: memoryNodeId,
-          label:
-            (primaryOperation as string) === "process"
-              ? "creates"
-              : (primaryOperation as string) === "retrieve"
-                ? "recalls"
-                : (primaryOperation as string) === "resume"
-                  ? "derives"
-                  : "packages",
-          detail: `${operationCopy(primaryOperation)} This edge explains why "${compactLabel(memory.summary || memory.content, memory.type)}" appears in the graph.`,
-          color,
-          opacity: 0.42,
-        });
-      }
-
-      visibleMemories.slice(0, memoryIndex).forEach((other) => {
-        if (other.type === memory.type || other.status === memory.status) {
-          edges.push({
-            id: `similar-${other.id}-${memory.id}`,
-            from: `memory-${other.id}`,
-            to: memoryNodeId,
-            label: other.type === memory.type ? "extends" : "updates",
-            detail: `These memories are connected because they share ${other.type === memory.type ? `type "${memory.type}"` : `status "${memory.status}"`}.`,
-            color,
-            opacity: 0.18,
-          });
-        }
-      });
-    });
-
-    // Generate Developer Coding Agent nodes
-    const agentNodes = [
-      { id: "agent-copilot", label: "IDE Copilot", y: 180, color: "var(--destructive)" },
-      { id: "agent-autopilot", label: "Autopilot", y: 280, color: "var(--destructive)" },
-      { id: "agent-cli", label: "CLI Agent", y: 380, color: "var(--destructive)" },
-    ];
-
-    agentNodes.forEach((agent) => {
-      nodes.push({
-        id: agent.id,
-        x: 880,
-        y: agent.y,
-        r: 10,
-        label: agent.label,
-        detail: `The ${agent.label} agent retrieving stored context in real-time.`,
-        color: agent.color,
-        kind: "agent",
-        group: "Live Agents",
-      });
-    });
-
-    // Generate edges from memories to agents to simulate live data passing
-    visibleMemories.forEach((memory, idx) => {
-      const targetAgent = agentNodes[idx % agentNodes.length];
-      edges.push({
-        id: `retrieve-${memory.id}-${targetAgent.id}`,
-        from: `memory-${memory.id}`,
-        to: targetAgent.id,
-        label: "retrieves",
-        detail: `${targetAgent.label} queries memory for real-time developer context.`,
-        color: targetAgent.color,
-        opacity: 0.9,
-      });
-    });
-
-    return { nodes, edges };
-  }, [memories, requestEvents]);
-
-  const handleExploreGraph = useCallback((memory: MemoryRow) => {
-    const node = memoryGraph.nodes.find((n) => n.memoryId === memory.id);
-    if (node) {
-      setSelectedGraphItem({ kind: "node", id: node.id });
-      document
-        .getElementById("memory-brain-map")
-        ?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [memoryGraph.nodes]);
-
-  const selectedGraphNode =
-    selectedGraphItem?.kind === "node"
-      ? memoryGraph.nodes.find((node) => node.id === selectedGraphItem.id)
-      : null;
-  const selectedGraphEdge =
-    selectedGraphItem?.kind === "edge"
-      ? memoryGraph.edges.find((edge) => edge.id === selectedGraphItem.id)
-      : null;
-  const selectedGraphMemory = selectedGraphNode?.memoryId
-    ? (memories.find((memory) => memory.id === selectedGraphNode.memoryId) ??
-      null)
-    : null;
-
-  const graphAwareStats = useMemo(() => {
-    return memoryStats.map(([label, value]) => {
-      if (label === "Memories") {
-        return [label, `${memories.length}`] as [string, string];
-      }
-      if (label === "Connections") {
-        return [label, `${memoryGraph.edges.length}`] as [string, string];
-      }
-      return [label, value] as [string, string];
-    });
-  }, [memories.length, memoryGraph.edges.length, memoryStats]);
-
   // ─── Live vault metrics (derived from real memories, not hard-coded) ───────
   const vaultStats = useMemo(() => {
     const total = memories.length;
@@ -780,22 +454,6 @@ export function MemoriesSection({
     };
   }, [memories]);
 
-  const memoryTypeLegend = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const m of memories) {
-      const t = (m.type || "other").trim() || "other";
-      counts.set(t, (counts.get(t) ?? 0) + 1);
-    }
-    return Array.from(counts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map(([type, count]) => ({
-        type,
-        count,
-        color: accentForMemoryType(type),
-        icon: iconForMemoryType(type),
-      }));
-  }, [memories]);
-
   // ─── Live Memory Doctor side-panel summary (derived from autopilotResult) ──
   const doctorPanelSummary = useMemo(() => {
     const issues = Array.isArray(autopilotResult?.issues)
@@ -833,7 +491,7 @@ export function MemoriesSection({
         <div className="absolute inset-0 bg-primary/5" />
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <h1 className="text-[26px] font-bold tracking-tight text-foreground shadow-black/50 drop-shadow-sm">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground drop-">
               Memory Intelligence Vault
             </h1>
           </div>
@@ -841,20 +499,20 @@ export function MemoriesSection({
             <button
               type="button"
               onClick={onOpenTagFilter}
-              className="rounded-none border border-transparent bg-background px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground transition hover:border-border shadow-none"
+              className="rounded-none border border-transparent bg-background px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition hover:border-border"
             >
               {selectedMemoryTags.length > 0
                 ? `TAGS: ${selectedMemoryTags.join(", ").toUpperCase()}`
                 : "ALL TAGS"}
             </button>
-            <div className="rounded-none border border-transparent bg-background px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground shadow-none">
+            <div className="rounded-none border border-transparent bg-background px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
               WORKSPACE: {workspaceName.toUpperCase()}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-6 mt-8 space-y-8 max-w-[1440px]">
+      <div className="px-6 mt-8 space-y-8 max-w-7xl">
         {/* SECTION 2: Top Metrics — derived from real memories */}
         <motion.div
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
@@ -872,18 +530,18 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 shadow-none border-t-2 border-t-primary hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-primary hover:bg-card transition-colors"
           >
             <DitherBackground
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08] transition group-hover:opacity-[0.14]"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
               accent="var(--color-primary)"
               density={0.44}
             />
-            <p className="relative text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+            <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
               Memory Health
             </p>
-            <div className="relative flex items-baseline gap-2">
-              <span className="text-[32px] font-bold tracking-tight">
+            <div className="relative flex flex-col gap-0.5">
+              <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
                 {vaultStats.total === 0 ? (
                   "—"
                 ) : (
@@ -893,7 +551,7 @@ export function MemoriesSection({
                 )}
               </span>
               <span
-                className={`text-[12px] font-medium ${vaultStats.health >= 70 ? "text-primary" : vaultStats.health >= 40 ? "text-muted-foreground" : "text-destructive"}`}
+                className={`text-xs font-medium ${vaultStats.health >= 70 ? "text-primary" : vaultStats.health >= 40 ? "text-muted-foreground" : "text-destructive"}`}
               >
                 {vaultStats.total === 0 ? "no data" : "avg confidence"}
               </span>
@@ -906,18 +564,18 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 shadow-none border-t-2 border-t-primary hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-primary hover:bg-card transition-colors"
           >
             <DitherBackground
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08] transition group-hover:opacity-[0.14]"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
               accent="var(--color-primary)"
               density={0.44}
             />
-            <p className="relative text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+            <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
               Impact Score
             </p>
-            <div className="relative flex items-baseline gap-2">
-              <span className="text-[32px] font-bold tracking-tight">
+            <div className="relative flex flex-col gap-0.5">
+              <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
                 {vaultStats.total === 0 ? (
                   "—"
                 ) : (
@@ -926,7 +584,7 @@ export function MemoriesSection({
                   </>
                 )}
               </span>
-              <span className="text-[12px] font-medium text-muted-foreground">
+              <span className="text-xs font-medium text-muted-foreground">
                 {vaultStats.total} memor{vaultStats.total === 1 ? "y" : "ies"}
               </span>
             </div>
@@ -938,22 +596,22 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 shadow-none border-t-2 border-t-muted-foreground hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-muted-foreground hover:bg-card transition-colors"
           >
             <DitherBackground
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08] transition group-hover:opacity-[0.14]"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
               accent="var(--muted-foreground)"
               density={0.44}
             />
-            <p className="relative text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+            <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
               Cleanup Needed
             </p>
-            <div className="relative flex items-baseline gap-2">
-              <span className="text-[32px] font-bold tracking-tight">
+            <div className="relative flex flex-col gap-0.5">
+              <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
                 <CountUp to={vaultStats.cleanupCount} />
               </span>
               <span
-                className={`text-[12px] font-medium ${vaultStats.cleanupCount === 0 ? "text-primary" : "text-muted-foreground"}`}
+                className={`text-xs font-medium ${vaultStats.cleanupCount === 0 ? "text-primary" : "text-muted-foreground"}`}
               >
                 {vaultStats.cleanupCount === 0 ? "all healthy" : "noisy nodes"}
               </span>
@@ -966,18 +624,18 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 shadow-none border-t-2 border-t-destructive hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-destructive hover:bg-card transition-colors"
           >
             
-            <p className="relative text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+            <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
               Conflicts
             </p>
-            <div className="relative flex items-baseline gap-2">
-              <span className="text-[32px] font-bold tracking-tight">
+            <div className="relative flex flex-col gap-0.5">
+              <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
                 <CountUp to={vaultStats.conflictCount} />
               </span>
               <span
-                className={`text-[12px] font-medium ${vaultStats.conflictCount === 0 ? "text-primary" : "text-destructive"}`}
+                className={`text-xs font-medium ${vaultStats.conflictCount === 0 ? "text-primary" : "text-destructive"}`}
               >
                 {vaultStats.conflictCount === 0 ? "all clear" : "needs review"}
               </span>
@@ -985,144 +643,8 @@ export function MemoriesSection({
           </motion.div>
         </motion.div>
 
-        {/* SECTION 3: Graph */}
-        <div className="grid gap-6">
-          <div
-            id="memory-brain-map"
-            className="relative rounded-none border border-transparent bg-background overflow-hidden flex flex-col min-h-[500px]"
-          >
-           
-            <div className="px-5 py-4 border-b border-transparent bg-background flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-3 min-w-0">
-                <h2 className="text-[12px] font-bold uppercase tracking-widest text-foreground flex items-center gap-3 shrink-0">
-                  Live Brain Map
-                  
-                </h2>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {graphAwareStats.map(([label, value]) => (
-                    <span
-                      key={label}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/20 px-2.5 py-1 text-[9px] font-mono uppercase tracking-wider text-muted-foreground"
-                    >
-                      <span className="text-foreground/35">{label}</span>
-                      <span className="font-bold text-foreground/90">{value}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onToggleLegend}
-                className="inline-flex items-center gap-2 shrink-0 rounded-none border border-border bg-background px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition hover:border-ring hover:text-foreground"
-              >
-                <Icon name="dither" className="h-3.5 w-3.5 opacity-80" />
-                {memoryLegendExpanded ? "Hide legend" : "Legend"}
-              </button>
-            </div>
-            <AnimatePresence initial={false}>
-              {memoryLegendExpanded ? (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: EASE_OUT }}
-                  className="overflow-hidden border-b border-border bg-background"
-                >
-                  <div className="px-5 py-4 grid gap-5 md:grid-cols-3">
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-foreground/35 mb-2.5">
-                        Memory types
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {memoryTypeLegend.length === 0 ? (
-                          <span className="text-[11px] text-foreground/35">
-                            No types yet
-                          </span>
-                        ) : (
-                          memoryTypeLegend.map((entry) => (
-                            <span
-                              key={entry.type}
-                              className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-2.5 py-1 text-[10px] text-muted-foreground"
-                            >
-                              <span
-                                className="h-2 w-2 rounded-full shrink-0"
-                                style={{ backgroundColor: entry.color }}
-                              />
-                              <Icon
-                                name={entry.icon}
-                                className="h-3 w-3 shrink-0 text-muted-foreground"
-                              />
-                              <span className="font-mono uppercase tracking-tighter">
-                                {entry.type}
-                              </span>
-                              <span className="text-muted-foreground tabular-nums">
-                                ×{entry.count}
-                              </span>
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-foreground/35 mb-2.5">
-                        Edge relations
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {memoryRelations.map((rel) => (
-                          <span
-                            key={rel.label}
-                            className="inline-flex items-center gap-1.5 text-[10px] text-foreground/75"
-                          >
-                            <span
-                              className={`h-2 w-2 rounded-full ${rel.tone}`}
-                            />
-                            {rel.label}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-foreground/35 mb-2.5">
-                        Status
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {memoryStatuses.map((st) => (
-                          <span
-                            key={st.label}
-                            className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${st.tone}`}
-                          >
-                            {st.label}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-            <div className="relative flex-1 bg-black overflow-hidden shadow-none group min-h-[520px]">
-              {hasGraphData ? (
-                <LiveBrainMapDitherCanvas
-                  graph={memoryGraph}
-                  theme="dark"
-                  selectedItem={selectedGraphItem}
-                  onSelectNode={(id) => setSelectedGraphItem({ kind: "node", id })}
-                  onSelectEdge={(id) => setSelectedGraphItem({ kind: "edge", id })}
-                  className="absolute inset-0 h-full w-full"
-                />
-              ) : (
-                <div className="absolute inset-0 grid place-items-center">
-                  <p className="text-muted-foreground text-[13px] font-medium">
-                    No graph data yet.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* SECTION 4: Smart Filters */}
-        <div className="flex flex-wrap gap-2 py-2">
+        {/* SECTION 3: Smart Filters */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
           {[
             { label: "All", icon: "vault" as const },
             { label: "Projects", icon: "graph" as const },
@@ -1140,7 +662,7 @@ export function MemoriesSection({
             <button
               key={label}
               onClick={() => setActiveFilter(label)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-widest transition-colors ${label === activeFilter ? "border-ring/50 bg-muted text-foreground" : "border-transparent bg-background text-muted-foreground hover:text-foreground hover:bg-muted"}`}
+              className={`inline-flex shrink-0 items-center gap-1.5 border px-3 py-1.5 text-xs font-bold uppercase tracking-widest transition-colors ${label === activeFilter ? "border-border bg-muted text-foreground" : "border-transparent bg-background text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"}`}
             >
               <Icon name={icon} className="h-3 w-3" />
               {label}
@@ -1149,8 +671,8 @@ export function MemoriesSection({
         </div>
 
         {/* SECTION 5: Cards & Doctor */}
-        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-          <div className="grid gap-4 self-start">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
+          <div className="grid min-w-0 gap-4">
             {filteredMemories.length > 0 ? (
               filteredMemories.map((memory, index) => (
                 <motion.article
@@ -1161,11 +683,11 @@ export function MemoriesSection({
                     duration: 0.26,
                     delay: Math.min(index * 0.04, 0.22),
                   }}
-                  className="relative overflow-hidden rounded-none border border-transparent bg-background shadow-none group hover:border-border transition-colors"
+                  className="relative overflow-hidden rounded-none border border-transparent bg-background group hover:border-border transition-colors"
                 >
                   
                   <div
-                    className={`absolute top-0 left-0 w-full h-[2px] ${
+                    className={`absolute top-0 left-0 w-full h-0.5 ${
                       memory.type === "project"
                         ? "bg-primary"
                         : memory.type === "problem"
@@ -1184,7 +706,7 @@ export function MemoriesSection({
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-3">
                           <span
-                            className={`rounded border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${
+                            className={`border px-2 py-0.5 text-xs font-bold uppercase tracking-widest ${
                               memory.type === "project"
                                 ? "border-primary/30 bg-primary/15 text-primary"
                                 : memory.type === "problem"
@@ -1200,7 +722,7 @@ export function MemoriesSection({
                           >
                             {memory.type || "memory"}
                           </span>
-                          <span className="rounded border border-transparent bg-muted px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                          <span className="border border-border bg-muted px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                             {memory.status || "active"}
                           </span>
                         </div>
@@ -1213,7 +735,7 @@ export function MemoriesSection({
                             detailText.length > 0 && detailText !== displayText;
                           return (
                             <>
-                              <p className="text-[15px] font-medium leading-relaxed text-foreground">
+                              <p className="text-sm font-medium leading-relaxed text-foreground">
                                 {displayText || "Agent context captured"}
                               </p>
                               {showDetail ? (
@@ -1241,7 +763,7 @@ export function MemoriesSection({
                     />
                   </div>
                   <div className="border-t border-border bg-background px-5 py-2.5 flex items-center justify-between gap-3">
-                    <p className="truncate font-mono text-[10px] text-muted-foreground tracking-wider flex-1 min-w-0">
+                    <p className="truncate font-mono text-xs text-muted-foreground tracking-wider flex-1 min-w-0">
                       ID: {memory.id}
                     </p>
                     <div className="flex items-center gap-1.5 shrink-0">
@@ -1249,7 +771,7 @@ export function MemoriesSection({
                         type="button"
                         onClick={() => handleInspect(memory)}
                         title="Open the memory inspector drawer"
-                        className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border hover:border-ring hover:bg-muted px-2.5 py-1 transition-colors"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border hover:border-ring hover:bg-muted px-2.5 py-1 transition-colors"
                       >
                         Inspect
                       </button>
@@ -1259,7 +781,7 @@ export function MemoriesSection({
                         disabled={explainLoading === memory.id}
                         title="Ask Agent A to explain this memory"
                         whileTap={{ scale: 0.98 }}
-                        className="relative overflow-hidden text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground border border-primary/20 hover:border-primary/60 hover:bg-primary/10 px-2.5 py-1 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-h-[28px]"
+                        className="relative overflow-hidden text-xs font-bold uppercase tracking-widest text-primary hover:text-foreground border border-primary/20 hover:border-primary/60 hover:bg-primary/10 px-2.5 py-1 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-h-7"
                       >
                         <AnimatePresence>
                           {explainLoading === memory.id ? (
@@ -1291,7 +813,7 @@ export function MemoriesSection({
                         disabled={promoteLoading === memory.id}
                         title="Promote to a structured memory (project / preference / learning / profile)"
                         whileTap={{ scale: 0.98 }}
-                        className="relative overflow-hidden text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground border border-primary/20 hover:border-primary/60 hover:bg-primary/15 px-2.5 py-1 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-h-[28px]"
+                        className="relative overflow-hidden text-xs font-bold uppercase tracking-widest text-primary hover:text-foreground border border-primary/20 hover:border-primary/60 hover:bg-primary/15 px-2.5 py-1 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-h-7"
                       >
                         <AnimatePresence>
                           {promoteLoading === memory.id ? (
@@ -1315,91 +837,84 @@ export function MemoriesSection({
                           {promoteLoading === memory.id ? "Promoting" : "Promote"}
                         </span>
                       </motion.button>
-                      <button
-                        type="button"
-                        onClick={() => handleExploreGraph(memory)}
-                        title="Highlight this memory in the brain map"
-                        className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary border border-transparent hover:border-primary/30 px-2.5 py-1 transition-colors opacity-60 group-hover:opacity-100"
-                      >
-                        Graph →
-                      </button>
                     </div>
                   </div>
                 </motion.article>
               ))
             ) : (
               <div className="grid place-items-center py-12 text-center text-muted-foreground">
-                <p className="text-[13px] font-medium">
+                <p className="text-sm font-medium">
                   No memories match the filter "{activeFilter}".
                 </p>
               </div>
             )}
           </div>
 
-          <div className="relative rounded-none border border-border bg-gradient-to-b from-background to-background flex flex-col self-start overflow-hidden sticky top-6 shadow-lg shadow-primary/10">
-            
-            <div className="px-5 py-4 border-b border-border bg-background/60 flex items-center justify-between">
-              <h2 className="text-[12px] font-bold uppercase tracking-widest text-primary">
+          <div className="relative flex min-w-0 w-full flex-col overflow-hidden rounded-none border border-border bg-background lg:sticky lg:top-6">
+            <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3.5">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
                 Memory Doctor
               </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
                   {doctorPanelSummary.hasResult ? "live" : "idle"}
                 </span>
                 <span
-                  className={`h-2 w-2 rounded-full ${doctorPanelSummary.hasResult ? "bg-primary animate-pulse" : "bg-muted"}`}
-                ></span>
+                  className={`h-2 w-2 shrink-0 rounded-full ${doctorPanelSummary.hasResult ? "animate-pulse bg-primary" : "bg-muted-foreground/40"}`}
+                />
               </div>
             </div>
-            <div className="p-6 space-y-5">
+            <div className="flex flex-1 flex-col gap-5 px-5 py-5">
               {!doctorPanelSummary.hasResult ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-muted px-3 py-3">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                    <div className="flex min-h-[4.5rem] flex-col justify-between border border-border bg-muted px-3 py-3">
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Episodic
                       </p>
-                      <p className="text-[18px] font-bold">
+                      <p className="text-2xl font-bold leading-none tabular-nums">
                         {vaultStats.episodicCount}
                       </p>
                     </div>
-                    <div className="bg-muted px-3 py-3">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                    <div className="flex min-h-[4.5rem] flex-col justify-between border border-border bg-muted px-3 py-3">
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         To clean
                       </p>
                       <p
-                        className={`text-[18px] font-bold ${vaultStats.cleanupCount > 0 ? "text-muted-foreground" : "text-primary"}`}
+                        className={`text-2xl font-bold leading-none tabular-nums ${vaultStats.cleanupCount > 0 ? "text-muted-foreground" : "text-primary"}`}
                       >
                         {vaultStats.cleanupCount}
                       </p>
                     </div>
                   </div>
-                  <p className="text-[12px] text-muted-foreground leading-relaxed border-l-2 border-border pl-3">-</p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Run autopilot to scan episodic noise, conflicts, and stale nodes.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-destructive/10 border-l-2 border-destructive px-3 py-2">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-destructive mb-0.5">
+                    <div className="flex min-h-[3.25rem] flex-col justify-between border border-destructive/30 bg-destructive/10 px-2.5 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-destructive">
                         Critical
                       </p>
-                      <p className="text-[16px] font-bold">
+                      <p className="text-base font-bold leading-none tabular-nums">
                         {doctorPanelSummary.critical.length}
                       </p>
                     </div>
-                    <div className="bg-muted/30 border-l-2 border-muted-foreground px-3 py-2">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
+                    <div className="flex min-h-[3.25rem] flex-col justify-between border border-border bg-muted/30 px-2.5 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                         Warn
                       </p>
-                      <p className="text-[16px] font-bold">
+                      <p className="text-base font-bold leading-none tabular-nums">
                         {doctorPanelSummary.warnings.length}
                       </p>
                     </div>
-                    <div className="bg-muted border-l-2 border-border px-3 py-2">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
+                    <div className="flex min-h-[3.25rem] flex-col justify-between border border-border bg-muted px-2.5 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                         Info
                       </p>
-                      <p className="text-[16px] font-bold">
+                      <p className="text-base font-bold leading-none tabular-nums">
                         {doctorPanelSummary.info.length}
                       </p>
                     </div>
@@ -1415,13 +930,13 @@ export function MemoriesSection({
                     return (
                       <div key={i}>
                         <p
-                          className="text-[10px] font-bold uppercase tracking-widest mb-1.5"
+                          className="text-xs font-bold uppercase tracking-widest mb-1.5"
                           style={{ color }}
                         >
                           {String(issue.type ?? "issue")}
                         </p>
                         <p
-                          className="text-[12px] text-foreground leading-relaxed border-l-2 pl-3"
+                          className="text-xs text-foreground leading-relaxed border-l-2 pl-3"
                           style={{ borderColor: color }}
                         >
                           {String(issue.message ?? "")}
@@ -1433,24 +948,24 @@ export function MemoriesSection({
                     <button
                       type="button"
                       onClick={() => setAutopilotResult(autopilotResult)}
-                      className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground transition-colors"
+                      className="text-xs font-bold uppercase tracking-widest text-primary hover:text-foreground transition-colors"
                     >
                       View all {doctorPanelSummary.issues.length} issues →
                     </button>
                   )}
                   {doctorPanelSummary.issues.length === 0 && (
-                    <p className="text-[12px] text-primary leading-relaxed border-l-2 border-primary pl-3">
+                    <p className="text-xs text-primary leading-relaxed border-l-2 border-primary pl-3">
                       Memory store looks clean. No issues detected.
                     </p>
                   )}
                 </div>
               )}
 
-              <div className="pt-4 border-t border-border space-y-2.5">
+              <div className="mt-auto space-y-2 border-t border-border pt-4">
                 <button
                   onClick={handleRunAutopilot}
                   disabled={autopilotLoading}
-                  className="relative overflow-hidden w-full bg-primary/15 hover:bg-primary/25 text-primary border border-primary/40 hover:border-primary/70 py-3 rounded-none text-[12px] font-bold uppercase tracking-wider transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-none border border-primary/40 bg-primary/15 py-3 text-xs font-bold uppercase tracking-wider text-primary transition hover:border-primary/70 hover:bg-primary/25 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <AnimatePresence>
                     {autopilotLoading && (
@@ -1477,7 +992,7 @@ export function MemoriesSection({
                 <button
                   onClick={handleCompileRawMemories}
                   disabled={compileLoading}
-                  className="relative overflow-hidden w-full bg-muted hover:bg-muted text-foreground hover:text-foreground border border-border hover:border-ring py-3 rounded-none text-[12px] font-bold uppercase tracking-wider transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-none border border-border bg-muted py-3 text-xs font-bold uppercase tracking-wider text-foreground transition hover:border-ring hover:bg-muted/80 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <AnimatePresence>
                     {compileLoading && (
@@ -1519,15 +1034,15 @@ export function MemoriesSection({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 8 }}
               transition={{ type: "spring", stiffness: 360, damping: 30 }}
-              className="relative overflow-hidden w-full max-w-[560px] rounded-none border border-transparent bg-background p-7 shadow-2xl shadow-black/40"
+              className="relative overflow-hidden w-full max-w-xl rounded-none border border-transparent bg-background p-7"
             >
               
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-[18px] font-semibold tracking-[-0.03em] text-foreground">
+                  <h2 className="text-lg font-semibold tracking-tight text-foreground">
                     Filter by Memory Tags
                   </h2>
-                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     Select continuity tags to show in the MemoryOS graph and
                     explorer.
                   </p>
@@ -1535,15 +1050,15 @@ export function MemoriesSection({
                 <button
                   type="button"
                   onClick={onCloseTagFilter}
-                  className="text-[24px] text-muted-foreground hover:text-foreground transition"
+                  className="text-2xl text-muted-foreground hover:text-foreground transition"
                 >
                   ×
                 </button>
               </div>
 
-              <div className="relative overflow-hidden mt-6 rounded-none border border-transparent bg-background px-4 py-3 shadow-none">
+              <div className="relative overflow-hidden mt-6 rounded-none border border-transparent bg-background px-4 py-3">
                 <DitherBackground
-                  className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08] transition group-hover:opacity-[0.14]"
+                  className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
                   accent="var(--color-primary)"
                   density={0.44}
                 />
@@ -1551,13 +1066,13 @@ export function MemoriesSection({
                   value={memoryTagQuery}
                   onChange={(event) => onTagQueryChange(event.target.value)}
                   placeholder="Search memory tags..."
-                  className="w-full bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted-foreground"
+                  className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                 />
               </div>
 
-              <div className="relative overflow-hidden mt-5 min-h-[160px] rounded-none border-transparent bg-background px-4 py-4 shadow-none">
+              <div className="relative overflow-hidden mt-5 min-h-40 rounded-none border-transparent bg-background px-4 py-4">
                 <DitherBackground
-                  className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08] transition group-hover:opacity-[0.14]"
+                  className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
                   accent="var(--color-primary)"
                   density={0.44}
                 />
@@ -1570,7 +1085,7 @@ export function MemoriesSection({
                           key={tag}
                           type="button"
                           onClick={() => onToggleTag(tag)}
-                          className={`rounded-full border px-4 py-2 text-[12px] font-bold uppercase tracking-widest transition shadow-sm ${
+                          className={`rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-widest transition ${
                             active
                               ? "border-primary/35 bg-primary/10 text-primary"
                               : "border-transparent bg-background text-muted-foreground hover:border-border hover:text-foreground"
@@ -1582,14 +1097,14 @@ export function MemoriesSection({
                     })}
                   </div>
                 ) : (
-                  <div className="grid h-full min-h-[120px] place-items-center text-[14px] text-muted-foreground">
+                  <div className="grid h-full min-h-32 place-items-center text-sm text-muted-foreground">
                     No matching tags found
                   </div>
                 )}
               </div>
 
               <div className="mt-5 flex items-center justify-between gap-4 border-t border-transparent pt-5">
-                <p className="text-[13px] text-muted-foreground font-mono uppercase tracking-widest">
+                <p className="text-sm text-muted-foreground font-mono uppercase tracking-widest">
                   {selectedMemoryTags.length > 0
                     ? `${selectedMemoryTags.length} tag(s) selected`
                     : "Showing all"}
@@ -1598,14 +1113,14 @@ export function MemoriesSection({
                   <button
                     type="button"
                     onClick={onResetTagFilter}
-                    className="rounded-none border border-transparent bg-transparent px-5 py-2 text-[12px] font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted transition"
+                    className="rounded-none border border-transparent bg-transparent px-5 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={onApplyTagFilter}
-                    className="rounded-none bg-primary px-5 py-2 text-[12px] font-bold uppercase tracking-widest text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/25"
+                    className="rounded-none bg-primary px-5 py-2 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:bg-primary/90 transition"
                   >
                     Apply Filters
                   </button>
@@ -1625,7 +1140,7 @@ export function MemoriesSection({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            className={`fixed bottom-6 right-6 z-[60] flex items-center gap-3 px-5 py-3 rounded-none text-[13px] font-medium shadow-xl shadow-black/35 border ${
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-none text-sm font-medium border ${
                 toastMessage.type === "success"
                 ? "bg-primary text-background border-primary"
                 : "bg-destructive text-destructive-foreground border-destructive"
@@ -1639,7 +1154,7 @@ export function MemoriesSection({
               type="button"
               onClick={() => setToastMessage(null)}
               aria-label="Dismiss"
-              className={`ml-2 text-[16px] leading-none ${toastMessage.type === "success" ? "text-background/70 hover:text-background" : "text-muted-foreground hover:text-foreground"}`}
+              className={`ml-2 text-base leading-none ${toastMessage.type === "success" ? "text-background/70 hover:text-background" : "text-muted-foreground hover:text-foreground"}`}
             >
               ×
             </button>
@@ -1663,11 +1178,11 @@ export function MemoriesSection({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 340, damping: 36 }}
-            className="relative overflow-hidden w-full max-w-[540px] bg-gradient-to-b from-background to-background border-l border-border h-full overflow-y-auto shadow-[-20px_0_60px] shadow-black/50"
+            className="relative overflow-hidden w-full max-w-xl bg-background border-l border-border h-full overflow-y-auto "
               onClick={(e) => e.stopPropagation()}
             >
             <DitherBackground
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
                         accent="var(--color-primary)"
               density={0.44}
             />
@@ -1684,7 +1199,7 @@ export function MemoriesSection({
                       backgroundColor: accentForMemoryType(inspectMemory.type),
                     }}
                   />
-                  <h2 className="text-[14px] font-bold text-foreground tracking-tight truncate">
+                  <h2 className="text-sm font-bold text-foreground tracking-tight truncate">
                     Memory Inspector
                   </h2>
                   <Icon
@@ -1692,7 +1207,7 @@ export function MemoriesSection({
                     className="h-4 w-4 shrink-0 text-muted-foreground"
                     title={inspectMemory.type ?? "memory"}
                   />
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground hidden sm:inline">
+                  <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground hidden sm:inline">
                     read-only
                   </span>
                 </div>
@@ -1700,7 +1215,7 @@ export function MemoriesSection({
                   type="button"
                   onClick={() => setInspectMemory(null)}
                   aria-label="Close inspector"
-                  className="text-muted-foreground hover:text-foreground text-[22px] leading-none shrink-0"
+                  className="text-muted-foreground hover:text-foreground text-xl leading-none shrink-0"
                 >
                   ×
                 </button>
@@ -1723,33 +1238,33 @@ export function MemoriesSection({
                   ].map(([k, v]) => (
                     <div key={k} className="relative overflow-hidden bg-muted px-3 py-2.5">
                       <DitherBackground
-                        className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+                        className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
                         accent="var(--color-primary)"
                         density={0.44}
                       />
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
                         {k}
                       </p>
-                      <p className="text-[12px] text-foreground/90 font-mono truncate">
+                      <p className="text-xs text-foreground/90 font-mono truncate">
                         {v}
                       </p>
                     </div>
                   ))}
                 </motion.div>
                 <motion.div variants={INSPECT_DRAWER_ITEM}>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                     ID
                   </p>
-                  <p className="text-[11px] text-muted-foreground font-mono break-all">
+                  <p className="text-xs text-muted-foreground font-mono break-all">
                     {inspectMemory.id}
                   </p>
                 </motion.div>
                 {formatMemoryForDisplay(inspectMemory.summary || inspectMemory.content) ? (
                   <motion.div variants={INSPECT_DRAWER_ITEM}>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                       Summary
                     </p>
-                    <p className="text-[13px] text-foreground/90 leading-relaxed">
+                    <p className="text-sm text-foreground/90 leading-relaxed">
                       {formatMemoryForDisplay(inspectMemory.summary || inspectMemory.content)}
                     </p>
                   </motion.div>
@@ -1760,10 +1275,10 @@ export function MemoriesSection({
                   if (!body || body === headline) return null;
                   return (
                     <motion.div variants={INSPECT_DRAWER_ITEM}>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                         Details
                       </p>
-                      <p className="text-[13px] text-muted-foreground leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {body}
                       </p>
                     </motion.div>
@@ -1771,7 +1286,7 @@ export function MemoriesSection({
                 })()}
                 <motion.div variants={INSPECT_DRAWER_ITEM}>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Raw JSON
                     </p>
                     <button
@@ -1782,7 +1297,7 @@ export function MemoriesSection({
                         );
                         showToast("Copied to clipboard", "success");
                       }}
-                      className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-foreground transition-colors border border-primary/20 hover:border-primary/60 px-2.5 py-1"
+                      className="text-xs font-bold uppercase tracking-widest text-primary hover:text-foreground transition-colors border border-primary/20 hover:border-primary/60 px-2.5 py-1"
                     >
                       Copy JSON
                     </button>
@@ -1790,7 +1305,7 @@ export function MemoriesSection({
                   <StructuredDataPanel
                     title="Memory JSON"
                     value={inspectMemory}
-                    maxHeightClassName="max-h-[300px]"
+                    maxHeightClassName="max-h-72"
                     compactChars={2600}
                   />
                 </motion.div>
@@ -1807,21 +1322,21 @@ export function MemoriesSection({
           onClick={() => setExplainResult(null)}
         >
           <div
-            className="relative overflow-hidden w-full max-w-[540px] bg-gradient-to-b from-background to-background border-l border-primary/20 h-full overflow-y-auto shadow-[-20px_0_60px] shadow-black/50"
+            className="relative overflow-hidden w-full max-w-xl bg-background border-l border-primary/20 h-full overflow-y-auto "
             onClick={(e) => e.stopPropagation()}
           >
             <DitherBackground
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
                         accent="var(--color-primary)"
               density={0.44}
             />
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                <h2 className="text-[14px] font-bold text-foreground tracking-tight">
+                <h2 className="text-sm font-bold text-foreground tracking-tight">
                   Memory Explanation
                 </h2>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-primary">
+                <span className="text-xs font-mono uppercase tracking-widest text-primary">
                   agent a
                 </span>
               </div>
@@ -1829,7 +1344,7 @@ export function MemoriesSection({
                 type="button"
                 onClick={() => setExplainResult(null)}
                 aria-label="Close"
-                className="text-muted-foreground hover:text-foreground text-[22px] leading-none"
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
               >
                 ×
               </button>
@@ -1846,17 +1361,17 @@ export function MemoriesSection({
                   key={String(k)}
                   className="border-l-2 border-primary/30 pl-3"
                 >
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
                     {String(k)}
                   </p>
-                  <p className="text-[13px] text-foreground/90 leading-relaxed">
+                  <p className="text-sm text-foreground/90 leading-relaxed">
                     {String(v ?? "—")}
                   </p>
                 </div>
               ))}
               {!!explainResult.agentError && (
-                <div className="border border-muted-foreground/30 bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground leading-relaxed">
-                  <p className="font-bold uppercase tracking-widest mb-1 text-[10px]">
+                <div className="border border-muted-foreground/30 bg-muted/30 px-4 py-3 text-xs text-muted-foreground leading-relaxed">
+                  <p className="font-bold uppercase tracking-widest mb-1 text-xs">
                     Agent fallback
                   </p>
                   <p className="font-mono">
@@ -1876,17 +1391,17 @@ export function MemoriesSection({
           onClick={() => setAutopilotResult(null)}
         >
           <div
-            className="relative overflow-hidden w-full max-w-[580px] bg-gradient-to-b from-background to-background border-l border-primary/20 h-full overflow-y-auto shadow-[-20px_0_60px] shadow-black/50"
+            className="relative overflow-hidden w-full max-w-2xl bg-background border-l border-primary/20 h-full overflow-y-auto "
             onClick={(e) => e.stopPropagation()}
           >
            
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                <h2 className="text-[14px] font-bold text-foreground tracking-tight">
+                <h2 className="text-sm font-bold text-foreground tracking-tight">
                   Memory Autopilot
                 </h2>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-primary">
+                <span className="text-xs font-mono uppercase tracking-widest text-primary">
                   agent b
                 </span>
               </div>
@@ -1894,7 +1409,7 @@ export function MemoriesSection({
                 type="button"
                 onClick={() => setAutopilotResult(null)}
                 aria-label="Close"
-                className="text-muted-foreground hover:text-foreground text-[22px] leading-none"
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
               >
                 ×
               </button>
@@ -1904,7 +1419,7 @@ export function MemoriesSection({
               (autopilotResult.issues as Array<Record<string, unknown>>)
                 .length > 0 ? (
                 <div className="space-y-3 mb-6">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     Issues Found ({(autopilotResult.issues as unknown[]).length}
                     )
                   </p>
@@ -1926,20 +1441,20 @@ export function MemoriesSection({
                       >
                         <div className="flex items-center justify-between mb-1">
                           <p
-                            className="text-[10px] font-bold uppercase tracking-widest"
+                            className="text-xs font-bold uppercase tracking-widest"
                             style={{ color }}
                           >
                             {String(issue.type ?? "issue")}
                           </p>
-                          <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
+                          <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
                             {severity}
                           </span>
                         </div>
-                        <p className="text-[13px] text-muted-foreground leading-relaxed">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                           {String(issue.message ?? "")}
                         </p>
                         {issue.action ? (
-                          <p className="mt-1.5 text-[10px] font-mono text-muted-foreground">
+                          <p className="mt-1.5 text-xs font-mono text-muted-foreground">
                             action: {String(issue.action)}
                           </p>
                         ) : null}
@@ -1949,7 +1464,7 @@ export function MemoriesSection({
                 </div>
               ) : (
                 <div className="border-l-2 border-primary bg-primary/5 pl-4 py-3 mb-6">
-                  <p className="text-[13px] text-primary font-medium">
+                  <p className="text-sm text-primary font-medium">
                     No issues detected — memory store is clean.
                   </p>
                 </div>
@@ -1961,7 +1476,7 @@ export function MemoriesSection({
                   >
                 ).length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Suggested Actions
                     </p>
                     {(
@@ -1974,14 +1489,14 @@ export function MemoriesSection({
                         className="relative overflow-hidden flex items-center justify-between bg-muted hover:bg-muted transition-colors px-4 py-3 border border-border"
                       >
                         <DitherBackground
-                          className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+                          className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
                           accent="var(--color-primary)"
                           density={0.44}
                         />
-                        <span className="text-[13px] text-muted-foreground">
+                        <span className="text-sm text-muted-foreground">
                           {String(action.label ?? "")}
                         </span>
-                        <span className="text-[11px] font-mono text-muted-foreground bg-background px-2 py-0.5">
+                        <span className="text-xs font-mono text-muted-foreground bg-background px-2 py-0.5">
                           {String(action.count ?? 0)} items
                         </span>
                       </div>
@@ -1989,8 +1504,8 @@ export function MemoriesSection({
                   </div>
                 )}
               {!!autopilotResult.agentError && (
-                <div className="mt-6 border border-muted-foreground/30 bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground leading-relaxed">
-                  <p className="font-bold uppercase tracking-widest mb-1 text-[10px]">
+                <div className="mt-6 border border-muted-foreground/30 bg-muted/30 px-4 py-3 text-xs text-muted-foreground leading-relaxed">
+                  <p className="font-bold uppercase tracking-widest mb-1 text-xs">
                     Agent fallback (heuristic mode)
                   </p>
                   <p className="font-mono">
@@ -2010,21 +1525,21 @@ export function MemoriesSection({
           onClick={() => setCompileResult(null)}
         >
           <div
-            className="relative overflow-hidden w-full max-w-[580px] bg-gradient-to-b from-background to-background border-l border-primary/20 h-full overflow-y-auto shadow-[-20px_0_60px] shadow-black/50"
+            className="relative overflow-hidden w-full max-w-2xl bg-background border-l border-primary/20 h-full overflow-y-auto "
             onClick={(e) => e.stopPropagation()}
           >
             <DitherBackground
-              className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
               accent="var(--color-primary)"
               density={0.44}
             />
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                <h2 className="text-[14px] font-bold text-foreground tracking-tight">
+                <h2 className="text-sm font-bold text-foreground tracking-tight">
                   Compiled Memories
                 </h2>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-primary">
+                <span className="text-xs font-mono uppercase tracking-widest text-primary">
                   agent b
                 </span>
               </div>
@@ -2032,7 +1547,7 @@ export function MemoriesSection({
                 type="button"
                 onClick={() => setCompileResult(null)}
                 aria-label="Close"
-                className="text-muted-foreground hover:text-foreground text-[22px] leading-none"
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
               >
                 ×
               </button>
@@ -2041,14 +1556,14 @@ export function MemoriesSection({
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="relative overflow-hidden bg-muted border-t-2 border-primary px-4 py-3 text-center">
                   <DitherBackground
-                    className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+                    className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
                     accent="var(--color-primary)"
                     density={0.44}
                   />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
                     Compiled
                   </p>
-                  <p className="text-[24px] font-bold text-primary">
+                  <p className="text-2xl font-bold text-primary">
                     {Array.isArray(compileResult.compiled)
                       ? (compileResult.compiled as unknown[]).length
                       : 0}
@@ -2056,14 +1571,14 @@ export function MemoriesSection({
                 </div>
                 <div className="relative overflow-hidden bg-muted border-t-2 border-muted-foreground px-4 py-3 text-center">
                   <DitherBackground
-                    className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
+                    className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
                     accent="var(--muted-foreground)"
                     density={0.44}
                   />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
                     Duplicates Removed
                   </p>
-                  <p className="text-[24px] font-bold text-muted-foreground">
+                  <p className="text-2xl font-bold text-muted-foreground">
                     {String(compileResult.removedDuplicates ?? 0)}
                   </p>
                 </div>
@@ -2072,7 +1587,7 @@ export function MemoriesSection({
               (compileResult.compiled as Array<Record<string, unknown>>)
                 .length > 0 ? (
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     Compiled memories
                   </p>
                   {(
@@ -2083,27 +1598,27 @@ export function MemoriesSection({
                       className="relative overflow-hidden border border-border hover:border-border bg-background p-4 transition-colors"
                     >
                       <DitherBackground
-                        className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08] transition group-hover:opacity-[0.14]"
+                        className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
                         accent="var(--color-primary)"
                         density={0.44}
                       />
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="border border-primary/30 bg-primary/15 text-primary px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest">
+                        <span className="border border-primary/30 bg-primary/15 text-primary px-2 py-0.5 text-xs font-bold uppercase tracking-widest">
                           {String(item.type ?? "memory")}
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">
+                        <span className="text-xs text-muted-foreground font-mono">
                           conf{" "}
                           {typeof item.confidence === "number"
                             ? item.confidence.toFixed(2)
                             : "—"}
                         </span>
                       </div>
-                      <p className="text-[13px] text-muted-foreground leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {String(item.content ?? "")}
                       </p>
                       {Array.isArray(item.mergedFrom) &&
                         (item.mergedFrom as string[]).length > 0 && (
-                          <p className="mt-2.5 text-[10px] font-mono text-muted-foreground">
+                          <p className="mt-2.5 text-xs font-mono text-muted-foreground">
                             merged from {(item.mergedFrom as string[]).length}{" "}
                             raw{" "}
                             {(item.mergedFrom as string[]).length === 1
@@ -2116,7 +1631,7 @@ export function MemoriesSection({
                 </div>
               ) : (
                 <div className="border-l-2 border-border bg-muted pl-4 py-3">
-                  <p className="text-[13px] text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     Nothing to compile right now — there are no episodic or
                     low-confidence memories to merge.
                   </p>

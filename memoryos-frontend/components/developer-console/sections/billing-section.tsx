@@ -250,12 +250,12 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
     <>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Billing</h1>
+          <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Billing</h1>
         </div>
       </div>
 
       {errorMessage ? (
-        <div className="mt-2.5 rounded-[10px] border border-destructive/40 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+        <div className="mt-2.5 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
           {errorMessage}
         </div>
       ) : null}
@@ -266,7 +266,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-[13px] transition ${
+            className={`-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm transition ${
               activeTab === tab ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-muted-foreground"
             }`}
           >
@@ -282,23 +282,23 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
             return (
               <div
                 key={card.name}
-                className={`rounded-[10px] border px-4 py-4 ${
-                  card.highlight ? "border-primary/40 bg-gradient-to-b from-primary/10 to-card" : "border-border bg-card"
+                className={`rounded-lg border px-4 py-4 ${
+                  card.highlight ? "border-primary/40 bg-primary/10" : "border-border bg-card"
                 }`}
               >
-                <p className="text-[34px] font-semibold tracking-[-0.04em] leading-none">{card.name}</p>
-                <p className="mt-2 text-[34px] font-semibold tracking-[-0.05em]">{card.price}</p>
-                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">{card.subtitle}</p>
+                <p className="text-4xl font-semibold tracking-tighter leading-none">{card.name}</p>
+                <p className="mt-2 text-4xl font-semibold tracking-tighter">{card.price}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{card.subtitle}</p>
                 <div className="mt-3 space-y-1.5">
                   {card.features.map((feature) => (
-                    <p key={feature} className="text-[13px] text-muted-foreground">{feature}</p>
+                    <p key={feature} className="text-sm text-muted-foreground">{feature}</p>
                   ))}
                 </div>
                 <button
                   type="button"
                   disabled={isCurrent || checkoutPendingPlan === card.name}
                   onClick={() => void startCheckout(card.name)}
-                  className={`mt-4 w-full rounded-[8px] border px-3 py-2 text-[12px] font-medium tracking-[0.08em] uppercase ${
+                  className={`mt-4 w-full rounded-md border px-3 py-2 text-xs font-medium tracking-wider uppercase ${
                     isCurrent ? "border-border bg-muted/50 text-muted-foreground" : "border-primary/30 bg-primary/10 text-primary disabled:opacity-50"
                   }`}
                 >
@@ -312,17 +312,17 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
 
       {activeTab === "Usage" ? (
         <div className="mt-3 space-y-3">
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <p className="text-[30px] font-semibold tracking-[-0.04em]">Current Billing Period</p>
-                <p className="mt-1 text-[14px] text-muted-foreground">Live workspace usage</p>
+                <p className="text-3xl font-semibold tracking-tighter">Current Billing Period</p>
+                <p className="mt-1 text-sm text-muted-foreground">Live workspace usage</p>
               </div>
-              <p className="text-[14px] text-muted-foreground">Resets in {usage.resetInDays} days</p>
+              <p className="text-sm text-muted-foreground">Resets in {usage.resetInDays} days</p>
             </div>
             <div className="mt-4 space-y-4">
               <div>
-                <div className="mb-1 flex items-center justify-between text-[14px]">
+                <div className="mb-1 flex items-center justify-between text-sm">
                   <span>Tokens</span>
                   <span className="text-muted-foreground">
                     {usage.tokenUsed.toLocaleString()} / {usage.tokenLimit.toLocaleString()} ({tokenPercent}%)
@@ -333,7 +333,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
                 </div>
               </div>
               <div>
-                <div className="mb-1 flex items-center justify-between text-[14px]">
+                <div className="mb-1 flex items-center justify-between text-sm">
                   <span>Search Queries</span>
                   <span className="text-muted-foreground">
                     {usage.searchUsed.toLocaleString()} / {usage.searchLimit.toLocaleString()} ({searchPercent}%)
@@ -349,22 +349,22 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       ) : null}
 
       {activeTab === "Invoices" ? (
-        <div className="mt-3 rounded-[10px] border border-border bg-card px-4 py-4">
+        <div className="mt-3 rounded-lg border border-border bg-card px-4 py-4">
           {invoices.length === 0 ? (
-            <div className="grid min-h-[240px] place-items-center text-center">
-              <p className="text-[15px] leading-7 text-muted-foreground">
+            <div className="grid min-h-60 place-items-center text-center">
+              <p className="text-sm leading-7 text-muted-foreground">
                 No invoices yet. Your invoices will appear here once billing starts.
               </p>
             </div>
           ) : (
             <div className="space-y-2.5">
               {invoices.map((invoice) => (
-                <div key={invoice.id} className="rounded-[8px] border border-border bg-muted/40 px-3 py-2.5">
+                <div key={invoice.id} className="rounded-md border border-border bg-muted/40 px-3 py-2.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[12px] font-semibold text-foreground">{invoice.id}</p>
-                    <span className="text-[11px] text-muted-foreground">{invoice.status}</span>
+                    <p className="text-xs font-semibold text-foreground">{invoice.id}</p>
+                    <span className="text-xs text-muted-foreground">{invoice.status}</span>
                   </div>
-                  <p className="mt-1 text-[12px] text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {formatMoney(invoice.amountCents, invoice.currency)} · {new Date(invoice.issuedAt).toLocaleString()}
                   </p>
                   {invoice.hostedInvoiceUrl ? (
@@ -372,7 +372,7 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
                       href={invoice.hostedInvoiceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-1 inline-block text-[11px] text-primary"
+                      className="mt-1 inline-block text-xs text-primary"
                     >
                       Open invoice
                     </a>
@@ -385,23 +385,23 @@ export function BillingSection({ workspaceName, currentPlan = "Free" }: BillingS
       ) : null}
 
       {activeTab === "Events" ? (
-        <div className="mt-3 rounded-[10px] border border-border bg-card px-4 py-4">
+        <div className="mt-3 rounded-lg border border-border bg-card px-4 py-4">
           {events.length === 0 ? (
-            <div className="grid min-h-[220px] place-items-center text-center">
-              <p className="text-[15px] leading-7 text-muted-foreground">
+            <div className="grid min-h-56 place-items-center text-center">
+              <p className="text-sm leading-7 text-muted-foreground">
                 No billing events yet. Webhook and checkout activity appears here in real time.
               </p>
             </div>
           ) : (
             <div className="space-y-2.5">
               {events.map((event) => (
-                <div key={event.id} className="rounded-[8px] border border-border bg-muted/40 px-3 py-2.5">
+                <div key={event.id} className="rounded-md border border-border bg-muted/40 px-3 py-2.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[12px] font-semibold text-foreground">{event.type}</p>
-                    <span className="text-[11px] text-muted-foreground">{event.status}</span>
+                    <p className="text-xs font-semibold text-foreground">{event.type}</p>
+                    <span className="text-xs text-muted-foreground">{event.status}</span>
                   </div>
-                  <p className="mt-1 text-[12px] text-muted-foreground">{event.summary}</p>
-                  <p className="mt-1 text-[11px] text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground">{event.summary}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {event.provider.toUpperCase()} · {new Date(event.createdAt).toLocaleString()}
                   </p>
                 </div>

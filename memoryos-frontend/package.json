@@ -21,6 +21,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@react-three/postprocessing": "^3.0.4",
+    "@remixicon/react": "^4.9.0",
     "@sentry/nextjs": "^10.53.1",
     "@tailwindcss/postcss": "^4",
     "@types/three": "^0.184.0",

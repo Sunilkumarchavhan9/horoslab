@@ -70,7 +70,10 @@ export class Mem0MemoryStoreAdapter implements MemoryStoreAdapter {
         createdAt: input.memory.createdAt,
         updatedAt: input.memory.updatedAt,
         evidenceCount: input.memory.evidenceCount,
+        contractVersion: input.memory.contractVersion,
+        contractCategory: input.memory.contractCategory,
         developerSignals: input.memory.developerSignals,
+        operationalTags: input.memory.operationalTags,
       },
     };
 

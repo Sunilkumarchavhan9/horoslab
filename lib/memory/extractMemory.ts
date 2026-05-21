@@ -1,4 +1,11 @@
-import type { DeveloperSignals, MemoryCandidate, MemoryType } from "./types";
+import {
+  MEMORY_CONTRACT_VERSION,
+  type DeveloperSignals,
+  type MemoryCandidate,
+  type MemoryContractCategory,
+  type MemoryType,
+  type OperationalTag,
+} from "./types";
 
 export interface ExtractMemoryInput {
   userId: string;
@@ -11,6 +18,8 @@ type Rule = {
   regex: RegExp;
   toContent: (match: RegExpMatchArray) => string;
   toSummary: (match: RegExpMatchArray) => string;
+  contractCategory?: MemoryContractCategory;
+  operationalTags?: OperationalTag[];
   toDeveloperSignals?: (match: RegExpMatchArray) => DeveloperSignals | undefined;
 };
 
@@ -22,6 +31,7 @@ const RULES: Rule[] = [
     regex: /\bI\s+use\s+(.+?)\s+with\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User uses ${m[1].trim()} with ${m[2].trim()}`,
     toSummary: (m) => `Uses ${m[1].trim()} with ${m[2].trim()}`,
+    contractCategory: "preference",
     toDeveloperSignals: (m) => ({
       framework: normalizeSignalTokens(m[1]),
       stack: normalizeSignalTokens(m[2]),
@@ -32,6 +42,7 @@ const RULES: Rule[] = [
     regex: /\bI\s+prefer\s+(.+?)\s+over\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User prefers ${m[1].trim()} over ${m[2].trim()}`,
     toSummary: (m) => `Prefers ${m[1].trim()} over ${m[2].trim()}`,
+    contractCategory: "preference",
     toDeveloperSignals: (m) => ({
       stack: [...normalizeSignalTokens(m[1]), ...normalizeSignalTokens(m[2])],
     }),
@@ -41,8 +52,85 @@ const RULES: Rule[] = [
     regex: /\bI\s+prefer\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User prefers ${m[1].trim()}`,
     toSummary: (m) => `Prefers ${m[1].trim()}`,
+    contractCategory: "preference",
     toDeveloperSignals: (m) => ({
       stack: normalizeSignalTokens(m[1]),
+    }),
+  },
+  {
+    type: "project",
+    regex: /\b(?:we|i)\s+(?:decided|chose)\s+to\s+(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Decision: ${m[1].trim()}`,
+    toSummary: (m) => `Decision: ${m[1].trim()}`,
+    contractCategory: "decision",
+    operationalTags: ["decision"],
+    toDeveloperSignals: (m) => ({
+      projectArea: normalizeSignalTokens(m[1]),
+    }),
+  },
+  {
+    type: "project",
+    regex: /\bdecision\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Decision: ${m[1].trim()}`,
+    toSummary: (m) => `Decision: ${m[1].trim()}`,
+    contractCategory: "decision",
+    operationalTags: ["decision"],
+  },
+  {
+    type: "episodic",
+    regex: /\b(?:runbook|playbook)\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Runbook: ${m[1].trim()}`,
+    toSummary: (m) => `Runbook: ${m[1].trim()}`,
+    contractCategory: "runbook",
+    operationalTags: ["runbook"],
+  },
+  {
+    type: "episodic",
+    regex: /\bincident\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Incident: ${m[1].trim()}`,
+    toSummary: (m) => `Incident: ${m[1].trim()}`,
+    contractCategory: "incident",
+    operationalTags: ["incident"],
+    toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "preference",
+    regex: /\bpolicy\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Policy: ${m[1].trim()}`,
+    toSummary: (m) => `Policy: ${m[1].trim()}`,
+    contractCategory: "policy",
+    operationalTags: ["policy"],
+  },
+  {
+    type: "preference",
+    regex: /\bpreference\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Preference: ${m[1].trim()}`,
+    toSummary: (m) => `Preference: ${m[1].trim()}`,
+    contractCategory: "preference",
+  },
+  {
+    type: "episodic",
+    regex: /\b(?:blocker|blocked by)\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Blocker: ${m[1].trim()}`,
+    toSummary: (m) => `Blocker: ${m[1].trim()}`,
+    contractCategory: "blocker",
+  },
+  {
+    type: "episodic",
+    regex: /\bbug\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Bug: ${m[1].trim()}`,
+    toSummary: (m) => `Bug: ${m[1].trim()}`,
+    contractCategory: "bug",
+    toDeveloperSignals: (m) => buildBugSignals(m[1]),
+  },
+  {
+    type: "project",
+    regex: /\bnext\s+action\s*:\s*(.+?)(?:[.!?]|$)/gi,
+    toContent: (m) => `Next action: ${m[1].trim()}`,
+    toSummary: (m) => `Next action: ${m[1].trim()}`,
+    contractCategory: "next_action",
+    toDeveloperSignals: (m) => ({
+      goal: normalizeSignalTokens(m[1]),
     }),
   },
   {
@@ -88,6 +176,8 @@ const RULES: Rule[] = [
     regex: /\bI\s+shipped\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User shipped ${m[1].trim()}`,
     toSummary: (m) => `Shipped ${m[1].trim()}`,
+    contractCategory: "decision",
+    operationalTags: ["decision"],
     toDeveloperSignals: (m) => ({
       projectArea: normalizeSignalTokens(m[1]),
     }),
@@ -97,6 +187,8 @@ const RULES: Rule[] = [
     regex: /\bI\s+deployed\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User deployed ${m[1].trim()}`,
     toSummary: (m) => `Deployed ${m[1].trim()}`,
+    contractCategory: "decision",
+    operationalTags: ["decision"],
     toDeveloperSignals: (m) => ({
       projectArea: normalizeSignalTokens(m[1]),
     }),
@@ -162,6 +254,7 @@ const RULES: Rule[] = [
     regex: /\bI\s+solved\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User solved ${m[1].trim()}`,
     toSummary: (m) => `Solved: ${m[1].trim()}`,
+    contractCategory: "previous_attempt",
     toDeveloperSignals: (m) => buildBugSignals(m[1]),
   },
   {
@@ -169,6 +262,7 @@ const RULES: Rule[] = [
     regex: /\bI\s+fixed\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User fixed ${m[1].trim()}`,
     toSummary: (m) => `Fixed: ${m[1].trim()}`,
+    contractCategory: "previous_attempt",
     toDeveloperSignals: (m) => buildBugSignals(m[1]),
   },
   {
@@ -176,6 +270,7 @@ const RULES: Rule[] = [
     regex: /\bI\s+debugged\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User debugged ${m[1].trim()}`,
     toSummary: (m) => `Debugged: ${m[1].trim()}`,
+    contractCategory: "previous_attempt",
     toDeveloperSignals: (m) => buildBugSignals(m[1]),
   },
   {
@@ -183,6 +278,7 @@ const RULES: Rule[] = [
     regex: /\bI\s+need\s+to\s+finish\s+(.+?)(?:[.!?]|$)/gi,
     toContent: (m) => `User needs to finish ${m[1].trim()}`,
     toSummary: (m) => `Need to finish: ${m[1].trim()}`,
+    contractCategory: "next_action",
     toDeveloperSignals: (m) => ({
       goal: normalizeSignalTokens(`finish ${m[1].trim()}`),
       projectArea: normalizeSignalTokens(m[1]),
@@ -322,9 +418,12 @@ export function extractMemory(input: ExtractMemoryInput): MemoryCandidate[] {
           content,
           summary,
           source: "chat",
+          contractVersion: rule.contractCategory ? MEMORY_CONTRACT_VERSION : undefined,
+          contractCategory: rule.contractCategory,
           developerSignals: compactDeveloperSignals(
             rule.toDeveloperSignals?.(match),
           ),
+          operationalTags: rule.operationalTags,
         });
       }
     }

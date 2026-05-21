@@ -183,28 +183,28 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
     <>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Team</h1>
+          <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Team</h1>
         </div>
 
         <div className="relative">
           <button
             type="button"
             onClick={openInvite}
-            className="rounded-[8px] border border-primary/30 bg-primary/10 px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-primary"
+            className="rounded-md border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium tracking-wider text-primary"
           >
             + INVITE MEMBER
           </button>
 
           {showUpgradeHint ? (
-            <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[290px] rounded-[8px] border border-border bg-card p-3 shadow-xl shadow-black/30">
-              <p className="text-[13px] font-semibold text-foreground">Team invites need Scale or Enterprise</p>
-              <p className="mt-1 text-[12px] leading-6 text-muted-foreground">
+            <div className="absolute right-0 top-full mt-2 z-20 w-72 rounded-md border border-border bg-card p-3">
+              <p className="text-sm font-semibold text-foreground">Team invites need Scale or Enterprise</p>
+              <p className="mt-1 text-xs leading-6 text-muted-foreground">
                 You are currently on Free. Upgrade in Billing to enable workspace invites.
               </p>
               <button
                 type="button"
                 onClick={() => setShowUpgradeHint(false)}
-                className="mt-2 rounded-[7px] border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground"
+                className="mt-2 rounded-md border border-border bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground"
               >
                 CLOSE
               </button>
@@ -214,43 +214,43 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
       </div>
 
       {errorMessage ? (
-        <div className="mt-2.5 rounded-[10px] border border-destructive/40 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+        <div className="mt-2.5 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
           {errorMessage}
         </div>
       ) : null}
 
       <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[10px] border border-border border-t-2 border-t-chart-2 bg-card px-3.5 py-3">
-          <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Active members</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{activeMembers}</p>
+        <div className="rounded-lg border border-border border-t-2 border-t-chart-2 bg-card px-3.5 py-3">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Active members</p>
+          <p className="mt-1 text-xl font-semibold tracking-tight">{activeMembers}</p>
         </div>
-        <div className="rounded-[10px] border border-border border-t-2 border-t-chart-5 bg-card px-3.5 py-3">
-          <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Pending invites</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{pendingInvites}</p>
+        <div className="rounded-lg border border-border border-t-2 border-t-chart-5 bg-card px-3.5 py-3">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Pending invites</p>
+          <p className="mt-1 text-xl font-semibold tracking-tight">{pendingInvites}</p>
         </div>
-        <div className="rounded-[10px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3">
-          <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Full-access members</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{fullAccessMembers}</p>
+        <div className="rounded-lg border border-border border-t-2 border-t-primary bg-card px-3.5 py-3">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Full-access members</p>
+          <p className="mt-1 text-xl font-semibold tracking-tight">{fullAccessMembers}</p>
         </div>
-        <div className="rounded-[10px] border border-border border-t-2 border-t-chart-4 bg-card px-3.5 py-3">
-          <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Scoped members</p>
-          <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{scopedMembers}</p>
+        <div className="rounded-lg border border-border border-t-2 border-t-chart-4 bg-card px-3.5 py-3">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Scoped members</p>
+          <p className="mt-1 text-xl font-semibold tracking-tight">{scopedMembers}</p>
         </div>
       </div>
 
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-[minmax(0,1fr)_330px]">
-        <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-          <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="mt-2.5 grid gap-3 xl:grid-cols-2">
+        <div className="rounded-lg border border-border bg-card px-4 py-4">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="4" cy="3.5" r="2" /><path d="M1 10a3 3 0 016 0" /><circle cx="8.5" cy="3.5" r="1.5" /><path d="M7 10a2.5 2.5 0 014 0" />
             </svg>
             Members
           </p>
 
-          <div className="mt-3 overflow-x-auto rounded-[10px] border border-border bg-muted/40">
+          <div className="mt-3 overflow-x-auto rounded-lg border border-border bg-muted/40">
             <table className="min-w-full divide-y divide-border">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
+                <tr className="text-left text-xs uppercase tracking-widest text-muted-foreground">
                   <th className="px-3 py-2.5">Member</th>
                   <th className="px-3 py-2.5">Role</th>
                   <th className="px-3 py-2.5">Access</th>
@@ -259,21 +259,21 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
               </thead>
               <tbody className="divide-y divide-border">
                 {members.map((member) => (
-                  <tr key={member.id} className="text-[12px]">
+                  <tr key={member.id} className="text-xs">
                     <td className="px-3 py-3">
-                      <p className="font-semibold tracking-[-0.02em] text-foreground">{member.name}</p>
+                      <p className="font-semibold tracking-tight text-foreground">{member.name}</p>
                       <p className="mt-0.5 text-muted-foreground">{member.email}</p>
                     </td>
                     <td className="px-3 py-3">
                       <span
-                        className={`rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] ${roleBadgeClass(member.role)}`}
+                        className={`rounded-md border px-2 py-0.5 text-xs uppercase tracking-widest ${roleBadgeClass(member.role)}`}
                       >
                         {member.role}
                       </span>
                     </td>
                     <td className="px-3 py-3">
                       <span
-                        className={`rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] ${accessBadgeClass(member.access)}`}
+                        className={`rounded-md border px-2 py-0.5 text-xs uppercase tracking-widest ${accessBadgeClass(member.access)}`}
                       >
                         {member.access}
                       </span>
@@ -287,8 +287,8 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
         </div>
 
         <div className="space-y-3">
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5.5 1L2 3v3c0 2.5 1.5 4 3.5 4.5C7.5 10 9 8.5 9 6V3L5.5 1z" />
               </svg>
@@ -301,23 +301,23 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
                 ["Owner", ownerName],
                 ["Invite policy", canInvite ? "Enabled" : "Upgrade required"],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-[8px] border border-border bg-muted/50 px-3 py-2.5">
-                  <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
-                  <p className="mt-1 text-[14px] font-semibold tracking-[-0.02em]">{value}</p>
+                <div key={label} className="rounded-md border border-border bg-muted/50 px-3 py-2.5">
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
+                  <p className="mt-1 text-sm font-semibold tracking-tight">{value}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="1" y="2.5" width="9" height="6.5" rx="1" /><path d="M1 4l4.5 3L10 4" />
               </svg>
               Invitations
             </p>
             {invites.length === 0 ? (
-              <div className="mt-2.5 rounded-[8px] border border-dashed border-border bg-muted px-5 py-5 text-center">
+              <div className="mt-2.5 rounded-md border border-dashed border-border bg-muted px-5 py-5 text-center">
                 <div className="mx-auto grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="8" cy="6.5" r="3.5" />
@@ -325,22 +325,22 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
                     <path d="M15.5 8.5v5M13 11h5" />
                   </svg>
                 </div>
-                <p className="mt-2.5 text-[12px] font-medium text-muted-foreground">No invites yet</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">Use Invite Member to add collaborators.</p>
+                <p className="mt-2.5 text-xs font-medium text-muted-foreground">No invites yet</p>
+                <p className="mt-1 text-xs text-muted-foreground">Use Invite Member to add collaborators.</p>
               </div>
             ) : (
               <div className="mt-2.5 space-y-2">
                 {invites.map((invite) => (
-                  <div key={invite.id} className="rounded-[8px] border border-border bg-muted/50 px-3 py-2.5">
+                  <div key={invite.id} className="rounded-md border border-border bg-muted/50 px-3 py-2.5">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-[12px] font-semibold tracking-[-0.02em]">{invite.email}</p>
+                      <p className="text-xs font-semibold tracking-tight">{invite.email}</p>
                       <span
-                        className={`rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] ${inviteBadgeClass(invite.state)}`}
+                        className={`rounded-md border px-2 py-0.5 text-xs uppercase tracking-widest ${inviteBadgeClass(invite.state)}`}
                       >
                         {invite.state}
                       </span>
                     </div>
-                    <p className="mt-1 text-[11px] text-muted-foreground">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {invite.role} · {invite.access} · {invite.sentAt}
                     </p>
                   </div>
@@ -352,39 +352,39 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
       </div>
 
       {showInviteModal ? (
-        <div className="fixed inset-0 z-[70] grid place-items-center bg-background/60 p-4">
-          <div className="w-full max-w-[520px] overflow-hidden rounded-[12px] border border-border bg-popover shadow-2xl shadow-black/40">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-background/60 p-4">
+          <div className="w-full max-w-xl overflow-hidden rounded-lg border border-border bg-popover">
             <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-4">
               <div>
-                <h2 className="text-[24px] font-semibold tracking-[-0.04em]">Invite Team Member</h2>
-                <p className="mt-1 text-[13px] text-muted-foreground">Grant role and access scope for workspace collaboration.</p>
+                <h2 className="text-2xl font-semibold tracking-tighter">Invite Team Member</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Grant role and access scope for workspace collaboration.</p>
               </div>
-              <button type="button" onClick={() => setShowInviteModal(false)} className="text-[18px] text-muted-foreground">
+              <button type="button" onClick={() => setShowInviteModal(false)} className="text-lg text-muted-foreground">
                 ×
               </button>
             </div>
 
             <div className="space-y-4 px-4 py-4">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Email</p>
+                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Email</p>
                 <input
                   value={inviteEmail}
                   onChange={(event) => setInviteEmail(event.target.value)}
                   placeholder="teammate@company.com"
-                  className="mt-1.5 w-full rounded-[8px] border border-border bg-muted/50 px-3 py-2.5 text-[13px] outline-none ring-primary/45 focus:ring-1"
+                  className="mt-1.5 w-full rounded-md border border-border bg-muted/50 px-3 py-2.5 text-sm outline-none ring-primary/45 focus:ring-1"
                 />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Role</p>
-                  <div className="mt-1.5 flex items-center overflow-hidden rounded-[8px] border border-border bg-muted">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Role</p>
+                  <div className="mt-1.5 flex items-center overflow-hidden rounded-md border border-border bg-muted">
                     {(["owner", "admin", "member"] as const).map((role) => (
                       <button
                         key={role}
                         type="button"
                         onClick={() => setInviteRole(role)}
-                        className={`flex-1 px-2.5 py-2 text-[11px] font-medium transition ${
+                        className={`flex-1 px-2.5 py-2 text-xs font-medium transition ${
                           inviteRole === role ? "bg-muted text-foreground" : "text-muted-foreground"
                         }`}
                       >
@@ -395,14 +395,14 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">Access</p>
-                  <div className="mt-1.5 flex items-center overflow-hidden rounded-[8px] border border-border bg-muted">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Access</p>
+                  <div className="mt-1.5 flex items-center overflow-hidden rounded-md border border-border bg-muted">
                     {(["Full", "Scoped", "Read"] as const).map((access) => (
                       <button
                         key={access}
                         type="button"
                         onClick={() => setInviteAccess(access)}
-                        className={`flex-1 px-2.5 py-2 text-[11px] font-medium transition ${
+                        className={`flex-1 px-2.5 py-2 text-xs font-medium transition ${
                           inviteAccess === access ? "bg-muted text-foreground" : "text-muted-foreground"
                         }`}
                       >
@@ -418,7 +418,7 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
               <button
                 type="button"
                 onClick={() => setShowInviteModal(false)}
-                className="rounded-[8px] border border-border bg-muted/50 px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-muted-foreground"
+                className="rounded-md border border-border bg-muted/50 px-3 py-1.5 text-xs font-medium tracking-wider text-muted-foreground"
               >
                 CANCEL
               </button>
@@ -426,7 +426,7 @@ export function TeamSection({ workspaceName, ownerName, ownerEmail, plan = "Free
                 type="button"
                 onClick={createInvite}
                 disabled={!inviteEmail.trim()}
-                className="rounded-[8px] border border-primary/30 bg-primary/10 px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-primary disabled:cursor-not-allowed disabled:opacity-45"
+                className="rounded-md border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium tracking-wider text-primary disabled:cursor-not-allowed disabled:opacity-45"
               >
                 SEND INVITE
               </button>

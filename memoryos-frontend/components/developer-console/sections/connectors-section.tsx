@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 import { type BillingPlan } from "@/lib/plan-catalog";
 
-type ConnectorStatus = "connected" | "not_connected" | "pending" | "syncing";
+type ConnectorStatus = "connected" | "not_connected" | "pending" | "syncing" | "error";
 type HealthStatus = "good" | "watch" | "error" | "offline";
 
 type ConnectorRow = {
@@ -45,6 +45,7 @@ type ConnectorDiagnostic = {
     lastTokenRefreshAt: string | null;
     hasAccessToken: boolean;
   };
+  contractCounts?: Record<string, number>;
   safety: { mcpSafeMetadata: boolean; policyCompatible: boolean };
 };
 
@@ -53,6 +54,7 @@ type ConnectorSyncLog = {
   type: string;
   status: "success" | "error";
   extractedCount: number;
+  contractCounts?: Record<string, number>;
   message: string;
   at: string;
 };
@@ -172,11 +174,11 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
 const EXTRACTS = [
   {
     source: "GitHub",
-    items: ["PR decisions", "Open bugs", "Architecture changes", "Repo ownership", "TODO patterns"],
+    items: ["Decisions", "Bugs and blockers", "Previous attempts", "Risky files", "Next actions"],
   },
   {
     source: "Local Files",
-    items: ["Project goals", "Stack decisions", "API contracts", "Roadmap notes"],
+    items: ["Runbooks", "Policies", "Architecture notes", "Preferences", "Project goals"],
   },
 ];
 
@@ -198,6 +200,19 @@ function connectorSeverity(item: ConnectorDiagnostic): "good" | "watch" | "error
   if (!item.transport.healthy || item.status === "error") return "error";
   if ((item.retry.retryCount ?? 0) > 0 || Boolean(item.retry.lastFailureReason)) return "watch";
   return "good";
+}
+
+function isActiveStatus(status: ConnectorStatus | undefined): boolean {
+  return status === "connected" || status === "syncing";
+}
+
+function formatContractCounts(counts?: Record<string, number>): string {
+  if (!counts) return "";
+  return Object.entries(counts)
+    .filter(([, value]) => typeof value === "number" && value > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([key, value]) => `${key.replace(/_/g, " ")}=${value}`)
+    .join(" · ");
 }
 
 async function unlockConnector(type: string, addActivity: (message: string, status?: string) => void): Promise<void> {
@@ -237,10 +252,10 @@ export function ConnectorsSection({
   const [currentPlan, setCurrentPlan] = useState<BillingPlan>("Free");
   const [realtimeTick, setRealtimeTick] = useState(0);
 
-  const connectedCount = connectors.filter((connector) => connector.status === "connected" || connector.status === "syncing").length;
+  const connectedCount = connectors.filter((connector) => isActiveStatus(connector.status)).length;
   const totalRecords = liveMemoryCount + internalRecords;
   const githubStatus = connectors.find((c) => c.id === "github")?.status;
-  const githubConnected = githubStatus === "connected" || githubStatus === "syncing";
+  const githubConnected = isActiveStatus(githubStatus);
 // Simulation Engine removed for real implementation
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -779,51 +794,51 @@ function addActivity(message: string, status: string = "info") {
     <div className="flex flex-col gap-8 pb-12 animate-in fade-in duration-500">
       {/* Page Title & Positioning */}
       <div>
-        <h1 className="text-[24px] font-bold tracking-[-0.04em] text-foreground">Data Sources</h1>
-        <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground max-w-2xl">
+        <h1 className="text-2xl font-bold tracking-tighter text-foreground">Data Sources</h1>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground max-w-2xl">
           Connect the tools your agents use every day and turn them into long-term developer memory. 
           MemoryOS indexes issues, docs, commits, messages, and local context so agents can continue work with full project awareness.
         </p>
       </div>
 
       {/* Hero Overview Card */}
-      <div className="relative overflow-hidden rounded-[4px] border border-border bg-card p-6">
+      <div className="relative overflow-hidden rounded-sm border border-border bg-card p-6">
         <div className="absolute inset-0 bg-primary/5" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-4">
-            <h2 className="text-[14px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Memory Ingestion Overview</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Memory Ingestion Overview</h2>
             <div className="flex flex-wrap gap-8">
               <div>
-                <p className="text-[24px] font-bold text-foreground">{totalRecords}</p>
-                <p className="text-[11px] uppercase tracking-[0.05em] text-muted-foreground">records indexed</p>
+                <p className="text-2xl font-bold text-foreground">{totalRecords}</p>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">records indexed</p>
               </div>
               <div>
-                <p className="text-[24px] font-bold text-foreground">{connectedCount}</p>
-                <p className="text-[11px] uppercase tracking-[0.05em] text-muted-foreground">active sources</p>
+                <p className="text-2xl font-bold text-foreground">{connectedCount}</p>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">active sources</p>
               </div>
               <div>
-                <p className="text-[24px] font-bold text-foreground">0</p>
-                <p className="text-[11px] uppercase tracking-[0.05em] text-muted-foreground">failed syncs</p>
+                <p className="text-2xl font-bold text-foreground">0</p>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">failed syncs</p>
               </div>
             </div>
             <div className="flex gap-3 pt-2">
               {!githubConnected && (
                 <button 
                   onClick={() => connectConnector("github")}
-                  className="rounded-[4px] bg-primary px-4 py-1.5 text-[12px] font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
+                  className="rounded-sm bg-primary px-4 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
                 >
                   Connect GitHub
                 </button>
               )}
               <button 
-                className="rounded-[4px] border border-border bg-muted px-4 py-1.5 text-[12px] font-bold text-foreground hover:bg-muted transition-colors"
+                className="rounded-sm border border-border bg-muted px-4 py-1.5 text-xs font-bold text-foreground hover:bg-muted transition-colors"
                 onClick={() => void runConnectedSync()}
               >
                 Run Sync
               </button>
               <button
                 onClick={() => setShowLogs((current) => !current)}
-                className="rounded-[4px] border border-border bg-muted px-4 py-1.5 text-[12px] font-bold text-foreground hover:bg-muted transition-colors"
+                className="rounded-sm border border-border bg-muted px-4 py-1.5 text-xs font-bold text-foreground hover:bg-muted transition-colors"
               >
                 View Ingestion Logs
               </button>
@@ -831,14 +846,14 @@ function addActivity(message: string, status: string = "info") {
           </div>
 
           {/* Mini Live Feed inside Hero */}
-          <div className="w-full md:w-64 rounded-[4px] border border-border bg-background/40 p-4">
-            <h3 className="mb-3 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground flex items-center gap-2">
+          <div className="w-full md:w-64 rounded-sm border border-border bg-background/40 p-4">
+            <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
               <span className="flex h-1.5 w-1.5 rounded-full bg-chart-2 animate-pulse"></span>
               Live Memory Feed
             </h3>
             <div className="space-y-2.5">
               {activity.slice(0, 4).map((item, i) => (
-                <div key={i} className="flex gap-2 text-[11px]">
+                <div key={i} className="flex gap-2 text-xs">
                   <span className="text-chart-2 shrink-0">✓</span>
                   <span className="text-muted-foreground truncate">{item.message}</span>
                 </div>
@@ -849,19 +864,24 @@ function addActivity(message: string, status: string = "info") {
       </div>
 
       {showLogs && (
-        <div className="rounded-[4px] border border-border bg-card p-5">
-          <h2 className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Connector Sync Logs</h2>
+        <div className="rounded-sm border border-border bg-card p-5">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Connector Sync Logs</h2>
           <div className="mt-3 space-y-2">
             {syncLogs.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground">No logs yet.</p>
+              <p className="text-xs text-muted-foreground">No logs yet.</p>
             ) : (
               syncLogs.slice(0, 20).map((log) => (
-                <div key={log.id} className="rounded-[4px] border border-border bg-background/40 px-3 py-2">
-                  <p className="text-[12px] font-medium text-foreground">
+                <div key={log.id} className="rounded-sm border border-border bg-background/40 px-3 py-2">
+                  <p className="text-xs font-medium text-foreground">
                     {log.type} · {log.status} · {log.extractedCount} extracted
                   </p>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">{log.message}</p>
-                  <p className="mt-0.5 text-[10px] text-muted-foreground">{new Date(log.at).toLocaleString()}</p>
+                  {formatContractCounts(log.contractCounts) ? (
+                    <p className="mt-0.5 text-xs text-primary">
+                      contracts: {formatContractCounts(log.contractCounts)}
+                    </p>
+                  ) : null}
+                  <p className="mt-0.5 text-xs text-muted-foreground">{log.message}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{new Date(log.at).toLocaleString()}</p>
                 </div>
               ))
             )}
@@ -869,18 +889,18 @@ function addActivity(message: string, status: string = "info") {
         </div>
       )}
 
-      <div className="rounded-[4px] border border-border bg-card p-5">
-        <h2 className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground">MCP Connector Health</h2>
+      <div className="rounded-sm border border-border bg-card p-5">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">MCP Connector Health</h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {diagnostics.length === 0 ? (
-            <p className="text-[12px] text-muted-foreground">No diagnostics yet.</p>
+            <p className="text-xs text-muted-foreground">No diagnostics yet.</p>
           ) : (
             diagnostics.map((item) => (
-              <div key={item.type} className="rounded-[4px] border border-border bg-background/40 p-3">
+              <div key={item.type} className="rounded-sm border border-border bg-background/40 p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[12px] font-semibold text-foreground">{item.type}</p>
+                  <p className="text-xs font-semibold text-foreground">{item.type}</p>
                   <span
-                    className={`rounded-full border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                    className={`rounded-full border px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
                       connectorSeverity(item) === "good"
                         ? "border-chart-2/35 bg-chart-2/10 text-chart-2"
                         : connectorSeverity(item) === "watch"
@@ -891,48 +911,54 @@ function addActivity(message: string, status: string = "info") {
                     {connectorSeverity(item)}
                   </span>
                 </div>
-                <p className="mt-1 text-[11px] text-muted-foreground">auth={item.auth.mode} transport={item.transport.protocol}</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">status={item.status} healthy={String(item.transport.healthy)}</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">retries={item.retry.retryCount}</p>
+                <p className="mt-1 text-xs text-muted-foreground">auth={item.auth.mode} transport={item.transport.protocol}</p>
+                <p className="mt-1 text-xs text-muted-foreground">status={item.status} healthy={String(item.transport.healthy)}</p>
+                <p className="mt-1 text-xs text-muted-foreground">retries={item.retry.retryCount}</p>
                 {item.retry.lastFailureAt ? (
-                  <p className="mt-1 text-[11px] text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     lastFailureAt={new Date(item.retry.lastFailureAt).toLocaleString()}
                   </p>
                 ) : null}
                 {item.retry.lastFailureReason ? (
-                  <p className="mt-1 text-[11px] text-destructive">{item.retry.lastFailureReason}</p>
+                  <p className="mt-1 text-xs text-destructive">{item.retry.lastFailureReason}</p>
                 ) : (
-                  <p className="mt-1 text-[11px] text-chart-2">no sync failures</p>
+                  <p className="mt-1 text-xs text-chart-2">no sync failures</p>
                 )}
                 {item.checkpoints ? (
-                  <div className="mt-2 space-y-1 rounded-[4px] border border-border/60 bg-muted/30 p-2">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">checkpoints</p>
-                    <p className="text-[11px] text-muted-foreground">
+                  <div className="mt-2 space-y-1 rounded-sm border border-border/60 bg-muted/30 p-2">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">checkpoints</p>
+                    <p className="text-xs text-muted-foreground">
                       lastCheckpointAt={item.checkpoints.lastCheckpointAt ? new Date(item.checkpoints.lastCheckpointAt).toLocaleString() : "none"}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">recentItemKeys={item.checkpoints.recentItemKeysCount}</p>
+                    <p className="text-xs text-muted-foreground">recentItemKeys={item.checkpoints.recentItemKeysCount}</p>
                     {item.checkpoints.slackLastMessageTs ? (
-                      <p className="text-[11px] text-muted-foreground">slackLastTs={item.checkpoints.slackLastMessageTs}</p>
+                      <p className="text-xs text-muted-foreground">slackLastTs={item.checkpoints.slackLastMessageTs}</p>
                     ) : null}
                     {item.checkpoints.slackCursor ? (
-                      <p className="text-[11px] text-muted-foreground">slackCursor=present</p>
+                      <p className="text-xs text-muted-foreground">slackCursor=present</p>
                     ) : null}
                     {item.checkpoints.gmailLastMessageId ? (
-                      <p className="text-[11px] text-muted-foreground">gmailLastId={item.checkpoints.gmailLastMessageId}</p>
+                      <p className="text-xs text-muted-foreground">gmailLastId={item.checkpoints.gmailLastMessageId}</p>
                     ) : null}
                     {item.checkpoints.gmailLastCheckpointEpochMs ? (
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         gmailCheckpoint={new Date(item.checkpoints.gmailLastCheckpointEpochMs).toLocaleString()}
                       </p>
                     ) : null}
                   </div>
                 ) : null}
+                {formatContractCounts(item.contractCounts) ? (
+                  <div className="mt-2 space-y-1 rounded-sm border border-primary/30 bg-primary/5 p-2">
+                    <p className="text-xs font-bold uppercase tracking-wider text-primary">memory contracts</p>
+                    <p className="text-xs text-muted-foreground">{formatContractCounts(item.contractCounts)}</p>
+                  </div>
+                ) : null}
                 {item.tokens ? (
-                  <div className="mt-2 space-y-1 rounded-[4px] border border-border/60 bg-muted/30 p-2">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">token state</p>
-                    <p className="text-[11px] text-muted-foreground">hasAccessToken={String(item.tokens.hasAccessToken)}</p>
-                    <p className="text-[11px] text-muted-foreground">hasRefreshToken={String(item.tokens.hasRefreshToken)}</p>
-                    <p className="text-[11px] text-muted-foreground">
+                  <div className="mt-2 space-y-1 rounded-sm border border-border/60 bg-muted/30 p-2">
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">token state</p>
+                    <p className="text-xs text-muted-foreground">hasAccessToken={String(item.tokens.hasAccessToken)}</p>
+                    <p className="text-xs text-muted-foreground">hasRefreshToken={String(item.tokens.hasRefreshToken)}</p>
+                    <p className="text-xs text-muted-foreground">
                       lastTokenRefreshAt={item.tokens.lastTokenRefreshAt ? new Date(item.tokens.lastTokenRefreshAt).toLocaleString() : "never"}
                     </p>
                   </div>
@@ -941,12 +967,12 @@ function addActivity(message: string, status: string = "info") {
                   <button
                     type="button"
                     onClick={() => void unlockConnector(item.type, addActivity)}
-                    className="mt-2 rounded-[4px] border border-chart-5/35 bg-chart-5/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-chart-5 hover:bg-chart-5/20"
+                    className="mt-2 rounded-sm border border-chart-5/35 bg-chart-5/10 px-2 py-1 text-xs font-bold uppercase tracking-wider text-chart-5 hover:bg-chart-5/20"
                   >
                     Force Unlock Sync
                   </button>
                 ) : null}
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   mcpSafe={String(item.safety.mcpSafeMetadata)} policyCompat={String(item.safety.policyCompatible)}
                 </p>
               </div>
@@ -960,52 +986,52 @@ function addActivity(message: string, status: string = "info") {
         <div className="lg:col-span-2 space-y-10">
           {categories.map((category) => (
             <div key={category} className="space-y-4">
-              <h2 className="text-[12px] font-bold uppercase tracking-[0.15em] text-muted-foreground px-1">{category}</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground px-1">{category}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {connectors
                   .filter((c) => c.category === category)
                   .map((connector) => (
-                    <div 
-                      key={connector.id} 
-                      className={`group relative flex flex-col justify-between rounded-[4px] border p-5 transition-all duration-300 ${
-                        connector.status === "connected" 
-                          ? "border-chart-2/30 bg-chart-2/5 shadow-lg shadow-chart-2/15" 
+                    <div
+                      key={connector.id}
+                      className={`group relative flex flex-col justify-between rounded-sm border p-5 transition-all duration-300 ${
+                        connector.status === "connected"
+                          ? "border-chart-2/30 bg-chart-2/5"
                           : "border-border bg-card hover:border-border"
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-[16px] font-bold text-foreground">{connector.name}</h3>
+                          <h3 className="text-base font-bold text-foreground">{connector.name}</h3>
                           <div className="flex items-center gap-2">
                             <span 
-                              className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${
+                              className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${
                                 connector.requiredPlan === "Free" ? "border-primary/30 text-primary bg-primary/5" : "border-chart-5/30 text-chart-5 bg-chart-5/5"
                               }`}
                             >
                               {connector.requiredPlan}
                             </span>
                             {connector.status === "connected" && (
-                              <div className="h-2 w-2 rounded-full bg-chart-2 shadow-md shadow-chart-2/40" />
+                              <div className="h-2 w-2 rounded-full bg-chart-2" />
                             )}
                           </div>
                         </div>
-                        <p className="text-[12px] text-muted-foreground leading-relaxed mb-6">
+                        <p className="text-xs text-muted-foreground leading-relaxed mb-6">
                           {connector.description}
                         </p>
                       </div>
 
                       <div className="space-y-3">
-                        <div className="flex justify-between items-center text-[11px]">
+                        <div className="flex justify-between items-center text-xs">
                           <span className="text-muted-foreground uppercase tracking-wider">Status</span>
                           <span className={`font-medium ${(connector.status === "connected" || connector.status === "syncing") ? "text-chart-2" : "text-muted-foreground"}`}>
                             {connector.status === "syncing" ? "Syncing" : connector.status === "connected" ? "Active" : "Not connected"}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-[11px]">
+                        <div className="flex justify-between items-center text-xs">
                           <span className="text-muted-foreground uppercase tracking-wider">Records</span>
                           <span className="text-foreground font-mono">{connector.records}</span>
                         </div>
-                        <div className="flex justify-between items-center text-[11px]">
+                        <div className="flex justify-between items-center text-xs">
                           <span className="text-muted-foreground uppercase tracking-wider">Last Sync</span>
                           <span className="text-muted-foreground">{connector.lastSync}</span>
                         </div>
@@ -1014,7 +1040,7 @@ function addActivity(message: string, status: string = "info") {
                           {!canUseConnector(currentPlan, connector.requiredPlan) ? (
                             <button
                               onClick={() => void routeToUpgrade(connector.requiredPlan)}
-                              className="flex-1 rounded-[4px] border border-chart-5/30 bg-chart-5/10 py-1.5 text-[10px] font-bold uppercase tracking-widest text-chart-5 hover:bg-chart-5/20 transition-colors"
+                              className="flex-1 rounded-sm border border-chart-5/30 bg-chart-5/10 py-1.5 text-xs font-bold uppercase tracking-widest text-chart-5 hover:bg-chart-5/20 transition-colors"
                             >
                               {nextUpgradeLabel(currentPlan, connector.requiredPlan)}
                             </button>
@@ -1023,13 +1049,13 @@ function addActivity(message: string, status: string = "info") {
                               <button 
                                 onClick={() => void connectConnector(connector.id)}
                                 disabled={connector.status === "syncing"}
-                                className="flex-1 rounded-[4px] bg-muted border border-border py-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground hover:bg-muted transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="flex-1 rounded-sm bg-muted border border-border py-1.5 text-xs font-bold uppercase tracking-widest text-foreground hover:bg-muted transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                               >
                                 {connector.status === "syncing" ? "Syncing..." : "Sync Now"}
                               </button>
                               <button 
                                 onClick={() => disconnectConnector(connector.id)}
-                                className="px-3 rounded-[4px] bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors"
+                                className="px-3 rounded-sm bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors"
                               >
                                 ✕
                               </button>
@@ -1037,7 +1063,7 @@ function addActivity(message: string, status: string = "info") {
                           ) : (
                             <button 
                               onClick={() => connectConnector(connector.id)}
-                              className="flex-1 rounded-[4px] bg-primary/10 border border-primary/30 py-1.5 text-[10px] font-bold uppercase tracking-widest text-primary hover:bg-primary/20 transition-colors"
+                              className="flex-1 rounded-sm bg-primary/10 border border-primary/30 py-1.5 text-xs font-bold uppercase tracking-widest text-primary hover:bg-primary/20 transition-colors"
                             >
                               Connect {connector.name}
                             </button>
@@ -1054,43 +1080,43 @@ function addActivity(message: string, status: string = "info") {
         {/* Sidebar Sections */}
         <div className="space-y-8">
           {/* Recommended Next Action */}
-          <div className="rounded-[4px] border border-chart-5/30 bg-chart-5/5 p-6 relative overflow-hidden">
+          <div className="rounded-sm border border-chart-5/30 bg-chart-5/5 p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-chart-5/10 rounded-full -mr-12 -mt-12 blur-2xl" />
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-chart-5 mb-4">Recommended Next</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-chart-5 mb-4">Recommended Next</h3>
             {!githubConnected ? (
               <>
-                <h4 className="text-[18px] font-bold text-foreground mb-2">Connect GitHub</h4>
-                <p className="text-[13px] text-muted-foreground leading-relaxed mb-6">
+                <h4 className="text-lg font-bold text-foreground mb-2">Connect GitHub</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                   Your local workspace is indexed, but MemoryOS cannot yet understand PRs, issues, commits, or repo decisions.
                 </p>
                 <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-[12px] text-foreground">
+                  <div className="flex items-center gap-2 text-xs text-foreground">
                     <span className="text-chart-2">+</span> Better agent handoffs
                   </div>
-                  <div className="flex items-center gap-2 text-[12px] text-foreground">
+                  <div className="flex items-center gap-2 text-xs text-foreground">
                     <span className="text-chart-2">+</span> Repo-aware planning
                   </div>
-                  <div className="flex items-center gap-2 text-[12px] text-foreground">
+                  <div className="flex items-center gap-2 text-xs text-foreground">
                     <span className="text-chart-2">+</span> Bug history memory
                   </div>
                 </div>
                 <button 
                   onClick={() => connectConnector("github")}
-                  className="w-full rounded-[4px] bg-chart-5 py-2 text-[12px] font-bold text-background hover:bg-chart-5/90 transition-colors"
+                  className="w-full rounded-sm bg-chart-5 py-2 text-xs font-bold text-background hover:bg-chart-5/90 transition-colors"
                 >
                   Connect GitHub
                 </button>
               </>
             ) : (
               <>
-                <h4 className="text-[18px] font-bold text-foreground mb-2">Run GitHub Sync</h4>
-                <p className="text-[13px] text-muted-foreground leading-relaxed mb-6">
+                <h4 className="text-lg font-bold text-foreground mb-2">Run GitHub Sync</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                   GitHub is connected. Run sync to refresh PRs, issues, commits, and decisions into MemoryOS.
                 </p>
                 <button
                   onClick={() => connectConnector("github")}
                   disabled={githubStatus === "syncing"}
-                  className="w-full rounded-[4px] bg-chart-5 py-2 text-[12px] font-bold text-background hover:bg-chart-5/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full rounded-sm bg-chart-5 py-2 text-xs font-bold text-background hover:bg-chart-5/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {githubStatus === "syncing" ? "GitHub Syncing..." : "Sync GitHub Now"}
                 </button>
@@ -1099,39 +1125,39 @@ function addActivity(message: string, status: string = "info") {
           </div>
 
           {/* Live Activity Timeline */}
-          <div className="rounded-[4px] border border-border bg-card overflow-hidden">
+          <div className="rounded-sm border border-border bg-card overflow-hidden">
             <div className="border-b border-border bg-muted/40 px-5 py-4">
-              <h3 className="text-[12px] font-bold uppercase tracking-widest text-foreground">Recent Ingestion Activity</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">Recent Ingestion Activity</h3>
             </div>
             <div className="p-5 space-y-4">
               {activity.map((item, i) => (
                 <div key={i} className="relative pl-5 border-l border-border pb-4 last:pb-0">
-                  <div className={`absolute left-[-5px] top-1 h-2 w-2 rounded-full ${item.status === "success" ? "bg-chart-2" : "bg-primary"}`} />
+                  <div className={`absolute -left-1 top-1 h-2 w-2 rounded-full ${item.status === "success" ? "bg-chart-2" : "bg-primary"}`} />
                   <div className="flex justify-between items-baseline mb-0.5">
-                    <p className="text-[12px] font-medium text-foreground/90">{item.message}</p>
-                    <span className="text-[10px] font-mono text-muted-foreground">{item.time}</span>
+                    <p className="text-xs font-medium text-foreground/90">{item.message}</p>
+                    <span className="text-xs font-mono text-muted-foreground">{item.time}</span>
                   </div>
                 </div>
               ))}
               {activity.length === 0 && (
-                <p className="text-[12px] text-muted-foreground italic">No recent activity</p>
+                <p className="text-xs text-muted-foreground italic">No recent activity</p>
               )}
             </div>
           </div>
 
           {/* Memory Extraction Panel */}
-          <div className="rounded-[4px] border border-border bg-card p-6">
-            <h3 className="text-[12px] font-bold uppercase tracking-widest text-foreground mb-6 flex items-center justify-between">
+          <div className="rounded-sm border border-border bg-card p-6">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground mb-6 flex items-center justify-between">
               What MemoryOS extracts
               <span className="h-1.5 w-1.5 rounded-full bg-chart-2" />
             </h3>
             <div className="space-y-8">
               {EXTRACTS.map((extract) => (
                 <div key={extract.source} className="space-y-3">
-                  <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-primary">{extract.source}</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-primary">{extract.source}</h4>
                   <ul className="space-y-2">
                     {extract.items.map((item, i) => (
-                      <li key={i} className="text-[12px] text-muted-foreground flex items-center gap-2">
+                      <li key={i} className="text-xs text-muted-foreground flex items-center gap-2">
                         <span className="text-muted-foreground">•</span>
                         {item}
                       </li>

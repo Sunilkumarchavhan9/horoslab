@@ -399,23 +399,23 @@ export function CompanyBrainSection() {
   return (
     <div className="space-y-3">
       <div>
-        <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Company Brain</h1>
+        <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Company Brain</h1>
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Runtime</p>
-        <div className="mt-2 rounded-[8px] border border-border bg-muted/30 px-3 py-2 text-[12px] text-foreground">
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Runtime</p>
+        <div className="mt-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-foreground">
           Company Brain runtime
         </div>
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => void Promise.all([loadSkills(), loadCompanyBrainControlPlane()])}
-              className="rounded-[7px] border border-border bg-muted/50 px-2.5 py-1.5 text-[11px] text-muted-foreground"
+              className="rounded-md border border-border bg-muted/50 px-2.5 py-1.5 text-xs text-muted-foreground"
             >
               Refresh
             </button>
@@ -423,7 +423,7 @@ export function CompanyBrainSection() {
               type="button"
               onClick={downloadSkills}
               disabled={!payload?.skillsMarkdown}
-              className="rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary disabled:opacity-50"
+              className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary disabled:opacity-50"
             >
               Export COMPANY_BRAIN.md
             </button>
@@ -431,12 +431,12 @@ export function CompanyBrainSection() {
         </div>
 
         {errorMessage ? (
-          <p className="mt-3 rounded-[8px] border border-destructive/35 bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+          <p className="mt-3 rounded-md border border-destructive/35 bg-destructive/10 px-3 py-2 text-xs text-destructive">
             {errorMessage}
           </p>
         ) : null}
         {statusMessage ? (
-          <p className="mt-3 rounded-[8px] border border-primary/30 bg-primary/10 px-3 py-2 text-[12px] text-primary">
+          <p className="mt-3 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-primary">
             {statusMessage}
           </p>
         ) : null}
@@ -454,8 +454,8 @@ export function CompanyBrainSection() {
         ) : null}
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Control Plane Health</p>
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Control Plane Health</p>
         {controlStatus ? (
           <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
             <Stat label="Scheduler" value={controlStatus.scheduler.enabled ? 1 : 0} suffix={controlStatus.scheduler.enabled ? "on" : "off"} />
@@ -468,9 +468,9 @@ export function CompanyBrainSection() {
             <Stat label="Pending Approvals" value={controlStatus.approvals.pending} />
           </div>
         ) : (
-          <p className="mt-2 text-[12px] text-muted-foreground">Loading control plane status...</p>
+          <p className="mt-2 text-xs text-muted-foreground">Loading control plane status...</p>
         )}
-        <div className="mt-2 text-[11px] text-muted-foreground">
+        <div className="mt-2 text-xs text-muted-foreground">
           <p>last tick: {controlStatus?.scheduler.lastTickAt ? new Date(controlStatus.scheduler.lastTickAt).toLocaleString() : "n/a"}</p>
           <p>last error: {controlStatus?.scheduler.lastError ?? "none"}</p>
           <p>graph updated: {controlStatus?.graph.updatedAt ? new Date(controlStatus.graph.updatedAt).toLocaleString() : "n/a"}</p>
@@ -480,40 +480,40 @@ export function CompanyBrainSection() {
           <button
             type="button"
             onClick={() => void runSreRecoverQueue()}
-            className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+            className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
           >
             SRE Recover Queue
           </button>
           <button
             type="button"
             onClick={() => void runSreBackfillDeadLetter()}
-            className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+            className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
           >
             SRE Backfill Dead Letter
           </button>
         </div>
         {sreRunbook ? (
-          <div className="mt-3 rounded-[8px] border border-border bg-muted/30 px-3 py-2">
-            <p className="text-[11px] text-muted-foreground">runbook backend={sreRunbook.queueBackendMode}</p>
+          <div className="mt-3 rounded-md border border-border bg-muted/30 px-3 py-2">
+            <p className="text-xs text-muted-foreground">runbook backend={sreRunbook.queueBackendMode}</p>
             {sreRunbook.warnings.length > 0 ? (
-              <p className="mt-1 text-[11px] text-amber-500">warnings: {sreRunbook.warnings.join(" | ")}</p>
+              <p className="mt-1 text-xs text-chart-2">warnings: {sreRunbook.warnings.join(" | ")}</p>
             ) : (
-              <p className="mt-1 text-[11px] text-emerald-500">warnings: none</p>
+              <p className="mt-1 text-xs text-primary">warnings: none</p>
             )}
           </div>
         ) : null}
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Business Source Config (No Manual API Calls)</p>
-        <p className="mt-1 text-[12px] text-muted-foreground">
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Business Source Config (No Manual API Calls)</p>
+        <p className="mt-1 text-xs text-muted-foreground">
           Configure `support`, `crm`, or `db` pull source directly from console.
         </p>
         <div className="mt-3 grid gap-2 md:grid-cols-2">
           <select
             value={sourceType}
             onChange={(event) => setSourceType(event.target.value as "support" | "crm" | "db")}
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           >
             <option value="support">support</option>
             <option value="crm">crm</option>
@@ -522,7 +522,7 @@ export function CompanyBrainSection() {
           <select
             value={sourceProvider}
             onChange={(event) => setSourceProvider(event.target.value)}
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           >
             {sourceType === "support" ? (
               <>
@@ -540,7 +540,7 @@ export function CompanyBrainSection() {
               </>
             ) : null}
           </select>
-          <label className="flex items-center gap-2 rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]">
+          <label className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
             <input
               type="checkbox"
               checked={sourceEnabled}
@@ -552,53 +552,53 @@ export function CompanyBrainSection() {
             value={sourceApiUrl}
             onChange={(event) => setSourceApiUrl(event.target.value)}
             placeholder="https://api.yourtool.com/v1/events"
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px] md:col-span-2"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs md:col-span-2"
           />
           <input
             value={sourceApiKey}
             onChange={(event) => setSourceApiKey(event.target.value)}
             placeholder="apiKey (optional)"
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           />
           <input
             value={sourceBearerToken}
             onChange={(event) => setSourceBearerToken(event.target.value)}
             placeholder="bearerToken (optional)"
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           />
           <input
             value={sourceAuthHeader}
             onChange={(event) => setSourceAuthHeader(event.target.value)}
             placeholder="Authorization"
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px] md:col-span-2"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs md:col-span-2"
           />
         </div>
         <button
           type="button"
           onClick={() => void saveBusinessSource()}
-          className="mt-3 rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary"
+          className="mt-3 rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
         >
           Save Business Source
         </button>
 
         <div className="mt-3 space-y-2">
           {sources.filter((source) => source.type === "support" || source.type === "crm" || source.type === "db").length === 0 ? (
-            <p className="text-[12px] text-muted-foreground">No business sources configured yet.</p>
+            <p className="text-xs text-muted-foreground">No business sources configured yet.</p>
           ) : (
             sources
               .filter((source) => source.type === "support" || source.type === "crm" || source.type === "db")
               .map((source) => (
-                <div key={source.id} className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
-                  <p className="text-[12px] font-medium">
+                <div key={source.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
+                  <p className="text-xs font-medium">
                     {source.type} · {source.enabled ? "enabled" : "disabled"}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     apiUrl={typeof source.config.apiUrl === "string" ? source.config.apiUrl : "not set"}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     provider={typeof source.config.provider === "string" ? source.config.provider : "generic"}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     updated={new Date(source.updatedAt).toLocaleString()}
                   </p>
                 </div>
@@ -607,13 +607,13 @@ export function CompanyBrainSection() {
         </div>
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Governance Policy Matrix</p>
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Governance Policy Matrix</p>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           {(["low", "medium", "high"] as const).map((risk) => (
-            <div key={risk} className="rounded-[8px] border border-border bg-muted/30 px-3 py-3">
-              <p className="text-[12px] font-semibold uppercase">{risk}</p>
-              <label className="mt-2 flex items-center gap-2 text-[12px] text-muted-foreground">
+            <div key={risk} className="rounded-md border border-border bg-muted/30 px-3 py-3">
+              <p className="text-xs font-semibold uppercase">{risk}</p>
+              <label className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                 <input
                   type="checkbox"
                   checked={governance.riskPolicy[risk].autoExecute}
@@ -651,7 +651,7 @@ export function CompanyBrainSection() {
                     },
                   }));
                 }}
-                className="mt-2 w-full rounded-[7px] border border-border bg-background px-2 py-1 text-[11px]"
+                className="mt-2 w-full rounded-md border border-border bg-background px-2 py-1 text-xs"
               />
             </div>
           ))}
@@ -660,26 +660,26 @@ export function CompanyBrainSection() {
           <button
             type="button"
             onClick={() => void saveGovernance()}
-            className="rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary"
+            className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
           >
             Save Governance Policy
           </button>
         </div>
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Role Assignment</p>
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Role Assignment</p>
         <div className="mt-2 grid gap-2 md:grid-cols-4">
           <input
             value={roleTargetUserId}
             onChange={(event) => setRoleTargetUserId(event.target.value)}
             placeholder="target user id"
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           />
           <select
             value={roleValue}
             onChange={(event) => setRoleValue(event.target.value as "owner" | "admin" | "operator" | "viewer")}
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           >
             <option value="owner">owner</option>
             <option value="admin">admin</option>
@@ -690,44 +690,44 @@ export function CompanyBrainSection() {
             value={roleScopes}
             onChange={(event) => setRoleScopes(event.target.value)}
             placeholder="comma scopes"
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px] md:col-span-2"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs md:col-span-2"
           />
         </div>
         <button
           type="button"
           onClick={() => void assignRole()}
-          className="mt-2 rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary"
+          className="mt-2 rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
         >
           Assign Role
         </button>
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Action Runner</p>
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Action Runner</p>
         <div className="mt-2 grid gap-2">
           <input
             value={newActionName}
             onChange={(event) => setNewActionName(event.target.value)}
-            className="rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px]"
+            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
           />
           <textarea
             value={newActionPayload}
             onChange={(event) => setNewActionPayload(event.target.value)}
-            className="min-h-[90px] rounded-[7px] border border-border bg-background px-2 py-1.5 text-[11px] font-mono"
+            className="min-h-24 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-mono"
           />
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => void simulateCurrentAction()}
               disabled={isSimulating}
-              className="w-fit rounded-[7px] border border-border bg-muted/50 px-2.5 py-1.5 text-[11px] text-muted-foreground disabled:opacity-50"
+              className="w-fit rounded-md border border-border bg-muted/50 px-2.5 py-1.5 text-xs text-muted-foreground disabled:opacity-50"
             >
               {isSimulating ? "Simulating..." : "Simulate Action"}
             </button>
             <button
               type="button"
               onClick={() => void requestAction()}
-              className="w-fit rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-[11px] text-primary"
+              className="w-fit rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
             >
               Create Action Request
             </button>
@@ -735,45 +735,45 @@ export function CompanyBrainSection() {
         </div>
 
         {simulation ? (
-          <div className="mt-3 rounded-[8px] border border-border bg-muted/30 px-3 py-2">
-            <p className="text-[12px] font-medium">Simulation Result</p>
-            <p className="mt-1 text-[11px] text-muted-foreground">
+          <div className="mt-3 rounded-md border border-border bg-muted/30 px-3 py-2">
+            <p className="text-xs font-medium">Simulation Result</p>
+            <p className="mt-1 text-xs text-muted-foreground">
               risk={simulation.risk} · autoExecutable={simulation.autoExecutable ? "yes" : "no"} · complianceBlocked={simulation.complianceBlocked ? "yes" : "no"}
             </p>
-            <p className="mt-1 text-[11px] text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               required approvals: {simulation.requiredApprovals.length ? simulation.requiredApprovals.join(",") : "none"}
             </p>
-            <p className="mt-1 text-[11px] text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               constraints: {simulation.executionConstraints.join(" | ")}
             </p>
             {simulation.complianceBlockReason ? (
-              <p className="mt-1 text-[11px] text-amber-500">{simulation.complianceBlockReason}</p>
+              <p className="mt-1 text-xs text-chart-2">{simulation.complianceBlockReason}</p>
             ) : null}
           </div>
         ) : null}
 
         <div className="mt-3 space-y-2">
           {actions.length === 0 ? (
-            <p className="text-[12px] text-muted-foreground">No action requests yet.</p>
+            <p className="text-xs text-muted-foreground">No action requests yet.</p>
           ) : (
             actions.slice(0, 12).map((action) => (
-              <div key={action.id} className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
-                <p className="text-[12px] font-medium">{action.name}</p>
-                <p className="text-[11px] text-muted-foreground">
+              <div key={action.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
+                <p className="text-xs font-medium">{action.name}</p>
+                <p className="text-xs text-muted-foreground">
                   risk={action.risk} · status={action.status} · required={action.requiredApprovals.join(",")}
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   approvals progress: {
                     action.requiredApprovals.length === 0
                       ? "none required"
                       : `${new Set((action.approvals ?? []).filter((entry) => entry.decision === "approve").map((entry) => entry.reviewerRole)).size}/${action.requiredApprovals.length}`
                   }
                 </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   constraints: {action.executionConstraints.join(" | ")}
                 </p>
                 {action.executionResult ? (
-                  <p className="mt-1 text-[11px] text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     result: {action.executionResult.ok ? "ok" : "failed"} · {action.executionResult.detail}
                   </p>
                 ) : null}
@@ -781,21 +781,21 @@ export function CompanyBrainSection() {
                   <button
                     type="button"
                     onClick={() => void reviewAction(action.id, "approve")}
-                    className="rounded-[7px] border border-primary/30 bg-primary/10 px-2 py-1 text-[11px] text-primary"
+                    className="rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs text-primary"
                   >
                     Approve
                   </button>
                   <button
                     type="button"
                     onClick={() => void reviewAction(action.id, "reject")}
-                    className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+                    className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
                   >
                     Reject
                   </button>
                   <button
                     type="button"
                     onClick={() => void executeAction(action.id)}
-                    className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground"
+                    className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
                   >
                     Execute
                   </button>
@@ -806,27 +806,27 @@ export function CompanyBrainSection() {
         </div>
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Generated Skills File</p>
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Generated Skills File</p>
         <textarea
           value={payload?.skillsMarkdown ?? ""}
           readOnly
           placeholder="Generate to view Company Brain skills..."
-          className="mt-2 min-h-[360px] w-full rounded-[8px] border border-border bg-muted/30 px-3 py-2 font-mono text-[12px] text-foreground outline-none"
+          className="mt-2 min-h-96 w-full rounded-md border border-border bg-muted/30 px-3 py-2 font-mono text-xs text-foreground outline-none"
         />
       </div>
 
-      <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Recent Exports</p>
+      <div className="rounded-lg border border-border bg-card px-4 py-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Recent Exports</p>
         <div className="mt-2 space-y-2">
           {exportsHistory.length === 0 ? (
-            <p className="text-[12px] text-muted-foreground">No previous exports yet.</p>
+            <p className="text-xs text-muted-foreground">No previous exports yet.</p>
           ) : (
             exportsHistory.slice(0, 8).map((entry) => (
-              <div key={entry.id} className="rounded-[8px] border border-border bg-muted/30 px-3 py-2">
+              <div key={entry.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
                 <div>
-                  <p className="text-[12px] font-medium">{new Date(entry.generatedAt).toLocaleString()}</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs font-medium">{new Date(entry.generatedAt).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">
                     {entry.workspace} · {entry.stats.activeMemoryCount} memories · {entry.stats.decisions} decisions
                   </p>
                 </div>
@@ -841,11 +841,11 @@ export function CompanyBrainSection() {
 
 function Stat({ label, value, suffix }: { label: string; value: number; suffix?: string }) {
   return (
-    <div className="rounded-[8px] border border-border bg-muted/40 px-3 py-2">
-      <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
-      <p className="mt-1 text-[18px] font-semibold">
+    <div className="rounded-md border border-border bg-muted/40 px-3 py-2">
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="mt-1 text-lg font-semibold">
         {value}
-        {suffix ? <span className="ml-1 text-[11px] font-normal text-muted-foreground">{suffix}</span> : null}
+        {suffix ? <span className="ml-1 text-xs font-normal text-muted-foreground">{suffix}</span> : null}
       </p>
     </div>
   );

@@ -169,7 +169,7 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
   return (
     <div className="space-y-3 text-foreground">
       <motion.div
-        className="relative overflow-hidden rounded-[10px] border border-border bg-background px-4 py-4"
+        className="relative overflow-hidden rounded-lg border border-border bg-background px-4 py-4"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.28, ease: EASE_OUT }}
@@ -183,23 +183,23 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
           <DitherBackground className="h-full w-full opacity-25" accent="var(--color-chart-5)" density={0.54} cols={260} rows={72} />
         </motion.div>
         <div className="relative z-10">
-          <h2 className="inline-block rounded-[6px] px-2 py-1 text-[17px] font-semibold">
+          <h2 className="inline-block rounded-md px-2 py-1 text-base font-semibold">
             Imports
           </h2>
           <br/>
-          <p className="mt-1 inline-block rounded-[6px] px-2 py-1 text-[12px] text-muted-foreground">
+          <p className="mt-1 inline-block rounded-md px-2 py-1 text-xs text-muted-foreground">
             Live connector ingestion and sync status from real backend integrations.
           </p>
         </div>
       </motion.div>
 
       {errorMessage ? (
-        <div className="rounded-[10px] border border-destructive/40 bg-destructive/15 px-3.5 py-3 text-[12px] text-destructive">
+        <div className="rounded-lg border border-destructive/40 bg-destructive/15 px-3.5 py-3 text-xs text-destructive">
           {errorMessage}
         </div>
       ) : null}
       {!errorMessage && loading ? (
-        <div className="rounded-[10px] border border-border bg-muted px-3.5 py-3 text-[12px] text-muted-foreground">
+        <div className="rounded-lg border border-border bg-muted px-3.5 py-3 text-xs text-muted-foreground">
           Loading live connector status...
         </div>
       ) : null}
@@ -209,7 +209,7 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
           { label: "Records", value: totalRecords, tone: "var(--color-chart-4)" },
           { label: "Health", value: healthLabel, tone: "var(--color-chart-2)" },
         ].map((card) => (
-          <div key={card.label} className="relative overflow-hidden rounded-[10px] border border-border bg-card px-3.5 py-3">
+          <div key={card.label} className="relative overflow-hidden rounded-lg border border-border bg-card px-3.5 py-3">
             <DitherBackground
               cols={52}
               rows={20}
@@ -219,12 +219,12 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
               className="pointer-events-none absolute inset-0"
             />
             <p className="relative">
-              <span className="inline-block rounded-[4px] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-foreground">
+              <span className="inline-block rounded-sm px-1.5 py-0.5 text-xs font-semibold uppercase tracking-widest text-foreground">
                 {card.label}
               </span>
             </p>
             <p className="relative mt-1">
-              <span className="inline-block rounded-[4px] px-1.5 py-0.5 text-[18px] font-semibold text-foreground">
+              <span className="inline-block rounded-sm px-1.5 py-0.5 text-lg font-semibold text-foreground">
                 {card.value}
               </span>
             </p>
@@ -232,22 +232,22 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
         ))}
       </div>
 
-      <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="rounded-[10px] border border-border bg-card p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground/75">
+      <div className="grid gap-3 xl:grid-cols-2">
+        <section className="rounded-lg border border-border bg-card p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-foreground/75">
             Sources
           </p>
           <div className="mt-2 space-y-2">
             {connectors.map((connector) => (
-              <div key={connector.id} className="rounded-[8px] border border-border bg-card/60 px-3 py-2.5">
+              <div key={connector.id} className="rounded-md border border-border bg-card/60 px-3 py-2.5">
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-[12px] font-semibold">{connector.name}</p>
-                    <p className="text-[11px] text-muted-foreground">{connector.type}</p>
+                    <p className="text-xs font-semibold">{connector.name}</p>
+                    <p className="text-xs text-muted-foreground">{connector.type}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] ${
+                      className={`rounded-md border px-2 py-0.5 text-xs uppercase tracking-wider ${
                         connector.status === "connected"
                           ? "border-primary/45 bg-primary/10 text-primary"
                           : connector.status === "pending"
@@ -261,48 +261,48 @@ export function ImportsSection({ liveMemoryCount = 0 }: { liveMemoryCount?: numb
                       type="button"
                       disabled={connector.status !== "connected" || busyId === connector.type}
                       onClick={() => void syncConnector(connector.type)}
-                      className="rounded-[7px] border border-primary/45 bg-primary px-2.5 py-1 text-[10px] font-semibold tracking-[0.08em] text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                      className="rounded-md border border-primary/45 bg-primary px-2.5 py-1 text-xs font-semibold tracking-wider text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {busyId === connector.type ? "SYNCING" : "SYNC"}
                     </button>
                   </div>
                 </div>
-                <p className="mt-2 text-[11px] text-muted-foreground">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Records: {connector.recordCount ?? 0} · Last sync: {connector.lastSyncAt ? new Date(connector.lastSyncAt).toLocaleString() : "Never"}
                 </p>
               </div>
             ))}
             {connectors.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground">No connector data returned yet.</p>
+              <p className="text-xs text-muted-foreground">No connector data returned yet.</p>
             ) : null}
           </div>
         </section>
 
-        <section className="rounded-[10px] border border-border bg-card p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground/75">
+        <section className="rounded-lg border border-border bg-card p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-foreground/75">
             Activity
           </p>
           <div className="mt-2 space-y-2">
             {activity.map((item) => (
-              <div key={item.id} className="rounded-[8px] border border-border bg-card/60 px-3 py-2">
-                <p className="text-[12px] text-foreground">{item.message}</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">{item.at}</p>
+              <div key={item.id} className="rounded-md border border-border bg-card/60 px-3 py-2">
+                <p className="text-xs text-foreground">{item.message}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{item.at}</p>
               </div>
             ))}
             {activity.length === 0 ? (
               diagnostics.length > 0 ? (
                 diagnostics.slice(0, 8).map((item, index) => (
-                  <div key={`${item.connectorType}-${item.checkedAt}-${index}`} className="rounded-[8px] border border-border bg-card/60 px-3 py-2">
-                    <p className="text-[12px] text-foreground">
+                  <div key={`${item.connectorType}-${item.checkedAt}-${index}`} className="rounded-md border border-border bg-card/60 px-3 py-2">
+                    <p className="text-xs text-foreground">
                       {item.connectorType} health={item.status}
                     </p>
-                    <p className="mt-1 text-[11px] text-muted-foreground">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {new Date(item.checkedAt).toLocaleString()}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-[12px] text-muted-foreground">No sync activity yet.</p>
+                <p className="text-xs text-muted-foreground">No sync activity yet.</p>
               )
             ) : null}
           </div>

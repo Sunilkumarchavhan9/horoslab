@@ -31,8 +31,8 @@ type ContractValidationResponse = {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b border-border py-2">
-      <p className="text-[12px] uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
-      <p className="max-w-[75%] text-right text-[13px] text-foreground">{value}</p>
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="max-w-prose text-right text-sm text-foreground">{value}</p>
     </div>
   );
 }
@@ -155,9 +155,9 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
 
   return (
     <section>
-      <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Contract Console</h1>
+      <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Contract Console</h1>
 
-      <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
+      <div className="mt-4 rounded-lg border border-border bg-muted p-4">
         <Row label="Goal" value={cleanContractText(contract.goal) || "Missing"} />
         <Row label="Constraints" value={compactList(contract.constraints)} />
         <Row label="Decisions" value={compactList(contract.decisions)} />
@@ -165,10 +165,10 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
         <Row label="Next Actions" value={compactList(contract.nextActions)} />
       </div>
 
-      <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Live Validation</p>
+      <div className="mt-4 rounded-lg border border-border bg-muted p-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Live Validation</p>
         {validation ? (
-          <div className="mt-2 space-y-1 text-[12px] text-muted-foreground">
+          <div className="mt-2 space-y-1 text-xs text-muted-foreground">
             <p>Governance mode: {validation.governanceMode}</p>
             <p>Completeness: {validation.completenessScore}%</p>
             <p>Quality: {validation.qualityGrade} ({validation.qualityScore})</p>
@@ -176,14 +176,14 @@ export function ContractConsoleSection({ contract }: ContractConsoleSectionProps
             <p>Present fields: {validation.presentFields.join(" · ") || "None"}</p>
             <p>Missing fields: {validation.missingFields.join(" · ") || "None"}</p>
             {dedupedSuggestions.map((item) => (
-              <p key={item} className="rounded-[6px] border border-border px-2 py-1 text-[11px] text-foreground">{item}</p>
+              <p key={item} className="rounded-md border border-border px-2 py-1 text-xs text-foreground">{item}</p>
             ))}
             {dedupedReasons.map((item) => (
-              <p key={item} className="rounded-[6px] border border-border px-2 py-1 text-[11px] text-muted-foreground">{item}</p>
+              <p key={item} className="rounded-md border border-border px-2 py-1 text-xs text-muted-foreground">{item}</p>
             ))}
           </div>
         ) : loading ? (
-          <p className="mt-2 text-[12px] text-muted-foreground">Validating...</p>
+          <p className="mt-2 text-xs text-muted-foreground">Validating...</p>
         ) : null}
       </div>
     </section>

@@ -193,22 +193,22 @@ export function RequestsSection({
     <>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">
+          <h1 className="text-base font-semibold tracking-tighter sm:text-lg">
             Requests
           </h1>
-          <p className="mt-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
+          <p className="mt-1 text-xs leading-6 text-muted-foreground sm:text-sm">
             View MemoryOS API request history and continuity runtime details.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center overflow-hidden rounded-[8px] border border-border bg-card">
+          <div className="flex items-center overflow-hidden rounded-md border border-border bg-card">
             {REQUEST_TIME_FILTERS.map((range) => (
               <button
                 key={range}
                 type="button"
                 onClick={() => setRequestTimeFilter(range)}
-                className={`px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] transition ${
+                className={`px-3 py-1.5 text-xs font-medium tracking-wider transition ${
                   requestTimeFilter === range
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"
@@ -226,7 +226,7 @@ export function RequestsSection({
                 setShowRequestTypeMenu((current) => !current);
                 setShowRequestStatusMenu(false);
               }}
-              className="flex items-center gap-2 rounded-[8px] border border-border bg-card px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-foreground transition hover:border-border"
+              className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-foreground transition hover:border-border"
             >
               {requestTypeFilter}
               <svg
@@ -244,7 +244,7 @@ export function RequestsSection({
               </svg>
             </button>
             {showRequestTypeMenu ? (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[220px] overflow-hidden rounded-[8px] border border-border bg-card shadow-xl">
+              <div className="absolute right-0 top-full mt-2 z-20 w-56 overflow-hidden rounded-md border border-border bg-card">
                 {requestTypeFilters.map((item) => (
                   <button
                     key={item}
@@ -253,7 +253,7 @@ export function RequestsSection({
                       setRequestTypeFilter(item);
                       setShowRequestTypeMenu(false);
                     }}
-                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-[12px] transition ${
+                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-xs transition ${
                       requestTypeFilter === item
                         ? "bg-muted font-semibold text-foreground"
                         : "text-muted-foreground hover:bg-muted"
@@ -276,7 +276,7 @@ export function RequestsSection({
                 setShowRequestStatusMenu((current) => !current);
                 setShowRequestTypeMenu(false);
               }}
-              className="flex items-center gap-2 rounded-[8px] border border-border bg-card px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-foreground transition hover:border-border"
+              className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-foreground transition hover:border-border"
             >
               {requestStatusFilter}
               <svg
@@ -294,7 +294,7 @@ export function RequestsSection({
               </svg>
             </button>
             {showRequestStatusMenu ? (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-[180px] overflow-hidden rounded-[8px] border border-border bg-card shadow-xl">
+              <div className="absolute right-0 top-full mt-2 z-20 w-44 overflow-hidden rounded-md border border-border bg-card">
                 {REQUEST_STATUS_FILTERS.map((item) => (
                   <button
                     key={item}
@@ -303,7 +303,7 @@ export function RequestsSection({
                       setRequestStatusFilter(item);
                       setShowRequestStatusMenu(false);
                     }}
-                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-[12px] transition ${
+                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-xs transition ${
                       requestStatusFilter === item
                         ? "bg-muted font-semibold text-foreground"
                         : "text-muted-foreground hover:bg-muted"
@@ -321,41 +321,41 @@ export function RequestsSection({
         </div>
       </div>
       <div className="mt-3 grid gap-2.5 lg:grid-cols-3">
-        <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
-          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <div className="rounded-md border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             By request type
           </p>
-          <p className="mt-2 text-[13px] text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground">
             {filteredRequestEvents.length > 0
               ? `${filteredRequestEvents.length} request(s) in this period`
               : "No requests in this period"}
           </p>
         </div>
-        <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
-          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <div className="rounded-md border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Successful requests (2xx)
           </p>
-          <p className="mt-2 text-[28px] font-semibold tracking-[-0.04em]">
+          <p className="mt-2 text-3xl font-semibold tracking-tighter">
             {successfulRequestCount}
-            <span className="ml-1.5 text-[12px] font-normal text-muted-foreground">
+            <span className="ml-1.5 text-xs font-normal text-muted-foreground">
               of {filteredRequestEvents.length}
             </span>
           </p>
         </div>
-        <div className="rounded-[8px] border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
-          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <div className="rounded-md border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Average latency (ms)
           </p>
-          <p className="mt-2 text-[28px] font-semibold tracking-[-0.04em]">
+          <p className="mt-2 text-3xl font-semibold tracking-tighter">
             {averageRequestLatency !== null ? averageRequestLatency : "-"}
           </p>
         </div>
       </div>
 
-      <div className="mt-3 rounded-[10px] border border-border bg-card px-4 py-4 sm:px-5 sm:py-5">
+      <div className="mt-3 rounded-lg border border-border bg-card px-4 py-4 sm:px-5 sm:py-5">
         {!hasRows ? (
-          <div className="grid min-h-[300px] place-items-center text-center sm:min-h-[360px]">
-            <div className="max-w-[460px]">
+          <div className="grid min-h-72 place-items-center text-center sm:min-h-96">
+            <div className="max-w-md">
               <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-border text-muted-foreground">
                 <svg
                   width="22"
@@ -370,10 +370,10 @@ export function RequestsSection({
                   <polyline points="1,11 4,11 6,5 9,17 12,8 15,13 17,11 21,11" />
                 </svg>
               </div>
-              <h2 className="mt-4 text-[30px] font-semibold tracking-[-0.04em]">
+              <h2 className="mt-4 text-3xl font-semibold tracking-tighter">
                 {emptyTitle}
               </h2>
-              <p className="mt-2 text-[14px] leading-7 text-muted-foreground">
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 {emptyDescription}
               </p>
             </div>
@@ -382,7 +382,7 @@ export function RequestsSection({
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-border">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                <tr className="text-left text-xs uppercase tracking-widest text-muted-foreground">
                   <th className="px-3 py-2">Time</th>
                   <th className="px-3 py-2">Type</th>
                   <th className="px-3 py-2">Route</th>
@@ -392,7 +392,7 @@ export function RequestsSection({
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredRequestEvents.map((event) => (
-                  <tr key={event.id} className="text-[12px] text-muted-foreground">
+                  <tr key={event.id} className="text-xs text-muted-foreground">
                     <td className="px-3 py-3">
                       {new Date(event.createdAt).toLocaleString()}
                     </td>

@@ -1,9 +1,11 @@
 import { randomUUID } from "crypto";
 import type { MemoryStoreSearchResult } from "../adapters/adapters";
 import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
+import { MEMORY_CONTRACT_CATEGORIES, MEMORY_CONTRACT_VERSION } from "../memory/types";
 import type {
   DeveloperSignals,
   Memory,
+  MemoryContractCategory,
   OperationalTag,
   MemorySource,
   MemoryStatus,
@@ -98,6 +100,13 @@ function parseOperationalTags(value: unknown): OperationalTag[] | undefined {
   return parsed.length > 0 ? Array.from(new Set(parsed)) : undefined;
 }
 
+function parseContractCategory(value: unknown): MemoryContractCategory | undefined {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().toLowerCase();
+  return MEMORY_CONTRACT_CATEGORIES.includes(normalized as MemoryContractCategory)
+    ? normalized as MemoryContractCategory
+    : undefined;
+}
 
 export function toMemory(candidate: ScoredMemoryCandidate): Memory{
     const now  =  new Date().toISOString();
@@ -115,7 +124,10 @@ export function toMemory(candidate: ScoredMemoryCandidate): Memory{
         createdAt: now,
         updatedAt: now,
         evidenceCount: 1,
+        contractVersion: candidate.contractCategory ? MEMORY_CONTRACT_VERSION : candidate.contractVersion,
+        contractCategory: candidate.contractCategory,
         developerSignals: candidate.developerSignals,
+        operationalTags: candidate.operationalTags,
     }
 }
 
@@ -167,6 +179,7 @@ export function toInternalMemory(
   );
   const confidence = parseNumericMetadataValue(metadata.confidence, 0.5);
   const evidenceCount = Math.max( 1, Math.round(parseNumericMetadataValue(metadata.evidenceCount, 1)),);
+  const contractCategory = parseContractCategory(metadata.contractCategory);
   const developerSignals = parseDeveloperSignals(metadata.developerSignals);
   const operationalTags = parseOperationalTags(metadata.operationalTags);
 
@@ -183,6 +196,8 @@ export function toInternalMemory(
     createdAt,
     updatedAt,
     evidenceCount,
+    contractVersion: contractCategory ? MEMORY_CONTRACT_VERSION : undefined,
+    contractCategory,
     developerSignals,
     operationalTags,
   };

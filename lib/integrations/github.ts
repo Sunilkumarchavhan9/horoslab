@@ -17,6 +17,11 @@ const GITHUB_ITEM_MAX_PAGES = Math.max(1, Number(process.env.GITHUB_SYNC_ITEM_MA
 const GITHUB_SYNC_BUDGET_MS = Math.max(5_000, Number(process.env.GITHUB_SYNC_BUDGET_MS ?? 25_000));
 const GITHUB_REQUEST_TIMEOUT_MS = Math.max(3_000, Number(process.env.GITHUB_REQUEST_TIMEOUT_MS ?? 10_000));
 
+function incrementContractCount(counts: Record<string, number>, category?: string): void {
+  if (!category) return;
+  counts[category] = (counts[category] ?? 0) + 1;
+}
+
 /**
  * GitHub integration client for fetching and processing real developer signals.
  */
@@ -32,6 +37,7 @@ export const GitHubClient = {
       },
     });
     const memoriesExtracted = [];
+    const contractCounts: Record<string, number> = {};
     const seen = new Set(options.recentItemKeys ?? []);
     const dedupeKeys: string[] = [];
     const sinceMs = options.since ? new Date(options.since).getTime() : 0;
@@ -115,6 +121,7 @@ export const GitHubClient = {
                   developerSignals: candidate.developerSignals,
                 });
                 memoriesExtracted.push(candidate);
+                incrementContractCount(contractCounts, candidate.contractCategory);
               }
               dedupeKeys.push(prKey);
             }
@@ -176,6 +183,7 @@ export const GitHubClient = {
                   developerSignals: candidate.developerSignals,
                 });
                 memoriesExtracted.push(candidate);
+                incrementContractCount(contractCounts, candidate.contractCategory);
               }
               dedupeKeys.push(issueKey);
             }
@@ -189,6 +197,7 @@ export const GitHubClient = {
         extractedCount: memoriesExtracted.length,
         checkpoint: newestCheckpointMs > 0 ? new Date(newestCheckpointMs).toISOString() : new Date().toISOString(),
         dedupeKeys,
+        contractCounts,
       };
     } catch (error) {
       console.error("[GitHubClient] Sync failed:", error);

@@ -98,17 +98,17 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
 
   return (
     <section>
-      <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Context Inspector</h1>
-      {status ? <p className="mt-2 text-[11px] text-muted-foreground">{status}</p> : null}
+      <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Context Inspector</h1>
+      {status ? <p className="mt-2 text-xs text-muted-foreground">{status}</p> : null}
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-[10px] border border-border bg-muted p-4">
+        <div className="rounded-lg border border-border bg-muted p-4">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Injected Payload</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Injected Payload</p>
             <button
               type="button"
               onClick={() => void copy(JSON.stringify(latestPayload, null, 2), "Payload JSON")}
-              className="rounded-[6px] border border-border px-2 py-1 text-[10px] text-foreground"
+              className="rounded-md border border-border px-2 py-1 text-xs text-foreground"
             >
               Copy JSON
             </button>
@@ -118,13 +118,13 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
           </div>
         </div>
 
-        <div className="rounded-[10px] border border-border bg-muted p-4">
+        <div className="rounded-lg border border-border bg-muted p-4">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Previous Diff</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Previous Diff</p>
             <button
               type="button"
               onClick={() => void copy(diffLines.join("\n\n"), "Diff")}
-              className="rounded-[6px] border border-border px-2 py-1 text-[10px] text-foreground"
+              className="rounded-md border border-border px-2 py-1 text-xs text-foreground"
             >
               Copy Diff
             </button>
@@ -139,8 +139,8 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
         </div>
       </div>
 
-      <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Trace Metadata</p>
+      <div className="mt-4 rounded-lg border border-border bg-muted p-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Trace Metadata</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["trace id", traceMeta.traceId],
@@ -151,9 +151,9 @@ export function ContextInspectorSection({ requestEvents }: ContextInspectorSecti
               traceMeta.retrievalConfidence !== null ? `${traceMeta.retrievalConfidence}` : "n/a",
             ],
           ].map(([label, value]) => (
-            <div key={String(label)} className="rounded-[8px] border border-border bg-muted px-3 py-2">
-              <p className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
-              <p className="mt-1 text-[12px] text-foreground">{String(value)}</p>
+            <div key={String(label)} className="rounded-md border border-border bg-muted px-3 py-2">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
+              <p className="mt-1 text-xs text-foreground">{String(value)}</p>
             </div>
           ))}
         </div>

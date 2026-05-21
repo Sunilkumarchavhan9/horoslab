@@ -23,6 +23,25 @@ export type MemorySource = (typeof MEMORY_SOURCE)[number];
 
 export type IsoDateString = string;
 
+export const MEMORY_CONTRACT_VERSION = "memoryos.contract.v1" as const;
+
+export const MEMORY_CONTRACT_CATEGORIES = [
+  "decision",
+  "runbook",
+  "incident",
+  "preference",
+  "policy",
+  "blocker",
+  "bug",
+  "architecture_note",
+  "previous_attempt",
+  "model_tool_update",
+  "risky_file",
+  "next_action",
+] as const;
+
+export type MemoryContractCategory = (typeof MEMORY_CONTRACT_CATEGORIES)[number];
+
 export interface DeveloperSignals {
   stack?: string[];
   framework?: string[];
@@ -46,6 +65,8 @@ export interface Memory {
     createdAt: IsoDateString;
     updatedAt: IsoDateString;
     evidenceCount: number;
+    contractVersion?: typeof MEMORY_CONTRACT_VERSION;
+    contractCategory?: MemoryContractCategory;
     developerSignals?: DeveloperSignals;
     operationalTags?: OperationalTag[];
 
@@ -59,6 +80,8 @@ export interface MemoryCandidate {
   summary: string;
   source: MemorySource;
   threadId?: string;
+  contractVersion?: typeof MEMORY_CONTRACT_VERSION;
+  contractCategory?: MemoryContractCategory;
   developerSignals?: DeveloperSignals;
   operationalTags?: OperationalTag[];
 }

@@ -300,24 +300,24 @@ export function ProjectsSection({
         };
 
   const primaryPanelClass =
-    "rounded-[14px] border border-border bg-card bg-gradient-to-b from-card via-card to-muted/25 px-4 py-4 shadow-lg shadow-black/20 backdrop-blur-sm transition duration-300 hover:border-border dark:shadow-black/40";
+    "rounded-xl border border-border bg-card px-4 py-4 transition duration-300 hover:border-border";
   const secondaryPanelClass =
-    "rounded-[12px] border border-border bg-card/80 bg-gradient-to-b from-card/90 to-muted/20 px-3.5 py-3.5 transition duration-300 hover:border-border";
+    "rounded-lg border border-border bg-card px-3.5 py-3.5 transition duration-300 hover:border-border";
   const subCardClass =
-    "rounded-[10px] border border-border bg-muted/30 px-3 py-3 sm:px-3.5 sm:py-3.5";
+    "rounded-lg border border-border bg-muted/30 px-3 py-3 sm:px-3.5 sm:py-3.5";
 
   const momentumDelta = (momentumValues[momentumValues.length - 1] ?? 0) - (momentumValues[0] ?? 0);
   const momentumDeltaLabel =
     momentumDelta > 0 ? `+${momentumDelta} points this week` : momentumDelta < 0 ? `${momentumDelta} points this week` : "steady this week";
 
   return (
-    <section className="relative overflow-hidden rounded-[16px] border border-border bg-gradient-to-b from-background via-card/40 to-muted/15 p-4 shadow-lg shadow-black/15 sm:p-5 dark:shadow-black/35">
-      <div className="pointer-events-none absolute -left-24 top-[-140px] h-[300px] w-[300px] rounded-full bg-primary/15 blur-[90px]" />
-      <div className="pointer-events-none absolute -right-28 bottom-[-130px] h-[290px] w-[290px] rounded-full bg-chart-2/15 blur-[95px]" />
+    <section className="relative overflow-hidden rounded-xl border border-border bg-card p-4 sm:p-5">
+      <div className="pointer-events-none absolute -left-24 -top-36 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-28 -bottom-32 h-72 w-72 rounded-full bg-chart-2/15 blur-3xl" />
       <div className="relative flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[20px] font-semibold tracking-[-0.04em] text-foreground sm:text-[24px]">Projects</h1>
-          <p className="mt-1.5 max-w-[760px] text-[13px] leading-6 text-muted-foreground sm:text-[14px]">
+          <h1 className="text-xl font-semibold tracking-tighter text-foreground sm:text-2xl">Projects</h1>
+          <p className="mt-1.5 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-sm">
             Browse active project context, continuity setup, and next actions for your workspace.
           </p>
         </div>
@@ -327,12 +327,12 @@ export function ProjectsSection({
               type="button"
               onClick={onSeedFirstMemory}
               disabled={isSeedingFirstMemory}
-              className="rounded-[10px] border border-primary/45 bg-primary/15 px-3.5 py-2 text-[11px] font-medium tracking-[0.08em] text-primary shadow-md shadow-primary/20 transition duration-300 hover:translate-y-[-1px] hover:border-primary/60 hover:bg-primary/25 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-lg border border-primary/45 bg-primary/15 px-3.5 py-2 text-xs font-medium tracking-wider text-primary transition duration-300 hover:-translate-y-px hover:border-primary/60 hover:bg-primary/25 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSeedingFirstMemory ? "SEEDING..." : "SEED FIRST MEMORY"}
             </button>
           ) : null}
-          <div className={`rounded-[10px] border px-3 py-1.5 text-[11px] font-medium tracking-[0.1em] ${statusTone.border} ${statusTone.bg} ${statusTone.text}`}>
+          <div className={`rounded-lg border px-3 py-1.5 text-xs font-medium tracking-widest ${statusTone.border} ${statusTone.bg} ${statusTone.text}`}>
             {activeProjectStatus.toUpperCase()}
           </div>
         </div>
@@ -341,16 +341,16 @@ export function ProjectsSection({
       <div className={`relative mt-3 border-t-2 border-t-primary ${primaryPanelClass}`}>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Active Project</p>
-            <h2 className="mt-2 break-words text-[20px] font-semibold tracking-[-0.04em] text-foreground sm:text-[22px] lg:text-[26px]">
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Active Project</p>
+            <h2 className="mt-2 break-words text-xl font-semibold tracking-tighter text-foreground sm:text-xl lg:text-2xl">
               {activeProjectName}
             </h2>
-            <p className="mt-2 max-w-[700px] text-[13px] leading-6 text-muted-foreground sm:text-[14px]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-sm">
               MemoryOS uses this project workspace to persist work state, retrieve context, and generate cleaner handoffs
               across developer and agent sessions.
             </p>
           </div>
-          <div className="rounded-[10px] border border-border bg-background/25 px-3.5 py-2.5 text-[12px] text-muted-foreground backdrop-blur-sm">
+          <div className="rounded-lg border border-border bg-background/25 px-3.5 py-2.5 text-xs text-muted-foreground backdrop-blur-sm">
             Last updated {activeProjectLastUpdated.toLowerCase()}
           </div>
         </div>
@@ -365,8 +365,8 @@ export function ProjectsSection({
             ["Last Updated", activeProjectLastUpdated],
           ].map(([label, value]) => (
             <div key={label} className={subCardClass}>
-              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-              <p className="mt-1.5 text-[13px] font-semibold tracking-[-0.02em] text-foreground sm:text-[14px]">{value}</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{label}</p>
+              <p className="mt-1.5 text-sm font-semibold tracking-tight text-foreground sm:text-sm">{value}</p>
             </div>
           ))}
         </div>
@@ -375,10 +375,10 @@ export function ProjectsSection({
       <div className="mt-3 grid gap-3 xl:grid-cols-3">
         <div className={`${primaryPanelClass} xl:col-span-2`}>
           <div className="flex items-center justify-between gap-3">
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Project Momentum</p>
-            <p className="text-[11px] text-primary">{momentumDeltaLabel}</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Project Momentum</p>
+            <p className="text-xs text-primary">{momentumDeltaLabel}</p>
           </div>
-          <svg viewBox="0 0 520 170" className="mt-2 h-[170px] w-full">
+          <svg viewBox="0 0 520 170" className="mt-2 h-44 w-full">
             <defs>
               <linearGradient id="momentum-line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="var(--color-primary)" />
@@ -413,14 +413,14 @@ export function ProjectsSection({
         </div>
 
         <div className={primaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Workstream Status Mix</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Workstream Status Mix</p>
           <div className="mt-3 flex items-center gap-4">
-            <div className="relative h-[120px] w-[120px] shrink-0 rounded-full shadow-lg shadow-primary/15" style={donutStyle(workstreamSlices)}>
-              <div className="absolute inset-[20px] rounded-full bg-card" />
+            <div className="relative size-32 shrink-0 rounded-full" style={donutStyle(workstreamSlices)}>
+              <div className="absolute inset-5 rounded-full bg-card" />
             </div>
             <div className="space-y-2">
               {workstreamSlices.map((slice) => (
-                <div key={slice.label} className="flex items-center justify-between gap-3 text-[11px]">
+                <div key={slice.label} className="flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2">
                     <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: slice.color }} />
                     <span className="text-muted-foreground">{slice.label}</span>
@@ -434,16 +434,16 @@ export function ProjectsSection({
       </div>
 
       <div className={`mt-3 ${primaryPanelClass}`}>
-        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Continuity Coverage</p>
+        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Continuity Coverage</p>
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {continuityCoverage.map((item) => (
             <div key={item.label}>
-              <div className="mb-1.5 flex items-center justify-between text-[11px]">
+              <div className="mb-1.5 flex items-center justify-between text-xs">
                 <span className="text-muted-foreground">{item.label}</span>
                 <span className="text-muted-foreground">{item.value}%</span>
               </div>
               <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
-                <div className={`h-full rounded-full ${item.barClass} shadow-sm`} style={{ width: `${item.value}%` }} />
+                <div className={`h-full rounded-full ${item.barClass}`} style={{ width: `${item.value}%` }} />
               </div>
             </div>
           ))}
@@ -452,46 +452,46 @@ export function ProjectsSection({
 
       <div className="mt-3 grid gap-2.5 lg:grid-cols-2 2xl:grid-cols-3">
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Current Summary</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Current Summary</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full shadow-sm"
+              className="h-full rounded-full"
               style={{ width: `${projectSignalRows[0]?.value ?? 0}%`, background: projectSignalRows[0]?.color ?? "var(--primary)" }}
             />
           </div>
-          <p className="mt-2 text-[13px] leading-6 text-muted-foreground sm:text-[14px]">{currentSummary}</p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-sm">{currentSummary}</p>
         </div>
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Last Known State</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Last Known State</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full shadow-sm"
+              className="h-full rounded-full"
               style={{ width: `${projectSignalRows[1]?.value ?? 0}%`, background: projectSignalRows[1]?.color ?? "var(--chart-2)" }}
             />
           </div>
-          <p className="mt-2 text-[13px] leading-6 text-muted-foreground sm:text-[14px]">{lastKnownState}</p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-sm">{lastKnownState}</p>
         </div>
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Next Recommended Action</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Next Recommended Action</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full shadow-sm"
+              className="h-full rounded-full"
               style={{ width: `${projectSignalRows[2]?.value ?? 0}%`, background: projectSignalRows[2]?.color ?? "var(--chart-4)" }}
             />
           </div>
-          <p className="mt-2 text-[13px] leading-6 text-muted-foreground sm:text-[14px]">{nextRecommendedAction}</p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-sm">{nextRecommendedAction}</p>
         </div>
       </div>
 
       <div className="mt-3 grid gap-2.5 lg:grid-cols-2">
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Open Loops</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Open Loops</p>
           <div className="mt-2.5 space-y-2">
             {openLoopRows.map((row) => (
               <div key={row.loop} className={subCardClass}>
-                <p className="text-[12px] leading-6 text-muted-foreground sm:text-[13px]">{row.loop}</p>
+                <p className="text-xs leading-6 text-muted-foreground sm:text-sm">{row.loop}</p>
                 <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-chart-5 shadow-sm" style={{ width: `${row.pressure}%` }} />
+                  <div className="h-full rounded-full bg-chart-5" style={{ width: `${row.pressure}%` }} />
                 </div>
               </div>
             ))}
@@ -499,19 +499,19 @@ export function ProjectsSection({
         </div>
 
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Active Workstreams</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Active Workstreams</p>
           <div className="mt-2.5 space-y-2">
             {workstreamRows.map((workstream) => (
               <div key={workstream.title} className={subCardClass}>
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[14px] font-semibold tracking-[-0.02em] sm:text-[15px]">{workstream.title}</p>
-                  <span className="rounded-[6px] border border-border px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                  <p className="text-sm font-semibold tracking-tight sm:text-sm">{workstream.title}</p>
+                  <span className="rounded-md border border-border px-2 py-1 text-xs uppercase tracking-widest text-muted-foreground">
                     {workstream.status}
                   </span>
                 </div>
-                <p className="mt-1.5 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">{workstream.detail}</p>
+                <p className="mt-1.5 text-xs leading-6 text-muted-foreground sm:text-sm">{workstream.detail}</p>
                 <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary shadow-sm" style={{ width: `${workstream.progress}%` }} />
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${workstream.progress}%` }} />
                 </div>
               </div>
             ))}
@@ -521,8 +521,8 @@ export function ProjectsSection({
 
       <div className="mt-3 grid gap-2.5 lg:grid-cols-2">
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Recent Memories</p>
-          <svg viewBox="0 0 320 90" className="mt-2 h-[82px] w-full">
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Recent Memories</p>
+          <svg viewBox="0 0 320 90" className="mt-2 h-20 w-full">
             <defs>
               <linearGradient id="memory-line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="var(--color-chart-2)" />
@@ -536,12 +536,12 @@ export function ProjectsSection({
             {memoryConfidenceRows.map((memory) => (
               <div key={memory.id} className={subCardClass}>
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[13px] font-semibold tracking-[-0.02em] sm:text-[14px]">{memory.type}</p>
-                  <span className="text-[12px] text-muted-foreground">confidence {memory.confidence}</span>
+                  <p className="text-sm font-semibold tracking-tight sm:text-sm">{memory.type}</p>
+                  <span className="text-xs text-muted-foreground">confidence {memory.confidence}</span>
                 </div>
-                <p className="mt-1.5 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">{memory.detail}</p>
+                <p className="mt-1.5 text-xs leading-6 text-muted-foreground sm:text-sm">{memory.detail}</p>
                 <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-chart-2 shadow-sm" style={{ width: `${memory.score}%` }} />
+                  <div className="h-full rounded-full bg-chart-2" style={{ width: `${memory.score}%` }} />
                 </div>
               </div>
             ))}
@@ -549,29 +549,29 @@ export function ProjectsSection({
         </div>
 
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Latest Handoff</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Latest Handoff</p>
           <div className="mt-2 flex items-center gap-4">
-            <div className="relative h-[92px] w-[92px] shrink-0 rounded-full shadow-lg shadow-primary/15" style={donutStyle(handoffSlices)}>
-              <div className="absolute inset-[16px] grid place-items-center rounded-full bg-muted text-[13px] font-semibold text-primary">
+            <div className="relative size-24 shrink-0 rounded-full" style={donutStyle(handoffSlices)}>
+              <div className="absolute inset-4 grid place-items-center rounded-full bg-muted text-sm font-semibold text-primary">
                 {handoffScore}%
               </div>
             </div>
             <div>
-              <p className="text-[12px] text-muted-foreground">handoff trust score</p>
-              <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{handoffScore}</p>
+              <p className="text-xs text-muted-foreground">handoff trust score</p>
+              <p className="mt-1 text-xl font-semibold tracking-tight">{handoffScore}</p>
             </div>
           </div>
           <div className={`mt-2.5 ${subCardClass}`}>
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[14px] font-semibold tracking-[-0.02em] sm:text-[15px]">{latestHandoff.title}</p>
-              <span className="rounded-[6px] border border-border px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+              <p className="text-sm font-semibold tracking-tight sm:text-sm">{latestHandoff.title}</p>
+              <span className="rounded-md border border-border px-2 py-1 text-xs uppercase tracking-widest text-muted-foreground">
                 {latestHandoff.status}
               </span>
             </div>
-            <p className="mt-1.5 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">{latestHandoff.detail}</p>
+            <p className="mt-1.5 text-xs leading-6 text-muted-foreground sm:text-sm">{latestHandoff.detail}</p>
             <button
               type="button"
-              className="mt-2.5 rounded-[8px] border border-primary/40 bg-primary/15 px-3.5 py-2 text-[12px] font-medium text-primary transition hover:bg-primary/25"
+              className="mt-2.5 rounded-md border border-primary/40 bg-primary/15 px-3.5 py-2 text-xs font-medium text-primary transition hover:bg-primary/25"
             >
               Generate first handoff
             </button>
@@ -581,8 +581,8 @@ export function ProjectsSection({
 
       <div className="mt-3 grid gap-2.5 lg:grid-cols-2 xl:grid-cols-3">
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Quality Status</p>
-          <svg viewBox="0 0 340 120" className="mt-2 h-[96px] w-full">
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Quality Status</p>
+          <svg viewBox="0 0 340 120" className="mt-2 h-24 w-full">
             <defs>
               <linearGradient id="quality-line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="var(--color-primary)" />
@@ -603,12 +603,12 @@ export function ProjectsSection({
           <div className="mt-1.5 space-y-2">
             {qualityGraphRows.map((row) => (
               <div key={row.label} className={subCardClass}>
-                <div className="flex items-center justify-between gap-3 text-[12px] sm:text-[13px]">
+                <div className="flex items-center justify-between gap-3 text-xs sm:text-sm">
                   <p className="text-muted-foreground">{row.label}</p>
                   <p className="font-semibold">{row.value}</p>
                 </div>
                 <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full shadow-sm" style={{ width: `${row.normalized}%`, background: row.color }} />
+                  <div className="h-full rounded-full" style={{ width: `${row.normalized}%`, background: row.color }} />
                 </div>
               </div>
             ))}
@@ -616,27 +616,27 @@ export function ProjectsSection({
         </div>
 
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Integration Health</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Integration Health</p>
           <div className="mt-2 flex items-center gap-4">
-            <div className="relative h-[92px] w-[92px] shrink-0 rounded-full shadow-lg shadow-chart-2/15" style={donutStyle(integrationSlices)}>
-              <div className="absolute inset-[16px] grid place-items-center rounded-full bg-muted text-[13px] font-semibold text-chart-2">
+            <div className="relative size-24 shrink-0 rounded-full" style={donutStyle(integrationSlices)}>
+              <div className="absolute inset-4 grid place-items-center rounded-full bg-muted text-sm font-semibold text-chart-2">
                 {integrationScore}%
               </div>
             </div>
             <div>
-              <p className="text-[12px] text-muted-foreground">Overall health score</p>
-              <p className="mt-1 text-[20px] font-semibold tracking-[-0.03em]">{integrationScore}</p>
+              <p className="text-xs text-muted-foreground">Overall health score</p>
+              <p className="mt-1 text-xl font-semibold tracking-tight">{integrationScore}</p>
             </div>
           </div>
           <div className="mt-2.5 space-y-2">
             {integrationGraphRows.map((row) => (
               <div key={row.label} className={subCardClass}>
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[12px] text-muted-foreground sm:text-[13px]">{row.label}</p>
-                  <p className="text-[12px] font-semibold sm:text-[13px]">{row.value}</p>
+                  <p className="text-xs text-muted-foreground sm:text-sm">{row.label}</p>
+                  <p className="text-xs font-semibold sm:text-sm">{row.value}</p>
                 </div>
                 <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-chart-2 shadow-sm" style={{ width: `${row.score}%` }} />
+                  <div className="h-full rounded-full bg-chart-2" style={{ width: `${row.score}%` }} />
                 </div>
               </div>
             ))}
@@ -644,8 +644,8 @@ export function ProjectsSection({
         </div>
 
         <div className={secondaryPanelClass}>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Recent Requests</p>
-          <svg viewBox="0 0 320 90" className="mt-2 h-[82px] w-full">
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Recent Requests</p>
+          <svg viewBox="0 0 320 90" className="mt-2 h-20 w-full">
             <defs>
               <linearGradient id="request-line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="var(--color-chart-4)" />
@@ -657,21 +657,21 @@ export function ProjectsSection({
           </svg>
           <div className="mt-1.5 space-y-2">
             {requestBars.length === 0 ? (
-              <div className="rounded-[10px] border border-dashed border-border bg-muted/40 px-3 py-3 text-[12px] text-muted-foreground">
+              <div className="rounded-lg border border-dashed border-border bg-muted/40 px-3 py-3 text-xs text-muted-foreground">
                 No request activity yet. Run retrieve/resume from Playground.
               </div>
             ) : (
               requestBars.map((request) => (
                 <div key={request.id} className={subCardClass}>
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-[13px] font-semibold tracking-[-0.02em] sm:text-[14px]">{request.method}</p>
-                    <span className="rounded-[6px] border border-border px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <p className="text-sm font-semibold tracking-tight sm:text-sm">{request.method}</p>
+                    <span className="rounded-md border border-border px-2 py-1 text-xs uppercase tracking-widest text-muted-foreground">
                       {request.state}
                     </span>
                   </div>
-                  <p className="mt-1 text-[12px] text-muted-foreground sm:text-[13px]">{request.detail}</p>
+                  <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{request.detail}</p>
                   <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                    <div className="h-full rounded-full bg-chart-4 shadow-sm" style={{ width: `${request.score}%` }} />
+                    <div className="h-full rounded-full bg-chart-4" style={{ width: `${request.score}%` }} />
                   </div>
                 </div>
               ))

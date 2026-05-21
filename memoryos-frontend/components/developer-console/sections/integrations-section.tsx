@@ -404,7 +404,7 @@ function CatalogIcon({ card }: { card: IntegrationCatalogCard }) {
       <img
         src={LOGO_URLS.pipecat}
         alt="Pipecat logo"
-        className="h-10 w-10 rounded-[6px] object-cover"
+        className="h-10 w-10 rounded-md object-cover"
         onError={(event) => {
           event.currentTarget.src = "/pipecat.png";
         }}
@@ -472,7 +472,7 @@ function CopyButton({
     <button
       type="button"
       onClick={() => onCopy(value)}
-      className="rounded-[8px] border border-border bg-card px-3 py-1.5 text-[11px] uppercase tracking-[0.08em] text-muted-foreground transition hover:border-border"
+      className="rounded-md border border-border bg-card px-3 py-1.5 text-xs uppercase tracking-wider text-muted-foreground transition hover:border-border"
     >
       {copied ? "Copied" : "Copy"}
     </button>
@@ -578,31 +578,31 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1040px]">
+    <div className="mx-auto w-full max-w-5xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[22px] font-semibold tracking-[-0.05em]">Setup Guide</h1>
-          <p className="mt-1 max-w-[640px] text-[13px] leading-6 text-muted-foreground">
+          <h1 className="text-xl font-semibold tracking-tighter">Setup Guide</h1>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
             Connect MemoryOS through the SDK, MCP adapter, or HTTP API. Each setup path explains when to use it,
             why the step is required, and what live console signal proves it is working.
           </p>
         </div>
-        <div className="rounded-[10px] border border-border bg-muted/50 px-3 py-2 text-right">
+        <div className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-right">
           
           <div className="mt-1 flex items-center justify-end gap-2">
             <span className={`h-2 w-2 rounded-full ${runtimeStatusDotClass}`} />
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {runtimeStatusLabel}
             </span>
           </div>
-          <p className="mt-1 text-[10px] text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground">
             Token: {tokenStatus === "ready" ? "ready" : tokenStatus === "checking" ? "checking" : "missing"}
           </p>
         </div>
       </div>
 
       {tokenStatus === "missing" ? (
-        <div className="mt-4 rounded-[10px] border border-chart-5/25 bg-muted px-4 py-3 text-[13px] leading-6 text-chart-5">
+        <div className="mt-4 rounded-lg border border-chart-5/25 bg-muted px-4 py-3 text-sm leading-6 text-chart-5">
           The console could not load a MemoryOS token yet. Sign in again or open API Keys to create a token before
           copying production config.
         </div>
@@ -615,9 +615,9 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               value={catalogQuery}
               onChange={(event) => setCatalogQuery(event.target.value)}
               placeholder="Search integrations..."
-              className="h-11 w-full rounded-[8px] border border-border bg-muted/50 px-4 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/70"
+              className="h-11 w-full rounded-md border border-border bg-muted/50 px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/70"
             />
-            <div className="mt-4 flex gap-6 overflow-x-auto border-b border-border text-[13px]">
+            <div className="mt-4 flex gap-6 overflow-x-auto border-b border-border text-sm">
               {CATALOG_TABS.map((tab) => (
                 <button
                   key={tab}
@@ -644,13 +644,13 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
                   setSelectedCatalogId(card.id);
                   setSelectedSurface(card.surface);
                 }}
-                className="min-h-[160px] rounded-[8px] border border-border bg-muted/40 p-5 text-left transition hover:border-ring hover:bg-muted"
+                className="min-h-40 rounded-md border border-border bg-muted/40 p-5 text-left transition hover:border-ring hover:bg-muted"
               >
-                <div className="grid h-10 w-10 place-items-center rounded-[7px]  text-[12px] font-bold text-foreground">
+                <div className="grid h-10 w-10 place-items-center rounded-md  text-xs font-bold text-foreground">
                   <CatalogIcon card={card} />
                 </div>
-                <p className="mt-8 text-[15px] font-semibold text-foreground">{card.title}</p>
-                <p className="mt-2 text-[13px] leading-5 text-muted-foreground">{card.subtitle}</p>
+                <p className="mt-8 text-sm font-semibold text-foreground">{card.title}</p>
+                <p className="mt-2 text-sm leading-5 text-muted-foreground">{card.subtitle}</p>
               </button>
             ))}
           </div>
@@ -659,7 +659,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
         <button
           type="button"
           onClick={() => setSelectedCatalogId(null)}
-          className="mt-5 text-[13px] text-muted-foreground transition hover:text-foreground"
+          className="mt-5 text-sm text-muted-foreground transition hover:text-foreground"
         >
           ← Back to integrations
         </button>
@@ -668,24 +668,24 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
       {selectedCatalogCard ? (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-[8px] bg-muted text-[13px] font-bold text-foreground">
+            <div className="grid h-12 w-12 place-items-center rounded-md bg-muted text-sm font-bold text-foreground">
               <CatalogIcon card={selectedCatalogCard} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-[18px] font-semibold">{selectedCatalogCard.title}</h2>
-                <span className="rounded-[6px] bg-primary/20 px-2 py-1 text-[11px] text-primary">
+                <h2 className="text-lg font-semibold">{selectedCatalogCard.title}</h2>
+                <span className="rounded-md bg-primary/20 px-2 py-1 text-xs text-primary">
                   {selectedCatalogCard.category}
                 </span>
               </div>
-              <p className="mt-1 text-[13px] text-muted-foreground">{selectedCatalogCard.subtitle}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{selectedCatalogCard.subtitle}</p>
             </div>
           </div>
           <a
             href={selectedCard.docsUrl}
             target={selectedCard.docsUrl.startsWith("http") ? "_blank" : undefined}
             rel={selectedCard.docsUrl.startsWith("http") ? "noreferrer" : undefined}
-            className="text-[12px] font-medium text-muted-foreground transition hover:text-foreground"
+            className="text-xs font-medium text-muted-foreground transition hover:text-foreground"
           >
             Open
           </a>
@@ -701,7 +701,7 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               key={card.id}
               type="button"
               onClick={() => setSelectedSurface(card.id)}
-              className={`rounded-[10px] border p-4 text-left transition ${
+              className={`rounded-lg border p-4 text-left transition ${
                 active
                   ? "border-primary/45 bg-primary/10"
                   : "border-border bg-muted/50 hover:border-ring"
@@ -709,22 +709,22 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             >
               <div className="flex items-center justify-between gap-3">
                 <div
-                  className="grid h-10 w-10 place-items-center rounded-[8px] text-[11px] font-semibold"
+                  className="grid h-10 w-10 place-items-center rounded-md text-xs font-semibold"
                   style={{ background: `${card.logoTone}22`, color: card.logoTone }}
                 >
                   {card.logoText}
                 </div>
-                <span className="rounded-[7px] border border-border bg-muted/50 px-2 py-1 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                <span className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs uppercase tracking-wider text-muted-foreground">
                   {card.badge}
                 </span>
               </div>
-              <p className="mt-4 text-[16px] font-semibold tracking-[-0.03em] text-foreground">
+              <p className="mt-4 text-base font-semibold tracking-tight text-foreground">
                 {card.title}
               </p>
-              <p className="mt-1 font-mono text-[11px] text-muted-foreground">{card.subtitle}</p>
-              <p className="mt-3 text-[12px] leading-5 text-muted-foreground">{card.summary}</p>
+              <p className="mt-1 font-mono text-xs text-muted-foreground">{card.subtitle}</p>
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">{card.summary}</p>
               {active ? (
-                <p className="mt-3 rounded-[7px] border border-primary/20 bg-primary/10 px-2.5 py-2 text-[11px] leading-5 text-primary">
+                <p className="mt-3 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-2 text-xs leading-5 text-primary">
                   Selected
                 </p>
               ) : null}
@@ -735,20 +735,20 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
       ) : null}
 
       {selectedCatalogCard ? (
-      <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="rounded-[12px] border border-border bg-card px-4 py-4">
+      <div className="mt-5 grid gap-4 xl:grid-cols-2">
+        <section className="rounded-lg border border-border bg-card px-4 py-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
                 {selectedCard.badge}
               </p>
-              <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.04em]">
+              <h2 className="mt-1 text-2xl font-semibold tracking-tighter">
                 {selectedCard.title}
               </h2>
-              <p className="mt-1 max-w-[560px] text-[13px] leading-6 text-muted-foreground">
+              <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
                 {selectedCard.summary}
               </p>
-              <p className="mt-2 max-w-[560px] text-[12px] leading-5 text-muted-foreground">
+              <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
                 Required for live data: MemoryOS needs one authenticated write path and one retrieval path so the console can show real memories, requests, and continuity output.
               </p>
             </div>
@@ -756,43 +756,43 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               href={selectedCard.docsUrl}
               target={selectedCard.docsUrl.startsWith("http") ? "_blank" : undefined}
               rel={selectedCard.docsUrl.startsWith("http") ? "noreferrer" : undefined}
-              className="rounded-[8px] border border-border bg-muted/50 px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] text-muted-foreground transition hover:border-border"
+              className="rounded-md border border-border bg-muted/50 px-3 py-1.5 text-xs font-medium tracking-wider text-muted-foreground transition hover:border-border"
             >
               DOCS
             </a>
           </div>
 
-          <div className="mt-4 rounded-[10px] border border-border bg-muted px-3 py-3">
+          <div className="mt-4 rounded-lg border border-border bg-muted px-3 py-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Install</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Install</p>
               <CopyButton
                 value={selectedCard.install}
                 copied={copiedBlockId === "install"}
                 onCopy={(value) => void copyText(value, "install")}
               />
             </div>
-            <code className="mt-2 block overflow-x-auto whitespace-pre text-[12px] text-muted-foreground">
+            <code className="mt-2 block overflow-x-auto whitespace-pre text-xs text-muted-foreground">
               {selectedCard.install}
             </code>
           </div>
 
-          <div className="mt-3 rounded-[10px] border border-border bg-muted px-3 py-3">
+          <div className="mt-3 rounded-lg border border-border bg-muted px-3 py-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Environment</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Environment</p>
               <CopyButton
                 value={envBlock}
                 copied={copiedBlockId === "env"}
                 onCopy={(value) => void copyText(value, "env")}
               />
             </div>
-            <pre className="mt-2 overflow-x-auto whitespace-pre-wrap text-[12px] leading-6 text-muted-foreground">
+            <pre className="mt-2 overflow-x-auto whitespace-pre-wrap text-xs leading-6 text-muted-foreground">
               <code>{envBlock}</code>
             </pre>
           </div>
 
-          <div className="mt-3 rounded-[10px] border border-border bg-muted px-3 py-3">
+          <div className="mt-3 rounded-lg border border-border bg-muted px-3 py-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
                 {selectedCard.id === "mcp" ? "MCP config" : "Verify"}
               </p>
               <CopyButton
@@ -801,30 +801,30 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
                 onCopy={(value) => void copyText(value, "code")}
               />
             </div>
-            <pre className="mt-2 max-h-[420px] overflow-x-auto whitespace-pre-wrap text-[12px] leading-6 text-muted-foreground">
+            <pre className="mt-2 max-h-96 overflow-x-auto whitespace-pre-wrap text-xs leading-6 text-muted-foreground">
               <code>{codeBlock}</code>
             </pre>
           </div>
         </section>
 
         <aside className="space-y-3">
-          <div className="rounded-[12px] border border-border bg-card px-4 py-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Live setup checklist
             </p>
             <div className="mt-3 space-y-3">
               {selectedCard.steps.map((step, index) => (
-                <div key={step.title} className="flex gap-3 rounded-[9px] border border-border bg-muted/50 px-3 py-3">
-                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-primary/35 bg-primary/10 text-[12px] font-semibold text-primary">
+                <div key={step.title} className="flex gap-3 rounded-md border border-border bg-muted/50 px-3 py-3">
+                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-primary/35 bg-primary/10 text-xs font-semibold text-primary">
                     {index + 1}
                   </div>
                   <div>
-                    <p className="text-[13px] font-semibold text-foreground">{step.title}</p>
-                    <p className="mt-1 text-[12px] leading-5 text-muted-foreground">{step.action}</p>
-                    <p className="mt-2 text-[11px] leading-5 text-muted-foreground">
+                    <p className="text-sm font-semibold text-foreground">{step.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{step.action}</p>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">
                       <span className="text-muted-foreground">Why required:</span> {step.requiredBecause}
                     </p>
-                    <p className="mt-1 text-[11px] leading-5 text-primary">
+                    <p className="mt-1 text-xs leading-5 text-primary">
                       Live proof: {step.liveProof}
                     </p>
                   </div>
@@ -833,52 +833,52 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             </div>
           </div>
 
-          <div className="rounded-[12px] border border-border bg-card px-4 py-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Verify installation
             </p>
-            <div className="mt-3 flex items-start gap-3 rounded-[9px] border border-border bg-muted/50 px-3 py-3">
+            <div className="mt-3 flex items-start gap-3 rounded-md border border-border bg-muted/50 px-3 py-3">
               <div
-                className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-[13px] font-bold ${verificationBadgeClass}`}
+                className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-bold ${verificationBadgeClass}`}
               >
                 {verificationStatus === "connected" ? "✓" : verificationStatus === "waiting" ? "…" : "3"}
               </div>
               <div>
-                <p className="text-[13px] font-semibold text-foreground">
+                <p className="text-sm font-semibold text-foreground">
                   {verificationStatus === "connected" ? "Connected" : verificationStatus === "waiting" ? "Waiting for events" : "Run a live test"}
                 </p>
-                <p className="mt-1 text-[12px] leading-5 text-muted-foreground">{verificationMessage}</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">{verificationMessage}</p>
               </div>
             </div>
             <button
               type="button"
               onClick={installationVerification?.onVerify}
               disabled={verificationStatus === "waiting"}
-              className="mt-3 w-full rounded-[8px] bg-primary px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground transition hover:bg-primary/90 disabled:cursor-wait disabled:opacity-70"
+              className="mt-3 w-full rounded-md bg-primary px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 disabled:cursor-wait disabled:opacity-70"
             >
               {verificationStatus === "connected" ? "Verified" : verificationStatus === "waiting" ? "Waiting..." : "Verify installation"}
             </button>
           </div>
 
-          <div className="rounded-[12px] border border-border bg-card px-4 py-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Live metrics
             </p>
             <div className="mt-3 grid grid-cols-3 gap-2">
-              <div className="rounded-[8px] border border-border bg-muted/50 px-2.5 py-2">
-                <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Memories</p>
-                <p className="mt-1 text-[15px] font-semibold text-foreground">{liveSignals?.memoryCount ?? 0}</p>
+              <div className="rounded-md border border-border bg-muted/50 px-2.5 py-2">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">Memories</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">{liveSignals?.memoryCount ?? 0}</p>
               </div>
-              <div className="rounded-[8px] border border-border bg-muted/50 px-2.5 py-2">
-                <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Requests</p>
-                <p className="mt-1 text-[15px] font-semibold text-foreground">{liveSignals?.requestCount ?? 0}</p>
+              <div className="rounded-md border border-border bg-muted/50 px-2.5 py-2">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">Requests</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">{liveSignals?.requestCount ?? 0}</p>
               </div>
-              <div className="rounded-[8px] border border-border bg-muted/50 px-2.5 py-2">
-                <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Timeline</p>
-                <p className="mt-1 text-[15px] font-semibold text-foreground">{liveSignals?.timelineCount ?? 0}</p>
+              <div className="rounded-md border border-border bg-muted/50 px-2.5 py-2">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">Timeline</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">{liveSignals?.timelineCount ?? 0}</p>
               </div>
             </div>
-            <p className="mt-3 text-[11px] leading-5 text-muted-foreground">
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">
               Last route: {liveSignals?.lastRequestRoute ?? "No request yet"}
             </p>
           </div>

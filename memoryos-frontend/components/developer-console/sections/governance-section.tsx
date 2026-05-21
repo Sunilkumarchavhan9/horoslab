@@ -167,13 +167,13 @@ export function GovernanceSection() {
 
   return (
     <section>
-      <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Governance</h1>
+      <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Governance</h1>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-3">
-        <div className="rounded-[10px] border border-border bg-muted p-4 xl:col-span-2">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Policy</p>
+        <div className="rounded-lg border border-border bg-muted p-4 xl:col-span-2">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Policy</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <label className="text-[12px] text-muted-foreground">
+            <label className="text-xs text-muted-foreground">
               Retention class
               <select
                 value={policy.retentionClass}
@@ -189,14 +189,14 @@ export function GovernanceSection() {
                           : 168,
                   }))
                 }
-                className="mt-1 h-9 w-full rounded-[8px] border border-border bg-muted px-2 text-[12px]"
+                className="mt-1 h-9 w-full rounded-md border border-border bg-muted px-2 text-xs"
               >
                 <option value="short">short (24h)</option>
                 <option value="standard">standard (168h)</option>
                 <option value="long">long (720h)</option>
               </select>
             </label>
-            <label className="text-[12px] text-muted-foreground">
+            <label className="text-xs text-muted-foreground">
               Governance mode
               <select
                 value={policy.mode}
@@ -206,14 +206,14 @@ export function GovernanceSection() {
                     mode: event.target.value as GovernanceMode,
                   }))
                 }
-                className="mt-1 h-9 w-full rounded-[8px] border border-border bg-muted px-2 text-[12px]"
+                className="mt-1 h-9 w-full rounded-md border border-border bg-muted px-2 text-xs"
               >
                 <option value="balanced">balanced</option>
                 <option value="strict">strict</option>
                 <option value="enterprise">enterprise</option>
               </select>
             </label>
-            <label className="text-[12px] text-muted-foreground">
+            <label className="text-xs text-muted-foreground">
               TTL (hours)
               <input
                 type="number"
@@ -226,18 +226,18 @@ export function GovernanceSection() {
                     ttlHours: Number(event.target.value),
                   }))
                 }
-                className="mt-1 h-9 w-full rounded-[8px] border border-border bg-muted px-2 text-[12px]"
+                className="mt-1 h-9 w-full rounded-md border border-border bg-muted px-2 text-xs"
               />
             </label>
-            <div className="text-[12px] text-muted-foreground">
+            <div className="text-xs text-muted-foreground">
               Role resolution
-              <div className="mt-1 h-9 w-full rounded-[8px] border border-border bg-muted px-2 text-[12px] flex items-center text-muted-foreground">
+              <div className="mt-1 h-9 w-full rounded-md border border-border bg-muted px-2 text-xs flex items-center text-muted-foreground">
                 Server-resolved (owner/admin required)
               </div>
             </div>
           </div>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
-            <label className="flex items-center gap-2 text-[12px] text-muted-foreground">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
               <input
                 type="checkbox"
                 checked={policy.redactSecrets}
@@ -247,7 +247,7 @@ export function GovernanceSection() {
               />
               Redact secrets
             </label>
-            <label className="flex items-center gap-2 text-[12px] text-muted-foreground">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
               <input
                 type="checkbox"
                 checked={policy.pinCriticalDecisions}
@@ -257,7 +257,7 @@ export function GovernanceSection() {
               />
               Pin critical decisions
             </label>
-            <label className="flex items-center gap-2 text-[12px] text-muted-foreground">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
               <input
                 type="checkbox"
                 checked={policy.requireManualReviewForHighRisk}
@@ -275,15 +275,15 @@ export function GovernanceSection() {
             type="button"
             onClick={() => void savePolicy()}
             disabled={busy}
-            className="mt-3 rounded-[8px] border border-border px-3 py-2 text-[11px] text-foreground disabled:opacity-50"
+            className="mt-3 rounded-md border border-border px-3 py-2 text-xs text-foreground disabled:opacity-50"
           >
             {busy ? "Saving..." : "Save Governance Policy"}
           </button>
         </div>
 
-        <div className="rounded-[10px] border border-border bg-muted p-4">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Live mode summary</p>
-          <div className="mt-3 space-y-2 text-[12px] text-muted-foreground">
+        <div className="rounded-lg border border-border bg-muted p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Live mode summary</p>
+          <div className="mt-3 space-y-2 text-xs text-muted-foreground">
             <p>Mode: {policy.mode}</p>
             <p>Retention: {policy.retentionClass}</p>
             <p>Policy TTL: {policy.ttlHours}h</p>
@@ -294,27 +294,27 @@ export function GovernanceSection() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">High-risk review queue</p>
-        <p className="mt-1 text-[12px] text-muted-foreground">
+      <div className="mt-4 rounded-lg border border-border bg-muted p-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">High-risk review queue</p>
+        <p className="mt-1 text-xs text-muted-foreground">
           Owner/admin can approve or reject pending high-risk memory writes.
         </p>
         <div className="mt-3 space-y-2">
           {dedupedReviewItems.length === 0 ? (
-            <p className="rounded-[8px] border border-border bg-muted px-3 py-2 text-[12px] text-muted-foreground">
+            <p className="rounded-md border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">
               No pending review items.
             </p>
           ) : (
             dedupedReviewItems.map((item) => (
-              <div key={item.id} className="rounded-[8px] border border-border bg-muted px-3 py-3">
-                <p className="text-[12px] text-foreground">{item.reason}</p>
-                <p className="mt-1 text-[10px] text-muted-foreground">{item.id}</p>
+              <div key={item.id} className="rounded-md border border-border bg-muted px-3 py-3">
+                <p className="text-xs text-foreground">{item.reason}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{item.id}</p>
                 <div className="mt-2 flex gap-2">
                   <button
                     type="button"
                     onClick={() => void reviewItem(item.id, "approve")}
                     disabled={busy}
-                    className="rounded-[6px] border border-chart-2/40 px-2 py-1 text-[10px] text-chart-2 disabled:opacity-50"
+                    className="rounded-md border border-chart-2/40 px-2 py-1 text-xs text-chart-2 disabled:opacity-50"
                   >
                     Approve
                   </button>
@@ -322,7 +322,7 @@ export function GovernanceSection() {
                     type="button"
                     onClick={() => void reviewItem(item.id, "reject")}
                     disabled={busy}
-                    className="rounded-[6px] border border-destructive/40 px-2 py-1 text-[10px] text-destructive disabled:opacity-50"
+                    className="rounded-md border border-destructive/40 px-2 py-1 text-xs text-destructive disabled:opacity-50"
                   >
                     Reject
                   </button>

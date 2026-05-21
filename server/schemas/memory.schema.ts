@@ -1,13 +1,31 @@
 import { z } from "zod";
+import { MEMORY_CONTRACT_CATEGORIES, MEMORY_CONTRACT_VERSION } from "../../lib/memory/types";
 
 const NonEmptyTrimmedString = z.string().trim().min(1);
 
+export const MemoryContractCategorySchema = z.enum(MEMORY_CONTRACT_CATEGORIES);
+
+export const MemoryContractItemSchema = z.object({
+  contract_version: z.literal(MEMORY_CONTRACT_VERSION).default(MEMORY_CONTRACT_VERSION),
+  category: MemoryContractCategorySchema,
+  content: NonEmptyTrimmedString,
+  source: NonEmptyTrimmedString.optional(),
+  confidence: z.number().min(0).max(1).optional(),
+  why_selected: NonEmptyTrimmedString.optional(),
+});
+
 export const MemoryContractSchema = z.object({
+  contract_version: z.literal(MEMORY_CONTRACT_VERSION).default(MEMORY_CONTRACT_VERSION),
   goal: NonEmptyTrimmedString.optional(),
   constraints: z.array(NonEmptyTrimmedString).max(20).optional(),
   decisions: z.array(NonEmptyTrimmedString).max(30).optional(),
+  runbooks: z.array(NonEmptyTrimmedString).max(30).optional(),
+  incidents: z.array(NonEmptyTrimmedString).max(30).optional(),
+  preferences: z.array(NonEmptyTrimmedString).max(30).optional(),
+  policies: z.array(NonEmptyTrimmedString).max(30).optional(),
   open_risks: z.array(NonEmptyTrimmedString).max(30).optional(),
   next_actions: z.array(NonEmptyTrimmedString).max(30).optional(),
+  items: z.array(MemoryContractItemSchema).max(80).optional(),
 });
 
 export const GovernancePolicySchema = z.object({

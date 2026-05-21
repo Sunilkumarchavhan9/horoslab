@@ -37,6 +37,7 @@ export type ConnectorSyncResult = {
   checkpoint?: string;
   dedupeKeys?: string[];
   attempts?: number;
+  contractCounts?: Record<string, number>;
 };
 
 const CONNECTOR_SYNC_MAX_ATTEMPTS = Math.max(1, Number(process.env.CONNECTOR_SYNC_MAX_ATTEMPTS ?? 3));
@@ -83,6 +84,17 @@ async function withRetry<T>(run: () => Promise<T>, label: string): Promise<{ val
   throw lastError instanceof Error ? lastError : new Error(`${label} failed`);
 }
 
+function countContractCategories(
+  candidates: Array<{ contractCategory?: string }>,
+): Record<string, number> {
+  return candidates.reduce<Record<string, number>>((counts, candidate) => {
+    if (candidate.contractCategory) {
+      counts[candidate.contractCategory] = (counts[candidate.contractCategory] ?? 0) + 1;
+    }
+    return counts;
+  }, {});
+}
+
 /**
  * The ConnectorManager is the central hub for processing real-time data 
  * from external sources like Notion, GitHub, and Drive.
@@ -103,7 +115,7 @@ export const ConnectorManager = {
 
     if (candidates.length === 0) {
       console.log(`[ConnectorManager] No memories extracted from ${payload.source} payload.`);
-      return { success: true, extractedCount: 0 };
+      return { success: true, extractedCount: 0, contractCounts: {} };
     }
 
     // 2. Commit extracted memories to the store
@@ -131,7 +143,8 @@ export const ConnectorManager = {
 
     return {
       success: true,
-      extractedCount: candidates.length
+      extractedCount: candidates.length,
+      contractCounts: countContractCategories(candidates),
     };
   },
 

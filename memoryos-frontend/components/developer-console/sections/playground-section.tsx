@@ -96,6 +96,7 @@ type ContinueProjectBrief = {
 type PromptTraceItem = {
   memoryId: string;
   source: string;
+  contractCategory?: string;
   confidence: number;
   whySelected: string;
 };
@@ -106,10 +107,20 @@ type PromptBundle = {
   claudeCode: string;
 };
 
+type TraceProof = {
+  runType: "resume_prompt";
+  memoryUsedCount: number;
+  averageConfidence: number;
+  contractCategories: string[];
+  whatChangedAfterAction: string;
+  summary: string;
+};
+
 type ResumePromptPayload = {
   target: "cursor" | "codex" | "claude_code";
   brief: ContinueProjectBrief;
   prompts: PromptBundle;
+  traceProof?: TraceProof;
   trace: PromptTraceItem[];
 };
 
@@ -959,12 +970,28 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
               codex: responseData.prompts.codex,
               claudeCode: responseData.prompts.claudeCode,
             },
+            traceProof: isRecord(responseData.traceProof)
+              ? {
+                  runType: responseData.traceProof.runType === "resume_prompt" ? "resume_prompt" : "resume_prompt",
+                  memoryUsedCount: typeof responseData.traceProof.memoryUsedCount === "number" ? responseData.traceProof.memoryUsedCount : 0,
+                  averageConfidence: typeof responseData.traceProof.averageConfidence === "number" ? responseData.traceProof.averageConfidence : 0,
+                  contractCategories: Array.isArray(responseData.traceProof.contractCategories)
+                    ? responseData.traceProof.contractCategories.filter((x): x is string => typeof x === "string")
+                    : [],
+                  whatChangedAfterAction:
+                    typeof responseData.traceProof.whatChangedAfterAction === "string"
+                      ? responseData.traceProof.whatChangedAfterAction
+                      : "Prompt generated from current brief.",
+                  summary: typeof responseData.traceProof.summary === "string" ? responseData.traceProof.summary : "",
+                }
+              : undefined,
             trace: Array.isArray(responseData.trace)
               ? responseData.trace
                   .filter((item): item is Record<string, unknown> => isRecord(item))
                   .map((item) => ({
                     memoryId: typeof item.memoryId === "string" ? item.memoryId : "unknown",
                     source: typeof item.source === "string" ? item.source : "general",
+                    ...(typeof item.contractCategory === "string" ? { contractCategory: item.contractCategory } : {}),
                     confidence: typeof item.confidence === "number" ? item.confidence : 0,
                     whySelected: typeof item.whySelected === "string" ? item.whySelected : "",
                   }))
@@ -1038,22 +1065,22 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
 
   if (!selectedContainerTag && isEmbedded) {
     return (
-      <div className="grid min-h-[calc(100vh-150px)] overflow-hidden rounded-[10px] border border-border bg-background lg:grid-cols-[minmax(420px,1fr)_390px]">
-        <section className="flex min-h-[660px] items-center justify-center px-8 pb-12">
-          <div className="w-full max-w-[720px] text-center">
+      <div className="grid min-h-screen overflow-hidden rounded-lg border border-border bg-background lg:grid-cols-2">
+        <section className="flex min-h-screen items-center justify-center px-8 pb-12">
+          <div className="w-full max-w-3xl text-center">
             <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center">
               <svg className="h-14 w-14 text-foreground" viewBox="0 0 48 48" fill="none" aria-hidden="true">
                 <path d="M24 4v16M24 28v16M4 24h16M28 24h16M11.5 11.5 20 20M28 28l8.5 8.5M36.5 11.5 28 20M20 28l-8.5 8.5" stroke="currentColor" strokeWidth="4" strokeLinecap="square" />
               </svg>
             </div>
-            <h1 className="text-[28px] font-semibold tracking-[-0.03em]">Select a container tag to start</h1>
-            <p className="mt-3 text-[14px] text-muted-foreground">Scope memory to a user, project, team, or agent runtime.</p>
-            <div className="mx-auto mt-8 flex h-[82px] max-w-[680px] items-center gap-3 rounded-[7px] border border-border bg-background px-5 shadow-2xl shadow-black/25">
+            <h1 className="text-3xl font-semibold tracking-tight">Select a container tag to start</h1>
+            <p className="mt-3 text-sm text-muted-foreground">Scope memory to a user, project, team, or agent runtime.</p>
+            <div className="mx-auto mt-8 flex h-20 max-w-2xl items-center gap-3 rounded-md border border-border bg-background px-5">
               <input
                 value={workspace}
                 onChange={(event) => setWorkspace(event.target.value)}
                 placeholder="Select a container tag first"
-                className="min-w-0 flex-1 bg-transparent text-[18px] font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                className="min-w-0 flex-1 bg-transparent text-lg font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
               />
               <button
                 type="button"
@@ -1061,7 +1088,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
                   setSelectedContainerTag(workspace.trim() || "memoryos-playground");
                   setStatusLine("Container tag selected");
                 }}
-                className="flex h-11 w-11 items-center justify-center rounded-[7px] bg-primary text-[20px] text-foreground transition hover:bg-primary/90"
+                className="flex h-11 w-11 items-center justify-center rounded-md bg-primary text-xl text-foreground transition hover:bg-primary/90"
                 aria-label="Select container tag"
               >
                 ↑
@@ -1070,8 +1097,8 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
           </div>
         </section>
 
-        <aside className="flex min-h-[660px] flex-col border-l border-border bg-background">
-          <div className="grid h-12 grid-cols-2 border-b border-border text-[14px]">
+        <aside className="flex min-h-screen flex-col border-l border-border bg-background">
+          <div className="grid h-12 grid-cols-2 border-b border-border text-sm">
             <button
               type="button"
               onClick={() => setSetupTab("configure")}
@@ -1091,17 +1118,17 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
           {setupTab === "configure" ? (
             <div className="flex-1 overflow-y-auto px-4 py-4">
               <div className="space-y-3">
-                <label className="grid grid-cols-[72px_1fr] items-center gap-3">
-                  <span className="text-[14px] font-semibold text-foreground">Tag</span>
+                <label className="grid grid-cols-4 items-center gap-3">
+                  <span className="text-sm font-semibold text-foreground">Tag</span>
                   <input
                     value={workspace}
                     onChange={(event) => setWorkspace(event.target.value)}
-                    className="h-10 rounded-[7px] border border-input bg-transparent px-3 text-[14px] text-foreground outline-none"
+                    className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none"
                   />
                 </label>
-                <label className="grid grid-cols-[72px_1fr] items-center gap-3">
-                  <span className="text-[14px] font-semibold text-foreground">Model</span>
-                  <select className="h-10 rounded-[7px] border border-input bg-background px-3 text-[14px] text-foreground outline-none">
+                <label className="grid grid-cols-4 items-center gap-3">
+                  <span className="text-sm font-semibold text-foreground">Model</span>
+                  <select className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none">
                     <option>Claude Sonnet 4.6</option>
                     <option>GPT agent</option>
                     <option>Qwen</option>
@@ -1114,30 +1141,30 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <button type="button" className="min-h-[108px] rounded-[8px] border border-primary bg-primary/10 px-4 py-5 text-center">
-                  <span className="block text-[20px] text-primary">⌕</span>
-                  <span className="mt-2 block text-[15px] font-semibold text-foreground">Agent</span>
-                  <span className="mt-1 block text-[11px] text-muted-foreground">LLM decides when to search</span>
+                <button type="button" className="min-h-28 rounded-md border border-primary bg-primary/10 px-4 py-5 text-center">
+                  <span className="block text-xl text-primary">⌕</span>
+                  <span className="mt-2 block text-sm font-semibold text-foreground">Agent</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">LLM decides when to search</span>
                 </button>
-                <button type="button" className="min-h-[108px] rounded-[8px] border border-input px-4 py-5 text-center">
-                  <span className="block text-[20px] text-muted-foreground">ϟ</span>
-                  <span className="mt-2 block text-[15px] font-semibold text-muted-foreground">Auto-Search</span>
-                  <span className="mt-1 block text-[11px] text-muted-foreground">Search every message</span>
+                <button type="button" className="min-h-28 rounded-md border border-input px-4 py-5 text-center">
+                  <span className="block text-xl text-muted-foreground">ϟ</span>
+                  <span className="mt-2 block text-sm font-semibold text-muted-foreground">Auto-Search</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">Search every message</span>
                 </button>
               </div>
 
-              <div className="mt-5 grid grid-cols-[90px_1fr] items-center gap-3 border-t border-border pt-4">
-                <span className="text-[14px] font-semibold text-foreground">Mode</span>
-                <input value="hybrid" readOnly className="h-10 rounded-[7px] border border-input bg-transparent px-3 text-[14px] text-foreground outline-none" />
-                <span className="text-[14px] font-semibold text-foreground">Limit</span>
-                <input value={topK} onChange={(event) => setTopK(Math.max(1, Math.min(20, Number(event.target.value) || 1)))} className="h-10 rounded-[7px] border border-input bg-transparent px-3 text-[14px] text-foreground outline-none" />
-                <span className="text-[14px] font-semibold text-foreground">Threshold</span>
-                <input defaultValue="0.4" className="h-10 rounded-[7px] border border-input bg-transparent px-3 text-[14px] text-foreground outline-none" />
+              <div className="mt-5 grid grid-cols-4 items-center gap-3 border-t border-border pt-4">
+                <span className="text-sm font-semibold text-foreground">Mode</span>
+                <input value="hybrid" readOnly className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
+                <span className="text-sm font-semibold text-foreground">Limit</span>
+                <input value={topK} onChange={(event) => setTopK(Math.max(1, Math.min(20, Number(event.target.value) || 1)))} className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
+                <span className="text-sm font-semibold text-foreground">Threshold</span>
+                <input defaultValue="0.4" className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
               </div>
 
               <div className="mt-5 border-t border-border pt-5">
-                <p className="text-[14px] font-semibold text-foreground">Code</p>
-                <pre className="mt-3 max-h-[260px] overflow-auto rounded-[7px] border border-border bg-background p-3 text-[11px] leading-5 text-foreground">
+                <p className="text-sm font-semibold text-foreground">Code</p>
+                <pre className="mt-3 max-h-64 overflow-auto rounded-md border border-border bg-background p-3 text-xs leading-5 text-foreground">
 {`import { createMemoryOSClient } from "@memoryostm/sdk";
 
 const memoryos = createMemoryOSClient({
@@ -1159,12 +1186,12 @@ const context = await memoryos.beforeModel({
                 value={importText}
                 onChange={(event) => setImportText(event.target.value)}
                 placeholder="Paste text - notes, articles, chat logs..."
-                className="h-32 w-full resize-none rounded-[7px] border border-border bg-background p-4 text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
+                className="h-32 w-full resize-none rounded-md border border-border bg-background p-4 text-sm text-foreground outline-none placeholder:text-muted-foreground"
               />
-              <button type="button" className="mt-4 flex h-11 w-full items-center justify-center rounded-[7px] bg-primary text-[14px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              <button type="button" className="mt-4 flex h-11 w-full items-center justify-center rounded-md bg-primary text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 + Import
               </button>
-              <p className="mt-20 text-center text-[16px] text-muted-foreground">No documents processing</p>
+              <p className="mt-20 text-center text-base text-muted-foreground">No documents processing</p>
             </div>
           )}
         </aside>
@@ -1198,19 +1225,19 @@ const answer = await model.generate({
 
     return (
       <main className="min-h-screen bg-background text-foreground">
-        <header className="grid h-[60px] grid-cols-[260px_1fr_400px] border-b border-border">
+        <header className="grid h-16 grid-cols-3 border-b border-border">
           <div className="flex items-center border-r border-border px-5">
-            <span className="inline-flex origin-left scale-[0.72]">
+            <span className="inline-flex origin-left scale-75">
               <MemoryStarLogo tone="white" />
             </span>
           </div>
           <div className="flex items-center justify-between px-10">
             <div className="flex items-center gap-3">
-              <span className="text-[15px]">⌂</span>
-              <span className="text-[15px] font-semibold uppercase tracking-[0.06em]">{workspace || "memoryostm"}</span>
-              <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Free</span>
+              <span className="text-sm">⌂</span>
+              <span className="text-sm font-semibold uppercase tracking-wide">{workspace || "memoryostm"}</span>
+              <span className="rounded-full border border-border px-2 py-0.5 text-xs uppercase tracking-widest text-muted-foreground">Free</span>
             </div>
-            <div className="flex items-center gap-8 text-[13px] font-semibold uppercase tracking-[0.08em]">
+            <div className="flex items-center gap-8 text-sm font-semibold uppercase tracking-wider">
               <a className="text-foreground transition hover:text-primary" href="/developer-console">Console</a>
               <a className="text-foreground transition hover:text-primary" href="/developer-console">Support</a>
               <button
@@ -1227,7 +1254,7 @@ const answer = await model.generate({
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-[8px] text-muted-foreground6 transition hover:text-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground6 transition hover:text-foreground"
               aria-label="Playground settings"
             >
               <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -1236,7 +1263,7 @@ const answer = await model.generate({
               </svg>
             </button>
             <span
-              className="flex h-9 w-9 items-center justify-center rounded-[8px] text-muted-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground"
               aria-label="Dark theme enabled"
             >
               <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -1246,18 +1273,18 @@ const answer = await model.generate({
           </div>
         </header>
 
-        <div className="grid min-h-[calc(100vh-60px)] grid-cols-[260px_minmax(620px,1fr)_400px]">
+        <div className="grid min-h-screen grid-cols-3">
           <aside className="border-r border-border bg-background px-2.5 py-4">
             <div className="relative">
               <input
                 placeholder="Search..."
-                className="h-11 w-full rounded-[7px] border border-border bg-muted/50 px-12 text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
+                className="h-11 w-full rounded-md border border-border bg-muted/50 px-12 text-sm text-foreground outline-none placeholder:text-muted-foreground"
               />
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">⌕</span>
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 rounded border border-border px-1.5 py-0.5 text-[11px] text-muted-foreground">⌘K</span>
+              <span className="absolute right-5 top-1/2 -translate-y-1/2 rounded border border-border px-1.5 py-0.5 text-xs text-muted-foreground">⌘K</span>
             </div>
 
-            <nav className="mt-5 space-y-1 text-[14px]">
+            <nav className="mt-5 space-y-1 text-sm">
               {[
                 ["Overview", "⌂"],
                 ["Playground", "○"],
@@ -1269,7 +1296,7 @@ const answer = await model.generate({
                 <button
                   key={label}
                   type="button"
-                  className={`flex h-9 w-full items-center gap-3 rounded-[5px] px-4 text-left transition ${
+                  className={`flex h-9 w-full items-center gap-3 rounded-md px-4 text-left transition ${
                     label === "Playground" ? "bg-muted font-semibold text-foreground" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                   }`}
                 >
@@ -1280,57 +1307,57 @@ const answer = await model.generate({
             </nav>
 
             <div className="mt-9 space-y-1">
-              <p className="px-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Analytics</p>
-              <button type="button" className="flex h-9 w-full items-center justify-between rounded-[5px] px-4 text-left text-[14px] text-muted-foreground">
+              <p className="px-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Analytics</p>
+              <button type="button" className="flex h-9 w-full items-center justify-between rounded-md px-4 text-left text-sm text-muted-foreground">
                 <span>User Insights</span>
                 <span className="text-muted-foreground">▢</span>
               </button>
             </div>
 
             <div className="mt-7 space-y-1">
-              <p className="px-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Data</p>
+              <p className="px-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Data</p>
               {["Connectors", "Import"].map((item) => (
-                <button key={item} type="button" className="flex h-9 w-full items-center rounded-[5px] px-4 text-left text-[14px] text-muted-foreground hover:bg-muted/60">
+                <button key={item} type="button" className="flex h-9 w-full items-center rounded-md px-4 text-left text-sm text-muted-foreground hover:bg-muted/60">
                   {item}
                 </button>
               ))}
             </div>
 
             <div className="mt-7 space-y-1">
-              <p className="px-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Developer</p>
+              <p className="px-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Developer</p>
               {["API Keys", "Agents", "Plugins"].map((item) => (
-                <button key={item} type="button" className="flex h-9 w-full items-center rounded-[5px] px-4 text-left text-[14px] text-muted-foreground hover:bg-muted/60">
+                <button key={item} type="button" className="flex h-9 w-full items-center rounded-md px-4 text-left text-sm text-muted-foreground hover:bg-muted/60">
                   {item}
                 </button>
               ))}
             </div>
 
             <div className="mt-7 space-y-1">
-              <p className="px-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Organization</p>
+              <p className="px-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Organization</p>
               {["Team", "Billing", "Settings"].map((item) => (
-                <button key={item} type="button" className="flex h-9 w-full items-center rounded-[5px] px-4 text-left text-[14px] text-muted-foreground hover:bg-muted/60">
+                <button key={item} type="button" className="flex h-9 w-full items-center rounded-md px-4 text-left text-sm text-muted-foreground hover:bg-muted/60">
                   {item}
                 </button>
               ))}
             </div>
           </aside>
 
-          <section className="flex min-h-[calc(100vh-60px)] flex-col bg-background">
+          <section className="flex min-h-screen flex-col bg-background">
             <div className="flex flex-1 items-center justify-center px-8 pb-20">
-              <div className="w-full max-w-[760px] text-center">
+              <div className="w-full max-w-3xl text-center">
                 <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center">
                   <svg className="h-14 w-14 text-foreground" viewBox="0 0 48 48" fill="none" aria-hidden="true">
                     <path d="M24 4v16M24 28v16M4 24h16M28 24h16M11.5 11.5 20 20M28 28l8.5 8.5M36.5 11.5 28 20M20 28l-8.5 8.5" stroke="currentColor" strokeWidth="4" strokeLinecap="square" />
                   </svg>
                 </div>
-                <h1 className="text-[28px] font-semibold tracking-[-0.03em]">Select a container tag to start</h1>
-                <p className="mt-3 text-[14px] text-muted-foreground">Scope memory to a user, project, team, or agent runtime.</p>
-                <div className="mx-auto mt-8 flex h-[86px] max-w-[720px] items-center gap-3 rounded-[7px] border border-border bg-background px-5 shadow-2xl shadow-black/25">
+                <h1 className="text-3xl font-semibold tracking-tight">Select a container tag to start</h1>
+                <p className="mt-3 text-sm text-muted-foreground">Scope memory to a user, project, team, or agent runtime.</p>
+                <div className="mx-auto mt-8 flex h-20 max-w-3xl items-center gap-3 rounded-md border border-border bg-background px-5">
                   <input
                     value={workspace}
                     onChange={(event) => setWorkspace(event.target.value)}
                     placeholder="Select a container tag first"
-                    className="min-w-0 flex-1 bg-transparent text-[18px] font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                    className="min-w-0 flex-1 bg-transparent text-lg font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
                   />
                   <button
                     type="button"
@@ -1338,7 +1365,7 @@ const answer = await model.generate({
                       setSelectedContainerTag(workspace.trim() || "memoryos-playground");
                       setStatusLine("Container tag selected");
                     }}
-                    className="flex h-12 w-12 items-center justify-center rounded-[7px] bg-primary text-[20px] text-foreground transition hover:bg-primary/90"
+                    className="flex h-12 w-12 items-center justify-center rounded-md bg-primary text-xl text-foreground transition hover:bg-primary/90"
                     aria-label="Select container tag"
                   >
                     ↑
@@ -1348,8 +1375,8 @@ const answer = await model.generate({
             </div>
           </section>
 
-          <aside className="flex min-h-[calc(100vh-60px)] flex-col border-l border-border bg-background">
-            <div className="grid h-11 grid-cols-2 border-b border-border text-[14px]">
+          <aside className="flex min-h-screen flex-col border-l border-border bg-background">
+            <div className="grid h-11 grid-cols-2 border-b border-border text-sm">
               <button
                 type="button"
                 onClick={() => setSetupTab("configure")}
@@ -1369,49 +1396,49 @@ const answer = await model.generate({
             {setupTab === "configure" ? (
               <div className="flex-1 overflow-y-auto px-4 py-4">
                 <div className="grid gap-3">
-                  <label className="grid grid-cols-[74px_1fr] items-center gap-3">
-                    <span className="text-[14px] font-semibold text-foreground">Tag</span>
-                    <button type="button" onClick={() => setWorkspace("memoryos-playground")} className="flex h-10 items-center justify-between rounded-[7px] border border-input px-3 text-[14px] text-foreground">
+                  <label className="grid grid-cols-4 items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Tag</span>
+                    <button type="button" onClick={() => setWorkspace("memoryos-playground")} className="flex h-10 items-center justify-between rounded-md border border-input px-3 text-sm text-foreground">
                       <span>{workspace || "Select tag"}</span><span>⌄</span>
                     </button>
                   </label>
-                  <label className="grid grid-cols-[74px_1fr] items-center gap-3">
-                    <span className="text-[14px] font-semibold text-foreground">Model</span>
-                    <button type="button" className="flex h-10 items-center justify-between rounded-[7px] border border-input px-3 text-[14px] text-foreground">
+                  <label className="grid grid-cols-4 items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Model</span>
+                    <button type="button" className="flex h-10 items-center justify-between rounded-md border border-input px-3 text-sm text-foreground">
                       <span>Claude Sonnet 4.6</span><span>⌄</span>
                     </button>
                   </label>
                 </div>
 
                 <div className="mt-6 grid grid-cols-2 gap-3">
-                  <button type="button" className="min-h-[118px] rounded-[8px] border border-primary bg-primary/10 px-4 py-6 text-center">
-                    <span className="block text-[22px] text-primary">⌕</span>
-                    <span className="mt-2 block text-[15px] font-semibold text-foreground">Agent</span>
-                    <span className="mt-1 block text-[11px] text-muted-foreground">LLM decides when to search</span>
+                  <button type="button" className="min-h-32 rounded-md border border-primary bg-primary/10 px-4 py-6 text-center">
+                    <span className="block text-xl text-primary">⌕</span>
+                    <span className="mt-2 block text-sm font-semibold text-foreground">Agent</span>
+                    <span className="mt-1 block text-xs text-muted-foreground">LLM decides when to search</span>
                   </button>
-                  <button type="button" className="min-h-[118px] rounded-[8px] border border-input px-4 py-6 text-center">
-                    <span className="block text-[22px] text-muted-foreground">ϟ</span>
-                    <span className="mt-2 block text-[15px] font-semibold text-muted-foreground">Auto-Search</span>
-                    <span className="mt-1 block text-[11px] text-muted-foreground">Search every message</span>
+                  <button type="button" className="min-h-32 rounded-md border border-input px-4 py-6 text-center">
+                    <span className="block text-xl text-muted-foreground">ϟ</span>
+                    <span className="mt-2 block text-sm font-semibold text-muted-foreground">Auto-Search</span>
+                    <span className="mt-1 block text-xs text-muted-foreground">Search every message</span>
                   </button>
                 </div>
 
                 <div className="mt-5 border-t border-border pt-4">
-                  <div className="grid grid-cols-[90px_1fr] items-center gap-3">
-                    <span className="text-[14px] font-semibold text-foreground">Mode</span>
-                    <button type="button" className="h-10 rounded-[7px] border border-input px-3 text-left text-[14px] text-foreground">hybrid</button>
-                    <span className="text-[14px] font-semibold text-foreground">Limit</span>
-                    <input value={topK} onChange={(event) => setTopK(Math.max(1, Math.min(20, Number(event.target.value) || 1)))} className="h-10 rounded-[7px] border border-input bg-transparent px-3 text-[14px] text-foreground outline-none" />
-                    <span className="text-[14px] font-semibold text-foreground">Threshold</span>
-                    <input defaultValue="0.4" className="h-10 rounded-[7px] border border-input bg-transparent px-3 text-[14px] text-foreground outline-none" />
+                  <div className="grid grid-cols-4 items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Mode</span>
+                    <button type="button" className="h-10 rounded-md border border-input px-3 text-left text-sm text-foreground">hybrid</button>
+                    <span className="text-sm font-semibold text-foreground">Limit</span>
+                    <input value={topK} onChange={(event) => setTopK(Math.max(1, Math.min(20, Number(event.target.value) || 1)))} className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
+                    <span className="text-sm font-semibold text-foreground">Threshold</span>
+                    <input defaultValue="0.4" className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-3 text-[13px] text-foreground">
+                  <div className="mt-3 flex flex-wrap gap-3 text-sm text-foreground">
                     {["Rerank", "Rewrite", "Aggregate"].map((item) => (
                       <label key={item} className="inline-flex items-center gap-2"><input type="checkbox" className="h-4 w-4" />{item}</label>
                     ))}
                   </div>
-                  <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Include</p>
-                  <div className="mt-2 flex flex-wrap gap-3 text-[13px] text-foreground">
+                  <p className="mt-4 text-xs uppercase tracking-widest text-muted-foreground">Include</p>
+                  <div className="mt-2 flex flex-wrap gap-3 text-sm text-foreground">
                     {["Related", "Docs", "Chunks", "Summaries", "Forgotten"].map((item, index) => (
                       <label key={item} className="inline-flex items-center gap-2">
                         <input defaultChecked={index < 2} type="checkbox" className="h-4 w-4" />
@@ -1422,8 +1449,8 @@ const answer = await model.generate({
                 </div>
 
                 <div className="mt-5 border-t border-border pt-5">
-                  <p className="text-[14px] font-semibold text-foreground">Code</p>
-                  <pre className="mt-3 max-h-[330px] overflow-auto rounded-[7px] border border-border bg-background p-3 text-[11px] leading-5 text-foreground">
+                  <p className="text-sm font-semibold text-foreground">Code</p>
+                  <pre className="mt-3 max-h-80 overflow-auto rounded-md border border-border bg-background p-3 text-xs leading-5 text-foreground">
                     {configureCode}
                   </pre>
                 </div>
@@ -1434,19 +1461,19 @@ const answer = await model.generate({
                   value={importText}
                   onChange={(event) => setImportText(event.target.value)}
                   placeholder="Paste text - notes, articles, chat logs..."
-                  className="h-32 w-full resize-none rounded-[7px] border border-border bg-background p-4 text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
+                  className="h-32 w-full resize-none rounded-md border border-border bg-background p-4 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                 />
-                <button type="button" className="mt-4 flex h-11 w-full items-center justify-center rounded-[7px] bg-primary text-[14px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                <button type="button" className="mt-4 flex h-11 w-full items-center justify-center rounded-md bg-primary text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   + Import
                 </button>
-                <p className="mt-20 text-center text-[16px] text-muted-foreground">No documents processing</p>
+                <p className="mt-20 text-center text-base text-muted-foreground">No documents processing</p>
               </div>
             )}
 
             <button
               type="button"
               onClick={handleNewChat}
-              className="h-[60px] border-t border-border text-[14px] font-semibold uppercase tracking-[0.08em] text-foreground"
+              className="h-16 border-t border-border text-sm font-semibold uppercase tracking-wider text-foreground"
             >
               Reset Chat
             </button>
@@ -1458,18 +1485,18 @@ const answer = await model.generate({
 
   return (
     <main className={`dark h-screen overflow-hidden ${lightMode ? "bg-background text-foreground" : "bg-background text-foreground"}`}>
-      <header className={`flex h-[70px] items-center justify-between border-b px-5 ${lightMode ? "border-black/10 bg-white [&_*]:!text-foreground" : "border-border bg-background"}`}>
+      <header className={`flex h-16 items-center justify-between border-b px-5 ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
         <div className="flex items-center gap-4">
-          <span className="inline-flex origin-left scale-[0.84]">
+          <span className="inline-flex origin-left scale-90">
             <MemoryStarLogo tone={lightMode ? "black" : "white"} />
           </span>
-          <span className={`hidden h-5 w-px sm:block ${lightMode ? "bg-background/12" : "bg-white/12"}`} />
+          <span className={`hidden h-5 w-px sm:block ${lightMode ? "bg-background/12" : "bg-muted"}`} />
         </div>
         <div className="flex items-center gap-2">
           <button       
             type="button" 
             onClick={() => setSettingsOpen(true)}
-            className={`flex h-9 w-9 items-center justify-center rounded-[8px] bg-transparent transition ${lightMode ? "text-black/65 hover:text-black" : "text-muted-foreground hover:text-foreground"}`}
+            className={`flex h-9 w-9 items-center justify-center rounded-md bg-transparent transition ${lightMode ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground hover:text-foreground"}`}
             aria-label="Playground settings"
           >
             <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -1478,7 +1505,7 @@ const answer = await model.generate({
             </svg>
           </button>
           <span
-            className="flex h-9 w-9 items-center justify-center rounded-[8px] text-muted-foreground"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground"
             aria-label="Dark theme enabled"
           >
             <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -1488,10 +1515,10 @@ const answer = await model.generate({
         </div>
       </header>
 
-      <div className={`grid h-[calc(100vh-70px)] min-h-0 grid-cols-1 ${graphExpanded ? "xl:grid-cols-[260px_minmax(420px,1fr)_minmax(560px,44vw)]" : "xl:grid-cols-[300px_minmax(560px,1fr)_430px]"}`}>
-        <aside className={`min-h-0 overflow-y-auto border-b xl:border-b-0 xl:border-r ${lightMode ? "border-black/10 bg-white [&_*]:!text-foreground" : "border-border bg-background"}`}>
+      <div className={`grid h-screen min-h-0 grid-cols-1 ${graphExpanded ? "xl:grid-cols-3" : "xl:grid-cols-3"}`}>
+        <aside className={`min-h-0 overflow-y-auto border-b xl:border-b-0 xl:border-r ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
           <div className="px-4 py-4">
-            <p className="border-l-4 border-primary pl-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Profile</p>
+            <p className="border-l-4 border-primary pl-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Profile</p>
             <div className="mt-3 space-y-2.5">
               {profileCards.length > 0 ? (
                 profileCards.map((card) => (
@@ -1499,75 +1526,75 @@ const answer = await model.generate({
                     key={card.id}
                     type="button"
                     onClick={() => toggleProfileCard(card.id)}
-                    className={`rounded-[8px] border px-3 py-3 text-[14px] leading-6 shadow-lg shadow-black/10 ${
-                      lightMode ? "border-black/10 bg-white text-foreground" : "border-border bg-background text-foreground"
+                    className={`rounded-md border px-3 py-3 text-sm leading-6 ${
+                      lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-background text-foreground"
                     } w-full cursor-pointer text-left transition hover:border-primary/40`}
                   >
-                    <div className={`${expandedProfileIds[card.id] ? "max-h-none" : "max-h-[168px] overflow-hidden"}`}>
+                    <div className={`${expandedProfileIds[card.id] ? "max-h-none" : "max-h-44 overflow-hidden"}`}>
                       {card.text}
                     </div>
-                    <div className="mt-2 text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+                    <div className="mt-2 text-xs uppercase tracking-wider text-muted-foreground">
                       {expandedProfileIds[card.id] ? "Collapse" : "Expand"}
                     </div>
                   </button>
                 ))
               ) : (
-                <div className={`flex min-h-[160px] flex-col items-center justify-center rounded-[10px] border border-dashed px-3 py-3 text-center ${
-                  lightMode ? "border-black/15 bg-white text-foreground" : "border-border bg-background"
+                <div className={`flex min-h-40 flex-col items-center justify-center rounded-lg border border-dashed px-3 py-3 text-center ${
+                  lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-background"
                 }`}>
-                  <div className={`mb-3 flex h-14 w-14 items-center justify-center rounded-full border text-[24px] ${
-                    lightMode ? "border-black/12 bg-background/[0.03] text-black/40" : "border-border bg-white/[0.03] text-muted-foreground"
+                  <div className={`mb-3 flex h-14 w-14 items-center justify-center rounded-full border text-2xl ${
+                    lightMode ? "border-border bg-muted/30 text-muted-foreground" : "border-border bg-muted/30 text-muted-foreground"
                   }`}>
                     o
                   </div>
-                  <p className={`text-[13px] ${lightMode ? "text-black/60" : "text-muted-foreground"}`}>No profile memories yet</p>
-                  <p className={`mt-1 text-[12px] ${lightMode ? "text-black/42" : "text-foreground/35"}`}>No data yet.</p>
+                  <p className={`text-sm ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>No profile memories yet</p>
+                  <p className={`mt-1 text-xs ${lightMode ? "text-muted-foreground" : "text-foreground/35"}`}>No data yet.</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className={`border-t px-4 py-4 ${lightMode ? "border-black/10" : "border-border"}`}>
-            <p className="border-l-4 border-primary pl-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Sessions</p>
+          <div className={`border-t px-4 py-4 ${lightMode ? "border-border" : "border-border"}`}>
+            <p className="border-l-4 border-primary pl-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Sessions</p>
             <div className="mt-3 space-y-2.5">
               {recentSessions.length > 0 ? (
                 recentSessions.map((session) => (
                   <div
                     key={session.id}
-                    className={`rounded-[8px] border px-3 py-3 shadow-lg shadow-black/10 ${
-                      lightMode ? "border-black/10 bg-white text-foreground" : "border-border bg-background"
+                    className={`rounded-md border px-3 py-3 ${
+                      lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-background"
                     }`}
                   >
-                    <p className={`text-[13px] font-semibold ${lightMode ? "text-foreground" : "text-foreground/90"}`}>{session.title}</p>
-                    <p className={`mt-1 text-[12px] ${lightMode ? "text-black/62" : "text-muted-foreground"}`}>{session.detail}</p>
-                    <p className={`mt-1 text-[11px] ${lightMode ? "text-black/44" : "text-muted-foreground"}`}>{formatTs(session.at)}</p>
+                    <p className={`text-sm font-semibold ${lightMode ? "text-foreground" : "text-foreground/90"}`}>{session.title}</p>
+                    <p className={`mt-1 text-xs ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>{session.detail}</p>
+                    <p className={`mt-1 text-xs ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>{formatTs(session.at)}</p>
                   </div>
                 ))
               ) : (
-                <div className={`flex min-h-[160px] flex-col items-center justify-center rounded-[10px] border border-dashed px-3 py-3 text-center ${
-                  lightMode ? "border-black/15 bg-white text-foreground" : "border-border bg-background"
+                <div className={`flex min-h-40 flex-col items-center justify-center rounded-lg border border-dashed px-3 py-3 text-center ${
+                  lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-background"
                 }`}>
-                  <div className={`mb-3 flex h-14 w-14 items-center justify-center rounded-full border text-[22px] ${
-                    lightMode ? "border-black/12 bg-background/[0.03] text-black/40" : "border-border bg-white/[0.03] text-muted-foreground"
+                  <div className={`mb-3 flex h-14 w-14 items-center justify-center rounded-full border text-xl ${
+                    lightMode ? "border-border bg-muted/30 text-muted-foreground" : "border-border bg-muted/30 text-muted-foreground"
                   }`}>
                     []
                   </div>
-                  <p className={`text-[13px] ${lightMode ? "text-black/60" : "text-muted-foreground"}`}>No sessions yet</p>
-                  <p className={`mt-1 text-[12px] ${lightMode ? "text-black/42" : "text-foreground/35"}`}>Requests appear after the first run.</p>
+                  <p className={`text-sm ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>No sessions yet</p>
+                  <p className={`mt-1 text-xs ${lightMode ? "text-muted-foreground" : "text-foreground/35"}`}>Requests appear after the first run.</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className={`border-t px-4 py-4 ${lightMode ? "border-black/10" : "border-border"}`}>
-            <p className="border-l-4 border-primary pl-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Get Started</p>
-            <div className={`mt-3 rounded-[8px] border p-3 ${
-              lightMode ? "border-black/10 bg-white" : "border-border bg-background"
+          <div className={`border-t px-4 py-4 ${lightMode ? "border-border" : "border-border"}`}>
+            <p className="border-l-4 border-primary pl-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Get Started</p>
+            <div className={`mt-3 rounded-md border p-3 ${
+              lightMode ? "border-border bg-card" : "border-border bg-background"
             }`}>
-              <p className={`text-[13px] ${lightMode ? "text-black/68" : "text-muted-foreground"}`}>Production-ready memory infrastructure</p>
+              <p className={`text-sm ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>Production-ready memory infrastructure</p>
               <a
                 href="/developer-console"
-                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-[8px] bg-primary text-[13px] font-semibold text-foreground transition hover:bg-primary/90"
+                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary text-sm font-semibold text-foreground transition hover:bg-primary/90"
               >
                 Back to Console
               </a>
@@ -1575,8 +1602,8 @@ const answer = await model.generate({
           </div>
         </aside>
 
-        <section className={`flex min-h-0 flex-col border-b xl:border-b-0 xl:border-r ${lightMode ? "border-black/10 bg-white [&_*]:!text-foreground" : "border-border bg-background"}`}>
-          <div className={`flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 ${lightMode ? "border-black/10" : "border-border"}`}>
+        <section className={`flex min-h-0 flex-col border-b xl:border-b-0 xl:border-r ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
+          <div className={`flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 ${lightMode ? "border-border" : "border-border"}`}>
             <div className="flex items-center">
               {[
                 { key: "chat", label: "Chat.md", icon: "MD" },
@@ -1587,17 +1614,17 @@ const answer = await model.generate({
                   key={entry.key}
                   type="button"
                   onClick={() => setTab(entry.key as CenterTab)}
-                  className={`flex h-10 min-w-[118px] items-center gap-2 border-r px-4 text-[13px] font-semibold transition ${lightMode ? "border-black/10" : "border-border"} ${
+                  className={`flex h-10 min-w-28 items-center gap-2 border-r px-4 text-sm font-semibold transition ${lightMode ? "border-border" : "border-border"} ${
                     tab === entry.key
                       ? lightMode
-                        ? "bg-background/[0.04] text-foreground"
-                        : "bg-white/[0.04] text-foreground"
+                        ? "bg-muted/30 text-foreground"
+                        : "bg-muted/30 text-foreground"
                       : lightMode
-                        ? "text-black/55 hover:text-black"
+                        ? "text-muted-foreground hover:text-foreground"
                         : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  <span className={`text-[9px] font-bold ${tab === entry.key ? "text-primary" : lightMode ? "text-black/35" : "text-foreground/35"}`}>
+                  <span className={`text-xs font-bold ${tab === entry.key ? "text-primary" : lightMode ? "text-muted-foreground" : "text-foreground/35"}`}>
                     {entry.icon}
                   </span>
                   {entry.label}
@@ -1609,15 +1636,15 @@ const answer = await model.generate({
               <button
                 type="button"
                 onClick={handleNewChat}
-                className="rounded-[8px] bg-primary px-4 py-2 text-[14px] font-semibold text-foreground transition hover:bg-primary/90"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-primary/90"
               >
                 + New Chat
               </button>
               <button
                 type="button"
                 onClick={() => setTab(tab === "chat" ? "code" : "chat")}
-                className={`h-9 w-9 rounded-[8px] text-[13px] font-semibold transition ${
-                  lightMode ? "text-black/50 hover:text-black" : "text-muted-foreground hover:text-foreground"
+                className={`h-9 w-9 rounded-md text-sm font-semibold transition ${
+                  lightMode ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-label="Toggle code"
               >
@@ -1630,28 +1657,28 @@ const answer = await model.generate({
             {tab === "chat" ? (
               <>
                 {!isEmbedded ? (
-                  <div className="mx-auto mb-12 max-w-[920px] pt-10 text-center">
+                  <div className="mx-auto mb-12 max-w-5xl pt-10 text-center">
                     <div className="mx-auto flex items-center justify-center">
-                      <span className="inline-flex scale-[1.18]">
+                      <span className="inline-flex scale-110">
                         <MemoryStarLogo tone={lightMode ? "black" : "white"} />
                       </span>
                     </div>
-                    <p className={`mx-auto mt-6 max-w-[720px] text-[16px] leading-7 ${lightMode ? "text-black/70" : "text-muted-foreground"}`}>
+                    <p className={`mx-auto mt-6 max-w-3xl text-base leading-7 ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
                       Live workspace continuity is connected to your backend.
                       <br />
                       Memory contracts, retrieval, and runtime requests are shown from real API data.
                     </p>
 
-                    <div className={`mx-auto mt-10 max-w-[780px] rounded-[10px] border p-7 text-left shadow-lg ${
-                      lightMode ? "border-black/10 bg-white text-foreground shadow-primary/10" : "border-border bg-card text-foreground shadow-black/20"
+                    <div className={`mx-auto mt-10 max-w-3xl rounded-lg border p-7 text-left ${
+                      lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-card text-foreground"
                     }`}>
                       <div className="mb-6 flex items-center gap-2">
                         <span className="h-3.5 w-3.5 rounded-full bg-destructive" />
                         <span className="h-3.5 w-3.5 rounded-full bg-chart-5" />
                         <span className="h-3.5 w-3.5 rounded-full bg-chart-2" />
-                        <span className={`ml-5 text-[12px] ${lightMode ? "text-black/42" : "text-foreground/35"}`}>memoryos.ts (live workspace)</span>
+                        <span className={`ml-5 text-xs ${lightMode ? "text-muted-foreground" : "text-foreground/35"}`}>memoryos.ts (live workspace)</span>
                       </div>
-                      <pre className={`overflow-x-auto text-[14px] leading-6 ${lightMode ? "text-foreground" : "text-foreground"}`}>
+                      <pre className={`overflow-x-auto text-sm leading-6 ${lightMode ? "text-foreground" : "text-foreground"}`}>
 {`const model = withMemoryOS(baseModel, {
   workspace: "${workspace}",
   project: "${project}",
@@ -1662,29 +1689,29 @@ const answer = await model.generate({
                       </pre>
                     </div>
 
-                    <div className="mx-auto mt-9 grid max-w-[720px] grid-cols-3 gap-4">
+                    <div className="mx-auto mt-9 grid max-w-3xl grid-cols-3 gap-4">
                       <div>
-                        <p className={`text-[27px] font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>
+                        <p className={`text-2xl font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>
                           {memories.length}
                         </p>
-                        <p className={`text-[11px] uppercase tracking-[0.12em] ${lightMode ? "text-black/52" : "text-muted-foreground"}`}>Live memories</p>
+                        <p className={`text-xs uppercase tracking-widest ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>Live memories</p>
                       </div>
                       <div>
-                        <p className={`text-[27px] font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>
+                        <p className={`text-2xl font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>
                           {liveRequestStats.p95LatencyMs !== null ? `${liveRequestStats.p95LatencyMs}ms` : "--"}
                         </p>
-                        <p className={`text-[11px] uppercase tracking-[0.12em] ${lightMode ? "text-black/52" : "text-muted-foreground"}`}>P95 request latency</p>
+                        <p className={`text-xs uppercase tracking-widest ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>P95 request latency</p>
                       </div>
                       <div>
-                        <p className={`text-[27px] font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>
+                        <p className={`text-2xl font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>
                           {liveRequestStats.successRate !== null ? `${liveRequestStats.successRate}%` : "--"}
                         </p>
-                        <p className={`text-[11px] uppercase tracking-[0.12em] ${lightMode ? "text-black/52" : "text-muted-foreground"}`}>Request success rate</p>
+                        <p className={`text-xs uppercase tracking-widest ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>Request success rate</p>
                       </div>
                     </div>
 
-                    <div className="mx-auto mt-12 max-w-[800px]">
-                      <p className={`text-[13px] font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>Try these prompts -</p>
+                    <div className="mx-auto mt-12 max-w-4xl">
+                      <p className={`text-sm font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>Try these prompts -</p>
                       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         {[
                           ["Introduce yourself", "My name is Alex. I am building MemoryOS."],
@@ -1699,11 +1726,11 @@ const answer = await model.generate({
                               setInput(prompt);
                               setMode(label === "Test recall" ? "retrieve" : "process");
                             }}
-                            className={`min-h-[92px] rounded-[8px] border px-3 py-3 text-center transition hover:border-primary/60 ${
-                              lightMode ? "border-black/10 bg-white hover:bg-primary/10" : "border-border bg-muted/30 hover:bg-primary/15"
+                            className={`min-h-24 rounded-md border px-3 py-3 text-center transition hover:border-primary/60 ${
+                              lightMode ? "border-border bg-card hover:bg-primary/10" : "border-border bg-muted/30 hover:bg-primary/15"
                             }`}
                           >
-                            <span className={`text-[13px] font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>{label}</span>
+                            <span className={`text-sm font-semibold ${lightMode ? "text-foreground" : "text-foreground"}`}>{label}</span>
                           </button>
                         ))}
                       </div>
@@ -1711,13 +1738,13 @@ const answer = await model.generate({
                   </div>
                 ) : null}
 
-                <div className="mx-auto max-w-[920px] space-y-9">
+                <div className="mx-auto max-w-5xl space-y-9">
                   {messages.map((message) => (
                     <div
                       key={message.id}
                       className="flex gap-5"
                     >
-                      <div className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border text-[11px] font-semibold uppercase ${
+                      <div className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-xs font-semibold uppercase ${
                         message.role === "user"
                           ? lightMode
                             ? "border-primary/35 bg-primary/10 text-primary"
@@ -1727,13 +1754,13 @@ const answer = await model.generate({
                               ? "border-chart-2/35 bg-chart-2/10 text-chart-2"
                               : "border-chart-2/35 bg-chart-2/15 text-chart-2"
                             : lightMode
-                              ? "border-black/12 bg-background/[0.04] text-black/55"
+                              ? "border-border bg-muted/30 text-muted-foreground"
                               : "border-border bg-muted/50 text-muted-foreground"
                       }`}>
                         {message.role === "user" ? "U" : message.role === "assistant" ? "M" : "S"}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className={`text-[18px] leading-8 ${
+                        <p className={`text-lg leading-8 ${
                           message.role === "user"
                             ? lightMode
                               ? "font-semibold text-foreground"
@@ -1744,7 +1771,7 @@ const answer = await model.generate({
                         }`}>
                           {formatMemoryForDisplay(message.text) || message.text}
                         </p>
-                        <p className={`mt-2 text-[11px] uppercase tracking-[0.1em] ${lightMode ? "text-black/34" : "text-muted-foreground"}`}>
+                        <p className={`mt-2 text-xs uppercase tracking-widest ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
                           {message.role} | {formatTs(message.createdAt)}
                         </p>
                       </div>
@@ -1753,8 +1780,8 @@ const answer = await model.generate({
                 </div>
               </>
             ) : tab === "code" ? (
-              <pre className={`rounded-[12px] border p-4 text-[13px] leading-6 ${
-                lightMode ? "border-black/10 bg-white text-foreground" : "border-border bg-card text-muted-foreground"
+              <pre className={`rounded-lg border p-4 text-sm leading-6 ${
+                lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-card text-muted-foreground"
               }`}>
 {`import { createMemoryOSClient } from "@memoryostm/sdk";
 
@@ -1784,8 +1811,8 @@ const next = await memoryos.handoff({
 });`}
               </pre>
             ) : (
-              <pre className={`rounded-[12px] border p-4 text-[13px] leading-6 ${
-                lightMode ? "border-black/10 bg-white text-foreground" : "border-border bg-card text-muted-foreground"
+              <pre className={`rounded-lg border p-4 text-sm leading-6 ${
+                lightMode ? "border-border bg-popover text-popover-foreground" : "border-border bg-card text-muted-foreground"
               }`}>
 {`import os
 import httpx
@@ -1814,30 +1841,30 @@ handoff = httpx.post(
             )}
 
             {errorMessage ? (
-              <div className="mt-4 rounded-[10px] border border-destructive/40 bg-destructive/15 px-3.5 py-2.5 text-[13px] text-destructive">
+              <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/15 px-3.5 py-2.5 text-sm text-destructive">
                 {errorMessage}
               </div>
             ) : null}
 
             {latestBrief ? (
-              <div className="mt-4 rounded-[10px] border border-border bg-card p-4">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Resume Project Brief</p>
-                <p className="mt-2 text-[14px]"><span className="font-semibold">Goal:</span> {latestBrief.currentGoal || "n/a"}</p>
-                <p className="mt-2 text-[14px]"><span className="font-semibold">Next:</span> {latestBrief.nextBestAction || "n/a"}</p>
+              <div className="mt-4 rounded-lg border border-border bg-card p-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume Project Brief</p>
+                <p className="mt-2 text-sm"><span className="font-semibold">Goal:</span> {latestBrief.currentGoal || "n/a"}</p>
+                <p className="mt-2 text-sm"><span className="font-semibold">Next:</span> {latestBrief.nextBestAction || "n/a"}</p>
                 {latestBrief.riskyFiles.length > 0 ? (
-                  <p className="mt-2 text-[14px]"><span className="font-semibold">Risky files:</span> {latestBrief.riskyFiles.join(", ")}</p>
+                  <p className="mt-2 text-sm"><span className="font-semibold">Risky files:</span> {latestBrief.riskyFiles.join(", ")}</p>
                 ) : null}
               </div>
             ) : null}
 
             {latestPrompt ? (
-              <div className="mt-4 rounded-[10px] border border-border bg-card p-4">
+              <div className="mt-4 rounded-lg border border-border bg-card p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">IDE Prompt</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">IDE Prompt</p>
                   <button
                     type="button"
                     onClick={() => void navigator.clipboard.writeText(latestPrompt.prompts[selectedPromptTab])}
-                    className="rounded-[7px] border border-border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground transition hover:text-foreground"
+                    className="rounded-md border border-border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition hover:text-foreground"
                   >
                     Copy {selectedPromptTab}
                   </button>
@@ -1848,7 +1875,7 @@ handoff = httpx.post(
                       key={tabName}
                       type="button"
                       onClick={() => setSelectedPromptTab(tabName)}
-                      className={`rounded-[7px] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${
+                      className={`rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-wider ${
                         selectedPromptTab === tabName ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground"
                       }`}
                     >
@@ -1856,16 +1883,43 @@ handoff = httpx.post(
                     </button>
                   ))}
                 </div>
-                <pre className="mt-3 max-h-[220px] overflow-auto rounded-[8px] border border-border bg-background p-3 text-[12px] leading-5">
+                <pre className="mt-3 max-h-56 overflow-auto rounded-md border border-border bg-background p-3 text-xs leading-5">
                   {latestPrompt.prompts[selectedPromptTab]}
                 </pre>
+                {latestPrompt.traceProof ? (
+                  <div className="mt-3 border border-border bg-background p-3 text-xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-semibold uppercase tracking-widest text-foreground">Trace Proof</p>
+                      <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                        {latestPrompt.traceProof.memoryUsedCount} memories / confidence {latestPrompt.traceProof.averageConfidence}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-muted-foreground">{latestPrompt.traceProof.summary}</p>
+                    <p className="mt-2 text-foreground">{latestPrompt.traceProof.whatChangedAfterAction}</p>
+                    {latestPrompt.traceProof.contractCategories.length > 0 ? (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {latestPrompt.traceProof.contractCategories.map((category) => (
+                          <span key={category} className="border border-border px-2 py-1 text-xs uppercase tracking-wider text-muted-foreground">
+                            {category}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
                 {latestPrompt.trace.length > 0 ? (
                   <div className="mt-3">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Trace Evidence</p>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Trace Evidence</p>
                     <div className="mt-2 space-y-2">
                       {latestPrompt.trace.slice(0, 4).map((item) => (
-                        <div key={item.memoryId} className="rounded-[8px] border border-border bg-background px-3 py-2 text-[12px]">
-                          <p><span className="font-semibold">Source:</span> {item.source} <span className="ml-2 font-semibold">Confidence:</span> {item.confidence}</p>
+                        <div key={item.memoryId} className="rounded-md border border-border bg-background px-3 py-2 text-xs">
+                          <p>
+                            <span className="font-semibold">Source:</span> {item.source}
+                            {item.contractCategory ? (
+                              <><span className="ml-2 font-semibold">Contract:</span> {item.contractCategory}</>
+                            ) : null}
+                            <span className="ml-2 font-semibold">Confidence:</span> {item.confidence}
+                          </p>
                           <p className="mt-1 text-muted-foreground">{item.whySelected}</p>
                         </div>
                       ))}
@@ -1876,22 +1930,22 @@ handoff = httpx.post(
             ) : null}
           </div>
 
-          <div className={`shrink-0 border-t px-8 py-4 ${lightMode ? "border-black/10 bg-white" : "border-border bg-background"}`}>
-            <div className="mx-auto mb-3 grid max-w-[920px] gap-2 md:grid-cols-[1fr_1fr_100px]">
+          <div className={`shrink-0 border-t px-8 py-4 ${lightMode ? "border-border bg-card" : "border-border bg-background"}`}>
+            <div className="mx-auto mb-3 grid max-w-5xl gap-2 md:grid-cols-3">
               <input
                 value={project}
                 onChange={(event) => setProject(event.target.value)}
                 placeholder="project"
-                className={`h-10 rounded-[8px] border px-3 text-[13px] outline-none ${
-                  lightMode ? "border-black/10 bg-white text-foreground placeholder:text-black/34" : "border-input bg-muted text-foreground placeholder:text-muted-foreground"
+                className={`h-10 rounded-md border px-3 text-sm outline-none ${
+                  lightMode ? "border-border bg-popover text-popover-foreground placeholder:text-muted-foreground" : "border-input bg-muted text-foreground placeholder:text-muted-foreground"
                 }`}
               />
               <input
                 value={threadId}
                 onChange={(event) => setThreadId(event.target.value)}
                 placeholder="threadId"
-                className={`h-10 rounded-[8px] border px-3 text-[13px] outline-none ${
-                  lightMode ? "border-black/10 bg-white text-foreground placeholder:text-black/34" : "border-input bg-muted text-foreground placeholder:text-muted-foreground"
+                className={`h-10 rounded-md border px-3 text-sm outline-none ${
+                  lightMode ? "border-border bg-popover text-popover-foreground placeholder:text-muted-foreground" : "border-input bg-muted text-foreground placeholder:text-muted-foreground"
                 }`}
               />
               <input
@@ -1900,28 +1954,28 @@ handoff = httpx.post(
                 min={1}
                 max={20}
                 onChange={(event) => setTopK(Math.max(1, Math.min(20, Number(event.target.value) || 1)))}
-                className={`h-10 rounded-[8px] border px-3 text-[13px] outline-none ${
-                  lightMode ? "border-black/10 bg-white text-foreground" : "border-input bg-muted text-foreground"
+                className={`h-10 rounded-md border px-3 text-sm outline-none ${
+                  lightMode ? "border-border bg-popover text-popover-foreground" : "border-input bg-muted text-foreground"
                 }`}
                 aria-label="Top K"
               />
             </div>
-            <div className="mx-auto flex max-w-[920px] flex-col gap-3">
+            <div className="mx-auto flex max-w-5xl flex-col gap-3">
               <div className="flex min-w-0 flex-1 items-end gap-2">
               <textarea
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 placeholder={mode === "process" ? "Message MemoryOS with a real project update..." : "Ask MemoryOS a continuity question..."}
                 rows={3}
-                className={`min-h-[112px] flex-1 resize-none rounded-[8px] border px-4 py-3 text-[15px] leading-6 outline-none transition focus:border-primary/70 ${
-                  lightMode ? "border-black/10 bg-white text-foreground placeholder:text-black/34" : "border-input bg-muted text-foreground placeholder:text-muted-foreground"
+                className={`min-h-28 flex-1 resize-none rounded-md border px-4 py-3 text-sm leading-6 outline-none transition focus:border-primary/70 ${
+                  lightMode ? "border-border bg-popover text-popover-foreground placeholder:text-muted-foreground" : "border-input bg-muted text-foreground placeholder:text-muted-foreground"
                 }`}
               />
               <button
                 type="button"
                 onClick={() => void runModeCall()}
                 disabled={isRunning}
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] text-[14px] font-semibold transition disabled:opacity-60 ${
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold transition disabled:opacity-60 ${
                   lightMode ? "bg-foreground text-background hover:bg-foreground/90" : "bg-primary text-primary-foreground hover:bg-primary/90"
                 }`}
                 aria-label={`Run ${selectedConfig.label}`}
@@ -1941,7 +1995,7 @@ handoff = httpx.post(
                 </div>
               ) : null}
             </div>
-            <div className={`mx-auto mt-2.5 flex max-w-[920px] flex-wrap items-center gap-3 text-[12px] ${lightMode ? "text-black/50" : "text-muted-foreground"}`}>
+            <div className={`mx-auto mt-2.5 flex max-w-5xl flex-wrap items-center gap-3 text-xs ${lightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
               <span>Mode: {selectedConfig.label}</span>
               <span>TopK: {topK}</span>
               <span>Workspace: {workspace}</span>
@@ -1952,11 +2006,11 @@ handoff = httpx.post(
 
         <aside className="flex min-h-0 flex-col bg-card">
           <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
-            <p className="border-l-4 border-primary pl-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Memory Graph</p>
+            <p className="border-l-4 border-primary pl-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Memory Graph</p>
             <button
               type="button"
               onClick={() => setGraphExpanded((current) => !current)}
-              className="rounded-[7px] border border-border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground transition hover:text-foreground"
+              className="rounded-md border border-border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition hover:text-foreground"
               aria-label={graphExpanded ? "Collapse memory graph" : "Expand memory graph"}
             >
               {graphExpanded ? "Collapse" : "Expand"}
@@ -2081,40 +2135,40 @@ handoff = httpx.post(
               </g>
             </svg>
 
-            <div className="absolute bottom-5 left-5 flex flex-col overflow-hidden rounded-[10px] border border-border bg-card/90 shadow-2xl shadow-black/20 backdrop-blur dark:shadow-black/35">
+            <div className="absolute bottom-5 left-5 flex flex-col overflow-hidden rounded-lg border border-border bg-card/90 backdrop-blur ">
               <button
                 type="button"
                 onClick={resetGraphView}
-                className="h-10 border-b border-border px-4 text-[13px] font-semibold text-muted-foreground transition hover:text-foreground"
+                className="h-10 border-b border-border px-4 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
               >
                 Fit
               </button>
               <button
                 type="button"
                 onClick={resetGraphView}
-                className="h-10 border-b border-border px-4 text-[13px] font-semibold text-muted-foreground transition hover:text-foreground"
+                className="h-10 border-b border-border px-4 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
               >
                 Center
               </button>
                 <button
                   type="button"
                 onClick={() => setGraphScale((current) => Math.min(1.4, Number((current + 0.1).toFixed(2))))}
-                className="h-10 border-b border-border px-4 text-[15px] font-semibold text-muted-foreground transition hover:text-foreground"
+                className="h-10 border-b border-border px-4 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
                 >
                 +
                 </button>
                 <button
                   type="button"
                 onClick={() => setGraphScale((current) => Math.max(0.7, Number((current - 0.1).toFixed(2))))}
-                className="h-10 px-4 text-[15px] font-semibold text-muted-foreground transition hover:text-foreground"
+                className="h-10 px-4 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
                 >
                 -
                 </button>
             </div>
 
-            <div className="absolute bottom-5 right-5 w-[190px] rounded-[14px] border border-input bg-card/95 p-4 shadow-2xl shadow-black/20 backdrop-blur dark:shadow-black/35">
+            <div className="absolute bottom-5 right-5 w-48 rounded-xl border border-input bg-card/95 p-4 backdrop-blur ">
               <div className="flex items-center justify-between">
-                <p className="text-[16px] font-semibold text-foreground">Legend</p>
+                <p className="text-base font-semibold text-foreground">Legend</p>
                 <button
                   type="button"
                   onClick={() => setLegendCollapsed((current) => !current)}
@@ -2125,8 +2179,8 @@ handoff = httpx.post(
                 </button>
               </div>
               {!legendCollapsed ? <div className="mt-4">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Statistics</p>
-              <div className="mt-2 space-y-2 text-[14px] text-foreground">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Statistics</p>
+              <div className="mt-2 space-y-2 text-sm text-foreground">
                 <div className="flex items-center justify-between"><span>memories</span><span>{stats.memories}</span></div>
                 <div className="flex items-center justify-between"><span>documents</span><span>{stats.documents}</span></div>
                 <div className="flex items-center justify-between"><span>connections</span><span>{stats.connections}</span></div>
@@ -2134,8 +2188,8 @@ handoff = httpx.post(
               </div> : null}
 
               {!legendCollapsed ? <div className="mt-4">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Legend</p>
-              <div className="mt-2 space-y-2 text-[13px] text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Legend</p>
+              <div className="mt-2 space-y-2 text-sm text-muted-foreground">
                 <p>Nodes: Memory (latest), Memory (older), Document</p>
                 <p>Relations: updates, derives, extends</p>
               </div>
@@ -2147,17 +2201,17 @@ handoff = httpx.post(
       </div>
 
       {settingsOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/55 px-4 backdrop-blur-[6px]">
-          <div className="w-full max-w-[560px] rounded-[12px] border border-border bg-card p-5 text-foreground shadow-2xl shadow-black/25 dark:shadow-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/55 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-lg border border-border bg-card p-5 text-foreground ">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-[22px] font-semibold tracking-[-0.02em]">Settings</h2>
-                <p className="mt-1 text-[14px] text-muted-foreground">Configure your MemoryOS playground connection.</p>
+                <h2 className="text-xl font-semibold tracking-tight">Settings</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Configure your MemoryOS playground connection.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setSettingsOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-[8px] border border-border text-muted-foreground transition hover:text-foreground"
+                className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:text-foreground"
                 aria-label="Close settings"
               >
                 <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -2168,23 +2222,23 @@ handoff = httpx.post(
 
             <div className="mt-6 space-y-5">
               <label className="block">
-                <span className="text-[14px] font-semibold text-foreground">Base URL</span>
+                <span className="text-sm font-semibold text-foreground">Base URL</span>
                 <input
                   value={apiOrigin}
                   onChange={(event) => setApiOrigin(event.target.value)}
                   placeholder="http://localhost:3001"
-                  className="mt-2 h-11 w-full rounded-[8px] border border-input bg-muted px-3 text-[14px] text-foreground outline-none transition focus:border-primary"
+                  className="mt-2 h-11 w-full rounded-md border border-input bg-muted px-3 text-sm text-foreground outline-none transition focus:border-primary"
                 />
-                <span className="mt-2 block text-[12px] text-muted-foreground">Use your local backend or deployed MemoryOS API origin.</span>
+                <span className="mt-2 block text-xs text-muted-foreground">Use your local backend or deployed MemoryOS API origin.</span>
               </label>
 
               <label className="block">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[14px] font-semibold text-foreground">API Key</span>
+                  <span className="text-sm font-semibold text-foreground">API Key</span>
                   <button
                     type="button"
                     onClick={() => setShowApiKey((current) => !current)}
-                    className="rounded-[6px] border border-border bg-card px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground"
+                    className="rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground"
                   >
                     {showApiKey ? "Hide" : "Show"}
                   </button>
@@ -2194,20 +2248,20 @@ handoff = httpx.post(
                   onChange={(event) => setToken(event.target.value)}
                   placeholder="mos_..."
                   type={showApiKey ? "text" : "password"}
-                  className="mt-2 h-11 w-full rounded-[8px] border border-input bg-muted px-3 text-[14px] text-foreground outline-none transition focus:border-primary"
+                  className="mt-2 h-11 w-full rounded-md border border-input bg-muted px-3 text-sm text-foreground outline-none transition focus:border-primary"
                 />
-                <span className="mt-2 block text-[12px] text-muted-foreground">The console token is auto-created after sign-in. Paste a token here for manual testing.</span>
+                <span className="mt-2 block text-xs text-muted-foreground">The console token is auto-created after sign-in. Paste a token here for manual testing.</span>
               </label>
 
               <label className="block">
-                <span className="text-[14px] font-semibold text-foreground">Workspace</span>
+                <span className="text-sm font-semibold text-foreground">Workspace</span>
                 <input
                   value={workspace}
                   onChange={(event) => setWorkspace(event.target.value)}
                   placeholder="memoryostm"
-                  className="mt-2 h-11 w-full rounded-[8px] border border-input bg-muted px-3 text-[14px] text-foreground outline-none transition focus:border-primary"
+                  className="mt-2 h-11 w-full rounded-md border border-input bg-muted px-3 text-sm text-foreground outline-none transition focus:border-primary"
                 />
-                <span className="mt-2 block text-[12px] text-muted-foreground">Used in retrieve, resume, and handoff playground requests.</span>
+                <span className="mt-2 block text-xs text-muted-foreground">Used in retrieve, resume, and handoff playground requests.</span>
               </label>
             </div>
 
@@ -2224,7 +2278,7 @@ handoff = httpx.post(
                   setThreadId(`playground-thread-${Date.now().toString().slice(-6)}`);
                   setStatusLine("Settings cleared");
                 }}
-                className="h-11 rounded-lg border border-border px-4 text-[14px] font-semibold text-foreground transition hover:bg-muted/50"
+                className="h-11 rounded-lg border border-border px-4 text-sm font-semibold text-foreground transition hover:bg-muted/50"
               >
                 Clear
               </button>
@@ -2232,14 +2286,14 @@ handoff = httpx.post(
                 <button
                   type="button"
                   onClick={() => setSettingsOpen(false)}
-                  className="h-11 rounded-lg border border-border px-4 text-[14px] font-semibold text-foreground transition hover:bg-muted/50"
+                  className="h-11 rounded-lg border border-border px-4 text-sm font-semibold text-foreground transition hover:bg-muted/50"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={() => void applyPlaygroundSettings()}
-                  className="h-11 rounded-lg bg-primary px-5 text-[14px] font-semibold text-primary-foreground transition hover:bg-primary/90"
+                  className="h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
                 >
                   Save & sync
                 </button>

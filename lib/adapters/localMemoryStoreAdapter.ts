@@ -47,6 +47,8 @@ function toSearchResult(memory: Memory, query: string): MemoryStoreSearchResult 
       createdAt: memory.createdAt,
       updatedAt: memory.updatedAt,
       evidenceCount: memory.evidenceCount,
+      contractVersion: memory.contractVersion,
+      contractCategory: memory.contractCategory,
       developerSignals: memory.developerSignals,
       operationalTags: memory.operationalTags,
     },

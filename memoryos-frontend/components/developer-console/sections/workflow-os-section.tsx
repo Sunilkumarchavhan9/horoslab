@@ -1,9 +1,27 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
-import { DitherBackground } from "@/components/ui/dither-background";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  ConsoleGrid,
+  ConsolePage,
+  ConsolePageHeader,
+  ConsoleSurface,
+} from "@/components/developer-console/console-ui";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
 /* ─── types ──────────────────────────────────────────────────── */
@@ -322,22 +340,40 @@ function progressFromSession(): { current: number; total: number } {
 
 /* ─── status visuals ─────────────────────────────────────────── */
 
-function statusPillClass(status: WorkflowRow["status"]) {
+function statusBadgeVariant(
+  status: WorkflowRow["status"],
+): ComponentProps<typeof Badge>["variant"] {
   switch (status) {
     case "RECORDING":
-      return "bg-primary/15 text-primary border border-primary/30";
     case "IDLE":
-      return "bg-primary/10 text-primary border border-primary/30";
     case "VERIFYING":
-      return "bg-primary/10 text-primary border border-primary/25";
+      return "default";
     case "PAUSED":
-      return "bg-muted text-muted-foreground border border-border";
-    case "COMPLETED":
-      return "bg-muted text-muted-foreground border border-border";
     case "IDLE_AGENT":
-      return "bg-muted text-muted-foreground border border-border";
+      return "secondary";
+    case "COMPLETED":
+      return "outline";
     default:
-      return "bg-muted text-muted-foreground border border-border";
+      return "secondary";
+  }
+}
+
+function statusIcon(status: WorkflowRow["status"]) {
+  switch (status) {
+    case "RECORDING":
+      return "play" as const;
+    case "IDLE":
+      return "pause" as const;
+    case "VERIFYING":
+      return "graph" as const;
+    case "PAUSED":
+      return "pause" as const;
+    case "COMPLETED":
+      return "success" as const;
+    case "IDLE_AGENT":
+      return "pause" as const;
+    default:
+      return "success" as const;
   }
 }
 
@@ -534,223 +570,168 @@ export function WorkflowOsSection() {
     });
   }, [drawerEvents, selectedRow]);
 
+  const tabs = [
+    { id: "live" as const, label: "Live Workflows", count: liveRows.length },
+    { id: "scheduled" as const, label: "Scheduled Agents", count: scheduledRows.length },
+    { id: "history" as const, label: "Historical Runs", count: historicalRows.length },
+  ];
+
   return (
-    <div className="pb-12 text-foreground h-full overflow-y-auto">
-      {/* Header w/ dither */}
-      <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
-        <div className="absolute inset-0 bg-primary/5" />
-        
-        
-        <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <h1 className="inline-flex items-center gap-3 rounded-[8px] px-3 py-1.5 text-[26px] font-bold tracking-tight text-foreground drop-shadow-sm">
-              <Icon
-                name="terminal"
-                className="h-6 w-6 text-primary"
-              />
-              Agent Workflow OS
-            </h1>
-            <br/>
-          </div>
-          
-        </div>
-      </div>
+    <ConsolePage className="h-full overflow-y-auto pb-12">
+      <ConsolePageHeader
+        title="Agent Workflow OS"
+        description="Monitor live agent sessions, scheduled work, and completed runs from one token-driven workspace."
+        badge={<Icon name="terminal" className="h-5 w-5 text-primary" />}
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void refresh(true)}
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? "Refreshing..." : "Refresh"}
+          </Button>
+        }
+      />
 
-      <div className="px-6 mt-8 space-y-6 max-w-6xl">
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-          {[
-            { label: "Live Workflows", value: liveRows.length, tone: "var(--color-primary)", icon: "play" as const },
-            { label: "Scheduled Agents", value: scheduledRows.length, tone: "var(--color-primary)", icon: "pause" as const },
-            { label: "Historical Runs", value: historicalRows.length, tone: "var(--color-primary)", icon: "graph" as const },
-          ].map((card) => (
-            <motion.div
-              key={card.label}
-              whileHover={{ y: -2 }}
-              className="relative overflow-hidden rounded-[10px] border border-border bg-card px-3.5 py-3"
-              style={{ borderTopColor: card.tone, borderTopWidth: "2px" }}
-            >
-              <DitherBackground className="pointer-events-none absolute inset-0 opacity-20" accent={card.tone} density={0.44} cols={56} rows={20} />
-              <p className="relative inline-flex items-center gap-1.5 rounded-[6px] px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
-                <Icon name={card.icon} className="h-3 w-3" />
-                {card.label}
-              </p>
-              <p className="relative mt-1 inline-block rounded-[6px] px-2 py-0.5 text-[22px] font-semibold tracking-[-0.03em] text-foreground">
-                {card.value}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+      <ConsoleGrid columns="three">
+        {[
+          { label: "Live Workflows", value: liveRows.length, icon: "play" as const },
+          { label: "Scheduled Agents", value: scheduledRows.length, icon: "pause" as const },
+          { label: "Historical Runs", value: historicalRows.length, icon: "graph" as const },
+        ].map((card) => (
+          <ConsoleSurface key={card.label} className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Icon name={card.icon} className="h-4 w-4 text-primary" />
+              <span>{card.label}</span>
+            </div>
+            <div className="text-3xl font-semibold tracking-tight tabular-nums">
+              {card.value}
+            </div>
+          </ConsoleSurface>
+        ))}
+      </ConsoleGrid>
 
-        {/* Tabs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
-          {[
-            { id: "live" as const, label: "Live Workflows", count: liveRows.length },
-            {
-              id: "scheduled" as const,
-              label: "Scheduled Agents",
-              count: scheduledRows.length,
-            },
-            {
-              id: "history" as const,
-              label: "Historical Runs",
-              count: historicalRows.length,
-            },
-          ].map((tab) => (
-            <motion.button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 px-4 py-2 text-[12px] font-bold uppercase tracking-widest transition-colors ${
-                activeTab === tab.id
-                  ? "border-b-2 border-primary bg-primary/10 text-primary"
-                  : "border-b-2 border-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              }`}
-            >
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+        className="gap-4"
+      >
+        <TabsList variant="line" className="w-full justify-start border-b border-border pb-2">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id} className="gap-2 px-3">
               {tab.label}
-              <span className="rounded-full border border-border bg-card/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+              <Badge variant="secondary" className="h-5 px-1.5 text-[11px]">
                 {tab.count}
-              </span>
-            </motion.button>
+              </Badge>
+            </TabsTrigger>
           ))}
-        </div>
+        </TabsList>
+      </Tabs>
 
-        {/* Error banner */}
-        <AnimatePresence>
-          {error ? (
-            <motion.div
-              key="wf-error"
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              className="rounded-[8px] border border-destructive/40 bg-destructive/15 px-4 py-2.5 font-mono text-[11px] text-destructive"
-            >
+      <AnimatePresence>
+        {error ? (
+          <motion.div
+            key="wf-error"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+          >
+            <ConsoleSurface tone="destructive" className="text-sm text-destructive">
               {error}
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+            </ConsoleSurface>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
-        {/* Table card with dither overlay */}
-        <div className="relative overflow-hidden rounded-md border border-border bg-card">
-          {loading && rows.length === 0 ? (
-            <div className="relative p-12 text-center font-mono text-[12px] text-muted-foreground">
-              Loading workflow data...
-            </div>
-          ) : rows.length === 0 ? (
-            <div className="relative p-12 text-center text-[12px] text-muted-foreground">
-              {emptyMessage}
-            </div>
-          ) : (
-            <div className="relative overflow-x-auto">
-              <table className="w-full text-left text-[12px]">
-                <thead>
-                  <tr className="bg-muted text-muted-foreground uppercase tracking-widest">
-                    <th className="px-5 py-3 font-medium">Worker ID</th>
-                    <th className="px-5 py-3 font-medium">Agent Task</th>
-                    <th className="px-5 py-3 font-medium">Progress</th>
-                    <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="px-5 py-3 font-medium text-right">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <motion.tbody
-                  className="divide-y divide-border"
-                  initial="hidden"
-                  animate="visible"
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.04 } },
-                  }}
-                >
-                  {rows.map((row) => {
-                    const isRunning =
-                      row.status === "RECORDING" || row.status === "IDLE";
-                    const pct =
-                      (row.progress.current / Math.max(row.progress.total, 1)) *
-                      100;
-                    return (
-                      <motion.tr
-                        key={row.rowId}
-                        variants={{
-                          hidden: {
-                            opacity: 0,
-                            y: 8,
-                            filter: "blur(3px)",
-                          },
-                          visible: {
-                            opacity: 1,
-                            y: 0,
-                            filter: "blur(0px)",
-                          },
-                        }}
-                        transition={{ duration: 0.24 }}
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => openDrawer(row)}
-                      >
-                        <td className="px-5 py-4">
-                          <div className="font-mono text-primary">
-                            {row.session?.id?.slice(0, 8) ??
-                              row.agent?.id?.slice(0, 8) ??
-                              row.rowId.slice(0, 8)}
-                          </div>
-                          <div className="text-[10px] text-muted-foreground mt-1">
-                            {row.agent?.name ?? "Unknown agent"}
-                          </div>
-                        </td>
-                        <td className="px-5 py-4 text-muted-foreground max-w-xs truncate">
-                          {row.task}
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="font-mono text-[10px] text-muted-foreground">
-                              {row.progress.current}/{row.progress.total}
-                            </div>
-                            <div className="w-24 h-1 bg-muted rounded-full overflow-hidden">
-                              <motion.div
-                                className="h-full bg-primary"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${pct}%` }}
-                                transition={{ duration: 0.5 }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4">
-                          <span
-                            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${statusPillClass(row.status)}`}
-                          >
-                            {isRunning ? (
-                              <span className="relative flex h-1.5 w-1.5">
-                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />
-                                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
-                              </span>
-                            ) : null}
-                            {statusLabel(row.status)}
+      <ConsoleSurface className="p-0">
+        {loading && rows.length === 0 ? (
+          <div className="p-12 text-center text-sm text-muted-foreground">
+            Loading workflow data...
+          </div>
+        ) : rows.length === 0 ? (
+          <div className="p-12 text-center text-sm text-muted-foreground">
+            {emptyMessage}
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Worker ID</TableHead>
+                <TableHead>Agent Task</TableHead>
+                <TableHead>Progress</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((row) => {
+                const isRunning =
+                  row.status === "RECORDING" || row.status === "IDLE";
+                const pct =
+                  (row.progress.current / Math.max(row.progress.total, 1)) *
+                  100;
+                return (
+                  <TableRow
+                    key={row.rowId}
+                    className="cursor-pointer"
+                    onClick={() => openDrawer(row)}
+                  >
+                    <TableCell>
+                      <div className="font-medium text-primary">
+                        {row.session?.id?.slice(0, 8) ??
+                          row.agent?.id?.slice(0, 8) ??
+                          row.rowId.slice(0, 8)}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {row.agent?.name ?? "Unknown agent"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-sm truncate text-muted-foreground">
+                      {row.task}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex min-w-32 items-center gap-3">
+                        <span className="text-xs tabular-nums text-muted-foreground">
+                          {row.progress.current}/{row.progress.total}
+                        </span>
+                        <Progress value={pct} className="w-24" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={statusBadgeVariant(row.status)} className="gap-1.5">
+                        {isRunning ? (
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
                           </span>
-                        </td>
-                        <td className="px-5 py-4 text-right">
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              openDrawer(row);
-                            }}
-                            className="rounded-sm border border-border bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-secondary-foreground transition-colors hover:bg-secondary/80 hover:text-secondary-foreground"
-                          >
-                            Manage
-                          </button>
-                        </td>
-                      </motion.tr>
-                    );
-                  })}
-                </motion.tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+                        ) : (
+                          <Icon name={statusIcon(row.status)} className="h-3 w-3" />
+                        )}
+                        {statusLabel(row.status)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          openDrawer(row);
+                        }}
+                      >
+                        Manage
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </ConsoleSurface>
 
       {/* Drawer */}
       <AnimatePresence>
@@ -773,11 +754,11 @@ export function WorkflowOsSection() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 480, opacity: 0 }}
               transition={{ type: "spring", stiffness: 360, damping: 38 }}
-              className="relative flex w-full max-w-[480px] flex-col border-l border-border bg-background shadow-2xl"
+              className="relative flex w-full max-w-lg flex-col border-l border-border bg-background"
             >
               <div className="relative sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card/85 px-6 py-4 backdrop-blur-md">
                 <div>
-                  <h3 className="flex items-center gap-2 text-[15px] font-bold text-foreground">
+                  <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
                     <span
                       className={`relative inline-flex h-2 w-2 rounded-full ${
                         selectedRow.status === "RECORDING" ||
@@ -797,7 +778,7 @@ export function WorkflowOsSection() {
                     </span>
                     {selectedRow.agent?.name ?? "Agent"}
                   </h3>
-                  <div className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  <div className="mt-1 font-mono text-xs text-muted-foreground">
                     {selectedRow.session?.id ?? selectedRow.agent?.id} ·{" "}
                     {selectedRow.agent?.runtime ?? "unknown runtime"}
                   </div>
@@ -805,7 +786,7 @@ export function WorkflowOsSection() {
                 <button
                   type="button"
                   onClick={closeDrawer}
-                  className="rounded-[6px] border border-border bg-background px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition hover:border-ring hover:bg-muted/50 hover:text-foreground"
+                  className="rounded-md border border-border bg-background px-2 py-1 font-mono text-xs uppercase tracking-widest text-muted-foreground transition hover:border-ring hover:bg-muted/50 hover:text-foreground"
                 >
                   Close
                 </button>
@@ -814,17 +795,17 @@ export function WorkflowOsSection() {
               <div className="relative flex-1 space-y-6 overflow-y-auto p-6">
                 {/* Goal */}
                 <div className="border border-border bg-muted p-4">
-                  <div className="mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <div className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
                     Current Goal
                   </div>
-                  <div className="text-[13px] leading-relaxed text-foreground">
+                  <div className="text-sm leading-relaxed text-foreground">
                     {selectedRow.task}
                   </div>
                 </div>
 
                 {/* Agent metrics */}
                 {selectedRow.agent ? (
-                  <div className="grid grid-cols-3 gap-2 text-[11px]">
+                  <div className="grid grid-cols-3 gap-2 text-xs">
                     {[
                       {
                         label: "Threads 24h",
@@ -843,10 +824,10 @@ export function WorkflowOsSection() {
                         key={cell.label}
                         className="border border-border bg-background/40 p-3"
                       >
-                        <div className="text-[9px] uppercase tracking-widest text-muted-foreground">
+                        <div className="text-xs uppercase tracking-widest text-muted-foreground">
                           {cell.label}
                         </div>
-                        <div className="mt-1 font-mono text-[18px] text-foreground">
+                        <div className="mt-1 font-mono text-lg text-foreground">
                           {cell.value}
                         </div>
                       </div>
@@ -856,14 +837,14 @@ export function WorkflowOsSection() {
 
                 {/* Drawer error */}
                 {drawerError ? (
-                  <div className="rounded-[6px] border border-destructive/30 bg-destructive/10 px-3 py-2 font-mono text-[11px] text-destructive">
+                  <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 font-mono text-xs text-destructive">
                     {drawerError}
                   </div>
                 ) : null}
 
                 {/* Intervention controls */}
                 <div>
-                  <h4 className="mb-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <h4 className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     Intervention Controls
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -875,7 +856,7 @@ export function WorkflowOsSection() {
                         disabled={
                           !selectedRow.session || actionPending !== null
                         }
-                        className="flex items-center justify-center gap-2 rounded-sm border border-border bg-secondary py-2 text-[11px] font-bold uppercase tracking-widest text-secondary-foreground transition-colors hover:bg-secondary/80 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex items-center justify-center gap-2 rounded-sm border border-border bg-secondary py-2 text-xs font-bold uppercase tracking-widest text-secondary-foreground transition-colors hover:bg-secondary/80 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <Icon name="pause" className="h-3.5 w-3.5" />
                         {actionPending === "pause" ? "Pausing..." : "Pause"}
@@ -887,7 +868,7 @@ export function WorkflowOsSection() {
                         disabled={
                           !selectedRow.session || actionPending !== null
                         }
-                        className="flex items-center justify-center gap-2 rounded-sm border border-primary/40 bg-primary/15 py-2 text-[11px] font-bold uppercase tracking-widest text-primary transition-colors hover:bg-primary/25 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex items-center justify-center gap-2 rounded-sm border border-primary/40 bg-primary/15 py-2 text-xs font-bold uppercase tracking-widest text-primary transition-colors hover:bg-primary/25 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <Icon name="play" className="h-3.5 w-3.5" />
                         {actionPending === "resume"
@@ -899,7 +880,7 @@ export function WorkflowOsSection() {
                       type="button"
                       onClick={() => setInjectMode((current) => !current)}
                       disabled={!selectedRow.session}
-                      className="flex items-center justify-center gap-2 rounded-sm border border-primary/35 bg-primary/10 py-2 text-[11px] font-bold uppercase tracking-widest text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="flex items-center justify-center gap-2 rounded-sm border border-primary/35 bg-primary/10 py-2 text-xs font-bold uppercase tracking-widest text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Icon name="terminal" className="h-3.5 w-3.5" />
                       Inject Context
@@ -908,7 +889,7 @@ export function WorkflowOsSection() {
                       type="button"
                       onClick={() => runIntervention("handoff")}
                       disabled={!selectedRow.session || actionPending !== null}
-                      className="flex items-center justify-center gap-2 rounded-sm border border-muted-foreground/35 bg-muted/30 py-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-muted/50 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="flex items-center justify-center gap-2 rounded-sm border border-muted-foreground/35 bg-muted/30 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-muted/50 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Icon name="handoff" className="h-3.5 w-3.5" />
                       {actionPending === "handoff"
@@ -919,7 +900,7 @@ export function WorkflowOsSection() {
                       type="button"
                       onClick={() => runIntervention("terminate")}
                       disabled={!selectedRow.session || actionPending !== null}
-                      className="flex items-center justify-center gap-2 rounded-sm border border-destructive/30 bg-destructive/10 py-2 text-[11px] font-bold uppercase tracking-widest text-destructive transition-colors hover:bg-destructive/20 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="flex items-center justify-center gap-2 rounded-sm border border-destructive/30 bg-destructive/10 py-2 text-xs font-bold uppercase tracking-widest text-destructive transition-colors hover:bg-destructive/20 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Icon name="warning" className="h-3.5 w-3.5" />
                       {actionPending === "terminate"
@@ -938,7 +919,7 @@ export function WorkflowOsSection() {
                         className="mt-3 overflow-hidden border border-primary/30 bg-muted"
                       >
                         <div className="p-4">
-                          <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-primary">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-primary">
                             Force Runtime Guidance
                           </label>
                           <textarea
@@ -947,7 +928,7 @@ export function WorkflowOsSection() {
                               setInjectText(event.target.value)
                             }
                             placeholder="Tell the agent what to prioritize next..."
-                            className="min-h-[80px] w-full rounded-md border border-input bg-background p-2 text-[12px] text-foreground outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                            className="min-h-20 w-full rounded-md border border-input bg-background p-2 text-xs text-foreground outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
                           />
                           <div className="mt-2 flex items-center justify-end gap-2">
                             <button
@@ -956,7 +937,7 @@ export function WorkflowOsSection() {
                                 setInjectMode(false);
                                 setInjectText("");
                               }}
-                              className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                              className="font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
                             >
                               Cancel
                             </button>
@@ -966,7 +947,7 @@ export function WorkflowOsSection() {
                               disabled={
                                 !injectText.trim() || actionPending !== null
                               }
-                              className="rounded-sm bg-primary px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+                              className="rounded-sm bg-primary px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
                             >
                               {actionPending === "inject"
                                 ? "Sending..."
@@ -982,10 +963,10 @@ export function WorkflowOsSection() {
                 {/* Execution graph (live timeline) */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
-                    <h4 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Execution Graph
                     </h4>
-                    <span className="font-mono text-[10px] text-muted-foreground">
+                    <span className="font-mono text-xs text-muted-foreground">
                       {drawerLoading
                         ? "Loading..."
                         : `${drawerEvents.length} event${drawerEvents.length === 1 ? "" : "s"}`}
@@ -993,11 +974,11 @@ export function WorkflowOsSection() {
                   </div>
 
                   {drawerLoading && drawerEvents.length === 0 ? (
-                    <div className="border border-border bg-muted/40 p-6 text-center font-mono text-[11px] text-muted-foreground">
+                    <div className="border border-border bg-muted/40 p-6 text-center font-mono text-xs text-muted-foreground">
                       Loading session timeline...
                     </div>
                   ) : drawerStages.length === 0 ? (
-                    <div className="border border-border bg-muted/40 p-6 text-center text-[11px] text-muted-foreground">
+                    <div className="border border-border bg-muted/40 p-6 text-center text-xs text-muted-foreground">
                       No timeline events yet for this agent.
                     </div>
                   ) : (
@@ -1022,14 +1003,14 @@ export function WorkflowOsSection() {
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-mono text-[12px] font-semibold text-foreground/90">
+                              <span className="font-mono text-xs font-semibold text-foreground/90">
                                 {stage.name}
                               </span>
-                              <span className="font-mono text-[10px] text-muted-foreground">
+                              <span className="font-mono text-xs text-muted-foreground">
                                 {new Date(stage.latestTs).toLocaleTimeString()}
                               </span>
                             </div>
-                            <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                            <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">
                               {stage.status} · {stage.eventCount} log
                               {stage.eventCount === 1 ? "" : "s"}
                             </div>
@@ -1037,7 +1018,7 @@ export function WorkflowOsSection() {
                               {stage.logs.slice(-4).map((log, li) => (
                                 <div
                                   key={li}
-                                  className={`font-mono text-[10px] leading-tight ${
+                                  className={`font-mono text-xs leading-tight ${
                                     log.includes("intervention")
                                       ? "text-primary"
                                       : "text-muted-foreground"
@@ -1058,6 +1039,6 @@ export function WorkflowOsSection() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </ConsolePage>
   );
 }

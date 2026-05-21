@@ -91,6 +91,16 @@ function getConnectorConfig(value: string | null | undefined): Record<string, un
   }
 }
 
+function getContractCounts(value: unknown): Record<string, number> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.entries(value as Record<string, unknown>).reduce<Record<string, number>>((counts, [key, count]) => {
+    if (typeof count === "number" && Number.isFinite(count) && count > 0) {
+      counts[key] = count;
+    }
+    return counts;
+  }, {});
+}
+
 function toSingleString(value: unknown): string {
   if (typeof value === "string") return value;
   if (Array.isArray(value)) {
@@ -290,6 +300,7 @@ connectorRouter.get(
             gmailLastCheckpointEpochMs:
               typeof config.lastCheckpointEpochMs === "number" ? config.lastCheckpointEpochMs : null,
           },
+          contractCounts: getContractCounts(config.lastContractCounts),
           tokens: {
             hasRefreshToken:
               allowed && typeof config.refreshToken === "string" && config.refreshToken.length > 0,
@@ -489,12 +500,17 @@ connectorRouter.get(
       if (!accessToken.startsWith("mock_token_")) {
         void (async () => {
           try {
-            await ConnectorManager.triggerSync(userId, type as ConnectorType, accessToken);
+            const result = await ConnectorManager.triggerSync(userId, type as ConnectorType, accessToken);
+            const contractCounts = getContractCounts(result.contractCounts);
             await prisma.connector.update({
               where: { id: `${userId}_${type}` },
               data: {
                 status: "connected",
                 lastSyncAt: new Date().toISOString(),
+                configJson: JSON.stringify({
+                  ...tokenConfig,
+                  lastContractCounts: contractCounts,
+                }),
               },
             });
             emitConnectorEvent({
@@ -503,6 +519,8 @@ connectorRouter.get(
               payload: {
                 type,
                 status: "success",
+                extractedCount: result.extractedCount,
+                contractCounts,
                 message: `${type} initial sync completed`,
                 at: new Date().toISOString(),
               },
@@ -751,14 +769,17 @@ connectorRouter.post(
           let checkpoint: string | undefined;
           let dedupeKeys: string[] = [];
           let syncAttempts = 1;
+          let contractCounts: Record<string, number> = {};
           if (type === "local_files") {
             const result = await ConnectorManager.triggerSync(userId, "local_files", undefined, undefined, recentItemKeys);
             extractedCount = result.extractedCount;
             dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
             syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
+            contractCounts = getContractCounts(result.contractCounts);
           } else if (accessToken && accessToken.startsWith("mock_token_")) {
             extractedCount = Math.floor(Math.random() * 20) + 5;
             checkpoint = new Date().toISOString();
+            contractCounts = {};
           } else {
             if (!accessToken) {
               throw new Error(`${type} access token missing. Reconnect this source.`);
@@ -795,6 +816,7 @@ connectorRouter.post(
             checkpoint = typeof result.checkpoint === "string" ? result.checkpoint : undefined;
             dedupeKeys = Array.isArray(result.dedupeKeys) ? result.dedupeKeys : [];
             syncAttempts = typeof result.attempts === "number" ? result.attempts : 1;
+            contractCounts = getContractCounts(result.contractCounts);
             if (type === "slack") {
               const slackCursor = (result as unknown as { cursor?: unknown }).cursor;
               const slackLastMessageTs = (result as unknown as { lastMessageTs?: unknown }).lastMessageTs;
@@ -825,6 +847,7 @@ connectorRouter.post(
                 ...config,
                 ...(checkpoint ? { lastCheckpointAt: checkpoint } : {}),
                 recentItemKeys: nextRecentItemKeys,
+                lastContractCounts: contractCounts,
                 syncStartedAt: null,
                 retryCount: 0,
                 lastFailureAt: null,
@@ -839,6 +862,7 @@ connectorRouter.post(
             type,
             status: "success",
             extractedCount,
+            contractCounts,
             message: `Sync completed for ${type} (attempts=${syncAttempts})`,
             at: new Date().toISOString(),
           });
@@ -849,6 +873,7 @@ connectorRouter.post(
               type,
               status: "connected",
               extractedCount,
+              contractCounts,
               at: new Date().toISOString(),
             },
           });
@@ -859,6 +884,7 @@ connectorRouter.post(
               type,
               status: "success",
               extractedCount,
+              contractCounts,
               message: `Sync completed for ${type} (attempts=${syncAttempts})`,
               at: new Date().toISOString(),
             },

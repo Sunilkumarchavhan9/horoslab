@@ -218,11 +218,11 @@ export function PluginsSection() {
         </motion.div>
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="inline-block rounded-[6px] px-2 py-1 text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">
+            <h1 className="inline-block rounded-md px-2 py-1 text-base font-semibold tracking-tighter sm:text-lg">
               Plugins
             </h1>
             <br/>
-            <p className="mt-1 inline-block rounded-[6px] px-2 py-1 text-[12px] leading-6 text-muted-foreground sm:text-[13px]">
+            <p className="mt-1 inline-block rounded-md px-2 py-1 text-xs leading-6 text-muted-foreground sm:text-sm">
               Install and manage MemoryOS adapters for MCP runtimes, SDK clients, HTTP agents, and workflow orchestration.
             </p>
           </div>
@@ -233,14 +233,14 @@ export function PluginsSection() {
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.18, ease: EASE_OUT }}
             onClick={() => window.open("https://www.npmjs.com/search?q=memoryos", "_blank", "noopener,noreferrer")}
-            className="inline-flex items-center gap-2 rounded-[8px] border border-primary/50 bg-primary px-3.5 py-2 text-[11px] font-semibold tracking-[0.08em] text-primary-foreground shadow-md shadow-primary/25 transition hover:border-primary hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-md border border-primary/50 bg-primary px-3.5 py-2 text-xs font-semibold tracking-wider text-primary-foreground transition hover:border-primary hover:bg-primary/90"
           >
             <span aria-hidden>↗</span>
             OPEN MARKETPLACE
           </motion.button>
           </div>
         </div>
-        <p className="relative z-10 mt-2 text-[11px] text-muted-foreground">
+        <p className="relative z-10 mt-2 text-xs text-muted-foreground">
           {isLoading
             ? "Loading plugin state..."
             : errorMessage
@@ -251,7 +251,7 @@ export function PluginsSection() {
         </p>
       </motion.div>
       {errorMessage ? (
-        <div className="mt-2.5 rounded-[10px] border border-destructive/25 bg-destructive/10 px-3.5 py-3 text-[12px] text-destructive">
+        <div className="mt-2.5 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-3 text-xs text-destructive">
           {errorMessage}
         </div>
       ) : null}
@@ -262,7 +262,7 @@ export function PluginsSection() {
             key={card.label}
             whileHover={{ y: -2 }}
             transition={{ duration: 0.2, ease: EASE_OUT }}
-            className="relative overflow-hidden rounded-[10px] border border-border bg-card px-3.5 py-3"
+            className="relative overflow-hidden rounded-lg border border-border bg-card px-3.5 py-3"
             style={{ borderTopColor: card.tone, borderTopWidth: "2px" }}
           >
             <DitherBackground
@@ -275,12 +275,12 @@ export function PluginsSection() {
               
             />
             <p className="relative">
-              <span className="inline-block rounded-[4px] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-foreground">
+              <span className="inline-block rounded-sm px-1.5 py-0.5 text-xs font-semibold uppercase tracking-widest text-foreground">
                 {card.label}
               </span>
             </p>
             <p className="relative mt-1">
-              <span className="inline-block rounded-[4px] px-1.5 py-0.5 text-[20px] font-semibold tracking-[-0.03em] text-foreground">
+              <span className="inline-block rounded-sm px-1.5 py-0.5 text-xl font-semibold tracking-tight text-foreground">
                 {card.value}
               </span>
             </p>
@@ -289,7 +289,7 @@ export function PluginsSection() {
       </div>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center overflow-hidden rounded-[8px] border border-border bg-card">
+        <div className="flex items-center overflow-hidden rounded-md border border-border bg-card">
           {(["All", "Runtime", "MCP", "Workflow"] as const).map((category) => (
             <motion.button
               key={category}
@@ -298,7 +298,7 @@ export function PluginsSection() {
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.15, ease: EASE_OUT }}
               onClick={() => setActiveCategory(category)}
-              className={`px-3 py-1.5 text-[11px] font-medium tracking-[0.08em] transition ${
+              className={`px-3 py-1.5 text-xs font-medium tracking-wider transition ${
                 activeCategory === category ? "bg-muted text-foreground" : "text-muted-foreground hover:text-muted-foreground"
               }`}
             >
@@ -310,7 +310,7 @@ export function PluginsSection() {
 
       <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
         {!isLoading && filteredPlugins.length === 0 ? (
-          <div className="rounded-[10px] border border-border bg-card px-3.5 py-6 text-[12px] text-muted-foreground xl:col-span-4">
+          <div className="rounded-lg border border-border bg-card px-3.5 py-6 text-xs text-muted-foreground xl:col-span-4">
             No plugins returned from backend yet.
           </div>
         ) : null}
@@ -319,16 +319,16 @@ export function PluginsSection() {
           return (
             <div
               key={plugin.id}
-              className={`rounded-[10px] border px-3.5 py-3.5 transition ${
+              className={`rounded-lg border px-3.5 py-3.5 transition ${
                 selectedPlugin?.id === plugin.id
                   ? "border-primary/45 bg-card"
                   : "border-border bg-card hover:border-border"
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-semibold tracking-[-0.02em]">{plugin.name}</p>
+                <p className="text-sm font-semibold tracking-tight">{plugin.name}</p>
                 <span
-                  className="rounded-[6px] border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em]"
+                  className="rounded-md border px-2 py-0.5 text-xs uppercase tracking-widest"
                   style={{
                     borderColor: `${statusTone(plugin.status)}55`,
                     color: statusTone(plugin.status),
@@ -338,15 +338,15 @@ export function PluginsSection() {
                   {statusLabel(plugin.status)}
                 </span>
               </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {plugin.category} · {plugin.runtime}
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground">v{plugin.version}</p>
+              <p className="mt-1 text-xs text-muted-foreground">v{plugin.version}</p>
               <div className="mt-2 flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => setSelectedPluginId(plugin.id)}
-                  className="rounded-[7px] border border-border bg-card px-2.5 py-1 text-[10px] tracking-[0.08em] text-muted-foreground"
+                  className="rounded-md border border-border bg-card px-2.5 py-1 text-xs tracking-wider text-muted-foreground"
                 >
                   DETAILS
                 </button>
@@ -354,7 +354,7 @@ export function PluginsSection() {
                   <button
                     type="button"
                     onClick={() => uninstallPlugin(plugin.id)}
-                    className="rounded-[7px] border border-border bg-card px-2.5 py-1 text-[10px] tracking-[0.08em] text-muted-foreground"
+                    className="rounded-md border border-border bg-card px-2.5 py-1 text-xs tracking-wider text-muted-foreground"
                   >
                     UNINSTALL
                   </button>
@@ -362,7 +362,7 @@ export function PluginsSection() {
                   <button
                     type="button"
                     onClick={() => installPlugin(plugin.id)}
-                    className="rounded-[7px] border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] tracking-[0.08em] text-primary"
+                    className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs tracking-wider text-primary"
                   >
                     INSTALL
                   </button>
@@ -373,9 +373,9 @@ export function PluginsSection() {
         })}
       </div>
 
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-[minmax(0,1fr)_330px]">
-        <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-          <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="mt-2.5 grid gap-3 xl:grid-cols-2">
+        <div className="rounded-lg border border-border bg-card px-4 py-4">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
             <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7.5 1H4.5a1 1 0 00-1 1v.5H2a1 1 0 00-1 1v5.5a1 1 0 001 1h7a1 1 0 001-1V3.5a1 1 0 00-1-1H7.5V2a1 1 0 00-1-1z" />
             </svg>
@@ -383,23 +383,23 @@ export function PluginsSection() {
           </p>
           {selectedPlugin ? (
             <>
-              <div className="mt-2.5 rounded-[8px] border border-border bg-card px-3 py-3">
+              <div className="mt-2.5 rounded-md border border-border bg-card px-3 py-3">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[14px] font-semibold tracking-[-0.02em]">{selectedPlugin.name}</p>
-                  <span className="text-[11px] text-muted-foreground">v{selectedPlugin.version}</span>
+                  <p className="text-sm font-semibold tracking-tight">{selectedPlugin.name}</p>
+                  <span className="text-xs text-muted-foreground">v{selectedPlugin.version}</span>
                 </div>
-                <p className="mt-1 text-[12px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {selectedPlugin.category} · {selectedPlugin.runtime}
                 </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Source: <code>{selectedPlugin.source}</code>
                 </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Health: {selectedPlugin.health}
                   {selectedPlugin.healthDetail ? ` - ${selectedPlugin.healthDetail}` : ""}
                 </p>
                 {selectedPlugin.installedAt ? (
-                  <p className="mt-1 text-[11px] text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     Installed: {new Date(selectedPlugin.installedAt).toLocaleString()}
                   </p>
                 ) : null}
@@ -407,7 +407,7 @@ export function PluginsSection() {
                   {selectedPlugin.capabilities.map((capability) => (
                     <span
                       key={capability}
-                      className="rounded-[6px] border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground"
+                      className="rounded-md border border-border bg-card px-2 py-1 text-xs text-muted-foreground"
                     >
                       {capability}
                     </span>
@@ -430,8 +430,8 @@ memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" comp
         </div>
 
         <div className="space-y-3">
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4">
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
               <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M1.5 3h8M1.5 5.5h8M1.5 8h5" />
               </svg>
@@ -439,11 +439,11 @@ memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" comp
             </p>
             <div className="mt-2.5 space-y-2">
               {events.length === 0 ? (
-                <div className="rounded-[8px] border border-border bg-card px-3 py-2.5 text-[12px] text-muted-foreground">
+                <div className="rounded-md border border-border bg-card px-3 py-2.5 text-xs text-muted-foreground">
                   No plugin activity yet.
                 </div>
               ) : events.map((event) => (
-                <div key={event.id} className="rounded-[8px] border border-border bg-card px-3 py-2.5">
+                <div key={event.id} className="rounded-md border border-border bg-card px-3 py-2.5">
                   <div className="flex items-start gap-2">
                     <span
                       className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full"
@@ -453,10 +453,10 @@ memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" comp
                       }}
                     />
                     <div>
-                      <p className="text-[12px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {event.action === "installed" ? "Installed" : "Uninstalled"} {event.pluginId}
                       </p>
-                      <p className="mt-1 text-[11px] text-muted-foreground">{new Date(event.at).toLocaleString()}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{new Date(event.at).toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
@@ -464,7 +464,7 @@ memoryos plugin status ${selectedPlugin.id}`} maxHeightClassName="max-h-52" comp
             </div>
           </div>
 
-          <div className="rounded-[10px] border border-border bg-card px-4 py-4 text-[12px] text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card px-4 py-4 text-xs text-muted-foreground">
             Source of truth: package manifests + persisted workspace install state. Marketplace listing is external.
           </div>
         </div>

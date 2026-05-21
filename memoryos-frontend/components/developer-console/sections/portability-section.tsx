@@ -212,31 +212,31 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
 
   return (
     <section>
-      <h1 className="text-[16px] font-semibold tracking-[-0.04em] sm:text-[18px]">Portability</h1>
-      {statusMessage ? <p className="mt-2 text-[11px] text-muted-foreground">{statusMessage}</p> : null}
+      <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Portability</h1>
+      {statusMessage ? <p className="mt-2 text-xs text-muted-foreground">{statusMessage}</p> : null}
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <div className="rounded-[10px] border border-border bg-muted p-4">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Export</p>
+        <div className="console-portability-card rounded-lg border bg-muted p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Export</p>
           <div className="mt-3 space-y-2">
-            <label className="block text-[11px] text-muted-foreground">Project</label>
+            <label className="block text-xs text-muted-foreground">Project</label>
             <input
               value={project}
               onChange={(event) => setProject(event.target.value)}
-              className="h-9 w-full rounded-[8px] border border-border bg-muted px-3 text-[12px] text-muted-foreground5"
+              className="h-9 w-full rounded-md border border-border bg-muted px-3 text-xs text-muted-foreground5"
             />
             <button
               type="button"
               onClick={() => void runExport()}
               disabled={isBusy}
-              className="rounded-[8px] border border-border px-3 py-2 text-[11px] text-foreground disabled:opacity-50"
+              className="rounded-md border border-border px-3 py-2 text-xs text-foreground disabled:opacity-50"
             >
               {isBusy ? "Working..." : "Export AGENTS.md + Snapshot"}
             </button>
           </div>
         </div>
-        <div className="rounded-[10px] border border-border bg-muted p-4">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Import</p>
+        <div className="console-portability-card rounded-lg border bg-muted p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Import</p>
           <div className="mt-3 flex items-center gap-2">
             <input
               id="dry-run"
@@ -244,7 +244,7 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
               checked={importDryRun}
               onChange={(event) => setImportDryRun(event.target.checked)}
             />
-            <label htmlFor="dry-run" className="text-[12px] text-muted-foreground">
+            <label htmlFor="dry-run" className="text-xs text-muted-foreground">
               Dry run validation only
             </label>
           </div>
@@ -252,7 +252,7 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
             type="button"
             onClick={() => void runImport()}
             disabled={isBusy || snapshotText.trim().length === 0}
-            className="mt-3 rounded-[8px] border border-border px-3 py-2 text-[11px] text-foreground disabled:opacity-50"
+            className="mt-3 rounded-md border border-border px-3 py-2 text-xs text-foreground disabled:opacity-50"
           >
             {isBusy ? "Working..." : importDryRun ? "Validate Snapshot" : "Import Snapshot"}
           </button>
@@ -260,14 +260,14 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-[10px] border border-border bg-muted p-4">
+        <div className="console-portability-card rounded-lg border bg-muted p-4">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">AGENTS.md</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">AGENTS.md</p>
             <button
               type="button"
               onClick={() => void copyText(agentsMd)}
               disabled={!agentsMd}
-              className="rounded-[6px] border border-border px-2 py-1 text-[10px] text-foreground disabled:opacity-40"
+              className="rounded-md border border-border px-2 py-1 text-xs text-foreground disabled:opacity-40"
             >
               Copy
             </button>
@@ -275,18 +275,18 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
           <textarea
             value={agentsMd}
             onChange={(event) => setAgentsMd(event.target.value)}
-            className="mt-2 h-64 w-full rounded-[8px] border border-border bg-muted p-3 font-mono text-[11px] text-foreground"
+            className="mt-2 h-64 w-full rounded-md border border-border bg-muted p-3 font-mono text-xs text-foreground"
             placeholder="Export to view AGENTS.md content..."
           />
         </div>
-        <div className="rounded-[10px] border border-border bg-muted p-4">
+        <div className="console-portability-card rounded-lg border bg-muted p-4">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Snapshot JSON</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Snapshot JSON</p>
             <button
               type="button"
               onClick={() => void copyText(snapshotText)}
               disabled={!snapshotText}
-              className="rounded-[6px] border border-border px-2 py-1 text-[10px] text-foreground disabled:opacity-40"
+              className="rounded-md border border-border px-2 py-1 text-xs text-foreground disabled:opacity-40"
             >
               Copy
             </button>
@@ -294,16 +294,16 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
           <textarea
             value={snapshotText}
             onChange={(event) => setSnapshotText(event.target.value)}
-            className="mt-2 h-64 w-full rounded-[8px] border border-border bg-muted p-3 font-mono text-[11px] text-foreground"
+            className="mt-2 h-64 w-full rounded-md border border-border bg-muted p-3 font-mono text-xs text-foreground"
             placeholder='Paste external snapshot JSON here (schema: "memoryos.snapshot.v1")'
           />
         </div>
       </div>
 
-      <div className="mt-4 rounded-[10px] border border-border bg-muted p-4">
-        <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Validation Result</p>
+      <div className="console-portability-card mt-4 rounded-lg border bg-muted p-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground">Validation Result</p>
         {importResult?.validation ? (
-          <div className="mt-2 space-y-2 text-[12px]">
+          <div className="mt-2 space-y-2 text-xs">
             <p className={importResult.validation.valid ? "text-chart-2" : "text-destructive"}>
               valid={String(importResult.validation.valid)}
             </p>
@@ -311,12 +311,12 @@ export function PortabilitySection({ workspaceName }: PortabilitySectionProps) {
               candidates={importResult.validation.stats?.importedCandidateCount ?? 0} contractFields={importResult.validation.stats?.contractFieldCount ?? 0}
             </p>
             {(importResult.validation.errors ?? []).map((error) => (
-              <p key={error} className="rounded-[6px] border border-destructive/30 bg-destructive/10 px-2 py-1 text-destructive">
+              <p key={error} className="rounded-md border border-destructive/30 bg-destructive/10 px-2 py-1 text-destructive">
                 {error}
               </p>
             ))}
             {(compatibilityNotes ?? []).map((warning) => (
-              <p key={warning} className="rounded-[6px] border border-chart-5/30 bg-chart-5/15 px-2 py-1 text-chart-5">
+              <p key={warning} className="rounded-md border border-chart-5/30 bg-chart-5/15 px-2 py-1 text-chart-5">
                 {warning}
               </p>
             ))}

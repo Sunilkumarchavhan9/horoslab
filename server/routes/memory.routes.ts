@@ -2337,78 +2337,114 @@ function buildWhyTop1(top?: {
 }
 
 function toContinueProjectBrief(result: ResumeResponseData): ContinueProjectBriefResponseData {
-  const memories = result.usedMemories ?? [];
-  const whatChangedRecently = memories
-    .slice(0, 3)
-    .map((memory) => memory.summary ?? memory.content)
-    .filter((value): value is string => Boolean(value && value.trim().length > 0));
-
-  const keyDecisions = memories
-    .map((memory) => memory.summary ?? memory.content)
-    .filter((text) => /\b(decision|decided|we chose|choose|approved)\b/i.test(text))
-    .slice(0, 3);
-
-  const openBlockers = result.openLoops
-    .filter((text) => /\b(block|blocked|risk|issue|debug|fix)\b/i.test(text))
-    .slice(0, 3);
-
-  const riskyFiles = Array.from(
-    new Set(
-      memories
-        .flatMap((memory) => {
-          const text = `${memory.summary ?? ""} ${memory.content ?? ""}`;
-          const fileMatches = text.match(/[A-Za-z0-9_/.-]+\.(ts|tsx|js|jsx|py|go|rs|java|rb|json|yaml|yml)/g) ?? [];
-          return fileMatches;
-        }),
-    ),
-  ).slice(0, 5);
-
-  const mustKnowContextForAgent = memories
-    .slice(0, 5)
-    .map((memory) => memory.summary ?? memory.content)
-    .filter((value): value is string => Boolean(value && value.trim().length > 0));
-
-  return {
-    whatChangedRecently: whatChangedRecently.length > 0 ? whatChangedRecently : [result.lastKnownState],
-    currentGoal: result.summary,
-    keyDecisions,
-    openBlockers,
-    riskyFiles,
-    nextBestAction: result.recommendedNextStep,
-    mustKnowContextForAgent,
-  };
+  return result.brief;
 }
 
 function toPromptBundle(input: {
   project: string;
   brief: ContinueProjectBriefResponseData;
 }): ResumePromptResponseData["prompts"] {
-  const riskyFilesText = input.brief.riskyFiles.length > 0
-    ? input.brief.riskyFiles.join(", ")
-    : "none explicitly identified";
-  const decisionsText = input.brief.keyDecisions.length > 0
-    ? input.brief.keyDecisions.join(" | ")
-    : "No explicit decisions captured yet.";
-  const blockersText = input.brief.openBlockers.length > 0
-    ? input.brief.openBlockers.join(" | ")
-    : "No explicit blockers captured.";
+  const listOrFallback = (items: string[], fallback: string) =>
+    items.length > 0 ? items.map((item) => `- ${item}`).join("\n") : `- ${fallback}`;
 
-  const base = [
-    `You are continuing project ${input.project}.`,
-    `Current goal: ${input.brief.currentGoal}`,
-    `Key decisions: ${decisionsText}`,
-    `Open blockers: ${blockersText}`,
-    `Risky files: ${riskyFilesText}`,
-    `Next best action: ${input.brief.nextBestAction}`,
-    "Only make the minimum safe change to complete the next action.",
-    "Do not rewrite unrelated modules.",
-    "After changes, explain what changed and why.",
+  const riskyFilesText = listOrFallback(input.brief.riskyFiles, "No risky files explicitly identified.");
+  const changedText = listOrFallback(input.brief.whatChangedRecently, "No recent changes captured.");
+  const decisionsText = listOrFallback(input.brief.keyDecisions, "No explicit decisions captured yet.");
+  const blockersText = listOrFallback(input.brief.openBlockers, "No explicit blockers captured.");
+  const contextText = listOrFallback(input.brief.mustKnowContextForAgent, "No additional context captured.");
+
+  const executionContract = [
+    `# MemoryOS Continue Contract: ${input.project}`,
+    "",
+    "## Current Goal",
+    input.brief.currentGoal,
+    "",
+    "## What Changed Recently",
+    changedText,
+    "",
+    "## Decisions To Preserve",
+    decisionsText,
+    "",
+    "## Open Blockers",
+    blockersText,
+    "",
+    "## Risky Files / Areas",
+    riskyFilesText,
+    "",
+    "## Must-Know Context",
+    contextText,
+    "",
+    "## Next Best Action",
+    input.brief.nextBestAction,
+    "",
+    "## Hard Guardrails",
+    "- Make the smallest safe change that advances the next best action.",
+    "- Do not rewrite unrelated modules or rename public interfaces unless the task requires it.",
+    "- Do not touch secrets, env files, generated folders, node_modules, or unrelated local changes.",
+    "- If the brief is missing a critical fact, ask one focused question instead of inventing product state.",
+    "- Preserve existing style and product direction unless the requested task explicitly changes it.",
+    "",
+    "## Required Output After Work",
+    "- Files changed and why.",
+    "- Validation run, or why validation could not run.",
+    "- Memory/brief items used, including any assumptions.",
+    "- Suggested next step only if one naturally follows.",
   ].join("\n");
 
   return {
-    cursor: `${base}\nFormat your plan first, then execute edits.`,
-    codex: `${base}\nUse concise reasoning, then apply focused code edits.`,
-    claudeCode: `${base}\nPrioritize clear patch safety and explicit assumptions.`,
+    cursor: [
+      executionContract,
+      "",
+      "## Cursor Execution Mode",
+      "1. Briefly inspect the relevant files before editing.",
+      "2. Apply focused edits directly.",
+      "3. Keep the chat summary short and include validation.",
+    ].join("\n"),
+    codex: [
+      executionContract,
+      "",
+      "## Codex Execution Mode",
+      "1. Work inside the existing repo and respect dirty files.",
+      "2. Prefer small patches and command-based verification.",
+      "3. Do not commit or push unless explicitly asked.",
+    ].join("\n"),
+    claudeCode: [
+      executionContract,
+      "",
+      "## Claude Code Execution Mode",
+      "1. State assumptions before changing behavior.",
+      "2. Prioritize patch safety, tests, and readable diffs.",
+      "3. Surface any mismatch between the brief and code reality.",
+    ].join("\n"),
+  };
+}
+
+function toTraceProof(input: {
+  trace: ResumePromptResponseData["trace"];
+  target: ResumePromptResponseData["target"];
+}): ResumePromptResponseData["traceProof"] {
+  const memoryUsedCount = input.trace.length;
+  const averageConfidence =
+    memoryUsedCount > 0
+      ? Number((input.trace.reduce((sum, item) => sum + item.confidence, 0) / memoryUsedCount).toFixed(3))
+      : 0;
+  const contractCategories = Array.from(
+    new Set(input.trace.map((item) => item.contractCategory).filter((item): item is string => Boolean(item))),
+  );
+  const targetLabel =
+    input.target === "claude_code" ? "Claude Code" : input.target === "codex" ? "Codex" : "Cursor";
+
+  return {
+    runType: "resume_prompt",
+    memoryUsedCount,
+    averageConfidence,
+    contractCategories,
+    whatChangedAfterAction:
+      `Generated a ${targetLabel} execution prompt from the canonical Continue Project brief. Code changes are captured after the agent run.`,
+    summary:
+      memoryUsedCount > 0
+        ? `Used ${memoryUsedCount} ranked memories at average confidence ${averageConfidence}.`
+        : "No ranked memories were available; prompt was generated from fallback brief context.",
   };
 }
 
@@ -3776,17 +3812,20 @@ memoryRouter.post(
 
     const brief = toContinueProjectBrief(result);
     const prompts = toPromptBundle({ project: parsed.data.project, brief });
+    const target = parsed.data.target ?? "cursor";
     const trace = result.usedMemories.slice(0, 6).map((memory) => ({
       memoryId: memory.id,
       source: memory.memoryType ?? "general",
+      ...(memory.contractCategory ? { contractCategory: memory.contractCategory } : {}),
       confidence: Number(memory.finalScore.toFixed(3)),
       whySelected: memory.summary ?? memory.content,
     }));
 
     const response: ResumePromptResponseData = {
-      target: parsed.data.target ?? "cursor",
+      target,
       brief,
       prompts,
+      traceProof: toTraceProof({ trace, target }),
       trace,
     };
     sendApiSuccess<ResumePromptResponseData>(

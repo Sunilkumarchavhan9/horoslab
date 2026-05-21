@@ -1,7 +1,7 @@
 import type { ContinuityPlannerResult } from "../../lib/memory/continuityPlanner";
 import type { HandoffPlannerResult } from "../../lib/memory/handoffPlanner";
 import type { MemoryToolDescriptor } from "../../lib/memory/MCP";
-import type { ResumePlannerResult } from "../../lib/memory/resumePlanner";
+import type { ContinueProjectBrief, ResumePlannerResult } from "../../lib/memory/resumePlanner";
 import type { RetrieveRelevantMemoryResult } from "../../lib/memory/retrieveRelevantMemory";
 import { getRetrievalWeights } from "../../lib/config/retrievalWeights";
 
@@ -35,15 +35,7 @@ export type RetrieveResponseData = RetrieveRelevantMemoryResult;
 export type ContinueResponseData = ContinuityPlannerResult;
 export type HandoffResponseData = HandoffPlannerResult;
 export type ResumeResponseData = ResumePlannerResult;
-export type ContinueProjectBriefResponseData = {
-  whatChangedRecently: string[];
-  currentGoal: string;
-  keyDecisions: string[];
-  openBlockers: string[];
-  riskyFiles: string[];
-  nextBestAction: string;
-  mustKnowContextForAgent: string[];
-};
+export type ContinueProjectBriefResponseData = ContinueProjectBrief;
 export type ResumePromptResponseData = {
   target: "cursor" | "codex" | "claude_code";
   brief: ContinueProjectBriefResponseData;
@@ -52,9 +44,18 @@ export type ResumePromptResponseData = {
     codex: string;
     claudeCode: string;
   };
+  traceProof: {
+    runType: "resume_prompt";
+    memoryUsedCount: number;
+    averageConfidence: number;
+    contractCategories: string[];
+    whatChangedAfterAction: string;
+    summary: string;
+  };
   trace: Array<{
     memoryId: string;
     source: string;
+    contractCategory?: string;
     confidence: number;
     whySelected: string;
   }>;
