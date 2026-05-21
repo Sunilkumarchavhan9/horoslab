@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, type PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
 import {
   formatMemoryForDisplay,
@@ -379,6 +379,12 @@ type PlaygroundSectionProps = {
   variant?: "standalone" | "embedded";
 };
 
+type PlaygroundPaneWidths = {
+  left: number;
+  center: number;
+  right: number;
+};
+
 export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionProps = {}) {
   const isEmbedded = variant === "embedded";
   const [mode, setMode] = useState<PlaygroundMode>("process");
@@ -409,6 +415,13 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   const [graphPan, setGraphPan] = useState({ x: 0, y: 0 });
   const [isGraphDragging, setIsGraphDragging] = useState(false);
   const graphDragStartRef = useRef({ pointerX: 0, pointerY: 0, panX: 0, panY: 0 });
+  const paneContainerRef = useRef<HTMLDivElement | null>(null);
+  const activePaneDividerRef = useRef<"left" | "right" | null>(null);
+  const [paneWidths, setPaneWidths] = useState<PlaygroundPaneWidths>({
+    left: 27,
+    center: 42,
+    right: 31,
+  });
   const [graphExpanded, setGraphExpanded] = useState(false);
   const [legendCollapsed, setLegendCollapsed] = useState(true);
   const [selectedGraphNodeId, setSelectedGraphNodeId] = useState<string | null>(null);
@@ -439,6 +452,83 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
 
     return { total, successRate, p95LatencyMs };
   }, [requests]);
+  const paneStyle = useMemo(
+    () =>
+      ({
+        "--playground-left-pane": `${paneWidths.left}%`,
+        "--playground-center-pane": `${paneWidths.center}%`,
+        "--playground-right-pane": `${paneWidths.right}%`,
+      }) as CSSProperties,
+    [paneWidths],
+  );
+
+  const updatePaneWidths = useCallback((divider: "left" | "right", clientX: number) => {
+    const container = paneContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const rect = container.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+
+    const pointerPercent = ((clientX - rect.left) / rect.width) * 100;
+    const minLeft = 16;
+    const minCenter = 24;
+    const minRight = 18;
+
+    setPaneWidths((current) => {
+      if (divider === "left") {
+        const left = Math.min(
+          Math.max(pointerPercent, minLeft),
+          100 - current.right - minCenter,
+        );
+        return {
+          left,
+          center: 100 - left - current.right,
+          right: current.right,
+        };
+      }
+
+      const right = Math.min(
+        Math.max(100 - pointerPercent, minRight),
+        100 - current.left - minCenter,
+      );
+      return {
+        left: current.left,
+        center: 100 - current.left - right,
+        right,
+      };
+    });
+  }, []);
+
+  const handlePaneDragStart = useCallback(
+    (divider: "left" | "right", event: ReactPointerEvent<HTMLButtonElement>) => {
+      activePaneDividerRef.current = divider;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      updatePaneWidths(divider, event.clientX);
+    },
+    [updatePaneWidths],
+  );
+
+  const handlePaneDragMove = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
+      const divider = activePaneDividerRef.current;
+      if (!divider) {
+        return;
+      }
+      updatePaneWidths(divider, event.clientX);
+    },
+    [updatePaneWidths],
+  );
+
+  const handlePaneDragEnd = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
+    activePaneDividerRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }, []);
 
   const withAuthorizedToken = useCallback(
     async <T,>(work: (effectiveToken: string) => Promise<T>): Promise<T> => {
@@ -1499,13 +1589,11 @@ const answer = await model.generate({
       </header>
 
       <div
-        className={`grid min-h-0 flex-1 grid-cols-1 overflow-y-auto lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.35fr)] lg:overflow-hidden xl:grid-cols-[minmax(260px,0.85fr)_minmax(480px,1.35fr)_minmax(360px,1fr)] 2xl:grid-cols-[minmax(300px,0.9fr)_minmax(560px,1.35fr)_minmax(420px,1fr)] ${
-          graphExpanded
-            ? "xl:grid-cols-[minmax(220px,0.65fr)_minmax(420px,0.9fr)_minmax(560px,1.45fr)] 2xl:grid-cols-[minmax(260px,0.7fr)_minmax(520px,1fr)_minmax(720px,1.55fr)]"
-            : ""
-        }`}
+        ref={paneContainerRef}
+        style={paneStyle}
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden"
       >
-        <aside className={`order-2 min-h-0 overflow-visible border-b lg:order-1 lg:max-h-[calc(100svh-4rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
+        <aside className={`order-2 min-h-0 w-full overflow-visible border-b lg:order-1 lg:max-h-[calc(100svh-4rem)] lg:w-[var(--playground-left-pane)] lg:overflow-y-auto lg:border-b-0 ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
           <div className="px-4 py-4">
             <div className="flex items-center justify-between gap-3">
               <p className="border-l-4 border-primary pl-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Profile</p>
@@ -1613,7 +1701,20 @@ const answer = await model.generate({
           </div>
         </aside>
 
-        <section className={`order-1 flex min-h-[78svh] flex-col border-b lg:order-2 lg:min-h-0 lg:max-h-[calc(100svh-4rem)] xl:border-b-0 xl:border-r ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
+        <button
+          type="button"
+          aria-label="Resize profile and chat panes"
+          title="Drag to resize profile and chat panes"
+          onPointerDown={(event) => handlePaneDragStart("left", event)}
+          onPointerMove={handlePaneDragMove}
+          onPointerUp={handlePaneDragEnd}
+          onPointerCancel={handlePaneDragEnd}
+          className="group order-1 hidden w-2 shrink-0 cursor-col-resize touch-none items-center justify-center border-x border-border bg-background transition hover:bg-muted/40 lg:order-2 lg:flex"
+        >
+          <span className="h-10 w-px bg-border transition group-hover:bg-primary" />
+        </button>
+
+        <section className={`order-1 flex min-h-[78svh] w-full flex-col border-b lg:order-3 lg:min-h-0 lg:max-h-[calc(100svh-4rem)] lg:w-[var(--playground-center-pane)] lg:border-l-0 xl:border-b-0 ${lightMode ? "border-border bg-card text-card-foreground" : "border-border bg-background"}`}>
           <div className={`flex items-center justify-between gap-3 border-b px-3 py-3 sm:px-5 ${lightMode ? "border-border" : "border-border"}`}>
             <div className="flex min-w-0 flex-1 items-center overflow-x-auto">
               {[
@@ -2015,7 +2116,20 @@ handoff = httpx.post(
           </div>
         </section>
 
-        <aside className="order-3 flex min-h-[520px] flex-col border-t border-border bg-card lg:col-span-2 lg:min-h-[560px] xl:col-span-1 xl:min-h-0 xl:max-h-[calc(100svh-4rem)] xl:border-t-0">
+        <button
+          type="button"
+          aria-label="Resize chat and memory graph panes"
+          title="Drag to resize chat and memory graph panes"
+          onPointerDown={(event) => handlePaneDragStart("right", event)}
+          onPointerMove={handlePaneDragMove}
+          onPointerUp={handlePaneDragEnd}
+          onPointerCancel={handlePaneDragEnd}
+          className="group order-3 hidden w-2 shrink-0 cursor-col-resize touch-none items-center justify-center border-x border-border bg-background transition hover:bg-muted/40 lg:order-4 lg:flex"
+        >
+          <span className="h-10 w-px bg-border transition group-hover:bg-primary" />
+        </button>
+
+        <aside className="order-3 flex min-h-[520px] w-full flex-col border-t border-border bg-card lg:order-5 lg:min-h-0 lg:max-h-[calc(100svh-4rem)] lg:w-[var(--playground-right-pane)] lg:border-t-0">
           <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
             <p className="border-l-4 border-primary pl-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Memory Graph</p>
             <div className="flex shrink-0 items-center gap-2">
@@ -2028,7 +2142,13 @@ handoff = httpx.post(
               </button>
               <button
                 type="button"
-                onClick={() => setGraphExpanded((current) => !current)}
+                onClick={() => {
+                  setGraphExpanded((current) => {
+                    const next = !current;
+                    setPaneWidths(next ? { left: 18, center: 30, right: 52 } : { left: 27, center: 42, right: 31 });
+                    return next;
+                  });
+                }}
                 className="rounded-md border border-border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition hover:text-foreground"
                 aria-label={graphExpanded ? "Collapse memory graph" : "Expand memory graph"}
               >

@@ -1459,6 +1459,29 @@ export function RunDemoSection() {
   const contrastOverrideStyles = (
     <style jsx global>{`
       .run-demo-dark {
+        --background: oklch(0 0 0);
+        --foreground: oklch(0.985 0 0);
+        --card: oklch(0.145 0 0);
+        --card-foreground: oklch(0.985 0 0);
+        --popover: oklch(0.145 0 0);
+        --popover-foreground: oklch(0.985 0 0);
+        --primary: oklch(0.55 0.22 264);
+        --primary-foreground: oklch(0.985 0 0);
+        --secondary: oklch(0.18 0 0);
+        --secondary-foreground: oklch(0.985 0 0);
+        --muted: oklch(0.18 0 0);
+        --muted-foreground: oklch(0.72 0 0);
+        --accent: oklch(0.18 0 0);
+        --accent-foreground: oklch(0.985 0 0);
+        --destructive: oklch(0.704 0.191 22.216);
+        --border: oklch(1 0 0 / 12%);
+        --input: oklch(1 0 0 / 16%);
+        --ring: oklch(0.55 0.22 264);
+        --chart-1: oklch(0.55 0.22 264);
+        --chart-2: oklch(0.696 0.17 162.48);
+        --chart-3: oklch(0.769 0.188 70.08);
+        --chart-4: oklch(0.627 0.265 303.9);
+        --chart-5: oklch(0.645 0.246 16.439);
         background: var(--background) !important;
         color: var(--foreground) !important;
       }
@@ -1517,7 +1540,7 @@ export function RunDemoSection() {
 
   if (canStart) {
     return (
-      <div className="run-demo-dark grid min-h-screen place-items-center bg-background px-5 py-10 text-primary-foreground">
+      <div className="run-demo-dark dark grid min-h-screen place-items-center bg-background px-5 py-10 text-primary-foreground">
         {contrastOverrideStyles}
         <div className="w-full max-w-5xl text-center">
           <div className="flex justify-center">{brandHeader}</div>
@@ -1580,7 +1603,7 @@ export function RunDemoSection() {
   }
 
   return (
-    <div className="run-demo-dark flex h-screen min-h-screen flex-col overflow-hidden bg-background text-primary-foreground">
+    <div className="run-demo-dark dark flex h-screen min-h-screen flex-col overflow-hidden bg-background text-primary-foreground">
       {contrastOverrideStyles}
       <header className="grid shrink-0 border-b border-border bg-background lg:grid-cols-3">
         <div className="border-b border-border px-5 py-4 lg:border-b-0 lg:border-r">{brandHeader}</div>
