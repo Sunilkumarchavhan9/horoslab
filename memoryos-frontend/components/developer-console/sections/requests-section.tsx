@@ -1,7 +1,26 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { Activity } from "lucide-react";
+import {
+  INTEL_LINE_CELL,
+  IntelLineGridFrame,
+  IntelPageStack,
+  IntelSectionGutter,
+  IntelTileGrid,
+  intelPanelBleed,
+  intelSectionRootClass,
+  IntelSectionScroll,
+} from "@/components/developer-console/intel-line-grid";
+import {
+  IntelligenceBreadcrumb,
+  IntelligenceDataTable,
+  IntelligenceEntityHeader,
+  IntelligenceStatusBadge,
+  IntelligenceWorkspace,
+  type IntelTableRow,
+} from "@/components/developer-console/os-intelligence-shell";
+import { cn } from "@/lib/utils";
 
 const REQUEST_TIME_FILTERS = ["1d", "7d", "30d", "All"] as const;
 const REQUEST_STATUS_FILTERS = ["All statuses", "Success", "Error"] as const;
@@ -25,6 +44,7 @@ export type RequestSectionEvent = {
 };
 
 type RequestsSectionProps = {
+  workspaceName?: string;
   requestEvents: RequestSectionEvent[];
   isLoading?: boolean;
   errorMessage?: string | null;
@@ -36,98 +56,122 @@ function normalizeRequestType(type: string): string {
   return type.trim().length > 0 ? type : "other";
 }
 
+function sanitizeRoute(route: string): string {
+  try {
+    const [pathname, query = ""] = route.split("?");
+    if (!query) return pathname;
+    const params = new URLSearchParams(query);
+    for (const key of Array.from(params.keys())) {
+      const normalizedKey = key.toLowerCase();
+      if (
+        normalizedKey.includes("token") ||
+        normalizedKey.includes("secret") ||
+        normalizedKey.includes("key") ||
+        normalizedKey.includes("code")
+      ) {
+        params.set(key, "[redacted]");
+      }
+    }
+    const sanitized = params.toString();
+    return sanitized ? `${pathname}?${sanitized}` : pathname;
+  } catch {
+    return route.replace(/([?&](?:token|secret|key|code)=)[^&]+/gi, "$1[redacted]");
+  }
+}
+
+function shouldHideRoute(route: string): boolean {
+  const pathname = route.split("?")[0]?.toLowerCase() ?? route.toLowerCase();
+  return pathname.endsWith("/api/memory/events") || pathname.endsWith("/api/connector/events");
+}
+
+function requestTitle(event: RequestSectionEvent): string {
+  const type = normalizeRequestType(event.type);
+  if (type === "resume") return "Resume context generated";
+  if (type === "handoff") return "Agent handoff generated";
+  if (type === "retrieve") return "Memory retrieval executed";
+  if (type === "memory_add") return "Memory written";
+  if (type === "memory_list") return "Memory registry loaded";
+  if (type === "timeline") return "Timeline inspected";
+  if (type === "insights") return "Memory insights refreshed";
+  if (type === "explain") return "Memory explanation requested";
+  return `${event.method} ${sanitizeRoute(event.route).split("?")[0]}`;
+}
+
+function requestDescription(event: RequestSectionEvent): string {
+  const type = normalizeRequestType(event.type);
+  if (event.status === "Error") {
+    return event.errorDetails ?? `Backend returned HTTP ${event.statusCode}.`;
+  }
+  if (type === "resume") return "MemoryOS assembled project context so the next agent can continue.";
+  if (type === "handoff") return "Generated a transfer brief for another agent or teammate.";
+  if (type === "retrieve") return "Selected memory candidates for an agent/runtime call.";
+  if (type === "memory_add") return "Stored or evolved context in the company memory layer.";
+  if (type === "memory_list") return "Loaded active memory records for the console.";
+  if (type === "timeline") return "Loaded memory activity for audit and traceability.";
+  if (type === "insights") return "Calculated health, impact, and continuity signals.";
+  return sanitizeRoute(event.route);
+}
+
+function formatTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+function shortText(input: string | undefined | null, max = 120): string {
+  if (!input) return "—";
+  const cleaned = input.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= max) return cleaned;
+  return `${cleaned.slice(0, max).trimEnd()}…`;
+}
+
+function sourceToneForRequest(event: RequestSectionEvent): IntelTableRow["sourceTone"] {
+  if (event.status === "Error") return "rose";
+  const route = event.route.toLowerCase();
+  if (route.includes("connector")) return "cyan";
+  if (route.includes("resume") || route.includes("handoff")) return "violet";
+  if (route.includes("retrieve")) return "amber";
+  return "slate";
+}
+
+function sourceLabelForRequest(event: RequestSectionEvent): string {
+  const type = normalizeRequestType(event.type);
+  if (event.status === "Error") return `${event.statusCode} error`;
+  if (type === "retrieve") return "Retrieval";
+  if (type === "resume") return "Continuity";
+  if (type === "handoff") return "Handoff";
+  if (type === "memory_add") return "Memory write";
+  if (event.route.includes("connector")) return "Connector";
+  return `${event.statusCode} OK`;
+}
+
+function percentile(values: number[], p: number): number | null {
+  const sorted = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
+  if (sorted.length === 0) return null;
+  const index = Math.min(sorted.length - 1, Math.ceil((p / 100) * sorted.length) - 1);
+  return sorted[index] ?? null;
+}
+
 export function RequestsSection({
+  workspaceName = "MemoryOS",
   requestEvents,
   isLoading = false,
   errorMessage = null,
 }: RequestsSectionProps) {
   const [liveEvents, setLiveEvents] = useState<RequestSectionEvent[]>(requestEvents);
-  const [liveError, setLiveError] = useState<string | null>(null);
-  const [requestTimeFilter, setRequestTimeFilter] =
-    useState<RequestTimeFilter>("30d");
+  const [requestTimeFilter, setRequestTimeFilter] = useState<RequestTimeFilter>("30d");
   const [requestTypeFilter, setRequestTypeFilter] = useState<string>("All types");
   const [requestStatusFilter, setRequestStatusFilter] =
     useState<RequestStatusFilter>("All statuses");
-  const [showRequestTypeMenu, setShowRequestTypeMenu] = useState(false);
-  const [showRequestStatusMenu, setShowRequestStatusMenu] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>("-");
 
   useEffect(() => {
     const deduped = Array.from(new Map(requestEvents.map((event) => [event.id, event])).values())
+      .filter((event) => !shouldHideRoute(event.route))
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     setLiveEvents(deduped);
     setLastUpdated(new Date().toISOString());
   }, [requestEvents]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchLive = async () => {
-      try {
-        const token = await getOrCreateMemoryToken();
-        if (!token) return;
-        const response = await fetch("/api/memory/requests?limit=200&range=all", {
-          headers: { Authorization: `Bearer ${token}` },
-          cache: "no-store",
-        });
-        if (!response.ok) {
-          throw new Error(`Could not refresh requests (${response.status})`);
-        }
-        const payload = (await response.json()) as {
-          requests?: unknown[];
-          data?: { requests?: unknown[] };
-        };
-        const rawList = Array.isArray(payload?.requests)
-          ? payload.requests
-          : Array.isArray(payload?.data?.requests)
-            ? payload.data.requests
-            : [];
-        const mapped: RequestSectionEvent[] = rawList
-          .filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null)
-          .map((entry) => ({
-            id: String(entry.id ?? ""),
-            createdAt: String(entry.createdAt ?? new Date().toISOString()),
-            type: String(entry.routeType ?? entry.type ?? "other"),
-            status:
-              Number(entry.status) >= 200 && Number(entry.status) < 400
-                ? "Success"
-                : "Error",
-            latencyMs: Number(entry.durationMs ?? entry.latencyMs ?? 0),
-            route: String(entry.path ?? entry.route ?? ""),
-            method: String(entry.method ?? "GET"),
-            statusCode: Number(entry.statusCode ?? entry.status ?? 0),
-            agent: typeof entry.agent === "string" ? entry.agent : undefined,
-            payloadSummary:
-              typeof entry.payloadSummary === "string" ? entry.payloadSummary : undefined,
-            responseSummary:
-              typeof entry.responseSummary === "string" ? entry.responseSummary : undefined,
-            errorDetails:
-              typeof entry.errorDetails === "string" ? entry.errorDetails : undefined,
-          }));
-        const deduped = Array.from(new Map(mapped.map((event) => [event.id, event])).values())
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        if (!cancelled) {
-          setLiveEvents(deduped);
-          setLiveError(null);
-          setLastUpdated(new Date().toISOString());
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setLiveError(err instanceof Error ? err.message : "Could not refresh requests.");
-        }
-      }
-    };
-
-    void fetchLive();
-    const timer = window.setInterval(() => {
-      void fetchLive();
-    }, 10000);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
-    };
-  }, []);
 
   const requestTypeFilters = useMemo(() => {
     const dynamicTypes = Array.from(
@@ -152,261 +196,209 @@ export function RequestsSection({
         requestTypeFilter === "All types" ||
         normalizeRequestType(event.type) === requestTypeFilter;
       const matchesStatus =
-        requestStatusFilter === "All statuses" ||
-        event.status === requestStatusFilter;
+        requestStatusFilter === "All statuses" || event.status === requestStatusFilter;
       const eventTimeMs = new Date(event.createdAt).getTime();
       const matchesTime =
         maxAgeMs === null ||
-        !Number.isFinite(eventTimeMs) ? false :
-        referenceTimeMs - eventTimeMs <= maxAgeMs;
-
+        (Number.isFinite(eventTimeMs) && referenceTimeMs - eventTimeMs <= maxAgeMs);
       return matchesType && matchesStatus && matchesTime;
     });
   }, [liveEvents, requestTimeFilter, requestTypeFilter, requestStatusFilter]);
 
-  const successfulRequestCount = filteredRequestEvents.filter(
-    (event) => event.status === "Success",
-  ).length;
-  const averageRequestLatency =
-    successfulRequestCount > 0
-      ? Math.round(
-          filteredRequestEvents
-            .filter((event) => event.status === "Success")
-            .reduce((total, event) => total + event.latencyMs, 0) /
-            successfulRequestCount,
-        )
-      : null;
+  const successfulRequestCount = filteredRequestEvents.filter((e) => e.status === "Success").length;
+  const errorCount = filteredRequestEvents.length - successfulRequestCount;
+  const successRate =
+    filteredRequestEvents.length > 0
+      ? Math.round((successfulRequestCount / filteredRequestEvents.length) * 100)
+      : 0;
+  const p95Latency = percentile(
+    filteredRequestEvents.filter((e) => e.status === "Success").map((e) => e.latencyMs),
+    95,
+  );
 
   const hasRows = filteredRequestEvents.length > 0;
-  const emptyTitle = isLoading
-    ? "Loading requests..."
-    : errorMessage || liveError
-      ? "Could not load requests"
-      : "No requests yet";
-  const emptyDescription = isLoading
-    ? "Fetching request history from the MemoryOS API."
-    : errorMessage || liveError
-      ? (errorMessage ?? liveError ?? "Could not load requests")
-      : "API requests will appear here once you run retrieve, resume, continue, or handoff flows.";
+  const streamLive = hasRows || liveEvents.length > 0;
+
+  const tableRows: IntelTableRow[] = useMemo(
+    () =>
+      filteredRequestEvents.slice(0, 80).map((event, index) => ({
+        id: `#${String(index + 1).padStart(4, "0")}`,
+        title: requestTitle(event),
+        operator: event.agent ?? event.method ?? "system",
+        detail: shortText(
+          event.responseSummary ?? event.payloadSummary ?? requestDescription(event),
+          120,
+        ),
+        value: `${event.latencyMs}ms · ${formatTime(event.createdAt)}`,
+        source: sourceLabelForRequest(event),
+        sourceTone: sourceToneForRequest(event),
+      })),
+    [filteredRequestEvents],
+  );
 
   return (
-    <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-base font-semibold tracking-tighter sm:text-lg">
-            Requests
-          </h1>
-          <p className="mt-1 text-xs leading-6 text-muted-foreground sm:text-sm">
-            View MemoryOS API request history and continuity runtime details.
-          </p>
-        </div>
+    <div className={intelSectionRootClass}>
+      <IntelligenceWorkspace>
+        <IntelligenceBreadcrumb
+          items={["Dashboard", workspaceName, "Runtime Activity"]}
+        />
+        <IntelligenceEntityHeader
+          icon={Activity}
+          title="Runtime Activity"
+          badge={
+            <IntelligenceStatusBadge live={streamLive}>
+              {streamLive ? "Live backend stream" : "Awaiting events"}
+            </IntelligenceStatusBadge>
+          }
+          meta={
+            <>
+              <span className="text-[#9CA3AF]">Observability trace stream</span>
+              <span className="hidden text-[#E5E7EB] sm:inline">·</span>
+              <span>
+                Updated {lastUpdated === "-" ? "—" : formatTime(lastUpdated)}
+              </span>
+            </>
+          }
+        />
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center overflow-hidden rounded-md border border-border bg-card">
-            {REQUEST_TIME_FILTERS.map((range) => (
-              <button
-                key={range}
-                type="button"
-                onClick={() => setRequestTimeFilter(range)}
-                className={`px-3 py-1.5 text-xs font-medium tracking-wider transition ${
-                  requestTimeFilter === range
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"
-                }`}
-              >
-                {range}
-              </button>
-            ))}
-          </div>
+        <IntelSectionScroll>
+        <div className={intelPanelBleed}>
+          <IntelPageStack>
+            <IntelSectionGutter />
 
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setShowRequestTypeMenu((current) => !current);
-                setShowRequestStatusMenu(false);
-              }}
-              className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-foreground transition hover:border-border"
-            >
-              {requestTypeFilter}
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-muted-foreground"
+            <IntelLineGridFrame flush>
+              <div
+                className={cn(
+                  INTEL_LINE_CELL,
+                  "flex flex-wrap items-center justify-between gap-3 py-4",
+                )}
               >
-                <path d="M2 4l3 3 3-3" />
-              </svg>
-            </button>
-            {showRequestTypeMenu ? (
-              <div className="absolute right-0 top-full mt-2 z-20 w-56 overflow-hidden rounded-md border border-border bg-card">
-                {requestTypeFilters.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => {
-                      setRequestTypeFilter(item);
-                      setShowRequestTypeMenu(false);
-                    }}
-                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-xs transition ${
-                      requestTypeFilter === item
-                        ? "bg-muted font-semibold text-foreground"
-                        : "text-muted-foreground hover:bg-muted"
-                    }`}
+                <p className="text-xs text-[#6B7280]">
+                  Filter the execution ledger by time window, request type, and status.
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap gap-1">
+                    {REQUEST_TIME_FILTERS.map((range) => (
+                      <button
+                        key={range}
+                        type="button"
+                        data-no-pixel-load
+                        onClick={() => setRequestTimeFilter(range)}
+                        className={cn(
+                          "intel-filter-chip h-9 border px-3 text-xs font-semibold uppercase tracking-[0.14em]",
+                          requestTimeFilter === range
+                            ? "border-[#111827] bg-[#111827] text-white"
+                            : "border-[#E5E7EB] bg-white text-[#6B7280] hover:bg-[#F9FAFB]",
+                        )}
+                      >
+                        {range}
+                      </button>
+                    ))}
+                  </div>
+                  <select
+                    value={requestTypeFilter}
+                    onChange={(e) => setRequestTypeFilter(e.target.value)}
+                    className="h-9 rounded-lg border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#374151] outline-none focus:border-[#D1D5DB] focus:ring-2 focus:ring-black/[0.04]"
                   >
-                    <span>{item}</span>
-                    {requestTypeFilter === item ? (
-                      <span className="text-muted-foreground">✓</span>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setShowRequestStatusMenu((current) => !current);
-                setShowRequestTypeMenu(false);
-              }}
-              className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-foreground transition hover:border-border"
-            >
-              {requestStatusFilter}
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-muted-foreground"
-              >
-                <path d="M2 4l3 3 3-3" />
-              </svg>
-            </button>
-            {showRequestStatusMenu ? (
-              <div className="absolute right-0 top-full mt-2 z-20 w-44 overflow-hidden rounded-md border border-border bg-card">
-                {REQUEST_STATUS_FILTERS.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => {
-                      setRequestStatusFilter(item);
-                      setShowRequestStatusMenu(false);
-                    }}
-                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-xs transition ${
-                      requestStatusFilter === item
-                        ? "bg-muted font-semibold text-foreground"
-                        : "text-muted-foreground hover:bg-muted"
-                    }`}
+                    {requestTypeFilters.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={requestStatusFilter}
+                    onChange={(e) =>
+                      setRequestStatusFilter(e.target.value as RequestStatusFilter)
+                    }
+                    className="h-9 rounded-lg border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#374151] outline-none focus:border-[#D1D5DB] focus:ring-2 focus:ring-black/[0.04]"
                   >
-                    <span>{item}</span>
-                    {requestStatusFilter === item ? (
-                      <span className="text-muted-foreground">✓</span>
-                    ) : null}
-                  </button>
-                ))}
+                    {REQUEST_STATUS_FILTERS.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-      <div className="mt-3 grid gap-2.5 lg:grid-cols-3">
-        <div className="rounded-md border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            By request type
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {filteredRequestEvents.length > 0
-              ? `${filteredRequestEvents.length} request(s) in this period`
-              : "No requests in this period"}
-          </p>
-        </div>
-        <div className="rounded-md border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Successful requests (2xx)
-          </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tighter">
-            {successfulRequestCount}
-            <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-              of {filteredRequestEvents.length}
-            </span>
-          </p>
-        </div>
-        <div className="rounded-md border border-border border-t-2 border-t-primary bg-card px-3.5 py-3.5 sm:px-4 sm:py-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Average latency (ms)
-          </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tighter">
-            {averageRequestLatency !== null ? averageRequestLatency : "-"}
-          </p>
-        </div>
-      </div>
+            </IntelLineGridFrame>
 
-      <div className="mt-3 rounded-lg border border-border bg-card px-4 py-4 sm:px-5 sm:py-5">
-        {!hasRows ? (
-          <div className="grid min-h-72 place-items-center text-center sm:min-h-96">
-            <div className="max-w-md">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-border text-muted-foreground">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="1,11 4,11 6,5 9,17 12,8 15,13 17,11 21,11" />
-                </svg>
-              </div>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tighter">
-                {emptyTitle}
-              </h2>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                {emptyDescription}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-border">
-              <thead>
-                <tr className="text-left text-xs uppercase tracking-widest text-muted-foreground">
-                  <th className="px-3 py-2">Time</th>
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Route</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Latency</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filteredRequestEvents.map((event) => (
-                  <tr key={event.id} className="text-xs text-muted-foreground">
-                    <td className="px-3 py-3">
-                      {new Date(event.createdAt).toLocaleString()}
-                    </td>
-                    <td className="px-3 py-3">{normalizeRequestType(event.type)}</td>
-                    <td className="px-3 py-3">{event.route}</td>
-                    <td className="px-3 py-3">{event.status}</td>
-                    <td className="px-3 py-3">{event.latencyMs}ms</td>
-                  </tr>
+            <IntelSectionGutter />
+
+            <IntelLineGridFrame flush>
+              <IntelTileGrid variant="kpi">
+                {[
+                  {
+                    label: "Live requests",
+                    value: filteredRequestEvents.length.toString(),
+                    detail: "Current filtered window",
+                  },
+                  {
+                    label: "Success rate",
+                    value: `${successRate}%`,
+                    detail: `${successfulRequestCount} successful`,
+                  },
+                  {
+                    label: "P95 latency",
+                    value: p95Latency !== null ? `${p95Latency}ms` : "—",
+                    detail: "Successful calls only",
+                  },
+                  {
+                    label: "Needs attention",
+                    value: errorCount.toString(),
+                    detail: "Errors and blocked requests",
+                  },
+                ].map((stat) => (
+                  <div key={stat.label} className={INTEL_LINE_CELL}>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                      {stat.label}
+                    </p>
+                    <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight text-[#111827]">
+                      {stat.value}
+                    </p>
+                    <p className="mt-1 text-xs text-[#6B7280]">{stat.detail}</p>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </>
+              </IntelTileGrid>
+            </IntelLineGridFrame>
+
+            <IntelSectionGutter />
+
+            <IntelLineGridFrame flush>
+              <div className={cn(INTEL_LINE_CELL, "space-y-0 p-0")}>
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E7EB] px-5 py-4">
+                  <div>
+                    <p className="text-sm font-semibold text-[#111827]">
+                      Runtime execution ledger
+                    </p>
+                    <p className="mt-1 text-xs text-[#6B7280]">
+                      Observability-style trace stream from your organizational memory runtime.
+                    </p>
+                  </div>
+                  <span className="border border-[#E5E7EB] bg-[#F9FAFB] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
+                    {hasRows ? `${filteredRequestEvents.length} events` : "Waiting for events"}
+                  </span>
+                </div>
+                <div className="overflow-x-auto">
+                  <IntelligenceDataTable
+                    lineGrid
+                    rows={tableRows}
+                    emptyMessage={
+                      isLoading
+                        ? "Loading request stream…"
+                        : errorMessage ??
+                          "No runtime requests yet. Run retrieve, resume, handoff, or playground flows — events appear from live backend activity only."
+                    }
+                  />
+                </div>
+              </div>
+            </IntelLineGridFrame>
+
+            <IntelSectionGutter />
+          </IntelPageStack>
+        </div>
+        </IntelSectionScroll>
+      </IntelligenceWorkspace>
+    </div>
   );
 }

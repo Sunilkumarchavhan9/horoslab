@@ -1,20 +1,48 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  ConsoleGrid,
-  ConsolePage,
-  ConsolePageHeader,
-  ConsoleSurface,
-  ConsoleStatusBadge,
-} from "@/components/developer-console/console-ui";
+import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { BrainCircuit, LayoutDashboard, Orbit, PlugZap, Code2 } from "lucide-react";
 import type { RequestSectionEvent } from "@/components/developer-console/sections/requests-section";
+import { intelContentPad } from "@/components/developer-console/intel-design";
+import {
+  INTEL_LINE_CELL,
+  IntelLineGridFrame,
+  IntelPageStack,
+  IntelSectionGutter,
+  IntelSectionScroll,
+  IntelTileGrid,
+  intelPanelBleed,
+  intelSectionRootClass,
+} from "@/components/developer-console/intel-line-grid";
+import { CompanyBrainFunnelPanel } from "@/components/developer-console/company-brain-funnel-panel";
+import { CompanyBrainPillarStrip } from "@/components/developer-console/company-brain-pillar-strip";
+import { CONSOLE_SECTION_BRAIN } from "@/lib/company-brain";
+import type { FunnelProgressInput } from "@/lib/company-brain-funnel";
+import { cn } from "@/lib/utils";
+import {
+  IntelligenceBreadcrumb,
+  IntelligenceDataTable,
+  IntelligenceEntityHeader,
+  IntelligenceFlowChart,
+  IntelligenceFlowInsightPanel,
+  IntelligenceGhostButton,
+  IntelligencePrimaryButton,
+  IntelligenceStatusBadge,
+  IntelligenceTableToolbar,
+  IntelligenceWorkspace,
+  buildIntelChartSeries,
+  collectOverviewFlowEvents,
+  type IntelTableRow,
+} from "@/components/developer-console/os-intelligence-shell";
 
 type ActionCardTitle = "Quick Start" | "Continuity Lab" | "Playground" | "Documentation";
 type OverviewActionHandlers = Partial<Record<ActionCardTitle, () => void>>;
 type InstallationVerificationStatus = "idle" | "waiting" | "connected" | "error";
 
 type OverviewSectionProps = {
+  workspaceName?: string;
+  ownerName?: string;
   actions?: OverviewActionHandlers;
   stats?: Array<{ label: string; value: string; accent?: string }>;
   isLoading?: boolean;
@@ -33,74 +61,63 @@ type OverviewSectionProps = {
     openLoops?: string[];
   } | null;
   timelineCount?: number;
+  timelineEvents?: Array<{ id: string; eventType: string; timestamp: string }>;
   installationVerification?: {
     status: InstallationVerificationStatus;
     message: string;
     onVerify: () => void;
   };
+  githubFunnel?: { connected: boolean; synced: boolean };
+  hasResumeBrief?: boolean;
+  funnelActions?: {
+    onConnectGithub: () => void;
+    onSyncGithub: () => void;
+    onContinueBrief: () => void;
+    onOpenLab: () => void;
+  };
 };
 
-function cleanNoise(input: string | undefined | null): string {
-  if (!input) return "";
-  let text = input;
-
-  // Remove common noisy fragments leaking from serialized benchmark payloads.
-  text = text.replace(/,\s*"expectedType"\s*:\s*"[^"]*"/g, "");
-  text = text.replace(/,\s*expectedType\s*:\s*"[^"]*"/g, "");
-  text = text.replace(/,\s*"input"\s*:\s*\{[^}]*\}/g, "");
-  text = text.replace(/,\s*input\s*:\s*\{[^}]*\}/g, "");
-  text = text.replace(/\{\s*"text"\s*:\s*"([^"]+)"\s*\}/g, "$1");
-  text = text.replace(/["{}[\]]/g, "");
-  text = text.replace(/,\s*id\s*:\s*[^,]+/gi, "");
-  text = text.replace(/\bmustMention\b\s*:\s*[^,]+/gi, "");
-  text = text.replace(/\s+/g, " ").trim();
-
-  return text;
-}
-
-function toSentenceChunks(input: string | undefined | null, maxItems = 4): string[] {
-  const cleaned = cleanNoise(input);
-  if (!cleaned) return [];
-  const parts = cleaned
-    .split(/(?:\s+-\s+|[.]\s+|,\s+(?=[A-Z]))/g)
-    .map((part) => part.trim())
-    .filter((part) => part.length > 16 && !/^input\b/i.test(part));
-  return parts.slice(0, maxItems);
-}
-
 function shortText(input: string | undefined | null, max = 180): string {
-  const cleaned = cleanNoise(input);
-  if (!cleaned) return "Not available yet.";
+  if (!input) return "Not available yet.";
+  const cleaned = input.replace(/\s+/g, " ").trim();
   if (cleaned.length <= max) return cleaned;
-  return `${cleaned.slice(0, max).trimEnd()}...`;
-}
-
-function isCompletionSignal(input: string | undefined | null): boolean {
-  const cleaned = cleanNoise(input).toLowerCase();
-  if (!cleaned) return false;
-  return /\b(shipped|completed|complete|done|solved|resolved|fixed|closed|delivered|released|validated|merged)\b/.test(
-    cleaned,
-  );
-}
-
-function isPendingLoop(input: string | undefined | null): boolean {
-  const cleaned = cleanNoise(input).toLowerCase();
-  if (!cleaned || isCompletionSignal(cleaned)) return false;
-  return /\b(problem|risk|blocked|blocker|todo|next|continue|open|pending|needs|follow[- ]?up)\b/.test(
-    cleaned,
-  );
+  return `${cleaned.slice(0, max).trimEnd()}…`;
 }
 
 function isSuccessfulRoute(event: RequestSectionEvent, fragment: string): boolean {
   return event.status === "Success" && event.route.includes(fragment);
 }
 
-function eventHasTraceProofSignal(event: RequestSectionEvent): boolean {
-  const text = `${event.responseSummary ?? ""} ${event.payloadSummary ?? ""}`;
-  return /\b(traceProof|trace proof|contractCategory|memoryUsedCount|whySelected|confidence)\b/i.test(text);
+function sourceToneForEvent(event: RequestSectionEvent): IntelTableRow["sourceTone"] {
+  const route = event.route.toLowerCase();
+  if (route.includes("connector")) return "cyan";
+  if (route.includes("resume") || route.includes("handoff")) return "violet";
+  if (route.includes("retrieve")) return "amber";
+  return "slate";
+}
+
+function sourceLabelForEvent(event: RequestSectionEvent): string {
+  const type = event.type?.toLowerCase() ?? "";
+  if (type === "retrieve") return "Retrieval";
+  if (type === "resume") return "Continuity";
+  if (type === "handoff") return "Agent handoff";
+  if (type === "memory_add") return "Memory write";
+  if (event.route.includes("connector")) return "Connector sync";
+  return "Runtime API";
+}
+
+function eventTitle(event: RequestSectionEvent): string {
+  const type = event.type?.toLowerCase() ?? "";
+  if (type === "resume") return "Resume context assembled";
+  if (type === "handoff") return "Cross-agent handoff";
+  if (type === "retrieve") return "Memory retrieval";
+  if (type === "memory_add") return "Memory evolved";
+  return `${event.method} ${event.route.split("?")[0]}`;
 }
 
 export function OverviewSection({
+  workspaceName = "MemoryOS",
+  ownerName = "Operator",
   actions,
   stats = [],
   isLoading = false,
@@ -111,10 +128,25 @@ export function OverviewSection({
   resumeData = null,
   handoffData = null,
   timelineCount = 0,
+  timelineEvents = [],
   installationVerification,
+  githubFunnel = { connected: false, synced: false },
+  hasResumeBrief = false,
+  funnelActions,
 }: OverviewSectionProps) {
+  const funnelProgress: FunnelProgressInput = {
+    githubConnected: githubFunnel.connected,
+    githubSynced:
+      githubFunnel.synced ||
+      memories.length > 0 ||
+      requestEvents.some((e) => e.status === "Success" && e.route.includes("/connector/github")),
+    hasBrief: hasResumeBrief,
+    labOpened: false,
+  };
+  const [chartRange, setChartRange] = useState("M");
   const verificationStatus = installationVerification?.status ?? "idle";
   const isConnected = verificationStatus === "connected";
+
   const successfulEvents = requestEvents.filter((event) => event.status === "Success");
   const hasSourceConnected =
     memories.length > 0 ||
@@ -124,408 +156,339 @@ export function OverviewSection({
         isSuccessfulRoute(event, "/api/memory/process") ||
         isSuccessfulRoute(event, "/api/memory/list"),
     );
-  const hasContinueBrief =
-    Boolean(resumeData?.summary) ||
-    successfulEvents.some(
-      (event) =>
-        isSuccessfulRoute(event, "/api/memory/resume") &&
-        !event.route.includes("/resume/prompt"),
-    );
-  const hasIdePrompt = successfulEvents.some((event) =>
-    isSuccessfulRoute(event, "/api/memory/resume/prompt"),
+
+  const focusThread = insights?.activeProjects?.[0]?.trim();
+  const showFocusThread =
+    typeof focusThread === "string" &&
+    focusThread.length > 0 &&
+    focusThread !== "Organizational runtime";
+
+  const latestMemoryAt = memories[0]?.updatedAt
+    ? new Date(memories[0].updatedAt).toLocaleString([], {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "Awaiting first sync";
+
+  const flowEvents = useMemo(
+    () => collectOverviewFlowEvents(requestEvents, timelineEvents, memories),
+    [requestEvents, timelineEvents, memories],
   );
-  const hasTraceProof =
-    hasIdePrompt &&
-    (successfulEvents.some(
-      (event) =>
-        isSuccessfulRoute(event, "/api/memory/resume/prompt") &&
-        eventHasTraceProofSignal(event),
-    ) ||
-      timelineCount > 0 ||
-      memories.length > 1);
-  const graphSynced = timelineCount > 0 || memories.length > 0;
 
-  const statusPills = [
-    { label: "Workspace Active", active: hasSourceConnected },
-    { label: "SDK Connected", active: isConnected },
-    { label: "Graph Synced", active: graphSynced },
-    { label: "Trace Proof Ready", active: hasTraceProof },
-  ];
+  const retrieveCount = flowEvents.filter((e) => e.kind === "retrieve").length;
+  const memoryWriteCount = flowEvents.filter((e) => e.kind === "memory").length;
+  const resumeCount = requestEvents.filter(
+    (e) => e.route.includes("resume") || e.route.includes("handoff"),
+  ).length;
+  const handoffCount = handoffData?.openLoops?.length ?? resumeData?.openLoops?.length ?? 0;
 
-  const metricCards = stats.map((entry) => ({
-    title: entry.label,
-    value: entry.value,
-    delta: null as string | null,
-    accentClass: "text-primary",
-    rows: [
-      { label: "Source", value: "Live backend", valueClass: "text-primary" },
-      { label: "Updated", value: "Realtime", valueClass: "text-foreground" },
-    ],
-  }));
+  const memoryStat = Number(stats.find((s) => s.label.includes("Memories"))?.value ?? memories.length);
+  const kpiRetrieval = Math.min(10, retrieveCount + (timelineCount > 0 ? 2 : 0));
+  const kpiMemory = Math.min(10, memoryStat / Math.max(1, 3));
+  const kpiContinuity = Math.min(10, resumeCount * 2 + (resumeData?.summary ? 3 : 0));
+  const continuityIdle = kpiContinuity <= 0;
 
-  const primaryProjectName = shortText(
-    insights?.activeProjects?.[0] ?? "No active project",
-    80,
+  const chartData = useMemo(
+    () => buildIntelChartSeries(flowEvents, chartRange),
+    [flowEvents, chartRange],
   );
-  const topMemory = shortText(memories[0]?.content ?? "No memory captured yet", 200);
-  const summarySentence = shortText(resumeData?.summary ?? memories[0]?.content ?? "No active summary yet.", 150);
-  const focusPoints = toSentenceChunks(resumeData?.summary ?? topMemory, 3);
-  const nextAction =
-    shortText(
-      resumeData?.recommendedNextStep ?? handoffData?.openLoops?.[0],
-      180,
-    ) ??
-    "No next action detected yet.";
-  const pendingLoops = [
-    ...(resumeData?.openLoops ?? []),
-    ...(handoffData?.openLoops ?? []),
-  ].filter(isPendingLoop);
-  const completedSignals = [
-    primaryProjectName,
-    topMemory,
-    resumeData?.summary,
-    resumeData?.recommendedNextStep,
-    ...(resumeData?.openLoops ?? []),
-    ...(handoffData?.openLoops ?? []),
-    ...memories.slice(0, 5).map((memory) => memory.content),
-  ].filter(isCompletionSignal);
-  const projectCompleted = completedSignals.length > 0 && pendingLoops.length === 0;
-  const completionSummary = shortText(
-    completedSignals[0] ?? primaryProjectName,
-    180,
+
+  const tableRows: IntelTableRow[] = useMemo(
+    () =>
+      requestEvents.slice(0, 12).map((event, index) => ({
+        id: `#${String(index + 1).padStart(4, "0")}`,
+        title: eventTitle(event),
+        operator: event.agent ?? event.method ?? "system",
+        detail: shortText(event.responseSummary ?? event.payloadSummary ?? event.route, 120),
+        value: `${event.latencyMs}ms`,
+        source: sourceLabelForEvent(event),
+        sourceTone: sourceToneForEvent(event),
+      })),
+    [requestEvents],
   );
-  const detectedProblem =
-    shortText(
-      pendingLoops.find((loop) =>
-        loop.toLowerCase().includes("problem") ||
-        loop.toLowerCase().includes("risk") ||
-        loop.toLowerCase().includes("blocked") ||
-        loop.toLowerCase().includes("pending"),
-      ),
-      180,
-    ) ?? "No blocker detected from current live context.";
-  const problemPoints = toSentenceChunks(detectedProblem, 2);
-  const evidenceItems = memories
-    .slice(0, 3)
-    .map((memory) => ({
-      text: shortText(memory.content, 110),
-      updatedAt: new Date(memory.updatedAt).toLocaleTimeString(),
-      type: (memory.type ?? "memory").toUpperCase(),
-    }));
-
-  const liveActivity = [
-    ...requestEvents.slice(0, 3).map((event) => ({
-      at: new Date(event.createdAt).toLocaleTimeString(),
-      title: `${event.method ?? "API"} ${event.route}`,
-      detail: `${event.status} · ${event.latencyMs}ms`,
-    })),
-    ...memories.slice(0, 2).map((memory) => ({
-      at: new Date(memory.updatedAt).toLocaleTimeString(),
-      title: "Memory updated",
-      detail: shortText(memory.content, 220),
-    })),
-  ].slice(0, 4);
-
-  const funnelSteps = [
-    {
-      id: "connect",
-      label: "Connect GitHub Source",
-      done: hasSourceConnected,
-      action: actions?.["Quick Start"],
-      actionLabel: "Open Integrations",
-      detail: "Connect at least one source and ingest real project context.",
-    },
-    {
-      id: "brief",
-      label: "Continue Project Brief",
-      done: hasContinueBrief,
-      action: actions?.["Continuity Lab"],
-      actionLabel: "Open Continuity Lab",
-      detail: "Generate structured output: recent changes, goal, blockers, risky files, next action.",
-    },
-    {
-      id: "prompt",
-      label: "Generate IDE Prompt",
-      done: hasIdePrompt,
-      action: actions?.["Playground"],
-      actionLabel: "Open Playground",
-      detail: "Create Cursor/Codex/Claude Code ready prompts from the brief.",
-    },
-    {
-      id: "trace",
-      label: "Trace Proof Panel",
-      done: hasTraceProof,
-      action: actions?.["Playground"],
-      actionLabel: "Inspect Trace",
-      detail: "Show memory used, source, confidence, and why each item was selected.",
-    },
-  ];
-  const missingFunnelSteps = funnelSteps.filter((step) => !step.done).map((step) => step.label);
 
   return (
-    <ConsolePage>
-      <ConsolePageHeader
-        title="Memory Command Center"
-        description="Live observability for agent memory, retrieval quality, and cross-session continuity."
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {statusPills.map((pill) => (
-              <ConsoleStatusBadge key={pill.label} label={pill.label} active={pill.active} />
-            ))}
-          </div>
-        }
-      />
+    <div className={intelSectionRootClass}>
+      <IntelligenceWorkspace>
+        <IntelligenceBreadcrumb
+          items={["Dashboard", workspaceName, "Overview"]}
+          actions={
+            <>
+              <IntelligenceGhostButton
+                loading={verificationStatus === "waiting"}
+                onClick={installationVerification?.onVerify}
+              >
+                Verify live
+              </IntelligenceGhostButton>
+              <IntelligencePrimaryButton onClick={actions?.["Continuity Lab"]}>
+                Continuity Lab ↗
+              </IntelligencePrimaryButton>
+            </>
+          }
+        />
 
-      <div className="space-y-8">
-        <ConsoleSurface>
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Engineering Continuity Funnel</h2>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Ship the wedge first: source connect, continue brief, IDE prompt, and trace proof.
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {missingFunnelSteps.length === 0
-                  ? "Wedge shipped for this workspace."
-                  : `Still needed: ${missingFunnelSteps.join(", ")}.`}
-              </p>
-            </div>
-            <ConsoleStatusBadge
-              label={`${funnelSteps.filter((step) => step.done).length}/${funnelSteps.length} complete`}
-              active={funnelSteps.every((step) => step.done)}
+        <IntelligenceEntityHeader
+          icon={LayoutDashboard}
+          title={workspaceName}
+          badge={
+            <IntelligenceStatusBadge live={hasSourceConnected}>
+              {hasSourceConnected ? "Live intelligence" : "Awaiting sources"}
+            </IntelligenceStatusBadge>
+          }
+          meta={
+            <>
+              <span className="text-[#9CA3AF]">Operational control center</span>
+              <span className="hidden text-[#E5E7EB] sm:inline">·</span>
+              <span className="flex items-center gap-2">
+                <span className="grid size-6 place-items-center rounded-full bg-[#E0E7FF] text-[10px] font-semibold text-[#4338CA]">
+                  {ownerName.slice(0, 1).toUpperCase()}
+                </span>
+                {ownerName}
+              </span>
+              <span>Last memory · {latestMemoryAt}</span>
+              {showFocusThread ? (
+                <span
+                  className="max-w-[220px] truncate rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-2 py-0.5 text-xs text-[#374151]"
+                  title={focusThread}
+                >
+                  Focus · {shortText(focusThread, 36)}
+                </span>
+              ) : null}
+              {isConnected ? (
+                <span className="flex items-center gap-1.5 text-[#059669]">
+                  <span className="size-1.5 rounded-full bg-[#10B981]" />
+                  SDK connected
+                </span>
+              ) : null}
+            </>
+          }
+          kpis={[
+            { label: "Retrieval", value: kpiRetrieval, tone: "cyan" },
+            { label: "Memory", value: kpiMemory, tone: "rose" },
+            {
+              label: "Continuity",
+              value: kpiContinuity,
+              tone: "amber",
+              displayValue: continuityIdle ? "Ready" : undefined,
+              idle: continuityIdle,
+            },
+          ]}
+        />
+
+        <IntelSectionScroll>
+        <div className={cn(intelPanelBleed, "overview-prody-stack")}>
+          <IntelPageStack>
+            <CompanyBrainPillarStrip
+              pillars={CONSOLE_SECTION_BRAIN.Overview.pillars}
+              purpose={CONSOLE_SECTION_BRAIN.Overview.purpose}
+              executionTier={CONSOLE_SECTION_BRAIN.Overview.executionTier}
             />
-          </div>
-          <ConsoleGrid columns="two">
-            {funnelSteps.map((step, index) => (
-              <ConsoleSurface key={step.id} tone="muted" className="console-funnel-step-card">
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Step {index + 1}</p>
-                  <ConsoleStatusBadge label={step.done ? "Done" : "Pending"} active={step.done} />
-                </div>
-                <p className="text-sm font-semibold text-foreground">{step.label}</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.detail}</p>
-                <Button className="mt-3 w-full" variant={step.done ? "secondary" : "default"} onClick={step.action}>
-                  {step.actionLabel}
-                </Button>
-              </ConsoleSurface>
-            ))}
-          </ConsoleGrid>
-        </ConsoleSurface>
-
-        <ConsoleGrid columns="five">
-          {metricCards.map((metric) => (
-            <ConsoleSurface
-              key={metric.title}
-              className="relative overflow-hidden"
-            >
-              <p className="mb-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">{metric.title}</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold tracking-tight text-foreground">{metric.value}</span>
-                {metric.delta ? <span className={`text-xs font-medium ${metric.accentClass}`}>{metric.delta}</span> : null}
-              </div>
-              <div className="mt-4 space-y-1 text-xs font-mono text-muted-foreground">
-                {metric.rows.map((row) => (
-                  <div key={row.label} className="flex justify-between">
-                    <span>{row.label}</span>
-                    <span className={row.valueClass}>{row.value}</span>
+            {funnelActions ? (
+              <>
+                <IntelSectionGutter />
+                <CompanyBrainFunnelPanel
+                  progress={funnelProgress}
+                  onConnectGithub={funnelActions.onConnectGithub}
+                  onSyncGithub={funnelActions.onSyncGithub}
+                  onContinueBrief={funnelActions.onContinueBrief}
+                  onOpenLab={funnelActions.onOpenLab}
+                />
+              </>
+            ) : null}
+            <IntelSectionGutter />
+            <IntelLineGridFrame flush>
+              <IntelTileGrid variant="kpi">
+                {[
+                  {
+                    label: "Memories indexed",
+                    value: String(memoryStat),
+                    detail: hasSourceConnected ? "Live organizational memory" : "Connect a source",
+                  },
+                  {
+                    label: "Runtime events",
+                    value: String(requestEvents.length),
+                    detail: "Filtered observability window",
+                  },
+                  {
+                    label: "Retrieval calls",
+                    value: String(retrieveCount),
+                    detail: retrieveCount > 0 ? "Agent/runtime retrieval" : "None in window",
+                  },
+                  {
+                    label: "Open loops",
+                    value: String(handoffCount),
+                    detail: continuityIdle ? "Start Continuity Lab" : "Active continuity threads",
+                  },
+                ].map((stat) => (
+                  <div key={stat.label} className={INTEL_LINE_CELL}>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                      {stat.label}
+                    </p>
+                    <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight text-[#111827]">
+                      {stat.value}
+                    </p>
+                    <p className="mt-1 text-xs text-[#6B7280]">{stat.detail}</p>
                   </div>
                 ))}
-              </div>
-            </ConsoleSurface>
-          ))}
-        </ConsoleGrid>
+              </IntelTileGrid>
+            </IntelLineGridFrame>
 
-        <ConsoleGrid columns="two" className="gap-6">
-          <ConsoleSurface className="flex flex-col overflow-hidden p-0">
-            <div className="flex items-center justify-between border-b border-border bg-card px-5 py-4">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Active Project State</h2>
-              <span className="text-xs font-mono text-muted-foreground">Confidence: live</span>
-            </div>
-            <div className="flex-1 space-y-6 p-6">
-              <div>
-                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">Project</p>
-                <p className="text-sm font-medium text-foreground">{primaryProjectName}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{summarySentence}</p>
+            <IntelSectionGutter />
+
+            <IntelLineGridFrame flush>
+              <div className="overview-chart-row">
+                <div className={cn(INTEL_LINE_CELL, "overview-chart-cell min-w-0 p-0")}>
+                  <IntelligenceFlowChart
+                    embedded
+                    title="Operational intelligence flow"
+                    subtitle={`Retrieval (${retrieveCount}) vs memory writes (${memoryWriteCount}) — live backend only.`}
+                    data={chartData}
+                    range={chartRange}
+                    onRangeChange={setChartRange}
+                    emptyTitle="No flow signal in this window"
+                    emptyDescription="Run retrieval, write memory, or connect any source (GitHub, local files, Slack, Drive, APIs, and more). The chart fills when real runtime events arrive — never from demo data."
+                    emptyAction={
+                      <button
+                        type="button"
+                        data-pixel-action
+                        data-no-pixel-load
+                        onClick={actions?.["Quick Start"]}
+                        className="h-10 bg-[#EF4444] px-4 text-sm font-semibold text-white hover:bg-[#DC2626]"
+                      >
+                        + Connect source
+                      </button>
+                    }
+                  />
+                </div>
+                <IntelligenceFlowInsightPanel
+                  data={chartData}
+                  range={chartRange}
+                  retrieveCount={retrieveCount}
+                  memoryWriteCount={memoryWriteCount}
+                />
               </div>
-              <div>
-                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-primary">Current Focus</p>
-                <ConsoleSurface tone="muted" className="px-3 py-2">
-                  <ul className="space-y-1.5 text-sm leading-relaxed text-foreground/90">
-                    {(focusPoints.length > 0 ? focusPoints : [shortText(resumeData?.summary ?? topMemory, 260)]).map((point, idx) => (
-                      <li key={`${idx}-${point}`} className="flex items-start gap-2">
-                        <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </ConsoleSurface>
-              </div>
-              <div>
-                <p className={`mb-1.5 text-xs font-bold uppercase tracking-widest ${projectCompleted ? "text-primary" : "text-destructive"}`}>
-                  {projectCompleted ? "Completed State" : "Detected Problem"}
-                </p>
-                <ConsoleSurface tone={projectCompleted ? "primary" : "destructive"} className="px-3 py-2">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full border px-2 py-0.5 text-xs font-bold uppercase tracking-widest ${projectCompleted ? "border-primary/30 bg-primary/10 text-primary" : "border-destructive/30 bg-destructive/10 text-destructive"}`}>
-                      {projectCompleted ? "Shipped" : "Open Loop"}
-                    </span>
-                    <span className="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                      {projectCompleted ? "Status: Complete" : "Severity: Medium"}
-                    </span>
-                  </div>
-                  <ul className="space-y-1.5 text-sm leading-relaxed text-foreground/90">
-                    {(projectCompleted ? [completionSummary] : problemPoints.length > 0 ? problemPoints : [detectedProblem]).map((point, idx) => (
-                      <li key={`${idx}-${point}`} className="flex items-start gap-2">
-                        <span className={`mt-1 inline-block h-1.5 w-1.5 rounded-full ${projectCompleted ? "bg-primary" : "bg-destructive"}`} />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </ConsoleSurface>
-              </div>
-              <div>
-                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-primary">Next Action</p>
-                <ConsoleSurface tone="primary" className="px-3 py-2">
-                  <p className="text-sm font-medium leading-relaxed text-primary">{nextAction}</p>
-                  <p className="mt-1 text-xs uppercase tracking-widest text-primary/80">Estimated time: 2-5 min</p>
-                </ConsoleSurface>
-              </div>
-              <div>
-                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">Evidence</p>
-                <div className="space-y-2">
-                  {evidenceItems.length === 0 ? (
-                    <ConsoleSurface tone="muted" className="px-3 py-2 text-xs text-muted-foreground">
-                      No evidence items yet.
-                    </ConsoleSurface>
-                  ) : evidenceItems.map((item, idx) => (
-                    <ConsoleSurface key={`${item.updatedAt}-${idx}`} tone="muted" className="px-3 py-2">
-                      <div className="mb-1 flex items-center justify-between gap-2">
-                        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{item.type}</span>
-                        <span className="text-xs font-mono text-muted-foreground">{item.updatedAt}</span>
-                      </div>
-                      <p className="text-xs leading-relaxed text-foreground/90">{item.text}</p>
-                    </ConsoleSurface>
-                  ))}
+            </IntelLineGridFrame>
+
+            <IntelSectionGutter />
+
+            <IntelLineGridFrame flush>
+              <div className={cn(INTEL_LINE_CELL, "space-y-0 p-0")}>
+                <div className="border-b border-[#E5E7EB] px-5 py-4">
+                  <IntelligenceTableToolbar title="Live runtime events" onAdd={actions?.["Quick Start"]} />
+                </div>
+                <div className="overflow-x-auto">
+                  <IntelligenceDataTable
+                    lineGrid
+                    rows={tableRows}
+                    emptyMessage="No runtime events yet. Connect any source or run the SDK — this stream fills from live backend activity only."
+                  />
                 </div>
               </div>
-            </div>
-          </ConsoleSurface>
+            </IntelLineGridFrame>
 
-          <ConsoleSurface className="flex h-full flex-col overflow-hidden p-0">
-            <div className="flex items-center justify-between border-b border-border bg-card px-5 py-4">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">Live Memory Activity</h2>
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-            </div>
-            <div className="flex-1 space-y-5 overflow-y-auto p-5">
-              {liveActivity.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No live events yet.</p>
-              ) : liveActivity.map((item, idx) => (
-                <div key={`${item.at}-${idx}`} className="relative border-l border-border pl-4">
-                  <div className="absolute -left-1 top-1.5 h-2 w-2 rounded-full bg-primary" />
-                  <p className="mb-1 text-xs font-mono text-muted-foreground">{item.at}</p>
-                  <p className="mb-0.5 text-xs font-bold text-foreground">{item.title}</p>
-                  <p className="break-words text-xs leading-relaxed text-muted-foreground">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </ConsoleSurface>
-        </ConsoleGrid>
+            <IntelSectionGutter />
 
-        <ConsoleGrid columns="two" className="gap-6">
-          <ConsoleSurface className="flex flex-col p-6">
-            <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-primary">Continuity Graph</h2>
-            <ConsoleGrid className="mb-6 flex-1 rounded-md border border-border bg-muted p-4">
-              <ConsoleSurface tone="primary" className="p-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-primary">Project</p>
-                <p className="mt-1 text-sm font-medium text-foreground">{primaryProjectName}</p>
-              </ConsoleSurface>
-              <ConsoleSurface className="p-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Focus</p>
-                <p className="mt-1 text-sm text-foreground/90">{shortText(resumeData?.summary, 190)}</p>
-              </ConsoleSurface>
-              <ConsoleSurface tone={projectCompleted ? "primary" : "destructive"} className="p-3">
-                <p className={`text-xs font-bold uppercase tracking-widest ${projectCompleted ? "text-primary" : "text-destructive"}`}>
-                  {projectCompleted ? "Completed" : "Problem"}
-                </p>
-                <p className="mt-1 text-sm text-foreground/90">
-                  {projectCompleted ? completionSummary : detectedProblem}
-                </p>
-              </ConsoleSurface>
-              <ConsoleSurface className="p-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Next Action</p>
-                <p className="mt-1 text-sm font-medium text-primary">{nextAction}</p>
-              </ConsoleSurface>
-            </ConsoleGrid>
-            <Button className="w-full" onClick={actions?.["Playground"]}>
-              Open Memory Playground
-            </Button>
-          </ConsoleSurface>
-
-          <ConsoleSurface className="flex flex-col p-6">
-            <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-foreground">Recommended Actions</h2>
-            <div className="space-y-3 flex-1">
-              {[
-                { title: "Test memory extraction in Playground", impact: "High", time: "2 min", status: "Ready", accent: "text-primary", action: actions?.["Playground"] },
-                { title: "Run a continuity handoff simulation", impact: "High", time: "2 min", status: "Ready", accent: "text-primary", action: actions?.["Continuity Lab"] },
-                { title: "Connect your first source", impact: "Med", time: "5 min", status: "Not started", accent: "text-muted-foreground", action: undefined },
-                { title: "Generate SDK integration code", impact: "High", time: "3 min", status: "Ready", accent: "text-primary", action: actions?.["Quick Start"] },
-              ].map((item, i) => (
-                <ConsoleSurface key={i} tone="muted" className="flex cursor-pointer items-center justify-between p-3 transition hover:bg-accent" onClick={item.action}>
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background text-xs text-muted-foreground">{i + 1}</span>
-                    <span className="text-sm font-medium text-foreground">{item.title}</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs font-mono uppercase tracking-widest">
-                    <span className="hidden text-muted-foreground sm:inline-block">Impact: {item.impact}</span>
-                    <span className="hidden text-muted-foreground sm:inline-block">Time: {item.time}</span>
-                    <span className={`${item.accent} font-bold`}>{item.status}</span>
-                  </div>
-                </ConsoleSurface>
-              ))}
-            </div>
-          </ConsoleSurface>
-        </ConsoleGrid>
-
-        <div>
-          <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Build with MemoryOS</h2>
-          <ConsoleGrid columns="four">
-            <button onClick={actions?.["Quick Start"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
-              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Quick Start</p>
-              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Add MemoryOS to your agent loop in under 5 minutes.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">Install SDK →</span>
-            </button>
-            <button onClick={actions?.["Continuity Lab"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
-              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Continuity Lab</p>
-              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Watch retrieve, resume, and handoff work with live workspace data.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">Open Continuity Lab →</span>
-            </button>
-            <button onClick={actions?.["Playground"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
-              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Playground</p>
-              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Inspect what your agent remembers and why.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">Open Memory Playground →</span>
-            </button>
-            <button onClick={actions?.["Documentation"]} className="group rounded-lg border border-primary/25 bg-primary/10 p-5 text-left transition-colors hover:bg-primary/20">
-              <p className="mb-2 text-sm font-bold text-primary transition-colors group-hover:text-primary">Docs</p>
-              <p className="mb-4 text-xs leading-relaxed text-muted-foreground">SDK, MCP, REST API, and LangGraph examples.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">Read Integration Guide →</span>
-            </button>
-          </ConsoleGrid>
+            <IntelLineGridFrame flush>
+              <IntelTileGrid variant="cards">
+                {[
+                  {
+                    title: "Continuity Lab",
+                    body: "Persistent reasoning workspace for developers and agents.",
+                    action: actions?.["Continuity Lab"],
+                    icon: BrainCircuit,
+                    featured: true,
+                  },
+                  {
+                    title: "Playground",
+                    body: "Agent runtime sandbox — retrieval, injection, and execution.",
+                    action: actions?.["Playground"],
+                    icon: Orbit,
+                    featured: false,
+                  },
+                  {
+                    title: "Connect sources",
+                    body: "GitHub, Notion, Jira, Slack, APIs — feed organizational memory.",
+                    action: actions?.["Quick Start"],
+                    icon: PlugZap,
+                    featured: false,
+                  },
+                  {
+                    title: "Integrations & SDK",
+                    body: "SDK, MCP, REST, and agent runtime integration guides.",
+                    action: actions?.["Documentation"],
+                    icon: Code2,
+                    featured: false,
+                  },
+                ].map((card) => {
+                  const Icon = card.icon;
+                  return (
+                    <button
+                      key={card.title}
+                      type="button"
+                      onClick={card.action}
+                      className={cn(
+                        INTEL_LINE_CELL,
+                        "flex h-full min-h-[148px] w-full flex-col text-left transition hover:bg-[#F9FAFB]",
+                        card.featured && "bg-gradient-to-b from-[#EEF2FF] to-white",
+                      )}
+                    >
+                      {card.featured ? (
+                        <span className="mb-2 inline-block w-fit bg-[#4338CA] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                          Core
+                        </span>
+                      ) : null}
+                      <Icon
+                        className={card.featured ? "size-5 text-[#4338CA]" : "size-5 text-[#6B7280]"}
+                        strokeWidth={1.5}
+                      />
+                      <p className="mt-3 text-sm font-semibold text-[#111827]">{card.title}</p>
+                      <p className="mt-1 flex-1 text-xs leading-relaxed text-[#6B7280]">{card.body}</p>
+                      <span
+                        className={cn(
+                          "mt-3 text-xs font-medium",
+                          card.featured ? "text-[#4338CA]" : "text-[#4F46E5]",
+                        )}
+                      >
+                        Open →
+                      </span>
+                    </button>
+                  );
+                })}
+              </IntelTileGrid>
+            </IntelLineGridFrame>
+          </IntelPageStack>
         </div>
 
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Loading overview data…</p>
-        ) : null}
-        {errorMessage ? (
-          <p className="rounded-md border border-border bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {errorMessage}
-          </p>
-        ) : null}
-        {installationVerification?.message ? (
-          <div className="rounded-md border border-border bg-card px-3 py-2 text-sm text-muted-foreground">
-            {installationVerification.message}
-          </div>
-        ) : null}
-      </div>
-    </ConsolePage>
+        <div className={cn("py-4", intelContentPad)}>
+          {resumeData?.recommendedNextStep ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-4 rounded-2xl border border-[#E0E7FF] bg-[#EEF2FF] px-4 py-3 text-sm text-[#4338CA]"
+            >
+              <span className="font-semibold text-[#312E81]">Next operational action: </span>
+              {shortText(resumeData.recommendedNextStep, 220)}
+            </motion.div>
+          ) : null}
+
+          {isLoading ? (
+            <p className="mt-3 text-sm text-[#6B7280]">Loading live workspace data…</p>
+          ) : null}
+          {errorMessage ? (
+            <p className="mt-3 rounded-xl border border-[#FECACA] bg-[#FEF2F2] px-3 py-2 text-sm text-[#B91C1C]">
+              {errorMessage}
+            </p>
+          ) : null}
+          {installationVerification?.message ? (
+            <p className="mt-3 rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-sm text-[#6B7280]">
+              {installationVerification.message}
+            </p>
+          ) : null}
+        </div>
+        </IntelSectionScroll>
+      </IntelligenceWorkspace>
+    </div>
   );
 }

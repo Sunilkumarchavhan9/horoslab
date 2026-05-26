@@ -188,8 +188,27 @@ export interface UseBenchmarksResult {
 
 // ─── Implementation ──────────────────────────────────────────────────────────
 
-const POLL_INTERVAL_MS = 30_000;
+const POLL_INTERVAL_MS = 60_000;
+const ACTIVE_RUN_POLL_INTERVAL_MS = 10_000;
 const RATE_LIMIT_COOLDOWN_MS = 60_000;
+const SHARED_GET_CACHE_MS = 30_000;
+
+const sharedGetRequests = new Map<
+  string,
+  { createdAt: number; promise: Promise<unknown> }
+>();
+
+class BenchmarkApiError extends Error {
+  status: number;
+  retryAfterMs: number | null;
+
+  constructor(message: string, status: number, retryAfterMs: number | null) {
+    super(message);
+    this.name = "BenchmarkApiError";
+    this.status = status;
+    this.retryAfterMs = retryAfterMs;
+  }
+}
 
 function getApiOrigin(): string {
   const configured = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim();
@@ -200,6 +219,31 @@ function getApiOrigin(): string {
 }
 
 async function fetchBenchmarkApi<T>(
+  path: string,
+  token: string,
+  init?: RequestInit,
+): Promise<T> {
+  const method = init?.method?.toUpperCase() ?? "GET";
+  const cacheKey = method === "GET" ? `${token}:${path}` : null;
+  if (cacheKey) {
+    const cached = sharedGetRequests.get(cacheKey);
+    if (cached && Date.now() - cached.createdAt < SHARED_GET_CACHE_MS) {
+      return cached.promise as Promise<T>;
+    }
+  }
+
+  const requestPromise = executeBenchmarkApi<T>(path, token, init);
+  if (cacheKey) {
+    sharedGetRequests.set(cacheKey, {
+      createdAt: Date.now(),
+      promise: requestPromise,
+    });
+  }
+
+  return requestPromise;
+}
+
+async function executeBenchmarkApi<T>(
   path: string,
   token: string,
   init?: RequestInit,
@@ -217,10 +261,24 @@ async function fetchBenchmarkApi<T>(
     cache: "no-store",
   });
 
-  const payload = await response.json();
+  const text = await response.text();
+  let payload: any = null;
+  try {
+    payload = text.length > 0 ? JSON.parse(text) : null;
+  } catch {
+    payload = text.length > 0 ? { error: text } : null;
+  }
 
   if (!response.ok) {
-    throw new Error(payload?.error ?? `Request failed (${response.status})`);
+    const retryAfter = response.headers.get("retry-after");
+    const retryAfterMs = retryAfter
+      ? Math.max(0, Number.parseInt(retryAfter, 10) * 1000)
+      : null;
+    throw new BenchmarkApiError(
+      payload?.error ?? `Request failed (${response.status})`,
+      response.status,
+      retryAfterMs,
+    );
   }
 
   // Unwrap the { ok, data } envelope
@@ -243,18 +301,44 @@ export function useBenchmarks(): UseBenchmarksResult {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
   const historyRef = useRef<BenchmarkHistoryItem[]>([]);
+  const latestStatusRef = useRef<BenchmarkLatestRun["status"] | null>(null);
   const historyPollModuloRef = useRef(0);
   const cooldownUntilRef = useRef(0);
+  const fetchingRef = useRef(false);
+  const mutationRef = useRef(false);
 
-  const fetchData = useCallback(async () => {
-    const token = await getOrCreateMemoryToken();
-    if (!token) {
+  const applyRateLimitCooldown = useCallback((error: unknown) => {
+    if (error instanceof BenchmarkApiError && error.status === 429) {
+      cooldownUntilRef.current =
+        Date.now() + (error.retryAfterMs ?? RATE_LIMIT_COOLDOWN_MS);
       setConnectionStatus("offline");
-      setIsLoading(false);
-      return;
+      setErrorMessage("Benchmark API is cooling down after rate limiting.");
+      return true;
     }
 
+    const msg = error instanceof Error ? error.message : "";
+    if (msg.includes("(429)") || msg.toLowerCase().includes("rate limit")) {
+      cooldownUntilRef.current = Date.now() + RATE_LIMIT_COOLDOWN_MS;
+      setConnectionStatus("offline");
+      setErrorMessage("Benchmark API is cooling down after rate limiting.");
+      return true;
+    }
+
+    return false;
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
+
     try {
+      const token = await getOrCreateMemoryToken();
+      if (!token) {
+        setConnectionStatus("offline");
+        setIsLoading(false);
+        return;
+      }
+
       const now = Date.now();
       if (now < cooldownUntilRef.current) {
         setConnectionStatus("offline");
@@ -273,6 +357,7 @@ export function useBenchmarks(): UseBenchmarksResult {
       if (!mountedRef.current) return;
 
       setLatest(latestData);
+      latestStatusRef.current = latestData?.status ?? null;
       const dedupedHistory = Array.from(
         new Map((historyData ?? []).map((run) => [run.runId, run])).values(),
       ).sort(
@@ -294,8 +379,8 @@ export function useBenchmarks(): UseBenchmarksResult {
     } catch (error) {
       if (!mountedRef.current) return;
       const msg = error instanceof Error ? error.message : "Failed to fetch benchmarks";
-      if (msg.includes("(429)") || msg.toLowerCase().includes("rate limit")) {
-        cooldownUntilRef.current = Date.now() + RATE_LIMIT_COOLDOWN_MS;
+      if (applyRateLimitCooldown(error)) {
+        return;
       }
       if (msg.includes("not reachable") || msg.includes("Failed to fetch")) {
         setConnectionStatus("offline");
@@ -304,11 +389,12 @@ export function useBenchmarks(): UseBenchmarksResult {
       }
       setErrorMessage(msg);
     } finally {
+      fetchingRef.current = false;
       if (mountedRef.current) {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [applyRateLimitCooldown]);
 
   // Start polling on mount
   useEffect(() => {
@@ -326,28 +412,31 @@ export function useBenchmarks(): UseBenchmarksResult {
   }, [fetchData]);
 
   const triggerRun = useCallback(async () => {
+    if (mutationRef.current || isRunning) return;
+    if (Date.now() < cooldownUntilRef.current) {
+      setErrorMessage("Benchmark API is cooling down after rate limiting.");
+      return;
+    }
+
     const token = await getOrCreateMemoryToken();
     if (!token) return;
 
+    mutationRef.current = true;
     setIsRunning(true);
     try {
       await fetchBenchmarkApi("/api/benchmarks/run", token, { method: "POST" });
-      // Immediately start polling faster until the run completes
+      // Poll gently while a run is active. The backend can be expensive here.
       const fastPoll = setInterval(async () => {
         if (!mountedRef.current) {
           clearInterval(fastPoll);
           return;
         }
         await fetchData();
-        const currentLatest = (await getOrCreateMemoryToken())
-          ? await fetchBenchmarkApi<BenchmarkLatestRun | null>("/api/benchmarks/latest", token).catch(() => null)
-          : null;
-        if (currentLatest && currentLatest.status !== "running") {
+        if (latestStatusRef.current !== "running") {
           clearInterval(fastPoll);
           setIsRunning(false);
-          await fetchData();
         }
-      }, 3000);
+      }, ACTIVE_RUN_POLL_INTERVAL_MS);
 
       // Safety timeout to stop fast polling after 5 minutes
       setTimeout(() => {
@@ -356,9 +445,12 @@ export function useBenchmarks(): UseBenchmarksResult {
       }, 5 * 60 * 1000);
     } catch (error) {
       setIsRunning(false);
+      if (applyRateLimitCooldown(error)) return;
       setErrorMessage(error instanceof Error ? error.message : "Failed to start benchmark");
+    } finally {
+      mutationRef.current = false;
     }
-  }, [fetchData]);
+  }, [applyRateLimitCooldown, fetchData, isRunning]);
 
   const fetchTrace = useCallback(
     async (runId: string, caseId: string): Promise<BenchmarkCaseTrace | null> => {
@@ -408,20 +500,35 @@ export function useBenchmarks(): UseBenchmarksResult {
           method: "POST",
           body: JSON.stringify(input),
         });
-      } catch {
+      } catch (error) {
+        applyRateLimitCooldown(error);
         return null;
       }
     },
-    [],
+    [applyRateLimitCooldown],
   );
 
   const runScenario = useCallback(async (scenarioId: string): Promise<void> => {
+    if (mutationRef.current) return;
+    if (Date.now() < cooldownUntilRef.current) {
+      setErrorMessage("Benchmark API is cooling down after rate limiting.");
+      return;
+    }
+
     const token = await getOrCreateMemoryToken();
     if (!token) return;
-    await fetchBenchmarkApi(`/api/benchmarks/scenarios/${scenarioId}/run`, token, {
-      method: "POST",
-    });
-  }, []);
+    mutationRef.current = true;
+    try {
+      await fetchBenchmarkApi(`/api/benchmarks/scenarios/${scenarioId}/run`, token, {
+        method: "POST",
+      });
+    } catch (error) {
+      if (applyRateLimitCooldown(error)) return;
+      throw error;
+    } finally {
+      mutationRef.current = false;
+    }
+  }, [applyRateLimitCooldown]);
 
   const checkRegressionGate = useCallback(
     async (thresholds?: {
@@ -449,14 +556,19 @@ export function useBenchmarks(): UseBenchmarksResult {
           generatedAt?: string;
           checks: Array<{ key: string; value: number; target: number; pass: boolean }>;
         }>(`/api/benchmarks/regression/check${suffix}`, token);
-      } catch {
+      } catch (error) {
+        applyRateLimitCooldown(error);
         return null;
       }
     },
-    [],
+    [applyRateLimitCooldown],
   );
 
   const refreshNow = useCallback(() => {
+    if (Date.now() < cooldownUntilRef.current) {
+      setErrorMessage("Benchmark API is cooling down after rate limiting.");
+      return;
+    }
     fetchData();
   }, [fetchData]);
 
@@ -481,10 +593,11 @@ export function useBenchmarks(): UseBenchmarksResult {
           recoveryLatencyMs: number | null;
         };
       }>("/api/benchmarks/metrics/weekly", token);
-    } catch {
+    } catch (error) {
+      applyRateLimitCooldown(error);
       return null;
     }
-  }, []);
+  }, [applyRateLimitCooldown]);
 
   const getRegressionAlerts = useCallback(async () => {
     const token = await getOrCreateMemoryToken();
@@ -503,10 +616,11 @@ export function useBenchmarks(): UseBenchmarksResult {
           generatedAt: string;
         }>;
       }>("/api/benchmarks/regression/alerts", token);
-    } catch {
+    } catch (error) {
+      applyRateLimitCooldown(error);
       return null;
     }
-  }, []);
+  }, [applyRateLimitCooldown]);
 
   return {
     latest,

@@ -90,14 +90,19 @@ export async function fetchMemoryTokenFromBridge(): Promise<string | null> {
     return null;
   }
 
-  const response = await fetch("/api/memory/token", {
-    method: "GET",
-    cache: "no-store",
-    credentials: "same-origin",
-    headers: {
-      Accept: "application/json",
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch("/api/memory/token", {
+      method: "GET",
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  } catch {
+    return null;
+  }
 
   if (!response.ok) {
     return null;

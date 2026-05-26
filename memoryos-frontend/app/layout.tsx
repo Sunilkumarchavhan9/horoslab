@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { IBM_Plex_Mono, Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { isClerkEnabled } from "@/lib/clerk";
 import { DatadogRumInit } from "@/components/observability/datadog-rum-init";
+import { GlobalPixelButtonLoader } from "@/components/ui/global-pixel-button-loader";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -47,12 +48,14 @@ export default function RootLayout({
     <html lang="en" className={cn(sora.variable, spaceGrotesk.variable, plexMono.variable, "font-mono", jetbrainsMono.variable)}>
       <body>
         <DatadogRumInit />
+        <GlobalPixelButtonLoader />
         {clerkEnabled ? (
           <ClerkProvider
             signInUrl="/developer-console/sign-in"
             signUpUrl="/sign-up"
             signInFallbackRedirectUrl="/developer-console"
             signUpFallbackRedirectUrl="/developer-console"
+            prefetchUI={false}
           >
             {children}
           </ClerkProvider>

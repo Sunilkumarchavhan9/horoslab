@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 type RouteContext = {
   params: Promise<{
@@ -26,22 +27,22 @@ const FORWARDED_HEADER_ALLOWLIST = new Set([
   "x-api-key",
   "x-request-id",
 ]);
-const DEFAULT_UPSTREAM_TIMEOUT_MS = 20_000;
+const DEFAULT_UPSTREAM_TIMEOUT_MS = 8_000;
 const METERED_GET_PATHS = new Set<string>([
   "/retrieve/explain",
 ]);
 
 function resolveTimeoutMs(pathSegments: string[], method: string): number {
   const path = `/${pathSegments.join("/")}`;
-  if (method === "POST" && (path === "/handoff" || path === "/resume")) return 35_000;
+  if (method === "GET" && path === "/events") return 5_000;
+  if (method === "POST" && (path === "/handoff" || path === "/resume")) return 18_000;
   if (method === "POST" && path === "/contract/validate") return 15_000;
-  if (method === "GET" && (path === "/requests" || path === "/list" || path === "/insights")) return 25_000;
+  if (method === "GET" && (path === "/requests" || path === "/list" || path === "/insights" || path === "/timeline")) return 8_000;
   return DEFAULT_UPSTREAM_TIMEOUT_MS;
 }
 
 function backendOrigin(): string {
-  const configured = process.env.MEMORYOS_API_ORIGIN?.trim();
-  return (configured && configured !== "same-origin" ? configured : "http://localhost:3001").replace(/\/+$/, "");
+  return resolveBackendOrigin();
 }
 
 function isRetriableProxyError(error: unknown): boolean {
@@ -92,7 +93,7 @@ async function forwardMemoryRequestWithRetry(
     const isIdempotent = request.method === "GET" || request.method === "HEAD";
     const normalizedPath = `/${pathSegments.join("/")}`;
     const isMeteredGetPath = METERED_GET_PATHS.has(normalizedPath);
-    if (isIdempotent && !isMeteredGetPath && isRetriableProxyError(error)) {
+    if (isIdempotent && normalizedPath !== "/events" && !isMeteredGetPath && isRetriableProxyError(error)) {
       return forwardMemoryRequest(request, url, headers, body, timeoutMs);
     }
     throw error;
@@ -117,6 +118,13 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
       headers.set(lowered, value);
     }
   });
+  const normalizedPath = `/${memoryPath.join("/")}`;
+  if (normalizedPath === "/events" && !headers.get("authorization")) {
+    const eventToken = request.nextUrl.searchParams.get("token");
+    if (eventToken && eventToken.trim().length > 0) {
+      headers.set("authorization", `Bearer ${eventToken.trim()}`);
+    }
+  }
 
   let response: globalThis.Response;
   try {
@@ -124,7 +132,6 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
     const body = hasBody ? new Uint8Array(await request.arrayBuffer()) : undefined;
     response = await forwardMemoryRequestWithRetry(request, url, headers, body, timeoutMs, memoryPath);
   } catch (error) {
-    const normalizedPath = `/${memoryPath.join("/")}`;
     const isGet = request.method === "GET";
     if (isGet && normalizedPath === "/requests") {
       return NextResponse.json(
@@ -165,6 +172,70 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
         { status: 200 },
       );
     }
+    if (isGet && normalizedPath === "/timeline") {
+      return NextResponse.json(
+        {
+          events: [],
+          count: 0,
+          warning: "memory_timeline_temporarily_unavailable",
+        },
+        { status: 200 },
+      );
+    }
+    if (isGet && normalizedPath === "/billing") {
+      return NextResponse.json(
+        {
+          workspaceName: "memoryos",
+          currentPlan: "Free",
+          usage: {
+            tokenLimit: 1_000_000,
+            tokenUsed: 0,
+            searchLimit: 10_000,
+            searchUsed: 0,
+            resetInDays: 30,
+          },
+          seats: {
+            activeMembers: 1,
+            pendingInvites: 0,
+            seatLimit: 1,
+          },
+          connectorSyncUsage: {
+            used: 0,
+            limit: 1_000,
+          },
+          invoices: [],
+          events: [],
+          checkout: {
+            configured: false,
+            provider: "none",
+            portalUrl: null,
+          },
+          warning: "memory_billing_temporarily_unavailable",
+        },
+        { status: 200 },
+      );
+    }
+    if (request.method === "POST" && normalizedPath === "/resume") {
+      return NextResponse.json(
+        {
+          summary: "",
+          nextAction: "MemoryOS backend is temporarily unavailable. Restart the backend and retry resume generation.",
+          evidence: [],
+          warning: "memory_resume_temporarily_unavailable",
+        },
+        { status: 200 },
+      );
+    }
+    if (request.method === "POST" && normalizedPath === "/handoff") {
+      return NextResponse.json(
+        {
+          handoff: "",
+          summary: "MemoryOS backend is temporarily unavailable. Restart the backend and retry handoff generation.",
+          warning: "memory_handoff_temporarily_unavailable",
+        },
+        { status: 200 },
+      );
+    }
     return NextResponse.json(
       {
         error: "MemoryOS backend proxy failed",
@@ -183,7 +254,6 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
   });
   responseHeaders.set("x-memoryos-proxy-target", response.url || url);
 
-  const normalizedPath = `/${memoryPath.join("/")}`;
   if (request.method === "GET" && normalizedPath === "/requests" && response.status >= 500) {
     return NextResponse.json(
       {

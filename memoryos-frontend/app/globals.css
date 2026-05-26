@@ -231,11 +231,673 @@
   background: var(--background);
 }
 
-/* Square corners (status dots / avatars may stay circular) */
-.developer-console-root :not(.rounded-full):not([class*="rounded-full"]),
-.developer-console-root :not(.rounded-full):not([class*="rounded-full"])::before,
-.developer-console-root :not(.rounded-full):not([class*="rounded-full"])::after {
+/* Prody-style light console shell */
+.memoryos-prody-shell {
+  --background: #f9fafb;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --muted: #f9fafb;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --primary: #111827;
+  --primary-foreground: #ffffff;
+  background: #f9fafb;
+  color: #111827;
+  font-family: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+}
+
+.memoryos-prody-shell .intel-section-content select,
+.memoryos-prody-shell .intel-section-content input:not([type="checkbox"]):not([type="radio"]),
+.memoryos-prody-shell .intel-section-content textarea {
+  border-radius: 0.75rem !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.memoryos-prody-shell .intel-section-content select:focus,
+.memoryos-prody-shell .intel-section-content input:focus,
+.memoryos-prody-shell .intel-section-content textarea:focus {
+  outline: none !important;
+  border-color: #d1d5db !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.memoryos-prody-shell .intel-section-content [data-slot="button"].bg-primary,
+.memoryos-prody-shell .intel-section-content button.bg-primary,
+.memoryos-prody-shell .intel-section-content [data-slot="button"][class*="bg-[#111827]"],
+.memoryos-prody-shell .intel-section-content button[class*="bg-[#111827]"] {
   border-radius: 0 !important;
+  background: #111827 !important;
+  color: #ffffff !important;
+  border-color: #111827 !important;
+  box-shadow: none !important;
+}
+
+/* Filter / tab chips — square (Integrations catalog, Settings connectors, Billing tabs) */
+.memoryos-prody-shell .intel-section-content .intel-filter-chip,
+.memoryos-prody-shell .intel-section-content button.intel-filter-chip {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.memoryos-prody-shell .intel-section-content [data-slot="button"][class*="bg-[#111827]"] .pixel-load-btn__label,
+.memoryos-prody-shell .intel-section-content button[class*="bg-[#111827]"] .pixel-load-btn__label {
+  color: #ffffff !important;
+}
+
+/* Outline / ghost only — do not match every button (base CVA adds `border` to all) */
+.memoryos-prody-shell .intel-section-content [data-slot="button"][data-variant="outline"],
+.memoryos-prody-shell .intel-section-content [data-slot="button"][data-variant="ghost"] {
+  border-radius: 0.75rem !important;
+  border-color: #e5e7eb !important;
+  background: #ffffff !important;
+  color: #374151 !important;
+}
+
+.memoryos-prody-shell .intel-section-content .prody-input {
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.memoryos-prody-shell :not(.rounded-full):not([class*="rounded-full"]),
+.memoryos-prody-shell :not(.rounded-full):not([class*="rounded-full"])::before,
+.memoryos-prody-shell :not(.rounded-full):not([class*="rounded-full"])::after {
+  border-radius: revert-layer;
+}
+
+.memoryos-prody-shell .intel-section-content {
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --muted: #f9fafb;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --primary: #111827;
+  --primary-foreground: #ffffff;
+}
+
+.memoryos-prody-shell .intel-section-content.intel-section-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.memoryos-prody-shell .intel-section-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Legacy flat console (non-Prody) — square corners */
+.developer-console-root:not(.memoryos-prody-shell) :not(.rounded-full):not([class*="rounded-full"]),
+.developer-console-root:not(.memoryos-prody-shell) :not(.rounded-full):not([class*="rounded-full"])::before,
+.developer-console-root:not(.memoryos-prody-shell) :not(.rounded-full):not([class*="rounded-full"])::after {
+  border-radius: 0 !important;
+}
+
+/* Prody premium surfaces inside intelligence workspace */
+.memoryos-prody-shell .console-premium-panel,
+.memoryos-prody-shell .console-section-surface,
+.memoryos-prody-shell .console-stat-surface,
+.memoryos-prody-shell .console-surface {
+  border-radius: 1rem !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.05) !important;
+}
+
+.memoryos-prody-shell .console-stat-surface {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.memoryos-prody-shell .console-stat-surface:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 12px 28px rgba(0, 0, 0, 0.07) !important;
+}
+
+.memoryos-prody-shell .console-toolbar {
+  border-radius: 0.875rem !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: #f9fafb !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.memoryos-prody-shell .console-empty-state {
+  border-radius: 1rem !important;
+  border: 1px dashed #e5e7eb !important;
+  background: #f9fafb !important;
+}
+
+.memoryos-prody-shell .intel-section-content [data-slot="button"]:not(.connector-action-btn):not(.intel-filter-chip),
+.memoryos-prody-shell .intel-section-content button[class*="bg-primary"]:not(.connector-action-btn):not(.intel-filter-chip) {
+  border-radius: 0 !important;
+}
+
+/* Connector catalog — square actions (Integrations line-grid style) */
+.memoryos-prody-shell .intel-section-content .connector-action-btn,
+.memoryos-prody-shell .intel-section-content button.connector-action-btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  min-height: 2.5rem;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-action-btn .pixel-load-btn__label {
+  position: relative;
+  z-index: 2;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-action-btn[data-pixel-loading="true"] {
+  cursor: wait;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-action-btn--disconnect {
+  border: none !important;
+  background: #111827 !important;
+  color: #ffffff !important;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-action-btn--disconnect:hover {
+  background: #1f2937 !important;
+  color: #ffffff !important;
+}
+
+/* Connector catalog — full-height 1px tile gutters (Integrations line-grid) */
+.memoryos-prody-shell .intel-section-content .connector-tile-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 1px !important;
+  background-color: #e5e7eb !important;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.memoryos-prody-shell .intel-section-content .connector-tile-grid--kpi {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .memoryos-prody-shell .intel-section-content .connector-tile-grid:not(.connector-tile-grid--kpi) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .memoryos-prody-shell .intel-section-content .connector-tile-grid--kpi {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .memoryos-prody-shell .intel-section-content .connector-tile-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.memoryos-prody-shell .intel-section-content .connector-tile-grid > * {
+  background-color: #ffffff !important;
+  min-height: 220px;
+  min-width: 0;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--tall > * {
+  min-height: 360px;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--short > * {
+  min-height: 120px;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--health > * {
+  min-height: 200px;
+}
+
+/* Connectors — break out of intelContentPad to true main-column edges */
+.memoryos-prody-shell .intel-section-content .connector-full-bleed {
+  box-sizing: border-box;
+  margin-left: -0.75rem !important;
+  margin-right: -0.75rem !important;
+  width: calc(100% + 1.5rem) !important;
+  max-width: none !important;
+}
+
+@media (min-width: 640px) {
+  .memoryos-prody-shell .intel-section-content .connector-full-bleed {
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    width: calc(100% + 2rem) !important;
+  }
+}
+
+/* Stacked panels + hatch gutters — square, no side inset */
+.memoryos-prody-shell .intel-section-content .connector-panel-run {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0 !important;
+  background-color: #ffffff;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-page-stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: visible;
+  border: none;
+  border-radius: 0 !important;
+  background-color: transparent;
+  box-shadow: none !important;
+}
+
+/* Section gutter band — solid line + hatch + solid line (Overview / Connectors) */
+.memoryos-prody-shell .intel-section-gutter-band {
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+  min-width: 100% !important;
+  flex-shrink: 0;
+  margin: 0 !important;
+}
+
+.memoryos-prody-shell .intel-section-gutter-line {
+  display: block;
+  width: 100% !important;
+  height: 1px;
+  flex-shrink: 0;
+  background-color: #e5e7eb;
+}
+
+.memoryos-prody-shell .connector-section-gutter,
+.memoryos-prody-shell .intel-section-content .connector-section-gutter {
+  display: block;
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 12px;
+  flex-shrink: 0;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  border-left: none;
+  border-right: none;
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(
+    115deg,
+    #ffffff 0,
+    #ffffff 7px,
+    #e5e7eb 7px,
+    #e5e7eb 8px
+  );
+}
+
+.memoryos-prody-shell .intel-section-gutter,
+.memoryos-prody-shell .intel-section-content .intel-section-gutter {
+  display: block;
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 12px;
+  flex-shrink: 0;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(
+    115deg,
+    #ffffff 0,
+    #ffffff 7px,
+    #e5e7eb 7px,
+    #e5e7eb 8px
+  );
+}
+
+/* Overview / intel line-grid — same tile gutters as connectors */
+.memoryos-prody-shell .intel-full-bleed,
+.memoryos-prody-shell .intel-section-content .intel-full-bleed {
+  box-sizing: border-box;
+  margin-left: -0.75rem !important;
+  margin-right: -0.75rem !important;
+  width: calc(100% + 1.5rem) !important;
+  max-width: none !important;
+}
+
+@media (min-width: 640px) {
+  .memoryos-prody-shell .intel-full-bleed,
+  .memoryos-prody-shell .intel-section-content .intel-full-bleed {
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    width: calc(100% + 2rem) !important;
+  }
+}
+
+.memoryos-prody-shell .intel-panel-run,
+.memoryos-prody-shell .intel-section-content .intel-panel-run {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0 !important;
+  background-color: #ffffff;
+}
+
+.memoryos-prody-shell .intel-page-stack,
+.memoryos-prody-shell .intel-section-content .intel-page-stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: visible;
+  border: none;
+  border-radius: 0 !important;
+  background-color: transparent;
+  box-shadow: none !important;
+}
+
+.memoryos-prody-shell .intel-tile-grid,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 1px !important;
+  background-color: #e5e7eb !important;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+/* Overview: chart + dark snapshot (never span full row) */
+.memoryos-prody-shell .overview-chart-row,
+.memoryos-prody-shell .intel-section-content .overview-chart-row {
+  display: grid !important;
+  width: 100% !important;
+  gap: 1px !important;
+  background-color: #e5e7eb !important;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 768px) {
+  .memoryos-prody-shell .overview-chart-row,
+  .memoryos-prody-shell .intel-section-content .overview-chart-row {
+    grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr) !important;
+  }
+}
+
+.memoryos-prody-shell .overview-chart-row > .overview-chart-cell,
+.memoryos-prody-shell .intel-section-content .overview-chart-row > .overview-chart-cell {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 320px;
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: hidden;
+  background-color: #ffffff !important;
+}
+
+.memoryos-prody-shell .overview-chart-cell .overview-flow-chart,
+.memoryos-prody-shell .intel-section-content .overview-chart-cell .overview-flow-chart {
+  flex: 1 1 auto;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.memoryos-prody-shell .overview-chart-cell .intel-chart-plot,
+.memoryos-prody-shell .intel-section-content .overview-chart-cell .intel-chart-plot {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 280px !important;
+  min-height: 280px !important;
+}
+
+.memoryos-prody-shell .overview-chart-cell .recharts-responsive-container,
+.memoryos-prody-shell .intel-section-content .overview-chart-cell .recharts-responsive-container {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 280px !important;
+  min-height: 280px !important;
+}
+
+.memoryos-prody-shell .overview-chart-cell .recharts-wrapper,
+.memoryos-prody-shell .intel-section-content .overview-chart-cell .recharts-wrapper {
+  width: 100% !important;
+  height: 280px !important;
+}
+
+.memoryos-prody-shell .overview-chart-row > .overview-flow-insight,
+.memoryos-prody-shell .intel-section-content .overview-chart-row > .overview-flow-insight {
+  min-height: 320px;
+  background-color: #f3f4f6 !important;
+}
+
+/* Memory Graph — chart gutter row (graph canvas | health + signals) */
+.memoryos-prody-shell .memory-graph-chart-row,
+.memoryos-prody-shell .intel-section-content .memory-graph-chart-row {
+  display: grid !important;
+  width: 100% !important;
+  gap: 1px !important;
+  background-color: #e5e7eb !important;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .memoryos-prody-shell .memory-graph-chart-row,
+  .memoryos-prody-shell .intel-section-content .memory-graph-chart-row {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 22rem) !important;
+  }
+}
+
+.memoryos-prody-shell .memory-graph-chart-row > .memory-graph-stage-cell,
+.memoryos-prody-shell .intel-section-content .memory-graph-chart-row > .memory-graph-stage-cell {
+  position: relative;
+  min-height: 560px;
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: hidden;
+  background-color: #ffffff !important;
+}
+
+.memoryos-prody-shell .memory-graph-chart-row > .memory-evolution-stage-cell,
+.memoryos-prody-shell .intel-section-content .memory-graph-chart-row > .memory-evolution-stage-cell {
+  min-height: 0;
+  overflow: visible;
+}
+
+.memoryos-prody-shell .memory-graph-sidebar-stack,
+.memoryos-prody-shell .intel-section-content .memory-graph-sidebar-stack {
+  display: grid !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 1px !important;
+  background-color: #e5e7eb !important;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+}
+
+.memoryos-prody-shell .memory-graph-sidebar-stack > .memory-graph-sidebar-cell,
+.memoryos-prody-shell .intel-section-content .memory-graph-sidebar-stack > .memory-graph-sidebar-cell {
+  min-width: 0 !important;
+  background-color: #ffffff !important;
+}
+
+.memoryos-prody-shell .intel-tile-grid--kpi,
+.memoryos-prody-shell .intel-tile-grid--cards,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .memoryos-prody-shell .intel-tile-grid--kpi,
+  .memoryos-prody-shell .intel-tile-grid--cards,
+  .memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi,
+  .memoryos-prody-shell .intel-section-content .intel-tile-grid--cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .memoryos-prody-shell .intel-tile-grid--kpi,
+  .memoryos-prody-shell .intel-tile-grid--cards,
+  .memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi,
+  .memoryos-prody-shell .intel-section-content .intel-tile-grid--cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+}
+
+.memoryos-prody-shell .intel-tile-grid > *,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid > * {
+  background-color: #ffffff !important;
+  min-width: 0;
+}
+
+.memoryos-prody-shell .intel-tile-grid--kpi > *,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi > * {
+  min-height: 108px;
+}
+
+.memoryos-prody-shell .intel-tile-grid--chart > *,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--chart > * {
+  min-height: 320px;
+}
+
+.memoryos-prody-shell .intel-tile-grid--cards > *,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--cards > * {
+  min-height: 148px;
+}
+
+.memoryos-prody-shell .intel-chart-plot,
+.memoryos-prody-shell .intel-section-content .intel-chart-plot {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  background-color: #fafafa;
+  background-image:
+    linear-gradient(to right, #f3f4f6 1px, transparent 1px),
+    linear-gradient(to bottom, #f3f4f6 1px, transparent 1px);
+  background-size: 48px 40px;
+}
+
+.memoryos-prody-shell .intel-section-content .intel-line-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.memoryos-prody-shell .intel-section-content .intel-line-table th,
+.memoryos-prody-shell .intel-section-content .intel-line-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+}
+
+.memoryos-prody-shell .intel-section-content .intel-line-table thead th {
+  background-color: #f9fafb;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.memoryos-prody-shell .intel-section-content .intel-line-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.memoryos-prody-shell .intel-section-content [data-slot="badge"] {
+  border-radius: 9999px !important;
+  font-weight: 500;
+}
+
+.memoryos-prody-shell .memoryos-neural-grid {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.memoryos-prody-shell .memoryos-console-scroll {
+  padding: 0;
+  background: #ffffff;
+}
+
+.memoryos-prody-shell .developer-console-sections {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.memoryos-prody-shell .developer-console-sections > * {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.memoryos-prody-shell .developer-console-sections .intel-workspace-fill {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+/* Developer console — thin scrollbars, no arrow buttons */
+.memoryos-prody-shell,
+.memoryos-prody-shell *,
+.developer-console-root,
+.developer-console-root * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(17, 24, 39, 0.22) transparent;
+}
+
+.memoryos-prody-shell::-webkit-scrollbar,
+.memoryos-prody-shell *::-webkit-scrollbar,
+.developer-console-root::-webkit-scrollbar,
+.developer-console-root *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.memoryos-prody-shell::-webkit-scrollbar-button,
+.memoryos-prody-shell *::-webkit-scrollbar-button,
+.developer-console-root::-webkit-scrollbar-button,
+.developer-console-root *::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.memoryos-prody-shell::-webkit-scrollbar-track,
+.memoryos-prody-shell *::-webkit-scrollbar-track,
+.developer-console-root::-webkit-scrollbar-track,
+.developer-console-root *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.memoryos-prody-shell::-webkit-scrollbar-thumb,
+.memoryos-prody-shell *::-webkit-scrollbar-thumb,
+.developer-console-root::-webkit-scrollbar-thumb,
+.developer-console-root *::-webkit-scrollbar-thumb {
+  background-color: rgba(17, 24, 39, 0.18);
+  border-radius: 9999px;
+}
+
+.memoryos-prody-shell::-webkit-scrollbar-thumb:hover,
+.memoryos-prody-shell *::-webkit-scrollbar-thumb:hover,
+.developer-console-root::-webkit-scrollbar-thumb:hover,
+.developer-console-root *::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(17, 24, 39, 0.32);
 }
 
 .developer-console-root .rounded-full,
@@ -267,6 +929,98 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Pixel-grid loading overlay for all action buttons (connecting / navigating) */
+button:not([data-no-pixel-load]),
+[data-slot="button"]:not([data-no-pixel-load]) {
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-load-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-load-btn__label {
+  position: relative;
+  z-index: 2;
+}
+
+.pixel-load-btn--loading .pixel-load-btn__label {
+  opacity: 0.92;
+}
+
+.pixel-load-overlay-host {
+  pointer-events: none;
+}
+
+.pixel-load-overlay-host .pixel-load-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.pixel-load-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  pointer-events: none;
+}
+
+.pixel-load-overlay__cell {
+  animation: pixel-load-flicker 1.35s ease-in-out infinite;
+  opacity: 0.06;
+  transform: scale(0.82);
+}
+
+.pixel-load-overlay--dark .pixel-load-overlay__cell {
+  background: #ffffff;
+}
+
+.pixel-load-overlay--light .pixel-load-overlay__cell {
+  background: #111827;
+}
+
+.pixel-load-overlay--muted .pixel-load-overlay__cell {
+  background: #6b7280;
+}
+
+@keyframes pixel-load-flicker {
+  0%,
+  100% {
+    opacity: 0.04;
+    transform: scale(0.78);
+  }
+  40% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  72% {
+    opacity: 0.1;
+    transform: scale(0.88);
+  }
+}
+
+button[data-pixel-loading="true"]:not([data-no-pixel-load]),
+[data-slot="button"][data-pixel-loading="true"]:not([data-no-pixel-load]),
+.pixel-load-btn[data-pixel-loading="true"] {
+  cursor: wait;
+}
+
+/* Brief click flash — visual only, must not block pointer events or clicks */
+.pixel-load-btn--click-flash {
+  cursor: pointer;
+}
+
+button[data-pixel-loading="true"] .pixel-load-btn__label,
+[data-slot="button"][data-pixel-loading="true"] .pixel-load-btn__label,
+.connector-action-btn[data-pixel-loading="true"] .pixel-load-btn__label {
+  position: relative;
+  z-index: 2;
 }
 
 @layer utilities {

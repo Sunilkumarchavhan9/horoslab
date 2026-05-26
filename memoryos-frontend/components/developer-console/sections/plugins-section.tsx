@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import {
@@ -51,7 +51,12 @@ function statusLabel(status: PluginStatus) {
   return "available";
 }
 
-export function PluginsSection() {
+type PluginsSectionProps = {
+  realtimeVersion?: number;
+};
+
+export function PluginsSection({ realtimeVersion: _realtimeVersion = 0 }: PluginsSectionProps) {
+  const didLoadRef = useRef(false);
   const [plugins, setPlugins] = useState<PluginCard[]>([]);
   const [events, setEvents] = useState<PluginEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +78,12 @@ export function PluginsSection() {
       | null;
     const payload = rawPayload?.data ?? rawPayload;
     if (!response.ok || !payload?.plugins) {
-      throw new Error(rawPayload?.error ?? "Could not load plugins.");
+      const planGated = response.status === 402;
+      throw new Error(
+        planGated
+          ? "Plugin marketplace is available on Pro and Scale workspaces."
+          : rawPayload?.error ?? "Could not load plugins.",
+      );
     }
     const dedupedPlugins = Array.from(new Map(payload.plugins.map((plugin) => [plugin.id, plugin])).values());
     const dedupedEvents = Array.from(new Map((payload.events ?? []).map((event) => [event.id, event])).values())
@@ -100,6 +110,8 @@ export function PluginsSection() {
   }, [selectedPluginId]);
 
   useEffect(() => {
+    if (didLoadRef.current) return;
+    didLoadRef.current = true;
     let cancelled = false;
     const run = async () => {
       try {
@@ -115,18 +127,8 @@ export function PluginsSection() {
       }
     };
     void run();
-    const interval = window.setInterval(() => {
-      void (async () => {
-        try {
-          await loadPlugins({ keepSelection: true });
-        } catch {
-          // background refresh stays silent
-        }
-      })();
-    }, 8000);
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
     };
   }, [loadPlugins]);
 
@@ -139,6 +141,7 @@ export function PluginsSection() {
   const installedPlugins = plugins.filter((plugin) => plugin.status === "installed");
   const healthyPlugins = plugins.filter((plugin) => plugin.health === "healthy");
   const catalogPlugins = plugins.length;
+  const isPlanGated = errorMessage?.toLowerCase().includes("pro and scale") ?? false;
   const statCards = [
     { label: "Installed plugins", value: installedPlugins.length, tone: "var(--color-chart-2)" },
     { label: "Catalog plugins", value: catalogPlugins, tone: "var(--color-primary)" },
@@ -244,15 +247,23 @@ export function PluginsSection() {
           {isLoading
             ? "Loading plugin state..."
             : errorMessage
-              ? "Connection issue"
+              ? isPlanGated ? "Plan-gated workspace feature" : "Connection issue"
               : backendReachable
                 ? "Workspace plugin state loaded"
                 : "Waiting for backend"} · Updated: {lastUpdated}
         </p>
       </motion.div>
       {errorMessage ? (
-        <div className="mt-2.5 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-3 text-xs text-destructive">
-          {errorMessage}
+        <div
+          className={
+            isPlanGated
+              ? "mt-2.5 rounded-lg border border-border bg-card px-3.5 py-3 text-xs text-muted-foreground"
+              : "mt-2.5 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-3 text-xs text-destructive"
+          }
+        >
+          {isPlanGated
+            ? "Plugins are an upgrade feature. The console will not keep retrying this endpoint until you refresh or upgrade."
+            : errorMessage}
         </div>
       ) : null}
 
@@ -306,6 +317,15 @@ export function PluginsSection() {
             </motion.button>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => void loadPlugins({ keepSelection: true }).catch((error) => {
+            setErrorMessage(error instanceof Error ? error.message : "Could not refresh plugins.");
+          })}
+          className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-muted-foreground"
+        >
+          REFRESH
+        </button>
       </div>
 
       <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">

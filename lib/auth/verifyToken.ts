@@ -3,6 +3,7 @@ import { verifyApiKeyToken } from "./apiKeyStore";
 
 export interface VerifiedAuth {
   userId: string;
+  apiKeyId?: string;
 }
 
 function readBearerToken(authHeader: string | undefined): string | null {

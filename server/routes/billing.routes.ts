@@ -45,6 +45,38 @@ function coercePlan(value: unknown): BillingPlan | null {
   return null;
 }
 
+function coercePlanFromProductSlug(value: unknown): BillingPlan | null {
+  if (typeof value !== "string" || value.trim().length === 0) return null;
+  const normalized = value.trim().toLowerCase();
+  if (normalized.includes("enterprise")) return "Enterprise";
+  if (normalized.includes("scale")) return "Scale";
+  if (normalized.includes("pro")) return "Pro";
+  if (normalized.includes("free")) return "Free";
+  return null;
+}
+
+function resolvePlanFromWebhook(
+  data: Record<string, unknown>,
+  metadata: Record<string, unknown>,
+): BillingPlan | null {
+  const direct = coercePlan(metadata.plan ?? data.planName ?? data.plan);
+  if (direct) return direct;
+
+  const productCandidates = [
+    metadata.product,
+    metadata.product_name,
+    data.product_name,
+    data.productName,
+    (data.product as Record<string, unknown> | undefined)?.name,
+  ];
+  for (const candidate of productCandidates) {
+    const fromProduct = coercePlanFromProductSlug(candidate);
+    if (fromProduct) return fromProduct;
+  }
+
+  return null;
+}
+
 function coerceSubscriptionStatus(value: unknown): SubscriptionStatus {
   if (value === "active" || value === "trialing" || value === "past_due" || value === "canceled" || value === "incomplete") {
     return value;
@@ -112,16 +144,48 @@ billingRouter.post("/webhooks/polar", async (req, res) => {
     return;
   }
 
-  if (eventType.includes("subscription")) {
-    const plan = coercePlan(metadata.plan ?? data.planName ?? data.plan);
+  const subscriptionStatus = coerceSubscriptionStatus(data.status);
+  const subscriptionId =
+    typeof data.subscription_id === "string"
+      ? data.subscription_id
+      : typeof data.id === "string" && eventType.includes("subscription")
+        ? data.id
+        : null;
+  const currentPeriodEnd =
+    typeof data.current_period_end === "string"
+      ? data.current_period_end
+      : typeof data.currentPeriodEnd === "string"
+        ? data.currentPeriodEnd
+        : null;
+
+  if (
+    eventType.includes("subscription") ||
+    eventType.includes("checkout") ||
+    eventType.includes("order")
+  ) {
+    const planFromWebhook = resolvePlanFromWebhook(data, metadata);
+    const plan =
+      subscriptionStatus === "canceled"
+        ? "Free"
+        : planFromWebhook;
+
     if (plan) {
       await setUserBillingState({
         userId,
         plan,
         customerId,
-        subscriptionId: typeof data.subscription_id === "string" ? data.subscription_id : null,
-        subscriptionStatus: coerceSubscriptionStatus(data.status),
-        currentPeriodEnd: typeof data.current_period_end === "string" ? data.current_period_end : null,
+        subscriptionId,
+        subscriptionStatus,
+        currentPeriodEnd,
+      });
+    } else if (subscriptionStatus === "canceled") {
+      await setUserBillingState({
+        userId,
+        plan: "Free",
+        customerId,
+        subscriptionId,
+        subscriptionStatus,
+        currentPeriodEnd,
       });
     }
   }

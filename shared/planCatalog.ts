@@ -1,3 +1,7 @@
+/**
+ * Source of truth for plan limits (backend billing + connector caps).
+ * Frontend display copy: `memoryos-frontend/lib/plan-catalog.ts` (keep in sync).
+ */
 export type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
 
 export type PlanDefinition = {

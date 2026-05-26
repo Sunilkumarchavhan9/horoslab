@@ -1,0 +1,7 @@
+interface:
+  display_name: "MemoryOS Product OS"
+  short_description: "Ship MemoryOS as an AI operating system"
+  default_prompt: "Use $memoryos-ship-loop to plan, design, implement, validate, and hand off the next MemoryOS AI product slice."
+
+policy:
+  allow_implicit_invocation: true

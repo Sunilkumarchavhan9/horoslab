@@ -9,8 +9,22 @@ type RateLimitConfig = {
 };
 
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS_PER_WINDOW = 60;
 const DEFAULT_REDIS_PREFIX = "memoryos:ratelimit";
+
+function resolveRateLimitMaxRequests(defaultProd: number): number {
+  const configured = Number(process.env.MEMORYOS_RATE_LIMIT_MAX);
+  if (Number.isFinite(configured) && configured > 0) {
+    return Math.floor(configured);
+  }
+  // Local console polls memory + connector endpoints together; avoid 429 during dev.
+  if (process.env.NODE_ENV === "development") {
+    return 300;
+  }
+  return defaultProd;
+}
+
+const MAX_REQUESTS_PER_WINDOW = resolveRateLimitMaxRequests(60);
+const MAX_MODERATE_REQUESTS_PER_WINDOW = resolveRateLimitMaxRequests(120);
 
 const inMemoryBuckets = new Map<string, number[]>();
 let redisClientPromise: Promise<RedisClientType | null> | null = null;
@@ -45,7 +59,7 @@ function getUserBucketKey(req: Request): string {
 function getIpBucketKey(req: Request): string {
   const forwarded = req.header("x-forwarded-for");
   const firstForwarded = forwarded?.split(",")[0]?.trim();
-  const ip = firstForwarded || req.ip || "unknown";
+  const ip = firstForwarded || req.ip || "unknown";  
   return `ip:${ip}`;
 }
 
@@ -54,6 +68,17 @@ function isBillingReadRequest(req: Request): boolean {
   if (req.method !== "GET") return false;
   const path = (req.path || req.url || "").split("?")[0] ?? "";
   return /\/billing(\/events)?$/i.test(path);
+}
+
+/** Long-lived SSE streams should not consume API burst quota. */
+function isRealtimeStreamRequest(req: Request): boolean {
+  if (req.method !== "GET") return false;
+  const path = (req.path || req.url || "").split("?")[0] ?? "";
+  return /\/events$/i.test(path);
+}
+
+function isMemoryRateLimitExempt(req: Request): boolean {
+  return isBillingReadRequest(req) || isRealtimeStreamRequest(req);
 }
 
 async function applyInMemoryLimit(
@@ -152,13 +177,14 @@ export const rateLimitMemoryApi = buildRateLimiter({
   windowMs: WINDOW_MS,
   maxRequests: MAX_REQUESTS_PER_WINDOW,
   keyResolver: getUserBucketKey,
-  skip: isBillingReadRequest,
+  skip: isMemoryRateLimitExempt,
 });
 
 export const rateLimitModerateApi = buildRateLimiter({
   windowMs: WINDOW_MS,
-  maxRequests: 120,
+  maxRequests: MAX_MODERATE_REQUESTS_PER_WINDOW,
   keyResolver: getUserBucketKey,
+  skip: isRealtimeStreamRequest,
 });
 
 export const rateLimitStrictApi = buildRateLimiter({

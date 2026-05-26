@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { EASE_OUT } from "@/lib/motion";
@@ -89,7 +89,12 @@ function getApiOrigin() {
   return origin;
 }
 
-export function AgentsSection() {
+type AgentsSectionProps = {
+  realtimeVersion?: number;
+};
+
+export function AgentsSection({ realtimeVersion: _realtimeVersion = 0 }: AgentsSectionProps) {
+  const didLoadRef = useRef(false);
   const [connectedAgents, setConnectedAgents] = useState<ConnectedAgent[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -110,12 +115,12 @@ export function AgentsSection() {
   ).length;
 
   const totalThreads24h = connectedAgents.reduce(
-    (sum, agent) => sum + agent.threads24h,
+    (sum, agent) => sum + (Number.isFinite(agent.threads24h) ? agent.threads24h : 0),
     0,
   );
 
   const totalHandoffs24h = connectedAgents.reduce(
-    (sum, agent) => sum + agent.handoffs24h,
+    (sum, agent) => sum + (Number.isFinite(agent.handoffs24h) ? agent.handoffs24h : 0),
     0,
   );
 
@@ -123,7 +128,7 @@ export function AgentsSection() {
     if (connectedAgents.length === 0) return 0;
 
     const avg =
-      connectedAgents.reduce((sum, agent) => sum + agent.resumeScore, 0) /
+      connectedAgents.reduce((sum, agent) => sum + (Number.isFinite(agent.resumeScore) ? agent.resumeScore : 0), 0) /
       connectedAgents.length;
 
     return Math.round(avg);
@@ -180,11 +185,10 @@ export function AgentsSection() {
   }, []);
 
   useEffect(() => {
+    if (didLoadRef.current) return;
+    didLoadRef.current = true;
     void loadAgents(false);
-    const timer = window.setInterval(() => {
-      void loadAgents(true);
-    }, 10000);
-    return () => window.clearInterval(timer);
+    return undefined;
   }, [loadAgents]);
 
   async function connectTemplate(template: AgentTemplate) {
@@ -518,8 +522,8 @@ export function AgentsSection() {
                   <div className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-4">
                     <p>Connected: {agent.connectedAt}</p>
                     <p>Heartbeat: {agent.lastHeartbeat}</p>
-                    <p>Threads 24h: {agent.threads24h}</p>
-                    <p>Handoffs 24h: {agent.handoffs24h}</p>
+                    <p>Threads 24h: {Number.isFinite(agent.threads24h) ? agent.threads24h : 0}</p>
+                    <p>Handoffs 24h: {Number.isFinite(agent.handoffs24h) ? agent.handoffs24h : 0}</p>
                   </div>
                 </div>
               ))

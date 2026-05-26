@@ -14,6 +14,7 @@ import {
   CardTitle as ShadcnCardTitle,
 } from "@/components/ui/card";
 import { Input as ShadcnInput } from "@/components/ui/input";
+import { useProdySection } from "@/components/developer-console/prody-section-context";
 import { cn } from "@/lib/utils";
 
 type DivProps = ComponentProps<"div">;
@@ -81,12 +82,13 @@ export function ConsolePage({
   children: ReactNode;
   className?: string;
 }) {
+  const { embedded } = useProdySection();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: embedded ? 0 : 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      className={cn("space-y-6 pb-10", className)}
+      className={cn(embedded ? "space-y-5" : "space-y-6 pb-10", className)}
     >
       {children}
     </motion.div>
@@ -100,6 +102,8 @@ type ConsolePageHeaderProps = {
   badge?: ReactNode;
   actions?: ReactNode;
   className?: string;
+  /** Force embedded toolbar (no duplicate page title card) */
+  embedded?: boolean;
 };
 
 export function ConsolePageHeader({
@@ -109,7 +113,34 @@ export function ConsolePageHeader({
   badge,
   actions,
   className,
+  embedded: embeddedProp,
 }: ConsolePageHeaderProps) {
+  const { embedded: prodyEmbedded } = useProdySection();
+  const embedded = embeddedProp ?? prodyEmbedded;
+
+  if (embedded) {
+    return (
+      <div
+        className={cn(
+          "flex flex-wrap items-start justify-between gap-4 border-b border-black/[0.06] pb-4",
+          className,
+        )}
+      >
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[#111827]">{title}</h2>
+            {badge}
+          </div>
+          {description ? (
+            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-[#6B7280]">{description}</p>
+          ) : null}
+          {meta ? <p className="mt-1 text-xs text-[#9CA3AF]">{meta}</p> : null}
+        </div>
+        {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -310,21 +341,32 @@ export function ConsoleStatusBadge({
   active?: boolean;
   className?: string;
 }) {
+  const { embedded } = useProdySection();
   return (
     <Badge
       variant="outline"
       className={cn(
         "gap-1.5 px-2.5 py-1 text-xs font-medium normal-case tracking-normal",
-        active
-          ? "border-primary/40 bg-primary/10 text-foreground"
-          : "border-border bg-muted/20 text-muted-foreground",
+        embedded
+          ? active
+            ? "border-[#A7F3D0] bg-[#D1FAE5] text-[#047857]"
+            : "border-[#E5E7EB] bg-[#F9FAFB] text-[#6B7280]"
+          : active
+            ? "border-primary/40 bg-primary/10 text-foreground"
+            : "border-border bg-muted/20 text-muted-foreground",
         className,
       )}
     >
       <span
         className={cn(
           "size-1.5 rounded-full",
-          active ? "bg-primary" : "bg-muted-foreground/50",
+          active
+            ? embedded
+              ? "bg-[#10B981]"
+              : "bg-primary"
+            : embedded
+              ? "bg-[#D1D5DB]"
+              : "bg-muted-foreground/50",
         )}
       />
       {label}

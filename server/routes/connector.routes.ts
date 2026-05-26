@@ -21,6 +21,14 @@ import {
 
 import { requireAuth } from "../middleware/auth";
 import { verifyAuthorizationHeader } from "../../lib/auth/verifyToken";
+import {
+  approveAndExecuteGitHubProposal,
+  listGitHubReposForUser,
+  proposeGitHubExecution,
+} from "../../lib/integrations/githubExecution";
+import { listGitHubRepoContents, readGitHubRepoFile } from "../../lib/integrations/githubRepoBrowser";
+import { listGitHubExecutionProposalsForUser } from "../../lib/integrations/githubExecutionStore";
+import type { GitHubExecutionKind } from "../../lib/integrations/githubExecutionStore";
 
 export const connectorRouter = Router();
 type ConnectorRealtimeEvent = {
@@ -137,6 +145,31 @@ async function maskConnectorByPlan(
   };
 }
 
+function serializeConnectorForList(connector: Record<string, unknown>): {
+  type: string;
+  status: string;
+  recordCount: number;
+  lastSyncAt: string | null;
+  contractCounts: Record<string, number>;
+} {
+  const config = getConnectorConfig(
+    typeof connector.configJson === "string" ? connector.configJson : null,
+  );
+  return {
+    type: typeof connector.type === "string" ? connector.type : "unknown",
+    status: typeof connector.status === "string" ? connector.status : "not_connected",
+    recordCount:
+      typeof connector.recordCount === "number" && Number.isFinite(connector.recordCount)
+        ? connector.recordCount
+        : 0,
+    lastSyncAt:
+      typeof connector.lastSyncAt === "string" && connector.lastSyncAt.length > 0
+        ? connector.lastSyncAt
+        : null,
+    contractCounts: getContractCounts(config.lastContractCounts),
+  };
+}
+
 
 /**
  * List all connectors for the current user.
@@ -202,18 +235,21 @@ connectorRouter.get(
       return;
     }
     try {
-      const connectors = await prisma.connector.findMany({
+      const storedConnectors = await prisma.connector.findMany({
         where: { userId: req.authUserId },
       });
-      const visibleConnectors = connectors.filter((connector) => connector.type !== "notion");
+      const visibleConnectors = storedConnectors.filter((connector) => connector.type !== "notion");
       const planAwareConnectors = await Promise.all(
         visibleConnectors.map((connector) => maskConnectorByPlan(req.authUserId, connector)),
+      );
+      const connectorSummaries = planAwareConnectors.map((connector) =>
+        serializeConnectorForList(connector as Record<string, unknown>),
       );
       dbUnavailableUntil = 0;
       sendApiSuccess(
         res,
         200,
-        { connectors: planAwareConnectors, backendAvailable: true },
+        { connectors: connectorSummaries, backendAvailable: true },
         buildApiMeta(req, startedAt),
       );
     } catch (error) {
@@ -958,6 +994,187 @@ connectorRouter.post(
     })();
     return;
   })
+);
+
+connectorRouter.get(
+  "/github/repos/:owner/:repo/contents",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const owner = typeof req.params.owner === "string" ? req.params.owner : "";
+    const repo = typeof req.params.repo === "string" ? req.params.repo : "";
+    const path = typeof req.query.path === "string" ? req.query.path : "";
+    const ref = typeof req.query.ref === "string" ? req.query.ref : undefined;
+    if (!owner || !repo) {
+      sendApiError(res, 400, { code: "BAD_REQUEST", message: "owner and repo are required" }, buildApiMeta(req, startedAt));
+      return;
+    }
+    try {
+      const result = await listGitHubRepoContents({
+        userId: req.authUserId,
+        owner,
+        repo,
+        path,
+        ref,
+      });
+      sendApiSuccess(res, 200, result, buildApiMeta(req, startedAt));
+    } catch (error) {
+      sendApiError(
+        res,
+        400,
+        {
+          code: "GITHUB_CONTENTS_LIST_FAILED",
+          message: error instanceof Error ? error.message : "Could not list repository contents.",
+        },
+        buildApiMeta(req, startedAt),
+      );
+    }
+  }),
+);
+
+connectorRouter.get(
+  "/github/repos/:owner/:repo/file",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const owner = typeof req.params.owner === "string" ? req.params.owner : "";
+    const repo = typeof req.params.repo === "string" ? req.params.repo : "";
+    const filePath = typeof req.query.path === "string" ? req.query.path : "";
+    const ref = typeof req.query.ref === "string" ? req.query.ref : undefined;
+    if (!owner || !repo || !filePath) {
+      sendApiError(
+        res,
+        400,
+        { code: "BAD_REQUEST", message: "owner, repo, and path are required" },
+        buildApiMeta(req, startedAt),
+      );
+      return;
+    }
+    try {
+      const result = await readGitHubRepoFile({
+        userId: req.authUserId,
+        owner,
+        repo,
+        path: filePath,
+        ref,
+      });
+      sendApiSuccess(res, 200, result, buildApiMeta(req, startedAt));
+    } catch (error) {
+      sendApiError(
+        res,
+        400,
+        {
+          code: "GITHUB_FILE_READ_FAILED",
+          message: error instanceof Error ? error.message : "Could not read file.",
+        },
+        buildApiMeta(req, startedAt),
+      );
+    }
+  }),
+);
+
+connectorRouter.get(
+  "/github/repos",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const limitRaw = typeof req.query.limit === "string" ? Number(req.query.limit) : 40;
+    try {
+      const repos = await listGitHubReposForUser(req.authUserId, limitRaw);
+      sendApiSuccess(res, 200, { repos }, buildApiMeta(req, startedAt));
+    } catch (error) {
+      sendApiError(
+        res,
+        400,
+        {
+          code: "GITHUB_REPOS_LIST_FAILED",
+          message: error instanceof Error ? error.message : "Could not list repositories.",
+        },
+        buildApiMeta(req, startedAt),
+      );
+    }
+  }),
+);
+
+connectorRouter.post(
+  "/github/execution/propose",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const body = req.body as Record<string, unknown>;
+    const owner = typeof body.owner === "string" ? body.owner : "";
+    const repo = typeof body.repo === "string" ? body.repo : "";
+    const commentBody = typeof body.body === "string" ? body.body : "";
+    const kindRaw = typeof body.kind === "string" ? body.kind : "issue_comment";
+    const kind: GitHubExecutionKind =
+      kindRaw === "brief_file_commit" || kindRaw === "pull_request" ? kindRaw : "issue_comment";
+    const issueNumber =
+      typeof body.issueNumber === "number" ? body.issueNumber : Number(body.issueNumber);
+    const pullTitle = typeof body.pullTitle === "string" ? body.pullTitle : undefined;
+    const headBranch = typeof body.headBranch === "string" ? body.headBranch : undefined;
+    const baseBranch = typeof body.baseBranch === "string" ? body.baseBranch : undefined;
+    const filePath = typeof body.filePath === "string" ? body.filePath : undefined;
+
+    try {
+      const proposal = await proposeGitHubExecution({
+        userId: req.authUserId,
+        kind,
+        owner,
+        repo,
+        body: commentBody,
+        issueNumber: Number.isFinite(issueNumber) ? issueNumber : undefined,
+        pullTitle,
+        headBranch,
+        baseBranch,
+        filePath,
+      });
+      sendApiSuccess(res, 201, { proposal }, buildApiMeta(req, startedAt));
+    } catch (error) {
+      sendApiError(
+        res,
+        400,
+        {
+          code: "GITHUB_EXECUTION_PROPOSE_FAILED",
+          message: error instanceof Error ? error.message : "Could not create proposal.",
+        },
+        buildApiMeta(req, startedAt),
+      );
+    }
+  }),
+);
+
+connectorRouter.get(
+  "/github/execution/proposals",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const proposals = listGitHubExecutionProposalsForUser(req.authUserId, 30);
+    sendApiSuccess(res, 200, { proposals }, buildApiMeta(req, startedAt));
+  }),
+);
+
+connectorRouter.post(
+  "/github/execution/:proposalId/approve",
+  asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const proposalId = typeof req.params.proposalId === "string" ? req.params.proposalId : "";
+    if (!proposalId) {
+      sendApiError(res, 400, { code: "BAD_REQUEST", message: "proposalId is required" }, buildApiMeta(req, startedAt));
+      return;
+    }
+    try {
+      const proposal = await approveAndExecuteGitHubProposal({
+        userId: req.authUserId,
+        proposalId,
+      });
+      sendApiSuccess(res, 200, { proposal }, buildApiMeta(req, startedAt));
+    } catch (error) {
+      sendApiError(
+        res,
+        400,
+        {
+          code: "GITHUB_EXECUTION_APPROVE_FAILED",
+          message: error instanceof Error ? error.message : "Could not execute proposal.",
+        },
+        buildApiMeta(req, startedAt),
+      );
+    }
+  }),
 );
 
 

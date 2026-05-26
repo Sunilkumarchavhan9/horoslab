@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ path?: string[] }> }) {
   const { path } = await params;
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 }
 
 async function proxyRequest(request: NextRequest, pathArray: string[]) {
-  const backendUrl = process.env.MEMORYOS_API_ORIGIN || "http://localhost:3001";
+  const backendUrl = resolveBackendOrigin();
   const targetPath = `/api/agent-sessions${pathArray.length > 0 ? "/" + pathArray.join("/") : ""}`;
   const url = new URL(request.url);
   url.href = `${backendUrl}${targetPath}${url.search}`;

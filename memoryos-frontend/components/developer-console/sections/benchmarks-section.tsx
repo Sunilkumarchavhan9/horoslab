@@ -52,6 +52,7 @@ type BenchmarksSectionProps = {
   runs?: BenchmarkRunItem[];
   isLoading?: boolean;
   errorMessage?: string | null;
+  realtimeVersion?: number;
 };
 
 function shortDate(iso: string) {
@@ -90,12 +91,43 @@ function Sparkline({ values }: { values: number[] }) {
   );
 }
 
+function formatPercent(value: number | null | undefined): string {
+  return typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(1)}%` : "-";
+}
+
+function formatLatency(value: number | null | undefined): string {
+  return typeof value === "number" && Number.isFinite(value) ? `${Math.round(value)}ms` : "-";
+}
+
+function formatDelta(value: number | null | undefined, unit = ""): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "-";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(unit === "ms" ? 0 : 1)}${unit}`;
+}
+
+function formatDateTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function metricTone(value: number, target: number, higherIsBetter = true): string {
+  const passed = higherIsBetter ? value >= target : value <= target;
+  return passed ? "text-primary" : "text-destructive";
+}
+
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export function BenchmarksSection({
   runs: runsProp,
   isLoading: isLoadingProp,
   errorMessage: errorMessageProp,
+  realtimeVersion: _realtimeVersion = 0,
 }: BenchmarksSectionProps) {
   const live = useBenchmarks();
   const {
@@ -307,258 +339,276 @@ export function BenchmarksSection({
       ? errorMessage
       : "Run `bun run eval:benchmark` to generate your first quality report.";
 
+  const latestStatusText = latestRun?.status ?? (isLoading ? "Loading" : "No runs");
+  const latestStatusClass = latestRun ? statusTone(latestRun.status) : "border-border bg-muted text-muted-foreground";
+  const latestRunDate = latestRun ? formatDateTime(latestRun.generatedAt) : "-";
+  const latestRunShortId = latestRun?.runId ? latestRun.runId.slice(0, 12) : "-";
+  const passRateGate = latestRun ? latestRun.passRate >= 85 : false;
+  const contradictionGate = latestRun ? latestRun.contradictionMissRate <= 5 : false;
+  const resumeGate = latestRun ? latestRun.resumeSuccessRate >= 80 : false;
+  const gatePassCount = [passRateGate, contradictionGate, resumeGate].filter(Boolean).length;
+  const sampleWindow = `${weeklyMetrics?.window ?? "7d"} sample ${weeklyMetrics?.sampleSize ?? 0}`;
+
   return (
-    <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Benchmarks</h1>
-          <p className="mt-1 text-xs leading-6 text-muted-foreground sm:text-sm">
-            Track retrieve, resume, and contradiction quality with live benchmark evidence.
-          </p>
+    <section className="space-y-5">
+      <div className="border border-border bg-card">
+        <div className="flex flex-col gap-5 px-5 py-5 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                Evaluation control plane
+              </p>
+              <span className={`border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] ${latestStatusClass}`}>
+                {latestStatusText}
+              </span>
+              <span className="border border-border bg-background px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                {live.connectionStatus}
+              </span>
+            </div>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
+              Benchmark Quality Gates
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Prove retrieval, resume, contradiction handling, and memory regression quality before teams trust agents in production workflows.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => live.refreshNow()}
+              className="border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-foreground transition hover:bg-muted"
+            >
+              Refresh
+            </button>
+            <button
+              type="button"
+              onClick={() => void triggerRun()}
+              disabled={isRunning}
+              className="border border-primary bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isRunning ? "Running suite" : "Run A/B now"}
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={() => void triggerRun()}
-          disabled={isRunning}
-          className="rounded-md border border-primary/50 bg-primary px-3 py-2 text-xs font-medium tracking-wider text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isRunning ? "RUNNING..." : "RUN A/B NOW"}
-        </button>
+
+        <div className="grid gap-px border-t border-border bg-border md:grid-cols-4">
+          <div className="bg-card p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Latest run</p>
+            <p className="mt-2 font-mono text-sm font-semibold text-foreground">{latestRunShortId}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{latestRunDate}</p>
+          </div>
+          <div className="bg-card p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Gate health</p>
+            <p className={`mt-2 text-3xl font-semibold tracking-tight ${gatePassCount === 3 ? "text-primary" : "text-destructive"}`}>
+              {latestRun ? `${gatePassCount}/3` : "-"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">pass, resume, contradiction</p>
+          </div>
+          <div className="bg-card p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Cases</p>
+            <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+              {latestRun ? `${latestRun.passedCases}/${latestRun.totalCases}` : "-"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">passed in latest run</p>
+          </div>
+          <div className="bg-card p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Updated</p>
+            <p className="mt-2 text-sm font-semibold text-foreground">
+              {live.lastUpdatedAt ? formatDateTime(live.lastUpdatedAt.toISOString()) : "-"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{sampleWindow}</p>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2.5">
-        <div className="flex items-center overflow-hidden rounded-md border border-border bg-muted/50">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex border border-border bg-card">
           {BENCHMARK_TIME_FILTERS.map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setTimeFilter(item)}
-              className={`px-3 py-1.5 text-xs font-medium tracking-wider transition ${
-                timeFilter === item ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/80 hover:text-muted-foreground"
+              className={`px-3 py-2 text-xs font-semibold transition ${
+                timeFilter === item
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               {item}
             </button>
           ))}
         </div>
-        <div className="flex items-center overflow-hidden rounded-md border border-border bg-muted/50">
+        <div className="flex border border-border bg-card">
           {BENCHMARK_SUITE_FILTERS.map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setSuiteFilter(item)}
-              className={`px-3 py-1.5 text-xs font-medium tracking-wider transition ${
-                suiteFilter === item ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/80 hover:text-muted-foreground"
+              className={`px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                suiteFilter === item
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
-              {item.toUpperCase()}
+              {item}
             </button>
           ))}
         </div>
-        <div className="flex items-center overflow-hidden rounded-md border border-border bg-muted/50">
+        <div className="flex border border-border bg-card">
           {BENCHMARK_ENV_FILTERS.map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setEnvFilter(item)}
-              className={`px-3 py-1.5 text-xs font-medium tracking-wider transition ${
-                envFilter === item ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/80 hover:text-muted-foreground"
+              className={`px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                envFilter === item
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
-              {item.toUpperCase()}
+              {item}
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() =>
-            void live
-              .createScenario({
-                name: scenarioName.trim() || "Continuity Scenario",
-                mode: latestRun?.mode === "preview" || latestRun?.mode === "production" ? latestRun.mode : "local",
-                caseIds: runCases.slice(0, 5).map((c) => c.caseId),
-              })
-              .then(async (scenario) => {
-                if (!scenario) return;
-                await live.runScenario(scenario.id);
-                live.refreshNow();
-              })
-          }
-          className="rounded-md border border-primary/50 bg-primary px-3 py-2 text-xs font-medium tracking-wider text-primary-foreground transition hover:bg-primary/90"
-        >
-          SAVE + RUN SCENARIO
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            void live.checkRegressionGate().then((result) => {
-              if (!result) {
-                setGateSummary("Regression gate: unavailable");
-                return;
-              }
-              setGateSummary(`Regression gate: ${result.pass ? "PASS" : "FAIL"} (${result.checks.map((c) => `${c.key}:${c.pass ? "ok" : "fail"}`).join(", ")})`);
-              live.refreshNow();
-            })
-          }
-          className="rounded-md border border-primary/50 bg-primary px-3 py-2 text-xs font-medium tracking-wider text-primary-foreground transition hover:bg-primary/90"
-        >
-          CHECK GATE
-        </button>
-        <label className="inline-flex h-8 min-w-[11rem] items-center gap-2 border border-border bg-background px-2.5">
-          <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            Scenario
-          </span>
-          <input
-            value={scenarioName}
-            onChange={(event) => setScenarioName(event.target.value)}
-            aria-label="Benchmark scenario name"
-            className="min-w-0 flex-1 border-0 bg-transparent px-0 text-xs text-foreground outline-none placeholder:text-muted-foreground"
-            placeholder="Continuity Scenario"
-          />
-        </label>
       </div>
-      {gateSummary ? <p className="mt-2 text-xs text-muted-foreground">{gateSummary}</p> : null}
+
+      <div className="border border-border bg-card p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Scenario runner</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Save a focused evaluation suite, then run it against the current MemoryOS runtime.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  void live
+                    .createScenario({
+                      name: scenarioName.trim() || "Continuity Scenario",
+                      mode: latestRun?.mode === "preview" || latestRun?.mode === "production" ? latestRun.mode : "local",
+                      caseIds: runCases.slice(0, 5).map((c) => c.caseId),
+                    })
+                    .then(async (scenario) => {
+                      if (!scenario) return;
+                      await live.runScenario(scenario.id);
+                      live.refreshNow();
+                    })
+                }
+                className="border border-primary bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-primary/90"
+              >
+                Save + run scenario
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  void live.checkRegressionGate().then((result) => {
+                    if (!result) {
+                      setGateSummary("Regression gate unavailable");
+                      return;
+                    }
+                    setGateSummary(
+                      `Regression gate: ${result.pass ? "PASS" : "FAIL"} (${result.checks
+                        .map((c) => `${c.key}:${c.pass ? "ok" : "fail"}`)
+                        .join(", ")})`,
+                    );
+                    live.refreshNow();
+                  })
+                }
+                className="border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-foreground transition hover:bg-muted"
+              >
+                Check gate
+              </button>
+            </div>
+          </div>
+          <label className="mt-4 grid gap-2 sm:grid-cols-[8rem_minmax(0,1fr)] sm:items-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Scenario</span>
+            <input
+              value={scenarioName}
+              onChange={(event) => setScenarioName(event.target.value)}
+              aria-label="Benchmark scenario name"
+              className="h-11 border border-border bg-background px-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring"
+              placeholder="Core Continuity Proof"
+            />
+          </label>
+          {gateSummary ? (
+            <p className="mt-3 border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">{gateSummary}</p>
+          ) : null}
+      </div>
 
       {latestRun === null ? (
-        <div className="mt-3 rounded-lg border border-border bg-muted px-4 py-10 text-center">
-          <h2 className="text-2xl font-semibold tracking-tighter">{emptyTitle}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{emptyDescription}</p>
+        <div className="grid min-h-80 place-items-center border border-border bg-card px-6 py-12 text-center">
+          <div className="max-w-md">
+            <div className="mx-auto h-2 w-2 bg-primary" />
+            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">{emptyTitle}</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{emptyDescription}</p>
+          </div>
         </div>
       ) : (
         <>
-          <div className="mt-3 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-6">
+          <div className="grid gap-px overflow-hidden border border-border bg-border lg:grid-cols-4">
             {[
-              { label: "Pass rate", value: `${latestRun.passRate.toFixed(1)}%`, trend: passTrend, accent: "var(--color-primary)" },
               {
-                label: "Top-3 retrieval precision",
-                value: `${latestRun.top3RetrievalPrecision.toFixed(1)}%`,
+                label: "Continuity pass rate",
+                value: formatPercent(latestRun.passRate),
+                detail: `${latestRun.passedCases} of ${latestRun.totalCases} cases passed`,
+                tone: metricTone(latestRun.passRate, 85),
+                trend: passTrend,
+              },
+              {
+                label: "Retrieval precision",
+                value: formatPercent(latestRun.top3RetrievalPrecision),
+                detail: "top-3 memory selection accuracy",
+                tone: metricTone(latestRun.top3RetrievalPrecision, 70),
                 trend: trendRuns.map((run) => run.top3RetrievalPrecision),
-                accent: "var(--color-primary)",
               },
               {
                 label: "Resume success",
-                value: `${latestRun.resumeSuccessRate.toFixed(1)}%`,
+                value: formatPercent(latestRun.resumeSuccessRate),
+                detail: "can another agent continue work",
+                tone: metricTone(latestRun.resumeSuccessRate, 80),
                 trend: trendRuns.map((run) => run.resumeSuccessRate),
-                accent: "var(--color-primary)",
               },
               {
                 label: "Contradiction miss",
-                value: `${latestRun.contradictionMissRate.toFixed(1)}%`,
+                value: formatPercent(latestRun.contradictionMissRate),
+                detail: "lower is safer for teams",
+                tone: metricTone(latestRun.contradictionMissRate, 5, false),
                 trend: trendRuns.map((run) => 100 - run.contradictionMissRate),
-                accent: "var(--color-muted-foreground)",
-              },
-              {
-                label: "Wrong merge",
-                value: `${latestRun.wrongMergeRate.toFixed(1)}%`,
-                trend: trendRuns.map((run) => 100 - run.wrongMergeRate),
-                accent: "var(--color-destructive)",
-              },
-              {
-                label: "p95 retrieve latency",
-                value:
-                  latestRun.p95RetrieveLatencyMs !== null
-                    ? `${latestRun.p95RetrieveLatencyMs}ms`
-                    : "-",
-                trend: trendRuns.map((run) =>
-                  run.p95RetrieveLatencyMs !== null
-                    ? 1000 - run.p95RetrieveLatencyMs
-                    : 0,
-                ),
-                accent: "var(--color-primary)",
-              },
-              {
-                label: "Missing-step delta",
-                value: `+${(latestRun.abSummary?.missingStepsImprovement ?? 0).toFixed(2)}`,
-                trend: trendRuns.map((run) => run.abSummary?.missingStepsImprovement ?? 0),
-                accent: "var(--color-primary)",
-              },
-              {
-                label: "Contradiction delta",
-                value: `+${(latestRun.abSummary?.contradictionImprovement ?? 0).toFixed(2)}`,
-                trend: trendRuns.map((run) => run.abSummary?.contradictionImprovement ?? 0),
-                accent: "var(--color-muted-foreground)",
-              },
-              {
-                label: "Time-to-correct delta",
-                value: `${Math.round(latestRun.abSummary?.timeToCorrectActionDeltaMs ?? 0)}ms`,
-                trend: trendRuns.map((run) => run.abSummary?.timeToCorrectActionDeltaMs ?? 0),
-                accent: "var(--color-primary)",
               },
             ].map((card) => (
-              <div
-                key={card.label}
-                className="rounded-md border border-border bg-card px-3.5 py-3.5"
-                style={{ borderTopColor: card.accent, borderTopWidth: "2px" }}
-              >
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{card.label}</p>
-                <p className="mt-1.5 text-xl font-semibold tracking-tighter">{card.value}</p>
-                <div className="mt-1.5">
-                  <Sparkline values={card.trend} />
-                </div>
+              <div key={card.label} className="bg-card p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{card.label}</p>
+                <p className={`mt-3 text-3xl font-semibold tracking-tight ${card.tone}`}>{card.value}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{card.detail}</p>
+                <div className="mt-3"><Sparkline values={card.trend} /></div>
               </div>
             ))}
           </div>
 
-          <div className="mt-3 grid gap-3 xl:grid-cols-3">
-            <div className="rounded-lg border border-border bg-card px-4 py-4 xl:col-span-3">
-              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Weekly continuity metrics</p>
-              <div className="mt-3 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
-                {[
-                  ["Continuity pass rate", weeklyMetrics?.metrics.continuityPassRate, weeklyMetrics?.deltasVsPreviousWeek.continuityPassRate, "%"],
-                  ["Contradiction rate", weeklyMetrics?.metrics.contradictionRate, weeklyMetrics?.deltasVsPreviousWeek.contradictionRate, "%"],
-                  ["Stale-memory rate", weeklyMetrics?.metrics.staleMemoryRate, weeklyMetrics?.deltasVsPreviousWeek.staleMemoryRate, "%"],
-                  ["Recovery latency", weeklyMetrics?.metrics.recoveryLatencyMs, weeklyMetrics?.deltasVsPreviousWeek.recoveryLatencyMs, "ms"],
-                ].map(([label, value, delta, unit]) => (
-                  <div key={String(label)} className="rounded-md border border-border bg-muted/50 px-3 py-3">
-                    <p className="text-xs text-muted-foreground">{String(label)}</p>
-                    <p className="mt-1 text-base font-semibold text-foreground">
-                      {typeof value === "number" ? `${value.toFixed(1)}${unit}` : "-"}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Delta vs prev week: {typeof delta === "number" ? `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}${unit}` : "-"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Window: {weeklyMetrics?.window ?? "7d"} sample={weeklyMetrics?.sampleSize ?? 0} previous={weeklyMetrics?.previousSampleSize ?? 0}
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-card px-4 py-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Latest run</p>
-                <span className={`rounded-md border px-2 py-1 text-xs font-medium uppercase tracking-widest ${statusTone(latestRun.status)}`}>
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_24rem]">
+            <div className="border border-border bg-card p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Suite health</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Latest run breakdown by evaluation suite.</p>
+                </div>
+                <span className={`border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${statusTone(latestRun.status)}`}>
                   {latestRun.status}
                 </span>
               </div>
-              <div className="mt-2.5 space-y-2">
-                {[
-                  ["Run ID", latestRun.runId],
-                  ["Generated at", shortDate(latestRun.generatedAt)],
-                  ["Mode", latestRun.mode],
-                  ["Cases", `${latestRun.passedCases}/${latestRun.totalCases}`],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between rounded-md border border-border bg-muted/50 px-3 py-2">
-                    <span className="text-xs text-muted-foreground">{label}</span>
-                    <span className="text-xs font-semibold text-foreground">{value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border bg-card px-4 py-4">
-              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Suite breakdown</p>
-              <div className="mt-3 space-y-3">
+              <div className="mt-5 space-y-4">
                 {suiteRows.map((suite) => {
                   const passPct = suite.total > 0 ? (suite.passed / suite.total) * 100 : 0;
                   return (
                     <div key={suite.key}>
-                      <div className="mb-1.5 flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">{suite.label}</span>
+                      <div className="mb-2 flex items-center justify-between text-sm">
+                        <span className="font-medium text-foreground">{suite.label}</span>
                         <span className="text-muted-foreground">{suite.passed}/{suite.total}</span>
                       </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                      <div className="h-2 w-full overflow-hidden bg-muted">
                         <div className="h-full bg-primary" style={{ width: `${passPct}%` }} />
                       </div>
                     </div>
@@ -567,54 +617,103 @@ export function BenchmarksSection({
               </div>
             </div>
 
-            <div className="rounded-lg border border-border bg-card px-4 py-4">
-              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Quality gate</p>
-              <div className="mt-2.5 space-y-2">
+            <div className="border border-border bg-card p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Production gate</p>
+              <div className="mt-4 space-y-2">
                 {qualityGates.map((gate) => {
                   const passed = gate.higherIsBetter ? gate.value >= gate.target : gate.value <= gate.target;
                   return (
-                    <div key={gate.label} className="rounded-md border border-border bg-muted/50 px-3 py-3">
-                      <p className="text-xs text-muted-foreground">{gate.label}</p>
-                      <div className="mt-1.5 flex items-center justify-between gap-3">
-                        <p className="text-xs font-semibold text-foreground">{gate.value.toFixed(1)}%</p>
-                        <span className={`rounded-md border px-2 py-0.5 text-xs font-medium uppercase tracking-widest ${
+                    <div key={gate.label} className="border border-border bg-background px-3 py-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs text-muted-foreground">{gate.label}</p>
+                        <span className={`border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] ${
                           passed ? "border-primary/30 bg-primary/10 text-primary" : "border-destructive/30 bg-destructive/10 text-destructive"
                         }`}>
                           {passed ? "PASS" : "FAIL"}
                         </span>
                       </div>
+                      <p className="mt-2 text-sm font-semibold text-foreground">{formatPercent(gate.value)}</p>
                     </div>
                   );
                 })}
               </div>
             </div>
+          </div>
 
-            <div className="rounded-lg border border-border bg-card px-4 py-4 xl:col-span-3">
-              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Regression alerts</p>
-              <div className="mt-2.5 space-y-2">
-                {regressionAlerts.length === 0 ? (
-                  <div className="rounded-md border border-primary/20 bg-primary/10 px-3 py-3 text-xs text-primary">
-                    No regression alerts in latest run.
+          <div className="grid gap-3 xl:grid-cols-3">
+            <div className="border border-border bg-card p-4 xl:col-span-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Weekly continuity metrics</p>
+              <div className="mt-4 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2">
+                {[
+                  ["Continuity pass", weeklyMetrics?.metrics.continuityPassRate, weeklyMetrics?.deltasVsPreviousWeek.continuityPassRate, "%"],
+                  ["Contradiction rate", weeklyMetrics?.metrics.contradictionRate, weeklyMetrics?.deltasVsPreviousWeek.contradictionRate, "%"],
+                  ["Stale-memory rate", weeklyMetrics?.metrics.staleMemoryRate, weeklyMetrics?.deltasVsPreviousWeek.staleMemoryRate, "%"],
+                  ["Recovery latency", weeklyMetrics?.metrics.recoveryLatencyMs, weeklyMetrics?.deltasVsPreviousWeek.recoveryLatencyMs, "ms"],
+                ].map(([label, value, delta, unit]) => (
+                  <div key={String(label)} className="bg-card p-4">
+                    <p className="text-xs font-semibold text-muted-foreground">{String(label)}</p>
+                    <p className="mt-2 text-xl font-semibold text-foreground">
+                      {unit === "ms" ? formatLatency(value as number | null) : formatPercent(value as number | null)}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">delta {formatDelta(delta as number | null, unit as string)}</p>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="border border-border bg-card p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Latest run metadata</p>
+              <div className="mt-4 space-y-2">
+                {[
+                  ["Run", latestRun.runId],
+                  ["Generated", formatDateTime(latestRun.generatedAt)],
+                  ["Mode", latestRun.mode],
+                  ["Latency p95", formatLatency(latestRun.p95RetrieveLatencyMs)],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between gap-3 border border-border bg-background px-3 py-2">
+                    <span className="text-xs text-muted-foreground">{label}</span>
+                    <span className="truncate text-xs font-semibold text-foreground">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-3 xl:grid-cols-2">
+            <div className="border border-border bg-card p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Regression alerts</p>
+              <div className="mt-4 space-y-2">
+                {regressionAlerts.length === 0 ? (
+                  <div className="border border-primary/20 bg-primary/10 px-3 py-3 text-sm text-primary">No regression alerts in latest run.</div>
                 ) : (
                   regressionAlerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className={`rounded-md border px-3 py-3 ${
-                        alert.severity === "critical"
-                          ? "border-destructive/30 bg-destructive/10"
-                          : "border-muted-foreground/30 bg-muted"
-                      }`}
-                    >
+                    <div key={alert.id} className={`border px-3 py-3 ${alert.severity === "critical" ? "border-destructive/30 bg-destructive/10" : "border-border bg-background"}`}>
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-semibold text-foreground">{alert.message}</p>
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground">{alert.severity}</span>
+                        <p className="text-sm font-semibold text-foreground">{alert.message}</p>
+                        <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{alert.severity}</span>
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {alert.metric}: latest={alert.latestValue.toFixed(2)}
-                        {typeof alert.previousValue === "number" ? ` previous=${alert.previousValue.toFixed(2)}` : ""}
-                        {typeof alert.delta === "number" ? ` delta=${alert.delta >= 0 ? "+" : ""}${alert.delta.toFixed(2)}` : ""}
+                        {alert.metric}: latest {alert.latestValue.toFixed(2)}{typeof alert.delta === "number" ? `, delta ${formatDelta(alert.delta)}` : ""}
                       </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="border border-border bg-card p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Failed cases</p>
+              <div className="mt-4 space-y-2">
+                {visibleFailedCases.length === 0 ? (
+                  <div className="border border-primary/20 bg-primary/10 px-3 py-3 text-sm text-primary">No failed cases for this suite.</div>
+                ) : (
+                  visibleFailedCases.map((item) => (
+                    <div key={item.id} className="border border-destructive/25 bg-destructive/10 px-3 py-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-mono text-xs font-semibold text-foreground">{item.id}</p>
+                        <span className="text-xs uppercase tracking-[0.16em] text-destructive">{item.type}</span>
+                      </div>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.reason}</p>
                     </div>
                   ))
                 )}
@@ -622,30 +721,17 @@ export function BenchmarksSection({
             </div>
           </div>
 
-          <div className="mt-3 rounded-lg border border-border bg-card px-4 py-4">
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Failed cases</p>
-            <div className="mt-2.5 space-y-2">
-              {visibleFailedCases.length === 0 ? (
-                <div className="rounded-md border border-primary/20 bg-primary/10 px-3 py-3 text-xs text-primary">
-                  No failed cases in this run.
-                </div>
-              ) : (
-                visibleFailedCases.map((item) => (
-                  <div key={item.id} className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs font-semibold text-foreground">{item.id}</p>
-                      <span className="text-xs uppercase tracking-widest text-destructive">{item.type}</span>
-                    </div>
-                    <p className="mt-1.5 text-xs text-muted-foreground">{item.reason}</p>
-                  </div>
-                ))
-              )}
+          <div className="border border-border bg-card p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Case drilldown</p>
+                <p className="mt-1 text-sm text-muted-foreground">Inspect with-memory and without-memory traces for individual eval cases.</p>
+              </div>
+              <span className="border border-border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                {runCases.length} cases
+              </span>
             </div>
-          </div>
-
-          <div className="mt-3 rounded-lg border border-border bg-card px-4 py-4">
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Case Drilldown</p>
-            <div className="mt-2.5 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               {runCases.map((item) => (
                 <button
                   key={item.caseId}
@@ -656,15 +742,17 @@ export function BenchmarksSection({
                       setCaseTraceText(trace ? JSON.stringify(trace, null, 2) : "No trace data.");
                     })
                   }
-                  className={`rounded-md border px-2 py-1 text-xs ${
-                    selectedCaseId === item.caseId ? "border-primary/50 text-primary" : "border-border text-muted-foreground"
+                  className={`border px-2.5 py-1 text-xs font-semibold transition ${
+                    selectedCaseId === item.caseId
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
                   {item.caseId}
                 </button>
               ))}
             </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <StructuredDataPanel
                 title="Case trace"
                 value={caseTraceText || "Select a case to inspect with/without-memory traces."}
@@ -675,6 +763,6 @@ export function BenchmarksSection({
           </div>
         </>
       )}
-    </>
+    </section>
   );
 }

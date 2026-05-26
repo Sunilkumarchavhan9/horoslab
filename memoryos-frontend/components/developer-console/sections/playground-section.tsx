@@ -83,6 +83,33 @@ type BillingSnapshot = {
   };
 };
 
+function requireArray<T>(value: unknown, label: string): T[] {
+  if (Array.isArray(value)) return value as T[];
+  throw new Error(`Invalid MemoryOS API response: ${label} must be an array.`);
+}
+
+function requireNumber(value: unknown, label: string): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  throw new Error(`Invalid MemoryOS API response: ${label} must be a number.`);
+}
+
+function requireBillingSnapshot(value: BillingSnapshot): BillingSnapshot {
+  if (!value || typeof value !== "object" || !("usage" in value)) {
+    throw new Error("Invalid MemoryOS API response: billing usage is missing.");
+  }
+  return {
+    ...value,
+    currentPlan: value.currentPlan,
+    usage: {
+      tokenLimit: requireNumber(value.usage?.tokenLimit, "usage.tokenLimit"),
+      tokenUsed: requireNumber(value.usage?.tokenUsed, "usage.tokenUsed"),
+      searchLimit: requireNumber(value.usage?.searchLimit, "usage.searchLimit"),
+      searchUsed: requireNumber(value.usage?.searchUsed, "usage.searchUsed"),
+      resetInDays: requireNumber(value.usage?.resetInDays, "usage.resetInDays"),
+    },
+  };
+}
+
 type ContinueProjectBrief = {
   whatChangedRecently: string[];
   currentGoal: string;
@@ -337,7 +364,7 @@ async function fetchMemoryApi<T>(
   const backendOrigin =
     apiOrigin?.trim() ||
     process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim() ||
-    "http://localhost:3001";
+    "same-origin";
   const sameOriginAlias = /^\/?same-origin\/?$/i.test(backendOrigin);
   const localPathAlias = backendOrigin.startsWith("/") && !backendOrigin.startsWith("//");
   const normalizedOrigin = (sameOriginAlias || localPathAlias ? "" : backendOrigin)
@@ -375,9 +402,19 @@ async function fetchMemoryApi<T>(
   return payload as T;
 }
 
-type PlaygroundSectionProps = {
-  variant?: "standalone" | "embedded";
-};
+function normalizeApiOriginForRuntime(value?: string | null): string {
+  const trimmed = value?.trim() ?? "";
+  if (!trimmed || /^\/?same-origin\/?$/i.test(trimmed)) return "";
+
+  if (typeof window !== "undefined") {
+    const isLocalHost = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+    if (isLocalHost && /memoryostm\.live/i.test(trimmed)) {
+      return "";
+    }
+  }
+
+  return trimmed;
+}
 
 type PlaygroundPaneWidths = {
   left: number;
@@ -385,8 +422,7 @@ type PlaygroundPaneWidths = {
   right: number;
 };
 
-export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionProps = {}) {
-  const isEmbedded = variant === "embedded";
+export function PlaygroundSection() {
   const [mode, setMode] = useState<PlaygroundMode>("process");
   const [tab, setTab] = useState<CenterTab>("chat");
   const [token, setToken] = useState(readMemoryTokenFromStorage() ?? "");
@@ -394,7 +430,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   const [project, setProject] = useState("memoryos-playground");
   const [workspace, setWorkspace] = useState("memoryostm");
   const [apiOrigin, setApiOrigin] = useState(
-    process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim() || "http://localhost:3001",
+    normalizeApiOriginForRuntime(process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN),
   );
   const [topK, setTopK] = useState(5);
   const [input, setInput] = useState("I am building MemoryOS and now focusing on Week 2 live traction.");
@@ -429,9 +465,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
   const [showApiKey, setShowApiKey] = useState(false);
   const [billing, setBilling] = useState<BillingSnapshot | null>(null);
   const lightMode = false;
-  const [selectedContainerTag, setSelectedContainerTag] = useState(
-    isEmbedded ? "" : "memoryostm",
-  );
+  const [selectedContainerTag, setSelectedContainerTag] = useState("memoryostm");
   const [setupTab, setSetupTab] = useState<SetupTab>("configure");
   const [importText, setImportText] = useState("");
 
@@ -574,7 +608,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
         undefined,
         apiOrigin,
       );
-      setBilling(billingPayload);
+      setBilling(requireBillingSnapshot(billingPayload));
     },
     [apiOrigin],
   );
@@ -588,10 +622,10 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
         fetchMemoryApi<RequestHistoryResponse>("/api/memory/requests?limit=30&range=all", effectiveToken, undefined, apiOrigin),
       ]);
 
-      setMemories(memoryPayload.memories);
+      setMemories(requireArray<MemoryRecord>(memoryPayload.memories, "memories"));
       setInsights(insightPayload);
-      setTimeline(timelinePayload.events);
-      setRequests(requestPayload.requests);
+      setTimeline(requireArray<TimelineEvent>(timelinePayload.events, "timeline.events"));
+      setRequests(requireArray<RequestEvent>(requestPayload.requests, "requests"));
     },
     [apiOrigin],
   );
@@ -605,7 +639,7 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
 
   useEffect(() => {
     const saved = readPlaygroundSettings();
-    if (saved?.apiOrigin) setApiOrigin(saved.apiOrigin);
+    if (saved?.apiOrigin) setApiOrigin(normalizeApiOriginForRuntime(saved.apiOrigin));
     if (saved?.workspace) setWorkspace(saved.workspace);
     if (saved?.project) setProject(saved.project);
     if (saved?.threadId) setThreadId(saved.threadId);
@@ -665,9 +699,68 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     };
   }, [refreshBilling, refreshLiveData, withAuthorizedToken]);
 
+  useEffect(() => {
+    let stream: EventSource | null = null;
+    let disposed = false;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleReconnect = () => {
+      if (disposed || reconnectTimer) return;
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        openStream();
+      }, 5000);
+    };
+
+    const handleMessage = (event: MessageEvent<string>) => {
+      try {
+        const payload = JSON.parse(event.data) as { kind?: string; status?: string };
+        if (payload.status === "offline") return;
+        if (
+          payload.kind === "request_logged" ||
+          payload.kind === "memory_processed" ||
+          payload.kind === "handoff_generated" ||
+          payload.kind === "resume_generated" ||
+          payload.kind === "governance_review_queued"
+        ) {
+          void withAuthorizedToken(async (effectiveToken) => {
+            await refreshLiveData(effectiveToken);
+            setStatusLine((current) =>
+              current.startsWith("Running ") ? current : "Live · synced",
+            );
+          }).catch(() => {
+            // background refresh stays quiet
+          });
+        }
+      } catch {
+        // ignore malformed stream payloads
+      }
+    };
+
+    function openStream() {
+      if (disposed) return;
+      stream?.close();
+      stream = new EventSource("/api/memory/events");
+      stream.onmessage = handleMessage;
+      stream.onerror = () => {
+        stream?.close();
+        stream = null;
+        scheduleReconnect();
+      };
+    }
+
+    openStream();
+
+    return () => {
+      disposed = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      stream?.close();
+    };
+  }, [refreshLiveData, withAuthorizedToken]);
+
   const applyPlaygroundSettings = useCallback(async () => {
     writePlaygroundSettings({
-      apiOrigin: apiOrigin.trim() || "http://localhost:3001",
+      apiOrigin: normalizeApiOriginForRuntime(apiOrigin) || "same-origin",
       workspace: workspace.trim() || "memoryostm",
       project: project.trim() || "memoryos-playground",
       threadId: threadId.trim() || "playground-thread-1",
@@ -1135,142 +1228,6 @@ export function PlaygroundSection({ variant = "standalone" }: PlaygroundSectionP
     documents: timeline.length,
     connections: Math.max(0, graphEdges.length),
   };
-
-  if (!selectedContainerTag && isEmbedded) {
-    return (
-      <div className="grid min-h-screen overflow-hidden rounded-lg border border-border bg-background lg:grid-cols-2">
-        <section className="flex min-h-screen items-center justify-center px-8 pb-12">
-          <div className="w-full max-w-3xl text-center">
-            <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center">
-              <svg className="h-14 w-14 text-foreground" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-                <path d="M24 4v16M24 28v16M4 24h16M28 24h16M11.5 11.5 20 20M28 28l8.5 8.5M36.5 11.5 28 20M20 28l-8.5 8.5" stroke="currentColor" strokeWidth="4" strokeLinecap="square" />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-semibold tracking-tight">Select a container tag to start</h1>
-            <p className="mt-3 text-sm text-muted-foreground">Scope memory to a user, project, team, or agent runtime.</p>
-            <div className="mx-auto mt-8 flex h-20 max-w-2xl items-center gap-3 rounded-md border border-border bg-background px-5">
-              <input
-                value={workspace}
-                onChange={(event) => setWorkspace(event.target.value)}
-                placeholder="Select a container tag first"
-                className="min-w-0 flex-1 bg-transparent text-lg font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedContainerTag(workspace.trim() || "memoryos-playground");
-                  setStatusLine("Container tag selected");
-                }}
-                className="flex h-11 w-11 items-center justify-center rounded-md bg-primary text-xl text-foreground transition hover:bg-primary/90"
-                aria-label="Select container tag"
-              >
-                ↑
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <aside className="flex min-h-screen flex-col border-l border-border bg-background">
-          <div className="grid h-12 grid-cols-2 border-b border-border text-sm">
-            <button
-              type="button"
-              onClick={() => setSetupTab("configure")}
-              className={`border-b-2 font-semibold ${setupTab === "configure" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"}`}
-            >
-              Configure
-            </button>
-            <button
-              type="button"
-              onClick={() => setSetupTab("import")}
-              className={`border-b-2 font-semibold ${setupTab === "import" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"}`}
-            >
-              Import
-            </button>
-          </div>
-
-          {setupTab === "configure" ? (
-            <div className="flex-1 overflow-y-auto px-4 py-4">
-              <div className="space-y-3">
-                <label className="grid grid-cols-4 items-center gap-3">
-                  <span className="text-sm font-semibold text-foreground">Tag</span>
-                  <input
-                    value={workspace}
-                    onChange={(event) => setWorkspace(event.target.value)}
-                    className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none"
-                  />
-                </label>
-                <label className="grid grid-cols-4 items-center gap-3">
-                  <span className="text-sm font-semibold text-foreground">Model</span>
-                  <select className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none">
-                    <option>Claude Sonnet 4.6</option>
-                    <option>GPT agent</option>
-                    <option>Qwen</option>
-                    <option>Gemini Pro</option>
-                    <option>DeepSeek </option>
-                    <option>Ollama</option>
-
-                  </select>
-                </label>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <button type="button" className="min-h-28 rounded-md border border-primary bg-primary/10 px-4 py-5 text-center">
-                  <span className="block text-xl text-primary">⌕</span>
-                  <span className="mt-2 block text-sm font-semibold text-foreground">Agent</span>
-                  <span className="mt-1 block text-xs text-muted-foreground">LLM decides when to search</span>
-                </button>
-                <button type="button" className="min-h-28 rounded-md border border-input px-4 py-5 text-center">
-                  <span className="block text-xl text-muted-foreground">ϟ</span>
-                  <span className="mt-2 block text-sm font-semibold text-muted-foreground">Auto-Search</span>
-                  <span className="mt-1 block text-xs text-muted-foreground">Search every message</span>
-                </button>
-              </div>
-
-              <div className="mt-5 grid grid-cols-4 items-center gap-3 border-t border-border pt-4">
-                <span className="text-sm font-semibold text-foreground">Mode</span>
-                <input value="hybrid" readOnly className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
-                <span className="text-sm font-semibold text-foreground">Limit</span>
-                <input value={topK} onChange={(event) => setTopK(Math.max(1, Math.min(20, Number(event.target.value) || 1)))} className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
-                <span className="text-sm font-semibold text-foreground">Threshold</span>
-                <input defaultValue="0.4" className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground outline-none" />
-              </div>
-
-              <div className="mt-5 border-t border-border pt-5">
-                <p className="text-sm font-semibold text-foreground">Code</p>
-                <pre className="mt-3 max-h-64 overflow-auto rounded-md border border-border bg-background p-3 text-xs leading-5 text-foreground">
-{`import { createMemoryOSClient } from "@memoryostm/sdk";
-
-const memoryos = createMemoryOSClient({
-  apiKey: process.env.MEMORYOS_API_KEY!,
-});
-
-const context = await memoryos.beforeModel({
-  containerTag: "${workspace || "memoryos-playground"}",
-  query: userMessage,
-  mode: "hybrid",
-  limit: ${topK},
-});`}
-                </pre>
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 px-4 py-4">
-              <textarea
-                value={importText}
-                onChange={(event) => setImportText(event.target.value)}
-                placeholder="Paste text - notes, articles, chat logs..."
-                className="h-32 w-full resize-none rounded-md border border-border bg-background p-4 text-sm text-foreground outline-none placeholder:text-muted-foreground"
-              />
-              <button type="button" className="mt-4 flex h-11 w-full items-center justify-center rounded-md bg-primary text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                + Import
-              </button>
-              <p className="mt-20 text-center text-base text-muted-foreground">No documents processing</p>
-            </div>
-          )}
-        </aside>
-      </div>
-    );
-  }
 
   if (!selectedContainerTag) {
     const configureCode = `import { createMemoryOSClient } from "@memoryostm/sdk";
@@ -1768,7 +1725,7 @@ const answer = await model.generate({
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 xl:px-8 xl:py-8">
             {tab === "chat" ? (
               <>
-                {showWelcomePanel && !isEmbedded ? (
+                {showWelcomePanel ? (
                   <div className="mx-auto mb-10 max-w-5xl pt-4 text-center sm:mb-12 sm:pt-8 xl:pt-10">
                     <div className="mx-auto flex items-center justify-center">
                       <span className="inline-flex scale-110">
@@ -2366,10 +2323,10 @@ handoff = httpx.post(
                 <input
                   value={apiOrigin}
                   onChange={(event) => setApiOrigin(event.target.value)}
-                  placeholder="http://localhost:3001"
+                  placeholder="same-origin"
                   className="mt-2 h-11 w-full rounded-md border border-input bg-muted px-3 text-sm text-foreground outline-none transition focus:border-primary"
                 />
-                <span className="mt-2 block text-xs text-muted-foreground">Use your local backend or deployed MemoryOS API origin.</span>
+                <span className="mt-2 block text-xs text-muted-foreground">Use same-origin for the console proxy. Only paste a full URL when testing an external backend directly.</span>
               </label>
 
               <label className="block">
@@ -2410,7 +2367,7 @@ handoff = httpx.post(
                 type="button"
                 onClick={() => {
                   clearPlaygroundSettings();
-                  setApiOrigin("http://localhost:3001");
+                  setApiOrigin("");
                   setToken("");
                   setShowApiKey(false);
                   setWorkspace("memoryostm");

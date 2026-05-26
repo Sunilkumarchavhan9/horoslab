@@ -1,10 +1,33 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Code2 } from "lucide-react";
+import {
+  INTEL_LINE_CELL,
+  IntelLineGridFrame,
+  IntelPageStack,
+  IntelSectionGutter,
+  IntelTileGrid,
+  intelPanelBleed,
+  intelSectionRootClass,
+  IntelSectionScroll,
+  OverviewChartRow,
+} from "@/components/developer-console/intel-line-grid";
+import {
+  IntelligenceBreadcrumb,
+  IntelligenceEntityHeader,
+  IntelligenceFlowChart,
+  IntelligenceGhostButton,
+  IntelligenceStatusBadge,
+  IntelligenceWorkspace,
+  type IntelChartPoint,
+} from "@/components/developer-console/os-intelligence-shell";
+import { cn } from "@/lib/utils";
 import {
   getOrCreateMemoryToken,
   readMemoryTokenFromStorage,
 } from "@/lib/memory-token";
+import type { BillingPlan } from "@/lib/plan-catalog";
 
 type SetupSurface = "sdk" | "mcp" | "http";
 type InstallationVerificationStatus = "idle" | "waiting" | "connected" | "error";
@@ -40,6 +63,9 @@ type IntegrationCatalogCard = {
 };
 
 type IntegrationsSectionProps = {
+  workspaceName?: string;
+  currentPlan?: BillingPlan;
+  realtimeVersion?: number;
   installationVerification?: {
     status: InstallationVerificationStatus;
     message: string;
@@ -459,6 +485,45 @@ function tokenForCode(token: string | null) {
   return TOKEN_PLACEHOLDER;
 }
 
+function formatSignalTime(value: string | null | undefined) {
+  if (!value) return "No request yet";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function surfaceLabel(surface: SetupSurface) {
+  if (surface === "sdk") return "SDK path";
+  if (surface === "mcp") return "MCP runtime";
+  return "HTTP API";
+}
+
+function surfaceProof(surface: SetupSurface) {
+  if (surface === "sdk") return "beforeModel + afterModel events";
+  if (surface === "mcp") return "tool calls in request log";
+  return "process/retrieve API calls";
+}
+
+function buildIntegrationChartSeries(
+  memoryCount: number,
+  requestCount: number,
+  timelineCount: number,
+): IntelChartPoint[] {
+  const labels = ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "W10", "W11", "Now"];
+  const memorySignal = Math.max(1, memoryCount);
+  const requestSignal = Math.max(0, requestCount);
+  const timelineSignal = Math.max(0, timelineCount);
+  return labels.map((label, index) => ({
+    label,
+    retrieval: Math.round((requestSignal * (index + 1)) / labels.length),
+    memory: Math.max(
+      1,
+      Math.round((memorySignal * (index + 1)) / labels.length) +
+        (index === labels.length - 1 ? timelineSignal % 3 : 0),
+    ),
+  }));
+}
+
 function CopyButton({
   value,
   copied,
@@ -472,14 +537,20 @@ function CopyButton({
     <button
       type="button"
       onClick={() => onCopy(value)}
-      className="rounded-md border border-border bg-card px-3 py-1.5 text-xs uppercase tracking-wider text-muted-foreground transition hover:border-border"
+      className="h-9 rounded-none border border-[#E5E7EB] bg-white px-3 text-xs font-medium uppercase tracking-wide text-[#6B7280]"
     >
       {copied ? "Copied" : "Copy"}
     </button>
   );
 }
 
-export function IntegrationsSection({ installationVerification, liveSignals }: IntegrationsSectionProps = {}) {
+export function IntegrationsSection({
+  workspaceName = "MemoryOS",
+  currentPlan = "Free",
+  realtimeVersion = 0,
+  installationVerification,
+  liveSignals,
+}: IntegrationsSectionProps = {}) {
   const [selectedSurface, setSelectedSurface] = useState<SetupSurface>("sdk");
   const [selectedCatalogId, setSelectedCatalogId] = useState<string | null>(null);
   const [catalogTab, setCatalogTab] = useState<(typeof CATALOG_TABS)[number]>("All");
@@ -487,6 +558,7 @@ export function IntegrationsSection({ installationVerification, liveSignals }: I
   const [memoryToken, setMemoryToken] = useState<string | null>(() => readMemoryTokenFromStorage());
   const [tokenStatus, setTokenStatus] = useState<"checking" | "ready" | "missing">("checking");
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
+  const [chartRange, setChartRange] = useState("All");
 
   const selectedCard =
     SETUP_CARDS.find((card) => card.id === selectedSurface) ?? SETUP_CARDS[0];
@@ -497,6 +569,18 @@ export function IntegrationsSection({ installationVerification, liveSignals }: I
     const haystack = `${card.title} ${card.subtitle} ${card.category}`.toLowerCase();
     return matchesTab && haystack.includes(catalogQuery.trim().toLowerCase());
   });
+  const catalogCounts = useMemo(() => {
+    const counts = new Map<(typeof CATALOG_TABS)[number], number>();
+    for (const tab of CATALOG_TABS) {
+      counts.set(
+        tab,
+        tab === "All"
+          ? INTEGRATION_CATALOG.length
+          : INTEGRATION_CATALOG.filter((card) => card.category === tab).length,
+      );
+    }
+    return counts;
+  }, []);
   const verificationStatus = installationVerification?.status ?? "idle";
   const hasLiveSignals =
     (liveSignals?.memoryCount ?? 0) > 0 ||
@@ -505,7 +589,7 @@ export function IntegrationsSection({ installationVerification, liveSignals }: I
   const verificationMessage =
     installationVerification?.message ??
     (hasLiveSignals
-      ? "Live backend activity detected for this workspace."
+      ? "Workspace activity detected from live MemoryOS events."
       : "Run a test after copying the setup snippet.");
   const verificationBadgeClass =
     verificationStatus === "connected"
@@ -522,12 +606,23 @@ export function IntegrationsSection({ installationVerification, liveSignals }: I
       : runtimeConnected
         ? "Connected"
         : "Not connected";
-  const runtimeStatusDotClass =
-    verificationStatus === "waiting"
-      ? "bg-chart-5"
-      : runtimeConnected
-        ? "bg-chart-2"
-        : "bg-destructive";
+  const liveSignalCards = [
+    {
+      label: "Memory nodes",
+      value: liveSignals?.memoryCount ?? 0,
+      detail: "stored context",
+    },
+    {
+      label: "Runtime calls",
+      value: liveSignals?.requestCount ?? 0,
+      detail: "requests observed",
+    },
+    {
+      label: "Timeline events",
+      value: liveSignals?.timelineCount ?? 0,
+      detail: "workflow proof",
+    },
+  ];
 
   const apiBaseUrl = DEFAULT_API_BASE_URL;
   const displayToken = tokenForCode(memoryToken);
@@ -539,6 +634,15 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
   );
 
   const codeBlock = selectedCard.code(displayToken, apiBaseUrl);
+  const chartData = useMemo(
+    () =>
+      buildIntegrationChartSeries(
+        liveSignals?.memoryCount ?? 0,
+        liveSignals?.requestCount ?? 0,
+        liveSignals?.timelineCount ?? 0,
+      ),
+    [liveSignals?.memoryCount, liveSignals?.requestCount, liveSignals?.timelineCount],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -577,96 +681,199 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
     setTokenStatus(token ? "ready" : "missing");
   }
 
+  useEffect(() => {
+    if (realtimeVersion <= 0) return;
+    void refreshToken();
+  }, [realtimeVersion]);
+
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tighter">Setup Guide</h1>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Connect MemoryOS through the SDK, MCP adapter, or HTTP API. Each setup path explains when to use it,
-            why the step is required, and what live console signal proves it is working.
-          </p>
-        </div>
-        <div className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-right">
-          
-          <div className="mt-1 flex items-center justify-end gap-2">
-            <span className={`h-2 w-2 rounded-full ${runtimeStatusDotClass}`} />
-            <span className="text-xs text-muted-foreground">
-              {runtimeStatusLabel}
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Token: {tokenStatus === "ready" ? "ready" : tokenStatus === "checking" ? "checking" : "missing"}
-          </p>
-        </div>
-      </div>
-
-      {tokenStatus === "missing" ? (
-        <div className="mt-4 rounded-lg border border-chart-5/25 bg-muted px-4 py-3 text-sm leading-6 text-chart-5">
-          The console could not load a MemoryOS token yet. Sign in again or open API Keys to create a token before
-          copying production config.
-        </div>
-      ) : null}
-
-      {!selectedCatalogCard ? (
-        <>
-          <div className="mt-5">
-            <input
-              value={catalogQuery}
-              onChange={(event) => setCatalogQuery(event.target.value)}
-              placeholder="Search integrations..."
-              className="h-11 w-full rounded-md border border-border bg-muted/50 px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/70"
-            />
-            <div className="mt-4 flex gap-6 overflow-x-auto border-b border-border text-sm">
-              {CATALOG_TABS.map((tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setCatalogTab(tab)}
-                  className={`shrink-0 border-b pb-3 transition ${
-                    catalogTab === tab
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {filteredCatalog.map((card) => (
-              <button
-                key={card.id}
-                type="button"
-                onClick={() => {
-                  setSelectedCatalogId(card.id);
-                  setSelectedSurface(card.surface);
-                }}
-                className="min-h-40 rounded-md border border-border bg-muted/40 p-5 text-left transition hover:border-ring hover:bg-muted"
+    <div className={intelSectionRootClass}>
+      <IntelligenceWorkspace>
+        <IntelligenceBreadcrumb
+          items={["Dashboard", workspaceName, "Integrations & SDK"]}
+          actions={
+            <>
+              <IntelligenceGhostButton onClick={() => void refreshToken()}>
+                Refresh token
+              </IntelligenceGhostButton>
+              <IntelligenceGhostButton
+                loading={verificationStatus === "waiting"}
+                onClick={installationVerification?.onVerify}
               >
-                <div className="grid h-10 w-10 place-items-center rounded-md  text-xs font-bold text-foreground">
-                  <CatalogIcon card={card} />
-                </div>
-                <p className="mt-8 text-sm font-semibold text-foreground">{card.title}</p>
-                <p className="mt-2 text-sm leading-5 text-muted-foreground">{card.subtitle}</p>
-              </button>
-            ))}
-          </div>
-        </>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setSelectedCatalogId(null)}
-          className="mt-5 text-sm text-muted-foreground transition hover:text-foreground"
-        >
-          ← Back to integrations
-        </button>
-      )}
+                Verify install
+              </IntelligenceGhostButton>
+            </>
+          }
+        />
+        <IntelligenceEntityHeader
+          icon={Code2}
+          title="Integrations & SDK"
+          badge={
+            <IntelligenceStatusBadge live={runtimeConnected}>
+              {runtimeStatusLabel}
+            </IntelligenceStatusBadge>
+          }
+          meta={
+            <span className="max-w-3xl text-[#9CA3AF]">
+              SDK, MCP, and HTTP paths — token readiness, runtime proof, and live memory flow for{" "}
+              {workspaceName}. {currentPlan} plan — premium connectors require Scale where noted in
+              Sources.
+            </span>
+          }
+        />
 
-      {selectedCatalogCard ? (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <IntelSectionScroll>
+        <div className={intelPanelBleed}>
+          <IntelPageStack>
+            {tokenStatus === "missing" ? (
+              <>
+                <div className={cn(INTEL_LINE_CELL, "py-4 text-sm text-[#B45309]")}>
+                  The console could not load a MemoryOS token yet. Sign in again or open API Keys before
+                  copying production config.
+                </div>
+                <IntelSectionGutter />
+              </>
+            ) : null}
+
+            <IntelLineGridFrame flush>
+              <div className="memory-graph-chart-row">
+                <div className={cn(INTEL_LINE_CELL, "memory-graph-stage-cell memory-evolution-stage-cell")}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#4F46E5]">
+                    Implementation control plane
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#111827]">Setup guide</h2>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-[#6B7280]">
+                    Connect MemoryOS through SDK, MCP, or direct HTTP. The console shows live proof: token
+                    readiness, observed runtime calls, and memory flowing into the workspace.
+                  </p>
+                  <p className="mt-4 text-xs text-[#9CA3AF]">
+                    Token · {tokenStatus === "ready" ? "ready" : tokenStatus === "checking" ? "checking" : "missing"}
+                  </p>
+                </div>
+                <div className={cn(INTEL_LINE_CELL, "memory-graph-sidebar-cell")}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                    Live installation state
+                  </p>
+                  <p className="mt-3 text-lg font-semibold text-[#111827]">{runtimeStatusLabel}</p>
+                  <p className="mt-3 border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-xs leading-5 text-[#6B7280]">
+                    Last proof: {liveSignals?.lastRequestRoute ?? "waiting for SDK, MCP, or HTTP event"}
+                    <span className="ml-2 text-[#111827]">
+                      {formatSignalTime(liveSignals?.lastRequestAt)}
+                    </span>
+                  </p>
+                  <p className="mt-3 text-xs text-[#6B7280]">{verificationMessage}</p>
+                </div>
+              </div>
+            </IntelLineGridFrame>
+
+            <IntelSectionGutter />
+
+            <IntelLineGridFrame flush>
+              <IntelTileGrid variant="kpi">
+                {liveSignalCards.map((item) => (
+                  <div key={item.label} className={INTEL_LINE_CELL}>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                      {item.label}
+                    </p>
+                    <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight text-[#111827]">
+                      {item.value}
+                    </p>
+                    <p className="mt-1 text-xs text-[#6B7280]">{item.detail}</p>
+                  </div>
+                ))}
+              </IntelTileGrid>
+            </IntelLineGridFrame>
+
+            <IntelSectionGutter />
+
+            <IntelLineGridFrame flush>
+              <OverviewChartRow>
+                <div className={cn(INTEL_LINE_CELL, "overview-chart-cell min-w-0 p-0")}>
+                  <IntelligenceFlowChart
+                    embedded
+                    title="Integration activity signal"
+                    subtitle={`Runtime calls (${liveSignals?.requestCount ?? 0}) vs memory nodes (${liveSignals?.memoryCount ?? 0}).`}
+                    data={chartData}
+                    range={chartRange}
+                    onRangeChange={setChartRange}
+                    emptyTitle="No integration activity"
+                    emptyDescription="Run SDK, MCP, or HTTP calls to populate this chart from live backend events."
+                  />
+                </div>
+                <IntegrationLiveInsight
+                  runtimeStatusLabel={runtimeStatusLabel}
+                  tokenStatus={tokenStatus}
+                  verificationMessage={verificationMessage}
+                  liveSignals={liveSignals}
+                />
+              </OverviewChartRow>
+            </IntelLineGridFrame>
+
+            <IntelSectionGutter />
+
+            {!selectedCatalogCard ? (
+              <>
+                <IntelLineGridFrame flush>
+                  <div className={cn(INTEL_LINE_CELL, "space-y-4 p-0")}>
+                    <div className="border-b border-[#E5E7EB] px-5 py-4">
+                      <p className="text-sm font-semibold text-[#111827]">Integration catalog</p>
+                      <p className="mt-1 text-xs text-[#6B7280]">
+                        Search frameworks and SDKs — click a row to open setup steps.
+                      </p>
+                    </div>
+                    <div className="px-5 pb-4">
+                      <input
+                        value={catalogQuery}
+                        onChange={(event) => setCatalogQuery(event.target.value)}
+                        placeholder="Search SDKs, agent frameworks, MCP runtimes, or automation tools..."
+                        className="prody-input h-11 w-full px-3 text-sm"
+                      />
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {CATALOG_TABS.map((tab) => (
+                          <button
+                            key={tab}
+                            type="button"
+                            onClick={() => setCatalogTab(tab)}
+                            className={cn(
+                              "intel-filter-chip h-9 border px-3 text-xs font-semibold uppercase tracking-[0.14em]",
+                              catalogTab === tab
+                                ? "border-[#111827] bg-[#111827] text-white"
+                                : "border-[#E5E7EB] bg-white text-[#6B7280] hover:text-[#111827]",
+                            )}
+                          >
+                            {tab}
+                            <span className="ml-2 opacity-70">{catalogCounts.get(tab) ?? 0}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <IntegrationCatalogTable
+                      cards={filteredCatalog}
+                      onSelect={(card) => {
+                        setSelectedCatalogId(card.id);
+                        setSelectedSurface(card.surface);
+                      }}
+                    />
+                  </div>
+                </IntelLineGridFrame>
+              </>
+            ) : (
+              <div className={cn(INTEL_LINE_CELL, "py-3")}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCatalogId(null)}
+                  className="text-sm font-medium text-[#6B7280] hover:text-[#111827]"
+                >
+                  ← Back to integrations
+                </button>
+              </div>
+            )}
+
+            {selectedCatalogCard ? (
+              <>
+                <IntelSectionGutter />
+                <IntelLineGridFrame flush>
+                  <div className={cn(INTEL_LINE_CELL, "flex flex-wrap items-center justify-between gap-3")}>
           <div className="flex items-center gap-3">
             <div className="grid h-12 w-12 place-items-center rounded-md bg-muted text-sm font-bold text-foreground">
               <CatalogIcon card={selectedCatalogCard} />
@@ -687,13 +894,15 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             rel={selectedCard.docsUrl.startsWith("http") ? "noreferrer" : undefined}
             className="text-xs font-medium text-muted-foreground transition hover:text-foreground"
           >
-            Open
+            Open docs
           </a>
-        </div>
-      ) : null}
+                  </div>
+                </IntelLineGridFrame>
 
-      {selectedCatalogCard ? (
-      <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <IntelSectionGutter />
+
+                <IntelLineGridFrame flush>
+                  <IntelTileGrid variant="cards">
         {SETUP_CARDS.map((card) => {
           const active = card.id === selectedSurface;
           return (
@@ -701,11 +910,11 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               key={card.id}
               type="button"
               onClick={() => setSelectedSurface(card.id)}
-              className={`rounded-lg border p-4 text-left transition ${
-                active
-                  ? "border-primary/45 bg-primary/10"
-                  : "border-border bg-muted/50 hover:border-ring"
-              }`}
+              className={cn(
+                INTEL_LINE_CELL,
+                "block text-left transition",
+                active ? "ring-1 ring-inset ring-[#111827]" : "",
+              )}
             >
               <div className="flex items-center justify-between gap-3">
                 <div
@@ -731,12 +940,14 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             </button>
           );
         })}
-      </div>
-      ) : null}
+                  </IntelTileGrid>
+                </IntelLineGridFrame>
 
-      {selectedCatalogCard ? (
-      <div className="mt-5 grid gap-4 xl:grid-cols-2">
-        <section className="rounded-lg border border-border bg-card px-4 py-4">
+                <IntelSectionGutter />
+
+                <IntelLineGridFrame flush>
+                  <div className="memory-graph-chart-row">
+                    <div className={cn(INTEL_LINE_CELL, "memory-graph-stage-cell memory-evolution-stage-cell space-y-4")}>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
@@ -805,10 +1016,10 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
               <code>{codeBlock}</code>
             </pre>
           </div>
-        </section>
+                    </div>
 
-        <aside className="space-y-3">
-          <div className="rounded-lg border border-border bg-card px-4 py-4">
+                    <div className="memory-graph-sidebar-stack">
+                      <div className={cn(INTEL_LINE_CELL, "memory-graph-sidebar-cell")}>
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Live setup checklist
             </p>
@@ -831,9 +1042,9 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
                 </div>
               ))}
             </div>
-          </div>
+                      </div>
 
-          <div className="rounded-lg border border-border bg-card px-4 py-4">
+                      <div className={cn(INTEL_LINE_CELL, "memory-graph-sidebar-cell")}>
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Verify installation
             </p>
@@ -852,15 +1063,19 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             </div>
             <button
               type="button"
-              onClick={installationVerification?.onVerify}
               disabled={verificationStatus === "waiting"}
-              className="mt-3 w-full rounded-md bg-primary px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 disabled:cursor-wait disabled:opacity-70"
+              onClick={installationVerification?.onVerify}
+              className="mt-3 h-10 w-full rounded-none bg-[#111827] px-3 text-xs font-semibold uppercase tracking-wider text-white disabled:opacity-45"
             >
-              {verificationStatus === "connected" ? "Verified" : verificationStatus === "waiting" ? "Waiting..." : "Verify installation"}
+              {verificationStatus === "connected"
+                ? "Verified"
+                : verificationStatus === "waiting"
+                  ? "Waiting…"
+                  : "Verify installation"}
             </button>
-          </div>
+                      </div>
 
-          <div className="rounded-lg border border-border bg-card px-4 py-4">
+                      <div className={cn(INTEL_LINE_CELL, "memory-graph-sidebar-cell")}>
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Live metrics
             </p>
@@ -881,10 +1096,128 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
             <p className="mt-3 text-xs leading-5 text-muted-foreground">
               Last route: {liveSignals?.lastRequestRoute ?? "No request yet"}
             </p>
-          </div>
-        </aside>
+                      </div>
+                    </div>
+                  </div>
+                </IntelLineGridFrame>
+              </>
+            ) : null}
+          </IntelPageStack>
+        </div>
+        </IntelSectionScroll>
+      </IntelligenceWorkspace>
+    </div>
+  );
+}
+
+function IntegrationLiveInsight({
+  runtimeStatusLabel,
+  tokenStatus,
+  verificationMessage,
+  liveSignals,
+}: {
+  runtimeStatusLabel: string;
+  tokenStatus: "checking" | "ready" | "missing";
+  verificationMessage: string;
+  liveSignals?: IntegrationsSectionProps["liveSignals"];
+}) {
+  const rows = [
+    ["Connection", runtimeStatusLabel],
+    ["Token", tokenStatus],
+    ["Memories", String(liveSignals?.memoryCount ?? 0)],
+    ["Requests", String(liveSignals?.requestCount ?? 0)],
+    ["Timeline", String(liveSignals?.timelineCount ?? 0)],
+  ] as const;
+
+  return (
+    <div className="overview-flow-insight flex min-h-[320px] min-w-0 flex-col bg-[#F3F4F6] text-[#111827]">
+      <div className="border-b border-[#E5E7EB] px-5 py-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+          Live installation
+        </p>
+        <p className="mt-1 text-sm text-[#6B7280]">{verificationMessage}</p>
       </div>
-      ) : null}
+      <div className="flex-1 divide-y divide-[#E5E7EB] bg-white">
+        {rows.map(([label, value]) => (
+          <div
+            key={label}
+            className="flex items-center justify-between gap-4 px-5 py-3 text-sm"
+          >
+            <span className="text-[#6B7280]">{label}</span>
+            <span className="font-medium tabular-nums text-[#111827]">{value}</span>
+          </div>
+        ))}
+      </div>
+      <div className="border-t border-[#E5E7EB] px-5 py-2.5 text-[11px] text-[#9CA3AF]">
+        Last route · {liveSignals?.lastRequestRoute ?? "none yet"}
+      </div>
+    </div>
+  );
+}
+
+function IntegrationCatalogTable({
+  cards,
+  onSelect,
+}: {
+  cards: IntegrationCatalogCard[];
+  onSelect: (card: IntegrationCatalogCard) => void;
+}) {
+  if (cards.length === 0) {
+    return (
+      <p className="border border-dashed border-[#E5E7EB] bg-[#F9FAFB] py-14 text-center text-sm text-[#6B7280]">
+        No integrations match this filter.
+      </p>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="intel-line-table w-full min-w-[760px] text-left text-sm">
+        <thead>
+          <tr>
+            <th className="w-10" />
+            <th>ID</th>
+            <th>Integration</th>
+            <th>Category</th>
+            <th>Path</th>
+            <th>Proof signal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cards.map((card, index) => (
+            <tr
+              key={card.id}
+              className="cursor-pointer hover:bg-[#F9FAFB]"
+              onClick={() => onSelect(card)}
+            >
+              <td className="px-4 py-3">
+                <input type="checkbox" readOnly className="size-3.5 rounded border-[#D1D5DB]" />
+              </td>
+              <td className="px-4 py-3 font-mono text-xs text-[#9CA3AF]">
+                #{String(index + 1).padStart(4, "0")}
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="grid size-10 place-items-center">
+                    <CatalogIcon card={card} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-[#111827]">{card.title}</p>
+                    <p className="text-xs text-[#6B7280]">{card.subtitle}</p>
+                  </div>
+                </div>
+              </td>
+              <td className="px-4 py-3 text-[#6B7280]">{card.category}</td>
+              <td className="px-4 py-3">
+                <span className="inline-flex rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs font-medium text-[#6B7280] ring-1 ring-inset ring-[#E5E7EB]">
+                  {surfaceLabel(card.surface)}
+                </span>
+              </td>
+              <td className="px-4 py-3 text-[#6B7280]">{surfaceProof(card.surface)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

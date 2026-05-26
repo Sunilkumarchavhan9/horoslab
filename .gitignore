@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /memoryos-frontend/node_modules
+/memoryos-ide/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -19,11 +20,16 @@
 /memoryos-frontend/.next/
 /memoryos-frontend/out/
 /out/
+/memoryos-ide/src-tauri/target/
 
 # production
 /build
 
 # misc
+.tmp-*
+lint_errors.txt
+lint_output.txt
+.recovery-backup-before-vscode-restore/
 .DS_Store
 *.pem
 /data

@@ -1,3 +1,6 @@
+/**
+ * UI plan limits — keep aligned with `shared/planCatalog.ts` (backend enforces there).
+ */
 export type BillingPlan = "Free" | "Pro" | "Scale" | "Enterprise";
 
 export type PlanDefinition = {
@@ -5,6 +8,8 @@ export type PlanDefinition = {
   monthlyPriceUsd: number | null;
   tokenLimit: number | null;
   searchLimit: number | null;
+  seatLimit: number | null;
+  connectorSyncRecordLimit: number | null;
 };
 
 export const PLAN_CATALOG: Record<BillingPlan, PlanDefinition> = {
@@ -13,24 +18,32 @@ export const PLAN_CATALOG: Record<BillingPlan, PlanDefinition> = {
     monthlyPriceUsd: 0,
     tokenLimit: 1_000_000,
     searchLimit: 10_000,
+    seatLimit: 1,
+    connectorSyncRecordLimit: 2_500,
   },
   Pro: {
     name: "Pro",
     monthlyPriceUsd: 19,
     tokenLimit: 3_000_000,
     searchLimit: 100_000,
+    seatLimit: 5,
+    connectorSyncRecordLimit: 50_000,
   },
   Scale: {
     name: "Scale",
     monthlyPriceUsd: 399,
     tokenLimit: 80_000_000,
     searchLimit: 20_000_000,
+    seatLimit: 25,
+    connectorSyncRecordLimit: 500_000,
   },
   Enterprise: {
     name: "Enterprise",
     monthlyPriceUsd: null,
     tokenLimit: null,
     searchLimit: null,
+    seatLimit: null,
+    connectorSyncRecordLimit: null,
   },
 };
 

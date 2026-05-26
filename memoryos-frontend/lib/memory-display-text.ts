@@ -217,6 +217,19 @@ const INSIGHT_NOISE_TOKENS = new Set([
   "with",
 ]);
 
+const RAW_SECTION_MARKERS = [
+  "COMPANY_BRAIN_SKILLS",
+  "COMPANY_BRAIN.md",
+  "Operating Model",
+  "Recent Signals",
+  "Runbooks",
+  "Open Risks",
+  "Constraints",
+  "Summary Describe what changed",
+  "generated_at",
+  "schema:",
+];
+
 export function isTechnicalInsightToken(value: string): boolean {
   const trimmed = value.trim();
   if (!trimmed) return true;
@@ -238,6 +251,50 @@ export function formatInsightDisplay(value: string | undefined | null): string |
   return formatted.length > 120 ? `${formatted.slice(0, 117).trimEnd()}…` : formatted;
 }
 
+export function isRawMemoryDisplay(value: string | undefined | null): boolean {
+  if (!value?.trim()) return false;
+  const text = value.trim();
+  if (text.length > 520) return true;
+  return RAW_SECTION_MARKERS.some((marker) =>
+    text.toLowerCase().includes(marker.toLowerCase()),
+  );
+}
+
+export function summarizeMemoryForCard(
+  summary: string | undefined | null,
+  content: string | undefined | null,
+): {
+  title: string;
+  detail: string | null;
+  rawHidden: boolean;
+} {
+  const displaySummary = formatMemoryForDisplay(summary);
+  const displayContent = formatMemoryForDisplay(content);
+  const rawHidden = isRawMemoryDisplay(displaySummary) || isRawMemoryDisplay(displayContent);
+
+  const source = displaySummary || displayContent || "Agent context captured";
+  const cleaned = source
+    .replace(/\s+/g, " ")
+    .replace(/\s+-\s+/g, " - ")
+    .trim();
+
+  const title =
+    cleaned.length > 150 ? `${cleaned.slice(0, 147).trimEnd()}...` : cleaned;
+
+  const detailSource =
+    displayContent && displayContent !== displaySummary && !isRawMemoryDisplay(displayContent)
+      ? displayContent
+      : null;
+
+  return {
+    title,
+    detail: detailSource && detailSource.length > 220
+      ? `${detailSource.slice(0, 217).trimEnd()}...`
+      : detailSource,
+    rawHidden,
+  };
+}
+
 export function hasRawMemoryPayload(
   content: string | undefined | null,
   summary: string | undefined | null,
@@ -246,5 +303,5 @@ export function hasRawMemoryPayload(
   const s = (summary ?? "").trim();
   if (!c) return false;
   if (c !== s) return true;
-  return c.startsWith("{") || c.includes("sessionId=") || /\bid:\s*\S+/i.test(c);
+  return c.startsWith("{") || c.includes("sessionId=") || /\bid:\s*\S+/i.test(c) || isRawMemoryDisplay(c);
 }

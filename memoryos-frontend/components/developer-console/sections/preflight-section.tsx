@@ -7,7 +7,12 @@ import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { Icon } from "@/components/ui/icon";
 import { StructuredDataPanel } from "./_shared/structured-data-panel";
-export function PreflightSection() {
+
+type PreflightSectionProps = {
+  realtimeVersion?: number;
+};
+
+export function PreflightSection({ realtimeVersion: _realtimeVersion = 0 }: PreflightSectionProps) {
   const [projectId, setProjectId] = useState("");
   const [agentId] = useState("agent-b");
   const [toolTarget, setToolTarget] = useState("Cursor");
@@ -24,6 +29,24 @@ export function PreflightSection() {
   const [lastSessionId, setLastSessionId] = useState<string | null>(null);
   const [showFullPacket, setShowFullPacket] = useState(false);
   const [showFullRules, setShowFullRules] = useState<Record<string, boolean>>({});
+
+  const preflightSignals = [
+    {
+      label: "Memory retrieval",
+      detail: "Pulls relevant project context before the agent starts.",
+      status: "Live",
+    },
+    {
+      label: "Execution contract",
+      detail: "Turns decisions, blockers, and files into agent rules.",
+      status: "Guarded",
+    },
+    {
+      label: "Session handoff",
+      detail: "Copies a packet and links the work to an agent session.",
+      status: lastSessionId ? "Linked" : "Ready",
+    },
+  ];
 
   const compactText = (input: string, maxChars = 2600) => {
     if (!input) return "";
@@ -43,11 +66,11 @@ export function PreflightSection() {
 
     try {
       const token = await getOrCreateMemoryToken();
-      const origin = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN === "same-origin" 
-        ? "" 
-        : (process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN || "");
+      if (!token) {
+        throw new Error("Sign in again to create a MemoryOS API token.");
+      }
         
-      const response = await fetch(`${origin}/api/preflight`, {
+      const response = await fetch("/api/preflight", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -64,7 +87,14 @@ export function PreflightSection() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to run preflight.");
+        const payload = await response.json().catch(() => null);
+        const message =
+          typeof payload?.error === "string"
+            ? payload.error
+            : typeof payload?.message === "string"
+              ? payload.message
+              : "Failed to run preflight.";
+        throw new Error(message);
       }
 
       const { data } = await response.json();
@@ -95,8 +125,11 @@ export function PreflightSection() {
   const recordSessionStart = async (tool: string) => {
     try {
       const token = await getOrCreateMemoryToken();
-      const origin = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN === "same-origin" ? "" : (process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN || "");
-      const response = await fetch(`${origin}/api/agent-sessions/start`, {
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch("/api/agent-sessions/start", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -120,11 +153,11 @@ export function PreflightSection() {
   };
 
   return (
-    <div className="h-full overflow-y-auto  pb-12 text-foreground">
+    <div className="h-full overflow-y-auto bg-background pb-12 text-foreground">
       {/* Header */}
       <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
         <DitherBackground
-          className="pointer-events-none absolute inset-0 opacity-30"
+          className="pointer-events-none absolute inset-0 opacity-20"
           accent="var(--color-primary)"
           density={0.56}
           cols={320}
@@ -132,16 +165,19 @@ export function PreflightSection() {
         />
         
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
-          <div>
+          <div className="max-w-3xl">
             <motion.h1
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.28 }}
-              className="inline-flex items-center gap-2 rounded-md bg-card px-3 py-1.5 text-2xl font-bold tracking-tight text-foreground"
+              className="inline-flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground"
             >
               <Icon name="terminal" className="h-6 w-6 text-primary" />
               Preflight Console
             </motion.h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Compile the exact context packet an agent should read before it starts work. MemoryOS pulls relevant memory, decisions, blockers, files, and rules into one handoff-ready packet.
+            </p>
             {lastSessionId ? (
               <p className="mt-2 text-xs text-muted-foreground">
                 Session linked.
@@ -151,55 +187,101 @@ export function PreflightSection() {
         </div>
       </div>
 
-      <div className="px-6 mt-8 space-y-8 max-w-6xl">
+      <div className="mx-auto mt-8 w-full max-w-7xl space-y-8 px-6">
+        <div className="grid grid-cols-1 gap-px overflow-hidden border border-border bg-border lg:grid-cols-3">
+          {preflightSignals.map((signal) => (
+            <div key={signal.label} className="bg-card px-5 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{signal.label}</p>
+                <span className="border border-border bg-background px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                  {signal.status}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-foreground">{signal.detail}</p>
+            </div>
+          ))}
+        </div>
+
         {/* Run Preflight Panel */}
         <motion.div
           whileHover={{ y: -2 }}
           transition={{ duration: 0.2 }}
-          className="relative overflow-hidden border border-border bg-card p-6"
+          className="relative overflow-hidden border border-border bg-card/70"
         >
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-muted-foreground"><path d="M12 2L2 22h20L12 2z"/></svg>
-          </div>
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-widest text-muted-foreground">Run Preflight Checklist</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 relative z-10">
-            <div>
-              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Project ID</label>
-              <input value={projectId} onChange={e => setProjectId(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+          <div className="border-b border-border px-6 py-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Live execution gate</p>
+                <h2 className="mt-2 text-lg font-semibold tracking-tight text-foreground">Agent preflight packet</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                  Give the next agent a verified operating context before it touches code, reviews, docs, or a handoff.
+                </p>
+              </div>
+              <div className="flex flex-col items-start gap-2 sm:items-end">
+                <div className="border border-border bg-background px-3 py-2 font-mono text-xs text-muted-foreground">
+                  memoryos.preflight()
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="h-2 w-2 bg-primary" />
+                  Backend wired
+                </div>
+              </div>
             </div>
-            <div>
+          </div>
+          
+          <div className="relative z-10 grid grid-cols-1 gap-4 p-6 md:grid-cols-2 xl:grid-cols-12">
+            <div className="xl:col-span-2">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Project ID</label>
+              <input value={projectId} onChange={e => setProjectId(e.target.value)} placeholder="current project" className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+            </div>
+            <div className="xl:col-span-2">
               <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Target Agent/Tool</label>
-              <select value={toolTarget} onChange={e => setToolTarget(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <select value={toolTarget} onChange={e => setToolTarget(e.target.value)} className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <option>Cursor</option><option>Claude Code</option><option>OpenCode</option>
                 <option>LangGraph</option><option>MCP Agent</option><option>Generic</option>
               </select>
             </div>
-            <div>
+            <div className="xl:col-span-2">
               <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Mode</label>
-              <select value={mode} onChange={e => setMode(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <select value={mode} onChange={e => setMode(e.target.value)} className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <option>coding</option><option>planning</option><option>debugging</option>
                 <option>pr-review</option><option>handoff</option><option>onboarding</option>
               </select>
             </div>
-            <div>
+            <div className="md:col-span-2 xl:col-span-4">
               <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Task Goal</label>
-              <input value={taskDescription} onChange={e => setTaskDescription(e.target.value)} placeholder="What are we doing?" className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+              <input value={taskDescription} onChange={e => setTaskDescription(e.target.value)} placeholder="What should the agent do next?" className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
             </div>
-            <div>
-              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Open Files (Comma separated)</label>
-              <input value={currentFiles} onChange={e => setCurrentFiles(e.target.value)} placeholder="src/app.ts, etc." className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+            <div className="md:col-span-2 xl:col-span-2">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-widest text-muted-foreground">Open Files</label>
+              <input value={currentFiles} onChange={e => setCurrentFiles(e.target.value)} placeholder="src/app.ts, lib/store.ts" className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+            </div>
+
+            <div className="md:col-span-2 xl:col-span-12 border border-border bg-background p-4">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Preflight will check</p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
+                {["Relevant memories", "Open decisions", "Known blockers", "Do-not-do rules", "Agent-ready context"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 border border-border bg-card px-3 py-2">
+                    <span className="h-1.5 w-1.5 shrink-0 bg-primary" />
+                    <span className="text-sm text-foreground">{item}</span>
+                  </div>
+                ))}
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="flex justify-between items-center relative z-10">
-            <div className="font-mono text-xs text-muted-foreground">memoryos.preflight()</div>
+          <div className="relative z-10 flex flex-col gap-4 border-t border-border px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-2xl text-sm text-muted-foreground">
+              Runs retrieval, compresses context, and prepares copy-ready rules for Cursor, Claude Code, OpenCode, MCP agents, or a generic agent session.
+            </p>
             <motion.button 
               onClick={handleRunPreflight} 
               disabled={loading}
               whileHover={{ y: -1, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors border ${
+              className={`h-11 min-w-44 px-6 text-xs font-bold uppercase tracking-widest transition-colors border ${
                 loading
                   ? "border-border bg-muted text-muted-foreground cursor-not-allowed"
                   : "border-primary/35 bg-primary text-primary-foreground hover:bg-primary/90"

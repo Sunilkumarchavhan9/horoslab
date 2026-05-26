@@ -1,8 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronDown, FileStack, Radio } from "lucide-react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import { clearFunnelFocus, isFunnelActive } from "@/lib/company-brain-funnel";
 import { type BillingPlan } from "@/lib/plan-catalog";
+import { connectorPanelBleed } from "@/components/developer-console/intel-design";
+import { cn } from "@/lib/utils";
+import { IntelEmpty, IntelPulseDot } from "@/components/developer-console/intel-section-primitives";
+import {
+  ConnectorBrandAvatar,
+  ConnectorBrandIcon,
+  connectorBrandId,
+  connectorBrandIdFromName,
+} from "@/components/developer-console/connector-brand-icons";
+import { IntelligenceStatusBadge } from "@/components/developer-console/os-intelligence-shell";
+import { PixelLoadOverlay } from "@/components/ui/pixel-load-overlay";
+import { inferPixelToneFromClassName } from "@/lib/pixel-button-runtime";
+import { Button } from "../console-ui";
 
 type ConnectorStatus = "connected" | "not_connected" | "pending" | "syncing" | "error";
 type HealthStatus = "good" | "watch" | "error" | "offline";
@@ -16,6 +31,7 @@ type ConnectorRow = {
   health: HealthStatus;
   records: number;
   lastSync: string;
+  contractCounts?: Record<string, number>;
   primary?: boolean;
   category: string;
   description: string;
@@ -122,6 +138,18 @@ const INITIAL_CONNECTORS: ConnectorRow[] = [
     category: "Communication",
   },
   {
+    id: "slack",
+    name: "Slack",
+    purpose: "Workspace channels, threads, and team decisions for agent continuity",
+    description: "Public and private channel messages",
+    requiredPlan: "Scale",
+    status: "not_connected",
+    health: "offline",
+    records: 0,
+    lastSync: "Requires Scale plan",
+    category: "Communication",
+  },
+  {
     id: "zendesk",
     name: "Zendesk",
     purpose: "Support tickets, incident handling, and customer escalation memory",
@@ -180,6 +208,10 @@ const EXTRACTS = [
     source: "Local Files",
     items: ["Runbooks", "Policies", "Architecture notes", "Preferences", "Project goals"],
   },
+  {
+    source: "Slack",
+    items: ["Channel decisions", "Thread context", "Mentions", "Incident threads", "Handoff notes"],
+  },
 ];
 
 const INITIAL_ACTIVITY: Array<{ time: string; message: string; status: string }> = [];
@@ -215,6 +247,391 @@ function formatContractCounts(counts?: Record<string, number>): string {
     .join(" · ");
 }
 
+function connectorTypeFromId(id: string): string {
+  return id.replace(/-/g, "_");
+}
+
+function titleFromType(type: string): string {
+  return type
+    .replace(/[-_]/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function formatConnectorDate(value?: string | null): string {
+  if (!value) return "Not yet";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleString();
+}
+
+function compactConnectorMessage(value?: string | null): string {
+  if (!value) return "";
+  const cleaned = value
+    .replace(/\s+/g, " ")
+    .replace(/Invalid `prisma\.[^`]+` invocation:.*/i, "Database schema mismatch. Apply the production database migration.")
+    .trim();
+  return cleaned.length > 150 ? `${cleaned.slice(0, 150).trim()}...` : cleaned;
+}
+
+type HealthTone = "good" | "watch" | "error" | "neutral";
+
+function healthToneFromLabel(label: string): HealthTone {
+  if (label === "Ready" || label === "Connected" || label === "Syncing now") return "good";
+  if (label === "Needs attention" || label === "Not connected") return label === "Needs attention" ? "error" : "neutral";
+  if (label === "Watch") return "watch";
+  return "neutral";
+}
+
+function severityTone(severity: "good" | "watch" | "error"): HealthTone {
+  if (severity === "error") return "error";
+  if (severity === "watch") return "watch";
+  return "good";
+}
+
+function IntelHealthPill({ label, tone }: { label: string; tone: HealthTone }) {
+  const classes: Record<HealthTone, string> = {
+    good: "bg-[#D1FAE5] text-[#047857] ring-[#A7F3D0]",
+    watch: "bg-[#FEF3C7] text-[#B45309] ring-[#FDE68A]",
+    error: "bg-[#FEE2E2] text-[#B91C1C] ring-[#FECACA]",
+    neutral: "bg-[#F3F4F6] text-[#6B7280] ring-[#E5E7EB]",
+  };
+  return (
+    <span className={cn("inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ring-inset", classes[tone])}>
+      {label}
+    </span>
+  );
+}
+
+function PlanPill({ plan }: { plan: BillingPlan }) {
+  return (
+    <span className="border border-[#E5E7EB] bg-[#F9FAFB] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+      {plan}
+    </span>
+  );
+}
+
+const LINE_GRID_LINE = "bg-[#E5E7EB]";
+const LINE_CELL = "bg-white p-5";
+const CONNECTOR_GRID_COLS = 4;
+
+const COMING_SOON_SLOTS: Record<string, Array<{ title: string; detail: string }>> = {
+  Recommended: [{ title: "Notion", detail: "Docs & wikis · in review" }],
+  Communication: [{ title: "Microsoft Teams", detail: "Enterprise chat · queued" }],
+  Advanced: [
+    { title: "Confluence", detail: "Knowledge base · planned" },
+    { title: "SharePoint", detail: "Enterprise files · planned" },
+  ],
+};
+
+type CategoryGridItem =
+  | { kind: "connector"; connector: ConnectorRow }
+  | { kind: "coming-soon"; title: string; detail: string }
+  | { kind: "reserved" };
+
+function buildCategoryGridItems(connectors: ConnectorRow[], category: string): CategoryGridItem[] {
+  const items: CategoryGridItem[] = connectors.map((connector) => ({ kind: "connector", connector }));
+  for (const slot of COMING_SOON_SLOTS[category] ?? []) {
+    items.push({ kind: "coming-soon", title: slot.title, detail: slot.detail });
+  }
+  const target = padGridSlotCount(items.length);
+  while (items.length < target) {
+    items.push({ kind: "reserved" });
+  }
+  return items;
+}
+
+function ConnectorActionButton({
+  loading = false,
+  className,
+  children,
+  disabled,
+  ...props
+}: React.ComponentProps<"button"> & { loading?: boolean }) {
+  const resolvedClassName = cn(
+    "connector-action-btn pixel-load-btn",
+    loading && "pixel-load-btn--loading",
+    className,
+  );
+  const pixelTone = inferPixelToneFromClassName(resolvedClassName);
+
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-busy={loading || undefined}
+      data-pixel-loading={loading ? "true" : undefined}
+      className={resolvedClassName}
+      {...props}
+    >
+      {loading ? <PixelLoadOverlay tone={pixelTone} /> : null}
+      <span className="pixel-load-btn__label">{children}</span>
+    </button>
+  );
+}
+
+function ConnectorComingSoonCell({ title, detail }: { title: string; detail: string }) {
+  return (
+    <div
+      className={cn(
+        "flex h-full min-h-[220px] flex-1 flex-col items-center justify-center border-dashed px-6 text-center",
+        LINE_CELL,
+        "bg-[#FAFAFA]",
+      )}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9CA3AF]">Coming soon</p>
+      <p className="mt-4 text-base font-semibold text-[#374151]">{title}</p>
+      <p className="mt-2 text-sm leading-5 text-[#6B7280]">{detail}</p>
+      <p className="mt-4 border border-[#E5E7EB] bg-white px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-[#9CA3AF]">
+        Next connectors shipping
+      </p>
+    </div>
+  );
+}
+
+function ConnectorPlaceholderCell() {
+  return (
+    <div
+      className={cn(
+        "flex h-full min-h-[220px] flex-1 flex-col items-center justify-center px-6 text-center",
+        LINE_CELL,
+        "bg-[#FAFAFA]",
+      )}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9CA3AF]">Slot reserved</p>
+      <p className="mt-4 text-sm font-medium text-[#6B7280]">Another source connector</p>
+      <p className="mt-2 text-xs text-[#9CA3AF]">Waiting for next release</p>
+    </div>
+  );
+}
+
+function LineGridFrame({
+  children,
+  className,
+  flush,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** Inside connector-page-stack — no per-card border/radius */
+  flush?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        flush ? "bg-white" : "overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** One continuous full-bleed column: KPI → ingestion → health → categories */
+function ConnectorPageStack({ children }: { children: ReactNode }) {
+  return <div className="connector-page-stack">{children}</div>;
+}
+
+/** Prody hatch band between stacked section panels (replaces plain white space-y gap). */
+function ConnectorSectionGutter() {
+  return <div className="connector-section-gutter" role="presentation" aria-hidden="true" />;
+}
+
+/** Integrations-style 1px gutters — styled in globals.css so lines always tile full height. */
+function ConnectorTileGrid({
+  children,
+  className,
+  variant = "default",
+}: {
+  children: ReactNode;
+  className?: string;
+  variant?: "default" | "tall" | "short" | "health" | "kpi";
+}) {
+  return (
+    <div
+      className={cn(
+        "connector-tile-grid",
+        variant === "tall" && "connector-tile-grid--tall",
+        variant === "short" && "connector-tile-grid--short",
+        variant === "health" && "connector-tile-grid--health",
+        variant === "kpi" && "connector-tile-grid--kpi",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function padGridSlotCount(length: number, cols = CONNECTOR_GRID_COLS) {
+  return Math.max(cols, Math.ceil(length / cols) * cols);
+}
+
+type HealthGridSlot = { kind: "diagnostic"; item: ConnectorDiagnostic } | { kind: "empty" };
+
+function buildHealthGridSlots(diagnostics: ConnectorDiagnostic[]): HealthGridSlot[] {
+  const slots: HealthGridSlot[] = diagnostics.map((item) => ({ kind: "diagnostic", item }));
+  const target = padGridSlotCount(slots.length);
+  while (slots.length < target) {
+    slots.push({ kind: "empty" });
+  }
+  return slots;
+}
+
+function SourceHealthPlaceholderCell() {
+  return (
+    <div className="flex h-full min-h-[200px] flex-1 flex-col items-center justify-center bg-[#FAFAFA] px-6 text-center">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9CA3AF]">Open slot</p>
+      <p className="mt-3 text-sm font-medium text-[#6B7280]">Awaiting source diagnostic</p>
+      <p className="mt-2 text-xs text-[#9CA3AF]">Connect another source to fill this column</p>
+    </div>
+  );
+}
+
+function ConnectorGridCell({
+  connector,
+  diagnostic,
+  active,
+  locked,
+  currentPlan,
+  health,
+  connectLoading,
+  onConnect,
+  onDisconnect,
+  onUpgrade,
+}: {
+  connector: ConnectorRow;
+  diagnostic?: ConnectorDiagnostic;
+  active: boolean;
+  locked: boolean;
+  currentPlan: BillingPlan;
+  health: string;
+  connectLoading: boolean;
+  onConnect: () => void;
+  onDisconnect: () => void;
+  onUpgrade: () => void;
+}) {
+  return (
+    <div
+      id={connector.id === "github" ? "connector-card-github" : undefined}
+      className={cn("flex h-full min-h-[220px] flex-1 flex-col text-left transition hover:bg-[#FAFAFA]", LINE_CELL, active && "bg-[#FAFAFA]")}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <ConnectorBrandAvatar
+          connectorId={connector.id}
+          className="size-10 rounded-md border-[#E5E7EB] shadow-none"
+          iconClassName="size-6"
+        />
+        <div className="flex flex-col items-end gap-1.5">
+          <PlanPill plan={connector.requiredPlan} />
+          <IntelHealthPill label={health} tone={healthToneFromLabel(health)} />
+        </div>
+      </div>
+      <p className="mt-6 text-base font-semibold text-[#111827]">{connector.name}</p>
+      <p className="mt-2 line-clamp-2 text-sm leading-5 text-[#6B7280]">{connector.purpose}</p>
+
+      <div className={cn("mt-5 grid grid-cols-3 gap-px border border-[#E5E7EB]", LINE_GRID_LINE)}>
+        {[
+          { label: "Status", value: statusLabel(connector.status) },
+          { label: "Records", value: String(connector.records) },
+          { label: "Recent keys", value: String(diagnostic?.checkpoints?.recentItemKeysCount ?? 0) },
+        ].map((metric) => (
+          <div key={metric.label} className={cn(LINE_CELL, "p-3")}>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">{metric.label}</p>
+            <p className="mt-1 truncate text-sm font-semibold tabular-nums text-[#111827]">{metric.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 flex-1 border-t border-[#E5E7EB] pt-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#111827]">Last sync</p>
+        <p className="mt-1 text-sm text-[#374151]">{connector.lastSync}</p>
+        {formatContractCounts(connector.contractCounts) ? (
+          <p className="mt-2 text-xs font-medium text-[#0F766E]">{formatContractCounts(connector.contractCounts)}</p>
+        ) : null}
+        {diagnostic?.retry.lastFailureReason ? (
+          <p className="mt-2 text-xs leading-5 text-[#B91C1C]">{compactConnectorMessage(diagnostic.retry.lastFailureReason)}</p>
+        ) : (
+          <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#6B7280]">{connector.description}</p>
+        )}
+      </div>
+
+      <div className={cn("mt-4 grid gap-px border border-[#E5E7EB]", locked || active ? "grid-cols-2" : "grid-cols-1", LINE_GRID_LINE)}>
+        {locked ? (
+          <ConnectorActionButton
+            className="flex h-10 w-full items-center justify-center bg-[#111827] text-sm font-semibold text-white hover:bg-[#1F2937]"
+            onClick={onUpgrade}
+          >
+            {nextUpgradeLabel(currentPlan, connector.requiredPlan)}
+          </ConnectorActionButton>
+        ) : active ? (
+          <>
+            <ConnectorActionButton
+              loading={connectLoading}
+              className="flex h-10 w-full items-center justify-center bg-[#F3F4F6] text-sm font-semibold text-[#111827] hover:bg-[#E5E7EB] disabled:opacity-50"
+              disabled={connector.status === "syncing"}
+              onClick={onConnect}
+            >
+              {connector.status === "syncing" ? "Syncing" : "Sync now"}
+            </ConnectorActionButton>
+            <ConnectorActionButton
+              className="connector-action-btn--disconnect flex h-10 w-full items-center justify-center text-sm font-semibold"
+              onClick={onDisconnect}
+            >
+              Disconnect
+            </ConnectorActionButton>
+          </>
+        ) : (
+          <ConnectorActionButton
+            loading={connectLoading}
+            className="flex h-10 w-full items-center justify-center bg-[#111827] text-sm font-semibold text-white hover:bg-[#1F2937]"
+            onClick={onConnect}
+          >
+            Connect {connector.name}
+          </ConnectorActionButton>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function diagnosticForConnector(diagnostics: ConnectorDiagnostic[], connectorId: string): ConnectorDiagnostic | undefined {
+  const type = connectorTypeFromId(connectorId);
+  return diagnostics.find((item) => item.type === type);
+}
+
+function healthLabel(diagnostic?: ConnectorDiagnostic, connector?: ConnectorRow): string {
+  if (diagnostic?.status === "syncing" || connector?.status === "syncing") return "Syncing now";
+  if (diagnostic && connectorSeverity(diagnostic) === "error") return "Needs attention";
+  if (diagnostic && connectorSeverity(diagnostic) === "watch") return "Watch";
+  if (diagnostic?.transport.healthy || connector?.status === "connected") return "Ready";
+  return "Not connected";
+}
+
+function statusLabel(status: ConnectorStatus): string {
+  if (status === "connected") return "Connected";
+  if (status === "syncing") return "Syncing";
+  if (status === "pending") return "Pending";
+  if (status === "error") return "Needs attention";
+  return "Not connected";
+}
+
+function authLabel(diagnostic?: ConnectorDiagnostic): string {
+  if (!diagnostic) return "Not checked yet";
+  if (!diagnostic.auth.configured) return "Auth not configured";
+  if (diagnostic.tokens?.hasAccessToken) return "Access token active";
+  if (diagnostic.tokens?.hasRefreshToken) return "Refresh token available";
+  return `${titleFromType(diagnostic.auth.mode)} configured`;
+}
+
+function syncLogSummary(log: ConnectorSyncLog): string {
+  const contracts = formatContractCounts(log.contractCounts);
+  const extracted = `${log.extractedCount} ${log.extractedCount === 1 ? "memory" : "memories"}`;
+  return contracts ? `${extracted} · ${contracts}` : extracted;
+}
+
 async function unlockConnector(type: string, addActivity: (message: string, status?: string) => void): Promise<void> {
   try {
     const token = await getOrCreateMemoryToken();
@@ -238,10 +655,12 @@ async function unlockConnector(type: string, addActivity: (message: string, stat
 
 export function ConnectorsSection({ 
   liveMemoryCount = 0, 
-  liveRequestCount = 0 
+  liveRequestCount = 0,
+  realtimeVersion = 0,
 }: { 
   liveMemoryCount?: number; 
   liveRequestCount?: number;
+  realtimeVersion?: number;
 }) {
   const [connectors, setConnectors] = useState<ConnectorRow[]>(INITIAL_CONNECTORS);
   const [activity, setActivity] = useState(INITIAL_ACTIVITY);
@@ -251,12 +670,39 @@ export function ConnectorsSection({
   const [showLogs, setShowLogs] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<BillingPlan>("Free");
   const [realtimeTick, setRealtimeTick] = useState(0);
+  const [connectorReloadNonce, setConnectorReloadNonce] = useState(0);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [syncAllLoading, setSyncAllLoading] = useState(false);
 
   const connectedCount = connectors.filter((connector) => isActiveStatus(connector.status)).length;
   const totalRecords = liveMemoryCount + internalRecords;
   const githubStatus = connectors.find((c) => c.id === "github")?.status;
   const githubConnected = isActiveStatus(githubStatus);
+  const [funnelFocusGithub, setFunnelFocusGithub] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !isFunnelActive()) return;
+    const focus = window.sessionStorage.getItem("memoryos.company-brain.funnel.focus");
+    if (focus === "github") {
+      setFunnelFocusGithub(true);
+      window.requestAnimationFrame(() => {
+        document.getElementById("connector-card-github")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+  }, [connectorReloadNonce]);
+
 // Simulation Engine removed for real implementation
+useEffect(() => {
+  if (realtimeVersion <= 0) return;
+  setRealtimeTick((value) => value + 1);
+  setConnectorReloadNonce((value) => value + 1);
+}, [realtimeVersion]);
+
+useEffect(() => {
+  if (realtimeTick <= 0) return;
+  setConnectorReloadNonce((value) => value + 1);
+}, [realtimeTick]);
+
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const connectedType = urlParams.get("connected");
@@ -299,6 +745,7 @@ useEffect(() => {
             status: ConnectorStatus;
             recordCount: number;
             lastSyncAt: string | null;
+            contractCounts?: Record<string, number>;
           }>;
         };
       } | null;
@@ -320,6 +767,7 @@ useEffect(() => {
               ...c,
               status: allowed ? (dbMatch.status as ConnectorStatus) : "not_connected",
               records: dbMatch.recordCount,
+              contractCounts: allowed ? dbMatch.contractCounts : undefined,
               lastSync: allowed
                 ? (dbMatch.lastSyncAt
                     ? new Date(dbMatch.lastSyncAt).toLocaleString()
@@ -346,12 +794,12 @@ useEffect(() => {
   loadConnectors();
   const timer = window.setInterval(() => {
     void loadConnectors();
-  }, 10000);
+  }, 30000);
   return () => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [currentPlan, liveMemoryCount, realtimeTick]);
+}, [currentPlan, connectorReloadNonce]);
 
 useEffect(() => {
   let cancelled = false;
@@ -378,12 +826,12 @@ useEffect(() => {
   void loadDiagnostics();
   const timer = window.setInterval(() => {
     void loadDiagnostics();
-  }, 10000);
+  }, 30000);
   return () => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [liveMemoryCount, liveRequestCount, realtimeTick]);
+}, [connectorReloadNonce]);
 
 useEffect(() => {
   let cancelled = false;
@@ -408,12 +856,12 @@ useEffect(() => {
   void loadSyncLogs();
   const timer = window.setInterval(() => {
     void loadSyncLogs();
-  }, 12000);
+  }, 30000);
   return () => {
     cancelled = true;
     window.clearInterval(timer);
   };
-}, [liveMemoryCount, liveRequestCount, realtimeTick]);
+}, [connectorReloadNonce]);
 
 useEffect(() => {
   let stream: EventSource | null = null;
@@ -425,12 +873,31 @@ useEffect(() => {
     try {
       const token = await getOrCreateMemoryToken();
       if (!token || disposed) return;
-      const url = `/api/connector/events?token=${encodeURIComponent(token)}`;
-      stream = new EventSource(url);
-      reconnectAttempts = 0;
-      stream.onmessage = () => {
+      stream = new EventSource("/api/connector/events");
+      stream.onopen = () => {
+        reconnectAttempts = 0;
+      };
+      stream.onmessage = (event) => {
         if (disposed) return;
         setRealtimeTick((value) => value + 1);
+        setConnectorReloadNonce((value) => value + 1);
+        try {
+          const payload = JSON.parse(event.data) as {
+            kind?: string;
+            payload?: { type?: string; status?: string; message?: string };
+          };
+          if (payload.kind === "sync_log" && payload.payload?.type) {
+            const label = titleFromType(payload.payload.type);
+            const status = payload.payload.status === "error" ? "error" : "success";
+            addActivity(
+              payload.payload.message?.trim() ||
+                `${label} sync ${payload.payload.status ?? "updated"}`,
+              status,
+            );
+          }
+        } catch {
+          // ignore malformed connector stream payloads
+        }
       };
       stream.onerror = () => {
         if (stream) {
@@ -523,6 +990,9 @@ async function connectConnector(connectorId: string) {
     return;
   }
 
+  setActionLoading(connectorId);
+  let keepLoading = false;
+
   const typeMap: Record<string, string> = {
     github: "github",
     "local-files": "local_files",
@@ -535,10 +1005,14 @@ async function connectConnector(connectorId: string) {
   };
 
   const type = typeMap[connectorId];
-  if (!type) return;
+  if (!type) {
+    setActionLoading((current) => (current === connectorId ? null : current));
+    return;
+  }
 
   if (connectorMeta.status === "syncing") {
     addActivity(`${connectorMeta.name} sync already in progress`, "info");
+    setActionLoading((current) => (current === connectorId ? null : current));
     return;
   }
 
@@ -585,6 +1059,10 @@ async function connectConnector(connectorId: string) {
           : `${connectorMeta.name} synced ${extractedCount} memories`,
         "success",
       );
+      if (connectorId === "github") {
+        clearFunnelFocus();
+        setFunnelFocusGithub(false);
+      }
     } catch (error) {
       setConnectors((current) =>
         current.map((connector) =>
@@ -594,6 +1072,10 @@ async function connectConnector(connectorId: string) {
         ),
       );
       addActivity(error instanceof Error ? error.message : `Failed to sync ${connectorMeta.name}`, "error");
+    } finally {
+      if (!keepLoading) {
+        setActionLoading((current) => (current === connectorId ? null : current));
+      }
     }
     return;
   }
@@ -640,6 +1122,10 @@ async function connectConnector(connectorId: string) {
       addActivity(`Local Files connected and synced ${extracted} memories.`, "success");
     } catch (error) {
       addActivity(error instanceof Error ? error.message : "Failed to connect Local Files", "error");
+    } finally {
+      if (!keepLoading) {
+        setActionLoading((current) => (current === connectorId ? null : current));
+      }
     }
     return;
   }
@@ -672,9 +1158,14 @@ async function connectConnector(connectorId: string) {
       if (!authorizeUrl) {
         throw new Error("Missing authorize URL from connector endpoint.");
       }
+      keepLoading = true;
       window.location.href = authorizeUrl;
     } catch (error) {
       addActivity(error instanceof Error ? error.message : "Could not start connector OAuth", "error");
+    } finally {
+      if (!keepLoading) {
+        setActionLoading((current) => (current === connectorId ? null : current));
+      }
     }
     return;
   }
@@ -746,6 +1237,10 @@ async function connectConnector(connectorId: string) {
     );
 
     addActivity(`Failed to connect ${connectorId}`, "error");
+  } finally {
+    if (!keepLoading) {
+      setActionLoading((current) => (current === connectorId ? null : current));
+    }
   }
 }
 
@@ -776,7 +1271,12 @@ async function runConnectedSync() {
     addActivity("No connected sources to sync.", "info");
     return;
   }
-  await Promise.all(connected.map((c) => connectConnector(c.id)));
+  setSyncAllLoading(true);
+  try {
+    await Promise.all(connected.map((c) => connectConnector(c.id)));
+  } finally {
+    setSyncAllLoading(false);
+  }
 }
 
 function addActivity(message: string, status: string = "info") {
@@ -789,385 +1289,481 @@ function addActivity(message: string, status: string = "info") {
 }
 
   const categories = ["Recommended", "Knowledge Sources", "Communication", "Advanced"];
+  const failedSyncs = diagnostics.filter((item) => connectorSeverity(item) === "error").length;
+  const latestSyncLog = syncLogs[0];
+  const realtimeOnline = realtimeTick > 0 || activity.some((item) => item.message.toLowerCase().includes("stream"));
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(categories.map((category) => [category, true])),
+  );
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories((prev) => ({ ...prev, [category]: !prev[category] }));
+  };
 
   return (
-    <div className="flex flex-col gap-8 pb-12 animate-in fade-in duration-500">
-      {/* Page Title & Positioning */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tighter text-foreground">Data Sources</h1>
-        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground max-w-2xl">
-          Connect the tools your agents use every day and turn them into long-term developer memory. 
-          MemoryOS indexes issues, docs, commits, messages, and local context so agents can continue work with full project awareness.
-        </p>
-      </div>
-
-      {/* Hero Overview Card */}
-      <div className="relative overflow-hidden rounded-sm border border-border bg-card p-6">
-        <div className="absolute inset-0 bg-primary/5" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-4">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Memory Ingestion Overview</h2>
-            <div className="flex flex-wrap gap-8">
-              <div>
-                <p className="text-2xl font-bold text-foreground">{totalRecords}</p>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">records indexed</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{connectedCount}</p>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">active sources</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">0</p>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">failed syncs</p>
-              </div>
-            </div>
-            <div className="flex gap-3 pt-2">
-              {!githubConnected && (
-                <button 
-                  onClick={() => connectConnector("github")}
-                  className="rounded-sm bg-primary px-4 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  Connect GitHub
-                </button>
-              )}
-              <button 
-                className="rounded-sm border border-border bg-muted px-4 py-1.5 text-xs font-bold text-foreground hover:bg-muted transition-colors"
-                onClick={() => void runConnectedSync()}
-              >
-                Run Sync
-              </button>
-              <button
-                onClick={() => setShowLogs((current) => !current)}
-                className="rounded-sm border border-border bg-muted px-4 py-1.5 text-xs font-bold text-foreground hover:bg-muted transition-colors"
-              >
-                View Ingestion Logs
-              </button>
-            </div>
-          </div>
-
-          {/* Mini Live Feed inside Hero */}
-          <div className="w-full md:w-64 rounded-sm border border-border bg-background/40 p-4">
-            <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-chart-2 animate-pulse"></span>
-              Live Memory Feed
-            </h3>
-            <div className="space-y-2.5">
-              {activity.slice(0, 4).map((item, i) => (
-                <div key={i} className="flex gap-2 text-xs">
-                  <span className="text-chart-2 shrink-0">✓</span>
-                  <span className="text-muted-foreground truncate">{item.message}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+    <div className="w-full min-w-0">
+      {isFunnelActive() ? (
+        <div className="mb-4 rounded-lg border border-[#C7D2FE] bg-[#EEF2FF] px-4 py-3 text-sm text-[#374151]">
+          <span className="font-semibold text-[#4338CA]">Company Brain setup · </span>
+          Connect GitHub first, run sync, then open Continuity Lab from Overview.
+          {funnelFocusGithub ? (
+            <span className="mt-1 block text-xs text-[#6B7280]">Step 1–2: connect and sync GitHub below.</span>
+          ) : null}
         </div>
-      </div>
+      ) : null}
 
-      {showLogs && (
-        <div className="rounded-sm border border-border bg-card p-5">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Connector Sync Logs</h2>
-          <div className="mt-3 space-y-2">
-            {syncLogs.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No logs yet.</p>
-            ) : (
-              syncLogs.slice(0, 20).map((log) => (
-                <div key={log.id} className="rounded-sm border border-border bg-background/40 px-3 py-2">
-                  <p className="text-xs font-medium text-foreground">
-                    {log.type} · {log.status} · {log.extractedCount} extracted
-                  </p>
-                  {formatContractCounts(log.contractCounts) ? (
-                    <p className="mt-0.5 text-xs text-primary">
-                      contracts: {formatContractCounts(log.contractCounts)}
-                    </p>
-                  ) : null}
-                  <p className="mt-0.5 text-xs text-muted-foreground">{log.message}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{new Date(log.at).toLocaleString()}</p>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      <div className="rounded-sm border border-border bg-card p-5">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">MCP Connector Health</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {diagnostics.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No diagnostics yet.</p>
+      <div className="flex flex-col gap-4 border-b border-black/[0.06] pb-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-2">
+          <p className="max-w-2xl text-sm leading-relaxed text-[#6B7280]">
+            Connect company knowledge sources, watch ingestion health, and keep agent memory synchronized with real
+            workspace context.
+          </p>
+          {realtimeOnline ? (
+            <IntelligenceStatusBadge live>Live source events</IntelligenceStatusBadge>
           ) : (
-            diagnostics.map((item) => (
-              <div key={item.type} className="rounded-sm border border-border bg-background/40 p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs font-semibold text-foreground">{item.type}</p>
-                  <span
-                    className={`rounded-full border px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
-                      connectorSeverity(item) === "good"
-                        ? "border-chart-2/35 bg-chart-2/10 text-chart-2"
-                        : connectorSeverity(item) === "watch"
-                          ? "border-chart-5/35 bg-chart-5/10 text-chart-5"
-                          : "border-destructive/35 bg-destructive/10 text-destructive"
-                    }`}
-                  >
-                    {connectorSeverity(item)}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">auth={item.auth.mode} transport={item.transport.protocol}</p>
-                <p className="mt-1 text-xs text-muted-foreground">status={item.status} healthy={String(item.transport.healthy)}</p>
-                <p className="mt-1 text-xs text-muted-foreground">retries={item.retry.retryCount}</p>
-                {item.retry.lastFailureAt ? (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    lastFailureAt={new Date(item.retry.lastFailureAt).toLocaleString()}
-                  </p>
-                ) : null}
-                {item.retry.lastFailureReason ? (
-                  <p className="mt-1 text-xs text-destructive">{item.retry.lastFailureReason}</p>
-                ) : (
-                  <p className="mt-1 text-xs text-chart-2">no sync failures</p>
-                )}
-                {item.checkpoints ? (
-                  <div className="mt-2 space-y-1 rounded-sm border border-border/60 bg-muted/30 p-2">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">checkpoints</p>
-                    <p className="text-xs text-muted-foreground">
-                      lastCheckpointAt={item.checkpoints.lastCheckpointAt ? new Date(item.checkpoints.lastCheckpointAt).toLocaleString() : "none"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">recentItemKeys={item.checkpoints.recentItemKeysCount}</p>
-                    {item.checkpoints.slackLastMessageTs ? (
-                      <p className="text-xs text-muted-foreground">slackLastTs={item.checkpoints.slackLastMessageTs}</p>
-                    ) : null}
-                    {item.checkpoints.slackCursor ? (
-                      <p className="text-xs text-muted-foreground">slackCursor=present</p>
-                    ) : null}
-                    {item.checkpoints.gmailLastMessageId ? (
-                      <p className="text-xs text-muted-foreground">gmailLastId={item.checkpoints.gmailLastMessageId}</p>
-                    ) : null}
-                    {item.checkpoints.gmailLastCheckpointEpochMs ? (
-                      <p className="text-xs text-muted-foreground">
-                        gmailCheckpoint={new Date(item.checkpoints.gmailLastCheckpointEpochMs).toLocaleString()}
-                      </p>
-                    ) : null}
-                  </div>
-                ) : null}
-                {formatContractCounts(item.contractCounts) ? (
-                  <div className="mt-2 space-y-1 rounded-sm border border-primary/30 bg-primary/5 p-2">
-                    <p className="text-xs font-bold uppercase tracking-wider text-primary">memory contracts</p>
-                    <p className="text-xs text-muted-foreground">{formatContractCounts(item.contractCounts)}</p>
-                  </div>
-                ) : null}
-                {item.tokens ? (
-                  <div className="mt-2 space-y-1 rounded-sm border border-border/60 bg-muted/30 p-2">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">token state</p>
-                    <p className="text-xs text-muted-foreground">hasAccessToken={String(item.tokens.hasAccessToken)}</p>
-                    <p className="text-xs text-muted-foreground">hasRefreshToken={String(item.tokens.hasRefreshToken)}</p>
-                    <p className="text-xs text-muted-foreground">
-                      lastTokenRefreshAt={item.tokens.lastTokenRefreshAt ? new Date(item.tokens.lastTokenRefreshAt).toLocaleString() : "never"}
-                    </p>
-                  </div>
-                ) : null}
-                {item.status === "syncing" ? (
-                  <button
-                    type="button"
-                    onClick={() => void unlockConnector(item.type, addActivity)}
-                    className="mt-2 rounded-sm border border-chart-5/35 bg-chart-5/10 px-2 py-1 text-xs font-bold uppercase tracking-wider text-chart-5 hover:bg-chart-5/20"
-                  >
-                    Force Unlock Sync
-                  </button>
-                ) : null}
-                <p className="mt-1 text-xs text-muted-foreground">
-                  mcpSafe={String(item.safety.mcpSafeMetadata)} policyCompat={String(item.safety.policyCompatible)}
-                </p>
-              </div>
-            ))
+            <IntelligenceStatusBadge>Waiting for source stream</IntelligenceStatusBadge>
           )}
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {!githubConnected ? (
+            <ConnectorActionButton
+              loading={actionLoading === "github" || githubStatus === "syncing" || githubStatus === "pending"}
+              className="flex h-10 items-center justify-center bg-[#111827] px-4 text-sm font-semibold text-white hover:bg-[#1F2937]"
+              onClick={() => void connectConnector("github")}
+            >
+              Connect GitHub
+            </ConnectorActionButton>
+          ) : null}
+          <ConnectorActionButton
+            loading={syncAllLoading}
+            className="flex h-10 items-center justify-center border border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
+            onClick={() => void runConnectedSync()}
+          >
+            Sync active sources
+          </ConnectorActionButton>
+          <ConnectorActionButton
+            className="flex h-10 items-center justify-center border border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#374151] hover:bg-[#F9FAFB]"
+            onClick={() => setShowLogs((current) => !current)}
+          >
+            {showLogs ? "Hide logs" : "View logs"}
+          </ConnectorActionButton>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Grid Section */}
-        <div className="lg:col-span-2 space-y-10">
-          {categories.map((category) => (
-            <div key={category} className="space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground px-1">{category}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {connectors
-                  .filter((c) => c.category === category)
-                  .map((connector) => (
-                    <div
-                      key={connector.id}
-                      className={`group relative flex flex-col justify-between rounded-sm border p-5 transition-all duration-300 ${
-                        connector.status === "connected"
-                          ? "border-chart-2/30 bg-chart-2/5"
-                          : "border-border bg-card hover:border-border"
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-base font-bold text-foreground">{connector.name}</h3>
-                          <div className="flex items-center gap-2">
-                            <span 
-                              className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${
-                                connector.requiredPlan === "Free" ? "border-primary/30 text-primary bg-primary/5" : "border-chart-5/30 text-chart-5 bg-chart-5/5"
-                              }`}
-                            >
-                              {connector.requiredPlan}
-                            </span>
-                            {connector.status === "connected" && (
-                              <div className="h-2 w-2 rounded-full bg-chart-2" />
-                            )}
-                          </div>
-                        </div>
-                        <p className="text-xs text-muted-foreground leading-relaxed mb-6">
-                          {connector.description}
-                        </p>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center text-xs">
-                          <span className="text-muted-foreground uppercase tracking-wider">Status</span>
-                          <span className={`font-medium ${(connector.status === "connected" || connector.status === "syncing") ? "text-chart-2" : "text-muted-foreground"}`}>
-                            {connector.status === "syncing" ? "Syncing" : connector.status === "connected" ? "Active" : "Not connected"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-xs">
-                          <span className="text-muted-foreground uppercase tracking-wider">Records</span>
-                          <span className="text-foreground font-mono">{connector.records}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-xs">
-                          <span className="text-muted-foreground uppercase tracking-wider">Last Sync</span>
-                          <span className="text-muted-foreground">{connector.lastSync}</span>
-                        </div>
-
-                        <div className="pt-4 flex gap-2">
-                          {!canUseConnector(currentPlan, connector.requiredPlan) ? (
-                            <button
-                              onClick={() => void routeToUpgrade(connector.requiredPlan)}
-                              className="flex-1 rounded-sm border border-chart-5/30 bg-chart-5/10 py-1.5 text-xs font-bold uppercase tracking-widest text-chart-5 hover:bg-chart-5/20 transition-colors"
-                            >
-                              {nextUpgradeLabel(currentPlan, connector.requiredPlan)}
-                            </button>
-                          ) : (connector.status === "connected" || connector.status === "syncing") ? (
-                            <>
-                              <button 
-                                onClick={() => void connectConnector(connector.id)}
-                                disabled={connector.status === "syncing"}
-                                className="flex-1 rounded-sm bg-muted border border-border py-1.5 text-xs font-bold uppercase tracking-widest text-foreground hover:bg-muted transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                              >
-                                {connector.status === "syncing" ? "Syncing..." : "Sync Now"}
-                              </button>
-                              <button 
-                                onClick={() => disconnectConnector(connector.id)}
-                                className="px-3 rounded-sm bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors"
-                              >
-                                ✕
-                              </button>
-                            </>
-                          ) : (
-                            <button 
-                              onClick={() => connectConnector(connector.id)}
-                              className="flex-1 rounded-sm bg-primary/10 border border-primary/30 py-1.5 text-xs font-bold uppercase tracking-widest text-primary hover:bg-primary/20 transition-colors"
-                            >
-                              Connect {connector.name}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+      <div className={connectorPanelBleed}>
+        <ConnectorPageStack>
+        <ConnectorSectionGutter />
+        <LineGridFrame flush>
+        <ConnectorTileGrid variant="kpi">
+          {[
+            { label: "Records indexed", value: String(totalRecords), detail: "Live memory records from backend" },
+            { label: "Active sources", value: String(connectedCount), detail: `${connectors.length} configured source slots` },
+            {
+              label: "Failed syncs",
+              value: String(failedSyncs),
+              detail: failedSyncs ? "Needs operator review" : "No failing diagnostics",
+            },
+            {
+              label: "Source events",
+              value: String(realtimeTick),
+              detail: realtimeOnline ? "Live connector updates received" : "Waiting for first source event",
+            },
+          ].map((stat) => (
+            <div key={stat.label} className={LINE_CELL}>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">{stat.label}</p>
+              <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight text-[#111827]">{stat.value}</p>
+              <p className="mt-1 text-xs text-[#6B7280]">{stat.detail}</p>
             </div>
           ))}
-        </div>
+        </ConnectorTileGrid>
+      </LineGridFrame>
 
-        {/* Sidebar Sections */}
-        <div className="space-y-8">
-          {/* Recommended Next Action */}
-          <div className="rounded-sm border border-chart-5/30 bg-chart-5/5 p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-chart-5/10 rounded-full -mr-12 -mt-12 blur-2xl" />
-            <h3 className="text-xs font-bold uppercase tracking-widest text-chart-5 mb-4">Recommended Next</h3>
-            {!githubConnected ? (
-              <>
-                <h4 className="text-lg font-bold text-foreground mb-2">Connect GitHub</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  Your local workspace is indexed, but MemoryOS cannot yet understand PRs, issues, commits, or repo decisions.
-                </p>
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-xs text-foreground">
-                    <span className="text-chart-2">+</span> Better agent handoffs
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-foreground">
-                    <span className="text-chart-2">+</span> Repo-aware planning
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-foreground">
-                    <span className="text-chart-2">+</span> Bug history memory
+      <ConnectorSectionGutter />
+      <LineGridFrame flush>
+        <div className={cn("border-b border-[#E5E7EB] px-5 py-4", LINE_CELL)}>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">Ingestion control</p>
+          <p className="mt-1 text-sm text-[#6B7280]">
+            Run source syncs without blocking the console. Connector events refresh this page automatically.
+          </p>
+        </div>
+        <ConnectorTileGrid variant="tall">
+          {/* Col 1 — primary action */}
+          <div className="flex flex-col p-0">
+            <div className="border-b border-[#E5E7EB] px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">Primary next step</p>
+            </div>
+            <div className="flex flex-1 flex-col px-4 py-4">
+              <p className="text-base font-semibold text-[#111827]">
+                {githubConnected ? "Refresh GitHub memory" : "Connect GitHub source"}
+              </p>
+              <p className="mt-2 text-sm leading-5 text-[#6B7280]">
+                {githubConnected
+                  ? "Pull latest PRs, issues, commits, and repo decisions into the company graph."
+                  : "Give agents repo-aware history before handoffs, debugging, and planning."}
+              </p>
+              <div className="mt-4 grid gap-px border border-[#E5E7EB] bg-[#E5E7EB] text-xs">
+                <div className="grid grid-cols-[7rem_1fr] gap-px bg-[#E5E7EB]">
+                  <div className="bg-[#F9FAFB] px-2 py-1.5 font-semibold uppercase tracking-wide text-[#9CA3AF]">Source</div>
+                  <div className="flex items-center gap-2 bg-white px-2 py-1.5 text-[#111827]">
+                    <ConnectorBrandIcon id="github" className="size-4" />
+                    GitHub
                   </div>
                 </div>
-                <button 
-                  onClick={() => connectConnector("github")}
-                  className="w-full rounded-sm bg-chart-5 py-2 text-xs font-bold text-background hover:bg-chart-5/90 transition-colors"
-                >
-                  Connect GitHub
-                </button>
-              </>
-            ) : (
-              <>
-                <h4 className="text-lg font-bold text-foreground mb-2">Run GitHub Sync</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  GitHub is connected. Run sync to refresh PRs, issues, commits, and decisions into MemoryOS.
-                </p>
-                <button
-                  onClick={() => connectConnector("github")}
-                  disabled={githubStatus === "syncing"}
-                  className="w-full rounded-sm bg-chart-5 py-2 text-xs font-bold text-background hover:bg-chart-5/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {githubStatus === "syncing" ? "GitHub Syncing..." : "Sync GitHub Now"}
-                </button>
-              </>
-            )}
+                <div className="grid grid-cols-[7rem_1fr] gap-px bg-[#E5E7EB]">
+                  <div className="bg-[#F9FAFB] px-2 py-1.5 font-semibold uppercase tracking-wide text-[#9CA3AF]">State</div>
+                  <div className="bg-white px-2 py-1.5 font-medium text-[#111827]">
+                    {githubConnected ? "Connected" : "Not connected"}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="border-t border-[#E5E7EB] p-4">
+              <ConnectorActionButton
+                loading={
+                  actionLoading === "github" || githubStatus === "syncing" || githubStatus === "pending"
+                }
+                className="flex h-10 w-full items-center justify-center bg-[#111827] text-sm font-semibold text-white hover:bg-[#1F2937] disabled:opacity-50"
+                disabled={githubStatus === "syncing"}
+                onClick={() => void connectConnector("github")}
+              >
+                {githubStatus === "syncing" ? "Syncing GitHub…" : githubConnected ? "Sync GitHub" : "Connect GitHub"}
+              </ConnectorActionButton>
+            </div>
           </div>
 
-          {/* Live Activity Timeline */}
-          <div className="rounded-sm border border-border bg-card overflow-hidden">
-            <div className="border-b border-border bg-muted/40 px-5 py-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">Recent Ingestion Activity</h3>
+          {/* Col 2 — latest sync */}
+          <div className="flex flex-col p-0">
+            <div className="border-b border-[#E5E7EB] px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">Latest ingestion</p>
             </div>
-            <div className="p-5 space-y-4">
-              {activity.map((item, i) => (
-                <div key={i} className="relative pl-5 border-l border-border pb-4 last:pb-0">
-                  <div className={`absolute -left-1 top-1 h-2 w-2 rounded-full ${item.status === "success" ? "bg-chart-2" : "bg-primary"}`} />
-                  <div className="flex justify-between items-baseline mb-0.5">
-                    <p className="text-xs font-medium text-foreground/90">{item.message}</p>
-                    <span className="text-xs font-mono text-muted-foreground">{item.time}</span>
+            <div className="flex flex-1 flex-col px-4 py-4">
+              {latestSyncLog ? (
+                <div className="grid gap-px border border-[#E5E7EB] bg-[#E5E7EB] text-sm">
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-px bg-[#E5E7EB]">
+                    <div className="bg-[#F9FAFB] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
+                      Source
+                    </div>
+                    <div className="bg-white px-2 py-2 font-semibold text-[#111827]">{titleFromType(latestSyncLog.type)}</div>
+                  </div>
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-px bg-[#E5E7EB]">
+                    <div className="bg-[#F9FAFB] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
+                      Result
+                    </div>
+                    <div className="bg-white px-2 py-2 text-[#374151]">{syncLogSummary(latestSyncLog)}</div>
+                  </div>
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-px bg-[#E5E7EB]">
+                    <div className="bg-[#F9FAFB] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
+                      When
+                    </div>
+                    <div className="bg-white px-2 py-2 text-xs text-[#6B7280]">{formatConnectorDate(latestSyncLog.at)}</div>
+                  </div>
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-px bg-[#E5E7EB]">
+                    <div className="bg-[#F9FAFB] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
+                      Status
+                    </div>
+                    <div className="bg-white px-2 py-2">
+                      <IntelHealthPill label={latestSyncLog.status} tone={latestSyncLog.status === "success" ? "good" : "error"} />
+                    </div>
                   </div>
                 </div>
-              ))}
-              {activity.length === 0 && (
-                <p className="text-xs text-muted-foreground italic">No recent activity</p>
+              ) : (
+                <div className="flex flex-1 flex-col justify-center border border-dashed border-[#E5E7EB] bg-[#FAFAFA] px-4 py-6 text-center">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">Queue empty</p>
+                  <p className="mt-3 text-sm font-medium text-[#374151]">Waiting for first sync</p>
+                  <p className="mt-2 text-xs leading-5 text-[#6B7280]">Connect GitHub or sync a source to record ingestion here.</p>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Memory Extraction Panel */}
-          <div className="rounded-sm border border-border bg-card p-6">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground mb-6 flex items-center justify-between">
-              What MemoryOS extracts
-              <span className="h-1.5 w-1.5 rounded-full bg-chart-2" />
-            </h3>
-            <div className="space-y-8">
-              {EXTRACTS.map((extract) => (
-                <div key={extract.source} className="space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-primary">{extract.source}</h4>
-                  <ul className="space-y-2">
-                    {extract.items.map((item, i) => (
-                      <li key={i} className="text-xs text-muted-foreground flex items-center gap-2">
-                        <span className="text-muted-foreground">•</span>
+          {/* Col 3 — live activity */}
+          <div className="flex flex-col p-0">
+            <div className="flex items-center justify-between gap-2 border-b border-[#E5E7EB] px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">Live activity</p>
+              {realtimeOnline ? <IntelPulseDot tone="emerald" /> : null}
+            </div>
+            <div className="flex flex-1 flex-col px-4 py-4">
+              {activity.slice(0, 5).length > 0 ? (
+                <div className="overflow-hidden border border-[#E5E7EB]">
+                  <div className="grid grid-cols-[1fr_3.5rem] gap-px border-b border-[#E5E7EB] bg-[#F9FAFB] text-[10px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
+                    <div className="px-2 py-1.5">Event</div>
+                    <div className="px-2 py-1.5 text-right">Time</div>
+                  </div>
+                  {activity.slice(0, 5).map((item, index) => (
+                    <div
+                      key={`${item.time}-${index}`}
+                      className={cn(
+                        "grid grid-cols-[1fr_3.5rem] gap-2 border-[#E5E7EB] px-2 py-2 text-sm",
+                        index > 0 && "border-t",
+                      )}
+                    >
+                      <div className="flex min-w-0 items-start gap-2">
+                        <span
+                          className={cn(
+                            "mt-1.5 size-1.5 shrink-0",
+                            item.status === "error" ? "bg-[#EF4444]" : item.status === "success" ? "bg-[#10B981]" : "bg-[#14B8A6]",
+                          )}
+                        />
+                        <span className="truncate text-[#374151]">{item.message}</span>
+                      </div>
+                      <span className="text-right text-xs tabular-nums text-[#9CA3AF]">{item.time}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-1 flex-col overflow-hidden border border-[#E5E7EB]">
+                  <div className="grid grid-cols-[1fr_3.5rem] gap-px border-b border-[#E5E7EB] bg-[#F9FAFB] text-[10px] font-semibold uppercase tracking-wide text-[#9CA3AF]">
+                    <div className="px-2 py-1.5">Event</div>
+                    <div className="px-2 py-1.5 text-right">Time</div>
+                  </div>
+                  {["Listening for connector events", "Next: OAuth callbacks", "Next: sync completions"].map((row, index) => (
+                    <div
+                      key={row}
+                      className={cn(
+                        "grid grid-cols-[1fr_3.5rem] gap-2 border-[#E5E7EB] bg-[#FAFAFA] px-2 py-2.5 text-xs text-[#9CA3AF]",
+                        index > 0 && "border-t",
+                      )}
+                    >
+                      <span className="italic">{row}</span>
+                      <span className="text-right">—</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Col 4 — extracts */}
+          <div className="flex flex-col p-0">
+            <div className="border-b border-[#E5E7EB] px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">What MemoryOS extracts</p>
+            </div>
+            <div className="flex flex-1 flex-col overflow-hidden">
+              {EXTRACTS.map((extract, index) => (
+                <div
+                  key={extract.source}
+                  className={cn("px-4 py-3", index > 0 && "border-t border-[#E5E7EB]")}
+                >
+                  <div className="flex items-center gap-2">
+                    <ConnectorBrandIcon id={connectorBrandIdFromName(extract.source)} className="size-5" />
+                    <p className="text-sm font-semibold text-[#111827]">{extract.source}</p>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {extract.items.map((item) => (
+                      <span
+                        key={item}
+                        className="border border-[#E5E7EB] bg-[#F9FAFB] px-1.5 py-0.5 text-[11px] text-[#374151]"
+                      >
                         {item}
-                      </li>
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
+        </ConnectorTileGrid>
+      </LineGridFrame>
+
+      {showLogs ? (
+        <>
+          <ConnectorSectionGutter />
+          <LineGridFrame flush>
+          <div className={cn("border-b border-[#E5E7EB] px-5 py-4", LINE_CELL)}>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">Connector sync logs</p>
+            <p className="mt-1 text-sm text-[#6B7280]">Recent backend ingestion jobs and extracted memory contracts.</p>
+          </div>
+          {syncLogs.length === 0 ? (
+            <div className={cn("px-5 py-12 text-center text-sm text-[#6B7280]", LINE_CELL)}>No sync logs yet.</div>
+          ) : (
+            <div className={cn("grid gap-px", LINE_GRID_LINE)}>
+              {syncLogs.slice(0, 20).map((log) => (
+                <div
+                  key={log.id}
+                  className={cn("grid gap-px md:grid-cols-[12rem_minmax(0,1fr)_auto]", LINE_GRID_LINE)}
+                >
+                  <div className={LINE_CELL}>
+                    <p className="text-sm font-semibold text-[#111827]">{titleFromType(log.type)}</p>
+                    <p className="mt-1 text-xs text-[#9CA3AF]">{formatConnectorDate(log.at)}</p>
+                  </div>
+                  <div className={LINE_CELL}>
+                    <p className="text-sm text-[#374151]">{syncLogSummary(log)}</p>
+                    {log.message ? (
+                      <p className="mt-1 text-xs text-[#6B7280]">{compactConnectorMessage(log.message)}</p>
+                    ) : null}
+                  </div>
+                  <div className={cn("flex items-center px-4", LINE_CELL)}>
+                    <IntelHealthPill label={log.status} tone={log.status === "success" ? "good" : "error"} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </LineGridFrame>
+        </>
+      ) : null}
+
+      <ConnectorSectionGutter />
+      <LineGridFrame flush>
+        <div className={cn("border-b border-[#E5E7EB] px-5 py-4", LINE_CELL)}>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B7280]">Source health</p>
+          <p className="mt-1 text-sm text-[#6B7280]">
+            Connector diagnostics — auth, transport, and checkpoints summarized for operators.
+          </p>
         </div>
+        {diagnostics.length === 0 ? (
+          <div className={LINE_CELL}>
+            <IntelEmpty
+              icon={Radio}
+              title="No diagnostics yet"
+              description="The backend has not returned source health diagnostics for this workspace."
+            />
+          </div>
+        ) : (
+          <ConnectorTileGrid variant="health">
+            {buildHealthGridSlots(diagnostics).map((slot, index) =>
+              slot.kind === "empty" ? (
+                <SourceHealthPlaceholderCell key={`health-empty-${index}`} />
+              ) : (
+                <div key={slot.item.type} className={cn("flex h-full flex-1 flex-col", LINE_CELL)}>
+                    {(() => {
+                      const item = slot.item;
+                      const severity = connectorSeverity(item);
+                      const label = healthLabel(item);
+                      return (
+                        <>
+                          <div className="flex items-start justify-between gap-3">
+                            <ConnectorBrandAvatar
+                              connectorId={connectorBrandId(item.type)}
+                              className="size-10 rounded-md border-[#E5E7EB] shadow-none"
+                              iconClassName="size-5"
+                            />
+                            <IntelHealthPill label={label} tone={severityTone(severity)} />
+                          </div>
+                          <p className="mt-6 text-base font-semibold text-[#111827]">{titleFromType(item.type)}</p>
+                          <p className="mt-2 text-sm leading-5 text-[#6B7280]">
+                            {item.transport.protocol.toUpperCase()} transport · {authLabel(item)}
+                          </p>
+                          <div className={cn("mt-5 grid grid-cols-2 gap-px border border-[#E5E7EB]", LINE_GRID_LINE)}>
+                            <div className={cn("p-3", LINE_CELL)}>
+                              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">Recent keys</p>
+                              <p className="mt-1 text-lg font-semibold tabular-nums text-[#111827]">
+                                {item.checkpoints?.recentItemKeysCount ?? 0}
+                              </p>
+                            </div>
+                            <div className={cn("p-3", LINE_CELL)}>
+                              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9CA3AF]">Retries</p>
+                              <p className="mt-1 text-lg font-semibold tabular-nums text-[#111827]">{item.retry.retryCount}</p>
+                            </div>
+                          </div>
+                          <div className="mt-5 flex-1 border-t border-[#E5E7EB] pt-3">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#111827]">Checkpoint</p>
+                            <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+                              {formatConnectorDate(item.checkpoints?.lastCheckpointAt)}
+                            </p>
+                            {formatContractCounts(item.contractCounts) ? (
+                              <p className="mt-2 text-xs font-medium text-[#0F766E]">{formatContractCounts(item.contractCounts)}</p>
+                            ) : null}
+                            {item.retry.lastFailureReason ? (
+                              <p className="mt-2 text-xs text-[#B91C1C]">{compactConnectorMessage(item.retry.lastFailureReason)}</p>
+                            ) : (
+                              <p className="mt-2 text-xs text-[#9CA3AF]">No recent sync failure reported.</p>
+                            )}
+                          </div>
+                          {item.status === "syncing" ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="mt-4 h-10 w-full rounded-none border border-[#E5E7EB] bg-white"
+                              variant="outline"
+                              onClick={() => void unlockConnector(item.type, addActivity)}
+                            >
+                              Force unlock stuck sync
+                            </Button>
+                          ) : null}
+                        </>
+                      );
+                    })()}
+                </div>
+              ),
+            )}
+          </ConnectorTileGrid>
+        )}
+      </LineGridFrame>
+
+      {categories.map((category) => {
+        const categoryConnectors = connectors.filter((connector) => connector.category === category);
+        if (categoryConnectors.length === 0) return null;
+        const open = expandedCategories[category] ?? true;
+        return (
+          <Fragment key={category}>
+            <ConnectorSectionGutter />
+            <LineGridFrame flush>
+              <button
+                type="button"
+                onClick={() => toggleCategory(category)}
+                className={cn(
+                  "flex w-full items-center justify-between gap-3 border-b border-[#E5E7EB] px-5 py-4 text-left transition hover:bg-[#FAFAFA]",
+                  LINE_CELL,
+                )}
+                aria-expanded={open}
+              >
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#111827]">{category}</h3>
+                  <p className="mt-1 text-xs text-[#6B7280]">
+                    {categoryConnectors.length} live
+                    {(COMING_SOON_SLOTS[category]?.length ?? 0) > 0
+                      ? ` · ${COMING_SOON_SLOTS[category]!.length} coming soon`
+                      : ""}
+                  </p>
+                </div>
+                <ChevronDown
+                  className={cn("size-4 shrink-0 text-[#9CA3AF] transition-transform duration-200", open && "rotate-180")}
+                />
+              </button>
+              {open ? (
+                <ConnectorTileGrid>
+                  {buildCategoryGridItems(categoryConnectors, category).map((item, index) => {
+                    if (item.kind === "coming-soon") {
+                      return (
+                        <ConnectorComingSoonCell
+                          key={`${category}-soon-${item.title}`}
+                          title={item.title}
+                          detail={item.detail}
+                        />
+                      );
+                    }
+                    if (item.kind === "reserved") {
+                      return <ConnectorPlaceholderCell key={`${category}-reserved-${index}`} />;
+                    }
+                    const connector = item.connector;
+                    return (
+                      <ConnectorGridCell
+                        key={connector.id}
+                        connector={connector}
+                        diagnostic={diagnosticForConnector(diagnostics, connector.id)}
+                        active={isActiveStatus(connector.status)}
+                        locked={!canUseConnector(currentPlan, connector.requiredPlan)}
+                        currentPlan={currentPlan}
+                        health={healthLabel(diagnosticForConnector(diagnostics, connector.id), connector)}
+                        connectLoading={
+                          actionLoading === connector.id
+                          || connector.status === "syncing"
+                          || connector.status === "pending"
+                        }
+                        onConnect={() => void connectConnector(connector.id)}
+                        onDisconnect={() => disconnectConnector(connector.id)}
+                        onUpgrade={() => void routeToUpgrade(connector.requiredPlan)}
+                      />
+                    );
+                  })}
+                </ConnectorTileGrid>
+              ) : null}
+            </LineGridFrame>
+          </Fragment>
+        );
+      })}
+        </ConnectorPageStack>
       </div>
     </div>
   );

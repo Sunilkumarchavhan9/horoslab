@@ -1,7 +1,18 @@
-"use client";
-
-import { OrganizationList } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+
+const OrganizationListPanel = dynamic(
+  () =>
+    import("./organization-list-panel").then((mod) => ({
+      default: mod.OrganizationListPanel,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <p className="py-8 text-center text-sm text-[#9ca5b0]">Loading organization picker…</p>
+    ),
+  },
+);
 
 export default function ChooseOrganizationPage() {
   return (
@@ -13,10 +24,7 @@ export default function ChooseOrganizationPage() {
         </p>
 
         <div className="mt-8 rounded-xl border border-[#2a2a2a] bg-[#0f1114] p-4 sm:p-6">
-          <OrganizationList
-            afterSelectOrganizationUrl="/developer-console"
-            afterCreateOrganizationUrl="/developer-console"
-          />
+          <OrganizationListPanel />
         </div>
 
         <div className="mt-6">

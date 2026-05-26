@@ -28,14 +28,16 @@ function UsageBar({
   limit: number;
   compact?: boolean;
 }) {
-  const percent = usagePercent(used, limit);
+  const safeUsed = Number.isFinite(used) ? used : 0;
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? limit : 0;
+  const percent = usagePercent(safeUsed, safeLimit);
 
   return (
     <div className={compact ? "min-w-0 flex-1" : "w-full"}>
       <div className={`flex items-center justify-between gap-2 ${compact ? "text-xs" : "text-sm"}`}>
         <span className="font-medium text-foreground">{label}</span>
         <span className="shrink-0 text-muted-foreground">
-          {used.toLocaleString()} / {limit.toLocaleString()} ({percent}%)
+          {safeUsed.toLocaleString()} / {safeLimit.toLocaleString()} ({percent}%)
         </span>
       </div>
       <div

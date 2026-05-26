@@ -1,11 +1,14 @@
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { SignJWT } from "jose";
+import { isClerkEnabled } from "@/lib/clerk";
 import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 type ConnectorRouteContext = {
   params: Promise<{ connectorPath?: string[] }>;
 };
 const UPSTREAM_TIMEOUT_MS = 45_000;
+const EVENT_STREAM_UPSTREAM_TIMEOUT_MS = 10 * 60_000;
 
 function isRetriableProxyError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
@@ -17,6 +20,70 @@ function isRetriableProxyError(error: unknown): boolean {
     message.includes("fetch failed") ||
     message.includes("network")
   );
+}
+
+function offlineEventStream(detail: string): Response {
+  const body = new ReadableStream({
+    start(controller) {
+      const encoder = new TextEncoder();
+      controller.enqueue(
+        encoder.encode(
+          [
+            "retry: 15000",
+            "event: connector-offline",
+            `data: ${JSON.stringify({ status: "offline", detail })}`,
+            "",
+            "",
+          ].join("\n"),
+        ),
+      );
+      controller.close();
+    },
+  });
+
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/event-stream; charset=utf-8",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-MemoryOS-Proxy-Fallback": "connector-events-offline",
+    },
+  });
+}
+
+async function createConnectorAuthHeader(): Promise<string | null> {
+  let userId: string | null = null;
+
+  if (isClerkEnabled()) {
+    const authState = await auth();
+    userId = authState.userId;
+  } else {
+    userId = process.env.MEMORYOS_DEV_USER_ID?.trim() || "user-demo";
+  }
+
+  const secret = process.env.MEMORYOS_JWT_SECRET ?? process.env.JWT_SECRET;
+  if (!userId || !secret) return null;
+
+  const issuer =
+    process.env.MEMORYOS_JWT_ISSUER ??
+    process.env.JWT_ISSUER ??
+    "memoryos";
+  const audience =
+    process.env.MEMORYOS_JWT_AUDIENCE ??
+    process.env.JWT_AUDIENCE ??
+    "memoryos-api";
+
+  const token = await new SignJWT({})
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(userId)
+    .setIssuer(issuer)
+    .setAudience(audience)
+    .setIssuedAt()
+    .setExpirationTime("1h")
+    .sign(new TextEncoder().encode(secret));
+
+  return `Bearer ${token}`;
 }
 
 export async function GET(
@@ -70,6 +137,11 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
     const eventToken = url.searchParams.get("token");
     if (eventToken && eventToken.trim().length > 0) {
       headers.set("authorization", `Bearer ${eventToken.trim()}`);
+    } else {
+      const authHeader = await createConnectorAuthHeader();
+      if (authHeader) {
+        headers.set("authorization", authHeader);
+      }
     }
   }
   if (userId) {
@@ -122,7 +194,10 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
   try {
     const runFetch = async () => {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+      const timeout = setTimeout(
+        () => controller.abort(),
+        normalizedPath === "/events" ? EVENT_STREAM_UPSTREAM_TIMEOUT_MS : UPSTREAM_TIMEOUT_MS,
+      );
       try {
         return await fetch(url.toString(), { ...init, signal: controller.signal });
       } finally {
@@ -135,7 +210,7 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
       response = await runFetch();
     } catch (error) {
       const isIdempotent = request.method === "GET" || request.method === "HEAD";
-      if (isIdempotent && isRetriableProxyError(error)) {
+      if (isIdempotent && normalizedPath !== "/events" && isRetriableProxyError(error)) {
         response = await runFetch();
       } else {
         throw error;
@@ -151,8 +226,11 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
       headers: responseHeaders,
     });
   } catch (error) {
-    console.error("[Connector Proxy] Error:", error);
     const isGet = request.method === "GET";
+    if (isGet && normalizedPath === "/events") {
+      return offlineEventStream(error instanceof Error ? error.message : "Unknown proxy error");
+    }
+    console.error("[Connector Proxy] Error:", error);
     if (isGet && (normalizedPath === "/" || normalizedPath === "")) {
       return new Response(
         JSON.stringify({

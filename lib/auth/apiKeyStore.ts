@@ -112,7 +112,7 @@ export function revokeApiKeyForUser(userId: string, keyId: string): ApiKeyRecord
   return target;
 }
 
-export function verifyApiKeyToken(token: string): { userId: string } | null {
+export function verifyApiKeyToken(token: string): { userId: string; keyId: string } | null {
   if (!token || typeof token !== "string") {
     return null;
   }
@@ -135,5 +135,5 @@ export function verifyApiKeyToken(token: string): { userId: string } | null {
 
   key.lastUsedAt = new Date(nowMs).toISOString();
   writeStore(store);
-  return { userId: key.userId };
+  return { userId: key.userId, keyId: key.id };
 }

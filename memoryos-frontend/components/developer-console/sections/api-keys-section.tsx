@@ -1,10 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { DitherBackground } from "@/components/ui/dither-background";
-import { EASE_OUT } from "@/lib/motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { KeyRound } from "lucide-react";
+import {
+  INTEL_LINE_CELL,
+  IntelLineGridFrame,
+  IntelPageStack,
+  IntelSectionGutter,
+  IntelSectionScroll,
+  IntelTileGrid,
+  intelPanelBleed,
+  intelSectionRootClass,
+  OverviewChartRow,
+} from "@/components/developer-console/intel-line-grid";
+import {
+  IntelligenceBreadcrumb,
+  IntelligenceDataTable,
+  IntelligenceEntityHeader,
+  IntelligenceFlowChart,
+  IntelligenceGhostButton,
+  IntelligenceStatusBadge,
+  IntelligenceWorkspace,
+  type IntelChartPoint,
+  type IntelTableRow,
+} from "@/components/developer-console/os-intelligence-shell";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
+import type { BillingPlan } from "@/lib/plan-catalog";
+import { PLAN_CATALOG, formatLimit } from "@/lib/plan-catalog";
+import { cn } from "@/lib/utils";
 
 type PermissionMode = "full" | "scoped";
 
@@ -66,6 +89,19 @@ function formatDate(value: string | null): string {
   });
 }
 
+function statusTone(status: ApiKeyRecord["status"]): IntelTableRow["sourceTone"] {
+  return status === "active" ? "cyan" : "rose";
+}
+
+function buildApiKeyChartSeries(active: number, requests24h: number): IntelChartPoint[] {
+  const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  return labels.map((label, index) => ({
+    label,
+    retrieval: Math.max(0, Math.round(requests24h / 7) + (index % 3)),
+    memory: Math.max(0, active + (index % 2)),
+  }));
+}
+
 async function fetchApiKeys<T>(path: string, init?: RequestInit): Promise<T> {
   const token = await getOrCreateMemoryToken();
   if (!token) {
@@ -97,24 +133,90 @@ async function fetchApiKeys<T>(path: string, init?: RequestInit): Promise<T> {
   return payload as T;
 }
 
-export function ApiKeysSection() {
+type ApiKeysSectionProps = {
+  workspaceName: string;
+  currentPlan?: BillingPlan;
+  realtimeVersion?: number;
+};
+
+function ApiKeysInsight({
+  activeCount,
+  scopedCount,
+  lastUpdated,
+}: {
+  activeCount: number;
+  scopedCount: number;
+  lastUpdated: string;
+}) {
+  return (
+    <div className={cn(INTEL_LINE_CELL, "memory-graph-sidebar-cell flex flex-col")}>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+        Key posture
+      </p>
+      <p className="mt-3 text-lg font-semibold text-[#111827]">
+        {activeCount} active · {scopedCount} scoped
+      </p>
+      <p className="mt-3 border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-xs leading-5 text-[#6B7280]">
+        Rotate scoped keys for production agents. Full-access keys should stay in secure runtimes only.
+      </p>
+      <p className="mt-3 text-xs text-[#9CA3AF]">
+        Last sync · {lastUpdated === "-" ? "pending" : formatDate(lastUpdated)}
+      </p>
+    </div>
+  );
+}
+
+export function ApiKeysSection({
+  workspaceName,
+  currentPlan = "Free",
+  realtimeVersion = 0,
+}: ApiKeysSectionProps) {
+  const didLoadRef = useRef(false);
+  const planLimits = PLAN_CATALOG[currentPlan];
   const [keys, setKeys] = useState<ApiKeyRecord[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [keyName, setKeyName] = useState(randomName);
   const [expires, setExpires] = useState<(typeof KEY_EXPIRY_OPTIONS)[number]>("1 year");
   const [permissionMode, setPermissionMode] = useState<PermissionMode>("full");
   const [contentTag, setContentTag] = useState("continuity");
-  const [selectedEndpoints, setSelectedEndpoints] = useState<string[]>(["retrieve", "resume", "handoff"]);
+  const [selectedEndpoints, setSelectedEndpoints] = useState<string[]>([
+    "retrieve",
+    "resume",
+    "handoff",
+  ]);
   const [revealedToken, setRevealedToken] = useState<string | null>(null);
   const [isLoadingKeys, setIsLoadingKeys] = useState(true);
   const [isSavingKey, setIsSavingKey] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>("-");
+  const [chartRange, setChartRange] = useState("7d");
 
   const activeKeys = keys.filter((key) => key.status === "active");
   const scopedCount = keys.filter((key) => key.mode === "scoped").length;
   const fullCount = keys.filter((key) => key.mode === "full").length;
-  const totalRequests24h = keys.reduce((sum, key) => sum + key.requests24h, 0);
+  const totalRequests24h = keys.reduce(
+    (sum, key) => sum + (Number.isFinite(key.requests24h) ? key.requests24h : 0),
+    0,
+  );
+
+  const chartData = useMemo(
+    () => buildApiKeyChartSeries(activeKeys.length, totalRequests24h),
+    [activeKeys.length, totalRequests24h],
+  );
+
+  const auditRows: IntelTableRow[] = useMemo(
+    () =>
+      keys.slice(0, 12).map((key, index) => ({
+        id: `#${String(index + 1).padStart(4, "0")}`,
+        title: key.status === "active" ? "API key active" : "API key revoked",
+        operator: key.name,
+        detail: key.prefix,
+        value: formatDate(key.createdAt),
+        source: key.mode,
+        sourceTone: statusTone(key.status),
+      })),
+    [keys],
+  );
 
   async function loadKeys() {
     setErrorMessage(null);
@@ -148,23 +250,22 @@ export function ApiKeysSection() {
   }
 
   useEffect(() => {
+    if (didLoadRef.current) return;
+    didLoadRef.current = true;
     let cancelled = false;
     setIsLoadingKeys(true);
     void (async () => {
       if (!cancelled) await loadKeys();
     })();
-
-    const interval = window.setInterval(() => {
-      if (!cancelled) {
-        void loadKeys();
-      }
-    }, 8000);
-
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    if (realtimeVersion <= 0) return;
+    void loadKeys();
+  }, [realtimeVersion]);
 
   async function createKey() {
     const normalizedName = keyName.trim();
@@ -202,9 +303,10 @@ export function ApiKeysSection() {
   async function revokeKey(keyId: string) {
     setErrorMessage(null);
     try {
-      const response = await fetchApiKeys<{ key: ApiKeyRecord }>(`/api/memory/api-keys/${keyId}/revoke`, {
-        method: "POST",
-      });
+      const response = await fetchApiKeys<{ key: ApiKeyRecord }>(
+        `/api/memory/api-keys/${keyId}/revoke`,
+        { method: "POST" },
+      );
       setKeys((current) => current.map((key) => (key.id === keyId ? response.key : key)));
       setLastUpdated(new Date().toISOString());
     } catch (error) {
@@ -217,302 +319,331 @@ export function ApiKeysSection() {
     try {
       await navigator.clipboard.writeText(revealedToken);
     } catch {
-      // best effort copy
+      // best effort
     }
   }
 
+  const keysLive = activeKeys.length > 0 || keys.length > 0;
+
   return (
-    <>
-      <motion.div
-        className="relative overflow-hidden border border-border bg-background px-4 py-4 sm:px-5"
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.28, ease: EASE_OUT }}
-      >
-        <div className="absolute inset-0 bg-primary/5" />
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          animate={{ x: [0, 2, -2, 0], y: [0, -1, 1, 0] }}
-          transition={{ duration: 9, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-        >
-          <DitherBackground className="h-full w-full opacity-25" accent="var(--color-primary)" density={0.54} cols={260} rows={72} />
-        </motion.div>
-        <div className="relative z-10 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="inline-block rounded-md bg-card px-2 py-1 text-base font-semibold tracking-tighter sm:text-lg">
-            API Keys
-          </h1>
-          <br />
-          <p className="mt-1 inline-block rounded-md bg-card px-2 py-1 text-xs leading-6 text-muted-foreground sm:text-sm">
-            Create and manage secure keys for retrieve, resume, continue, and handoff APIs.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <motion.button
-            type="button"
-            whileHover={{ y: -1, scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.18, ease: EASE_OUT }}
-            onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-md border border-primary/50 bg-primary px-3.5 py-2 text-xs font-semibold tracking-wider text-primary-foreground transition hover:bg-primary/90"
-          >
-            <span aria-hidden>+</span>
-             CREATE KEY
-          </motion.button>
-          <motion.button
-            type="button"
-            whileHover={{ y: -1, scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.18, ease: EASE_OUT }}
-            onClick={() => void loadKeys()}
-            className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3.5 py-2 text-xs font-semibold tracking-wider text-secondary-foreground"
-          >
-            <span aria-hidden>↻</span>
-            REFRESH
-          </motion.button>
-        </div>
-        </div>
-      </motion.div>
+    <div className={intelSectionRootClass}>
+      <IntelligenceWorkspace>
+        <IntelligenceBreadcrumb
+          items={["Dashboard", workspaceName, "API Keys"]}
+          actions={
+            <>
+              <IntelligenceGhostButton loading={isLoadingKeys} onClick={() => void loadKeys()}>
+                Refresh
+              </IntelligenceGhostButton>
+              <button
+                type="button"
+                onClick={openCreateModal}
+                className="h-10 rounded-none bg-[#111827] px-4 text-xs font-semibold uppercase tracking-wide text-white"
+              >
+                + Create key
+              </button>
+            </>
+          }
+        />
+        <IntelligenceEntityHeader
+          icon={KeyRound}
+          title="API Keys"
+          badge={
+            <IntelligenceStatusBadge live={keysLive}>
+              {activeKeys.length} active · {keys.length} total
+            </IntelligenceStatusBadge>
+          }
+          meta={
+            <span className="max-w-3xl text-[#9CA3AF]">
+              Secure keys for retrieve, resume, continue, and handoff APIs in {workspaceName}. Usage bills
+              to this workspace on the {currentPlan} plan (
+              {formatLimit(planLimits.searchLimit ?? 0)} searches/mo ·{" "}
+              {formatLimit(planLimits.tokenLimit ?? 0)} tokens/mo).
+            </span>
+          }
+        />
 
-      {revealedToken ? (
-        <div className="mt-2.5 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-3.5">
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <code className="rounded-md border border-border bg-muted px-2.5 py-1.5 text-xs text-muted-foreground">
-              {revealedToken}
-            </code>
-            <button
-              type="button"
-              onClick={copyToken}
-              className="rounded-md border border-border bg-popover px-2.5 py-1.5 text-xs font-medium text-muted-foreground"
-            >
-              COPY
-            </button>
-            <button
-              type="button"
-              onClick={() => setRevealedToken(null)}
-              className="rounded-md border border-border bg-popover px-2.5 py-1.5 text-xs font-medium text-muted-foreground"
-            >
-              I SAVED IT
-            </button>
-          </div>
-        </div>
-      ) : null}
-
-      {errorMessage ? (
-        <div className="mt-2.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-3 text-xs leading-5 text-destructive">
-          {errorMessage}
-        </div>
-      ) : null}
-
-      <div className="mt-2.5 grid gap-2.5 md:grid-cols-2 xl:grid-cols-4">
-        {[
-          { label: "Active keys", value: activeKeys.length, tone: "var(--color-chart-2)" },
-          { label: "Scoped keys", value: scopedCount, tone: "var(--color-chart-4)" },
-          { label: "Full-access keys", value: fullCount, tone: "var(--color-chart-5)" },
-          { label: "24h requests", value: totalRequests24h, tone: "var(--color-primary)" },
-        ].map((card) => (
-          <div
-            key={card.label}
-            className="relative overflow-hidden rounded-lg border border-border bg-card px-3.5 py-3"
-            style={{ borderTopColor: card.tone, borderTopWidth: "2px" }}
-          >
-            <DitherBackground
-              cols={52}
-              rows={20}
-              accent={card.tone}
-              density={0.52}
-              opacity={0.22}
-              className="pointer-events-none absolute inset-0"
-            />
-            <p className="relative">
-              <span className="inline-block rounded-sm bg-card px-1.5 py-0.5 text-xs font-semibold uppercase tracking-widest text-foreground">
-                {card.label}
-              </span>
-            </p>
-            <p className="relative mt-1">
-              <span className="inline-block rounded-sm bg-card px-1.5 py-0.5 text-xl font-semibold tracking-tight text-foreground">
-                {card.value}
-              </span>
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-2.5 grid gap-3 xl:grid-cols-2">
-        <div className="rounded-lg border border-border bg-card px-4 py-4">
-          <div className="flex items-center justify-between gap-2">
-            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="7.5" cy="4" r="2.5" /><path d="M5 6.5L1.5 10v.5H3l.5-.5V9h1.5" />
-              </svg>
-              Key Inventory
-            </p>
-            <span className="text-xs text-muted-foreground">{keys.length} total</span>
-          </div>
-
-          {isLoadingKeys ? (
-            <div className="mt-3 grid min-h-64 place-items-center rounded-lg border border-dashed border-border bg-muted text-center text-sm text-muted-foreground">
-              Loading API keys...
-            </div>
-          ) : keys.length === 0 ? (
-            <div className="mt-3 grid min-h-64 place-items-center rounded-lg border border-dashed border-border bg-muted text-center">
-              <div className="max-w-sm px-4">
-                <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-border text-muted-foreground">
-                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="15" cy="8" r="4.5" />
-                    <path d="M10.5 12.5l-7.5 7.5v1.5H5l.5-.5V20h2.5l.5-.5V18h1.5" />
-                  </svg>
-                </div>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tighter">No API keys yet</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Create your first key to run MemoryOS APIs programmatically from apps, agents, and MCP tools.
-                </p>
-                <button
-                  type="button"
-                  onClick={openCreateModal}
-                  className="mt-3 rounded-md border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-medium tracking-wider text-primary"
-                >
-                  + CREATE KEY
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-3 space-y-2.5">
-              {keys.map((key) => (
-                <div key={key.id} className="rounded-md border border-border bg-card px-3.5 py-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-semibold tracking-tight">{key.name}</p>
-                      <p className="mt-0.5 font-mono text-xs text-muted-foreground">{key.prefix}••••••••••••</p>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className={
-                          key.mode === "full"
-                            ? "rounded-md border border-chart-5/40 bg-chart-5/15 px-2 py-0.5 text-xs uppercase tracking-widest text-chart-5"
-                            : "rounded-md border border-chart-2/40 bg-chart-2/15 px-2 py-0.5 text-xs uppercase tracking-widest text-chart-2"
-                        }
-                      >
-                        {key.mode}
-                      </span>
-                      <span
-                        className={
-                          key.status === "active"
-                            ? "rounded-md border border-chart-2/40 bg-chart-2/15 px-2 py-0.5 text-xs uppercase tracking-widest text-chart-2"
-                            : "rounded-md border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-xs uppercase tracking-widest text-destructive"
-                        }
-                      >
-                        {key.status}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-4">
-                    <p>Created: {key.createdAt}</p>
-                    <p>Last used: {formatDate(key.lastUsedAt)}</p>
-                    <p>Expires: {formatDate(key.expiresAt)}</p>
-                    <p>24h req: {key.requests24h}</p>
-                  </div>
-                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      {key.endpoints.slice(0, 6).map((endpoint, endpointIndex) => (
-                        <span
-                          key={`${key.id}-endpoint-${endpointIndex}-${endpoint}`}
-                          className="rounded-md border border-border bg-card px-2 py-1 text-xs text-muted-foreground"
-                        >
-                          {endpoint}
-                        </span>
-                      ))}
-                    </div>
-                    {key.status === "active" ? (
+        <IntelSectionScroll>
+          <div className={intelPanelBleed}>
+            <IntelPageStack>
+              {revealedToken ? (
+                <>
+                  <div className={cn(INTEL_LINE_CELL, "space-y-3 py-4")}>
+                    <p className="text-sm font-semibold text-[#111827]">Copy this key now</p>
+                    <p className="text-xs text-[#6B7280]">
+                      You will not see the full token again after leaving this page.
+                    </p>
+                    <code className="block border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 font-mono text-xs text-[#374151]">
+                      {revealedToken}
+                    </code>
+                    <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
-                        onClick={() => void revokeKey(key.id)}
-                        className="rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-xs font-medium uppercase tracking-wider text-destructive"
+                        onClick={() => void copyToken()}
+                        className="h-9 rounded-none border border-[#E5E7EB] bg-white px-3 text-xs font-semibold uppercase tracking-wide text-[#374151]"
                       >
-                        Revoke
+                        Copy
                       </button>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-3">
-          <div className="rounded-lg border border-border bg-card px-4 py-4">
-            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1.5 3h8M1.5 5.5h8M1.5 8h5" />
-              </svg>
-              Audit Feed
-            </p>
-            <div className="mt-2.5 space-y-2">
-              {keys.slice(0, 4).map((key) => (
-                <div key={key.id} className="rounded-md border border-border bg-card px-3 py-2.5">
-                  <div className="flex items-start gap-2">
-                    <span
-                      className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${
-                        key.status === "active" ? "bg-chart-2" : "bg-destructive"
-                      }`}
-                    />
-                    <div>
-                      <p className="text-xs text-muted-foreground">{key.status === "active" ? "API key active" : "API key revoked"}: {key.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Created {formatDate(key.createdAt)}</p>
+                      <button
+                        type="button"
+                        onClick={() => setRevealedToken(null)}
+                        className="h-9 rounded-none bg-[#111827] px-3 text-xs font-semibold uppercase tracking-wide text-white"
+                      >
+                        I saved it
+                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
-              {keys.length === 0 ? (
-                <p className="rounded-md border border-border bg-card px-3 py-2.5 text-xs text-muted-foreground">
-                  No key events yet.
-                </p>
+                  <IntelSectionGutter />
+                </>
               ) : null}
-            </div>
+
+              {errorMessage ? (
+                <>
+                  <div className={cn(INTEL_LINE_CELL, "py-4 text-sm text-[#B91C1C]")}>{errorMessage}</div>
+                  <IntelSectionGutter />
+                </>
+              ) : null}
+
+              <IntelLineGridFrame flush>
+                <IntelTileGrid variant="kpi">
+                  {[
+                    ["Active keys", activeKeys.length.toString(), "Keys currently authorized"],
+                    ["Scoped keys", scopedCount.toString(), "Endpoint-limited credentials"],
+                    ["Full-access keys", fullCount.toString(), "Unrestricted MemoryOS APIs"],
+                    ["24h requests", totalRequests24h.toString(), "Observed usage across all keys"],
+                  ].map(([label, value, detail]) => (
+                    <div key={label} className={INTEL_LINE_CELL}>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6B7280]">
+                        {label}
+                      </p>
+                      <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight text-[#111827]">
+                        {value}
+                      </p>
+                      <p className="mt-1 text-xs text-[#6B7280]">{detail}</p>
+                    </div>
+                  ))}
+                </IntelTileGrid>
+              </IntelLineGridFrame>
+
+              <IntelSectionGutter />
+
+              <IntelLineGridFrame flush>
+                <OverviewChartRow>
+                  <div className={cn(INTEL_LINE_CELL, "overview-chart-cell min-w-0 p-0")}>
+                    <IntelligenceFlowChart
+                      embedded
+                      title="API usage signal"
+                      subtitle={`24h requests (${totalRequests24h}) vs active keys (${activeKeys.length}).`}
+                      data={chartData}
+                      range={chartRange}
+                      onRangeChange={setChartRange}
+                      emptyTitle="No API usage yet"
+                      emptyDescription="Create a key and run SDK or HTTP calls to populate this chart."
+                    />
+                  </div>
+                  <ApiKeysInsight
+                    activeCount={activeKeys.length}
+                    scopedCount={scopedCount}
+                    lastUpdated={lastUpdated}
+                  />
+                </OverviewChartRow>
+              </IntelLineGridFrame>
+
+              <IntelSectionGutter />
+
+              <IntelLineGridFrame flush>
+                <div className={cn(INTEL_LINE_CELL, "space-y-0 p-0")}>
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E7EB] px-5 py-4">
+                    <div>
+                      <p className="text-sm font-semibold text-[#111827]">Key inventory</p>
+                      <p className="mt-1 text-xs text-[#6B7280]">
+                        Names, scopes, and lifecycle for programmatic access.
+                      </p>
+                    </div>
+                    <span className="border border-[#E5E7EB] bg-[#F9FAFB] px-2.5 py-1 text-xs font-medium text-[#6B7280]">
+                      {keys.length} total
+                    </span>
+                  </div>
+
+                  {isLoadingKeys ? (
+                    <p className="border-t border-[#E5E7EB] py-14 text-center text-sm text-[#6B7280]">
+                      Loading API keys…
+                    </p>
+                  ) : keys.length === 0 ? (
+                    <div className="border-t border-[#E5E7EB] px-5 py-14 text-center">
+                      <p className="text-sm font-semibold text-[#111827]">No API keys yet</p>
+                      <p className="mt-2 text-xs text-[#6B7280]">
+                        Create your first key for apps, agents, and MCP tools.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={openCreateModal}
+                        className="mt-4 h-10 rounded-none bg-[#111827] px-4 text-xs font-semibold uppercase tracking-wide text-white"
+                      >
+                        + Create key
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="intel-line-table w-full min-w-[920px] text-left text-sm">
+                        <thead>
+                          <tr>
+                            <th className="w-10" />
+                            <th>Name</th>
+                            <th>Prefix</th>
+                            <th>Mode</th>
+                            <th>Status</th>
+                            <th>Last used</th>
+                            <th>24h req</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {keys.map((key) => (
+                            <tr key={key.id} className="group">
+                              <td className="px-4 py-3">
+                                <input
+                                  type="checkbox"
+                                  className="size-3.5 border-[#D1D5DB]"
+                                  readOnly
+                                />
+                              </td>
+                              <td className="px-4 py-3">
+                                <p className="font-medium text-[#111827]">{key.name}</p>
+                                <p className="mt-1 max-w-[220px] truncate text-[10px] text-[#9CA3AF]">
+                                  {key.endpoints.join(", ")}
+                                </p>
+                              </td>
+                              <td className="px-4 py-3 font-mono text-xs text-[#6B7280]">
+                                {key.prefix}••••••••
+                              </td>
+                              <td className="px-4 py-3">
+                                <span
+                                  className={cn(
+                                    "inline-flex border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                                    key.mode === "full"
+                                      ? "border-[#FEF3C7] bg-[#FEF3C7] text-[#B45309]"
+                                      : "border-[#E0E7FF] bg-[#EEF2FF] text-[#4338CA]",
+                                  )}
+                                >
+                                  {key.mode}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3">
+                                <span
+                                  className={cn(
+                                    "inline-flex border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                                    key.status === "active"
+                                      ? "border-[#D1FAE5] bg-[#ECFDF5] text-[#059669]"
+                                      : "border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]",
+                                  )}
+                                >
+                                  {key.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-[#6B7280]">
+                                {formatDate(key.lastUsedAt)}
+                              </td>
+                              <td className="px-4 py-3 tabular-nums text-[#6B7280]">
+                                {Number.isFinite(key.requests24h) ? key.requests24h : 0}
+                              </td>
+                              <td className="px-4 py-3">
+                                {key.status === "active" ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => void revokeKey(key.id)}
+                                    className="h-8 rounded-none border border-[#FECACA] bg-[#FEF2F2] px-2.5 text-[10px] font-semibold uppercase tracking-wide text-[#B91C1C]"
+                                  >
+                                    Revoke
+                                  </button>
+                                ) : (
+                                  <span className="text-xs text-[#9CA3AF]">—</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </IntelLineGridFrame>
+
+              <IntelSectionGutter />
+
+              <IntelLineGridFrame flush>
+                <div className={cn(INTEL_LINE_CELL, "space-y-0 p-0")}>
+                  <div className="border-b border-[#E5E7EB] px-5 py-4">
+                    <p className="text-sm font-semibold text-[#111827]">Audit feed</p>
+                    <p className="mt-1 text-xs text-[#6B7280]">
+                      Recent key lifecycle events for this workspace.
+                    </p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <IntelligenceDataTable
+                      lineGrid
+                      rows={auditRows}
+                      emptyMessage="No key events yet. Create or revoke a key to populate this feed."
+                    />
+                  </div>
+                </div>
+              </IntelLineGridFrame>
+
+              <IntelSectionGutter />
+            </IntelPageStack>
           </div>
-        </div>
-      </div>
+        </IntelSectionScroll>
+      </IntelligenceWorkspace>
 
       {showCreateModal ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-xl overflow-hidden rounded-lg border border-border bg-popover">
-            <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-4">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-[#111827]/40 p-4">
+          <div className="w-full max-w-xl overflow-hidden border border-[#E5E7EB] bg-white shadow-xl">
+            <div className="flex items-start justify-between gap-3 border-b border-[#E5E7EB] px-4 py-4">
               <div>
-                <h2 className="text-2xl font-semibold tracking-tighter">Create New API Key</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h2 className="text-lg font-semibold text-[#111827]">Create new API key</h2>
+                <p className="mt-1 text-sm text-[#6B7280]">
                   Configure access for MemoryOS retrieve, resume, continue, and handoff flows.
                 </p>
               </div>
-              <button type="button" onClick={closeCreateModal} className="text-lg text-muted-foreground">
+              <button
+                type="button"
+                onClick={closeCreateModal}
+                className="h-8 w-8 border border-[#E5E7EB] text-[#6B7280]"
+              >
                 ×
               </button>
             </div>
 
             <div className="space-y-4 px-4 py-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Key Name</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
+                  Key name
+                </p>
                 <input
                   value={keyName}
                   onChange={(event) => setKeyName(event.target.value)}
                   placeholder="helpful-context-key"
-                  className="mt-1.5 w-full rounded-md border border-border bg-card px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="prody-input mt-1.5 h-11 w-full px-3 text-sm"
                 />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Expires</p>
-                  <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
+                    Expires
+                  </p>
+                  <div className="mt-1.5 grid grid-cols-2 gap-px bg-[#E5E7EB]">
                     {KEY_EXPIRY_OPTIONS.map((option) => (
                       <button
                         key={option}
                         type="button"
                         onClick={() => setExpires(option)}
-                        className={`rounded-md border px-2.5 py-2 text-xs transition ${
+                        className={cn(
+                          "intel-filter-chip h-10 border-0 px-2.5 text-xs font-medium",
                           expires === option
-                            ? "border-primary/45 bg-primary/10 text-primary"
-                            : "border-border bg-card text-muted-foreground hover:border-ring"
-                        }`}
+                            ? "bg-[#111827] text-white"
+                            : "bg-white text-[#6B7280]",
+                        )}
                       >
                         {option}
                       </button>
@@ -521,23 +652,29 @@ export function ApiKeysSection() {
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Permissions</p>
-                  <div className="mt-1.5 flex items-center overflow-hidden rounded-md border border-border bg-muted">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
+                    Permissions
+                  </p>
+                  <div className="mt-1.5 grid grid-cols-2 gap-px bg-[#E5E7EB]">
                     <button
                       type="button"
                       onClick={() => setPermissionMode("full")}
-                      className={`flex-1 px-3 py-2 text-xs font-medium transition ${
-                        permissionMode === "full" ? "bg-muted text-foreground" : "text-muted-foreground"
-                      }`}
+                      className={cn(
+                        "intel-filter-chip h-10 border-0 text-xs font-medium",
+                        permissionMode === "full" ? "bg-[#111827] text-white" : "bg-white text-[#6B7280]",
+                      )}
                     >
-                      Full Access
+                      Full access
                     </button>
                     <button
                       type="button"
                       onClick={() => setPermissionMode("scoped")}
-                      className={`flex-1 px-3 py-2 text-xs font-medium transition ${
-                        permissionMode === "scoped" ? "bg-muted text-foreground" : "text-muted-foreground"
-                      }`}
+                      className={cn(
+                        "intel-filter-chip h-10 border-0 text-xs font-medium",
+                        permissionMode === "scoped"
+                          ? "bg-[#111827] text-white"
+                          : "bg-white text-[#6B7280]",
+                      )}
                     >
                       Scoped
                     </button>
@@ -548,16 +685,20 @@ export function ApiKeysSection() {
               {permissionMode === "scoped" ? (
                 <>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Content Tag</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
+                      Content tag
+                    </p>
                     <input
                       value={contentTag}
                       onChange={(event) => setContentTag(event.target.value)}
                       placeholder="continuity"
-                      className="mt-1.5 w-full rounded-md border border-border bg-card px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="prody-input mt-1.5 h-11 w-full px-3 text-sm"
                     />
                   </div>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Allowed Endpoints</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6B7280]">
+                      Allowed endpoints
+                    </p>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {KEY_ENDPOINTS.map((endpoint) => {
                         const selected = selectedEndpoints.includes(endpoint);
@@ -566,11 +707,12 @@ export function ApiKeysSection() {
                             key={endpoint}
                             type="button"
                             onClick={() => toggleEndpoint(endpoint)}
-                            className={`rounded-md border px-2.5 py-1.5 text-xs transition ${
+                            className={cn(
+                              "intel-filter-chip h-8 border px-2.5 text-xs",
                               selected
-                                ? "border-primary/45 bg-primary/10 text-primary"
-                                : "border-border bg-card text-muted-foreground hover:border-ring"
-                            }`}
+                                ? "border-[#111827] bg-[#111827] text-white"
+                                : "border-[#E5E7EB] bg-white text-[#6B7280]",
+                            )}
                           >
                             {endpoint}
                           </button>
@@ -580,32 +722,32 @@ export function ApiKeysSection() {
                   </div>
                 </>
               ) : (
-                <div className="rounded-md border border-chart-5/30 bg-muted px-3 py-2 text-xs text-chart-5">
-                  This key grants full access to all MemoryOS endpoints. Use scoped keys in production where possible.
-                </div>
+                <p className="border border-[#FEF3C7] bg-[#FFFBEB] px-3 py-2 text-xs text-[#B45309]">
+                  Full access grants every MemoryOS endpoint. Prefer scoped keys in production.
+                </p>
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E5E7EB] px-4 py-3">
               <button
                 type="button"
                 onClick={closeCreateModal}
-                className="rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium tracking-wider text-muted-foreground"
+                className="h-9 rounded-none border border-[#E5E7EB] bg-white px-3 text-xs font-semibold uppercase tracking-wide text-[#374151]"
               >
-                CANCEL
+                Cancel
               </button>
               <button
                 type="button"
                 disabled={!keyName.trim() || (permissionMode === "scoped" && selectedEndpoints.length === 0)}
                 onClick={() => void createKey()}
-                className="rounded-md border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium tracking-wider text-primary disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-9 rounded-none bg-[#111827] px-3 text-xs font-semibold uppercase tracking-wide text-white disabled:opacity-45"
               >
-                {isSavingKey ? "CREATING..." : "CREATE KEY"}
+                {isSavingKey ? "Creating…" : "Create key"}
               </button>
             </div>
           </div>
         </div>
       ) : null}
-    </>
+    </div>
   );
 }

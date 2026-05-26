@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge, Card, CardContent, CardHeader, CardTitle, Input } from "@/components/developer-console/console-ui";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ContinuityLabSessionView } from "@/components/developer-console/continuity-lab-session-view";
 import { UsageMeter } from "@/components/developer-console/usage-meter";
 import {
   fetchMemoryTokenFromBridge,
@@ -772,7 +773,17 @@ function speechRecognitionErrorMessage(error: string): string {
   return `Speech recognition error: ${error}`;
 }
 
-export function RunDemoSection() {
+export function RunDemoSection({
+  autostart = false,
+  autobrief = false,
+  initialLayoutMode,
+  forceDesktop = false,
+}: {
+  autostart?: boolean;
+  autobrief?: boolean;
+  initialLayoutMode?: "agent" | "editor";
+  forceDesktop?: boolean;
+} = {}) {
   const [runState, setRunState] = useState<DemoRunState>("idle");
   const [micState, setMicState] = useState<MicState>("disabled");
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
@@ -809,6 +820,8 @@ export function RunDemoSection() {
   const transcriptRef = useRef("");
   const shouldSendTranscriptRef = useRef(false);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
+  const didAutostartRef = useRef(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   const isStarting = runState === "starting";
   const isEnding = runState === "ending";
@@ -1139,12 +1152,19 @@ export function RunDemoSection() {
       );
       setSession(payload.session);
       setRunState("recording");
-      appendSystemMessage("MemoryOS is live. Start with text or browser voice.");
     } catch (error) {
       setRunState("idle");
       setErrorMessage(error instanceof Error ? error.message : "Could not start the live MemoryOS session.");
     }
   }
+
+  useEffect(() => {
+    if (!autostart || didAutostartRef.current || !authToken) return;
+    if (runState !== "idle" && runState !== "ended") return;
+    didAutostartRef.current = true;
+    void startConversation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- funnel autostart once when token is ready
+  }, [autostart, authToken, runState]);
 
   async function enableMic(): Promise<void> {
     setMicError(null);
@@ -1204,7 +1224,10 @@ export function RunDemoSection() {
       const message = error instanceof Error ? error.message : "Agent reply failed.";
       setErrorMessage(message);
       if (/goal intake required/i.test(message)) {
-        setChatInput("Goal: Build MemoryOS continuity workflow; Owner: Platform team; Deadline: End of this sprint");
+        setIntakeGoal("Build MemoryOS continuity workflow");
+        setIntakeOwner("Platform team");
+        setIntakeDeadline("End of this sprint");
+        setToolsOpen(true);
       }
       setConversation((current) => [
         ...current,
@@ -1538,704 +1561,102 @@ export function RunDemoSection() {
     `}</style>
   );
 
-  if (canStart) {
-    return (
-      <div className="run-demo-dark dark grid min-h-screen place-items-center bg-background px-5 py-10 text-primary-foreground">
-        {contrastOverrideStyles}
-        <div className="w-full max-w-5xl text-center">
-          <div className="flex justify-center">{brandHeader}</div>
-          <div className="mx-auto mt-12 max-w-3xl">
-            <p className="font-mono text-xs uppercase tracking-widest text-foreground">
-              {statusLabel(runState)} / {micLabel(micState)}
-            </p>
-            <h1 className="mt-5 font-mono text-4xl font-bold uppercase leading-tight tracking-wider text-foreground sm:text-5xl">
-              Living memory agent workspace
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-foreground">
-              MemoryOS tracks how projects evolve, structures decisions, and lets another model continue instantly
-              without retraining or repeated context.
-            </p>
-          </div>
-
-          <div className="mx-auto mt-10 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
-            <div className="bg-background p-4">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Step 1</p>
-              <p className="mt-2 text-sm text-foreground">Type your real project goal</p>
-            </div>
-            <div className="bg-background p-4">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Step 2</p>
-              <p className="mt-2 text-sm text-foreground">Add constraints or decisions</p>
-            </div>
-            <div className="bg-background p-4">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Step 3</p>
-              <p className="mt-2 text-sm text-foreground">Next Step, Execute, handoff in chat bar</p>
-            </div>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <Button
-              type="button"
-              onClick={() => void startConversation()}
-              disabled={isStarting || !hasRuntimeAgents}
-              className="rounded-md bg-primary px-7 py-3 text-sm font-semibold uppercase tracking-widest text-primary-foreground ring-1 ring-border/50 transition hover:bg-primary/90 hover: hover:"
-            >
-              {isStarting ? "Starting" : "Start live proof"}
-            </Button>
-            <Button
-              type="button"
-              onClick={() => void enableMic()}
-              disabled={micEnabled || !hasRuntimeAgents}
-              variant="outline"
-              className="rounded-md border border-transparent bg-primary px-4 py-3 text-xs font-semibold uppercase tracking-widest text-primary-foreground ring-1 ring-border/50"
-            >
-              Enable mic
-            </Button>
-          </div>
-
-          {micError || errorMessage ? (
-            <p className="mx-auto mt-5 max-w-3xl border border-destructive/40 bg-destructive/10 px-5 py-4 text-sm text-destructive">
-              {micError ?? errorMessage}
-            </p>
-          ) : null}
-        </div>
-      </div>
-    );
+  async function handleSendMessage(): Promise<void> {
+    if (canStart) {
+      await startConversation();
+    }
+    await sendTextMessage();
   }
 
   return (
-    <div className="run-demo-dark dark flex h-screen min-h-screen flex-col overflow-hidden bg-background text-primary-foreground">
-      {contrastOverrideStyles}
-      <header className="grid shrink-0 border-b border-border bg-background lg:grid-cols-3">
-        <div className="border-b border-border px-5 py-4 lg:border-b-0 lg:border-r">{brandHeader}</div>
-        <div className="border-b border-border bg-background p-2 lg:border-b-0">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "timeline" | "graph")}>
-            <TabsList className="grid w-full grid-cols-2 border border-border bg-background">
-              <TabsTrigger value="timeline" className="font-mono text-xs uppercase tracking-wider">Timeline</TabsTrigger>
-              <TabsTrigger value="graph" className="font-mono text-xs uppercase tracking-wider">Decision Intelligence</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-        <div className="flex flex-wrap items-center justify-start gap-2 px-5 py-3 lg:justify-end">
-          <Select value={activeAgent} onValueChange={(value) => setActiveAgent(value)}>
-            <SelectTrigger className="h-8 w-64 border-border bg-background text-xs" disabled={!hasRuntimeAgents || isRuntimeAgentsLoading}>
-              <SelectValue placeholder={isRuntimeAgentsLoading ? "Loading live agents..." : "Select live agent runtime"} />
-            </SelectTrigger>
-            <SelectContent>
-              {availableRuntimeAgents.map((agent) => (
-                <SelectItem key={agent.id} value={agent.id}>
-                  {agent.label} - {agent.model}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Badge variant="outline" className="border-border bg-background px-3 py-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            {statusLabel(runState)}
-          </Badge>
-          <Button
-            type="button"
-            onClick={() => void enableMic()}
-            disabled={micEnabled || !hasRuntimeAgents}
-            variant="outline"
-            className="px-3 py-2 font-mono text-xs uppercase tracking-widest text-primary"
-          >
-            Enable mic
-          </Button>
-          <Button
-            type="button"
-            onClick={disableMic}
-            disabled={!micEnabled}
-            variant="outline"
-            className="px-3 py-2 font-mono text-xs uppercase tracking-widest text-muted-foreground"
-          >
-            Disable mic
-          </Button>
-          <Button
-            type="button"
-            onClick={() => void endConversation()}
-            disabled={!canEnd || isEnding}
-            variant="outline"
-            className="border-destructive/50 px-3 py-2 font-mono text-xs uppercase tracking-widest text-destructive"
-          >
-            {isEnding ? "Ending" : "End"}
-          </Button>
-        </div>
-      </header>
-      {micError || errorMessage ? (
-        <div className="shrink-0 border-b border-chart-2/30 bg-chart-2/10 px-5 py-3 text-sm text-chart-2">
-          {micError ?? errorMessage}
-        </div>
-      ) : null}
-
-      <main className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-3">
-        <section className="flex min-h-0 flex-col border-b border-border bg-background lg:border-b-0 lg:border-r">
-          <div className="shrink-0 border-b border-border bg-background px-5 py-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                  {isChatLoading ? "Thinking" : isVoiceRecording ? "Listening" : "Conversation"}
-                </p>
-                <p className="mt-1 truncate text-sm font-semibold text-foreground">
-                  {projectState.systemGoal || "Waiting for project context"}
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-2">
-                <span
-                  className={`h-10 w-10 rounded-md transition ${
-                    isChatLoading
-                      ? "animate-pulse bg-primary"
-                      : isVoiceRecording
-                        ? "bg-primary/90"
-                        : "bg-muted-foreground/40"
-                  }`}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div ref={chatScrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
-            {conversation.length > 0 ? (
-              <>
-                {conversation.map((message, index) => {
-                  if (message.speaker === "system") {
-                    return (
-                      <div key={`${message.text}-${index}`} className="flex justify-center py-2">
-                        <span className="max-w-full rounded-full bg-muted px-3 py-1 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                          {message.text}
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  const fromAssistant = message.speaker === "assistant";
-                  const isLatestAssistant =
-                    fromAssistant && index === conversation.findLastIndex((item) => item.speaker === "assistant");
-                  return (
-                    <div key={`${message.text}-${index}`} className={`flex ${fromAssistant ? "justify-start" : "justify-end"}`}>
-                      <div
-                        className={`max-w-full rounded-xl px-4 py-3 text-left ${
-                          fromAssistant
-                            ? `rounded-bl-sm border bg-background ${
-                                isLatestAssistant
-                                  ? "border-primary/50"
-                                  : "border-border"
-                              }`
-                            : "rounded-br-[4px] border border-primary/30 bg-primary/10"
-                        }`}
-                      >
-                        <div className="mb-1 flex items-center justify-between gap-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                          <span>{fromAssistant ? "AI reply" : "User"}</span>
-                          <span>{formatTime(message.createdAt)}</span>
-                        </div>
-                        <p className="whitespace-pre-wrap text-sm leading-6 text-card-foreground">{message.text}</p>
-                        <div className="mt-3 flex flex-wrap gap-2 border-t border-border pt-2">
-                          <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-xs uppercase tracking-wide text-muted-foreground">
-                            {fromAssistant ? "model reply stored" : "user input stored"}
-                          </span>
-                          {message.tags?.map((tag) => (
-                            <span key={tag} className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-xs uppercase tracking-wide text-primary">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                {isChatLoading ? (
-                  <div className="flex justify-start">
-                    <div className="max-w-full animate-pulse rounded-xl rounded-bl-sm border border-primary/40 bg-background px-4 py-3 text-left">
-                      <div className="mb-1 flex items-center justify-between gap-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                        <span>AI reply</span>
-                        <span>thinking</span>
-                      </div>
-                      <p className="text-sm leading-5 text-card-foreground">
-                        Storing your turn in MemoryOS, retrieving context, then asking the model...
-                      </p>
-                      <div className="mt-3 grid grid-cols-3 gap-1">
-                        <span className="h-1.5 rounded-full bg-primary" />
-                        <span className="h-1.5 animate-pulse rounded-full bg-primary/50" />
-                        <span className="h-1.5 rounded-full bg-muted" />
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </>
-            ) : (
-              <div className="grid h-full place-items-center text-center">
-                <p className="max-w-xs font-mono text-sm leading-6 text-muted-foreground">
-                  Start by telling MemoryOS what you are building.
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div className="shrink-0 border-t border-border bg-background p-4">
-            <div
-              className={`overflow-hidden rounded-2xl border bg-background transition ${
-                isChatLoading ? "border-primary/50" : "border-border"
-              }`}
-            >
-              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-xs text-muted-foreground">
-                <span>
-                  {isChatLoading
-                    ? "MemoryOS updating"
-                    : isVoiceRecording
-                      ? "Listening"
-                      : `${conversation.filter((message) => message.speaker !== "system").length} turns stored`}
-                </span>
-                <span className="font-semibold text-primary">
-                  {hasActiveSession ? "Live" : "Start session"}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between border-b border-border bg-background px-3 py-2 text-xs">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span className={`inline-block h-2 w-2 rounded-full ${applyCompanyBrainSkills ? "bg-primary" : "bg-muted-foreground/50"}`} />
-                  <span>Apply Company Brain Skills (server-side)</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setApplyCompanyBrainSkills((current) => !current)}
-                  className={`rounded-md border px-2 py-1 text-xs font-semibold uppercase tracking-wider ${
-                    applyCompanyBrainSkills
-                      ? "border-primary/40 bg-primary/10 text-primary"
-                      : "border-border bg-muted/40 text-muted-foreground"
-                  }`}
-                >
-                  {applyCompanyBrainSkills ? "On" : "Off"}
-                </button>
-              </div>
-
-              <div className="rounded-t-xl border-t border-border bg-background px-3 py-3">
-                <div className="flex flex-col gap-3">
-                <div className="min-w-0 flex-1">
-                <Input
-                  value={chatInput}
-                  onChange={(event) => {
-                    transcriptRef.current = event.target.value;
-                    setChatInput(event.target.value);
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      void sendTextMessage();
-                    }
-                  }}
-                  disabled={!hasActiveSession || isEnding || isChatLoading}
-                  placeholder={isChatLoading ? "MemoryOS is updating..." : "What do you want to do today?"}
-                  className="h-11 border-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-0 disabled:cursor-not-allowed"
-                />
-
-                <div className="mt-2 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-1">
-                    <ComposerIcon
-                      label={isVoiceRecording ? "Stop voice input" : "Start voice input"}
-                      onClick={isVoiceRecording ? stopVoiceRecording : () => void startVoiceRecording()}
-                      disabled={!hasActiveSession || isEnding}
-                    >
-                      <MicIcon />
-                    </ComposerIcon>
-                    <ComposerIcon
-                      label="Inject MemoryOS state into the other model"
-                      onClick={() => void switchAgent()}
-                      disabled={!hasActiveSession || isEnding || isChatLoading || isSwitchingAgent}
-                    >
-                      <HandoffIcon />
-                    </ComposerIcon>
-                    <ComposerIcon
-                      label="Suggest next move"
-                      onClick={() => void generateNextStep()}
-                      disabled={!hasActiveSession || isNextStepLoading || isChatLoading}
-                    >
-                      <NextIcon />
-                    </ComposerIcon>
-                    <ComposerIcon
-                      label="Show decision graph"
-                      onClick={() => setActiveTab("graph")}
-                    >
-                      <GraphIcon />
-                    </ComposerIcon>
-                  </div>
-
-                  <button
-                    type="button"
-                    aria-label="Send message"
-                    onClick={() => void sendTextMessage()}
-                    disabled={!chatInput.trim() || !hasActiveSession || isEnding || isChatLoading}
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition hover:bg-primary/90 hover: disabled:cursor-not-allowed disabled:opacity-45"
-                  >
-                    <SendIcon />
-                  </button>
-                </div>
-                </div>
-                {billing ? (
-                  <div className="w-full">
-                    <UsageMeter usage={billing.usage} currentPlan={billing.currentPlan} compact />
-                  </div>
-                ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="flex min-h-0 flex-col border-b border-border bg-background lg:border-b-0 lg:border-r">
-          <div className="shrink-0 border-b border-border bg-background px-5 py-4">
-            <p className="font-mono text-xs uppercase tracking-wider text-foreground">
-              {activeTab === "timeline" ? "Timeline" : "Decision Intelligence"}
-            </p>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-y-auto p-5">
-            {activeTab === "timeline" ? (
-              <div className="space-y-4">
-                {visibleTimeline.length > 0 ? (
-                  visibleTimeline.map((event) => (
-                    <div key={event.id} className="border-l-2 border-primary py-1 pl-4">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-xs uppercase tracking-wider text-primary">{event.eventType}</span>
-                        <span className="font-mono text-xs text-muted-foreground">{formatTime(event.timestamp)}</span>
-                      </div>
-                      <p className="mt-1 text-sm leading-5 text-foreground">{event.reason}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">Timeline will fill when MemoryOS stores turns, detects goals, constraints, and decisions.</p>
-                )}
-              </div>
-            ) : (
-              renderDecisionGraphCanvas(decisionGraph, projectState, visibleTimeline)
-            )}
-          </div>
-
-          <div
-            className={`shrink-0 space-y-3 border-t border-border p-5 transition-all duration-500 ${
-              activeTab === "graph" ? "bg-destructive/5" : "bg-background"
-            }`}
-          >
-            {activeTab === "graph" && (
-              <div className="mb-4 text-center">
-                <p className="font-mono text-xs uppercase tracking-wider text-destructive">Required Action</p>
-                <p className="mt-1 text-sm font-semibold text-destructive">{projectState.systemGoal ? "Continue Execution" : "Define project goal"}</p>
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => void generateNextStep()}
-              disabled={!hasActiveSession || isNextStepLoading}
-              className={`w-full rounded-md border bg-background py-3 text-xs font-semibold uppercase tracking-widest transition disabled:opacity-50 ${
-                activeTab === "graph"
-                  ? "border-destructive/50 text-destructive hover:bg-destructive/10"
-                  : "border-border text-foreground hover:bg-accent"
-              }`}
-            >
-              {isNextStepLoading ? "Reading MemoryOS state..." : projectState.systemGoal ? "Next Step" : "Define Goal"}
-            </button>
-            <button
-              type="button"
-              onClick={() => void executeNextStep()}
-              disabled={!hasActiveSession || isExecuting}
-              className={`w-full rounded-md py-3 text-xs font-semibold uppercase tracking-widest transition disabled:opacity-50 ${
-                activeTab === "graph"
-                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
-              }`}
-            >
-              {isExecuting ? "Executing..." : projectState.systemGoal ? "Execute Plan" : "Execute: Generate Goal Structure"}
-            </button>
-          </div>
-        </section>
-
-        <aside className="flex min-h-0 flex-col bg-background">
-          <div className="shrink-0 border-b border-border px-5 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="border-l-4 border-primary pl-3 font-mono text-xs uppercase tracking-wider text-foreground">
-                  Project Intelligence
-                </p>
-                <p className="ml-4 mt-1 text-xs text-muted-foreground">Live state used by agents</p>
-              </div>
-              {projectState.systemGoal ? (
-                <span className="rounded-full bg-primary/15 px-2 py-1 font-mono text-xs uppercase tracking-widest text-primary">
-                  Ready
-                </span>
-              ) : (
-                <span className="rounded-full bg-destructive/10 px-2 py-1 font-mono text-xs uppercase tracking-widest text-destructive">
-                  Incomplete · Needs Goal
-                </span>
-              )}
-            </div>
-            <div className="mt-4 rounded-md bg-background p-2.5">
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">System Status</p>
-              <div className="mt-1.5 flex items-center gap-2 text-xs font-medium">
-                {projectState.systemGoal ? (
-                  <span className="text-primary">🟢 Goal Defined &rarr; Planning Ready &rarr; Execution Unlocked</span>
-                ) : (
-                  <span className="text-chart-2">🟡 Waiting for Goal &rarr; Planning Disabled &rarr; Execution Blocked</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="shrink-0 border-b border-border bg-background px-5 py-2">
-            <div className="flex flex-wrap items-center gap-4 font-mono text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <span className="uppercase tracking-wider">User:</span>
-                <span className="text-foreground" title={displayUserId}>{compactId(displayUserId)}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="uppercase tracking-wider">Session:</span>
-                <span className="text-foreground" title={sessionIdentity.sessionId}>{compactId(sessionIdentity.sessionId)}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-5">
-            <div className="flex items-center gap-5 rounded-md bg-background p-4">
-              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-background">
-                <svg className="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-border" strokeWidth="3" />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="16"
-                    fill="none"
-                    className="stroke-primary transition-all duration-1000 ease-out"
-                    strokeWidth="3"
-                    strokeDasharray="100"
-                    strokeDashoffset={100 - (projectState.confidence ?? 0)}
-                  />
-                </svg>
-                <div className="text-center">
-                  <span className="block font-mono text-sm font-bold text-foreground">{projectState.confidence ?? 0}%</span>
-                </div>
-              </div>
-              <div>
-                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Current Understanding</p>
-                <div className="mt-1 space-y-1">
-                  <p className="text-sm"><span className="font-medium text-foreground">Goal:</span> <span className="text-muted-foreground">{projectState.systemGoal ? "Defined" : "Not defined"}</span></p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Progress Flow</p>
-              <div className="mt-3 flex items-center justify-between font-mono text-xs uppercase tracking-wide text-muted-foreground">
-                <div className={`flex flex-col items-center gap-1.5 ${projectState.systemGoal ? "text-primary" : ""}`}>
-                  <span className="text-sm">{projectState.systemGoal ? "●" : "○"}</span>
-                  <span>Goal</span>
-                </div>
-                <div className="mx-2 h-px flex-1 bg-border" />
-                <div className={`flex flex-col items-center gap-1.5 ${(projectState.activeConstraints ?? []).length > 0 ? "text-primary" : ""}`}>
-                  <span className="text-sm">{(projectState.activeConstraints ?? []).length > 0 ? "●" : "○"}</span>
-                  <span>Constraints</span>
-                </div>
-                <div className="mx-2 h-px flex-1 bg-border" />
-                <div className={`flex flex-col items-center gap-1.5 ${(projectState.preferences ?? []).length > 0 ? "text-primary" : ""}`}>
-                  <span className="text-sm">{(projectState.preferences ?? []).length > 0 ? "●" : "○"}</span>
-                  <span>Decisions</span>
-                </div>
-                <div className="mx-2 h-px flex-1 bg-border" />
-                <div className={`flex flex-col items-center gap-1.5 ${(projectState.executionPlan ?? []).length > 0 ? "text-primary" : ""}`}>
-                  <span className="text-sm">{(projectState.executionPlan ?? []).length > 0 ? "●" : "○"}</span>
-                  <span>Plan</span>
-                </div>
-                <div className="mx-2 h-px flex-1 bg-border" />
-                <div className="flex flex-col items-center gap-1.5 text-muted-foreground">
-                  <span className="text-sm">○</span>
-                  <span>Execute</span>
-                </div>
-              </div>
-            </div>
-
-            {(projectState.missingInfo ?? []).length > 0 && (
-              <div className="rounded-md border-2 border-destructive/50 bg-destructive/10 p-4" title="This missing information blocks progression">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground">
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
-                  </span>
-                  <p className="font-mono text-xs font-bold uppercase tracking-wider text-destructive">Blocker</p>
-                </div>
-                <p className="mt-2 text-sm font-semibold text-destructive">{projectState.missingInfo?.[0]}</p>
-                <div className="mt-3 border-t border-destructive/20 pt-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-destructive">Impact:</p>
-                  <ul className="mt-1 space-y-1 text-sm text-destructive/90">
-                    <li className="flex items-center gap-2"><span>•</span> Planning disabled</li>
-                    <li className="flex items-center gap-2"><span>•</span> Execution blocked</li>
-                    <li className="flex items-center gap-2"><span>•</span> Agents lack direction</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Agent Context Packet</p>
-              <p className="mt-1 text-xs text-muted-foreground">Injected into next agent run</p>
-              <div className="mt-2 rounded-md bg-background p-4 font-mono text-xs leading-6 text-primary">
-                <p>&gt; goal: {projectState.systemGoal ? `"${projectState.systemGoal}"` : "null"}</p>
-                <p>&gt; confidence: {(projectState.confidence ?? 0) / 100}</p>
-                <p>&gt; primary_gap: {(projectState.missingInfo ?? []).length > 0 ? `"${projectState.missingInfo?.[0]}"` : "null"}</p>
-                <p>&gt; next_action: {projectState.systemGoal ? `"Execute plan"` : `"Ask for objective"`}</p>
-                <span className="mt-2 inline-block h-2 w-2 animate-pulse bg-primary" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Constraints</p>
-                {(projectState.activeConstraints ?? []).length > 0 ? (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {projectState.activeConstraints?.map((constraint) => (
-                      <span key={constraint} className="rounded border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
-                        {constraint}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-1 text-xs italic text-muted-foreground">None detected</p>
-                )}
-              </div>
-
-              <div>
-                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Decisions</p>
-                {(projectState.preferences ?? []).length > 0 ? (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {projectState.preferences?.map((preference) => (
-                      <span key={preference} className="rounded border border-primary/25 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                        {preference}
-                      </span>
-                    ))}
-                  </div>    
-                ) : (
-                  <p className="mt-1 text-xs italic text-muted-foreground">None recorded</p>
-                )}
-              </div>
-            </div>
-
-            <Card className="border-0 bg-background ring-0">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Goal Intake Gate
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 pt-0">
-                <Input
-                  value={intakeGoal}
-                  onChange={(event) => setIntakeGoal(event.target.value)}
-                  placeholder="Goal (what success looks like)"
-                  className="h-9"
-                />
-                <Input
-                  value={intakeOwner}
-                  onChange={(event) => setIntakeOwner(event.target.value)}
-                  placeholder="Owner (name or team)"
-                  className="h-9"
-                />
-                <Input
-                  value={intakeDeadline}
-                  onChange={(event) => setIntakeDeadline(event.target.value)}
-                  placeholder="Deadline (date or timeframe)"
-                  className="h-9"
-                />
-                <Button
-                  type="button"
-                  onClick={() => void submitGoalIntake()}
-                  disabled={!hasActiveSession || isChatLoading || isEnding}
-                  className="w-full"
-                >
-                  Save Intake + Continue
-                </Button>
-              </CardContent>
-            </Card>
-
-            <div className="rounded-md p-3">
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Confidence Breakdown</p>
-              <ul className="mt-2 space-y-1.5 text-xs">
-                <li className="flex items-center gap-2 text-primary"><span>+</span> Session context detected</li>
-                {projectState.systemGoal ? (
-                  <li className="flex items-center gap-2 text-primary"><span>+</span> Goal defined</li>
-                ) : (
-                  <li className="flex items-center gap-2 text-chart-2"><span>-</span> Goal missing</li>
-                )}
-                {(projectState.activeConstraints ?? []).length > 0 ? (
-                  <li className="flex items-center gap-2 text-primary"><span>+</span> Constraints added</li>
-                ) : (
-                  <li className="flex items-center gap-2 text-chart-2"><span>-</span> No constraints</li>
-                )}
-                {(projectState.preferences ?? []).length > 0 ? (
-                  <li className="flex items-center gap-2 text-primary"><span>+</span> Decisions recorded</li>
-                ) : (
-                  <li className="flex items-center gap-2 text-chart-2"><span>-</span> No decisions</li>
-                )}
-              </ul>
-            </div>
-
-            <Card className="border-0 bg-background ring-0">
-              <CardHeader className="pb-2">
-                <CardTitle className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  Contract Quality
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-foreground">
-                    {lastContractQuality ? `${lastContractQuality.score}/100` : "Not scored yet"}
-                  </p>
-                  <Badge variant="outline">
-                    Grade {lastContractQuality?.grade ?? "-"}
-                  </Badge>
-                </div>
-                {lastContractQuality?.reasons?.length ? (
-                  <ul className="mt-2 list-disc pl-4 text-xs text-muted-foreground">
-                    {lastContractQuality.reasons.slice(0, 2).map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="mt-2 text-xs text-muted-foreground">Send a turn to compute contract quality.</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="relative z-10 shrink-0 rounded-none border-x-0 border-b-0 border-t border-border bg-background">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-foreground">
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12h16M12 4v16"/></svg>
-                Next Best Action
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-sm font-medium text-foreground" title="This action drives the system forward">
-                {projectState.systemGoal ? "Generate execution plan" : "Define the project goal"}
-              </p>
-              <div className="mt-4">
-                <Button
-                  type="button"
-                  onClick={() => void setChatInput(projectState.systemGoal ? "Generate an execution plan based on the current state." : "What are you trying to build?")}
-                  title="This will unlock planning + execution"
-                  className="w-full rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-                >
-                  {projectState.systemGoal ? "Generate Starter Plan" : "Define Goal"}
-                </Button>
-              </div>
-              <div className="mt-2">
-                <Button
-                  type="button"
-                  onClick={() => void sendToIdeAgent()}
-                  disabled={!hasActiveSession || isSendingIdePacket}
-                  className="w-full rounded-md bg-primary font-mono text-xs uppercase tracking-wider text-primary-foreground hover:bg-primary/90"
-                >
-                  {isSendingIdePacket ? "Sending..." : "Send to IDE Agent"}
-                </Button>
-              </div>
-              <p className="mt-3 text-center font-mono text-xs text-muted-foreground">
-                Copy handoff packet into your coding assistant context.
-              </p>
-            </CardContent>
-          </Card>
-        </aside>
-      </main>
-    </div>
+    <ContinuityLabSessionView
+      canStartSession={canStart}
+      isStartingSession={isStarting}
+      toolsOpen={toolsOpen}
+      onToolsOpenChange={setToolsOpen}
+      activeAgent={activeAgent}
+      onActiveAgentChange={setActiveAgent}
+      availableRuntimeAgents={availableRuntimeAgents}
+      hasRuntimeAgents={hasRuntimeAgents}
+      isRuntimeAgentsLoading={isRuntimeAgentsLoading}
+      hasActiveSession={hasActiveSession}
+      isEnding={isEnding}
+      canEnd={canEnd}
+      onEndConversation={() => void endConversation()}
+      onNewChat={() => {
+        void (async () => {
+          if (canEnd) await endConversation();
+          void startConversation();
+        })();
+      }}
+      micError={micError}
+      errorMessage={errorMessage}
+      workspace={WORKSPACE}
+      project={PROJECT}
+      threadId={session?.threadId ?? sessionIdentity.threadId}
+      autobrief={autobrief}
+      onBriefLoaded={(loaded) => {
+        if (loaded.currentGoal) {
+          setProjectState((current) => ({
+            ...current,
+            systemGoal: loaded.currentGoal ?? current.systemGoal,
+            missingInfo: loaded.openBlockers?.length ? loaded.openBlockers : current.missingInfo,
+          }));
+        }
+      }}
+      onAnalyzeRisk={(summary) => {
+        appendSystemMessage(summary.length > 400 ? `${summary.slice(0, 400)}…` : summary);
+      }}
+      conversation={conversation}
+      isChatLoading={isChatLoading}
+      chatScrollRef={chatScrollRef}
+      chatInput={chatInput}
+      onChatInputChange={(value) => {
+        transcriptRef.current = value;
+        setChatInput(value);
+      }}
+      onSendMessage={() => void handleSendMessage()}
+      onKeyDownSend={(event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          void sendTextMessage();
+        }
+      }}
+      isSwitchingAgent={isSwitchingAgent}
+      onSwitchAgent={() => void switchAgent()}
+      isNextStepLoading={isNextStepLoading}
+      onGenerateNextStep={() => void generateNextStep()}
+      onExecuteNextStep={() => void executeNextStep()}
+      isExecuting={isExecuting}
+      applyCompanyBrainSkills={applyCompanyBrainSkills}
+      onToggleCompanyBrainSkills={() => setApplyCompanyBrainSkills((c) => !c)}
+      isVoiceRecordingActive={isVoiceRecording}
+      onStartVoice={() => void startVoiceRecording()}
+      onStopVoice={stopVoiceRecording}
+      billing={billing}
+      projectState={projectState}
+      visibleTimeline={visibleTimeline}
+      onSubmitGoalIntake={() => void submitGoalIntake()}
+      intakeGoal={intakeGoal}
+      onIntakeGoalChange={setIntakeGoal}
+      intakeOwner={intakeOwner}
+      onIntakeOwnerChange={setIntakeOwner}
+      intakeDeadline={intakeDeadline}
+      onIntakeDeadlineChange={setIntakeDeadline}
+      onSendToIde={() => void sendToIdeAgent()}
+      isSendingIdePacket={isSendingIdePacket}
+      mutationHistory={mutationHistory}
+      initialLayoutMode={initialLayoutMode}
+      forceDesktop={forceDesktop}
+      onExplainPlan={() =>
+        void (async () => {
+          if (canStart) await startConversation();
+          await sendTextMessage(
+            "Explain the current project plan from organizational memory. Include: current goal, open blockers, risky files, and the recommended next step before I write any code.",
+          );
+        })()
+      }
+    />
   );
 }
+

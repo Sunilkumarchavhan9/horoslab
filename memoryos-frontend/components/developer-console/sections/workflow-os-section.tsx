@@ -144,9 +144,7 @@ async function api<T>(
 
 /* ─── live data hook ─────────────────────────────────────────── */
 
-const POLL_MS = 12000;
-
-function useWorkflowData() {
+function useWorkflowData(_realtimeVersion = 0) {
   const [agents, setAgents] = useState<AgentProfile[]>([]);
   const [sessions, setSessions] = useState<AgentSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -220,15 +218,6 @@ function useWorkflowData() {
     void load(false);
     return () => {
       cancelled.current = true;
-    };
-  }, [load]);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      void load(true);
-    }, POLL_MS);
-    return () => {
-      window.clearInterval(timer);
     };
   }, [load]);
 
@@ -384,8 +373,12 @@ function statusLabel(status: WorkflowRow["status"]) {
 
 /* ─── component ──────────────────────────────────────────────── */
 
-export function WorkflowOsSection() {
-  const { agents, sessions, loading, isRefreshing, error, lastUpdated, refresh } = useWorkflowData();
+type WorkflowOsSectionProps = {
+  realtimeVersion?: number;
+};
+
+export function WorkflowOsSection({ realtimeVersion = 0 }: WorkflowOsSectionProps) {
+  const { agents, sessions, loading, isRefreshing, error, lastUpdated, refresh } = useWorkflowData(realtimeVersion);
   const [activeTab, setActiveTab] = useState<
     "live" | "scheduled" | "history"
   >("live");
@@ -576,11 +569,47 @@ export function WorkflowOsSection() {
     { id: "history" as const, label: "Historical Runs", count: historicalRows.length },
   ];
 
+  const workflowStats = [
+    {
+      label: "Live Workflows",
+      value: liveRows.length,
+      icon: "play" as const,
+      detail: "Agent sessions currently recording, idle, or verifying.",
+    },
+    {
+      label: "Scheduled Agents",
+      value: scheduledRows.length,
+      icon: "pause" as const,
+      detail: "Paused sessions and idle agents waiting for work.",
+    },
+    {
+      label: "Historical Runs",
+      value: historicalRows.length,
+      icon: "graph" as const,
+      detail: "Completed agent sessions available for review.",
+    },
+  ];
+
+  const workflowSignals = [
+    {
+      label: "Backend source",
+      value: "/api/agents + /api/agent-sessions",
+    },
+    {
+      label: "Refresh cycle",
+      value: "Manual + live events",
+    },
+    {
+      label: "Last update",
+      value: lastUpdated === "-" ? "waiting" : new Date(lastUpdated).toLocaleTimeString(),
+    },
+  ];
+
   return (
-    <ConsolePage className="h-full overflow-y-auto pb-12">
+    <ConsolePage className="h-full overflow-y-auto bg-background pb-12">
       <ConsolePageHeader
         title="Agent Workflow OS"
-        description="Monitor live agent sessions, scheduled work, and completed runs from one token-driven workspace."
+        description="A company-grade control plane for engineering teams running AI agents: see active work, waiting agents, completed runs, interventions, and handoffs in one operating surface."
         badge={<Icon name="terminal" className="h-5 w-5 text-primary" />}
         actions={
           <Button
@@ -595,23 +624,54 @@ export function WorkflowOsSection() {
         }
       />
 
-      <ConsoleGrid columns="three">
-        {[
-          { label: "Live Workflows", value: liveRows.length, icon: "play" as const },
-          { label: "Scheduled Agents", value: scheduledRows.length, icon: "pause" as const },
-          { label: "Historical Runs", value: historicalRows.length, icon: "graph" as const },
-        ].map((card) => (
-          <ConsoleSurface key={card.label} className="space-y-3">
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Icon name={card.icon} className="h-4 w-4 text-primary" />
-              <span>{card.label}</span>
+      <ConsoleSurface className="p-0">
+        <div className="grid grid-cols-1 divide-y divide-border lg:grid-cols-[minmax(0,1fr)_22rem] lg:divide-x lg:divide-y-0">
+          <div className="p-5 sm:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Workflow runtime</p>
+                <h2 className="mt-2 text-lg font-semibold tracking-tight text-foreground">Agent sessions are monitored from live backend data</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                  Built for companies and engineering teams, this page watches running sessions, paused work, and completed runs. Open any row to inspect timeline events, inject operator notes, generate a handoff, or terminate a session.
+                </p>
+              </div>
+              <Badge variant="outline" className="gap-2 border-border bg-background px-3 py-1.5">
+                <span className="h-2 w-2 bg-primary" />
+                {isRefreshing ? "Syncing" : "Live monitor"}
+              </Badge>
             </div>
-            <div className="text-3xl font-semibold tracking-tight tabular-nums">
-              {card.value}
+
+            <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border md:grid-cols-3">
+              {workflowStats.map((card) => (
+                <div key={card.label} className="bg-card p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Icon name={card.icon} className="h-4 w-4 text-primary" />
+                      <span>{card.label}</span>
+                    </div>
+                    <span className="text-3xl font-semibold tracking-tight tabular-nums text-foreground">
+                      {card.value}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-muted-foreground">{card.detail}</p>
+                </div>
+              ))}
             </div>
-          </ConsoleSurface>
-        ))}
-      </ConsoleGrid>
+          </div>
+
+          <div className="bg-muted/20 p-5 sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Runtime signals</p>
+            <div className="mt-4 space-y-3">
+              {workflowSignals.map((signal) => (
+                <div key={signal.label} className="border-b border-border pb-3 last:border-b-0 last:pb-0">
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">{signal.label}</p>
+                  <p className="mt-1 break-words font-mono text-xs text-foreground">{signal.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </ConsoleSurface>
 
       <Tabs
         value={activeTab}
@@ -646,6 +706,23 @@ export function WorkflowOsSection() {
       </AnimatePresence>
 
       <ConsoleSurface className="p-0">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              {tabs.find((tab) => tab.id === activeTab)?.label}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {activeTab === "live"
+                ? "Active agent work that may need operator attention."
+                : activeTab === "scheduled"
+                  ? "Paused or idle agents ready to be resumed."
+                  : "Completed runs you can inspect for handoffs and traceability."}
+            </p>
+          </div>
+          <Badge variant="secondary" className="tabular-nums">
+            {rows.length} total
+          </Badge>
+        </div>
         {loading && rows.length === 0 ? (
           <div className="p-12 text-center text-sm text-muted-foreground">
             Loading workflow data...
@@ -675,7 +752,7 @@ export function WorkflowOsSection() {
                 return (
                   <TableRow
                     key={row.rowId}
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:bg-muted/40"
                     onClick={() => openDrawer(row)}
                   >
                     <TableCell>
@@ -733,31 +810,34 @@ export function WorkflowOsSection() {
         )}
       </ConsoleSurface>
 
-      {/* Drawer */}
+      {/* Session command modal */}
       <AnimatePresence>
         {selectedRow ? (
           <motion.div
-            key="wf-drawer"
+            key="wf-session-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex justify-end bg-background/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm"
           >
             <button
               type="button"
-              aria-label="Close drawer"
+              aria-label="Close session command modal"
               onClick={closeDrawer}
               className="absolute inset-0 h-full w-full cursor-default"
             />
             <motion.div
-              initial={{ x: 480, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 480, opacity: 0 }}
+              initial={{ y: 24, scale: 0.98, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 24, scale: 0.98, opacity: 0 }}
               transition={{ type: "spring", stiffness: 360, damping: 38 }}
-              className="relative flex w-full max-w-lg flex-col border-l border-border bg-background"
+              className="relative flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden border border-border bg-background shadow-2xl"
             >
               <div className="relative sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card/85 px-6 py-4 backdrop-blur-md">
                 <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">
+                    Agent command center
+                  </p>
                   <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
                     <span
                       className={`relative inline-flex h-2 w-2 rounded-full ${
@@ -778,9 +858,19 @@ export function WorkflowOsSection() {
                     </span>
                     {selectedRow.agent?.name ?? "Agent"}
                   </h3>
-                  <div className="mt-1 font-mono text-xs text-muted-foreground">
-                    {selectedRow.session?.id ?? selectedRow.agent?.id} ·{" "}
-                    {selectedRow.agent?.runtime ?? "unknown runtime"}
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span className="border border-border bg-background px-2 py-0.5">
+                      {statusLabel(selectedRow.status)}
+                    </span>
+                    <span className="border border-border bg-background px-2 py-0.5">
+                      {selectedRow.session?.tool ?? selectedRow.agent?.runtime ?? "operator session"}
+                    </span>
+                    <span className="border border-border bg-background px-2 py-0.5">
+                      {selectedRow.session?.mode ?? selectedRow.agent?.category ?? "workflow"}
+                    </span>
+                    <span className="font-mono text-muted-foreground">
+                      ref {selectedRow.session?.id?.slice(0, 8) ?? selectedRow.agent?.id?.slice(0, 8) ?? selectedRow.rowId.slice(0, 8)}
+                    </span>
                   </div>
                 </div>
                 <button
@@ -792,7 +882,8 @@ export function WorkflowOsSection() {
                 </button>
               </div>
 
-              <div className="relative flex-1 space-y-6 overflow-y-auto p-6">
+              <div className="relative grid flex-1 gap-6 overflow-y-auto p-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                <div className="space-y-6">
                 {/* Goal */}
                 <div className="border border-border bg-muted p-4">
                   <div className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
@@ -841,7 +932,9 @@ export function WorkflowOsSection() {
                     {drawerError}
                   </div>
                 ) : null}
+                </div>
 
+                <div className="space-y-6">
                 {/* Intervention controls */}
                 <div>
                   <h4 className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -959,7 +1052,9 @@ export function WorkflowOsSection() {
                     ) : null}
                   </AnimatePresence>
                 </div>
+                </div>
 
+                <div className="lg:col-span-2">
                 {/* Execution graph (live timeline) */}
                 <div>
                   <div className="mb-4 flex items-center justify-between">
@@ -1033,6 +1128,7 @@ export function WorkflowOsSection() {
                       ))}
                     </div>
                   )}
+                </div>
                 </div>
               </div>
             </motion.div>

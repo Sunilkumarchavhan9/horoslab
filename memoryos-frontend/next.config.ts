@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  webpack: (config, { dev, isServer }) => {
+    // Clerk UI times out when webpack lazy-compilation stalls chunk loads in dev.
+    if (dev && !isServer) {
+      config.experiments = {
+        ...config.experiments,
+        lazyCompilation: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default withSentryConfig(nextConfig, {

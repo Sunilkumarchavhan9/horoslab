@@ -5,9 +5,19 @@ export function resolveBackendOrigin(): string {
 
   if (isDevelopment) {
     // In local dev, prefer local backend unless explicitly overridden.
-    const preferred = devOverride || "http://localhost:3001";
-    return preferred.replace(/\/+$/, "");
+    const preferred = devOverride || configured || "http://127.0.0.1:3001";
+    return normalizeLocalBackendOrigin(preferred);
   }
 
-  return (configured && configured !== "same-origin" ? configured : "http://localhost:3001").replace(/\/+$/, "");
+  return normalizeLocalBackendOrigin(
+    configured && configured !== "same-origin" ? configured : "http://127.0.0.1:3001",
+  );
+}
+
+export function normalizeLocalBackendOrigin(origin: string): string {
+  const trimmed = origin.replace(/\/+$/, "");
+  if (/^http:\/\/localhost(?::|$)/i.test(trimmed)) {
+    return trimmed.replace(/^http:\/\/localhost/i, "http://127.0.0.1");
+  }
+  return trimmed;
 }

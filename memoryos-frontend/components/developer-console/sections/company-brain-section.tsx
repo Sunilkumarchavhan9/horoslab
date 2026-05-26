@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
 type CompanyBrainPayload = {
@@ -97,7 +97,11 @@ const DEFAULT_GOVERNANCE: GovernancePolicy = {
   },
 };
 
-export function CompanyBrainSection() {
+type CompanyBrainSectionProps = {
+  realtimeVersion?: number;
+};
+
+export function CompanyBrainSection({ realtimeVersion = 0 }: CompanyBrainSectionProps) {
   const [payload, setPayload] = useState<CompanyBrainPayload | null>(null);
   const [exportsHistory, setExportsHistory] = useState<CompanyBrainExportSummary[]>([]);
   const [governance, setGovernance] = useState<GovernancePolicy>(DEFAULT_GOVERNANCE);
@@ -119,9 +123,11 @@ export function CompanyBrainSection() {
   const [roleValue, setRoleValue] = useState<"owner" | "admin" | "operator" | "viewer">("operator");
   const [roleScopes, setRoleScopes] = useState("actions.execute,actions.approve,governance.policy.write,governance.roles.write");
   const [loading, setLoading] = useState(true);
+  const [compilingSkills, setCompilingSkills] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [sreRunbook, setSreRunbook] = useState<SreRunbook | null>(null);
+  const didInitialLoadRef = useRef(false);
 
   async function authHeaders(): Promise<HeadersInit> {
     const token = await getOrCreateMemoryToken();
@@ -372,11 +378,27 @@ export function CompanyBrainSection() {
     URL.revokeObjectURL(url);
   }
 
+  async function compileAndDownloadSkills(): Promise<void> {
+    try {
+      setCompilingSkills(true);
+      setErrorMessage(null);
+      setStatusMessage("Compiling Company Brain export...");
+      await loadSkills();
+      setStatusMessage("Company Brain export compiled. Download is ready.");
+    } catch (error) {
+      setStatusMessage(null);
+      setErrorMessage(error instanceof Error ? error.message : "Failed to compile Company Brain export.");
+    } finally {
+      setCompilingSkills(false);
+    }
+  }
+
   useEffect(() => {
+    if (didInitialLoadRef.current) return;
+    didInitialLoadRef.current = true;
     let cancelled = false;
     void (async () => {
       try {
-        await loadSkills();
         await loadCompanyBrainControlPlane();
         if (!cancelled) {
           setErrorMessage(null);
@@ -396,124 +418,170 @@ export function CompanyBrainSection() {
     };
   }, []);
 
+  const companyStats = payload?.stats;
+  const activeSources = sources.filter((source) => source.enabled).length;
+  const businessSources = sources.filter((source) => source.type === "support" || source.type === "crm" || source.type === "db");
+  const pendingActions = actions.filter((action) => action.status === "pending").length;
+  const blockedActions = actions.filter((action) => action.status === "failed" || action.status === "rejected").length;
+  const controlPlaneReady = Boolean(controlStatus) && !controlStatus?.scheduler.lastError;
+  const companyBrainLocked = errorMessage?.toLowerCase().includes("pro") ?? false;
+  const runtimeStatus = controlPlaneReady
+    ? "Operational"
+    : companyBrainLocked
+      ? "Plan required"
+      : loading
+        ? "Checking"
+        : "Idle";
+
+  function formatDate(value: string | null | undefined): string {
+    if (!value) return "Not seen yet";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Not seen yet";
+    return date.toLocaleString();
+  }
+
+  function sourceLabel(source: CompanyBrainSource): string {
+    const provider = typeof source.config.provider === "string" ? source.config.provider : source.type;
+    return provider.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
   return (
-    <div className="space-y-3">
-      <div>
-        <h1 className="text-base font-semibold tracking-tighter sm:text-lg">Company Brain</h1>
-      </div>
-
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Runtime</p>
-        <div className="mt-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-foreground">
-          Company Brain runtime
+    <div className="space-y-6">
+      <section className="border border-border bg-muted/30">
+        <div className="grid gap-6 p-5 lg:grid-cols-[1fr_340px]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Company Brain</p>
+            <h1 className="mt-3 max-w-3xl text-2xl font-semibold tracking-tight text-foreground">
+              Turn source memory into an operating layer for agent teams.
+            </h1>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+              Company Brain compiles decisions, incidents, runbooks, risks, and source signals into a reusable
+              company memory contract that agents can execute against with governance.
+            </p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+            <StatusTile label="Runtime" value={runtimeStatus} tone={controlPlaneReady ? "good" : "neutral"} />
+            <StatusTile label="Workspace graph" value={`${controlStatus?.graph.nodes ?? 0} nodes`} detail={`${controlStatus?.graph.edges ?? 0} edges`} />
+          </div>
         </div>
+      </section>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <Stat label="Active memory" value={companyStats?.activeMemoryCount ?? 0} detail="usable company context" />
+        <Stat label="Decisions captured" value={companyStats?.decisions ?? 0} detail="contract evidence" />
+        <Stat label="Connected sources" value={activeSources} detail={`${sources.length} configured`} />
+        <Stat label="Pending approvals" value={controlStatus?.approvals.pending ?? pendingActions} detail="human gates" />
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex gap-2">
+      {(errorMessage || statusMessage) ? (
+        <div
+          className={`border px-4 py-3 text-sm ${
+            companyBrainLocked
+              ? "border-border bg-muted/40 text-muted-foreground"
+              : errorMessage
+                ? "border-destructive/35 bg-destructive/10 text-destructive"
+                : "border-primary/30 bg-primary/10 text-primary"
+          }`}
+        >
+          {companyBrainLocked ? (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="font-medium text-foreground">Company Brain export is available on Pro and Scale.</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Runtime health, source setup, governance, and action control remain visible here. Upgrade unlocks compiled COMPANY_BRAIN.md exports.
+                </p>
+              </div>
+              <span className="border border-border bg-background px-2 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Upgrade feature
+              </span>
+            </div>
+          ) : errorMessage ?? statusMessage}
+        </div>
+      ) : null}
+
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="border border-border bg-card">
+          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Control Plane</p>
+              <p className="mt-1 text-sm text-muted-foreground">Live backend health for graph, scheduler, queues, and compiled skills.</p>
+            </div>
             <button
               type="button"
-              onClick={() => void Promise.all([loadSkills(), loadCompanyBrainControlPlane()])}
-              className="rounded-md border border-border bg-muted/50 px-2.5 py-1.5 text-xs text-muted-foreground"
+              onClick={() => void loadCompanyBrainControlPlane()}
+              className="border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-widest text-foreground hover:border-primary"
             >
               Refresh
             </button>
+          </div>
+          <div className="grid gap-0 md:grid-cols-2 xl:grid-cols-4">
+            <HealthCell label="Scheduler" value={controlStatus?.scheduler.enabled ? "Running" : "Idle"} detail={`Last tick: ${formatDate(controlStatus?.scheduler.lastTickAt)}`} />
+            <HealthCell label="Queue" value={`${controlStatus?.queue.queued ?? 0} queued`} detail={`${controlStatus?.queue.failed ?? 0} failed`} />
+            <HealthCell label="Source events" value={`${controlStatus?.sourceEvents.pending ?? 0} pending`} detail={`${controlStatus?.sourceEvents.deadLetter ?? 0} dead-letter`} />
+            <HealthCell label="Skills compiler" value={`${controlStatus?.skills.count ?? 0} skills`} detail={`Updated: ${formatDate(controlStatus?.skills.updatedAt)}`} />
+          </div>
+          <div className="flex flex-wrap gap-2 border-t border-border px-4 py-3">
             <button
               type="button"
-              onClick={downloadSkills}
-              disabled={!payload?.skillsMarkdown}
-              className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary disabled:opacity-50"
+              onClick={() => void runSreRecoverQueue()}
+              className="border border-border bg-muted/40 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:border-primary hover:text-foreground"
             >
-              Export COMPANY_BRAIN.md
+              Recover Queue
+            </button>
+            <button
+              type="button"
+              onClick={() => void runSreBackfillDeadLetter()}
+              className="border border-border bg-muted/40 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:border-primary hover:text-foreground"
+            >
+              Backfill Dead Letter
             </button>
           </div>
         </div>
 
-        {errorMessage ? (
-          <p className="mt-3 rounded-md border border-destructive/35 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-            {errorMessage}
-          </p>
-        ) : null}
-        {statusMessage ? (
-          <p className="mt-3 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-primary">
-            {statusMessage}
-          </p>
-        ) : null}
-
-        {payload ? (
-          <div className="mt-3 grid gap-2 sm:grid-cols-3 xl:grid-cols-7">
-            <Stat label="Active Memory" value={payload.stats.activeMemoryCount} />
-            <Stat label="Timeline" value={payload.stats.totalTimelineEvents} />
-            <Stat label="Decisions" value={payload.stats.decisions} />
-            <Stat label="Constraints" value={payload.stats.constraints} />
-            <Stat label="Incidents" value={payload.stats.incidents} />
-            <Stat label="Runbooks" value={payload.stats.runbooks} />
-            <Stat label="Open Risks" value={payload.stats.openRisks} />
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Company Contract</p>
+            <p className="mt-1 text-sm text-muted-foreground">Exportable operating memory for coding agents, support agents, and platform teams.</p>
           </div>
-        ) : null}
-      </div>
-
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Control Plane Health</p>
-        {controlStatus ? (
-          <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-            <Stat label="Scheduler" value={controlStatus.scheduler.enabled ? 1 : 0} suffix={controlStatus.scheduler.enabled ? "on" : "off"} />
-            <Stat label="Queue (queued)" value={controlStatus.queue.queued} />
-            <Stat label="Queue (failed)" value={controlStatus.queue.failed} />
-            <Stat label="Dead Letter" value={controlStatus.sourceEvents.deadLetter} />
-            <Stat label="Graph Nodes" value={controlStatus.graph.nodes} />
-            <Stat label="Graph Edges" value={controlStatus.graph.edges} />
-            <Stat label="Skills" value={controlStatus.skills.count} />
-            <Stat label="Pending Approvals" value={controlStatus.approvals.pending} />
+          <div className="grid grid-cols-2 border-b border-border">
+            <HealthCell label="Incidents" value={`${companyStats?.incidents ?? 0}`} detail="debug memory" />
+            <HealthCell label="Runbooks" value={`${companyStats?.runbooks ?? 0}`} detail="repeatable ops" />
+            <HealthCell label="Constraints" value={`${companyStats?.constraints ?? 0}`} detail="guardrails" />
+            <HealthCell label="Open risks" value={`${companyStats?.openRisks ?? 0}`} detail="needs attention" />
           </div>
-        ) : (
-          <p className="mt-2 text-xs text-muted-foreground">Loading control plane status...</p>
-        )}
-        <div className="mt-2 text-xs text-muted-foreground">
-          <p>last tick: {controlStatus?.scheduler.lastTickAt ? new Date(controlStatus.scheduler.lastTickAt).toLocaleString() : "n/a"}</p>
-          <p>last error: {controlStatus?.scheduler.lastError ?? "none"}</p>
-          <p>graph updated: {controlStatus?.graph.updatedAt ? new Date(controlStatus.graph.updatedAt).toLocaleString() : "n/a"}</p>
-          <p>skills updated: {controlStatus?.skills.updatedAt ? new Date(controlStatus.skills.updatedAt).toLocaleString() : "n/a"}</p>
+          <div className="flex flex-wrap gap-2 px-4 py-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (payload?.skillsMarkdown) {
+                  downloadSkills();
+                  return;
+                }
+                void compileAndDownloadSkills();
+              }}
+              disabled={compilingSkills}
+              className="border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              {compilingSkills ? "Compiling..." : payload?.skillsMarkdown ? "Download COMPANY_BRAIN.md" : "Compile COMPANY_BRAIN.md"}
+            </button>
+            <span className="px-3 py-2 text-xs text-muted-foreground">
+              {payload?.generatedAt ? `Generated ${formatDate(payload.generatedAt)}` : "Generate requires eligible workspace plan"}
+            </span>
+          </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => void runSreRecoverQueue()}
-            className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
-          >
-            SRE Recover Queue
-          </button>
-          <button
-            type="button"
-            onClick={() => void runSreBackfillDeadLetter()}
-            className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
-          >
-            SRE Backfill Dead Letter
-          </button>
-        </div>
-        {sreRunbook ? (
-          <div className="mt-3 rounded-md border border-border bg-muted/30 px-3 py-2">
-            <p className="text-xs text-muted-foreground">runbook backend={sreRunbook.queueBackendMode}</p>
-            {sreRunbook.warnings.length > 0 ? (
-              <p className="mt-1 text-xs text-chart-2">warnings: {sreRunbook.warnings.join(" | ")}</p>
-            ) : (
-              <p className="mt-1 text-xs text-primary">warnings: none</p>
-            )}
-          </div>
-        ) : null}
-      </div>
+      </section>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Business Source Config (No Manual API Calls)</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Configure `support`, `crm`, or `db` pull source directly from console.
-        </p>
-        <div className="mt-3 grid gap-2 md:grid-cols-2">
+      <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Source Intake</p>
+            <p className="mt-1 text-sm text-muted-foreground">Configure support, CRM, or database sources without manual API calls.</p>
+          </div>
+          <div className="grid gap-3 p-4 md:grid-cols-2">
           <select
             value={sourceType}
             onChange={(event) => setSourceType(event.target.value as "support" | "crm" | "db")}
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+              className="border border-border bg-background px-3 py-2 text-sm"
           >
             <option value="support">support</option>
             <option value="crm">crm</option>
@@ -522,7 +590,7 @@ export function CompanyBrainSection() {
           <select
             value={sourceProvider}
             onChange={(event) => setSourceProvider(event.target.value)}
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+              className="border border-border bg-background px-3 py-2 text-sm"
           >
             {sourceType === "support" ? (
               <>
@@ -540,7 +608,7 @@ export function CompanyBrainSection() {
               </>
             ) : null}
           </select>
-          <label className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
+            <label className="flex items-center gap-2 border border-border bg-background px-3 py-2 text-sm">
             <input
               type="checkbox"
               checked={sourceEnabled}
@@ -552,68 +620,80 @@ export function CompanyBrainSection() {
             value={sourceApiUrl}
             onChange={(event) => setSourceApiUrl(event.target.value)}
             placeholder="https://api.yourtool.com/v1/events"
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs md:col-span-2"
+              className="border border-border bg-background px-3 py-2 text-sm md:col-span-2"
           />
           <input
             value={sourceApiKey}
             onChange={(event) => setSourceApiKey(event.target.value)}
             placeholder="apiKey (optional)"
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+              className="border border-border bg-background px-3 py-2 text-sm"
           />
           <input
             value={sourceBearerToken}
             onChange={(event) => setSourceBearerToken(event.target.value)}
             placeholder="bearerToken (optional)"
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+              className="border border-border bg-background px-3 py-2 text-sm"
           />
           <input
             value={sourceAuthHeader}
             onChange={(event) => setSourceAuthHeader(event.target.value)}
             placeholder="Authorization"
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs md:col-span-2"
+              className="border border-border bg-background px-3 py-2 text-sm md:col-span-2"
           />
+            <button
+              type="button"
+              onClick={() => void saveBusinessSource()}
+              className="border border-primary bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary-foreground md:col-span-2"
+            >
+              Save Source
+            </button>
         </div>
-        <button
-          type="button"
-          onClick={() => void saveBusinessSource()}
-          className="mt-3 rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
-        >
-          Save Business Source
-        </button>
+        </div>
 
-        <div className="mt-3 space-y-2">
-          {sources.filter((source) => source.type === "support" || source.type === "crm" || source.type === "db").length === 0 ? (
-            <p className="text-xs text-muted-foreground">No business sources configured yet.</p>
-          ) : (
-            sources
-              .filter((source) => source.type === "support" || source.type === "crm" || source.type === "db")
-              .map((source) => (
-                <div key={source.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
-                  <p className="text-xs font-medium">
-                    {source.type} · {source.enabled ? "enabled" : "disabled"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    apiUrl={typeof source.config.apiUrl === "string" ? source.config.apiUrl : "not set"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    provider={typeof source.config.provider === "string" ? source.config.provider : "generic"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    updated={new Date(source.updatedAt).toLocaleString()}
-                  </p>
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Source Inventory</p>
+            <p className="mt-1 text-sm text-muted-foreground">What the company brain can currently learn from.</p>
+          </div>
+          <div className="divide-y divide-border">
+            {businessSources.length === 0 ? (
+              <div className="px-4 py-8 text-sm text-muted-foreground">No business sources configured yet.</div>
+            ) : (
+              businessSources.map((source) => (
+                <div key={source.id} className="grid gap-3 px-4 py-3 md:grid-cols-[1fr_120px_160px] md:items-center">
+                  <div>
+                    <p className="font-medium text-foreground">{sourceLabel(source)}</p>
+                    <p className="mt-1 truncate text-xs text-muted-foreground">
+                      {typeof source.config.apiUrl === "string" ? source.config.apiUrl : "No endpoint configured"}
+                    </p>
+                  </div>
+                  <span className={`w-fit border px-2 py-1 text-xs font-semibold uppercase tracking-widest ${source.enabled ? "border-primary/30 bg-primary/10 text-primary" : "border-border bg-muted text-muted-foreground"}`}>
+                    {source.enabled ? "Enabled" : "Paused"}
+                  </span>
+                  <p className="text-xs text-muted-foreground md:text-right">{formatDate(source.updatedAt)}</p>
                 </div>
               ))
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Governance Policy Matrix</p>
-        <div className="mt-3 grid gap-3 md:grid-cols-3">
+      <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Governance Matrix</p>
+            <p className="mt-1 text-sm text-muted-foreground">Decide which agent actions can execute and which need human approval.</p>
+          </div>
+          <div className="grid gap-3 p-4 md:grid-cols-3 xl:grid-cols-1">
           {(["low", "medium", "high"] as const).map((risk) => (
-            <div key={risk} className="rounded-md border border-border bg-muted/30 px-3 py-3">
-              <p className="text-xs font-semibold uppercase">{risk}</p>
-              <label className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+              <div key={risk} className="border border-border bg-muted/30 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-semibold uppercase tracking-widest">{risk} risk</p>
+                  <span className="text-xs text-muted-foreground">
+                    {governance.riskPolicy[risk].autoExecute ? "Auto" : "Review"}
+                  </span>
+                </div>
+                <label className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                 <input
                   type="checkbox"
                   checked={governance.riskPolicy[risk].autoExecute}
@@ -651,92 +731,91 @@ export function CompanyBrainSection() {
                     },
                   }));
                 }}
-                className="mt-2 w-full rounded-md border border-border bg-background px-2 py-1 text-xs"
+                  className="mt-3 w-full border border-border bg-background px-3 py-2 text-xs"
               />
             </div>
           ))}
         </div>
-        <div className="mt-3">
+          <div className="border-t border-border px-4 py-3">
           <button
             type="button"
             onClick={() => void saveGovernance()}
-            className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
+              className="border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary"
           >
             Save Governance Policy
           </button>
         </div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Role Assignment</p>
-        <div className="mt-2 grid gap-2 md:grid-cols-4">
-          <input
-            value={roleTargetUserId}
-            onChange={(event) => setRoleTargetUserId(event.target.value)}
-            placeholder="target user id"
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
-          />
-          <select
-            value={roleValue}
-            onChange={(event) => setRoleValue(event.target.value as "owner" | "admin" | "operator" | "viewer")}
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
-          >
-            <option value="owner">owner</option>
-            <option value="admin">admin</option>
-            <option value="operator">operator</option>
-            <option value="viewer">viewer</option>
-          </select>
-          <input
-            value={roleScopes}
-            onChange={(event) => setRoleScopes(event.target.value)}
-            placeholder="comma scopes"
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs md:col-span-2"
-          />
-        </div>
-        <button
-          type="button"
-          onClick={() => void assignRole()}
-          className="mt-2 rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
-        >
-          Assign Role
-        </button>
-      </div>
-
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Action Runner</p>
-        <div className="mt-2 grid gap-2">
-          <input
-            value={newActionName}
-            onChange={(event) => setNewActionName(event.target.value)}
-            className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
-          />
-          <textarea
-            value={newActionPayload}
-            onChange={(event) => setNewActionPayload(event.target.value)}
-            className="min-h-24 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-mono"
-          />
-          <div className="flex flex-wrap gap-2">
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Agent Action Queue</p>
+            <p className="mt-1 text-sm text-muted-foreground">Create, simulate, approve, and execute governed actions from one place.</p>
+          </div>
+          <div className="grid gap-3 p-4">
+            <div className="grid gap-3 md:grid-cols-2">
+              <input
+                value={newActionName}
+                onChange={(event) => setNewActionName(event.target.value)}
+                className="border border-border bg-background px-3 py-2 text-sm"
+              />
+              <select
+                value={roleValue}
+                onChange={(event) => setRoleValue(event.target.value as "owner" | "admin" | "operator" | "viewer")}
+                className="border border-border bg-background px-3 py-2 text-sm"
+              >
+                <option value="owner">owner</option>
+                <option value="admin">admin</option>
+                <option value="operator">operator</option>
+                <option value="viewer">viewer</option>
+              </select>
+            </div>
+            <textarea
+              value={newActionPayload}
+              onChange={(event) => setNewActionPayload(event.target.value)}
+              className="min-h-24 border border-border bg-background px-3 py-2 font-mono text-xs"
+            />
+            <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => void simulateCurrentAction()}
               disabled={isSimulating}
-              className="w-fit rounded-md border border-border bg-muted/50 px-2.5 py-1.5 text-xs text-muted-foreground disabled:opacity-50"
+                className="border border-border bg-muted/40 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground disabled:opacity-50"
             >
               {isSimulating ? "Simulating..." : "Simulate Action"}
             </button>
             <button
               type="button"
               onClick={() => void requestAction()}
-              className="w-fit rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs text-primary"
+                className="border border-primary bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary-foreground"
             >
               Create Action Request
             </button>
+              <button
+                type="button"
+                onClick={() => void assignRole()}
+                className="border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary"
+              >
+                Assign {roleValue} Role
+              </button>
+            </div>
+            <input
+              value={roleTargetUserId}
+              onChange={(event) => setRoleTargetUserId(event.target.value)}
+              placeholder="target user id for role assignment"
+              className="border border-border bg-background px-3 py-2 text-sm"
+            />
+            <input
+              value={roleScopes}
+              onChange={(event) => setRoleScopes(event.target.value)}
+              placeholder="comma scopes"
+              className="border border-border bg-background px-3 py-2 text-sm"
+            />
           </div>
-        </div>
 
         {simulation ? (
-          <div className="mt-3 rounded-md border border-border bg-muted/30 px-3 py-2">
-            <p className="text-xs font-medium">Simulation Result</p>
+            <div className="border-t border-border bg-muted/20 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-widest text-foreground">Simulation Result</p>
             <p className="mt-1 text-xs text-muted-foreground">
               risk={simulation.risk} · autoExecutable={simulation.autoExecutable ? "yes" : "no"} · complianceBlocked={simulation.complianceBlocked ? "yes" : "no"}
             </p>
@@ -752,50 +831,47 @@ export function CompanyBrainSection() {
           </div>
         ) : null}
 
-        <div className="mt-3 space-y-2">
+          <div className="border-t border-border">
           {actions.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No action requests yet.</p>
+              <p className="px-4 py-6 text-sm text-muted-foreground">No action requests yet.</p>
           ) : (
             actions.slice(0, 12).map((action) => (
-              <div key={action.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
-                <p className="text-xs font-medium">{action.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  risk={action.risk} · status={action.status} · required={action.requiredApprovals.join(",")}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  approvals progress: {
-                    action.requiredApprovals.length === 0
-                      ? "none required"
-                      : `${new Set((action.approvals ?? []).filter((entry) => entry.decision === "approve").map((entry) => entry.reviewerRole)).size}/${action.requiredApprovals.length}`
-                  }
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  constraints: {action.executionConstraints.join(" | ")}
-                </p>
-                {action.executionResult ? (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    result: {action.executionResult.ok ? "ok" : "failed"} · {action.executionResult.detail}
-                  </p>
-                ) : null}
-                <div className="mt-2 flex gap-2">
+                <div key={action.id} className="grid gap-3 border-b border-border px-4 py-3 md:grid-cols-[1fr_120px_210px] md:items-center">
+                  <div>
+                    <p className="font-medium text-foreground">{action.name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {action.risk} risk · approvals {
+                        action.requiredApprovals.length === 0
+                          ? "not required"
+                          : `${new Set((action.approvals ?? []).filter((entry) => entry.decision === "approve").map((entry) => entry.reviewerRole)).size}/${action.requiredApprovals.length}`
+                      }
+                    </p>
+                    <p className="mt-1 truncate text-xs text-muted-foreground">
+                      {action.executionConstraints.length ? action.executionConstraints.join(" | ") : "No runtime constraints"}
+                    </p>
+                  </div>
+                  <span className={`w-fit border px-2 py-1 text-xs font-semibold uppercase tracking-widest ${action.status === "approved" || action.status === "executed" ? "border-primary/30 bg-primary/10 text-primary" : action.status === "failed" || action.status === "rejected" ? "border-destructive/30 bg-destructive/10 text-destructive" : "border-border bg-muted text-muted-foreground"}`}>
+                    {action.status}
+                  </span>
+                  <div className="flex flex-wrap gap-2 md:justify-end">
                   <button
                     type="button"
                     onClick={() => void reviewAction(action.id, "approve")}
-                    className="rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs text-primary"
+                      className="border border-primary/30 bg-primary/10 px-2 py-1 text-xs text-primary"
                   >
                     Approve
                   </button>
                   <button
                     type="button"
                     onClick={() => void reviewAction(action.id, "reject")}
-                    className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
+                      className="border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
                   >
                     Reject
                   </button>
                   <button
                     type="button"
                     onClick={() => void executeAction(action.id)}
-                    className="rounded-md border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
+                      className="border border-border bg-muted/50 px-2 py-1 text-xs text-muted-foreground"
                   >
                     Execute
                   </button>
@@ -805,27 +881,35 @@ export function CompanyBrainSection() {
           )}
         </div>
       </div>
+      </section>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Generated Skills File</p>
+      <section className="grid gap-4 xl:grid-cols-[1fr_360px]">
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Generated Skills File</p>
+            <p className="mt-1 text-sm text-muted-foreground">A portable COMPANY_BRAIN.md contract for agents and teams.</p>
+          </div>
         <textarea
           value={payload?.skillsMarkdown ?? ""}
           readOnly
           placeholder="Generate to view Company Brain skills..."
-          className="mt-2 min-h-96 w-full rounded-md border border-border bg-muted/30 px-3 py-2 font-mono text-xs text-foreground outline-none"
+            className="min-h-96 w-full border-0 bg-muted/20 px-4 py-3 font-mono text-xs text-foreground outline-none"
         />
       </div>
 
-      <div className="rounded-lg border border-border bg-card px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Recent Exports</p>
-        <div className="mt-2 space-y-2">
+        <div className="border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Recent Exports</p>
+            <p className="mt-1 text-sm text-muted-foreground">Audit trail for generated company memory contracts.</p>
+          </div>
+          <div className="divide-y divide-border">
           {exportsHistory.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No previous exports yet.</p>
+              <p className="px-4 py-6 text-sm text-muted-foreground">No previous exports yet.</p>
           ) : (
             exportsHistory.slice(0, 8).map((entry) => (
-              <div key={entry.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
+                <div key={entry.id} className="px-4 py-3">
                 <div>
-                  <p className="text-xs font-medium">{new Date(entry.generatedAt).toLocaleString()}</p>
+                    <p className="text-sm font-medium">{formatDate(entry.generatedAt)}</p>
                   <p className="text-xs text-muted-foreground">
                     {entry.workspace} · {entry.stats.activeMemoryCount} memories · {entry.stats.decisions} decisions
                   </p>
@@ -835,18 +919,43 @@ export function CompanyBrainSection() {
           )}
         </div>
       </div>
+      </section>
     </div>
   );
 }
 
-function Stat({ label, value, suffix }: { label: string; value: number; suffix?: string }) {
+function Stat({ label, value, suffix, detail }: { label: string; value: number; suffix?: string; detail?: string }) {
   return (
-    <div className="rounded-md border border-border bg-muted/40 px-3 py-2">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="mt-1 text-lg font-semibold">
+    <div className="border border-border bg-card px-4 py-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+      <p className="mt-3 text-3xl font-semibold tabular-nums">
         {value}
         {suffix ? <span className="ml-1 text-xs font-normal text-muted-foreground">{suffix}</span> : null}
       </p>
+      {detail ? <p className="mt-1 text-xs text-muted-foreground">{detail}</p> : null}
+    </div>
+  );
+}
+
+function StatusTile({ label, value, detail, tone = "neutral" }: { label: string; value: string; detail?: string; tone?: "good" | "warn" | "neutral" }) {
+  return (
+    <div className="border border-border bg-background px-4 py-3">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+      <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+        <span className={`h-2 w-2 rounded-full ${tone === "good" ? "bg-primary" : tone === "warn" ? "bg-destructive" : "bg-muted-foreground"}`} />
+        {value}
+      </p>
+      {detail ? <p className="mt-1 text-xs text-muted-foreground">{detail}</p> : null}
+    </div>
+  );
+}
+
+function HealthCell({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <div className="border-b border-border px-4 py-4 md:border-r xl:border-b-0">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+      <p className="mt-2 text-lg font-semibold text-foreground">{value}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
     </div>
   );
 }

@@ -10,41 +10,39 @@ import React, {
 } from "react";
 import type { CSSProperties } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
-import { AgentsSection } from "@/components/developer-console/sections/agents-section";
 import { ApiKeysSection } from "@/components/developer-console/sections/api-keys-section";
-import { BenchmarksSection } from "@/components/developer-console/sections/benchmarks-section";
 import { BillingSection } from "@/components/developer-console/sections/billing-section";
 import { ConnectorsSection } from "@/components/developer-console/sections/connectors-section";
-import { ConflictStalenessSection } from "@/components/developer-console/sections/conflict-staleness-section";
-import { ContextInspectorSection } from "@/components/developer-console/sections/context-inspector-section";
-import { ContractConsoleSection } from "@/components/developer-console/sections/contract-console-section";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
 import { IntegrationsSection } from "@/components/developer-console/sections/integrations-section";
-import { ImportsSection } from "@/components/developer-console/sections/imports-section";
-import { PreflightSection } from "@/components/developer-console/sections/preflight-section";
-import { WorkflowOsSection } from "@/components/developer-console/sections/workflow-os-section";
-import { MemoriesSection } from "@/components/developer-console/sections/memories-section";
 import { FlightRecorderSection } from "@/components/developer-console/sections/flight-recorder-section";
+import { MemoryEvolutionSection } from "@/components/developer-console/sections/memory-evolution-section";
+import { MemoryGraphSection } from "@/components/developer-console/sections/memory-graph-section";
 import { OverviewSection } from "@/components/developer-console/sections/overview-section";
-import { PluginsSection } from "@/components/developer-console/sections/plugins-section";
-import { PlaygroundSection } from "@/components/developer-console/sections/playground-section";
-import { PortabilitySection } from "@/components/developer-console/sections/portability-section";
 import { GovernanceSection } from "@/components/developer-console/sections/governance-section";
+import { buildHeaderNotifications } from "@/components/developer-console/intel-console-header-bar";
+import { IntelligenceConsoleLayout } from "@/components/developer-console/intelligence-console-layout";
 import {
   RequestsSection,
   type RequestSectionEvent,
 } from "@/components/developer-console/sections/requests-section";
 import { SettingsSection } from "@/components/developer-console/sections/settings-section";
 import { TeamSection } from "@/components/developer-console/sections/team-section";
-import { CompanyBrainSection } from "@/components/developer-console/sections/company-brain-section";
 import { Icon, type IconName } from "@/components/ui/icon";
-import { Badge, ConsoleNavSearch } from "@/components/developer-console/console-ui";
+import { Badge } from "@/components/developer-console/console-ui";
+import { IntelligenceSectionWrap } from "@/components/developer-console/intelligence-section-wrap";
+import { osNavIcon } from "@/components/developer-console/os-nav-icons";
 import { Button } from "@/components/ui/button";
+import type { BillingPlan } from "@/lib/plan-catalog";
+import {
+  activateCompanyBrainFunnel,
+  focusFunnelOnGithub,
+  markFunnelLabOpened,
+} from "@/lib/company-brain-funnel";
 
 import {
   clearStoredMemoryTokens,
   fetchMemoryTokenFromBridge,
-  readMemoryTokenFromStorage,
 } from "@/lib/memory-token";
 
 const STORAGE_KEY = "memoryos.developer-console.onboarding";
@@ -341,64 +339,117 @@ const GLITCH_ASCII_PATTERN = Array.from({ length: 18 }, (_, row) =>
   ).join(" "),
 ).join("\n");
 
+/**
+ * Company Brain execution blueprint — canonical developer console IA.
+ * @see product vision: ingestion → memory → agents → continuity → execution
+ */
 const DASHBOARD_NAV = [
   {
-    section: "",
+    section: "Intelligence",
     items: [
-      "Command Center",
-      "Preflight Console",
-      "Agent Workflow OS",
-      "Memory Vault",
-      "Agent Flight Recorder",
+      "Overview",
+      "Connected Intelligence Sources",
+      "Memory Graph",
+      "Runtime Activity",
+      "Agent Activity Timeline",
+      "Memory Evolution Timeline",
+      "Security + Governance",
     ],
   },
   {
-    section: "Test",
-    items: ["API Requests", "Evaluation", "Conflict & Staleness"],
+    section: "Workspaces",
+    items: ["Continuity Lab", "Playground"],
   },
   {
-    section: "Data",
-    items: [
-      "Data Sources",
-      "Frameworks",
-      "Ingestion Control Center",
-      "Portability",
-      "Company Brain",
-      "Governance",
-      "Contract Console",
-      "Context Inspector",
-    ],
+    section: "Developer",
+    items: ["Integrations & SDK"],
   },
-  { section: "Developer", items: ["API Keys", "Agent Profiles", "Adapters"] },
-  { section: "Organization", items: ["Team", "Billing", "Settings"] },
+  {
+    section: "Organization",
+    items: ["Team", "Billing", "Settings", "API Keys"],
+  },
 ] as const;
 
+const CONSOLE_NAV_ITEMS = new Set<string>(
+  DASHBOARD_NAV.flatMap((group) => group.items as readonly string[]),
+);
+
+/** Old sidebar labels → current routes (bookmarks / saved state). */
+const LEGACY_NAV_ALIASES: Record<string, string> = {
+  "Command Center": "Overview",
+  "Overview Dashboard": "Overview",
+  "Data Sources": "Connected Intelligence Sources",
+  Connectors: "Connected Intelligence Sources",
+  Integrations: "Integrations & SDK",
+  Frameworks: "Integrations & SDK",
+  Plugins: "Integrations & SDK",
+  Adapters: "Integrations & SDK",
+  Imports: "Connected Intelligence Sources",
+  "Ingestion Control Center": "Connected Intelligence Sources",
+  "API Requests": "Runtime Activity",
+  Requests: "Runtime Activity",
+  "Agent Flight Recorder": "Agent Activity Timeline",
+  "Flight Recorder": "Agent Activity Timeline",
+  "Memory Vault": "Memory Graph",
+  Memories: "Memory Graph",
+  "Memory Store": "Memory Graph",
+  "Company Brain": "Memory Graph",
+  "Agent Profiles": "Integrations & SDK",
+  Governance: "Security + Governance",
+  Preflight: "Playground",
+  Benchmarks: "Runtime Activity",
+  "Conflict + Staleness": "Memory Evolution Timeline",
+  "Context Inspector": "Memory Graph",
+  "Workflow OS": "Runtime Activity",
+  Agents: "Agent Activity Timeline",
+  "Run Demo": "Playground",
+  Projects: "Overview",
+  Handoffs: "Continuity Lab",
+  Portability: "Integrations & SDK",
+  "Contract Console": "Integrations & SDK",
+};
+
+function resolveDashboardItem(item: string): string {
+  const mapped = LEGACY_NAV_ALIASES[item] ?? item;
+  if (CONSOLE_NAV_ITEMS.has(mapped)) {
+    return mapped;
+  }
+  return "Overview";
+}
+
+function isWorkspaceTabItem(item: string): boolean {
+  return item === "Continuity Lab" || item === "Playground";
+}
+
+function openWorkspaceTab(item: string, options?: { autostartLab?: boolean }) {
+  if (item === "Continuity Lab") {
+    markFunnelLabOpened();
+    const params = options?.autostartLab ? "?autostart=1&autobrief=1" : "";
+    window.open(`/continuity-lab${params}`, "_blank", "noopener,noreferrer");
+    return;
+  }
+  if (item === "Playground") {
+    window.open("/playground", "_blank", "noopener,noreferrer");
+  }
+}
+
 function dashboardItemIcon(item: string): IconName {
+  const resolved = resolveDashboardItem(item);
   const map: Record<string, IconName> = {
-    "Command Center": "radar",
-    "Preflight Console": "terminal",
-    "Agent Workflow OS": "agent",
-    "Memory Vault": "vault",
-    "Agent Flight Recorder": "timeline",
-    "API Requests": "timeline",
-    Evaluation: "graph",
-    "Data Sources": "search",
-    Frameworks: "memory",
-    "Ingestion Control Center": "send",
-    Portability: "memory",
-    "Company Brain": "graph",
-    Governance: "settings",
-    "Contract Console": "terminal",
-    "Context Inspector": "timeline",
+    Overview: "radar",
+    "Connected Intelligence Sources": "search",
+    "Memory Graph": "graph",
+    "Runtime Activity": "timeline",
+    "Agent Activity Timeline": "agent",
+    "Memory Evolution Timeline": "vault",
+    "Security + Governance": "settings",
+    "Integrations & SDK": "memory",
     "API Keys": "vault",
-    "Agent Profiles": "agent",
-    Adapters: "settings",
     Team: "agent",
     Billing: "graph",
     Settings: "settings",
   };
-
-  return map[item] ?? "memory";
+  return map[resolved] ?? "memory";
 }
 
 type EntryPath = (typeof ENTRY_OPTIONS)[number]["id"] | null;
@@ -785,6 +836,7 @@ type MemoryListItem = {
 type MemoryListResponse = {
   memories: MemoryListItem[];
   count: number;
+  warning?: string;
 };
 
 type InsightsResponse = {
@@ -793,6 +845,7 @@ type InsightsResponse = {
   topSkills: string[];
   activeProjects: string[];
   recentMilestones: string[];
+  warning?: string;
 };
 
 type ResumeResponseData = {
@@ -808,6 +861,81 @@ type ResumeResponseData = {
     updatedAt?: string;
   }>;
 };
+
+type ContinueProjectBriefData = {
+  whatChangedRecently: string[];
+  currentGoal: string;
+  keyDecisions: string[];
+  openBlockers: string[];
+  riskyFiles: string[];
+  nextBestAction: string;
+  mustKnowContextForAgent: string[];
+};
+
+function mapContinueBriefToResume(brief: ContinueProjectBriefData): ResumeResponseData {
+  const contextLines = brief.mustKnowContextForAgent.filter((line) => line.trim().length > 0);
+  const recentChanges = brief.whatChangedRecently.filter((line) => line.trim().length > 0);
+  const openLoops = [...brief.openBlockers, ...brief.keyDecisions]
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .slice(0, 6);
+
+  return {
+    summary:
+      brief.currentGoal.trim() ||
+      contextLines[0] ||
+      "Continue from the latest indexed organizational memory.",
+    lastKnownState:
+      recentChanges.length > 0
+        ? recentChanges.join(" ")
+        : "No recent indexed changes yet.",
+    openLoops:
+      openLoops.length > 0
+        ? openLoops
+        : ["No blockers indexed yet. Add memory from a connector or continuity run."],
+    recommendedNextStep:
+      brief.nextBestAction.trim() ||
+      "Connect GitHub or local files, sync once, then open Continuity Lab.",
+    usedMemories: [],
+  };
+}
+
+function continuityProjectName(workspaceLabel: string): string {
+  return workspaceLabel.replace(/ Continuity Workspace$/i, "").trim() || "MemoryOS";
+}
+
+type HandoffApiPayload = {
+  summary?: string;
+  lastKnownState?: string;
+  currentState?: string;
+  openLoops?: string[];
+  nextRecommendedAction?: string;
+  recommendedNextActions?: string[];
+  keyMemories?: HandoffResponseData["keyMemories"];
+  keyDecisions?: string[];
+};
+
+function mapHandoffPayload(payload: HandoffApiPayload): HandoffResponseData {
+  const recommended =
+    Array.isArray(payload.recommendedNextActions) && payload.recommendedNextActions.length > 0
+      ? payload.recommendedNextActions
+      : payload.nextRecommendedAction
+        ? [payload.nextRecommendedAction]
+        : [];
+
+  return {
+    summary: payload.summary?.trim() || "Handoff package ready from live memory.",
+    currentState:
+      payload.currentState?.trim() ||
+      payload.lastKnownState?.trim() ||
+      "Latest organizational state indexed.",
+    openLoops: Array.isArray(payload.openLoops)
+      ? payload.openLoops.filter((loop) => typeof loop === "string" && loop.trim().length > 0)
+      : [],
+    recommendedNextActions: recommended,
+    keyMemories: Array.isArray(payload.keyMemories) ? payload.keyMemories : [],
+  };
+}
 
 type HandoffResponseData = {
   summary: string;
@@ -833,8 +961,42 @@ type RequestHistoryResponse = {
     status: "Success" | "Error";
     durationMs: number;
     createdAt: string;
+    agent?: string;
+    payloadSummary?: unknown;
+    responseSummary?: unknown;
+    errorDetails?: unknown;
   }>;
+  warning?: string;
 };
+
+type RequestHistoryEntry = RequestHistoryResponse["requests"][number];
+
+function toOptionalString(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (value === undefined || value === null) return undefined;
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function mapRequestHistoryEntryToEvent(entry: RequestHistoryEntry): RequestSectionEvent {
+  return {
+    id: entry.id,
+    createdAt: entry.createdAt,
+    type: entry.routeType,
+    status: entry.status,
+    latencyMs: entry.durationMs,
+    route: entry.path,
+    method: entry.method,
+    statusCode: entry.statusCode,
+    agent: entry.agent,
+    payloadSummary: toOptionalString(entry.payloadSummary),
+    responseSummary: toOptionalString(entry.responseSummary),
+    errorDetails: toOptionalString(entry.errorDetails),
+  };
+}
 
 type TimelineHistoryResponse = {
   count: number;
@@ -843,6 +1005,7 @@ type TimelineHistoryResponse = {
     eventType: string;
     timestamp: string;
   }>;
+  warning?: string;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -871,6 +1034,18 @@ function extractErrorMessage(payload: unknown, fallback: string): string {
   return fallback;
 }
 
+function extractApiWarning(payload: unknown): string | null {
+  if (isRecord(payload) && typeof payload.warning === "string") {
+    return payload.warning;
+  }
+
+  return null;
+}
+
+function formatApiWarning(warning: string): string {
+  return warning.replace(/^memory_/, "").replace(/_/g, " ");
+}
+
 function getConsoleAuthTokenFromEnv(): string | null {
   const envToken =
     process.env.NEXT_PUBLIC_MEMORYOS_CONSOLE_TOKEN ??
@@ -887,9 +1062,9 @@ function isUnauthorizedError(error: unknown): boolean {
 }
 
 async function getConsoleAuthToken(): Promise<string | null> {
-  const storageToken = readMemoryTokenFromStorage();
-  if (storageToken) {
-    return storageToken;
+  const bridgeToken = await fetchMemoryTokenFromBridge().catch(() => null);
+  if (bridgeToken) {
+    return bridgeToken;
   }
 
   const envToken = getConsoleAuthTokenFromEnv();
@@ -897,13 +1072,31 @@ async function getConsoleAuthToken(): Promise<string | null> {
     return envToken;
   }
 
-  return fetchMemoryTokenFromBridge();
+  return null;
 }
+
+const DASHBOARD_SSE_REFRESH_KINDS = new Set([
+  "resume_generated",
+  "handoff_generated",
+  "memory_processed",
+  "connector_update",
+  "sync_log",
+  "governance_review_queued",
+]);
+
+const DASHBOARD_SSE_REFRESH_DEBOUNCE_MS = 5_000;
+const BILLING_REFRESH_KINDS = new Set([
+  "request_logged",
+  "memory_processed",
+  "resume_generated",
+  "handoff_generated",
+]);
 
 async function fetchMemoryApi<T>(
   routePath: string,
   token: string,
   init?: RequestInit,
+  attempt = 0,
 ): Promise<T> {
   const configuredOrigin = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim();
   const normalizedOrigin =
@@ -944,6 +1137,15 @@ async function fetchMemoryApi<T>(
   }
 
   if (!response.ok) {
+    if (response.status === 429 && attempt < 2) {
+      const retryAfterHeader = Number(response.headers.get("retry-after"));
+      const retryAfterMs = Number.isFinite(retryAfterHeader) && retryAfterHeader > 0
+        ? retryAfterHeader * 1000
+        : 1500;
+      await new Promise((resolve) => window.setTimeout(resolve, retryAfterMs));
+      return fetchMemoryApi<T>(routePath, token, init, attempt + 1);
+    }
+
     throw new Error(
       extractErrorMessage(
         payload,
@@ -953,6 +1155,10 @@ async function fetchMemoryApi<T>(
   }
 
   return normalizeApiPayload<T>(payload);
+}
+
+function compactDashboardLimit(path: string): string {
+  return path.replace("limit=200", "limit=80").replace("limit=120", "limit=80");
 }
 
 function readStoredState() {
@@ -1066,16 +1272,8 @@ export function DeveloperConsoleExperience() {
   const [supportErrorMessage, setSupportErrorMessage] = useState<string | null>(
     null,
   );
-  const [activeDashboardItem, setActiveDashboardItem] =
-    useState("Command Center");
+  const [activeDashboardItem, setActiveDashboardItem] = useState("Overview");
   const [navSearchQuery, setNavSearchQuery] = useState("");
-  const [mountedDashboardItems, setMountedDashboardItems] = useState<string[]>([
-    "Command Center",
-  ]);
-  const [memoryLegendExpanded, setMemoryLegendExpanded] = useState(true);
-  const [showMemoryTagFilter, setShowMemoryTagFilter] = useState(false);
-  const [memoryTagQuery, setMemoryTagQuery] = useState("");
-  const [selectedMemoryTags, setSelectedMemoryTags] = useState<string[]>([]);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [dashboardDataLoading, setDashboardDataLoading] = useState(false);
   const [dashboardDataError, setDashboardDataError] = useState<string | null>(
@@ -1096,18 +1294,47 @@ export function DeveloperConsoleExperience() {
     null,
   );
   const [liveTimelineCount, setLiveTimelineCount] = useState(0);
+  const [liveTimelineEvents, setLiveTimelineEvents] = useState<
+    Array<{ id: string; eventType: string; timestamp: string }>
+  >([]);
   const [liveResume, setLiveResume] = useState<ResumeResponseData | null>(null);
   const [liveHandoff, setLiveHandoff] = useState<HandoffResponseData | null>(
     null,
   );
+  const [liveCurrentPlan, setLiveCurrentPlan] = useState<BillingPlan>("Free");
+  const [githubFunnelStatus, setGithubFunnelStatus] = useState({
+    connected: false,
+    synced: false,
+  });
   const [liveRequestEvents, setLiveRequestEvents] = useState<
     RequestSectionEvent[]
   >([]);
+  const continuityLoadedProjectRef = useRef<string | null>(null);
+  const loadDashboardDataRef = useRef<
+    ((hasRetriedAuth?: boolean) => Promise<void>) | null
+  >(null);
+  const loadLiveBillingRef = useRef<(() => Promise<void>) | null>(null);
+  const lastBillingFetchAtRef = useRef(0);
   // Benchmark state is now self-contained inside BenchmarksSection via useBenchmarks hook
   const installationEventCount =
     liveRequestEvents.length + liveMemories.length + liveTimelineCount;
+  const realtimeVersion = dashboardRefreshKey + installationEventCount;
   const isLightTheme = resolvedTheme === "light";
-
+  const headerNotifications = useMemo(
+    () =>
+      buildHeaderNotifications({
+        requestEvents: liveRequestEvents,
+        memoryCount: liveMemories.length,
+        hasConnectedSource: liveMemories.length > 0 || liveTimelineCount > 0,
+        installationConnected: installationVerificationStatus === "connected",
+      }),
+    [
+      liveRequestEvents,
+      liveMemories.length,
+      liveTimelineCount,
+      installationVerificationStatus,
+    ],
+  );
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -1137,15 +1364,6 @@ export function DeveloperConsoleExperience() {
   }, [themePreference]);
 
   useEffect(() => {
-    if (step !== "dashboard") return;
-    setMountedDashboardItems((current) =>
-      current.includes(activeDashboardItem)
-        ? current
-        : [...current, activeDashboardItem],
-    );
-  }, [activeDashboardItem, step]);
-
-  useEffect(() => {
     if (installationVerificationStatus !== "waiting") {
       return;
     }
@@ -1161,8 +1379,8 @@ export function DeveloperConsoleExperience() {
     }
 
     const interval = window.setInterval(() => {
-      setDashboardRefreshKey((current) => current + 1);
-    }, 3000);
+      void loadDashboardDataRef.current?.(false);
+    }, 30_000);
 
     return () => window.clearInterval(interval);
   }, [
@@ -1170,6 +1388,150 @@ export function DeveloperConsoleExperience() {
     installationVerificationBaseline,
     installationVerificationStatus,
   ]);
+
+  useEffect(() => {
+    if (!hydrated || step !== "dashboard") return;
+
+    let memoryStream: EventSource | null = null;
+    let connectorStream: EventSource | null = null;
+    let disposed = false;
+    let memoryReconnectTimer: number | null = null;
+    let connectorReconnectTimer: number | null = null;
+    let memoryReconnectAttempts = 0;
+    let connectorReconnectAttempts = 0;
+    let lastRefreshAt = 0;
+    let lastBillingRefreshAt = 0;
+
+    const queueBillingRefresh = () => {
+      const now = Date.now();
+      if (now - lastBillingRefreshAt < 4_000) return;
+      lastBillingRefreshAt = now;
+      void loadLiveBillingRef.current?.();
+    };
+
+    const queueDashboardRefresh = () => {
+      const now = Date.now();
+      if (now - lastRefreshAt < DASHBOARD_SSE_REFRESH_DEBOUNCE_MS) return;
+      lastRefreshAt = now;
+      void loadDashboardDataRef.current?.(false);
+    };
+    const handleRealtimeMessage = (event: MessageEvent<string>) => {
+      try {
+        const payload = JSON.parse(event.data) as {
+          kind?: string;
+          status?: string;
+          payload?: Record<string, unknown>;
+        };
+        if (payload.status === "offline") {
+          return;
+        }
+        if (payload.kind === "request_logged" && isRecord(payload.payload?.request)) {
+          const request = payload.payload.request as RequestHistoryEntry;
+          setLiveRequestEvents((current) => {
+            const next = [mapRequestHistoryEntryToEvent(request), ...current];
+            return Array.from(
+              new Map(next.map((entry) => [entry.id, entry])).values(),
+            )
+              .sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime(),
+              )
+              .slice(0, 200);
+          });
+          queueBillingRefresh();
+          return;
+        }
+        if (payload.kind && BILLING_REFRESH_KINDS.has(payload.kind)) {
+          queueBillingRefresh();
+        }
+        if (payload.kind && DASHBOARD_SSE_REFRESH_KINDS.has(payload.kind)) {
+          queueDashboardRefresh();
+        }
+      } catch {
+        // Ignore malformed SSE payloads; live request rows are patched inline above.
+      }
+    };
+
+    const scheduleMemoryReconnect = () => {
+      if (disposed || memoryReconnectTimer) return;
+      const delay = Math.min(
+        60000,
+        5000 * Math.max(1, memoryReconnectAttempts + 1),
+      );
+      memoryReconnectAttempts += 1;
+      memoryReconnectTimer = window.setTimeout(() => {
+        memoryReconnectTimer = null;
+        void openMemoryStream();
+      }, delay);
+    };
+
+    const scheduleConnectorReconnect = () => {
+      if (disposed || connectorReconnectTimer) return;
+      const delay = Math.min(
+        60000,
+        5000 * Math.max(1, connectorReconnectAttempts + 1),
+      );
+      connectorReconnectAttempts += 1;
+      connectorReconnectTimer = window.setTimeout(() => {
+        connectorReconnectTimer = null;
+        void openConnectorStream();
+      }, delay);
+    };
+
+    async function openMemoryStream() {
+      const token = await getConsoleAuthToken();
+      if (!token || disposed) return;
+
+      try {
+        memoryStream?.close();
+        memoryStream = new EventSource("/api/memory/events");
+        memoryStream.onopen = () => {
+          memoryReconnectAttempts = 0;
+        };
+        memoryStream.onmessage = handleRealtimeMessage;
+        memoryStream.onerror = () => {
+          memoryStream?.close();
+          memoryStream = null;
+          scheduleMemoryReconnect();
+        };
+      } catch {
+        scheduleMemoryReconnect();
+      }
+    }
+
+    async function openConnectorStream() {
+      const token = await getConsoleAuthToken();
+      if (!token || disposed) return;
+
+      try {
+        connectorStream?.close();
+        connectorStream = new EventSource("/api/connector/events");
+        connectorStream.onopen = () => {
+          connectorReconnectAttempts = 0;
+        };
+        connectorStream.onmessage = handleRealtimeMessage;
+        connectorStream.onerror = () => {
+          connectorStream?.close();
+          connectorStream = null;
+          scheduleConnectorReconnect();
+        };
+      } catch {
+        scheduleConnectorReconnect();
+      }
+    }
+
+    void openMemoryStream();
+    void openConnectorStream();
+
+    return () => {
+      disposed = true;
+      if (memoryReconnectTimer) window.clearTimeout(memoryReconnectTimer);
+      if (connectorReconnectTimer) window.clearTimeout(connectorReconnectTimer);
+      memoryStream?.close();
+      connectorStream?.close();
+    };
+  }, [hydrated, step]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -1285,19 +1647,13 @@ export function DeveloperConsoleExperience() {
     }
 
     let cancelled = false;
-    const workspace = currentOrganization?.name ?? "memoryos";
-    const resumePayload = {
-      project: activeProjectName,
-      question: "What should I resume next for this project?",
-      workspace,
-    };
-    const handoffPayload = {
-      project: activeProjectName,
-      question: "Generate a continuity handoff for this project.",
-      workspace,
-    };
-
+    let lastDashboardFetchAt = 0;
     async function loadDashboardData(hasRetriedAuth = false) {
+      const now = Date.now();
+      if (!hasRetriedAuth && now - lastDashboardFetchAt < 8_000) {
+        return;
+      }
+      lastDashboardFetchAt = now;
       const token = await getConsoleAuthToken();
       if (!token) {
         if (!cancelled) {
@@ -1310,37 +1666,37 @@ export function DeveloperConsoleExperience() {
       }
       const authToken: string = token;
 
-      setDashboardDataLoading(true);
+      setDashboardDataLoading(liveMemories.length === 0 && liveRequestEvents.length === 0);
       setDashboardDataError(null);
-      setLiveMemories([]);
-      setLiveInsights(null);
-      setLiveTimelineCount(0);
-      setLiveResume(null);
-      setLiveHandoff(null);
-      setLiveRequestEvents([]);
+      const shouldResetContinuity =
+        continuityLoadedProjectRef.current !== activeProjectName;
+      if (shouldResetContinuity) {
+        setLiveResume(null);
+        setLiveHandoff(null);
+      }
 
       const results = await Promise.allSettled([
         fetchMemoryApi<MemoryListResponse>(
-          "/api/memory/list?limit=120",
+          compactDashboardLimit("/api/memory/list?limit=120"),
           authToken,
         ),
         fetchMemoryApi<InsightsResponse>("/api/memory/insights", authToken),
         fetchMemoryApi<RequestHistoryResponse>(
-          "/api/memory/requests?limit=200&range=all",
+          compactDashboardLimit("/api/memory/requests?limit=200&range=all"),
           authToken,
         ),
         fetchMemoryApi<TimelineHistoryResponse>(
-          "/api/memory/timeline?limit=200",
+          compactDashboardLimit("/api/memory/timeline?limit=200"),
           authToken,
         ),
-        fetchMemoryApi<ResumeResponseData>("/api/memory/resume", authToken, {
-          method: "POST",
-          body: JSON.stringify(resumePayload),
-        }),
-        fetchMemoryApi<HandoffResponseData>("/api/memory/handoff", authToken, {
-          method: "POST",
-          body: JSON.stringify(handoffPayload),
-        }),
+        fetchMemoryApi<{
+          connectors?: Array<{
+            type: string;
+            status: string;
+            recordCount?: number;
+            lastSyncAt?: string | null;
+          }>;
+        }>("/api/connector", authToken),
       ]);
 
       if (cancelled) {
@@ -1352,13 +1708,15 @@ export function DeveloperConsoleExperience() {
         insightsResult,
         requestsResult,
         timelineResult,
-        resumeResult,
-        handoffResult,
+        connectorsResult,
       ] = results;
 
       if (memoriesResult.status === "fulfilled") {
+        const memories = Array.isArray(memoriesResult.value.memories)
+          ? memoriesResult.value.memories
+          : [];
         setLiveMemories(
-          [...memoriesResult.value.memories].sort(
+          [...memories].sort(
             (a, b) =>
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
           ),
@@ -1370,36 +1728,96 @@ export function DeveloperConsoleExperience() {
       }
 
       if (requestsResult.status === "fulfilled") {
+        const requests = Array.isArray(requestsResult.value.requests)
+          ? requestsResult.value.requests
+          : [];
         setLiveRequestEvents(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          requestsResult.value.requests.map((entry: any) => ({
-            id: entry.id,
-            createdAt: entry.createdAt,
-            type: entry.routeType,
-            status:
-              entry.status >= 200 && entry.status < 400 ? "Success" : "Error",
-            latencyMs: entry.durationMs,
-            route: entry.path,
-            method: entry.method,
-            statusCode: entry.statusCode,
-            agent: entry.agent,
-            payloadSummary: entry.payloadSummary,
-            responseSummary: entry.responseSummary,
-            errorDetails: entry.errorDetails,
-          })),
+          requests.map(mapRequestHistoryEntryToEvent),
         );
       }
 
       if (timelineResult.status === "fulfilled") {
-        setLiveTimelineCount(timelineResult.value.count ?? 0);
+        const events = Array.isArray(timelineResult.value.events)
+          ? timelineResult.value.events
+          : [];
+        setLiveTimelineEvents(events);
+        setLiveTimelineCount(
+          typeof timelineResult.value.count === "number"
+            ? timelineResult.value.count
+            : events.length,
+        );
       }
 
-      if (resumeResult.status === "fulfilled") {
-        setLiveResume(resumeResult.value);
+      if (connectorsResult.status === "fulfilled") {
+        const github = connectorsResult.value.connectors?.find((c) => c.type === "github");
+        const connected = github?.status === "connected";
+        const synced = Boolean(
+          connected &&
+            ((github?.recordCount ?? 0) > 0 ||
+              (github?.lastSyncAt && github.lastSyncAt.length > 0)),
+        );
+        if (!cancelled) {
+          setGithubFunnelStatus({ connected, synced });
+        }
       }
 
-      if (handoffResult.status === "fulfilled") {
-        setLiveHandoff(handoffResult.value);
+      if (shouldResetContinuity) {
+        continuityLoadedProjectRef.current = activeProjectName;
+      }
+
+      if (
+        !cancelled &&
+        memoriesResult.status === "fulfilled" &&
+        Array.isArray(memoriesResult.value.memories) &&
+        memoriesResult.value.memories.length > 0
+      ) {
+        const continuityProject = continuityProjectName(activeProjectName);
+        const continuityQuestion =
+          "Where should we continue from the latest organizational memory?";
+        const continuityBody = {
+          project: continuityProject,
+          question: continuityQuestion,
+          topK: 8,
+        };
+
+        try {
+          const brief = await fetchMemoryApi<ContinueProjectBriefData>(
+            "/api/memory/resume/brief",
+            authToken,
+            {
+              method: "POST",
+              body: JSON.stringify(continuityBody),
+            },
+          );
+          if (!cancelled) {
+            setLiveResume(mapContinueBriefToResume(brief));
+          }
+        } catch {
+          if (!cancelled && shouldResetContinuity) {
+            setLiveResume(null);
+          }
+        }
+
+        try {
+          const handoff = await fetchMemoryApi<HandoffApiPayload>(
+            "/api/memory/handoff",
+            authToken,
+            {
+              method: "POST",
+              body: JSON.stringify(continuityBody),
+            },
+          );
+          if (!cancelled) {
+            setLiveHandoff(mapHandoffPayload(handoff));
+          }
+        } catch {
+          if (!cancelled && shouldResetContinuity) {
+            setLiveHandoff(null);
+          }
+        }
+      } else if (!cancelled && shouldResetContinuity) {
+        setLiveResume(null);
+        setLiveHandoff(null);
       }
 
       const rejected = results
@@ -1410,9 +1828,22 @@ export function DeveloperConsoleExperience() {
         );
       const firstError = rejected[0]?.result;
       const hasAnySuccess = results.some((result) => result.status === "fulfilled");
+      const rateLimited = rejected.some((entry) => {
+        const reason = entry.result.reason;
+        return (
+          reason instanceof Error &&
+          (reason.message.includes("(429)") ||
+            reason.message.toLowerCase().includes("too many requests"))
+        );
+      });
       const hasUnauthorizedError = rejected.some((entry) =>
         isUnauthorizedError(entry.result.reason),
       );
+      const warnings = results
+        .map((result) =>
+          result.status === "fulfilled" ? extractApiWarning(result.value) : null,
+        )
+        .filter((warning): warning is string => Boolean(warning));
 
       if (firstError) {
         if (!hasRetriedAuth && hasUnauthorizedError) {
@@ -1426,13 +1857,25 @@ export function DeveloperConsoleExperience() {
 
         if (!hasAnySuccess) {
           setDashboardDataError(
-            firstError.reason instanceof Error
-              ? firstError.reason.message
-              : "Some live dashboard data could not be loaded.",
+            rateLimited
+              ? "MemoryOS API rate limit reached. Wait a few seconds and refresh, or reduce parallel console tabs."
+              : firstError.reason instanceof Error
+                ? firstError.reason.message
+                : "Some live dashboard data could not be loaded.",
+          );
+        } else if (rateLimited) {
+          setDashboardDataError(
+            "Some dashboard data is temporarily rate-limited. Charts use the latest loaded events; retrying shortly.",
           );
         } else {
           setDashboardDataError(null);
         }
+      } else if (warnings.length > 0) {
+        setDashboardDataError(
+          `MemoryOS backend returned fallback data: ${[
+            ...new Set(warnings.map(formatApiWarning)),
+          ].join(", ")}.`,
+        );
       } else {
         setDashboardDataError(null);
       }
@@ -1440,18 +1883,42 @@ export function DeveloperConsoleExperience() {
       setDashboardDataLoading(false);
     }
 
+    async function loadLiveBilling() {
+      const token = await getConsoleAuthToken();
+      if (!token || cancelled) return;
+      const now = Date.now();
+      if (now - lastBillingFetchAtRef.current < 4_000) return;
+      lastBillingFetchAtRef.current = now;
+      try {
+        const payload = await fetchMemoryApi<{
+          currentPlan?: BillingPlan;
+        }>("/api/memory/billing", token);
+        const plan = payload?.currentPlan;
+        if (
+          !cancelled &&
+          (plan === "Free" ||
+            plan === "Pro" ||
+            plan === "Scale" ||
+            plan === "Enterprise")
+        ) {
+          setLiveCurrentPlan(plan);
+        }
+      } catch {
+        // non-blocking — Billing section still loads its own snapshot
+      }
+    }
+
+    loadDashboardDataRef.current = loadDashboardData;
+    loadLiveBillingRef.current = loadLiveBilling;
     void loadDashboardData();
+    void loadLiveBilling();
 
     return () => {
       cancelled = true;
+      loadDashboardDataRef.current = null;
+      loadLiveBillingRef.current = null;
     };
-  }, [
-    hydrated,
-    step,
-    currentOrganization?.name,
-    activeProjectName,
-    dashboardRefreshKey,
-  ]);
+  }, [hydrated, step, currentOrganization?.name, activeProjectName]);
 
   const openLoops = (
     liveResume?.openLoops && liveResume.openLoops.length > 0
@@ -1467,59 +1934,29 @@ export function DeveloperConsoleExperience() {
     {
       label: "Memories Stored",
       value: `${liveMemories.length}`,
-      accent: "var(--color-primary)",
+      accent: "var(--primary)",
     },
     {
       label: "Resume Runs",
       value: `${liveRequestEvents.filter((request) => request.route.includes("/api/memory/resume")).length}`,
-      accent: "var(--color-chart-2)",
+      accent: "var(--chart-2)",
     },
     {
       label: "Retrieve Requests",
       value: `${liveRequestEvents.filter((request) => request.route.includes("/api/memory/retrieve")).length}`,
-      accent: "var(--color-chart-4)",
+      accent: "var(--chart-3)",
     },
     {
       label: "Handoffs Generated",
       value: `${liveRequestEvents.filter((request) => request.route.includes("/api/memory/handoff")).length}`,
-      accent: "var(--color-chart-5)",
+      accent: "var(--chart-4)",
     },
     {
       label: "Active Projects",
       value: `${liveInsights?.activeProjects?.length ?? 0}`,
-      accent: "var(--color-primary)",
+      accent: "var(--primary)",
     },
   ];
-
-  const memoryStats: [string, string][] = [
-    ["Memories", `${liveMemories.length}`],
-    [
-      "Project facts",
-      `${liveMemories.filter((memory) => memory.type === "project").length}`,
-    ],
-    ["Open loops", `${openLoops.length}`],
-    ["Connections", `${liveInsights?.activeProjects?.length ?? 0}`],
-    ["Timeline events", `${liveTimelineCount}`],
-  ];
-  const memoryRelations = [
-    { label: "Derives", tone: "bg-chart-5" },
-    { label: "Updates", tone: "bg-chart-4" },
-    { label: "Extends", tone: "bg-primary" },
-    { label: "Contradicts", tone: "bg-destructive" },
-  ];
-  const memoryStatuses = [
-    { label: "Recent (< 24h)", tone: "border-chart-2 text-chart-2" },
-    { label: "Active", tone: "border-primary text-primary" },
-    { label: "Needs review", tone: "border-chart-5 text-chart-5" },
-    { label: "Forgotten", tone: "border-destructive text-destructive" },
-  ];
-  const filteredMemoryTagOptions = useMemo(
-    () =>
-      MEMORY_TAG_OPTIONS.filter((tag) =>
-        tag.includes(memoryTagQuery.toLowerCase()),
-      ),
-    [memoryTagQuery],
-  );
 
   const canContinue =
     step === "org"
@@ -1549,6 +1986,10 @@ export function DeveloperConsoleExperience() {
     setIsSaving(true);
     await sleep(600);
     setIsSaving(false);
+    activateCompanyBrainFunnel();
+    if (!useCaseId) {
+      setUseCaseId("developer-docs");
+    }
     const newOrganization: StoredOrganization = {
       id: `${Date.now()}`,
       name: orgName.trim() || "Untitled Organization",
@@ -1560,7 +2001,7 @@ export function DeveloperConsoleExperience() {
     };
     setOrganizations((current) => [...current, newOrganization]);
     setCurrentOrganizationId(newOrganization.id);
-    setActiveDashboardItem("Command Center");
+    setActiveDashboardItem("Overview");
     setStep("dashboard");
   }
 
@@ -1581,14 +2022,14 @@ export function DeveloperConsoleExperience() {
     setSelectedIntegration(null);
     setExpandedSetupSection(1);
     setCurrentOrganizationId(null);
-    setActiveDashboardItem("Command Center");
+    setActiveDashboardItem("Overview");
     setShowOrganizationMenu(false);
     setStep("org");
   }
 
   function selectOrganization(organizationId: string) {
     setCurrentOrganizationId(organizationId);
-    setActiveDashboardItem("Command Center");
+    setActiveDashboardItem("Overview");
     setShowOrganizationMenu(false);
     setStep("dashboard");
   }
@@ -1617,7 +2058,7 @@ export function DeveloperConsoleExperience() {
     setInstallationVerificationMessage(
       "Waiting for events. Run your SDK, MCP, HTTP quickstart, or the playground.",
     );
-    setDashboardRefreshKey((current) => current + 1);
+    void loadDashboardDataRef.current?.(false);
   }
 
   async function sendSupportMessage() {
@@ -1651,7 +2092,7 @@ export function DeveloperConsoleExperience() {
         setShowSupportWidget(false);
         setSupportSendState("idle");
       }, 650);
-      setDashboardRefreshKey((current) => current + 1);
+      void loadDashboardDataRef.current?.(false);
     } catch (error) {
       setSupportSendState("error");
       setSupportErrorMessage(
@@ -1660,14 +2101,23 @@ export function DeveloperConsoleExperience() {
     }
   }
 
-  function renderDashboardMain(item = activeDashboardItem) {
-    if (
-      item === "Overview" ||
-      item === "Command Center" ||
-      item === "Command Center"
-    ) {
+  function renderDashboardMain(item = resolveDashboardItem(activeDashboardItem)) {
+    const workspace = currentOrganization?.name ?? "MemoryOS";
+    const memoryPayload = liveMemories.map((memory) => ({
+      id: memory.id,
+      type: memory.type,
+      summary: memory.content.slice(0, 120),
+      content: memory.content,
+      status: memory.status,
+      confidence: memory.confidence ?? 0,
+      updatedAt: memory.updatedAt,
+    }));
+
+    if (item === "Overview") {
       return (
         <OverviewSection
+          workspaceName={workspace}
+          ownerName={userDisplayName}
           stats={overviewStats}
           isLoading={dashboardDataLoading}
           errorMessage={dashboardDataError}
@@ -1677,90 +2127,69 @@ export function DeveloperConsoleExperience() {
           resumeData={liveResume}
           handoffData={liveHandoff}
           timelineCount={liveTimelineCount}
+          timelineEvents={liveTimelineEvents}
           installationVerification={{
             status: installationVerificationStatus,
             message: installationVerificationMessage,
             onVerify: verifyInstallation,
           }}
+          githubFunnel={githubFunnelStatus}
+          hasResumeBrief={Boolean(liveResume?.summary)}
+          funnelActions={{
+            onConnectGithub: () => {
+              focusFunnelOnGithub();
+              setActiveDashboardItem("Connected Intelligence Sources");
+            },
+            onSyncGithub: () => {
+              focusFunnelOnGithub();
+              setActiveDashboardItem("Connected Intelligence Sources");
+            },
+            onContinueBrief: () => openWorkspaceTab("Continuity Lab", { autostartLab: true }),
+            onOpenLab: () => openWorkspaceTab("Continuity Lab", { autostartLab: true }),
+          }}
           actions={{
-            "Quick Start": () => setActiveDashboardItem("Integrations"),
-            "Continuity Lab": () => {
-              window.location.href = "/developer-console/continuity-lab";
+            "Quick Start": () => {
+              focusFunnelOnGithub();
+              setActiveDashboardItem("Connected Intelligence Sources");
             },
-            Playground: () => {
-              window.location.href = "/playground";
-            },
-            Documentation: () => setActiveDashboardItem("Integrations"),
+            "Continuity Lab": () => openWorkspaceTab("Continuity Lab", { autostartLab: true }),
+            Playground: () => openWorkspaceTab("Playground"),
+            Documentation: () => setActiveDashboardItem("Integrations & SDK"),
           }}
         />
       );
     }
 
-    if (
-      item === "Memories" ||
-      item === "Memory Store" ||
-      item === "Memory Vault" ||
-      item === "Memory Store"
-    ) {
+    if (item === "Connected Intelligence Sources") {
       return (
-        <MemoriesSection
-          selectedMemoryTags={selectedMemoryTags}
-          workspaceName={currentOrganization?.name ?? "MemoryOS"}
-          showMemoryTagFilter={showMemoryTagFilter}
-          memoryLegendExpanded={memoryLegendExpanded}
-          memoryTagQuery={memoryTagQuery}
-          filteredMemoryTagOptions={filteredMemoryTagOptions}
-          memoryStats={memoryStats}
-          memoryRelations={memoryRelations}
-          memoryStatuses={memoryStatuses}
-          memories={
-            selectedMemoryTags.length > 0
-              ? liveMemories.filter(
-                  (memory) =>
-                    selectedMemoryTags.includes(memory.type) ||
-                    selectedMemoryTags.includes(memory.status),
-                )
-              : liveMemories
-          }
+        <IntelligenceSectionWrap workspaceName={workspace} sectionLabel={item}>
+          <ConnectorsSection
+            liveMemoryCount={liveMemories.length}
+            liveRequestCount={liveRequestEvents.length}
+            realtimeVersion={realtimeVersion}
+          />
+        </IntelligenceSectionWrap>
+      );
+    }
+
+    if (item === "Memory Graph") {
+      return (
+        <MemoryGraphSection
+          workspaceName={workspace}
+          memories={memoryPayload}
           requestEvents={liveRequestEvents}
+          timelineEvents={liveTimelineEvents}
+          timelineCount={liveTimelineCount}
           isLoading={dashboardDataLoading}
           errorMessage={dashboardDataError}
-          onToggleLegend={() => setMemoryLegendExpanded((current) => !current)}
-          onOpenTagFilter={() => setShowMemoryTagFilter(true)}
-          onCloseTagFilter={() => setShowMemoryTagFilter(false)}
-          onApplyTagFilter={() => setShowMemoryTagFilter(false)}
-          onResetTagFilter={() => {
-            setSelectedMemoryTags([]);
-            setMemoryTagQuery("");
-            setShowMemoryTagFilter(false);
-          }}
-          onTagQueryChange={setMemoryTagQuery}
-          onToggleTag={(tag: string) =>
-            setSelectedMemoryTags((current) =>
-              current.includes(tag)
-                ? current.filter((item) => item !== tag)
-                : [...current, tag],
-            )
-          }
         />
       );
     }
 
-    if (item === "Preflight Console") {
-      return <PreflightSection />;
-    }
-
-    if (item === "Agent Workflow OS") {
-      return <WorkflowOsSection />;
-    }
-
-    if (
-      item === "Requests" ||
-      item === "API Requests" ||
-      item === "API Requests"
-    ) {
+    if (item === "Runtime Activity") {
       return (
         <RequestsSection
+          workspaceName={workspace}
           requestEvents={liveRequestEvents}
           isLoading={dashboardDataLoading}
           errorMessage={dashboardDataError}
@@ -1768,44 +2197,48 @@ export function DeveloperConsoleExperience() {
       );
     }
 
-    if (
-      item === "Benchmarks" ||
-      item === "Evaluation" ||
-      item === "Evaluation"
-    ) {
-      return <BenchmarksSection />;
-    }
-
-    if (item === "Conflict & Staleness") {
+    if (item === "Agent Activity Timeline") {
       return (
-        <ConflictStalenessSection
+        <FlightRecorderSection
+          workspaceName={workspace}
           requestEvents={liveRequestEvents}
-          openLoops={openLoops}
+          isLoading={dashboardDataLoading}
+          errorMessage={dashboardDataError}
         />
       );
     }
 
-    if (
-      item === "Connectors" ||
-      item === "Data Sources" ||
-      item === "Data Sources"
-    ) {
+    if (item === "Memory Evolution Timeline") {
       return (
-        <ConnectorsSection
-          liveMemoryCount={liveMemories.length}
-          liveRequestCount={liveRequestEvents.length}
+        <MemoryEvolutionSection
+          workspaceName={workspace}
+          memories={memoryPayload}
+          requestEvents={liveRequestEvents}
+          timelineEvents={liveTimelineEvents}
+          openLoops={openLoops}
+          timelineCount={liveTimelineCount}
+          isLoading={dashboardDataLoading}
+          errorMessage={dashboardDataError}
         />
       );
     }
 
-    if (
-      item === "Integrations" ||
-      item === "Frameworks" ||
-      item === "Frameworks"
-    ) {
+    if (item === "Security + Governance") {
+      return (
+        <GovernanceSection
+          workspaceName={workspace}
+          realtimeVersion={realtimeVersion}
+        />
+      );
+    }
+
+    if (item === "Integrations & SDK") {
       const latestRequest = liveRequestEvents[0] ?? null;
       return (
         <IntegrationsSection
+          workspaceName={workspace}
+          currentPlan={liveCurrentPlan}
+          realtimeVersion={realtimeVersion}
           installationVerification={{
             status: installationVerificationStatus,
             message: installationVerificationMessage,
@@ -1822,81 +2255,24 @@ export function DeveloperConsoleExperience() {
       );
     }
 
-    if (
-      item === "Imports" ||
-      item === "Bulk Import" ||
-      item === "Ingestion Control Center"
-    ) {
-      return <ImportsSection liveMemoryCount={liveMemories.length} />;
-    }
-
-    if (item === "Portability") {
+    if (item === "API Keys") {
       return (
-        <PortabilitySection
-          workspaceName={currentOrganization?.name ?? "MemoryOS"}
+        <ApiKeysSection
+          workspaceName={workspace}
+          currentPlan={liveCurrentPlan}
+          realtimeVersion={realtimeVersion}
         />
       );
-    }
-
-    if (item === "Company Brain") {
-      return <CompanyBrainSection />;
-    }
-
-    if (item === "Governance") {
-      return <GovernanceSection />;
-    }
-
-    if (item === "Contract Console") {
-      const contract = {
-        goal: liveResume?.summary?.slice(0, 140) ?? "",
-        constraints: liveResume?.openLoops?.slice(0, 3) ?? [],
-        decisions: liveHandoff?.recommendedNextActions?.slice(0, 3) ?? [],
-        openRisks: liveResume?.openLoops?.slice(0, 3) ?? [],
-        nextActions: liveHandoff?.recommendedNextActions?.slice(0, 3) ?? [],
-      };
-      return <ContractConsoleSection contract={contract} />;
-    }
-
-    if (item === "Context Inspector") {
-      return <ContextInspectorSection requestEvents={liveRequestEvents} />;
-    }
-
-    if (
-      item === "Playground" ||
-      item === "Memory Playground" ||
-      item === "Live Memory Playground" ||
-      item === "Memory Playground"
-    ) {
-      return <PlaygroundSection variant="embedded" />;
-    }
-
-    if (item === "API Keys") {
-      return <ApiKeysSection />;
-    }
-
-    if (
-      item === "Agents" ||
-      item === "Agent Profiles" ||
-      item === "Agent Profiles"
-    ) {
-      return <AgentsSection />;
-    }
-
-    if (
-      item === "Plugins" ||
-      item === "Adapters" ||
-      item === "Adapters"
-    ) {
-      return <PluginsSection />;
     }
 
     if (item === "Team") {
       return (
         <TeamSection
-          workspaceName={currentOrganization?.name ?? "MemoryOS"}
+          workspaceName={workspace}
           ownerName={userDisplayName}
           ownerEmail={userEmail}
-          plan="Free"
+          plan={liveCurrentPlan}
+          realtimeVersion={realtimeVersion}
         />
       );
     }
@@ -1904,8 +2280,9 @@ export function DeveloperConsoleExperience() {
     if (item === "Billing") {
       return (
         <BillingSection
-          workspaceName={currentOrganization?.name ?? "MemoryOS"}
-          currentPlan="Free"
+          workspaceName={workspace}
+          currentPlan={liveCurrentPlan}
+          realtimeVersion={realtimeVersion}
         />
       );
     }
@@ -1913,31 +2290,22 @@ export function DeveloperConsoleExperience() {
     if (item === "Settings") {
       return (
         <SettingsSection
-          workspaceName={currentOrganization?.name ?? "MemoryOS"}
+          workspaceName={workspace}
           ownerName={userDisplayName}
           ownerEmail={userEmail}
           organizationId={currentOrganization?.id ?? ""}
+          currentPlan={liveCurrentPlan}
+          realtimeVersion={realtimeVersion}
         />
       );
     }
 
-    if (item === "Agent Flight Recorder") {
-      return <FlightRecorderSection requestEvents={liveRequestEvents} />;
-    }
-
     return (
-      <>
-        <h1 className="text-xl font-semibold tracking-tighter">
-            {item}
-        </h1>
-        <div className="mt-4 rounded-lg border border-dashed border-transparent bg-background px-6 py-8">
-          <p className="text-sm leading-7 text-muted-foreground">
-            {item} is next in the console buildout. We&apos;ve
-            wired the navigation now, and this section can be filled with
-            MemoryOS-specific workflows after the live data surfaces are stable.
-          </p>
-        </div>
-      </>
+      <div className="rounded-lg border border-dashed border-border px-6 py-8">
+        <p className="text-sm text-muted-foreground">
+          Unknown section. Choose a page from the sidebar.
+        </p>
+      </div>
     );
   }
 
@@ -2024,207 +2392,165 @@ export function DeveloperConsoleExperience() {
 
   if (step === "dashboard") {
     return (
-      <div className="developer-console-root h-dvh overflow-hidden bg-background text-foreground lg:flex">
-        <aside className="flex flex-col overflow-hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground lg:h-dvh lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
-          <div className="flex items-center border-b border-sidebar-border px-4 py-4">
-            <Link href="/" className="block w-full max-w-xs">
-              <MemoryStarLogo tone="black" />
-            </Link>
-          </div>
-
-          <div className="px-3 py-3">
-            <ConsoleNavSearch
-              value={navSearchQuery}
-              onChange={setNavSearchQuery}
-              placeholder="Search…"
-            />
-          </div>
-
-          <nav className="relative min-h-0 flex-1 space-y-4 overflow-y-auto px-2 pb-4">
-            {filteredDashboardNav.map((group) => (
-              <div key={group.section || "main"}>
-                {group.section ? (
-                  <p className="mb-1.5 px-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                    {group.section}
-                  </p>
-                ) : null}
-                <div className="space-y-0.5">
-                  {group.items.map((item) => (
+      <>
+      <IntelligenceConsoleLayout
+        navGroups={filteredDashboardNav}
+        activeItem={activeDashboardItem}
+        navSearchQuery={navSearchQuery}
+        onNavSearchChange={setNavSearchQuery}
+        resolveItem={resolveDashboardItem}
+        isWorkspaceTab={isWorkspaceTabItem}
+        onNavSelect={(item) => {
+          if (isWorkspaceTabItem(item)) {
+            openWorkspaceTab(item);
+            return;
+          }
+          setActiveDashboardItem(resolveDashboardItem(item));
+        }}
+        orgName={currentOrganization?.name ?? "MemoryOS"}
+        userInitial={userInitial}
+        userDisplayName={userDisplayName}
+        userEmail={userEmail}
+        memoryCount={liveMemories.length}
+        runtimeHealthy={
+          liveMemories.length > 0 ||
+          liveRequestEvents.some((event) => event.status === "Success")
+        }
+        notifications={headerNotifications}
+        onHeaderNavigate={(item) => {
+          if (isWorkspaceTabItem(item)) {
+            openWorkspaceTab(item);
+            return;
+          }
+          setActiveDashboardItem(resolveDashboardItem(item));
+        }}
+        navBadges={{
+          ...(liveMemories.length > 0
+            ? { "Connected Intelligence Sources": Math.min(liveMemories.length, 99) }
+            : {}),
+          ...(liveRequestEvents.length > 0
+            ? { "Runtime Activity": liveRequestEvents.length }
+            : {}),
+          ...(liveMemories.length > 0 ? { "Memory Graph": liveMemories.length } : {}),
+          "Continuity Lab": "Core",
+        }}
+        headerRight={
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="text-[#6B7280] hover:bg-black/[0.04] hover:text-[#111827]"
+            >
+              <a href="#">Docs</a>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSupportWidget(true)}
+              className="text-[#6B7280] hover:bg-black/[0.04] hover:text-[#111827]"
+            >
+              Support
+            </Button>
+            <div className="relative z-50">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setShowOrganizationMenu((current) => !current);
+                  setShowAccountMenu(false);
+                }}
+                className="h-auto gap-2 rounded-xl border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-[#111827] shadow-sm hover:bg-[#F9FAFB]"
+              >
+                <span className="text-sm font-semibold tracking-tight">
+                  {currentOrganization?.name ?? "MemoryOS"}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className="rounded-md border-[#E5E7EB] bg-[#F9FAFB] px-1.5 py-0 text-xs font-medium normal-case text-[#6B7280]"
+                >
+                  Free
+                </Badge>
+              </Button>
+              {showOrganizationMenu ? (
+                <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white text-[#111827] shadow-xl">
+                  {organizations.map((organization) => (
                     <button
-                      key={item}
+                      key={organization.id}
                       type="button"
-                      onClick={() => setActiveDashboardItem(item)}
-                      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-colors ${
-                        item === activeDashboardItem
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                          : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-                      }`}
-                      title={item}
+                      onClick={() => selectOrganization(organization.id)}
+                      className="flex w-full items-center justify-between gap-4 border-b border-[#F3F4F6] px-4 py-4 text-left transition hover:bg-[#F9FAFB]"
                     >
-                      <Icon
-                        name={dashboardItemIcon(item)}
-                        className={`size-4 shrink-0 ${item === activeDashboardItem ? "text-sidebar-accent-foreground" : "text-muted-foreground"}`}
-                      />
-                      {item}
+                      <div className="flex items-center gap-3">
+                        <div className="grid h-9 w-9 place-items-center rounded-full bg-[#E0E7FF] text-sm font-semibold text-[#4338CA]">
+                          {organization.name.slice(0, 1).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-base font-semibold">{organization.name}</p>
+                          <p className="text-sm text-[#6B7280]">Free</p>
+                        </div>
+                      </div>
+                      {organization.id === currentOrganizationId ? (
+                        <span className="text-[#059669]">✓</span>
+                      ) : null}
                     </button>
                   ))}
-                </div>
-              </div>
-            ))}
-          </nav>
-        </aside>
-
-        <main className="flex min-w-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
-          <div className="relative z-40 overflow-visible border-b border-border/80 bg-background px-4 py-3 sm:px-5 lg:px-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="relative z-50">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => {
-                    setShowOrganizationMenu((current) => !current);
-                    setShowAccountMenu(false);
-                  }}
-                  className="h-auto gap-2 rounded-lg px-2.5 py-1.5 text-foreground hover:bg-muted/60"
-                >
-                  <span className="text-base font-semibold tracking-tight">
-                    {currentOrganization?.name ?? "MemoryOS"}
-                  </span>
-                  <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-xs font-medium normal-case">
-                    Free
-                  </Badge>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="h-4 w-4 text-muted-foreground"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </Button>
-
-                {showOrganizationMenu ? (
-                  <div className="absolute left-0 top-full mt-2 z-50 w-80 overflow-hidden rounded-none border border-transparent bg-popover text-popover-foreground">
-                    {organizations.map((organization) => (
-                      <button
-                        key={organization.id}
-                        type="button"
-                        onClick={() => selectOrganization(organization.id)}
-                        className="flex w-full items-center justify-between gap-4 border-b border-border px-4 py-4 text-left transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
-                            {organization.name.slice(0, 1).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="text-base font-semibold">
-                              {organization.name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">Free</p>
-                          </div>
-                        </div>
-                        {organization.id === currentOrganizationId ? (
-                          <span className="text-primary">✓</span>
-                        ) : null}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={startNewOrganization}
-                      className="flex w-full items-center gap-3 px-4 py-4 text-left text-base font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
-                    >
-                      <span className="text-xl leading-none">+</span>
-                      Create organization
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" asChild className="text-muted-foreground">
-                  <a href="#">Docs</a>
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSupportWidget(true)}
-                  className="text-muted-foreground"
-                >
-                  Support
-                </Button>
-                <div className="relative z-50">
-                  <Button
+                  <button
                     type="button"
-                    variant="secondary"
-                    size="icon"
-                    onClick={() => {
-                      setShowAccountMenu((current) => !current);
-                      setShowOrganizationMenu(false);
-                    }}
-                    className="size-9 rounded-full text-sm font-semibold"
+                    onClick={startNewOrganization}
+                    className="flex w-full items-center gap-3 px-4 py-4 text-left text-base font-medium transition hover:bg-[#F9FAFB]"
                   >
-                    {userInitial}
-                  </Button>
-                  {showAccountMenu ? (
-                    <div
-                      className={`absolute right-0 top-full mt-2 z-50 w-72 rounded-none border ${
-                        isLightTheme
-                          ? "border-transparent bg-popover text-popover-foreground"
-                          : "border-transparent bg-popover text-popover-foreground"
-                      } isolate`}
-                    >
-                      <div className="relative z-10 border-b border-border px-4 py-4">
-                        <p className="truncate text-xl font-semibold">
-                          {userDisplayName}
-                        </p>
-                        <p
-                          className={`mt-1 truncate text-sm ${
-                            isLightTheme ? "text-muted-foreground" : "text-muted-foreground"
-                          }`}
-                        >
-                          {userEmail}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActiveDashboardItem("Settings");
-                          setShowAccountMenu(false);
-                        }}
-                        className="flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left text-base font-medium transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
-                      >
-                        Account settings
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleSignOut}
-                        className="flex w-full items-center gap-3 px-4 py-4 text-left text-base font-medium text-destructive transition hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  ) : null}
+                    <span className="text-xl leading-none">+</span>
+                    Create organization
+                  </button>
                 </div>
-              </div>
+              ) : null}
             </div>
-          </div>
-
-          <div className="memoryos-console-scroll relative z-0 min-h-0 flex-1 overflow-y-auto bg-background px-4 py-4 sm:px-5 lg:px-6">
-            <div className="developer-console-sections mx-auto w-full max-w-7xl bg-background">
-              {mountedDashboardItems.map((item) => (
-                <div key={item} className={item === activeDashboardItem ? "block" : "hidden"}>
-                  {renderDashboardMain(item)}
+            <div className="relative z-50">
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                onClick={() => {
+                  setShowAccountMenu((current) => !current);
+                  setShowOrganizationMenu(false);
+                }}
+                className="size-9 rounded-full border border-[#E5E7EB] bg-white text-sm font-semibold text-[#111827] shadow-sm"
+              >
+                {userInitial}
+              </Button>
+              {showAccountMenu ? (
+                <div className="absolute right-0 top-full z-50 mt-2 w-72 isolate overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white text-[#111827] shadow-xl">
+                  <div className="border-b border-[#F3F4F6] px-4 py-4">
+                    <p className="truncate text-lg font-semibold">{userDisplayName}</p>
+                    <p className="mt-1 truncate text-sm text-[#6B7280]">{userEmail}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveDashboardItem("Settings");
+                      setShowAccountMenu(false);
+                    }}
+                    className="flex w-full items-center gap-3 border-b border-[#F3F4F6] px-4 py-4 text-left text-sm font-medium transition hover:bg-[#F9FAFB]"
+                  >
+                    Account settings
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="flex w-full items-center gap-3 px-4 py-4 text-left text-sm font-medium text-[#DC2626] transition hover:bg-[#F9FAFB]"
+                  >
+                    Sign out
+                  </button>
                 </div>
-              ))}
+              ) : null}
             </div>
-          </div>
-        </main>
+          </>
+        }
+      >
+        <div key={activeDashboardItem}>{renderDashboardMain(activeDashboardItem)}</div>
+      </IntelligenceConsoleLayout>
 
         {showSupportWidget ? (
           <div className="fixed bottom-5 right-5 z-30 w-full max-w-xl overflow-hidden rounded-md border border-border bg-card">
@@ -2248,7 +2574,7 @@ export function DeveloperConsoleExperience() {
                 <button
                   type="button"
                   onClick={() => {
-                    setActiveDashboardItem("Integrations");
+                    setActiveDashboardItem("Integrations & SDK");
                     setShowSupportWidget(false);
                   }}
                   className="mt-8 text-xl font-medium text-foreground transition hover:text-foreground"
@@ -2380,7 +2706,7 @@ export function DeveloperConsoleExperience() {
             background: var(--background);
           }
         `}</style>
-      </div>
+      </>
     );
   }
 

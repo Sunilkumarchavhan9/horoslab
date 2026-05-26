@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 type RouteContext = {
   params: Promise<{
@@ -28,8 +29,7 @@ const FORWARDED_HEADER_ALLOWLIST = new Set([
 ]);
 
 function backendOrigin(): string {
-  const configured = process.env.MEMORYOS_API_ORIGIN?.trim();
-  return (configured && configured !== "same-origin" ? configured : "http://localhost:3001").replace(/\/+$/, "");
+  return resolveBackendOrigin();
 }
 
 async function forwardRequest(

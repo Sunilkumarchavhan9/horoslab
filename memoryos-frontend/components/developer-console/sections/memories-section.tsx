@@ -410,6 +410,33 @@ export function MemoriesSection({
     });
   }, [memories, activeFilter]);
 
+  const memoryRegistryFilters = useMemo(() => {
+    const options = [
+      { label: "All", icon: "vault" as const, matches: (_memory: MemoryRow) => true },
+      { label: "Projects", icon: "graph" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "project" },
+      { label: "Goals", icon: "timeline" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "goal" },
+      { label: "Tasks", icon: "agent" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "task" },
+      { label: "Decisions", icon: "handoff" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "decision" },
+      { label: "Preferences", icon: "memory" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "preference" },
+      { label: "Constraints", icon: "vault" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "constraint" },
+      { label: "Risks", icon: "handoff" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "risk" || memory.type?.toLowerCase() === "problem" },
+      { label: "Handoffs", icon: "handoff" as const, matches: (memory: MemoryRow) => memory.type?.toLowerCase() === "handoff" },
+      { label: "Low Confidence", icon: "memory" as const, matches: (memory: MemoryRow) => memory.confidence < 0.6 },
+      {
+        label: "Needs Cleanup",
+        icon: "graph" as const,
+        matches: (memory: MemoryRow) =>
+          memory.status === "needs_review" || memory.confidence < 0.4,
+      },
+      { label: "Conflicts", icon: "timeline" as const, matches: (memory: MemoryRow) => memory.status === "conflict" },
+    ];
+
+    return options.map((option) => ({
+      ...option,
+      count: memories.filter(option.matches).length,
+    }));
+  }, [memories]);
+
   // ─── Live vault metrics (derived from real memories, not hard-coded) ───────
   const vaultStats = useMemo(() => {
     const total = memories.length;
@@ -477,42 +504,139 @@ export function MemoriesSection({
 
   function formatConfidence(value: number) {
     if (!Number.isFinite(value)) return "-";
-    return value <= 1 ? value.toFixed(2) : `${Math.round(value)}%`;
+    return `${Math.round((value <= 1 ? value : value / 100) * 100)}%`;
+  }
+
+  function confidenceLabel(value: number) {
+    if (!Number.isFinite(value)) return "Review needed";
+    const normalized = value <= 1 ? value : value / 100;
+    if (normalized >= 0.9) return "High trust";
+    if (normalized >= 0.72) return "Useful signal";
+    return "Needs review";
+  }
+
+  function memoryKindLabel(type: string | undefined) {
+    const normalized = (type || "").toLowerCase();
+    if (normalized === "project") return "Project fact";
+    if (normalized === "problem") return "Risk / blocker";
+    if (normalized === "task") return "Next task";
+    if (normalized === "preference") return "Preference";
+    if (normalized === "handoff") return "Handoff";
+    if (normalized === "episodic") return "Session memory";
+    if (normalized === "insights") return "Insight";
+    return "Reusable context";
   }
 
   function formatDate(value: string) {
     const date = new Date(value);
     return Number.isFinite(date.getTime()) ? date.toLocaleString() : value;
   }
+
+  function cleanMemoryPreview(value: string, maxLength = 240) {
+    const formatted = formatMemoryForDisplay(value || "");
+    const withoutTechnicalNoise = formatted
+      .replace(/generated_at:\s*\S+/gi, " ")
+      .replace(/schema:\s*memoryos\.[\w.-]+/gi, " ")
+      .replace(/workspace:\s*MemoryOS/gi, " ")
+      .replace(/COMPANY_BRAIN_SKILLS/gi, " ")
+      .replace(/agent_chat_meta/gi, " ")
+      .replace(/\/SDK|SDK\s*\//gi, " ")
+      .replace(/##\s*(Summary|Constraints|Runbooks|Open Risks|Recent Signals|Operating Model)\s*-?/gi, ". ")
+      .replace(/\b(query|User|Assistant|Owner|Deadline|purpose):\s*/gi, "")
+      .replace(/\s*-\s*/g, " - ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const candidates = withoutTechnicalNoise
+      .split(/(?:\.\s+|\s##\s|\s;\s)/)
+      .map((part) => part.trim())
+      .filter((part) => part.length > 12)
+      .filter((part) => !/^(none captured yet|not available yet)$/i.test(part));
+
+    const unique: string[] = [];
+    for (const candidate of candidates) {
+      const normalized = candidate.toLowerCase();
+      if (!unique.some((item) => normalized.includes(item.toLowerCase()) || item.toLowerCase().includes(normalized))) {
+        unique.push(candidate);
+      }
+      if (unique.join(". ").length >= maxLength) break;
+    }
+
+    const preview = (unique.length > 0 ? unique.join(". ") : withoutTechnicalNoise)
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (preview.length <= maxLength) return preview;
+    return `${preview.slice(0, maxLength).replace(/\s+\S*$/, "")}...`;
+  }
+
+  function buildMemorySummary(memory: MemoryRow) {
+    return (
+      cleanMemoryPreview(memory.summary || memory.content, 220) ||
+      "Agent context captured for future retrieval."
+    );
+  }
+
+  function buildMemorySupportingLine(memory: MemoryRow, summary: string) {
+    const supporting = cleanMemoryPreview(memory.content, 180);
+    if (!supporting || supporting === summary || summary.includes(supporting)) {
+      return "";
+    }
+    return supporting;
+  }
   return (
     <div className="pb-12 text-foreground">
       {/* SECTION 1: Top Header */}
-      <div className="relative overflow-hidden border-b border-transparent bg-background px-6 py-8">
+      <div className="relative overflow-hidden border-b border-border bg-background px-6 py-8">
         <div className="absolute inset-0 bg-primary/5" />
         <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground drop-">
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+              Company memory control plane
+            </p>
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
               Memory Intelligence Vault
             </h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={onOpenTagFilter}
-              className="rounded-none border border-transparent bg-background px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition hover:border-border"
-            >
-              {selectedMemoryTags.length > 0
-                ? `TAGS: ${selectedMemoryTags.join(", ").toUpperCase()}`
-                : "ALL TAGS"}
-            </button>
-            <div className="rounded-none border border-transparent bg-background px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-              WORKSPACE: {workspaceName.toUpperCase()}
-            </div>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Review the shared memory graph your AI agents rely on: project facts, decisions, handoffs, risks, preferences, and cleanup signals for engineering teams.
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="px-6 mt-8 space-y-8 max-w-7xl">
+      <div className="mx-auto mt-8 max-w-7xl space-y-8 px-6">
+        <div className="grid grid-cols-1 gap-px overflow-hidden border border-border bg-border lg:grid-cols-3">
+          {[
+            {
+              label: "Agent continuity",
+              value: "retrieval-ready",
+              detail: "Memories here are used before agent calls to prevent restart-from-zero behavior.",
+            },
+            {
+              label: "Governance surface",
+              value: "explainable",
+              detail: "Inspect, explain, promote, and clean memory nodes before they affect future work.",
+            },
+            {
+              label: "Team graph",
+              value: `${vaultStats.total} nodes`,
+              detail: "One shared project memory base for developers, operators, and engineering leaders.",
+            },
+          ].map((item) => (
+            <div key={item.label} className="bg-card px-5 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  {item.label}
+                </p>
+                <span className="border border-border bg-background px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
+                  {item.value}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-foreground">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+
         {/* SECTION 2: Top Metrics — derived from real memories */}
         <motion.div
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
@@ -530,7 +654,7 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-primary hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-border bg-card p-5 border-t-2 border-t-primary transition-colors hover:bg-muted/30"
           >
             <DitherBackground
               className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
@@ -538,7 +662,7 @@ export function MemoriesSection({
               density={0.44}
             />
             <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-              Memory Health
+              Trust Health
             </p>
             <div className="relative flex flex-col gap-0.5">
               <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
@@ -564,7 +688,7 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-primary hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-border bg-card p-5 border-t-2 border-t-primary transition-colors hover:bg-muted/30"
           >
             <DitherBackground
               className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
@@ -572,7 +696,7 @@ export function MemoriesSection({
               density={0.44}
             />
             <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-              Impact Score
+              Usable Memory
             </p>
             <div className="relative flex flex-col gap-0.5">
               <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
@@ -596,7 +720,7 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-muted-foreground hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-border bg-card p-5 border-t-2 border-t-muted-foreground transition-colors hover:bg-muted/30"
           >
             <DitherBackground
               className="pointer-events-none absolute inset-0 h-full w-full opacity-10 transition group-hover:opacity-15"
@@ -604,7 +728,7 @@ export function MemoriesSection({
               density={0.44}
             />
             <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-              Cleanup Needed
+              Cleanup Queue
             </p>
             <div className="relative flex flex-col gap-0.5">
               <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
@@ -624,11 +748,11 @@ export function MemoriesSection({
             }}
             transition={{ duration: 0.28 }}
             whileHover={{ scale: 1.016 }}
-            className="group relative overflow-hidden rounded-none border border-transparent bg-background p-5 border-t-2 border-t-destructive hover:bg-card transition-colors"
+            className="group relative overflow-hidden rounded-none border border-border bg-card p-5 border-t-2 border-t-destructive transition-colors hover:bg-muted/30"
           >
             
             <p className="relative text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-              Conflicts
+              Conflict Risk
             </p>
             <div className="relative flex flex-col gap-0.5">
               <span className="text-3xl font-bold leading-none tracking-tight tabular-nums">
@@ -644,30 +768,47 @@ export function MemoriesSection({
         </motion.div>
 
         {/* SECTION 3: Smart Filters */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
-          {[
-            { label: "All", icon: "vault" as const },
-            { label: "Projects", icon: "graph" as const },
-            { label: "Goals", icon: "timeline" as const },
-            { label: "Tasks", icon: "agent" as const },
-            { label: "Decisions", icon: "handoff" as const },
-            { label: "Preferences", icon: "memory" as const },
-            { label: "Constraints", icon: "vault" as const },
-            { label: "Risks", icon: "handoff" as const },
-            { label: "Handoffs", icon: "handoff" as const },
-            { label: "Low Confidence", icon: "memory" as const },
-            { label: "Needs Cleanup", icon: "graph" as const },
-            { label: "Conflicts", icon: "timeline" as const },
-          ].map(({ label, icon }) => (
+        <div className="space-y-3 border-b border-border pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Memory registry
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Filter the company graph by operational memory type.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={onOpenTagFilter}
+                className="border border-border bg-card px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground transition hover:border-ring hover:text-foreground"
+              >
+                {selectedMemoryTags.length > 0
+                  ? `${selectedMemoryTags.length} tag${selectedMemoryTags.length === 1 ? "" : "s"} active`
+                  : "All tags"}
+              </button>
+              <span className="border border-border bg-card px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                showing {filteredMemories.length} / {memories.length}
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+          {memoryRegistryFilters.map(({ label, icon, count }) => (
             <button
               key={label}
               onClick={() => setActiveFilter(label)}
-              className={`inline-flex shrink-0 items-center gap-1.5 border px-3 py-1.5 text-xs font-bold uppercase tracking-widest transition-colors ${label === activeFilter ? "border-border bg-muted text-foreground" : "border-transparent bg-background text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"}`}
+              disabled={count === 0 && label !== "All"}
+              className={`inline-flex shrink-0 items-center gap-1.5 border px-3 py-1.5 text-xs font-bold uppercase tracking-widest transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${label === activeFilter ? "border-border bg-muted text-foreground" : "border-transparent bg-background text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"}`}
             >
               <Icon name={icon} className="h-3 w-3" />
               {label}
+              <span className="ml-1 border border-border bg-card px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                {count}
+              </span>
             </button>
           ))}
+          </div>
         </div>
 
         {/* SECTION 5: Cards & Doctor */}
@@ -683,7 +824,7 @@ export function MemoriesSection({
                     duration: 0.26,
                     delay: Math.min(index * 0.04, 0.22),
                   }}
-                  className="relative overflow-hidden rounded-none border border-transparent bg-background group hover:border-border transition-colors"
+                  className="relative overflow-hidden rounded-none border border-border bg-card group transition-colors hover:bg-muted/20"
                 >
                   
                   <div
@@ -727,34 +868,43 @@ export function MemoriesSection({
                           </span>
                         </div>
                         {(() => {
-                          const displayText = formatMemoryForDisplay(
-                            memory.summary || memory.content,
+                          const displayText = buildMemorySummary(memory);
+                          const detailText = buildMemorySupportingLine(
+                            memory,
+                            displayText,
                           );
-                          const detailText = formatMemoryForDisplay(memory.content);
-                          const showDetail =
-                            detailText.length > 0 && detailText !== displayText;
                           return (
                             <>
-                              <p className="text-sm font-medium leading-relaxed text-foreground">
+                              <p className="text-base font-semibold leading-relaxed text-foreground">
                                 {displayText || "Agent context captured"}
                               </p>
-                              {showDetail ? (
-                                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                              {detailText ? (
+                                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
                                   {detailText}
                                 </p>
                               ) : null}
+                              <div className="mt-4 flex flex-wrap items-center gap-2">
+                                <span className="border border-border bg-background px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                  {memoryKindLabel(memory.type)}
+                                </span>
+                                <span className="border border-primary/20 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                                  {confidenceLabel(memory.confidence)}
+                                </span>
+                                <span className="border border-border bg-muted px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                  Used by retrieval
+                                </span>
+                              </div>
                             </>
                           );
                         })()}
                       </div>
                       <div className="text-right text-xs text-muted-foreground flex flex-col items-end gap-1 shrink-0">
-                        <div className="flex items-center gap-1.5">
-                          <span>Conf</span>
-                          <span className="font-bold text-foreground">
-                            {formatConfidence(memory.confidence)}
-                          </span>
+                        <span className="border border-border bg-background px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground">
+                          {formatConfidence(memory.confidence)} match
+                        </span>
+                        <div className="max-w-32 text-muted-foreground">
+                          Updated {formatDate(memory.updatedAt)}
                         </div>
-                        <div>{formatDate(memory.updatedAt)}</div>
                       </div>
                     </div>
                     <ExpandedMemoryDetail
@@ -763,8 +913,11 @@ export function MemoriesSection({
                     />
                   </div>
                   <div className="border-t border-border bg-background px-5 py-2.5 flex items-center justify-between gap-3">
-                    <p className="truncate font-mono text-xs text-muted-foreground tracking-wider flex-1 min-w-0">
-                      ID: {memory.id}
+                    <p className="truncate text-xs text-muted-foreground flex-1 min-w-0">
+                      <span className="font-semibold uppercase tracking-widest">
+                        Source
+                      </span>{" "}
+                      <span>MemoryOS graph node</span>
                     </p>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button
@@ -850,36 +1003,54 @@ export function MemoriesSection({
             )}
           </div>
 
-          <div className="relative flex min-w-0 w-full flex-col overflow-hidden rounded-none border border-border bg-background lg:sticky lg:top-6">
-            <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3.5">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-primary">
-                Memory Doctor
-              </h2>
-              <div className="flex shrink-0 items-center gap-2">
-                <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+          <div className="relative flex min-w-0 w-full flex-col overflow-hidden rounded-none border border-border bg-card lg:sticky lg:top-6">
+            <div className="flex items-center justify-between gap-3 border-b border-border bg-background px-5 py-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Governance inspector
+                </p>
+                <h2 className="mt-1 text-sm font-bold uppercase tracking-widest text-primary">
+                  Memory Doctor
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Review memory quality before agents reuse context.
+                </p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2 border border-border bg-muted px-2.5 py-1.5">
+                <span
+                  className={`h-2 w-2 shrink-0 ${doctorPanelSummary.hasResult ? "animate-pulse bg-primary" : "bg-muted-foreground/40"}`}
+                />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   {doctorPanelSummary.hasResult ? "live" : "idle"}
                 </span>
-                <span
-                  className={`h-2 w-2 shrink-0 rounded-full ${doctorPanelSummary.hasResult ? "animate-pulse bg-primary" : "bg-muted-foreground/40"}`}
-                />
               </div>
             </div>
             <div className="flex flex-1 flex-col gap-5 px-5 py-5">
               {!doctorPanelSummary.hasResult ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex min-h-[4.5rem] flex-col justify-between border border-border bg-muted px-3 py-3">
-                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                        Episodic
-                      </p>
+                  <div className="grid grid-cols-1 gap-px overflow-hidden border border-border bg-border">
+                    <div className="flex items-center justify-between bg-background px-3 py-3">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                          Episodic noise
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          session memories to compress
+                        </p>
+                      </div>
                       <p className="text-2xl font-bold leading-none tabular-nums">
                         {vaultStats.episodicCount}
                       </p>
                     </div>
-                    <div className="flex min-h-[4.5rem] flex-col justify-between border border-border bg-muted px-3 py-3">
-                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                        To clean
-                      </p>
+                    <div className="flex items-center justify-between bg-background px-3 py-3">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                          Review queue
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          low-confidence / stale nodes
+                        </p>
+                      </div>
                       <p
                         className={`text-2xl font-bold leading-none tabular-nums ${vaultStats.cleanupCount > 0 ? "text-muted-foreground" : "text-primary"}`}
                       >
@@ -887,9 +1058,14 @@ export function MemoriesSection({
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    Run autopilot to scan episodic noise, conflicts, and stale nodes.
-                  </p>
+                  <div className="border border-border bg-muted/30 px-3 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      Recommended workflow
+                    </p>
+                    <p className="mt-2 text-xs leading-relaxed text-foreground">
+                      Run review, fix risky nodes, then compile a memory contract for the next agent handoff.
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -965,7 +1141,7 @@ export function MemoriesSection({
                 <button
                   onClick={handleRunAutopilot}
                   disabled={autopilotLoading}
-                  className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-none border border-primary/40 bg-primary/15 py-3 text-xs font-bold uppercase tracking-wider text-primary transition hover:border-primary/70 hover:bg-primary/25 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-none border border-primary/40 bg-primary/10 px-4 py-3 text-left transition hover:border-primary/70 hover:bg-primary/15 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <AnimatePresence>
                     {autopilotLoading && (
@@ -982,17 +1158,23 @@ export function MemoriesSection({
                       />
                     )}
                   </AnimatePresence>
-                  <Icon name="memory" className="relative h-3.5 w-3.5" />
-                  <span className="relative">
-                    {autopilotLoading
-                      ? "Running Autopilot…"
-                      : "Run Memory Autopilot"}
+                  <span className="relative flex items-center gap-3">
+                    <Icon name="memory" className="h-3.5 w-3.5 text-primary" />
+                    <span>
+                      <span className="block text-xs font-bold uppercase tracking-wider text-primary">
+                        {autopilotLoading ? "Running Review…" : "Run Memory Review"}
+                      </span>
+                      <span className="mt-1 block text-xs text-muted-foreground">
+                        Detect conflicts, noise, stale context
+                      </span>
+                    </span>
                   </span>
+                  <span className="relative text-xs font-bold text-primary">→</span>
                 </button>
                 <button
                   onClick={handleCompileRawMemories}
                   disabled={compileLoading}
-                  className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-none border border-border bg-muted py-3 text-xs font-bold uppercase tracking-wider text-foreground transition hover:border-ring hover:bg-muted/80 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-none border border-border bg-muted/40 px-4 py-3 text-left transition hover:border-ring hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <AnimatePresence>
                     {compileLoading && (
@@ -1009,10 +1191,18 @@ export function MemoriesSection({
                       />
                     )}
                   </AnimatePresence>
-                  <Icon name="graph" className="relative h-3.5 w-3.5" />
-                  <span className="relative">
-                    {compileLoading ? "Compiling…" : "Compile Raw Memories"}
+                  <span className="relative flex items-center gap-3">
+                    <Icon name="graph" className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>
+                      <span className="block text-xs font-bold uppercase tracking-wider text-foreground">
+                        {compileLoading ? "Compiling…" : "Compile Memory Contract"}
+                      </span>
+                      <span className="mt-1 block text-xs text-muted-foreground">
+                        Package trusted context for agents
+                      </span>
+                    </span>
                   </span>
+                  <span className="relative text-xs font-bold text-muted-foreground">→</span>
                 </button>
               </div>
             </div>
@@ -1170,15 +1360,15 @@ export function MemoriesSection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-md"
             onClick={() => setInspectMemory(null)}
           >
             <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 340, damping: 36 }}
-            className="relative overflow-hidden w-full max-w-xl bg-background border-l border-border h-full overflow-y-auto "
+            className="relative max-h-[min(820px,calc(100vh-2rem))] w-full max-w-3xl overflow-hidden border border-border bg-background shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
             <DitherBackground
@@ -1221,7 +1411,7 @@ export function MemoriesSection({
                 </button>
               </motion.div>
               <motion.div
-                className="p-6 space-y-5"
+                className="mx-auto max-w-2xl space-y-5 overflow-y-auto px-6 py-6 sm:px-8"
                 variants={INSPECT_DRAWER_CONTAINER}
                 initial="hidden"
                 animate="visible"
@@ -1318,24 +1508,29 @@ export function MemoriesSection({
       {/* ─── Explain Result Panel ──────────────────────────────────────────── */}
       {explainResult && (
         <div
-          className="fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-md"
           onClick={() => setExplainResult(null)}
         >
           <div
-            className="relative overflow-hidden w-full max-w-xl bg-background border-l border-primary/20 h-full overflow-y-auto "
+            className="relative max-h-[min(760px,calc(100vh-2rem))] w-full max-w-3xl overflow-hidden border border-border bg-background shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <DitherBackground
               className="pointer-events-none absolute inset-0 h-full w-full opacity-10"
-                        accent="var(--color-primary)"
+              accent="var(--color-primary)"
               density={0.44}
             />
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                <h2 className="text-sm font-bold text-foreground tracking-tight">
-                  Memory Explanation
-                </h2>
+                <div>
+                  <h2 className="text-sm font-bold text-foreground tracking-tight">
+                    Memory Explanation
+                  </h2>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Shows why this context should or should not be reused by future agents.
+                  </p>
+                </div>
                 <span className="text-xs font-mono uppercase tracking-widest text-primary">
                   agent a
                 </span>
@@ -1349,13 +1544,40 @@ export function MemoriesSection({
                 ×
               </button>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="mx-auto max-w-2xl space-y-5 overflow-y-auto px-6 py-6 sm:px-8">
+              <div className="grid gap-3 border border-border bg-muted/30 p-4 sm:grid-cols-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Decision
+                  </p>
+                  <p className="mt-1 text-sm font-semibold capitalize text-foreground">
+                    {String(explainResult.recommendation ?? "review")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Memory class
+                  </p>
+                  <p className="mt-1 text-sm font-semibold capitalize text-foreground">
+                    {String(explainResult.category ?? "context")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Trust
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-primary">
+                    {String(explainResult.confidence ?? "review")}
+                  </p>
+                </div>
+              </div>
               {[
                 ["Summary", explainResult.summary],
                 ["Reason", explainResult.reason],
-                ["Category", explainResult.category],
-                ["Recommendation", explainResult.recommendation],
-                ["Confidence", explainResult.confidence],
+                [
+                  "Team value",
+                  "Keeps engineers, reviewers, and follow-up agents aligned on the same project context instead of relying on chat history or memory from the previous session.",
+                ],
               ].map(([k, v]) => (
                 <div
                   key={String(k)}
@@ -1387,20 +1609,25 @@ export function MemoriesSection({
       {/* ─── Autopilot Result Panel ────────────────────────────────────────── */}
       {autopilotResult && (
         <div
-          className="fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-md"
           onClick={() => setAutopilotResult(null)}
         >
           <div
-            className="relative overflow-hidden w-full max-w-2xl bg-background border-l border-primary/20 h-full overflow-y-auto "
+            className="relative max-h-[min(820px,calc(100vh-2rem))] w-full max-w-4xl overflow-hidden border border-border bg-background shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
            
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                <h2 className="text-sm font-bold text-foreground tracking-tight">
-                  Memory Autopilot
-                </h2>
+                <div>
+                  <h2 className="text-sm font-bold text-foreground tracking-tight">
+                    Memory Autopilot Review
+                  </h2>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Finds noisy, stale, or risky memory before engineering agents reuse it.
+                  </p>
+                </div>
                 <span className="text-xs font-mono uppercase tracking-widest text-primary">
                   agent b
                 </span>
@@ -1414,7 +1641,36 @@ export function MemoriesSection({
                 ×
               </button>
             </div>
-            <div className="p-6">
+            <div className="mx-auto max-w-3xl overflow-y-auto px-6 py-6 sm:px-8">
+              <div className="mb-6 grid gap-3 sm:grid-cols-3">
+                <div className="border border-border bg-muted/30 px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Review status
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    {Array.isArray(autopilotResult.issues) &&
+                    (autopilotResult.issues as unknown[]).length > 0
+                      ? "Action needed"
+                      : "Clean"}
+                  </p>
+                </div>
+                <div className="border border-border bg-muted/30 px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Impact
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Retrieval quality
+                  </p>
+                </div>
+                <div className="border border-border bg-muted/30 px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Recommended owner
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Engineering ops
+                  </p>
+                </div>
+              </div>
               {Array.isArray(autopilotResult.issues) &&
               (autopilotResult.issues as Array<Record<string, unknown>>)
                 .length > 0 ? (
@@ -1521,11 +1777,11 @@ export function MemoriesSection({
       {/* ─── Compile Result Panel ──────────────────────────────────────────── */}
       {compileResult && (
         <div
-          className="fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-md"
           onClick={() => setCompileResult(null)}
         >
           <div
-            className="relative overflow-hidden w-full max-w-2xl bg-background border-l border-primary/20 h-full overflow-y-auto "
+            className="relative max-h-[min(820px,calc(100vh-2rem))] w-full max-w-4xl overflow-hidden border border-border bg-background shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <DitherBackground
@@ -1536,9 +1792,14 @@ export function MemoriesSection({
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                <h2 className="text-sm font-bold text-foreground tracking-tight">
-                  Compiled Memories
-                </h2>
+                <div>
+                  <h2 className="text-sm font-bold text-foreground tracking-tight">
+                    Memory Contract Compile
+                  </h2>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Converts noisy session memory into reusable company context for future agents.
+                  </p>
+                </div>
                 <span className="text-xs font-mono uppercase tracking-widest text-primary">
                   agent b
                 </span>
@@ -1552,7 +1813,7 @@ export function MemoriesSection({
                 ×
               </button>
             </div>
-            <div className="p-6">
+            <div className="mx-auto max-w-3xl overflow-y-auto px-6 py-6 sm:px-8">
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="relative overflow-hidden bg-muted border-t-2 border-primary px-4 py-3 text-center">
                   <DitherBackground

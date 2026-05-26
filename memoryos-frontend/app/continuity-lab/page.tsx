@@ -1,5 +1,5 @@
-import { RunDemoSection } from "@/components/developer-console/sections/run-demo-section";
+import { ContinuityLabPageClient } from "@/components/developer-console/continuity-lab-page-client";
 
 export default function ContinuityLabPage() {
-  return <RunDemoSection />;
+  return <ContinuityLabPageClient />;
 }

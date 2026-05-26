@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Response as ExpressResponse } from "express";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { runIngestFlowLangGraph } from "../../lib/workflows/ingestGraphLangGraph";
@@ -30,7 +30,7 @@ import {
 } from "../../lib/auth/apiKeyStore";
 import { isRelationalRuntimeStore } from "../../lib/storage/runtimeStoreBackend";
 import { isRuntimeStoreDbHealthy } from "../../lib/storage/runtimeStoreDb";
-import { listRequestHistory } from "../middleware/requestLogger";
+import { countApiKeyRequests24h, listRequestHistory, subscribeRequestHistory } from "../middleware/requestLogger";
 import {
   ContinueMemorySchema,
   HandoffMemorySchema,
@@ -75,8 +75,56 @@ import { upsertRecentMemory } from "../../lib/memory/recentMemoryStore";
 import { randomUUID } from "crypto";
 import { PLAN_CATALOG, type BillingPlan } from "../../shared/planCatalog";
 import { getBillingStateForUser, listBillingEventsForUser, tryConsumeUsage, type UsageSnapshot } from "../../lib/billing/store";
+import {
+  type MemoryMeterOperation,
+  getMeteringCatalog,
+  resolveUsageCost,
+} from "../../lib/billing/metering";
+import {
+  getCompanyBrainFunnelProgress,
+  patchCompanyBrainFunnelProgress,
+} from "../../lib/integrations/companyBrainFunnelStore";
 
 export const memoryRouter = Router();
+
+type MemoryRealtimeEvent = {
+  kind:
+    | "memory_processed"
+    | "handoff_generated"
+    | "resume_generated"
+    | "timeline_updated"
+    | "request_logged"
+    | "governance_review_queued";
+  userId: string;
+  payload: Record<string, unknown>;
+};
+
+const MEMORY_STREAMS = new Map<string, Set<ExpressResponse>>();
+
+function emitMemoryEvent(event: MemoryRealtimeEvent): void {
+  const sinks = MEMORY_STREAMS.get(event.userId);
+  if (!sinks || sinks.size === 0) return;
+  const line = `data: ${JSON.stringify(event)}\n\n`;
+  for (const res of sinks) {
+    try {
+      res.write(line);
+    } catch {
+      // Stale connections are removed by the close handler.
+    }
+  }
+}
+
+subscribeRequestHistory((entry) => {
+  if (!entry.userId || entry.userId === "anonymous") return;
+  if (!entry.path.startsWith("/api/memory") && !entry.path.startsWith("/api/v1/memory")) return;
+  if (entry.path.startsWith("/api/memory/events")) return;
+
+  emitMemoryEvent({
+    kind: "request_logged",
+    userId: entry.userId,
+    payload: { request: entry },
+  });
+});
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const RECENT_MEMORY_STORE_PATH = path.join(DATA_DIR, "recent-memories.json");
@@ -767,7 +815,8 @@ function hasValidBestConfig(): boolean {
 }
 
 memoryRouter.get("/api-keys", asyncHandler(async (req, res) => {
-  res.json({ keys: listApiKeysForUser(req.authUserId) });
+  const keys = listApiKeysForUser(req.authUserId).map((key) => serializeApiKeyForClient(key));
+  res.json({ keys });
 }));
 
 memoryRouter.post("/api-keys", asyncHandler(async (req, res) => {
@@ -816,7 +865,10 @@ memoryRouter.post("/api-keys", asyncHandler(async (req, res) => {
     contentTag: mode === "full" ? "all" : contentTag,
   });
 
-  res.status(201).json(result);
+  res.status(201).json({
+    token: result.token,
+    key: serializeApiKeyForClient(result.key),
+  });
 }));
 
 memoryRouter.post("/api-keys/:keyId/revoke", asyncHandler(async (req, res) => {
@@ -870,6 +922,10 @@ memoryRouter.get("/billing/events", asyncHandler(async (req, res) => {
   res.json({ events: await listBillingEventsForUser(req.authUserId, limit) });
 }));
 
+memoryRouter.get("/billing/metering", asyncHandler(async (_req, res) => {
+  res.json(getMeteringCatalog());
+}));
+
 memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
   if (!isObjectRecord(req.body) || typeof req.body.plan !== "string") {
     res.status(400).json({ error: "plan is required" });
@@ -881,14 +937,15 @@ memoryRouter.post("/billing/checkout", asyncHandler(async (req, res) => {
     res.status(400).json({ error: "Invalid plan for checkout" });
     return;
   }
-  const checkoutUrl = toConfiguredCheckoutUrl(requestedPlan);
-  if (!checkoutUrl) {
+  const checkoutBase = toConfiguredCheckoutUrl(requestedPlan);
+  if (!checkoutBase) {
     res.status(500).json({
       error: `Checkout URL is not configured for ${requestedPlan}`,
       requiredEnv: `CHECKOUT_URL_${requestedPlan.toUpperCase()}`,
     });
     return;
   }
+  const checkoutUrl = appendCheckoutMetadata(checkoutBase, req.authUserId, requestedPlan);
   const state = getWorkspaceState(req.authUserId);
   const billingState = await getBillingStateForUser(req.authUserId);
   res.json({
@@ -1404,11 +1461,12 @@ memoryRouter.post("/governance/review", asyncHandler(async (req, res) => {
       .join("\n");
 
     if (message.trim().length > 0) {
-      if (!(await applyUsageOrReject({
+      if (!(await applyMeteredOperation({
         req,
         res,
         startedAt,
-        tokenCost: estimateTokenCostFromText(message),
+        operation: "process_ingest",
+        text: message,
       }))) {
         return;
       }
@@ -1805,6 +1863,25 @@ memoryRouter.get("/company-brain/exports", asyncHandler(async (_req, res) => {
   res.json({ exports: exportsList });
 }));
 
+memoryRouter.get("/company-brain/funnel", asyncHandler(async (req, res) => {
+  const startedAt = Date.now();
+  const progress = getCompanyBrainFunnelProgress(req.authUserId);
+  sendApiSuccess(res, 200, { progress }, buildApiMeta(req, startedAt));
+}));
+
+memoryRouter.patch("/company-brain/funnel", asyncHandler(async (req, res) => {
+  const startedAt = Date.now();
+  const body = req.body as Record<string, unknown>;
+  const patch: Record<string, boolean> = {};
+  if (typeof body.connectGithub === "boolean") patch.connectGithub = body.connectGithub;
+  if (typeof body.syncGithub === "boolean") patch.syncGithub = body.syncGithub;
+  if (typeof body.briefLoaded === "boolean") patch.briefLoaded = body.briefLoaded;
+  if (typeof body.labOpened === "boolean") patch.labOpened = body.labOpened;
+  if (typeof body.dismissed === "boolean") patch.dismissed = body.dismissed;
+  const progress = patchCompanyBrainFunnelProgress(req.authUserId, patch);
+  sendApiSuccess(res, 200, { progress }, buildApiMeta(req, startedAt));
+}));
+
 
 function hasValidBaselineReport(): boolean {
   return hasValidJsonFile(BASELINE_REPORT_PATH, (value) => {
@@ -1942,6 +2019,24 @@ function toTimestampMs(raw: unknown): number {
   }
   const value = new Date(raw).getTime();
   return Number.isFinite(value) ? value : 0;
+}
+
+function compactRequestField(value: unknown): unknown {
+  if (value === undefined || value === null) return value;
+  try {
+    const raw = JSON.stringify(value);
+    if (raw.length <= 2_000) return value;
+    return {
+      truncated: true,
+      preview: raw.slice(0, 2_000),
+      originalChars: raw.length,
+    };
+  } catch {
+    const text = String(value);
+    return text.length > 2_000
+      ? { truncated: true, preview: text.slice(0, 2_000), originalChars: text.length }
+      : text;
+  }
 }
 
 function readJsonFile<T>(filePath: string, fallback: T): T {
@@ -2228,13 +2323,6 @@ async function hasMinimumPlan(userId: string, minimum: PlanTier): Promise<boolea
 
 type UsageMeter = "tokens" | "searches";
 
-function estimateTokenCostFromText(input: string): number {
-  const trimmed = input.trim();
-  if (!trimmed) return 1;
-  // Approximate token cost with a conservative chars/token heuristic.
-  return Math.max(1, Math.ceil(trimmed.length / 4));
-}
-
 function sendUpgradeRequired(
   res: Parameters<typeof sendApiError>[0],
   startedAt: number,
@@ -2290,6 +2378,51 @@ async function applyUsageOrReject(params: {
     return false;
   }
   return true;
+}
+
+async function applyMeteredOperation(params: {
+  req: { authUserId: string };
+  res: Parameters<typeof sendApiError>[0];
+  startedAt: number;
+  operation: MemoryMeterOperation;
+  text?: string;
+}): Promise<boolean> {
+  const cost = resolveUsageCost(params.operation, params.text ?? "");
+  return applyUsageOrReject({
+    req: params.req,
+    res: params.res,
+    startedAt: params.startedAt,
+    tokenCost: cost.tokenCost,
+    searchCost: cost.searchCost,
+  });
+}
+
+function serializeApiKeyForClient(key: ReturnType<typeof listApiKeysForUser>[number]) {
+  return {
+    id: key.id,
+    name: key.name,
+    prefix: key.keyPrefix,
+    createdAt: key.createdAt,
+    lastUsedAt: key.lastUsedAt,
+    expiresAt: key.expires,
+    mode: key.mode,
+    status: key.status,
+    endpoints: key.endpoints,
+    contentTag: key.contentTag,
+    requests24h: countApiKeyRequests24h(key.userId, key.id),
+  };
+}
+
+function appendCheckoutMetadata(baseUrl: string, userId: string, plan: BillingPlan): string {
+  try {
+    const url = new URL(baseUrl);
+    url.searchParams.set("metadata[userId]", userId);
+    url.searchParams.set("metadata[plan]", plan);
+    return url.toString();
+  } catch {
+    const separator = baseUrl.includes("?") ? "&" : "?";
+    return `${baseUrl}${separator}metadata%5BuserId%5D=${encodeURIComponent(userId)}&metadata%5Bplan%5D=${encodeURIComponent(plan)}`;
+  }
 }
 
 function toConfiguredCheckoutUrl(plan: BillingPlan): string | null {
@@ -2708,6 +2841,16 @@ memoryRouter.post(
         createdAt: new Date().toISOString(),
       };
       appendGovernanceReviewItem(reviewItem);
+      emitMemoryEvent({
+        kind: "governance_review_queued",
+        userId: req.authUserId,
+        payload: {
+          traceId,
+          reviewItemId: reviewItem.id,
+          reason: reviewItem.reason,
+          at: reviewItem.createdAt,
+        },
+      });
       res.status(202).json({
         traceId,
         status: "pending_review",
@@ -2736,11 +2879,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(message),
+      operation: "process_ingest",
+      text: message,
     }))) {
       return;
     }
@@ -2772,6 +2916,18 @@ memoryRouter.post(
       existingMemories: existingBefore.memories,
     });
     appendConflictQueueItems(autoConflicts);
+    emitMemoryEvent({
+      kind: "memory_processed",
+      userId: req.authUserId,
+      payload: {
+        traceId,
+        acceptedCount: taggedAcceptedMemories.length,
+        rejectedCount: result.rejectedMemories.length,
+        timelineCount: result.timelineEvents.length,
+        autoConflictsQueued: autoConflicts.length,
+        at: new Date().toISOString(),
+      },
+    });
 
     res.status(200).json({
       traceId,
@@ -2850,6 +3006,17 @@ memoryRouter.post(
       tags: parsed.data.tags,
       sentiment: parsed.data.sentiment,
     });
+
+    const startedAt = Date.now();
+    if (!(await applyMeteredOperation({
+      req,
+      res,
+      startedAt,
+      operation: "voice_ingest",
+      text: chunkMessage,
+    }))) {
+      return;
+    }
 
     const ingestResult = await runIngestFlowLangGraph({
       userId: req.authUserId,
@@ -3408,12 +3575,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(parsed.data.question),
-      searchCost: 1,
+      operation: "retrieve",
+      text: parsed.data.question,
     }))) {
       return;
     }
@@ -3463,12 +3630,12 @@ memoryRouter.get(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(question),
-      searchCost: 1,
+      operation: "retrieve_explain",
+      text: question,
     }))) {
       return;
     }
@@ -3587,12 +3754,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(parsed.data.question),
-      searchCost: 1,
+      operation: "continue",
+      text: parsed.data.question,
     }))) {
       return;
     }
@@ -3639,12 +3806,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(parsed.data.question),
-      searchCost: 1,
+      operation: "handoff",
+      text: parsed.data.question,
     }))) {
       return;
     }
@@ -3657,6 +3824,15 @@ memoryRouter.post(
       includeArchived: parsed.data.includeArchived,
       ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
       ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+    });
+    emitMemoryEvent({
+      kind: "handoff_generated",
+      userId: req.authUserId,
+      payload: {
+        project: parsed.data.project,
+        openLoopCount: result.openLoops?.length ?? 0,
+        at: new Date().toISOString(),
+      },
     });
 
     sendApiSuccess<HandoffResponseData>(
@@ -3689,12 +3865,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(parsed.data.question),
-      searchCost: 1,
+      operation: "resume",
+      text: parsed.data.question,
     }))) {
       return;
     }
@@ -3707,6 +3883,15 @@ memoryRouter.post(
       includeArchived: parsed.data.includeArchived,
       ...(parsed.data.workspace ? { workspace: parsed.data.workspace } : {}),
       ...(parsed.data.threadId ? { threadId: parsed.data.threadId } : {}),
+    });
+    emitMemoryEvent({
+      kind: "resume_generated",
+      userId: req.authUserId,
+      payload: {
+        project: parsed.data.project,
+        openLoopCount: result.openLoops?.length ?? 0,
+        at: new Date().toISOString(),
+      },
     });
 
     sendApiSuccess<ResumeResponseData>(
@@ -3739,12 +3924,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(parsed.data.question),
-      searchCost: 1,
+      operation: "resume_brief",
+      text: parsed.data.question,
     }))) {
       return;
     }
@@ -3790,12 +3975,12 @@ memoryRouter.post(
       return;
     }
 
-    if (!(await applyUsageOrReject({
+    if (!(await applyMeteredOperation({
       req,
       res,
       startedAt,
-      tokenCost: estimateTokenCostFromText(parsed.data.question),
-      searchCost: 1,
+      operation: "resume_prompt",
+      text: parsed.data.question,
     }))) {
       return;
     }
@@ -4022,6 +4207,43 @@ memoryRouter.get("/timeline", asyncHandler(async (req, res) => {
   res.status(200).json({
     events,
     count: events.length,
+  });
+}));
+
+memoryRouter.get("/events", asyncHandler(async (req, res) => {
+  const userId = req.authUserId;
+  if (!userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+  res.write(`event: ready\ndata: ${JSON.stringify({ ok: true, userId })}\n\n`);
+
+  const existingSinks = MEMORY_STREAMS.get(userId);
+  const sinks = existingSinks ?? new Set<ExpressResponse>();
+  if (!existingSinks) {
+    MEMORY_STREAMS.set(userId, sinks);
+  }
+  sinks.add(res);
+
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(`event: ping\ndata: {"ts":"${new Date().toISOString()}"}\n\n`);
+    } catch {
+      // ignored
+    }
+  }, 15000);
+
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    const current = MEMORY_STREAMS.get(userId);
+    if (!current) return;
+    current.delete(res);
+    if (current.size === 0) MEMORY_STREAMS.delete(userId);
   });
 }));
 
@@ -4389,7 +4611,14 @@ memoryRouter.get(
         return true;
       })
       .sort((a, b) => toTimestampMs(b.createdAt) - toTimestampMs(a.createdAt))
-      .slice(0, limit);
+      .slice(0, limit)
+      .map((entry) => ({
+        ...entry,
+        path: entry.path.length > 240 ? `${entry.path.slice(0, 240)}...[TRUNCATED]` : entry.path,
+        payloadSummary: compactRequestField(entry.payloadSummary),
+        responseSummary: compactRequestField(entry.responseSummary),
+        errorDetails: compactRequestField(entry.errorDetails),
+      }));
 
     res.status(200).json({
       requests: filtered,
@@ -4441,12 +4670,12 @@ memoryRouter.post("/retrieve/debug", asyncHandler(async (req, res) => {
     return;
   }
 
-  if (!(await applyUsageOrReject({
+  if (!(await applyMeteredOperation({
     req,
     res,
     startedAt,
-    tokenCost: estimateTokenCostFromText(parsed.data.question),
-    searchCost: 1,
+    operation: "retrieve_debug",
+    text: parsed.data.question,
   }))) {
     return;
   }
@@ -4489,12 +4718,12 @@ memoryRouter.post("/retrieve/why-not", asyncHandler(async (req, res) => {
     return;
   }
 
-  if (!(await applyUsageOrReject({
+  if (!(await applyMeteredOperation({
     req,
     res,
     startedAt,
-    tokenCost: estimateTokenCostFromText(parsed.data.question),
-    searchCost: 1,
+    operation: "retrieve_why_not",
+    text: parsed.data.question,
   }))) {
     return;
   }

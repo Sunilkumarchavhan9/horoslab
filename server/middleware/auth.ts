@@ -13,5 +13,8 @@ export async function requireAuth(
   }
 
   req.authUserId = verified.userId;
+  if (verified.apiKeyId) {
+    req.authApiKeyId = verified.apiKeyId;
+  }
   next();
 }

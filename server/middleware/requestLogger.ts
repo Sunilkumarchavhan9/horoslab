@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 const MAX_REQUEST_LOG_ENTRIES = 400;
 const MAX_CAPTURED_JSON_CHARS = 20_000;
 const MAX_STRING_FIELD_CHARS = 500;
+const MAX_RESPONSE_SUMMARY_CHARS = 2_000;
 
 export interface RequestHistoryEntry {
   id: string;
@@ -13,6 +14,7 @@ export interface RequestHistoryEntry {
   status: "Success" | "Error";
   durationMs: number;
   userId: string;
+  apiKeyId?: string;
   requestId: string;
   createdAt: string;
   agent?: string;
@@ -21,7 +23,17 @@ export interface RequestHistoryEntry {
   errorDetails?: any;
 }
 
+type RequestHistoryListener = (entry: RequestHistoryEntry) => void;
+
 const requestHistory: RequestHistoryEntry[] = [];
+const requestHistoryListeners = new Set<RequestHistoryListener>();
+
+export function subscribeRequestHistory(listener: RequestHistoryListener): () => void {
+  requestHistoryListeners.add(listener);
+  return () => {
+    requestHistoryListeners.delete(listener);
+  };
+}
 
 function inferRouteType(method: string, path: string): string {
   const loweredPath = path.toLowerCase();
@@ -46,11 +58,89 @@ function inferRouteType(method: string, path: string): string {
   return "other";
 }
 
+function shouldSkipRequestHistory(path: string): boolean {
+  const normalizedPath = path.split("?")[0]?.toLowerCase() ?? path.toLowerCase();
+  return (
+    normalizedPath.endsWith("/api/memory/events") ||
+    normalizedPath.endsWith("/api/connector/events")
+  );
+}
+
+function sanitizeRequestPath(path: string): string {
+  try {
+    const [pathname, query = ""] = path.split("?");
+    if (!query) return pathname;
+    const params = new URLSearchParams(query);
+    for (const key of Array.from(params.keys())) {
+      const normalizedKey = key.toLowerCase();
+      if (
+        normalizedKey.includes("token") ||
+        normalizedKey.includes("secret") ||
+        normalizedKey.includes("key") ||
+        normalizedKey.includes("code")
+      ) {
+        params.set(key, "[redacted]");
+      }
+    }
+    const sanitized = params.toString();
+    return sanitized ? `${pathname}?${sanitized}` : pathname;
+  } catch {
+    return path.replace(/([?&](?:token|secret|key|code)=)[^&]+/gi, "$1[redacted]");
+  }
+}
+
 function pushRequestHistoryEntry(entry: RequestHistoryEntry): void {
   requestHistory.unshift(entry);
   if (requestHistory.length > MAX_REQUEST_LOG_ENTRIES) {
     requestHistory.length = MAX_REQUEST_LOG_ENTRIES;
   }
+
+  for (const listener of requestHistoryListeners) {
+    try {
+      listener(entry);
+    } catch {
+      // Request logging must never fail the request that just completed.
+    }
+  }
+}
+
+function compactForHistory(value: any, maxChars = MAX_RESPONSE_SUMMARY_CHARS): any {
+  if (value === undefined || value === null) return value;
+  try {
+    const seen = new WeakSet<object>();
+    const raw = JSON.stringify(value, (_key, nested) => {
+      if (typeof nested === "string") {
+        return nested.length > MAX_STRING_FIELD_CHARS
+          ? `${nested.slice(0, MAX_STRING_FIELD_CHARS)}...[TRUNCATED]`
+          : nested;
+      }
+      if (typeof nested === "object" && nested !== null) {
+        if (seen.has(nested)) return "[Circular]";
+        seen.add(nested);
+      }
+      return nested;
+    });
+    if (raw.length <= maxChars) return JSON.parse(raw);
+    return {
+      truncated: true,
+      preview: raw.slice(0, maxChars),
+      originalChars: raw.length,
+    };
+  } catch {
+    const text = String(value);
+    return text.length > maxChars
+      ? { truncated: true, preview: text.slice(0, maxChars), originalChars: text.length }
+      : text;
+  }
+}
+
+export function countApiKeyRequests24h(userId: string, apiKeyId: string): number {
+  const cutoffMs = Date.now() - 24 * 60 * 60 * 1000;
+  return requestHistory.filter((entry) => {
+    if (entry.userId !== userId || entry.apiKeyId !== apiKeyId) return false;
+    const createdMs = Date.parse(entry.createdAt);
+    return Number.isFinite(createdMs) && createdMs >= cutoffMs;
+  }).length;
 }
 
 export function listRequestHistory(options?: {
@@ -176,6 +266,10 @@ export function requestLogger(
     const status: "Success" | "Error" = statusCode < 400 ? "Success" : "Error";
     const routeType = inferRouteType(req.method, req.originalUrl);
 
+    if (shouldSkipRequestHistory(req.originalUrl)) {
+      return;
+    }
+
     let agent = undefined;
     if (routeType === "handoff" || routeType === "resume") {
       agent = req.body?.agentId || "Agent A";
@@ -187,24 +281,29 @@ export function requestLogger(
       routeType !== "revisions" &&
       routeType !== "insights";
 
+    const payloadSummary = Object.keys(req.body || {}).length > 0 ? redactPayload(req.body) : undefined;
+    const responseSummary =
+      status === "Success" && shouldCaptureResponseBody
+        ? compactForHistory(redactPayload(responseBody))
+        : undefined;
+    const errorDetails = status === "Error" ? compactForHistory(redactPayload(responseBody)) : undefined;
+
     pushRequestHistoryEntry({
       id: requestId,
       method: req.method.toUpperCase(),
-      path: req.originalUrl,
+      path: sanitizeRequestPath(req.originalUrl),
       routeType,
       statusCode,
       status,
       durationMs,
       userId,
+      ...(req.authApiKeyId ? { apiKeyId: req.authApiKeyId } : {}),
       requestId,
       createdAt: finishedAt,
       agent,
-      payloadSummary: Object.keys(req.body || {}).length > 0 ? redactPayload(req.body) : undefined,
-      responseSummary:
-        status === "Success" && shouldCaptureResponseBody
-          ? redactPayload(responseBody)
-          : undefined,
-      errorDetails: status === "Error" ? redactPayload(responseBody) : undefined,
+      payloadSummary: compactForHistory(payloadSummary),
+      responseSummary,
+      errorDetails,
     });
 
     console.log(
