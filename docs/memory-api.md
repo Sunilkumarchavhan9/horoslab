@@ -666,3 +666,54 @@ Route not found `404`:
 - Prefer `/api/v1/memory/*` moving forward.
 - Legacy `/api/memory/*` remains available for compatibility.
 - Responses include `x-api-version: 1`.
+
+## Company Brain Phase 2
+
+### `POST /api/memory/company-brain/phase2/capture`
+
+Stores structured company knowledge into four memory pillars:
+- decision memory
+- incident memory
+- architecture memory
+- process memory
+
+Body example:
+
+```json
+{
+  "project": "memoryos-core",
+  "decisionMemories": [
+    {
+      "decision": "Use GitHub connector as default memory pipeline",
+      "why": "Most engineering context already lives in repos and PRs",
+      "who": ["Founder", "Platform Lead"],
+      "alternatives": ["Generic connector order", "Local-first only"]
+    }
+  ],
+  "incidentMemories": [
+    {
+      "rootCause": "Scoped retrieval returned empty due to strict metadata filtering",
+      "fix": "Fallback to merged candidates when scoped filter returns none",
+      "lessonsLearned": ["Do not hard-empty retrieval on incomplete metadata"]
+    }
+  ],
+  "architectureMemories": [
+    {
+      "adr": "ADR-023: Contract-first continuity memory",
+      "tradeoffs": ["Higher upfront structure work", "Better resume reliability"],
+      "constraints": ["Must keep backward-compatible APIs"]
+    }
+  ],
+  "processMemories": [
+    {
+      "workflowType": "deploy",
+      "workflow": "Production release flow",
+      "steps": ["Run gate", "Review failures", "Approve", "Deploy"]
+    }
+  ]
+}
+```
+
+### `GET /api/memory/company-brain/phase2/overview?project=<project>`
+
+Returns structured memory coverage and latest entries by pillar.

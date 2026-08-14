@@ -1,0 +1,3 @@
+{
+  "/api/epoch/[...epochPath]/route": "app/api/epoch/[...epochPath]/route.js"
+}

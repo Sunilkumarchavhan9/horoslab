@@ -10,6 +10,43 @@ export interface LocalFilesSyncOptions {
   recentItemKeys?: string[];
 }
 
+export type LocalFileMemorySourceDetails = {
+  sourceRef: string;
+  traceProof: {
+    sourceType: "docs";
+    sourceRef: string;
+    evidence: string[];
+    confidence: number;
+    capturedAt: string;
+  };
+  developerSignals: {
+    projectArea: string[];
+  };
+};
+
+export function buildLocalFileMemorySourceDetails(input: {
+  relativePath: string;
+  absolutePath: string;
+  capturedAt?: string;
+}): LocalFileMemorySourceDetails {
+  const capturedAt = input.capturedAt ?? new Date().toISOString();
+  const normalizedPath = input.relativePath.replace(/\\/g, "/");
+  const sourceRef = `docs://${encodeURI(normalizedPath)}`;
+  return {
+    sourceRef,
+    traceProof: {
+      sourceType: "docs",
+      sourceRef,
+      evidence: [`Document: ${normalizedPath}`, input.absolutePath],
+      confidence: 0.9,
+      capturedAt,
+    },
+    developerSignals: {
+      projectArea: [normalizedPath],
+    },
+  };
+}
+
 function safeReadText(filePath: string): string {
   try {
     return readFileSync(filePath, "utf8");
@@ -94,13 +131,41 @@ export const LocalFilesClient = {
       const relativePath = path.relative(rootPath, filePath).replace(/\\/g, "/");
       const dedupeKey = `local:${relativePath}`;
       if (seen.has(dedupeKey)) continue;
+      const sourceDetails = buildLocalFileMemorySourceDetails({
+        relativePath,
+        absolutePath: filePath,
+        capturedAt: now,
+      });
       const content = `Local File ${relativePath}\n${compact}`;
+      await upsertRecentMemory({
+        id: randomUUID(),
+        userId: options.userId,
+        type: "project",
+        content,
+        summary: `Document ${relativePath} imported as a company knowledge source.`,
+        source: "import",
+        status: "active",
+        createdAt: now,
+        updatedAt: now,
+        importanceScore: 0.76,
+        confidence: 0.9,
+        evidenceCount: sourceDetails.traceProof.evidence.length,
+        contractVersion: "memoryos.contract.v1",
+        contractCategory: "architecture_note",
+        developerSignals: sourceDetails.developerSignals,
+        sourceRef: sourceDetails.sourceRef,
+        traceProof: sourceDetails.traceProof,
+      });
+      extractedCount += 1;
+      incrementContractCount(contractCounts, "architecture_note");
+
       const candidates = extractMemory({
         userId: options.userId,
         message: content,
       });
 
       for (const candidate of candidates) {
+        const sourceRef = candidate.sourceRef ?? sourceDetails.sourceRef;
         await upsertRecentMemory({
           ...candidate,
           id: randomUUID(),
@@ -111,7 +176,20 @@ export const LocalFilesClient = {
           importanceScore: 0.82,
           confidence: 0.9,
           evidenceCount: 1,
-          developerSignals: candidate.developerSignals,
+          developerSignals: {
+            ...candidate.developerSignals,
+            projectArea: Array.from(
+              new Set([
+                ...(candidate.developerSignals?.projectArea ?? []),
+                ...sourceDetails.developerSignals.projectArea,
+              ]),
+            ),
+          },
+          sourceRef,
+          traceProof: {
+            ...sourceDetails.traceProof,
+            sourceRef,
+          },
         });
         extractedCount += 1;
         incrementContractCount(contractCounts, candidate.contractCategory);

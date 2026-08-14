@@ -6,7 +6,7 @@
  * benchmark store.
  */
 
-import { readFileSync, existsSync } from "fs";
+import { access, readFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import {
@@ -49,15 +49,17 @@ type RetrievedMemory = {
 
 const CASES_PATH = path.join(process.cwd(), "data", "eval", "benchmark-cases.json");
 
-function loadBenchmarkCases(): BenchmarkCase[] {
-  if (!existsSync(CASES_PATH)) {
+async function loadBenchmarkCases(): Promise<BenchmarkCase[]> {
+  try {
+    await access(CASES_PATH);
+  } catch {
     console.warn(
       `[benchmark] benchmark-cases.json missing at ${CASES_PATH}; running with 0 cases`,
     );
     return [];
   }
   try {
-    const raw = readFileSync(CASES_PATH, "utf8");
+    const raw = await readFile(CASES_PATH, "utf8");
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) {
       console.warn("[benchmark] benchmark-cases.json is not an array; ignoring");
@@ -472,7 +474,7 @@ export async function executeBenchmarkRun(
   options?: { caseIds?: string[] },
 ): Promise<BenchmarkRun> {
   const runId = `run_${randomUUID().slice(0, 8)}`;
-  const allCases = loadBenchmarkCases();
+  const allCases = await loadBenchmarkCases();
   const caseIds = options?.caseIds ?? [];
   const cases =
     caseIds.length > 0
@@ -519,7 +521,7 @@ export async function executeBenchmarkRun(
     caseResults: [],
   };
 
-  saveRun(run);
+  await saveRun(run);
 
   // Execute all cases
   const caseResults: BenchmarkCaseResult[] = [];
@@ -576,7 +578,7 @@ export async function executeBenchmarkRun(
 
   const status: BenchmarkRun["status"] = failedCases > 0 ? "failed" : "passed";
 
-  const completedRun = updateRunStatus(runId, {
+  const completedRun = await updateRunStatus(runId, {
     status,
     completedAt: new Date().toISOString(),
     passedCases,

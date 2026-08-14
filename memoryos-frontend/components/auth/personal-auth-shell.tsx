@@ -41,13 +41,13 @@ export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
             href="#"
             className="inline-flex min-h-[42px] items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-2 text-[13px] font-semibold text-white/95 shadow-[0_14px_32px_rgba(0,0,0,0.28)] backdrop-blur-md transition hover:bg-[linear-gradient(180deg,#1f2530_0%,#0b0d15_100%)] sm:min-h-[48px] sm:px-6 sm:py-3 sm:text-[15px]"
           >
-            Memory API↗
+            Epoch API↗
           </a>
         </div>
 
         <div className="mx-auto flex w-full max-w-[980px] flex-1 flex-col items-center justify-center pb-6 pt-10 text-center sm:pb-8 sm:pt-14 lg:pt-16">
           <h1 className="max-w-[980px] text-balance text-[30px] font-semibold tracking-[-0.065em] text-white sm:text-[42px] md:text-[56px] lg:text-[68px]">
-            Never forget anything, anywhere with MemoryOS
+            Never forget anything, anywhere with Epoch
           </h1>
 
           <div className="mt-8 w-full max-w-[760px] rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-5 shadow-[0_30px_80px_rgba(0,0,0,0.62)] backdrop-blur-xl sm:mt-10 sm:rounded-[5px] sm:px-7 sm:py-7 md:px-10 md:py-8">

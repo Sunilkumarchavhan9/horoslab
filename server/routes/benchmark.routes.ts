@@ -34,7 +34,7 @@ export const benchmarkRouter = Router();
 benchmarkRouter.get(
   "/latest",
   asyncHandler(async (_req, res) => {
-    const latest = getLatestRun();
+    const latest = await getLatestRun();
 
     if (!latest) {
       res.status(200).json({
@@ -78,7 +78,7 @@ benchmarkRouter.get(
       ? (range as (typeof validRanges)[number])
       : "30d";
 
-    const runs = getRunHistory(safeRange);
+    const runs = await getRunHistory(safeRange);
 
     // Return lightweight summaries for chart rendering
     const summaries = runs.map((run) => ({
@@ -107,7 +107,7 @@ benchmarkRouter.get(
 benchmarkRouter.get(
   "/runs/:runId",
   asyncHandler(async (req, res) => {
-    const run = getRunById(req.params.runId as string);
+    const run = await getRunById(req.params.runId as string);
     if (!run) {
       res.status(404).json({ ok: false, error: "Benchmark run not found" });
       return;
@@ -135,7 +135,7 @@ benchmarkRouter.get(
 benchmarkRouter.get(
   "/runs/:runId/cases",
   asyncHandler(async (req, res) => {
-    const cases = getCaseResultsForRun(req.params.runId as string);
+    const cases = await getCaseResultsForRun(req.params.runId as string);
     res.status(200).json({ ok: true, data: cases });
   }),
 );
@@ -145,7 +145,7 @@ benchmarkRouter.get(
 benchmarkRouter.get(
   "/cases/:runId/:caseId/trace",
   asyncHandler(async (req, res) => {
-    const caseResult = getCaseResultById(
+    const caseResult = await getCaseResultById(
       req.params.runId as string,
       req.params.caseId as string,
     );
@@ -179,7 +179,7 @@ benchmarkRouter.get(
 benchmarkRouter.post(
   "/run",
   asyncHandler(async (req, res) => {
-    if (hasRunningBenchmark()) {
+    if (await hasRunningBenchmark()) {
       res.status(409).json({
         ok: false,
         error: "A benchmark run is already in progress.",
@@ -212,7 +212,7 @@ benchmarkRouter.post(
 benchmarkRouter.get(
   "/regression/check",
   asyncHandler(async (req, res) => {
-    const latest = getLatestRun();
+    const latest = await getLatestRun();
     if (!latest) {
       res.status(200).json({
         ok: true,
@@ -266,7 +266,7 @@ benchmarkRouter.get(
 benchmarkRouter.get(
   "/metrics/weekly",
   asyncHandler(async (_req, res) => {
-    const runs = getRunHistory("30d");
+    const runs = await getRunHistory("30d");
     const now = Date.now();
     const weekMs = 7 * 24 * 60 * 60 * 1000;
     const currentStart = now - weekMs;
@@ -342,8 +342,8 @@ benchmarkRouter.get(
 benchmarkRouter.get(
   "/regression/alerts",
   asyncHandler(async (req, res) => {
-    const runs = getRunHistory("30d");
-    const latest = getLatestRun();
+    const runs = await getRunHistory("30d");
+    const latest = await getLatestRun();
     if (!latest) {
       res.status(200).json({ ok: true, data: { alerts: [] } });
       return;
@@ -430,7 +430,7 @@ benchmarkRouter.get(
 benchmarkRouter.get(
   "/scenarios",
   asyncHandler(async (_req, res) => {
-    res.status(200).json({ ok: true, data: listBenchmarkScenarios() });
+    res.status(200).json({ ok: true, data: await listBenchmarkScenarios() });
   }),
 );
 
@@ -456,7 +456,7 @@ benchmarkRouter.post(
       return;
     }
 
-    const scenario = upsertBenchmarkScenario({
+    const scenario = await upsertBenchmarkScenario({
       id: typeof req.body?.id === "string" ? req.body.id : undefined,
       name,
       mode,
@@ -469,14 +469,14 @@ benchmarkRouter.post(
 benchmarkRouter.post(
   "/scenarios/:scenarioId/run",
   asyncHandler(async (req, res) => {
-    if (hasRunningBenchmark()) {
+    if (await hasRunningBenchmark()) {
       res.status(409).json({
         ok: false,
         error: "A benchmark run is already in progress.",
       });
       return;
     }
-    const scenario = getBenchmarkScenario(req.params.scenarioId as string);
+    const scenario = await getBenchmarkScenario(req.params.scenarioId as string);
     if (!scenario) {
       res.status(404).json({ ok: false, error: "Scenario not found." });
       return;
@@ -510,3 +510,4 @@ benchmarkRouter.post(
     });
   }),
 );
+

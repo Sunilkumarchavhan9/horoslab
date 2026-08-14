@@ -3,15 +3,22 @@ import { planHandoff } from "../lib/memory/handoffPlanner";
 
 const mocks = vi.hoisted(() => ({
   retrieveRelevantMemory: vi.fn(),
+  listActionMemories: vi.fn(),
 }));
 
 vi.mock("../lib/memory/retrieveRelevantMemory", () => ({
   retrieveRelevantMemory: mocks.retrieveRelevantMemory,
 }));
 
+vi.mock("../lib/memory/actionMemoryStore", () => ({
+  listActionMemories: mocks.listActionMemories,
+}));
+
 describe("Handoff planner contract", () => {
   beforeEach(() => {
     mocks.retrieveRelevantMemory.mockReset();
+    mocks.listActionMemories.mockReset();
+    mocks.listActionMemories.mockResolvedValue([]);
   });
 
   it("returns structured handoff output from retrieved memories", async () => {
@@ -60,5 +67,38 @@ describe("Handoff planner contract", () => {
 
     expect(result.summary).toContain("No strong handoff context found");
     expect(result.keyMemories).toHaveLength(0);
+  });
+
+  it("includes Mythic lineage as handoff context when available", async () => {
+    mocks.retrieveRelevantMemory.mockResolvedValue({
+      memories: [],
+      debug: [],
+    });
+    mocks.listActionMemories.mockResolvedValue([
+      {
+        id: "act-1",
+        userId: "u1",
+        projectId: "memoryos",
+        workspace: "memoryos",
+        action: "Mythic execution completed: Runtime worker hardening",
+        reason: "Persist worker jobs and prevent duplicate retries",
+        outcome: "success",
+        sourceType: "continuity",
+        sourceId: "thread-1",
+        metadata: {
+          provenanceTags: ["mythic_execution", "mythic_handoff"],
+        },
+        updatedAt: "2026-06-12T10:00:00.000Z",
+      },
+    ]);
+
+    const result = await planHandoff({
+      userId: "u1",
+      project: "memoryos",
+      question: "prepare a handoff",
+    });
+
+    expect(result.keyMemories[0]?.content).toContain("Mythic lineage");
+    expect(result.recommendedNextActions[0]).toContain("Mythic execution lineage");
   });
 });

@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type ClerkConsoleSignInProps = {
-  redirectTo: "/developer-console" | "/personal-app";
+  redirectTo: "/personal-app" | "/mission-control";
+  emailLinkCompleteUrl?: string;
+  authError?: string | null;
 };
 
 const AUTH_LOADING_MESSAGE =
@@ -68,7 +70,7 @@ function ActionButton({
   );
 }
 
-export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
+export function ClerkConsoleSignIn({ redirectTo, emailLinkCompleteUrl, authError }: ClerkConsoleSignInProps) {
   const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const { isSignedIn } = useAuth();
   const router = useRouter();
@@ -113,6 +115,21 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
     return () => window.clearTimeout(timeout);
   }, [pendingStrategy]);
 
+  useEffect(() => {
+    if (!authError) return;
+
+    if (authError === "account_exists") {
+      setStatusMessage("That account already exists. Use sign in instead.");
+      setStatusTone("error");
+      return;
+    }
+
+    if (authError === "oauth_callback") {
+      setStatusMessage("OAuth sign-in could not finish. Try again or use email sign-in.");
+      setStatusTone("error");
+    }
+  }, [authError]);
+
   function buildAbsoluteUrl(path: string) {
     if (typeof window === "undefined") {
       return path;
@@ -134,6 +151,17 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
         longMessage.toLowerCase().includes("social")
       ) {
         return "Google/GitHub is not fully configured in Clerk for this app. Enable both social providers and allow localhost:3000 redirect URLs in Clerk dashboard.";
+      }
+
+      if (
+        code.includes("exists") ||
+        code.includes("identifier") ||
+        longMessage.toLowerCase().includes("already exists") ||
+        longMessage.toLowerCase().includes("already in use") ||
+        shortMessage.toLowerCase().includes("already exists") ||
+        shortMessage.toLowerCase().includes("already in use")
+      ) {
+        return "That account already exists. Use sign in instead.";
       }
 
       if (code.includes("dev_browser_unauthenticated")) {
@@ -171,8 +199,8 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
   }, [redirectTo, router]);
 
   const redirectToOrganizationTask = useCallback(() => {
-    router.replace("/developer-console/choose-organization");
-  }, [router]);
+    router.replace(redirectTo);
+  }, [redirectTo, router]);
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -211,7 +239,7 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
         await redirectToOrganizationTask();
         return;
       }
-      console.error("[MemoryOS Auth] Developer OAuth sign-in failed", error);
+      console.error("[Epoch Auth] Developer OAuth sign-in failed", error);
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -242,7 +270,7 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
       const signInAttempt = await signIn.create({
         strategy: "email_link",
         identifier: trimmedEmail,
-        redirectUrl: buildAbsoluteUrl("/developer-console/verify-link"),
+        redirectUrl: buildAbsoluteUrl(emailLinkCompleteUrl ?? "/auth/verify-link"),
       });
 
       const emailLinkFactor = signInAttempt.supportedFirstFactors?.find(
@@ -257,10 +285,10 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
 
       await startEmailLinkFlow({
         emailAddressId: emailLinkFactor.emailAddressId,
-        redirectUrl: buildAbsoluteUrl("/developer-console/verify-link"),
+        redirectUrl: buildAbsoluteUrl(emailLinkCompleteUrl ?? "/auth/verify-link"),
       });
 
-      setStatusMessage(`Magic link sent to ${trimmedEmail}. Open it in this browser to finish sign-in.`);
+      setStatusMessage(`Email link sent to ${trimmedEmail}. Open it in this browser to finish sign-in.`);
       setStatusTone("success");
     } catch (error) {
       if (isAlreadySignedInError(error)) {
@@ -294,8 +322,8 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
           {!authReady
             ? "PREPARING SIGN-IN..."
             : pendingStrategy === "email"
-              ? "SENDING MAGIC LINK..."
-              : "SEND MAGIC LINK"}
+              ? "SENDING EMAIL LINK..."
+              : "SEND EMAIL LINK"}
         </button>
       </div>
 
@@ -349,13 +377,16 @@ export function ClerkConsoleSignIn({ redirectTo }: ClerkConsoleSignInProps) {
 
       <div
         id="clerk-captcha"
-        className="min-h-[70px] w-full"
+        className="relative min-h-[70px] w-full"
         aria-hidden="true"
       />
 
       <p className="pt-1 text-center text-[13px] text-[#9ca5b0]">
-        New to MemoryOS?{" "}
-        <Link href="/sign-up" className="text-[#c9defd] underline-offset-2 hover:underline">
+        New to Epoch?{" "}
+        <Link
+          href="/auth/sign-up"
+          className="text-[#c9defd] underline-offset-2 hover:underline"
+        >
           Create account
         </Link>
       </p>

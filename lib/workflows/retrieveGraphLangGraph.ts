@@ -73,7 +73,11 @@ function buildWorkflowKey(input: RetrieveRelevantMemoryInput): string {
   const workspace = input.workspace ?? "default";
   const project = input.project ?? "default";
   const thread = input.threadId ?? "default";
-  return `retrieve:${input.userId}:${workspace}:${project}:${thread}`;
+  const repo = input.repo ?? "default";
+  const service = input.service ?? "default";
+  const environment = input.environment ?? "default";
+  const taskId = input.taskId ?? "default";
+  return `retrieve:${input.userId}:${workspace}:${project}:${thread}:${repo}:${service}:${environment}:${taskId}`;
 }
 
 export async function runRetrieveFlowLangGraph(

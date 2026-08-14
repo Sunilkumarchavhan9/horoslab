@@ -1,0 +1,40 @@
+{
+  "name": "memoryos-cloudflare-edge-baseline",
+  "description": "Minimum Cloudflare edge controls for memoryosTM API and console traffic.",
+  "rules": [
+    {
+      "id": "memoryos-managed-waf",
+      "phase": "http_request_firewall_managed",
+      "action": "execute",
+      "enabled": true,
+      "description": "Run Cloudflare managed WAF rules before traffic reaches MemoryOS."
+    },
+    {
+      "id": "memoryos-api-rate-limit",
+      "phase": "http_ratelimit",
+      "action": "block",
+      "enabled": true,
+      "description": "Block API bursts at the edge before backend Upstash rate limiting.",
+      "match": "(http.request.uri.path contains \"/api/\")",
+      "requestsPerPeriod": 300,
+      "periodSeconds": 60,
+      "mitigationTimeoutSeconds": 60
+    },
+    {
+      "id": "memoryos-bot-challenge",
+      "phase": "http_request_firewall_custom",
+      "action": "managed_challenge",
+      "enabled": true,
+      "description": "Challenge likely automated traffic hitting app/API routes.",
+      "match": "(cf.bot_management.score lt 30 and http.request.uri.path contains \"/api/\")"
+    },
+    {
+      "id": "memoryos-admin-country-guard",
+      "phase": "http_request_firewall_custom",
+      "action": "managed_challenge",
+      "enabled": true,
+      "description": "Challenge high-risk Mission Control access from unexpected geographies.",
+      "match": "(http.request.uri.path contains \"/mission-control\" and not ip.geoip.country in {\"US\" \"IN\"})"
+    }
+  ]
+}

@@ -22,6 +22,10 @@ export interface RetrieveRelevantMemoryInput {
   workspace?: string;
   project?: string;
   threadId?: string;
+  repo?: string;
+  service?: string;
+  environment?: string;
+  taskId?: string;
   strictThreadId?: boolean;
 }
 
@@ -31,7 +35,7 @@ export interface RankedMemory extends MemoryStoreSearchResult {
   importanceScore: number; // 0..1
   recencyScore: number; // 0..1
   typeRelevanceScore: number; // 0..1
-  semanticScore: number; // 0..1 (from Mem0 score)
+  semanticScore: number; // 0..1 (from memory store semantic score)
   continuityBoost: number;
   finalScore: number; // weighted score
   updatedAt?: string;
@@ -230,6 +234,21 @@ const PROJECT_MILESTONE_REGEX =
 const MEMORY_STORE_SEARCH_TIMEOUT_MS = 1200;
 const CONTEXT_SEARCH_TIMEOUT_MS = 1200;
 const TIMELINE_LOOKUP_LIMIT = 500;
+const RETRIEVAL_WARNING_DEDUPE_MS = Math.max(
+  5_000,
+  Number(process.env.RETRIEVAL_WARNING_DEDUPE_MS ?? 60_000),
+);
+const retrievalWarningLastLoggedAt = new Map<string, number>();
+
+function warnRetrievalOnce(key: string, message: string): void {
+  const now = Date.now();
+  const lastLoggedAt = retrievalWarningLastLoggedAt.get(key) ?? 0;
+  if (now - lastLoggedAt < RETRIEVAL_WARNING_DEDUPE_MS) {
+    return;
+  }
+  retrievalWarningLastLoggedAt.set(key, now);
+  console.warn(message);
+}
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
   let timeoutHandle: NodeJS.Timeout | undefined;
@@ -337,6 +356,8 @@ function memoryToSearchResult(
     id: memory.id,
     memory: memory.content,
     score: computeLexicalSimilarity(question, memory.content),
+    ...(memory.sourceRef ? { sourceRef: memory.sourceRef } : {}),
+    ...(memory.traceProof ? { traceProof: memory.traceProof } : {}),
     metadata: {
       memoryId: memory.id,
       type: memory.type,
@@ -348,8 +369,20 @@ function memoryToSearchResult(
       createdAt: memory.createdAt,
       updatedAt: memory.updatedAt,
       evidenceCount: String(memory.evidenceCount),
+      contractVersion: memory.contractVersion,
       contractCategory: memory.contractCategory,
       developerSignals: memory.developerSignals,
+      operationalTags: memory.operationalTags,
+      companyBrainType: memory.companyBrainType,
+      sourceRef: memory.sourceRef,
+      traceProof: memory.traceProof,
+      freshness: memory.freshness,
+      conflict: memory.conflict,
+      graph: memory.graph,
+      entities: memory.entities,
+      relations: memory.relations,
+      proofQuality: memory.proofQuality,
+      files: memory.files,
     },
   };
 }
@@ -392,6 +425,89 @@ function candidateMatchesThreadScope(candidate: MemoryStoreSearchResult, threadI
   }
 
   return candidate.memory.includes(`threadId=${threadId}`) || candidate.memory.includes(`thread=${threadId}`);
+}
+
+function normalizeScopeToken(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function collectMetadataScopeTokens(metadata: Record<string, unknown>): string[] {
+  const keys = [
+    "workspace",
+    "project",
+    "threadId",
+    "thread_id",
+    "repo",
+    "repository",
+    "selected_repository",
+    "service",
+    "environment",
+    "env",
+    "taskId",
+    "task_id",
+    "task",
+  ] as const;
+
+  const values: string[] = [];
+  for (const key of keys) {
+    const value = metadata[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      values.push(value);
+      continue;
+    }
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item === "string" && item.trim().length > 0) {
+          values.push(item);
+        }
+      }
+    }
+  }
+  return values.map(normalizeScopeToken);
+}
+
+function candidateMatchesScopedField(candidate: MemoryStoreSearchResult, value?: string): boolean {
+  if (!value || value.trim().length === 0) {
+    return true;
+  }
+  const needle = normalizeScopeToken(value);
+  const metadata = candidate.metadata && typeof candidate.metadata === "object"
+    ? (candidate.metadata as Record<string, unknown>)
+    : null;
+  const metadataTokens = metadata ? collectMetadataScopeTokens(metadata) : [];
+  const memoryText = typeof candidate.memory === "string" ? normalizeScopeToken(candidate.memory) : "";
+
+  if (metadataTokens.some((token) => token.includes(needle) || needle.includes(token))) {
+    return true;
+  }
+
+  if (memoryText.length > 0 && memoryText.includes(needle)) {
+    return true;
+  }
+
+  return false;
+}
+
+function candidateMatchesScope(
+  candidate: MemoryStoreSearchResult,
+  scope: {
+    workspace?: string;
+    project?: string;
+    threadId?: string;
+    repo?: string;
+    service?: string;
+    environment?: string;
+    taskId?: string;
+  },
+): boolean {
+  if (!candidateMatchesScopedField(candidate, scope.workspace)) return false;
+  if (!candidateMatchesScopedField(candidate, scope.project)) return false;
+  if (!candidateMatchesScopedField(candidate, scope.repo)) return false;
+  if (!candidateMatchesScopedField(candidate, scope.service)) return false;
+  if (!candidateMatchesScopedField(candidate, scope.environment)) return false;
+  if (!candidateMatchesScopedField(candidate, scope.taskId)) return false;
+  if (scope.threadId && !candidateMatchesThreadScope(candidate, scope.threadId)) return false;
+  return true;
 }
 
 function parseMetadata(result: MemoryStoreSearchResult): ParsedCandidateMetadata {
@@ -814,7 +930,8 @@ async function fetchCandidatePool(
   ).catch((error: unknown) => {
     const message =
       error instanceof Error ? error.message : "Unknown memory store error";
-    console.warn(
+    warnRetrievalOnce(
+      `memory-store:${input.userId}:${message}`,
       `[memory.retrieval] Memory store search failed for user=${input.userId}; continuing with fallback candidates. ${message}`,
     );
     return [] as MemoryStoreSearchResult[];
@@ -827,13 +944,18 @@ async function fetchCandidatePool(
       ...(input.workspace ? { workspace: input.workspace } : {}),
       ...(input.project ? { project: input.project } : {}),
       ...(input.threadId ? { threadId: input.threadId } : {}),
+      ...(input.repo ? { repo: input.repo } : {}),
+      ...(input.service ? { service: input.service } : {}),
+      ...(input.environment ? { environment: input.environment } : {}),
+      ...(input.taskId ? { taskId: input.taskId } : {}),
     }),
     CONTEXT_SEARCH_TIMEOUT_MS,
   )
     .catch((error: unknown) => {
       const message =
         error instanceof Error ? error.message : "Unknown context adapter error";
-      console.warn(
+      warnRetrievalOnce(
+        `context:${input.userId}:${message}`,
         `[memory.retrieval] Context search failed for user=${input.userId}; continuing without context adapter results. ${message}`,
       );
       return [] as ContextSearchResult[];
@@ -865,6 +987,32 @@ async function fetchCandidatePool(
       return [];
     }
     return mergedCandidates.filter((candidate) => candidateMatchesThreadScope(candidate, input.threadId as string));
+  }
+
+  const hasScopedContext = Boolean(
+    input.workspace ||
+      input.project ||
+      input.threadId ||
+      input.repo ||
+      input.service ||
+      input.environment ||
+      input.taskId,
+  );
+
+  if (hasScopedContext) {
+    const scopedCandidates = mergedCandidates.filter((candidate) =>
+      candidateMatchesScope(candidate, {
+        workspace: input.workspace,
+        project: input.project,
+        threadId: input.threadId,
+        repo: input.repo,
+        service: input.service,
+        environment: input.environment,
+        taskId: input.taskId,
+      }),
+    );
+    // If scoped metadata is missing on stored memories, prefer recall over hard-empty results.
+    return scopedCandidates.length > 0 ? scopedCandidates : mergedCandidates;
   }
 
   return mergedCandidates;
@@ -1056,6 +1204,12 @@ export async function analyzeRetrieval(
   });
 
   ranked.sort((a, b) => {
+    // Typed memories carry contract semantics; keep untyped context records from
+    // displacing them when the final result set is bounded by topK.
+    if (Boolean(a.memoryType) !== Boolean(b.memoryType)) {
+      return a.memoryType ? -1 : 1;
+    }
+
     if (b.finalScore !== a.finalScore) {
       return b.finalScore - a.finalScore;
     }

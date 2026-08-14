@@ -52,9 +52,107 @@ export interface DeveloperSignals {
 
 export type OperationalTag = "decision" | "policy" | "incident" | "runbook";
 
+export const COMPANY_BRAIN_MEMORY_TYPES = [
+  "decision",
+  "incident",
+  "architecture",
+  "process",
+  "customer_issue",
+  "execution",
+  "agent_action",
+  "risk",
+  "test",
+  "knowledge",
+  "context",
+] as const;
+
+export type CompanyBrainMemoryType = (typeof COMPANY_BRAIN_MEMORY_TYPES)[number];
+
+export type CompanyBrainTraceProof = {
+  sourceType: string;
+  sourceRef: string;
+  evidence: string[];
+  confidence: number;
+  capturedAt: IsoDateString;
+};
+
+export type CompanyBrainFreshness = {
+  status: "fresh" | "aging" | "stale";
+  checkedAt: IsoDateString;
+};
+
+export type CompanyBrainConflict = {
+  status: "none" | "possible_conflict";
+  conflictsWith: string[];
+  checkedAt: IsoDateString;
+};
+
+export type CompanyBrainGraph = {
+  nodeId: string;
+  nodeType: CompanyBrainMemoryType;
+  edgeRefs: string[];
+};
+
+export type CompanyBrainEntityKind =
+  | "source"
+  | "project"
+  | "workspace"
+  | "thread"
+  | "agent"
+  | "repo"
+  | "file"
+  | "issue"
+  | "pull_request"
+  | "service"
+  | "customer"
+  | "memory_type"
+  | "test"
+  | "policy"
+  | "memory_ref";
+
+export type CompanyBrainResolvedEntity = {
+  id: string;
+  kind: CompanyBrainEntityKind;
+  label: string;
+  canonicalId: string;
+  aliases: string[];
+  references: string[];
+  evidenceCount: number;
+  memoryIds: string[];
+  latestMemoryAt: IsoDateString;
+  confidence: number;
+};
+
+export type CompanyBrainRelation = {
+  id: string;
+  fromEntityId: string;
+  toEntityId: string;
+  relationType:
+    | "scopes"
+    | "derived_from"
+    | "evidenced_by"
+    | "mentions"
+    | "conflicts_with"
+    | "inherits_to"
+    | "validated_by";
+  evidenceRefs: string[];
+  memoryIds: string[];
+  confidence: number;
+};
+
+export type CompanyBrainProofQuality = {
+  score: number;
+  status: "strong" | "usable" | "weak" | "blocked";
+  productionReady: boolean;
+  reasons: string[];
+  gaps: string[];
+  assessedAt: IsoDateString;
+};
+
 export interface Memory {
     id: string;
     userId: string;
+    orgId?: string | null;
     type: MemoryType;
     content: string;
     summary: string;
@@ -69,6 +167,18 @@ export interface Memory {
     contractCategory?: MemoryContractCategory;
     developerSignals?: DeveloperSignals;
     operationalTags?: OperationalTag[];
+    companyBrainType?: CompanyBrainMemoryType;
+    traceProof?: CompanyBrainTraceProof;
+    freshness?: CompanyBrainFreshness;
+    conflict?: CompanyBrainConflict;
+    graph?: CompanyBrainGraph;
+    entities?: CompanyBrainResolvedEntity[];
+    relations?: CompanyBrainRelation[];
+    proofQuality?: CompanyBrainProofQuality;
+    /** Connector or artifact reference, e.g. connector_source=github issue=42 */
+    sourceRef?: string;
+    /** Related repository file paths when known (risky_file, PR diffs, etc.). */
+    files?: string[];
 
 }
 
@@ -84,6 +194,8 @@ export interface MemoryCandidate {
   contractCategory?: MemoryContractCategory;
   developerSignals?: DeveloperSignals;
   operationalTags?: OperationalTag[];
+  sourceRef?: string;
+  files?: string[];
 }
 
 
@@ -108,6 +220,100 @@ export interface TimelineEvent {
   timestamp: IsoDateString;
   metadata?: Record<string, string | number | boolean>;
 }
+
+export const MEMORY_REALTIME_EVENT_STAGES = [
+  "source_sync",
+  "memory",
+  "experience",
+  "skill",
+  "governance",
+  "execution",
+  "learning",
+  "system",
+] as const;
+
+export type MemoryRealtimeEventStage = (typeof MEMORY_REALTIME_EVENT_STAGES)[number];
+
+export const MEMORY_REALTIME_EVENT_KINDS = [
+  "source_synced",
+  "memory_extracted",
+  "experience_captured",
+  "skill_candidate_generated",
+  "skill_approved",
+  "agent_run_prepared",
+  "agent_run_started",
+  "agent_run_completed",
+  "outcome_recorded",
+  "future_instruction_created",
+  "brief_ready",
+  "projection_refreshed",
+  "memory_processed",
+  "handoff_generated",
+  "resume_generated",
+  "timeline_updated",
+  "request_logged",
+  "governance_review_queued",
+  "api_keys_changed",
+  "service_users_changed",
+] as const;
+
+export type MemoryRealtimeEventKind = (typeof MEMORY_REALTIME_EVENT_KINDS)[number];
+
+export type MemoryRealtimeSubject = {
+  type: string;
+  id?: string;
+  label?: string;
+};
+
+export interface MemoryRealtimeEvent {
+  id: string;
+  userId: string;
+  orgId?: string | null;
+  contractVersion: string;
+  correlationId?: string | null;
+  causationId?: string | null;
+  traceId?: string | null;
+  kind: MemoryRealtimeEventKind;
+  stage: MemoryRealtimeEventStage;
+  source: "memory-router" | "memory-ignition" | "company-brain" | "continuity" | "request-logger" | "system";
+  subject?: MemoryRealtimeSubject;
+  payload: Record<string, unknown>;
+  occurredAt: IsoDateString;
+}
+
+export interface MemoryRealtimeEventInput {
+  id?: string;
+  userId: string;
+  orgId?: string | null;
+  contractVersion?: string;
+  correlationId?: string | null;
+  causationId?: string | null;
+  traceId?: string | null;
+  kind: MemoryRealtimeEventKind;
+  stage?: MemoryRealtimeEventStage;
+  source?: MemoryRealtimeEvent["source"];
+  subject?: MemoryRealtimeSubject;
+  payload?: Record<string, unknown>;
+  occurredAt?: IsoDateString;
+}
+
+export type MemoryRealtimeProjection = {
+  userId: string;
+  updatedAt: IsoDateString;
+  totalEvents: number;
+  totalByKind: Record<MemoryRealtimeEventKind, number>;
+  totalByStage: Record<MemoryRealtimeEventStage, number>;
+  latestEventAt: IsoDateString | null;
+  latestEventId: string | null;
+  recentEvents: Array<{
+    id: string;
+    kind: MemoryRealtimeEventKind;
+    stage: MemoryRealtimeEventStage;
+    occurredAt: IsoDateString;
+    summary: string;
+    subject?: MemoryRealtimeSubject;
+  }>;
+};
 
 
 export interface RevisionChange {

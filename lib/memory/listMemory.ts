@@ -6,6 +6,7 @@ import type { Memory, MemoryStatus, MemoryType } from "./types";
 
 export interface ListMemoryInput {
   userId: string;
+  orgId?: string;
   status?: MemoryStatus;
   type?: MemoryType;
   limit?: number;
@@ -39,7 +40,7 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
 export async function listMemories(input: ListMemoryInput): Promise<ListMemoryResult> {
   const effectiveLimit = Math.min(Math.max(input.limit ?? 50, 1), 200);
 
-  const localRecent = await getRecentMemories(input.userId);
+  const localRecent = await getRecentMemories(input.userId, input.orgId);
 
   // Base list source: local recent memories is always available for each user.
   // This keeps /api/memory/list stable even if an external provider rejects empty queries.
@@ -83,6 +84,29 @@ export async function listMemories(input: ListMemoryInput): Promise<ListMemoryRe
             : undefined;
 
       if (ownerFromMetadata && ownerFromMetadata !== input.userId) {
+        continue;
+      }
+
+      const orgFromMetadata =
+        result.metadata &&
+        typeof result.metadata === "object" &&
+        typeof result.metadata.orgId === "string"
+          ? result.metadata.orgId
+          : result.metadata &&
+              typeof result.metadata === "object" &&
+              typeof result.metadata.org_id === "string"
+            ? result.metadata.org_id
+            : undefined;
+
+      if (input.orgId && orgFromMetadata && orgFromMetadata !== input.orgId) {
+        continue;
+      }
+
+      if (input.orgId && !orgFromMetadata && !memory.orgId) {
+        continue;
+      }
+
+      if (input.orgId && !orgFromMetadata && memory.orgId !== input.orgId) {
         continue;
       }
 

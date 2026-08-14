@@ -13,7 +13,8 @@ export function Reveal({ children, delay = 0, className }: RevealProps) {
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.45, ease: "easeOut", delay }}
     >
       {children}

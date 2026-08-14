@@ -1,0 +1,28 @@
+{
+  "name": "@epochtm/api",
+  "version": "0.1.1",
+  "description": "Epoch HTTP API client for institution runtime services.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"fs.copyFileSync('dist/index.js', 'dist/index.mjs')\"",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "epoch",
+    "api",
+    "institution",
+    "runtime",
+    "agents"
+  ],
+  "author": "Epoch Team",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.12.7"
+  }
+}

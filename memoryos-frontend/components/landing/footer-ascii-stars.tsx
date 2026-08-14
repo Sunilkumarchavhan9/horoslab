@@ -212,7 +212,7 @@ function AsciiStar({
       {STAR_POINTS.map((point, index) => (
         <span
           key={`base-${index}`}
-          className="absolute font-mono leading-none text-blue-600"
+          className="absolute font-mono leading-none text-[#0015FF]"
           style={{
             left: px(point.x * scale),
             top: px(point.y * scale),
@@ -229,7 +229,7 @@ function AsciiStar({
       {glitchPoints.map((point, index) => (
         <span
           key={`glitch-${index}`}
-          className={`absolute font-mono leading-none text-blue-600 ${active ? "footer-star-glitch" : ""}`}
+          className={`absolute font-mono leading-none text-[#0015FF] ${active ? "footer-star-glitch" : ""}`}
           style={{
             left: px(point.x * scale),
             top: px(point.y * scale),

@@ -1,4 +1,6 @@
+import { connectorUserFilter, resolveRequestOrgId } from "../auth/orgScope";
 import { prisma } from "../storage/prismaClient";
+import { hasPrismaConnectorDatasourceUrl } from "../storage/prismaErrorUtils";
 import type { ConnectorType } from "./connectorManager";
 
 type ConnectorConfig = {
@@ -15,10 +17,17 @@ function parseConnectorConfig(configJson: string | null | undefined): ConnectorC
   }
 }
 
-export async function getConnectedConnectorTypes(userId: string): Promise<ConnectorType[]> {
+export async function getConnectedConnectorTypes(
+  userId: string,
+  orgId?: string,
+): Promise<ConnectorType[]> {
+  if (!hasPrismaConnectorDatasourceUrl()) {
+    return [];
+  }
+  const scopedOrgId = resolveRequestOrgId(orgId);
   const connectors = await prisma.connector.findMany({
     where: {
-      userId,
+      ...connectorUserFilter({ userId, orgId: scopedOrgId }),
       status: { in: ["connected", "syncing"] },
     },
     select: { type: true },
@@ -35,8 +44,18 @@ export async function getConnectedConnectorTypes(userId: string): Promise<Connec
         "gmail",
         "slack",
         "local_files",
+        "ide_chats",
+        "cursor_chats",
+        "vs_code_chats",
+        "codex_chats",
+        "chatgpt_chats",
+        "windsurf_chats",
+        "devin_chats",
+        "ci_cd_logs",
+        "deployment_errors",
         "zendesk",
         "jira",
+        "linear",
       ].includes(type),
     );
 }
@@ -44,9 +63,18 @@ export async function getConnectedConnectorTypes(userId: string): Promise<Connec
 export async function getConnectorAccessToken(
   userId: string,
   type: ConnectorType,
+  orgId?: string,
 ): Promise<string | null> {
+  if (!hasPrismaConnectorDatasourceUrl()) {
+    return null;
+  }
+  const scopedOrgId = resolveRequestOrgId(orgId);
   const connector = await prisma.connector.findFirst({
-    where: { userId, type, status: "connected" },
+    where: {
+      ...connectorUserFilter({ userId, orgId: scopedOrgId }),
+      type,
+      status: "connected",
+    },
     select: { configJson: true },
   });
   const config = parseConnectorConfig(connector?.configJson);

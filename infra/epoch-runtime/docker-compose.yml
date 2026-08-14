@@ -1,0 +1,58 @@
+services:
+  vllm:
+    # CUDA 12.x-compatible release for the current RTX 4050 driver.
+    # Do not use latest: newer vLLM images require CUDA >=13.
+    image: vllm/vllm-openai:v0.8.5.post1
+    profiles: [vllm]
+    command: ["--model", "/models/epoch", "--served-model-name", "distilbert/distilgpt2", "--host", "0.0.0.0", "--port", "8000", "--max-model-len", "512", "--gpu-memory-utilization", "0.55", "--swap-space", "1", "--enforce-eager"]
+    ports: ["8000:8000"]
+    environment:
+      HF_HUB_DISABLE_XET: "true"
+      HF_HUB_DOWNLOAD_TIMEOUT: "60"
+      HF_HUB_ETAG_TIMEOUT: "30"
+    volumes:
+      - vllm-hf-cache:/root/.cache/huggingface
+      - ${EPOCH_VLLM_MODEL_DIR:-./.epoch-runtime-models/distilgpt2}:/models/epoch:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  sglang:
+    # Pinned runtime image; latest can move to a CUDA version newer than the
+    # Windows NVIDIA driver available to the local RTX 4050.
+    image: lmsysorg/sglang:v0.5.17-cu129-runtime
+    profiles: [sglang]
+    command: ["python3", "-m", "sglang.launch_server", "--model-path", "/models/epoch", "--host", "0.0.0.0", "--port", "30000", "--context-length", "512", "--served-model-name", "distilbert/distilgpt2", "--mem-fraction-static", "0.55"]
+    ports: ["30000:30000"]
+    environment:
+      HF_HUB_DISABLE_XET: "true"
+      HF_HUB_DOWNLOAD_TIMEOUT: "60"
+      HF_HUB_ETAG_TIMEOUT: "30"
+    volumes:
+      - ${EPOCH_VLLM_MODEL_DIR:-./.epoch-runtime-models/distilgpt2}:/models/epoch:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  tei:
+    image: ghcr.io/huggingface/text-embeddings-inference:latest
+    profiles: [tei]
+    command: ["--model-id", "sentence-transformers/all-MiniLM-L6-v2", "--port", "80"]
+    ports: ["8080:80"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  vllm-hf-cache:

@@ -1,6 +1,5 @@
 import "dotenv/config";
-import { existsSync, readFileSync } from "fs";
-import path from "path";
+import { getLatestRun } from "../lib/benchmark/benchmarkStore";
 
 type BaselineReport = {
   passRate: number;
@@ -8,55 +7,24 @@ type BaselineReport = {
   updatedAt: string;
 };
 
-const BASELINE_PATH = path.join(
-  process.cwd(),
-  "data",
-  "eval",
-  "baseline-report.json",
-);
-
-function readBaselineReport(): BaselineReport {
-  if (!existsSync(BASELINE_PATH)) {
-    throw new Error(`baseline report not found: ${BASELINE_PATH}`);
+async function readBaselineReport(): Promise<BaselineReport> {
+  const latest = await getLatestRun();
+  if (!latest || latest.totalCases <= 0) {
+    throw new Error("benchmark baseline not found in Prisma benchmark_runs");
   }
-
-  const raw = readFileSync(BASELINE_PATH, "utf8");
-  const parsed = JSON.parse(raw) as Partial<BaselineReport>;
-
-  if (
-    typeof parsed.passRate !== "number" ||
-    Number.isNaN(parsed.passRate) ||
-    parsed.passRate < 0 ||
-    parsed.passRate > 100
-  ) {
-    throw new Error("baseline-report.json: passRate must be a number in [0,100]");
-  }
-
-  if (
-    typeof parsed.totalCases !== "number" ||
-    !Number.isInteger(parsed.totalCases) ||
-    parsed.totalCases <= 0
-  ) {
-    throw new Error("baseline-report.json: totalCases must be a positive integer");
-  }
-
-  if (typeof parsed.updatedAt !== "string" || parsed.updatedAt.length === 0) {
-    throw new Error("baseline-report.json: updatedAt must be a non-empty ISO string");
-  }
-
   return {
-    passRate: parsed.passRate,
-    totalCases: parsed.totalCases,
-    updatedAt: parsed.updatedAt,
+    passRate: latest.passRate,
+    totalCases: latest.totalCases,
+    updatedAt: latest.completedAt ?? latest.generatedAt,
   };
 }
 
 async function main(): Promise<void> {
-  // Compare eval should use local store and avoid external Mem0 dependency in CI.
-  process.env.MEMORY_STORE_PROVIDER = "local";
+  // Compare eval should use the Prisma-backed runtime path in CI.
+  process.env.MEMORY_STORE_PROVIDER = "prisma";
 
   const { runAllCases } = await import("./eval/harness");
-  const baseline = readBaselineReport();
+  const baseline = await readBaselineReport();
   const current = await runAllCases({ printEach: false });
 
   console.log("Baseline:");

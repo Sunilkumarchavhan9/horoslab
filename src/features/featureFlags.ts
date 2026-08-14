@@ -1,7 +1,13 @@
 // Lightweight feature flag helper.
 // This file provides a minimal API to toggle UI features during rollout.
 
-export type FeatureKey = 'mythic_ui' | 'mythic_shell_rollout';
+declare global {
+  interface Window {
+    __FEATURE_FLAGS__?: Partial<Record<FeatureKey, boolean>>;
+  }
+}
+
+export type FeatureKey = "mythic_ui" | "mythic_shell_rollout";
 
 const DEFAULTS: Record<FeatureKey, boolean> = {
   mythic_ui: false,
@@ -21,18 +27,20 @@ export class FeatureFlags {
 
     // 2) environment variable (NODE env in server; window.__FEATURE_FLAGS__ in browser)
     try {
-      if (typeof process !== 'undefined' && process.env) {
+      if (typeof process !== "undefined" && process.env) {
         const name = `FEATURE_${key.toUpperCase()}`;
-        if (process.env[name] !== undefined) return process.env[name] === 'true';
+        if (process.env[name] !== undefined)
+          return process.env[name] === "true";
       }
 
       // browser global (for quick toggles during dev)
-      // @ts-ignore
-      if (typeof window !== 'undefined' && (window.__FEATURE_FLAGS__ || {})[key] !== undefined) {
-        // @ts-ignore
-        return !!window.__FEATURE_FLAGS__[key];
+      if (
+        typeof window !== "undefined" &&
+        (window.__FEATURE_FLAGS__ || {})[key] !== undefined
+      ) {
+        return !!window.__FEATURE_FLAGS__?.[key];
       }
-    } catch (e) {
+    } catch {
       // noop
     }
 

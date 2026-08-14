@@ -84,7 +84,7 @@ export function LandingNavDropdown({
     >
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 text-[15px] text-[#101827] transition hover:text-blue-600"
+        className="inline-flex items-center gap-1.5 text-[15px] text-[#101827] transition hover:text-[#0015FF]"
         aria-expanded={open}
       >
         {label}
@@ -104,7 +104,7 @@ export function LandingNavDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, y: 12, scale: 0.99 }}
             transition={{ duration: 0.28, ease: EASE_OUT }}
-            className={`absolute top-full z-[100] ${alignClass} ${widthClass} mt-1 rounded-2xl border border-[#c9d8ee] bg-white p-4 shadow-[0_24px_48px_rgba(15,23,42,0.14)]`}
+            className={`absolute top-full z-[100] ${alignClass} ${widthClass} mt-1 rounded-md border border-[#c9d8ee] bg-white p-4 shadow-[0_24px_48px_rgba(15,23,42,0.14)]`}
           >
             <motion.div
               className={`grid gap-3 ${columns === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`}
@@ -159,7 +159,7 @@ export function LandingNavLoginDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
             transition={{ duration: 0.28, ease: EASE_OUT }}
-            className="absolute right-0 top-full z-[100] mt-1 w-[min(92vw,640px)] rounded-2xl border border-[#c9d8ee] bg-white p-4 shadow-[0_24px_48px_rgba(15,23,42,0.14)]"
+            className="absolute right-0 top-full z-[100] mt-1 w-[min(92vw,640px)] rounded-md border border-[#c9d8ee] bg-white p-4 shadow-[0_24px_48px_rgba(15,23,42,0.14)]"
           >
             <motion.div
               className="grid grid-cols-1 gap-3 sm:grid-cols-2"
@@ -183,3 +183,5 @@ export function LandingNavLoginDropdown({
     </motion.div>
   );
 }
+
+

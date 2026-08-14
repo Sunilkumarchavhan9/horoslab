@@ -1,0 +1,624 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/agent-sessions/[id]",
+      "regex": "^/agent\\-sessions/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/agent\\-sessions/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/agent/[...path]",
+      "regex": "^/api/agent/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/agent/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/agent-access/[...path]",
+      "regex": "^/api/agent\\-access/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/agent\\-access/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/agent-runs/[...path]",
+      "regex": "^/api/agent\\-runs/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/agent\\-runs/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/agent-sessions/[[...path]]",
+      "regex": "^/api/agent\\-sessions(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/agent\\-sessions(?:/(?<nxtPpath>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/api/agents/[id]",
+      "regex": "^/api/agents/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/agents/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/approvals/[...path]",
+      "regex": "^/api/approvals/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/approvals/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/benchmarks/[...benchmarkPath]",
+      "regex": "^/api/benchmarks/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPbenchmarkPath": "nxtPbenchmarkPath"
+      },
+      "namedRegex": "^/api/benchmarks/(?<nxtPbenchmarkPath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/company-brain/[...path]",
+      "regex": "^/api/company\\-brain/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/company\\-brain/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/connector/[...connectorPath]",
+      "regex": "^/api/connector/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPconnectorPath": "nxtPconnectorPath"
+      },
+      "namedRegex": "^/api/connector/(?<nxtPconnectorPath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/epoch/[...epochPath]",
+      "regex": "^/api/epoch/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPepochPath": "nxtPepochPath"
+      },
+      "namedRegex": "^/api/epoch/(?<nxtPepochPath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/experience/[...path]",
+      "regex": "^/api/experience/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/experience/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/future-instructions/[...path]",
+      "regex": "^/api/future\\-instructions/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/future\\-instructions/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/masterplan/[...path]",
+      "regex": "^/api/masterplan/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/masterplan/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/memories/[...path]",
+      "regex": "^/api/memories/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/memories/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/memory/[...memoryPath]",
+      "regex": "^/api/memory/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPmemoryPath": "nxtPmemoryPath"
+      },
+      "namedRegex": "^/api/memory/(?<nxtPmemoryPath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/memory-doctor/[...doctorPath]",
+      "regex": "^/api/memory\\-doctor/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPdoctorPath": "nxtPdoctorPath"
+      },
+      "namedRegex": "^/api/memory\\-doctor/(?<nxtPdoctorPath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/memoryignition/[...path]",
+      "regex": "^/api/memoryignition/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/memoryignition/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/mistake-immunity/[...path]",
+      "regex": "^/api/mistake\\-immunity/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/mistake\\-immunity/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/overview/[...path]",
+      "regex": "^/api/overview/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/overview/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/packages/[...path]",
+      "regex": "^/api/packages/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/packages/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/policies/[...path]",
+      "regex": "^/api/policies/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/policies/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/policy-center/[...path]",
+      "regex": "^/api/policy\\-center/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/policy\\-center/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/preflight/[...path]",
+      "regex": "^/api/preflight/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/preflight/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/reality/[...path]",
+      "regex": "^/api/reality/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/reality/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/risk-approvals/[...path]",
+      "regex": "^/api/risk\\-approvals/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/risk\\-approvals/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/runtime/[[...runtimePath]]",
+      "regex": "^/api/runtime(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPruntimePath": "nxtPruntimePath"
+      },
+      "namedRegex": "^/api/runtime(?:/(?<nxtPruntimePath>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/api/skills/[...path]",
+      "regex": "^/api/skills/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/skills/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/sources/[...path]",
+      "regex": "^/api/sources/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/sources/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/epoch/[...epochPath]",
+      "regex": "^/api/v1/epoch/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPepochPath": "nxtPepochPath"
+      },
+      "namedRegex": "^/api/v1/epoch/(?<nxtPepochPath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/sso-callback/[[...sso-callback]]",
+      "regex": "^/sso\\-callback(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPssocallback": "nxtPsso-callback"
+      },
+      "namedRegex": "^/sso\\-callback(?:/(?<nxtPssocallback>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/sso-callback-developer/[[...sso-callback]]",
+      "regex": "^/sso\\-callback\\-developer(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPssocallback": "nxtPsso-callback"
+      },
+      "namedRegex": "^/sso\\-callback\\-developer(?:/(?<nxtPssocallback>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/sso-callback-developer-sign-up/[[...sso-callback]]",
+      "regex": "^/sso\\-callback\\-developer\\-sign\\-up(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPssocallback": "nxtPsso-callback"
+      },
+      "namedRegex": "^/sso\\-callback\\-developer\\-sign\\-up(?:/(?<nxtPssocallback>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/sso-callback-personal/[[...sso-callback]]",
+      "regex": "^/sso\\-callback\\-personal(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPssocallback": "nxtPsso-callback"
+      },
+      "namedRegex": "^/sso\\-callback\\-personal(?:/(?<nxtPssocallback>.+?))?(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/api/agent-access/events",
+      "regex": "^/api/agent\\-access/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/agent\\-access/events(?:/)?$"
+    },
+    {
+      "page": "/api/agent-runs",
+      "regex": "^/api/agent\\-runs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/agent\\-runs(?:/)?$"
+    },
+    {
+      "page": "/api/agents",
+      "regex": "^/api/agents(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/agents(?:/)?$"
+    },
+    {
+      "page": "/api/approvals",
+      "regex": "^/api/approvals(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/approvals(?:/)?$"
+    },
+    {
+      "page": "/api/connector",
+      "regex": "^/api/connector(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/connector(?:/)?$"
+    },
+    {
+      "page": "/api/epoch",
+      "regex": "^/api/epoch(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/epoch(?:/)?$"
+    },
+    {
+      "page": "/api/events/stream",
+      "regex": "^/api/events/stream(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/events/stream(?:/)?$"
+    },
+    {
+      "page": "/api/experience",
+      "regex": "^/api/experience(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/experience(?:/)?$"
+    },
+    {
+      "page": "/api/future-instructions",
+      "regex": "^/api/future\\-instructions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/future\\-instructions(?:/)?$"
+    },
+    {
+      "page": "/api/memories",
+      "regex": "^/api/memories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/memories(?:/)?$"
+    },
+    {
+      "page": "/api/memory/events",
+      "regex": "^/api/memory/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/memory/events(?:/)?$"
+    },
+    {
+      "page": "/api/memory/token",
+      "regex": "^/api/memory/token(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/memory/token(?:/)?$"
+    },
+    {
+      "page": "/api/memoryignition",
+      "regex": "^/api/memoryignition(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/memoryignition(?:/)?$"
+    },
+    {
+      "page": "/api/outcomes",
+      "regex": "^/api/outcomes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/outcomes(?:/)?$"
+    },
+    {
+      "page": "/api/packages",
+      "regex": "^/api/packages(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/packages(?:/)?$"
+    },
+    {
+      "page": "/api/policies",
+      "regex": "^/api/policies(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/policies(?:/)?$"
+    },
+    {
+      "page": "/api/preflight",
+      "regex": "^/api/preflight(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/preflight(?:/)?$"
+    },
+    {
+      "page": "/api/profile-preferences",
+      "regex": "^/api/profile\\-preferences(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/profile\\-preferences(?:/)?$"
+    },
+    {
+      "page": "/api/reality-compiler/history",
+      "regex": "^/api/reality\\-compiler/history(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/reality\\-compiler/history(?:/)?$"
+    },
+    {
+      "page": "/api/reality-compiler/missions",
+      "regex": "^/api/reality\\-compiler/missions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/reality\\-compiler/missions(?:/)?$"
+    },
+    {
+      "page": "/api/reality-compiler/status",
+      "regex": "^/api/reality\\-compiler/status(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/reality\\-compiler/status(?:/)?$"
+    },
+    {
+      "page": "/api/reality-compiler/verifications",
+      "regex": "^/api/reality\\-compiler/verifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/reality\\-compiler/verifications(?:/)?$"
+    },
+    {
+      "page": "/api/reality-compiler/verify",
+      "regex": "^/api/reality\\-compiler/verify(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/reality\\-compiler/verify(?:/)?$"
+    },
+    {
+      "page": "/api/runtime/company-model",
+      "regex": "^/api/runtime/company\\-model(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/runtime/company\\-model(?:/)?$"
+    },
+    {
+      "page": "/api/runtime/github-provider-token",
+      "regex": "^/api/runtime/github\\-provider\\-token(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/runtime/github\\-provider\\-token(?:/)?$"
+    },
+    {
+      "page": "/api/runtime/memoryostm-shell-exec",
+      "regex": "^/api/runtime/memoryostm\\-shell\\-exec(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/runtime/memoryostm\\-shell\\-exec(?:/)?$"
+    },
+    {
+      "page": "/api/runtime/openrouter-provider-key",
+      "regex": "^/api/runtime/openrouter\\-provider\\-key(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/runtime/openrouter\\-provider\\-key(?:/)?$"
+    },
+    {
+      "page": "/api/skills",
+      "regex": "^/api/skills(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/skills(?:/)?$"
+    },
+    {
+      "page": "/api/sources",
+      "regex": "^/api/sources(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/sources(?:/)?$"
+    },
+    {
+      "page": "/auth/sign-in",
+      "regex": "^/auth/sign\\-in(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/sign\\-in(?:/)?$"
+    },
+    {
+      "page": "/auth/sign-up",
+      "regex": "^/auth/sign\\-up(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/sign\\-up(?:/)?$"
+    },
+    {
+      "page": "/auth/verify-link",
+      "regex": "^/auth/verify\\-link(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/verify\\-link(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/icon.png",
+      "regex": "^/icon\\.png(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/icon\\.png(?:/)?$"
+    },
+    {
+      "page": "/mission-control",
+      "regex": "^/mission\\-control(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/mission\\-control(?:/)?$"
+    },
+    {
+      "page": "/personal-app",
+      "regex": "^/personal\\-app(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/personal\\-app(?:/)?$"
+    },
+    {
+      "page": "/personal-app/sign-in",
+      "regex": "^/personal\\-app/sign\\-in(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/personal\\-app/sign\\-in(?:/)?$"
+    },
+    {
+      "page": "/personal-app/sign-up",
+      "regex": "^/personal\\-app/sign\\-up(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/personal\\-app/sign\\-up(?:/)?$"
+    },
+    {
+      "page": "/personal-app/verify-link",
+      "regex": "^/personal\\-app/verify\\-link(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/personal\\-app/verify\\-link(?:/)?$"
+    },
+    {
+      "page": "/personal-app-coming-soon",
+      "regex": "^/personal\\-app\\-coming\\-soon(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/personal\\-app\\-coming\\-soon(?:/)?$"
+    },
+    {
+      "page": "/pilot",
+      "regex": "^/pilot(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/pilot(?:/)?$"
+    },
+    {
+      "page": "/playground",
+      "regex": "^/playground(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/playground(?:/)?$"
+    },
+    {
+      "page": "/pricing",
+      "regex": "^/pricing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/pricing(?:/)?$"
+    },
+    {
+      "page": "/privacy-policy",
+      "regex": "^/privacy\\-policy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy\\-policy(?:/)?$"
+    },
+    {
+      "page": "/refund-policy",
+      "regex": "^/refund\\-policy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/refund\\-policy(?:/)?$"
+    },
+    {
+      "page": "/sign-up",
+      "regex": "^/sign\\-up(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sign\\-up(?:/)?$"
+    },
+    {
+      "page": "/terms-and-conditions",
+      "regex": "^/terms\\-and\\-conditions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms\\-and\\-conditions(?:/)?$"
+    },
+    {
+      "page": "/terms-of-service",
+      "regex": "^/terms\\-of\\-service(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms\\-of\\-service(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

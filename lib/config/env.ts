@@ -22,7 +22,6 @@ const optionalUrlString = z.preprocess((value) => {
 const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
-  MEM0_API_KEY: optionalNonEmptyString,
   SUPERMEMORY_API_KEY: optionalNonEmptyString,
   SUPERMEMORY_BASE_URL: optionalUrlString,
   SUPERMEMORY_PROJECT: optionalNonEmptyString,
@@ -41,7 +40,6 @@ const EnvSchema = z.object({
 export interface AppEnv {
   nodeEnv: "development" | "test" | "production";
   port: number;
-  mem0ApiKey?: string;
   supermemoryApiKey?: string;
   supermemoryBaseUrl?: string;
   supermemoryProject?: string;
@@ -69,17 +67,9 @@ export function loadEnvConfig(): AppEnv {
   }
 
   const data = parsed.data;
-  const memoryStoreProvider = process.env.MEMORY_STORE_PROVIDER?.trim().toLowerCase();
-  const mem0Required = memoryStoreProvider === "mem0";
-
-  if (mem0Required && !data.MEM0_API_KEY) {
-    throw new Error("MEM0_API_KEY is required when MEMORY_STORE_PROVIDER=mem0");
-  }
-
   cachedEnv = {
     nodeEnv: data.NODE_ENV,
     port: data.PORT,
-    mem0ApiKey: data.MEM0_API_KEY,
     supermemoryApiKey: data.SUPERMEMORY_API_KEY,
     supermemoryBaseUrl: data.SUPERMEMORY_BASE_URL,
     supermemoryProject: data.SUPERMEMORY_PROJECT,

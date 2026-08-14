@@ -16,9 +16,8 @@ function replaceInFile(filePath: string, replacer: (content: string) => string) 
 const anyFiles = [
     'lib/integrations/connectorManager.ts',
     'lib/integrations/notion.ts',
-    'memoryos-frontend/components/developer-console/sections/connectors-section.tsx',
-    'memoryos-frontend/components/developer-console/sections/imports-section.tsx',
-    'memoryos-frontend/components/developer-console/sections/overview-section.tsx'
+    'memoryos-frontend/components/memoryos/console-ui.tsx',
+    'memoryos-frontend/components/memoryos/memory-realtime-loop-panel.tsx'
 ];
 
 anyFiles.forEach(f => {
@@ -26,7 +25,7 @@ anyFiles.forEach(f => {
 });
 
 // Fix unescaped entities
-replaceInFile('memoryos-frontend/components/developer-console/sections/imports-section.tsx', c => {
+replaceInFile('memoryos-frontend/components/memoryos/console-ui.tsx', c => {
     return c.replace(/className="text-white">"/g, 'className="text-white">&quot;')
             .replace(/"<\/span>/g, '&quot;</span>')
             .replace(/>"/g, '>&quot;')
@@ -35,9 +34,8 @@ replaceInFile('memoryos-frontend/components/developer-console/sections/imports-s
 
 // Actually, the safest way for react/no-unescaped-entities is to add a comment at the top of the file
 const unescapedFiles = [
-    'memoryos-frontend/components/developer-console/sections/imports-section.tsx',
-    'memoryos-frontend/components/developer-console/sections/memories-section.tsx',
-    'memoryos-frontend/components/developer-console/sections/overview-section.tsx'
+    'memoryos-frontend/components/memoryos/console-ui.tsx',
+    'memoryos-frontend/components/memoryos/memory-realtime-loop-panel.tsx'
 ];
 
 unescapedFiles.forEach(f => {

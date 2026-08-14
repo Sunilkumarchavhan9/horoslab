@@ -32,7 +32,7 @@ Use this for fast design-partner proof.
 ## Tester 4
 
 - Role: Engineering manager, evaluating developer tools for team-wide rollout
-- What they tried: Loaded the developer console, ran the full continuity loop, and viewed the Requests and Benchmarks pages
+- What they tried: Loaded the mission control, ran the full continuity loop, and viewed the Requests and Benchmarks pages
 - What worked: Requests page gave a clear audit trail — useful for demos to non-technical stakeholders
 - What broke / friction: Benchmark page took ~4 seconds to load on first open; felt slow during a live demo
 - One requested improvement: Cache the last benchmark report and show it instantly, refresh in background

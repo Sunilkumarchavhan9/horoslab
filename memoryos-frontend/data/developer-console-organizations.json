@@ -1,0 +1,39 @@
+{
+  "users": {
+    "user_3Cd5xYIn5iJszqCeHTHy1lPKu2O": {
+      "organizations": [],
+      "currentOrganizationId": null,
+      "updatedAt": "2026-06-16T10:10:59.642Z"
+    },
+    "user_3C7cIe3BzQR2mkhtAG5W2n17dPt": {
+      "organizations": [
+        {
+          "id": "org_c5be9f7c-f934-43d2-84b4-3c25a4551163",
+          "name": "m1",
+          "slug": "m1",
+          "plan": "Free Plan",
+          "docs": 0,
+          "connectors": 0,
+          "tags": 0,
+          "companySize": "201-1,000",
+          "createdAt": "2026-06-16T10:17:26.781Z",
+          "updatedAt": "2026-06-16T10:17:26.781Z"
+        },
+        {
+          "id": "org_34ec4bcc-cba6-42bc-882f-57ab2283b7da",
+          "name": "b7",
+          "slug": "b7",
+          "plan": "Free Plan",
+          "docs": 0,
+          "connectors": 0,
+          "tags": 0,
+          "companySize": "Just me",
+          "createdAt": "2026-06-16T10:22:34.000Z",
+          "updatedAt": "2026-06-16T10:22:34.000Z"
+        }
+      ],
+      "currentOrganizationId": "org_c5be9f7c-f934-43d2-84b4-3c25a4551163",
+      "updatedAt": "2026-06-16T10:32:55.596Z"
+    }
+  }
+}

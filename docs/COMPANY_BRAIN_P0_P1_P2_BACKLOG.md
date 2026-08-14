@@ -38,8 +38,21 @@ MemoryOS shipping principle:
   - Slack, Notion, tickets, and docs all normalize into `memoryos.contract.v1`.
   - Show first sync state: last sync, extracted memories, failures, contract categories.
   - Persist connector-level contract counts so ingestion proves value by category, not only raw records.
+  - Expand the connector ladder in priority order instead of adding random integrations:
+    - GitHub
+    - Slack
+    - Jira
+    - Linear
+    - Cursor / VS Code / Windsurf chat imports
+    - docs and local files
+    - Sentry
+    - CI/CD logs
+    - Vercel / cloud logs
+    - Zendesk
+    - email
+    - meetings
 - Primary files:
-  - `memoryos-frontend/components/developer-console/sections/connectors-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/connectors-section.tsx`
   - `server/routes/connector.routes.ts`
   - `lib/integrations/github.ts`
   - `lib/integrations/localFiles.ts`
@@ -81,8 +94,8 @@ MemoryOS shipping principle:
 - Primary files:
   - `server/routes/memory.routes.ts`
   - `lib/memory/resumePlanner.ts`
-  - `memoryos-frontend/components/developer-console/sections/playground-section.tsx`
-  - `memoryos-frontend/components/developer-console/sections/run-demo-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/playground-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/run-demo-section.tsx`
 
 ### P0.5 Unified trace proof panel
 - Outcome: trustable explanation of memory usage for each continuity run.
@@ -100,8 +113,8 @@ MemoryOS shipping principle:
 - Primary files:
   - `lib/memory/retrieveRelevantMemory.ts`
   - `server/routes/memory.routes.ts`
-  - `memoryos-frontend/components/developer-console/sections/context-inspector-section.tsx`
-  - `memoryos-frontend/components/developer-console/sections/flight-recorder-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/context-inspector-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/flight-recorder-section.tsx`
 
 ### P0.6 Production reliability for limits and metering
 - Outcome: enforceable quota/rate controls in multi-instance deployments.
@@ -136,9 +149,9 @@ MemoryOS shipping principle:
   - CTO: risk, governance, roadmap drift
   - Support: playbooks, customer memory, incident context
 - Primary files:
-  - `memoryos-frontend/components/developer-console/sections/overview-section.tsx`
-  - `memoryos-frontend/components/developer-console/console-experience.tsx`
-  - `memoryos-frontend/components/developer-console/sections/*`
+  - `memoryos-frontend/components/mission-control/sections/overview-section.tsx`
+  - `memoryos-frontend/components/mission-control/console-experience.tsx`
+  - `memoryos-frontend/components/mission-control/sections/*`
 
 ### P1.3 Governance maturity
 - Outcome: enterprise-trustable controls without losing product focus.
@@ -148,7 +161,7 @@ MemoryOS shipping principle:
   - Audit export consistency
 - Primary files:
   - `server/routes/memory.routes.ts`
-  - `memoryos-frontend/components/developer-console/sections/governance-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/governance-section.tsx`
 
 ### P1.4 KPI surface (product health + user value)
 - Outcome: measurable continuity outcomes visible in product.
@@ -160,7 +173,7 @@ MemoryOS shipping principle:
   - trace coverage
 - Primary files:
   - `server/observability/metrics.ts`
-  - `memoryos-frontend/components/developer-console/sections/overview-section.tsx`
+  - `memoryos-frontend/components/mission-control/sections/overview-section.tsx`
 
 ---
 
@@ -207,7 +220,7 @@ MemoryOS shipping principle:
 
 ### Exit P1
 - Slack/Notion quality near GitHub baseline.
-- KPI dashboard used in weekly product reviews.
+- KPI control plane used in weekly product reviews.
 
 ### Exit P2
 - Company Brain + AI Operating loop operational across multiple roles.

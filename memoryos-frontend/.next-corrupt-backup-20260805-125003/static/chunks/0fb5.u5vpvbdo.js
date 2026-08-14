@@ -1,0 +1,4 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="464909f3-5a90-0ca4-e52a-0f6a684091ef")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,253348,e=>{"use strict";var t=e.i(843476),o=e.i(662537),r=e.i(271645);e.s(["default",0,function({error:e,reset:n}){return(0,r.useEffect)(()=>{o.captureException(e)},[e]),(0,t.jsx)("html",{children:(0,t.jsx)("body",{children:(0,t.jsxs)("div",{style:{padding:24,fontFamily:"ui-monospace, SFMono-Regular, Menlo, monospace"},children:[(0,t.jsx)("h2",{children:"Unexpected error"}),(0,t.jsx)("p",{children:"We logged this error. Please retry."}),(0,t.jsx)("button",{type:"button",onClick:()=>n(),children:"Retry"})]})})})}])}]);
+
+//# debugId=464909f3-5a90-0ca4-e52a-0f6a684091ef

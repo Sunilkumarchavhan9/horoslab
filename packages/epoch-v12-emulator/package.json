@@ -1,0 +1,11 @@
+{
+  "name": "@epochtm/v12-emulator",
+  "version": "0.1.0",
+  "description": "Local Epoch V12 Worker Protocol emulator.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {"epoch-v12-emulator": "dist/index.js"},
+  "files": ["dist", "README.md"],
+  "scripts": {"build": "tsc -p tsconfig.json"},
+  "devDependencies": {"typescript": "^5.4.5", "@types/node": "^20.12.7"}
+}

@@ -24,7 +24,7 @@ export function NavDropdownLink({ href, label, description }: NavDropdownLinkPro
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
-      className="group/card flex h-full min-h-[280px] flex-col items-center rounded-xl px-4 py-5 text-center transition-colors hover:bg-[#f6f9ff] focus-visible:bg-[#f6f9ff] focus-visible:outline-none"
+      className="group/card flex h-full min-h-[280px] flex-col items-center rounded-md px-4 py-5 text-center transition-colors hover:bg-[#f6f9ff] focus-visible:bg-[#f6f9ff] focus-visible:outline-none"
       whileHover={
         prefersReducedMotion
           ? undefined
@@ -46,7 +46,7 @@ export function NavDropdownLink({ href, label, description }: NavDropdownLinkPro
         <NavAsciiTile
           variant={variant}
           active={hovered}
-          className="aspect-square h-[168px] w-full shrink-0 rounded-xl"
+          className="aspect-square h-[168px] w-full shrink-0 rounded-md"
         />
       </motion.div>
       <div className="mt-5 w-full min-w-0">

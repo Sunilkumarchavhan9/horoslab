@@ -38,6 +38,9 @@ async function createMemoryAuthHeader(): Promise<string | null> {
   if (isClerkEnabled()) {
     const authState = await auth();
     userId = authState.userId;
+    if (!userId && process.env.NODE_ENV === "development") {
+      userId = process.env.MEMORYOS_DEV_USER_ID?.trim() || "user-demo";
+    }
   } else {
     userId = process.env.MEMORYOS_DEV_USER_ID?.trim() || "user-demo";
   }

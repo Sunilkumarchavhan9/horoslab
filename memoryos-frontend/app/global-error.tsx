@@ -1,6 +1,6 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from "@sentry/browser";
 import { useEffect } from "react";
 
 export default function GlobalError({
@@ -28,4 +28,3 @@ export default function GlobalError({
     </html>
   );
 }
-

@@ -1,0 +1,27 @@
+# MemoryOS config
+# DEFAULT MODEL: changed to gpt-5-mini per request
+model = "gpt-5-mini"
+model_provider = "openai"
+model_reasoning_effort = "medium"
+
+[models]
+# default runtime model (used when no override is present)
+default = "gpt-5-mini"
+# model to use for live debugging / code-assistance
+debug = "gpt-5-mini"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5-mini" = 4
+
+
+# Notes:
+# - Restart the MemoryOS process after editing this file for changes to take effect.
+# - If you authenticate to OpenAI via ChatGPT sign-in (i.e. not using an API key), some Codex models
+#   like `gpt-5-mini` may be unavailable for web/ChatGPT sessions. Use an API key to guarantee access.
+# - To force this model for the current shell session use:
+#     $env:OPENAI_MODEL = 'gpt-5-mini'
+#   Or to persist on Windows:
+#     setx OPENAI_MODEL "gpt-5-mini"
+
+

@@ -367,7 +367,12 @@ function buildBugSignals(raw: string): DeveloperSignals {
 function splitIntoClauses(message: string): string[] {
   return message
     .split(/(?:[!?]+|[.](?=\s|$))/)
-    .flatMap((segment) => segment.split(/\band\b/i))
+    // Preserve compound progress statements unless the conjunction starts a
+    // clearly independent subject; otherwise important workstream details are
+    // discarded before resume planning can use them.
+    .flatMap((segment) =>
+      segment.split(/\band\s+(?=(?:I|we|my|currently|debugging|fixing|need)\b)/i),
+    )
     .map(cleanText)
     .filter(Boolean);
 }

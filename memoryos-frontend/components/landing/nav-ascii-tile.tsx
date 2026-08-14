@@ -265,6 +265,7 @@ export function NavAsciiTile({
   const variantRef = useRef(variant);
   const visibleRef = useRef(true);
   const reducedMotionRef = useRef(false);
+  const darkSchemeRef = useRef(false);
   const searchTermsRef = useRef(searchTerms);
   const smoothMotionRef = useRef(smoothMotion);
 
@@ -379,7 +380,9 @@ export function NavAsciiTile({
           const driftX = hashNoise(i * 3.1, 0.5, t * 0.55) * width * 0.72 + width * 0.1;
           const driftY = hashNoise(0.5, i * 2.7, t * 0.48) * height * 0.62 + height * 0.14;
           const pulse = 0.42 + 0.28 * Math.sin(t * 1.35 + i * 1.1);
-          ctx.fillStyle = `rgba(41, 100, 206, ${pulse.toFixed(3)})`;
+          ctx.fillStyle = darkSchemeRef.current
+            ? `rgba(153, 196, 255, ${pulse.toFixed(3)})`
+            : `rgba(41, 100, 206, ${pulse.toFixed(3)})`;
           ctx.fillText(term, driftX, driftY);
         }
       }
@@ -411,6 +414,14 @@ export function NavAsciiTile({
     };
     reduced.addEventListener("change", onReducedChange);
 
+    const darkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    darkSchemeRef.current = darkScheme.matches;
+    const onDarkSchemeChange = (event: MediaQueryListEvent) => {
+      darkSchemeRef.current = event.matches;
+      paint(performance.now());
+    };
+    darkScheme.addEventListener("change", onDarkSchemeChange);
+
     const observer = new ResizeObserver(() => {
       resize();
       paint(performance.now());
@@ -436,13 +447,14 @@ export function NavAsciiTile({
       observer.disconnect();
       visibilityObserver.disconnect();
       reduced.removeEventListener("change", onReducedChange);
+      darkScheme.removeEventListener("change", onDarkSchemeChange);
     };
   }, [active, speed, smoothMotion]);
 
   return (
     <canvas
       ref={canvasRef}
-      className={className ?? "block h-[76px] w-[76px] shrink-0 rounded-lg"}
+      className={className ?? "block h-[76px] w-[76px] shrink-0 rounded-md"}
       aria-hidden="true"
     />
   );

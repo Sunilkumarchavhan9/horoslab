@@ -69,7 +69,7 @@ bun run eval:benchmark
 localStorage.setItem("memoryos.apiToken", "<JWT_TOKEN>");
 ```
 
-Open developer console and capture:
+Open mission control and capture:
 - Requests page with live rows
 - Benchmarks page with latest report values
 

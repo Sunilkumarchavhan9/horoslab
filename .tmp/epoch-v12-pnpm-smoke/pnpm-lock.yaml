@@ -1,0 +1,48 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@epochtm/v12-api':
+        specifier: 0.1.1
+        version: 0.1.1
+      '@epochtm/v12-cli':
+        specifier: 0.1.1
+        version: 0.1.1
+      '@epochtm/v12-mcp':
+        specifier: 0.1.1
+        version: 0.1.1
+      '@epochtm/v12-sdk':
+        specifier: 0.1.1
+        version: 0.1.1
+
+packages:
+
+  '@epochtm/v12-api@0.1.1':
+    resolution: {integrity: sha512-eHtU2RF8rWnHq49yXoWu18R5ack3F8+rbkA5O/M3ItFzYMTce+rxL2waQpmzugkloiNI7yAaaCNQjuiFOhtp0A==}
+
+  '@epochtm/v12-cli@0.1.1':
+    resolution: {integrity: sha512-jyPzeYKUI91py7G2KACm+tPfQlroViaVmBrAKs3ZUyD6kbXv2flICASakh9P/kbIXsXuq4eO/emhCnayvQPlqQ==}
+    hasBin: true
+
+  '@epochtm/v12-mcp@0.1.1':
+    resolution: {integrity: sha512-6r2HLl0Bp5fnWbcTVgQih2+qjVDbnp+lTS59IE/QFPlw77CYL6UTgmuQeov/DX9FeXNJOGDXJr7siIZPBcHAKA==}
+    hasBin: true
+
+  '@epochtm/v12-sdk@0.1.1':
+    resolution: {integrity: sha512-S/QO7UaPha5/6Ed9jpUn4xyY6neM+o07EMn5Du120ZWjhJh6scvMnsEQsSf1hpZ2/EhduIN+x7xZ5i9FKWBdjQ==}
+
+snapshots:
+
+  '@epochtm/v12-api@0.1.1': {}
+
+  '@epochtm/v12-cli@0.1.1': {}
+
+  '@epochtm/v12-mcp@0.1.1': {}
+
+  '@epochtm/v12-sdk@0.1.1': {}

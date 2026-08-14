@@ -1,34 +1,22 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import request from "supertest";
 import { createMemoryOsApp } from "../server/app";
 import { makeToken } from "./helpers/authToken";
 import { resetRetrievalWeights } from "../lib/config/retrievalWeights";
-import { resetRuntimeDataStores } from "./helpers/resetDataDir";
+import { resetRuntimeDataStoresForTests } from "./helpers/resetDataDir";
+import { setMemoryStoreAdapter } from "../lib/adapters/registry";
+import { TestMemoryStoreAdapter } from "./helpers/testMemoryStoreAdapter";
 
-const mem0Store: Array<{
-  id: string;
-  memory?: string;
-  score?: number;
-  metadata?: Record<string, unknown>;
-}> = [];
-
-vi.mock("../lib/integrations/mem0", () => ({
-  saveMemoryToMem0: vi.fn(async ({ memory }) => ({ id: memory.id })),
-  searchMemoryFromMem0: vi.fn(async ({ userId }) =>
-    mem0Store.filter((item) => item.metadata?.userId === userId),
-  ),
-  getMemoryById: vi.fn(async ({ id }: { id: string }) =>
-    mem0Store.find((item) => item.id === id) ?? null,
-  ),
-}));
+const testMemoryStore = new TestMemoryStoreAdapter();
 
 describe("Memory retrieval weight config contract", () => {
   const app = createMemoryOsApp();
 
-  beforeEach(() => {
-    mem0Store.length = 0;
+  beforeEach(async () => {
+    testMemoryStore.clear();
+    setMemoryStoreAdapter(testMemoryStore);
     resetRetrievalWeights();
-    resetRuntimeDataStores();
+    await resetRuntimeDataStoresForTests();
   });
 
   it("returns 400 for invalid retrieval weight payload", async () => {
@@ -67,7 +55,7 @@ describe("Memory retrieval weight config contract", () => {
     const token = await makeToken("u_cfg_contract");
     const now = new Date().toISOString();
 
-    mem0Store.push(
+    testMemoryStore.seed([
       {
         id: "sem-high",
         memory: "High semantic but low importance",
@@ -102,7 +90,7 @@ describe("Memory retrieval weight config contract", () => {
           evidenceCount: "1",
         },
       },
-    );
+    ]);
 
     const baseline = await request(app)
       .post("/api/memory/retrieve")

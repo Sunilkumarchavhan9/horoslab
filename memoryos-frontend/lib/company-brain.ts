@@ -1,5 +1,5 @@
 /**
- * Company Brain — product pillars and how Developer Console sections map to them.
+ * Company Brain — product pillars and how Mission Control sections map to them.
  * @see docs/COMPANY_BRAIN_CORE_PRODUCT.md
  */
 
@@ -7,12 +7,12 @@ export const COMPANY_BRAIN_PILLARS = [
   {
     id: "ingest",
     label: "Ingest",
-    short: "Connect tools & sync knowledge",
+    short: "Connect tools & sync inherited proof",
   },
   {
     id: "structure",
     label: "Structure",
-    short: "Contracts, graph, lineage",
+    short: "Contracts, operational map, lineage",
   },
   {
     id: "execute",
@@ -22,7 +22,7 @@ export const COMPANY_BRAIN_PILLARS = [
   {
     id: "continue",
     label: "Continue",
-    short: "Cross-model continuity",
+    short: "Cross-model inheritance",
   },
   {
     id: "operate",
@@ -44,7 +44,7 @@ export type ConsoleSectionBrainMeta = {
 /** How each main console section supports the Company Brain vision. */
 export const CONSOLE_SECTION_BRAIN: Record<string, ConsoleSectionBrainMeta> = {
   Overview: {
-    purpose: "Operational control center — live memory, connectors, continuity, and runtime signals.",
+    purpose: "Operational control center — live memory, connectors, inheritance, and runtime signals.",
     pillars: ["ingest", "structure", "continue", "operate"],
     executionTier: "live",
   },
@@ -54,7 +54,7 @@ export const CONSOLE_SECTION_BRAIN: Record<string, ConsoleSectionBrainMeta> = {
     executionTier: "partial",
   },
   "Memory Graph": {
-    purpose: "Visualize structured memory, repos, workflows, and relationships from live data.",
+    purpose: "Visualize structured memory, repos, workflows, inheritance, and relationships from live data.",
     pillars: ["structure", "continue"],
     executionTier: "partial",
   },
@@ -69,7 +69,7 @@ export const CONSOLE_SECTION_BRAIN: Record<string, ConsoleSectionBrainMeta> = {
     executionTier: "partial",
   },
   "Memory Evolution Timeline": {
-    purpose: "How organizational intelligence evolved — decisions, context, and memory changes.",
+    purpose: "How organizational intelligence evolved — decisions, context, proof, and memory changes.",
     pillars: ["structure", "continue"],
     executionTier: "partial",
   },
@@ -78,9 +78,14 @@ export const CONSOLE_SECTION_BRAIN: Record<string, ConsoleSectionBrainMeta> = {
     pillars: ["operate"],
     executionTier: "partial",
   },
+  "Action Lineage": {
+    purpose: "Governed execution proof — memory, approval trace, and outcome in one operational timeline.",
+    pillars: ["execute", "operate"],
+    executionTier: "live",
+  },
   "Continuity Lab": {
     purpose:
-      "Living memory workspace — chat with live company intelligence, multi-agent handoff, project evolution.",
+      "Living memory workspace — chat with live company intelligence, multi-agent handoff, inheritance, and project evolution.",
     pillars: ["continue", "execute", "structure", "ingest"],
     executionTier: "partial",
   },
@@ -90,7 +95,7 @@ export const CONSOLE_SECTION_BRAIN: Record<string, ConsoleSectionBrainMeta> = {
     executionTier: "live",
   },
   "Integrations & SDK": {
-    purpose: "Wire MemoryOS into your stack — SDK, MCP, API keys, and installation proof.",
+    purpose: "Wire MemoryOS into your stack — SDK, MCP, API keys, and inheritance proof.",
     pillars: ["ingest", "execute"],
     executionTier: "live",
   },
@@ -143,17 +148,11 @@ export const CONTINUITY_LAB_CAPABILITIES = [
     detail: "Debug retrieval quality; trace what memory was used and why.",
   },
   {
-    id: "ide_workspace",
-    label: "Codex-style IDE workspace",
-    tier: "partial" as const,
+    id: "online_agent",
+    label: "Continuity Labs workspace",
+    tier: "live" as const,
     detail:
-      "Agent + Editor layouts: threads rail, chat or Monaco workbench, review with local edits and GitHub propose→approve.",
-  },
-  {
-    id: "editor_workbench",
-    label: "In-browser code editor",
-    tier: "partial" as const,
-    detail: "GitHub repo browser, Monaco editor, dirty-file tracking, governed file commits.",
+      "MemoryOS-branded agent IDE — threads, terminal, repo tools, and Company Brain memory injection.",
   },
   {
     id: "connected_context",

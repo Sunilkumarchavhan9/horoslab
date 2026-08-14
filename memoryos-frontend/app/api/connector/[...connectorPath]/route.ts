@@ -55,10 +55,17 @@ function offlineEventStream(detail: string): Response {
 async function createConnectorAuthHeader(): Promise<string | null> {
   let userId: string | null = null;
 
-  if (isClerkEnabled()) {
+  // Prefer the current Clerk session whenever it exists. This route is also
+  // used by disconnect, where forwarding a legacy console JWT can target a
+  // different user than the Mission Control workspace.
+  try {
     const authState = await auth();
     userId = authState.userId;
-  } else {
+  } catch {
+    userId = null;
+  }
+
+  if (!userId && !isClerkEnabled()) {
     userId = process.env.MEMORYOS_DEV_USER_ID?.trim() || "user-demo";
   }
 
@@ -133,9 +140,9 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
   headers.set("host", new URL(backendUrl).host);
   headers.set("origin", url.origin);
   const normalizedPath = `/${pathArray.join("/")}`;
-  if (normalizedPath === "/events" && !headers.get("authorization")) {
+  if (!headers.get("authorization")) {
     const eventToken = url.searchParams.get("token");
-    if (eventToken && eventToken.trim().length > 0) {
+    if (normalizedPath === "/events" && eventToken && eventToken.trim().length > 0) {
       headers.set("authorization", `Bearer ${eventToken.trim()}`);
     } else {
       const authHeader = await createConnectorAuthHeader();
@@ -208,8 +215,49 @@ async function proxyRequest(request: NextRequest, pathArray: string[]) {
     let response: Response;
     try {
       response = await runFetch();
+      const isOAuthCallback = normalizedPath.endsWith("/callback");
+      if (isOAuthCallback && response.status >= 400) {
+        let returnPath = "/mission-control";
+        try {
+          const stateParam = url.searchParams.get("state");
+          if (stateParam) {
+            const payloadB64 = stateParam.split(".")[1];
+            if (payloadB64) {
+              const payload = JSON.parse(Buffer.from(payloadB64, "base64").toString("utf-8"));
+              if (payload.returnTo) returnPath = payload.returnTo;
+            }
+          }
+        } catch (e) {}
+        const frontendUrl = new URL(returnPath, request.nextUrl.origin);
+        frontendUrl.searchParams.set("tab", "Data Sources");
+        frontendUrl.searchParams.set("connectorError", "oauth_callback_failed");
+        frontendUrl.searchParams.set("detail", `Callback failed with status ${response.status}`);
+        return Response.redirect(frontendUrl, 302);
+      }
     } catch (error) {
       const isIdempotent = request.method === "GET" || request.method === "HEAD";
+      const isOAuthCallback = normalizedPath.endsWith("/callback");
+      if (isIdempotent && isOAuthCallback) {
+        let returnPath = "/mission-control";
+        try {
+          const stateParam = url.searchParams.get("state");
+          if (stateParam) {
+            const payloadB64 = stateParam.split(".")[1];
+            if (payloadB64) {
+              const payload = JSON.parse(Buffer.from(payloadB64, "base64").toString("utf-8"));
+              if (payload.returnTo) returnPath = payload.returnTo;
+            }
+          }
+        } catch (e) {}
+        const frontendUrl = new URL(returnPath, request.nextUrl.origin);
+        frontendUrl.searchParams.set("tab", "Data Sources");
+        frontendUrl.searchParams.set("connectorError", "oauth_callback_failed");
+        frontendUrl.searchParams.set(
+          "detail",
+          error instanceof Error ? error.message.slice(0, 180) : "Unknown proxy error",
+        );
+        return Response.redirect(frontendUrl, 302);
+      }
       if (isIdempotent && normalizedPath !== "/events" && isRetriableProxyError(error)) {
         response = await runFetch();
       } else {

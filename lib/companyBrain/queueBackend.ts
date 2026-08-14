@@ -1,6 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
 import { randomUUID } from "crypto";
+import { prisma } from "../storage/prismaClient";
 
 export type CompanyBrainJobType = "sync_all_sources" | "rebuild_graph" | "compile_skills";
 
@@ -15,6 +14,8 @@ export type CompanyBrainQueueJob = {
   error?: string;
 };
 
+export type QueueBackendMode = "postgres";
+
 export interface QueueBackend {
   enqueue(userId: string, type: CompanyBrainJobType): Promise<CompanyBrainQueueJob>;
   lease(userId: string, workerId: string, limit: number): Promise<CompanyBrainQueueJob[]>;
@@ -22,32 +23,76 @@ export interface QueueBackend {
   fail(jobId: string, error: string): Promise<void>;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const STORE_PATH = path.join(DATA_DIR, "company-brain-queue.json");
+const ACTIVE_QUEUE_STATUSES = ["queued", "leased"] as const;
 
 function nowIso(): string {
   return new Date().toISOString();
 }
 
-function readJobs(): CompanyBrainQueueJob[] {
-  if (!existsSync(STORE_PATH)) return [];
+function jobFromRow(row: {
+  id: string;
+  userId: string;
+  jobType: string;
+  status: string;
+  createdAt: string;
+  dataJson: string;
+}): CompanyBrainQueueJob {
   try {
-    const raw = readFileSync(STORE_PATH, "utf8");
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as CompanyBrainQueueJob[]) : [];
+    const parsed = JSON.parse(row.dataJson) as Partial<CompanyBrainQueueJob>;
+    return {
+      id: row.id,
+      userId: row.userId,
+      type: (parsed.type ?? row.jobType) as CompanyBrainJobType,
+      status: (parsed.status ?? row.status) as CompanyBrainQueueJob["status"],
+      createdAt: parsed.createdAt ?? row.createdAt,
+      leasedAt: parsed.leasedAt,
+      leaseOwner: parsed.leaseOwner,
+      error: parsed.error,
+    };
   } catch {
-    return [];
+    return {
+      id: row.id,
+      userId: row.userId,
+      type: row.jobType as CompanyBrainJobType,
+      status: row.status as CompanyBrainQueueJob["status"],
+      createdAt: row.createdAt,
+    };
   }
 }
 
-function writeJobs(jobs: CompanyBrainQueueJob[]): void {
-  mkdirSync(DATA_DIR, { recursive: true });
-  writeFileSync(STORE_PATH, JSON.stringify(jobs, null, 2), "utf8");
+async function persistQueueJob(job: CompanyBrainQueueJob): Promise<void> {
+  await prisma.companyBrainQueueJob.upsert({
+    where: { id: job.id },
+    create: {
+      id: job.id,
+      userId: job.userId,
+      jobType: job.type,
+      status: job.status,
+      createdAt: job.createdAt,
+      dataJson: JSON.stringify(job),
+    },
+    update: {
+      userId: job.userId,
+      jobType: job.type,
+      status: job.status,
+      createdAt: job.createdAt,
+      dataJson: JSON.stringify(job),
+    },
+  });
 }
 
-class FileQueueBackend implements QueueBackend {
+class PostgresQueueBackend implements QueueBackend {
   async enqueue(userId: string, type: CompanyBrainJobType): Promise<CompanyBrainQueueJob> {
-    const jobs = readJobs();
+    const existing = await prisma.companyBrainQueueJob.findFirst({
+      where: {
+        userId,
+        jobType: type,
+        status: { in: [...ACTIVE_QUEUE_STATUSES] },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (existing) return jobFromRow(existing);
+
     const job: CompanyBrainQueueJob = {
       id: randomUUID(),
       userId,
@@ -55,41 +100,43 @@ class FileQueueBackend implements QueueBackend {
       status: "queued",
       createdAt: nowIso(),
     };
-    jobs.unshift(job);
-    writeJobs(jobs.slice(0, 5000));
+    await persistQueueJob(job);
     return job;
   }
 
   async lease(userId: string, workerId: string, limit: number): Promise<CompanyBrainQueueJob[]> {
-    const jobs = readJobs();
+    const rows = await prisma.companyBrainQueueJob.findMany({
+      where: { userId, status: "queued" },
+      orderBy: { createdAt: "asc" },
+      take: limit,
+    });
     const leased: CompanyBrainQueueJob[] = [];
-    for (const job of jobs) {
-      if (leased.length >= limit) break;
-      if (job.userId !== userId || job.status !== "queued") continue;
+    for (const row of rows) {
+      const job = jobFromRow(row);
       job.status = "leased";
       job.leasedAt = nowIso();
       job.leaseOwner = workerId;
+      await persistQueueJob(job);
       leased.push(job);
     }
-    if (leased.length > 0) writeJobs(jobs);
     return leased;
   }
 
   async ack(jobId: string): Promise<void> {
-    const jobs = readJobs();
-    const job = jobs.find((entry) => entry.id === jobId);
-    if (job) job.status = "done";
-    writeJobs(jobs);
+    const row = await prisma.companyBrainQueueJob.findUnique({ where: { id: jobId } });
+    if (!row) return;
+    const job = jobFromRow(row);
+    job.status = "done";
+    await persistQueueJob(job);
   }
 
   async fail(jobId: string, error: string): Promise<void> {
-    const jobs = readJobs();
-    const job = jobs.find((entry) => entry.id === jobId);
-    if (job) {
-      job.status = "failed";
-      job.error = error;
-    }
-    writeJobs(jobs);
+    const row = await prisma.companyBrainQueueJob.findUnique({ where: { id: jobId } });
+    if (!row) return;
+    const job = jobFromRow(row);
+    job.status = "failed";
+    job.error = error;
+    await persistQueueJob(job);
   }
 }
 
@@ -195,40 +242,16 @@ class RedisQueueBackend implements QueueBackend {
   }
 }
 
-let backend: QueueBackend = new FileQueueBackend();
-let backendMode: "file" | "redis" = "file";
-let redisAdapter: RedisQueueBackend | null = null;
+let backend: QueueBackend = new PostgresQueueBackend();
+let backendMode: QueueBackendMode = "postgres";
 let backendInitPromise: Promise<void> | null = null;
 
 async function initBackend(): Promise<void> {
   if (backendInitPromise) return backendInitPromise;
   backendInitPromise = (async () => {
-    const preferred = (process.env.COMPANY_BRAIN_QUEUE_BACKEND ?? "").toLowerCase();
-    const redisUrl = process.env.REDIS_URL;
-    if (preferred !== "redis" && !redisUrl) {
-      backend = new FileQueueBackend();
-      backendMode = "file";
-      return;
-    }
-    try {
-      const redisModule = await import("redis");
-      const client = redisModule.createClient(redisUrl ? { url: redisUrl } : undefined) as RedisLikeClient;
-      if (!client.isOpen) {
-        await client.connect();
-      }
-      redisAdapter = new RedisQueueBackend(client);
-      backend = {
-        enqueue: (userId, type) => redisAdapter!.enqueue(userId, type),
-        lease: (userId, workerId, limit) => redisAdapter!.lease(userId, workerId, limit),
-        ack: async (_jobId) => Promise.resolve(),
-        fail: async (_jobId, _error) => Promise.resolve(),
-      };
-      backendMode = "redis";
-    } catch {
-      backend = new FileQueueBackend();
-      backendMode = "file";
-      redisAdapter = null;
-    }
+    await prisma.$connect();
+    backend = new PostgresQueueBackend();
+    backendMode = "postgres";
   })();
   return backendInitPromise;
 }
@@ -239,23 +262,17 @@ export function getQueueBackend(): QueueBackend {
 }
 
 export async function ackQueueJob(userId: string, jobId: string): Promise<void> {
+  void userId;
   await initBackend();
-  if (backendMode === "redis" && redisAdapter) {
-    await redisAdapter.ackWithUser(userId, jobId);
-    return;
-  }
   await backend.ack(jobId);
 }
 
 export async function failQueueJob(userId: string, jobId: string, error: string): Promise<void> {
+  void userId;
   await initBackend();
-  if (backendMode === "redis" && redisAdapter) {
-    await redisAdapter.failWithUser(userId, jobId, error);
-    return;
-  }
   await backend.fail(jobId, error);
 }
 
-export function getQueueBackendInfo(): { mode: "file" | "redis" } {
+export function getQueueBackendInfo(): { mode: QueueBackendMode } {
   return { mode: backendMode };
 }

@@ -1,110 +1,150 @@
-import { BenchmarksSection } from "@/components/landing/benchmarks-section";
+import { ThesisManifestoSection } from "@/components/landing/thesis-manifesto-section";
 import { BlueBand } from "@/components/landing/blue-band";
-import { ContextStackSection } from "@/components/landing/context-stack-section";
-import { CompanyBrainThesisSection } from "@/components/landing/company-brain-thesis-section";
-import { DeveloperExperienceSection } from "@/components/landing/developer-experience-section";
-import { EnterpriseSection } from "@/components/landing/enterprise-section";
+import { MemoryIgnitionSection } from "@/components/landing/memory-ignition-section";
+import { TheProblemSection } from "@/components/landing/the-problem-section";
+import { ThePainSection } from "@/components/landing/the-pain-section";
+import { InstitutionRuntimeSection } from "@/components/landing/institution-runtime-section";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { HeroSection } from "@/components/landing/hero-section";
 import { LandingNav } from "@/components/landing/landing-nav";
 import { PersonalMemorySection } from "@/components/landing/personal-memory-section";
-import { PricingSection } from "@/components/landing/pricing-section";
+import { VerificationAssuranceCaseSection } from "@/components/landing/verification-assurance-case-section";
 import { SectionLabel } from "@/components/landing/section-label";
-import { UnderTheHoodSection } from "@/components/landing/under-the-hood-section";
+import { MistakeImmunityGrid } from "@/components/landing/mistake-immunity-grid";
 import { WhatWeDoSection } from "@/components/landing/what-we-do-section";
+import { RealitySettlementSection } from "@/components/landing/reality-settlement-section";
+import { ProductSurfacesSection } from "@/components/landing/product-surfaces-section";
+import { DeveloperExperienceSection } from "@/components/landing/developer-experience-section";
+import { FaqSection } from "@/components/landing/faq-section";
 
 export default function Home() {
   return (
-    <main className="landing-root min-h-screen bg-white pb-0 pt-[72px]">
-      <div className="fixed left-1/2 top-0 z-[80] w-full max-w-[1240px] -translate-x-1/2 border-x border-b border-[#c9d8ee] bg-white">
+    <main className="landing-root min-h-screen bg-white pb-0 pt-16 lg:pt-[60px]">
+      <div className="fixed left-0 top-0 z-[80] w-full border-b border-[#c9d8ee] bg-white">
         <LandingNav />
       </div>
 
-      <div className="mx-auto max-w-[1240px] border-x border-b border-[#c9d8ee] bg-white">
-        <section className="relative">
-          <HeroSection />
-          <BlueBand />
-        </section>
+      <section className="relative w-full">
+        <HeroSection />
+        <BlueBand />
+      </section>
 
+      <div className="mx-auto max-w-[1240px] border-x border-b border-[#c9d8ee] bg-white">
         <section id="what-we-do" className="relative">
           <SectionLabel
-            title="WHAT WE DO"
-            index="[1/9]"
-            className="sticky top-[72px] z-[70]"
+            title="AUTONOMOUS ORGANIZATION INFRASTRUCTURE"
+            index="[1/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
           <WhatWeDoSection />
         </section>
 
-        <section id="company-brain-thesis" className="relative">
+        <section id="how-it-works" className="relative">
           <SectionLabel
-            title="COMPANY BRAIN"
-            index="[2/9]"
-            className="sticky top-[72px] z-[70]"
+            title="THE ORGANIZATION LOOP"
+            index="[2/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
-          <CompanyBrainThesisSection />
+          <TheProblemSection />
         </section>
 
-        <section id="context-stack" className="relative">
+        <section id="memory-ignition" className="relative">
           <SectionLabel
-            title="THE CONTEXT STACK"
-            index="[3/9]"
-            className="sticky top-[72px] z-[70]"
+            title="RUNTIME BRIEF"
+            index="[3/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
-          <ContextStackSection />
+          <MemoryIgnitionSection />
         </section>
 
         <section id="under-the-hood" className="relative">
           <SectionLabel
-            title="UNDER THE HOOD"
-            index="[4/9]"
-            className="sticky top-[72px] z-[70]"
+            title="WHY AGENT PLATFORMS BREAK"
+            index="[4/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
-          <UnderTheHoodSection />
+          <MistakeImmunityGrid />
         </section>
 
-        <section id="benchmarks" className="relative">
+        <section id="the-thesis" className="relative bg-white">
           <SectionLabel
-            title="BENCHMARKS"
-            index="[5/9]"
-            className="sticky top-[72px] z-[70]"
+            title="THESIS"
+            index="[5/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
-          <BenchmarksSection />
+          <ThesisManifestoSection />
+        </section>
+
+        <section id="the-pain" className="relative bg-white">
+          <SectionLabel
+            title="THE AUTONOMY GAP"
+            index="[6/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
+          />
+          <ThePainSection />
+        </section>
+
+        <section id="personal-memory" className="relative bg-white">
+          <SectionLabel
+            title="WHAT EPOCH IS"
+            index="[7/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
+          />
+          <PersonalMemorySection />
+        </section>
+
+        <section id="institution-runtime" className="relative">
+          <SectionLabel
+            title="INSTITUTION RUNTIME"
+            index="[8/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
+          />
+          <InstitutionRuntimeSection />
+        </section>
+
+        <section id="verification" className="relative">
+          <SectionLabel
+            title="VERIFICATION & ASSURANCE"
+            index="[9/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
+          />
+          <VerificationAssuranceCaseSection />
+        </section>
+
+        <section id="reality-settlement" className="relative">
+          <SectionLabel
+            title="REALITY SETTLEMENT"
+            index="[10/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
+          />
+          <RealitySettlementSection />
         </section>
 
         <section id="developer-experience" className="relative">
           <SectionLabel
-            title="DEVELOPER EXPERIENCE"
-            index="[6/9]"
-            className="sticky top-[72px] z-[70]"
+            title="AGENT-NATIVE INTEGRATIONS"
+            index="[11/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
           <DeveloperExperienceSection />
         </section>
-      </div>
 
-      <section id="personal-memory" className="relative left-1/2 right-1/2 -mx-[50vw] mt-0 w-screen">
-        <div className="sticky top-[72px] z-[70] mx-auto max-w-[1240px] border-x border-b border-[#c9d8ee] bg-white">
-          <SectionLabel title="PERSONAL MEMORY" index="[7/9]" />
-        </div>
-        <PersonalMemorySection />
-      </section>
-
-      <div className="mx-auto max-w-[1240px] border-x border-b border-[#c9d8ee] bg-white">
-        <section id="enterprise" className="relative">
+        <section id="product-surfaces" className="relative">
           <SectionLabel
-            title="ENTERPRISE"
-            index="[8/9]"
-            className="sticky top-[72px] z-[70]"
+            title="AUTHORITY & TRUST"
+            index="[12/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
-          <EnterpriseSection />
+          <ProductSurfacesSection />
         </section>
 
-        <section id="pricing" className="relative">
+        <section id="faq" className="relative">
           <SectionLabel
-            title="PRICING"
-            index="[9/9]"
-            className="sticky top-[72px] z-[70]"
+            title="FAQ"
+            index="[13/13]"
+            className="sticky top-16 z-[70] lg:top-[60px]"
           />
-          <PricingSection />
+          <FaqSection />
         </section>
       </div>
 
@@ -114,3 +154,4 @@ export default function Home() {
     </main>
   );
 }
+

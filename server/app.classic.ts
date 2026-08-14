@@ -1,4 +1,3 @@
-import cors from "cors";
 import express from "express";
 import type { ErrorRequestHandler } from "express";
 
@@ -8,6 +7,7 @@ import {
   classicRequestIdMiddleware,
   requireClassicAuth,
 } from "./middleware/classic";
+import { corsMiddleware } from "./middleware/cors";
 import {
   getMetricsContentType,
   renderMetrics,
@@ -28,13 +28,7 @@ export function createClassicMemoryOsApp() {
     });
   };
 
-  app.use(
-    cors({
-      origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
-      methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "x-metrics-token"],
-    }),
-  );
+  app.use(corsMiddleware);
 
   app.use(express.json());
   app.use(classicRequestIdMiddleware);

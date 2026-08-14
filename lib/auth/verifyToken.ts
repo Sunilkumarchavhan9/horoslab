@@ -3,7 +3,11 @@ import { verifyApiKeyToken } from "./apiKeyStore";
 
 export interface VerifiedAuth {
   userId: string;
+  orgId?: string;
   apiKeyId?: string;
+  apiKeyMode?: "full" | "scoped";
+  apiKeyEndpoints?: string[];
+  apiKeyContentTag?: string;
 }
 
 function readBearerToken(authHeader: string | undefined): string | null {
@@ -22,9 +26,15 @@ export async function verifyAuthorizationHeader(
   const token = readBearerToken(authHeader);
   if (!token) return null;
 
-  const apiKeyAuth = verifyApiKeyToken(token);
+  const apiKeyAuth = await verifyApiKeyToken(token);
   if (apiKeyAuth) {
-    return apiKeyAuth;
+    return {
+      userId: apiKeyAuth.userId,
+      apiKeyId: apiKeyAuth.keyId,
+      apiKeyMode: apiKeyAuth.mode,
+      apiKeyEndpoints: apiKeyAuth.endpoints,
+      apiKeyContentTag: apiKeyAuth.contentTag,
+    };
   }
 
   const secret = process.env.MEMORYOS_JWT_SECRET ?? process.env.JWT_SECRET;
@@ -56,7 +66,11 @@ export async function verifyAuthorizationHeader(
       return null;
     }
 
-    return { userId: sub };
+    const orgId = typeof payload.orgId === "string" && payload.orgId.trim()
+      ? payload.orgId.trim()
+      : undefined;
+
+    return { userId: sub, orgId };
   } catch {
     return null;
   }

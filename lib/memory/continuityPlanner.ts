@@ -1,6 +1,7 @@
 import { retrieveRelevantMemory, type RankedMemory } from "./retrieveRelevantMemory";
+import { listActionMemories } from "./actionMemoryStore";
 import type { ContinuityScope } from "../adapters/adapters";
-import type { MemoryType } from "./types";
+import type { MemoryContractCategory, MemoryType } from "./types";
 
 export type ContinuityMode = "build_next" | "debug_next" | "learn_next";
 
@@ -21,7 +22,9 @@ export interface ContinuityUsedMemory {
   id: string;
   content: string;
   memoryType?: MemoryType;
+  contractCategory?: MemoryContractCategory;
   summary?: string;
+  source?: string;
   finalScore: number;
   importanceScore: number;
   updatedAt?: string;
@@ -63,6 +66,13 @@ function getMetadataSummary(memory: RankedMemory): string | undefined {
   return typeof raw === "string" && raw.length > 0 ? raw : undefined;
 }
 
+function getMetadataSource(memory: RankedMemory): string | undefined {
+  const metadata = memory.metadata;
+  if (!metadata || typeof metadata !== "object") return undefined;
+  const raw = (metadata as Record<string, unknown>).source;
+  return typeof raw === "string" && raw.length > 0 ? raw : undefined;
+}
+
 function toUsedMemory(memory: RankedMemory): ContinuityUsedMemory {
   const fallbackSummary = getMetadataSummary(memory);
 
@@ -70,11 +80,71 @@ function toUsedMemory(memory: RankedMemory): ContinuityUsedMemory {
     id: memory.id,
     content: memory.memory ?? fallbackSummary ?? "No memory content",
     memoryType: memory.memoryType,
+    contractCategory: memory.contractCategory,
     summary: fallbackSummary,
+    source: getMetadataSource(memory),
     finalScore: memory.finalScore,
     importanceScore: memory.importanceScore,
     updatedAt: memory.updatedAt,
   };
+}
+
+function cleanText(value: string | undefined, limit = 260): string | undefined {
+  const normalized = value?.replace(/\s+/g, " ").trim();
+  if (!normalized) return undefined;
+  return normalized.length > limit ? `${normalized.slice(0, limit - 3)}...` : normalized;
+}
+
+async function loadMythicUsedMemories(
+  input: ContinuityPlannerScopedInput,
+): Promise<ContinuityUsedMemory[]> {
+  const scopeKey = input.project?.trim().toLowerCase() ?? input.repo?.trim().toLowerCase() ?? "";
+  const actions = await listActionMemories(input.userId, { limit: 30 });
+
+  return actions
+    .filter((entry) => entry.outcome === "success")
+    .filter((entry) => entry.sourceType === "continuity" || entry.sourceType === "github_execution")
+    .filter((entry) => {
+      const metadata = entry.metadata;
+      const tags = Array.isArray(metadata?.provenanceTags)
+        ? metadata.provenanceTags.filter((value): value is string => typeof value === "string")
+        : [];
+      if (!tags.some((tag) => tag.startsWith("mythic_"))) {
+        return false;
+      }
+
+      if (scopeKey.length === 0) {
+        return true;
+      }
+
+      const haystack = [
+        entry.projectId,
+        entry.workspace,
+        entry.action,
+        entry.reason,
+        typeof metadata?.repo === "string" ? metadata.repo : undefined,
+      ]
+        .filter((value): value is string => typeof value === "string" && value.length > 0)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(scopeKey);
+    })
+    .slice(0, 3)
+    .map((entry, index) => {
+      const summary = cleanText(`${entry.action}: ${entry.reason}`) ?? entry.action;
+      return {
+        id: entry.id,
+        content: summary,
+        memoryType: "episodic",
+        contractCategory: "previous_attempt",
+        summary,
+        source: `mythic_execution:${entry.sourceId ?? entry.id}`,
+        finalScore: Math.max(0.55, 0.9 - index * 0.05),
+        importanceScore: 0.85,
+        updatedAt: entry.updatedAt,
+      } satisfies ContinuityUsedMemory;
+    });
 }
 
 function pickFirstByType(
@@ -93,22 +163,26 @@ function buildActions(
   const learning = pickFirstByType(used, "learning");
   const preference = pickFirstByType(used, "preference");
   const episodic = pickFirstByType(used, "episodic");
+  const mythic = used.find((memory) => memory.source?.startsWith("mythic_execution:"));
 
   const actions: string[] = [];
 
   if (mode === "build_next") {
+    if (mythic) actions.push(`Reuse this successful Mythic execution path: ${mythic.content}`);
     if (project) actions.push(`Continue this project thread: ${project.content}`);
     if (preference) actions.push(`Use preferred stack/style: ${preference.content}`);
     if (learning) actions.push(`Add one feature that uses your learning focus: ${learning.content}`);
   }
 
   if (mode === "debug_next") {
+    if (mythic) actions.push(`Start from prior Mythic evidence before debugging: ${mythic.content}`);
     if (episodic) actions.push(`Re-check similar bug pattern: ${episodic.content}`);
     if (project) actions.push(`Reproduce inside current project flow: ${project.content}`);
     if (preference) actions.push(`Apply your known technical preference while fixing: ${preference.content}`);
   }
 
   if (mode === "learn_next") {
+    if (mythic) actions.push(`Study why this Mythic run succeeded: ${mythic.content}`);
     if (learning) actions.push(`Study this next: ${learning.content}`);
     if (project) actions.push(`Practice learning directly in project work: ${project.content}`);
     if (preference) actions.push(`Use your preferred tools while learning: ${preference.content}`);
@@ -171,17 +245,31 @@ export async function planContinuity(
   const mode: ContinuityMode = input.mode ?? "build_next";
   const previousContext = getPreviousContinuityContext(input.previousCheckpoint);
 
-  const retrieval = await retrieveRelevantMemory({
-    userId: input.userId,
-    question: input.question,
-    topK: input.topK ?? 5,
-    includeArchived: input.includeArchived ?? false,
-    ...(input.workspace ? { workspace: input.workspace } : {}),
-    ...(input.project ? { project: input.project } : {}),
-    ...(input.threadId ? { threadId: input.threadId } : {}),
-  });
+  const [retrieval, mythicUsedMemories] = await Promise.all([
+    retrieveRelevantMemory({
+      userId: input.userId,
+      question: input.question,
+      topK: input.topK ?? 5,
+      includeArchived: input.includeArchived ?? false,
+      ...(input.workspace ? { workspace: input.workspace } : {}),
+      ...(input.project ? { project: input.project } : {}),
+      ...(input.threadId ? { threadId: input.threadId } : {}),
+      ...(input.repo ? { repo: input.repo } : {}),
+      ...(input.service ? { service: input.service } : {}),
+      ...(input.environment ? { environment: input.environment } : {}),
+      ...(input.taskId ? { taskId: input.taskId } : {}),
+    }),
+    loadMythicUsedMemories(input),
+  ]);
 
-  const usedMemories = retrieval.memories.map(toUsedMemory);
+  const usedMemories = Array.from(
+    new Map(
+      [...mythicUsedMemories, ...retrieval.memories.map(toUsedMemory)].map((memory) => [
+        memory.id,
+        memory,
+      ]),
+    ).values(),
+  );
   const currentNextActions = buildActions(mode, input.question, usedMemories);
   const nextActions =
     usedMemories.length === 0 && previousContext.previousNextActions?.length

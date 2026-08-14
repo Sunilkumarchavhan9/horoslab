@@ -23,11 +23,21 @@
       }
     ],
     "paths": {
+      "@/lib/continuity-lab/*": [
+        "./memoryos-frontend/lib/continuity-lab/*"
+      ],
+      "@/lib/*": [
+        "./memoryos-frontend/lib/*",
+        "./lib/*"
+      ],
       "@/*": [
         "./*"
       ],
-      "@memoryostm/sdk": [
-        "./packages/sdk/dist/index.js"
+      "@epochtm/sdk": [
+        "./packages/epoch-sdk/dist/index.js"
+      ],
+      "@epochtm/api": [
+        "./packages/epoch-api/dist/index.js"
       ]
     }
   },
@@ -47,6 +57,7 @@
   "exclude": [
     "node_modules",
     "memoryos-frontend",
-    ".next"
+    ".next",
+    "packages/**/examples/**"
   ]
 }

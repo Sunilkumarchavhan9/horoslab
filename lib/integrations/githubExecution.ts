@@ -7,9 +7,11 @@ import {
   type GitHubExecutionKind,
   type GitHubExecutionProposal,
 } from "./githubExecutionStore";
+import { connectorUserFilter, resolveRequestOrgId } from "../auth/orgScope";
 import { prisma } from "../storage/prismaClient";
 
 const DEFAULT_BRIEF_PATH = ".memoryos/company-brain-brief.md";
+const READABLE_GITHUB_CONNECTOR_STATUSES = ["connected", "syncing", "error"] as const;
 
 export type GitHubRepoSummary = {
   fullName: string;
@@ -20,9 +22,23 @@ export type GitHubRepoSummary = {
   updatedAt: string | null;
 };
 
-async function getGitHubAccessTokenForUser(userId: string): Promise<string | null> {
+export type GitHubUserSummary = {
+  login: string;
+  name: string | null;
+  avatarUrl: string | null;
+  htmlUrl: string | null;
+};
+
+async function getGitHubAccessTokenForUser(userId: string, orgId?: string): Promise<string | null> {
+  const scopedOrgId = resolveRequestOrgId(orgId);
   const row = await prisma.connector.findFirst({
-    where: { userId, type: "github", status: "connected" },
+    where: {
+      ...connectorUserFilter({ userId, orgId: scopedOrgId }),
+      type: "github",
+      status: {
+        in: [...READABLE_GITHUB_CONNECTOR_STATUSES],
+      },
+    },
   });
   if (!row?.configJson) return null;
   try {
@@ -33,28 +49,165 @@ async function getGitHubAccessTokenForUser(userId: string): Promise<string | nul
   }
 }
 
-async function octokitForUser(userId: string): Promise<Octokit> {
-  const token = await getGitHubAccessTokenForUser(userId);
+async function getCachedGitHubRepoFullNamesForUser(userId: string, orgId?: string): Promise<string[]> {
+  const scopedOrgId = resolveRequestOrgId(orgId);
+  const row = await prisma.connector.findFirst({
+    where: {
+      ...connectorUserFilter({ userId, orgId: scopedOrgId }),
+      type: "github",
+      status: {
+        in: [...READABLE_GITHUB_CONNECTOR_STATUSES],
+      },
+    },
+    select: { configJson: true },
+  });
+  if (!row?.configJson) return [];
+  try {
+    const config = JSON.parse(row.configJson) as { repoFullNames?: unknown };
+    if (!Array.isArray(config.repoFullNames)) return [];
+    return config.repoFullNames.filter(
+      (item): item is string => typeof item === "string" && item.includes("/"),
+    );
+  } catch {
+    return [];
+  }
+}
+
+async function getCachedGitHubPullRequestsForRepo(
+  userId: string,
+  repoFullName: string,
+  orgId?: string,
+): Promise<Array<{ number: number; title: string; state: string; updatedAt: string | null; htmlUrl: string | null }>> {
+  const scopedOrgId = resolveRequestOrgId(orgId);
+  const row = await prisma.connector.findFirst({
+    where: {
+      ...connectorUserFilter({ userId, orgId: scopedOrgId }),
+      type: "github",
+      status: {
+        in: [...READABLE_GITHUB_CONNECTOR_STATUSES],
+      },
+    },
+    select: { configJson: true },
+  });
+  if (!row?.configJson) return [];
+  try {
+    const config = JSON.parse(row.configJson) as {
+      repoPullRequestsByRepo?: Record<
+        string,
+        Array<{ number: number; title: string; state: string; updatedAt: string | null; htmlUrl: string | null }>
+      >;
+    };
+    const entries = config.repoPullRequestsByRepo?.[repoFullName];
+    return Array.isArray(entries) ? entries : [];
+  } catch {
+    return [];
+  }
+}
+
+async function octokitForUser(userId: string, orgId?: string): Promise<Octokit> {
+  const token = await getGitHubAccessTokenForUser(userId, orgId);
   if (!token) {
     throw new Error("GitHub is not connected. Connect GitHub in Connected Intelligence Sources first.");
   }
   return new Octokit({ auth: token });
 }
 
-export async function listGitHubReposForUser(userId: string, limit = 40): Promise<GitHubRepoSummary[]> {
-  const octokit = await octokitForUser(userId);
-  const { data } = await octokit.repos.listForAuthenticatedUser({
-    sort: "updated",
-    per_page: Math.min(Math.max(limit, 1), 100),
-  });
-  return data.map((repo) => ({
-    fullName: repo.full_name,
-    owner: repo.owner?.login ?? "",
-    name: repo.name,
-    defaultBranch: repo.default_branch ?? "main",
-    private: repo.private ?? false,
-    updatedAt: repo.updated_at ?? null,
-  }));
+export async function getGitHubOctokitForUser(userId: string, orgId?: string): Promise<Octokit> {
+  return octokitForUser(userId, orgId);
+}
+
+export async function listGitHubReposForUser(
+  userId: string,
+  limit = 40,
+  orgId?: string,
+): Promise<GitHubRepoSummary[]> {
+  const mappedLimit = Math.min(Math.max(limit, 1), 100);
+  const cached = await getCachedGitHubRepoFullNamesForUser(userId, orgId);
+  if (cached.length > 0) {
+    return cached.slice(0, mappedLimit).map((fullName) => {
+      const [owner = "", name = fullName] = fullName.split("/", 2);
+      return {
+        fullName,
+        owner,
+        name,
+        defaultBranch: "main",
+        private: false,
+        updatedAt: null,
+      };
+    });
+  }
+  try {
+    const octokit = await octokitForUser(userId, orgId);
+    const { data } = await octokit.repos.listForAuthenticatedUser({
+      sort: "updated",
+      per_page: mappedLimit,
+    });
+    return data.map((repo) => ({
+      fullName: repo.full_name,
+      owner: repo.owner?.login ?? "",
+      name: repo.name,
+      defaultBranch: repo.default_branch ?? "main",
+      private: repo.private ?? false,
+      updatedAt: repo.updated_at ?? null,
+    }));
+  } catch {
+    return cached.slice(0, mappedLimit).map((fullName) => {
+      const [owner = "", name = fullName] = fullName.split("/", 2);
+      return {
+        fullName,
+        owner,
+        name,
+        defaultBranch: "main",
+        private: false,
+        updatedAt: null,
+      };
+    });
+  }
+}
+
+export async function getGitHubProfileForUser(userId: string, orgId?: string): Promise<GitHubUserSummary> {
+  const octokit = await octokitForUser(userId, orgId);
+  const { data } = await octokit.users.getAuthenticated();
+  return {
+    login: data.login,
+    name: data.name ?? null,
+    avatarUrl: data.avatar_url ?? null,
+    htmlUrl: data.html_url ?? null,
+  };
+}
+
+export async function listGitHubPullRequestsForUser(
+  userId: string,
+  orgId: string | undefined,
+  owner: string,
+  repo: string,
+  limit = 50,
+): Promise<Array<{ number: number; title: string; state: string; updatedAt: string | null; htmlUrl: string | null }>> {
+  const mappedLimit = Math.min(Math.max(limit, 1), 100);
+  const cached = await getCachedGitHubPullRequestsForRepo(userId, `${owner.trim()}/${repo.trim()}`, orgId);
+  if (cached.length > 0) {
+    return cached.slice(0, mappedLimit);
+  }
+  try {
+    const octokit = await octokitForUser(userId, orgId);
+    const { data } = await octokit.pulls.list({
+      owner: owner.trim(),
+      repo: repo.trim(),
+      state: "all",
+      sort: "updated",
+      direction: "desc",
+      per_page: mappedLimit,
+    });
+    return data.map((pull) => ({
+      number: pull.number,
+      title: pull.title,
+      state: pull.state,
+      updatedAt: pull.updated_at ?? null,
+      htmlUrl: pull.html_url ?? null,
+    }));
+  } catch {
+    return cached.slice(0, mappedLimit);
+  }
 }
 
 export async function proposeGitHubExecution(input: {
@@ -246,11 +399,57 @@ async function executePullRequest(
   return proposal;
 }
 
+export async function mergeGitHubPullRequest(input: {
+  userId: string;
+  orgId?: string;
+  owner: string;
+  repo: string;
+  number: number;
+  mergeMethod?: "merge" | "squash" | "rebase";
+  commitTitle?: string;
+  commitMessage?: string;
+  expectedHeadSha?: string;
+}): Promise<{
+  merged: boolean;
+  sha: string | null;
+  mergedAt: string | null;
+  message: string | null;
+}> {
+  const owner = input.owner.trim();
+  const repo = input.repo.trim();
+  if (!owner || !repo) {
+    throw new Error("Repository owner and name are required.");
+  }
+  if (!Number.isFinite(input.number) || input.number < 1) {
+    throw new Error("Pull request number must be a positive integer.");
+  }
+
+  const octokit = await octokitForUser(input.userId, input.orgId);
+  const { data } = await octokit.pulls.merge({
+    owner,
+    repo,
+    pull_number: Math.floor(input.number),
+    ...(input.mergeMethod ? { merge_method: input.mergeMethod } : {}),
+    ...(input.commitTitle?.trim() ? { commit_title: input.commitTitle.trim() } : {}),
+    ...(input.commitMessage?.trim() ? { commit_message: input.commitMessage.trim() } : {}),
+    ...(input.expectedHeadSha?.trim() ? { sha: input.expectedHeadSha.trim() } : {}),
+  });
+  const mergeData = data as typeof data & { merged_at?: unknown };
+
+  return {
+    merged: Boolean(mergeData?.merged),
+    sha: typeof mergeData?.sha === "string" ? mergeData.sha : null,
+    mergedAt:
+      typeof mergeData?.merged_at === "string" && mergeData.merged_at.length > 0 ? mergeData.merged_at : null,
+    message: typeof mergeData?.message === "string" ? mergeData.message : null,
+  };
+}
+
 export async function approveAndExecuteGitHubProposal(input: {
   userId: string;
   proposalId: string;
 }): Promise<GitHubExecutionProposal> {
-  const proposal = getGitHubExecutionProposal(input.userId, input.proposalId);
+  const proposal = await getGitHubExecutionProposal(input.userId, input.proposalId);
   if (!proposal) {
     throw new Error("Execution proposal not found.");
   }
@@ -262,7 +461,7 @@ export async function approveAndExecuteGitHubProposal(input: {
 
   proposal.status = "approved";
   proposal.reviewedAt = new Date().toISOString();
-  updateGitHubExecutionProposal(proposal);
+  await updateGitHubExecutionProposal(proposal);
 
   try {
     if (proposal.kind === "issue_comment") {
@@ -295,8 +494,8 @@ export async function approveAndExecuteGitHubProposal(input: {
   return updateGitHubExecutionProposal(proposal);
 }
 
-export function listPendingGitHubExecutions(userId: string): GitHubExecutionProposal[] {
-  return listGitHubExecutionProposalsForUser(userId, 30).filter((p) =>
+export async function listPendingGitHubExecutions(userId: string): Promise<GitHubExecutionProposal[]> {
+  return (await listGitHubExecutionProposalsForUser(userId, 30)).filter((p) =>
     ["pending", "approved", "failed"].includes(p.status),
   );
 }

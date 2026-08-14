@@ -25,7 +25,7 @@ function TestRunner() {
   }, []);
 
   return (
-    <div className="w-full h-[320px] bg-card border border-border rounded-xl overflow-hidden flex flex-col font-mono text-[11px] shadow-sm relative group transition-all duration-500 hover:border-primary/40">
+    <div className="w-full h-[320px] bg-card border border-border rounded-md overflow-hidden flex flex-col font-mono text-[11px] shadow-sm relative group transition-all duration-500 hover:border-primary/40">
       <div className="absolute top-0 left-0 w-full h-[2px] bg-primary/20 z-10">
          <motion.div className="h-full bg-primary" animate={{ width: `${Math.min(100, (step / tests.length) * 100)}%` }} transition={{ duration: 0.5 }} />
       </div>
@@ -45,7 +45,7 @@ function TestRunner() {
                 key={test.id}
                 initial={{ opacity: 0, x: -10, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
-                className="flex items-center justify-between bg-muted/40 p-2.5 rounded-lg border border-border/50"
+                className="flex items-center justify-between bg-muted/40 p-2.5 rounded-md border border-border/50"
               >
                  <div className="flex items-center gap-2 text-foreground">
                    <ChevronRight size={12} className="text-muted-foreground" />
@@ -79,7 +79,7 @@ function TestRunner() {
             >
                <motion.div 
                  initial={{ scale: 0.8, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", damping: 20 }}
-                 className="bg-card border border-primary/30 p-6 rounded-2xl flex flex-col items-center gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] ring-1 ring-primary/20"
+                 className="bg-card border border-primary/30 p-6 rounded-md flex flex-col items-center gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] ring-1 ring-primary/20"
                >
                  <div className="w-12 h-12 rounded-full bg-chart-2/10 flex items-center justify-center text-chart-2 mb-1 border border-chart-2/20">
                     <CheckCircle2 size={24} />
@@ -128,14 +128,14 @@ function RetrievalSimulation() {
   }, [step]);
 
   return (
-    <div className="w-full h-[320px] bg-card border border-border rounded-xl p-6 flex flex-col relative overflow-hidden group shadow-sm transition-all duration-500 hover:border-primary/40">
+    <div className="w-full h-[320px] bg-card border border-border rounded-md p-6 flex flex-col relative overflow-hidden group shadow-sm transition-all duration-500 hover:border-primary/40">
        <div className="flex items-center gap-2 text-foreground font-bold font-sans text-[13px] mb-4 relative z-10">
          <Search size={14} className="text-primary" /> Top-3 Retrieval Precision
        </div>
        
        <div className="flex-1 flex flex-col gap-3 relative z-10 w-full mt-2">
           {/* Query Box */}
-          <div className="bg-muted/50 border border-border rounded-lg p-3">
+          <div className="bg-muted/50 border border-border rounded-md p-3">
              <div className="text-[9px] text-muted-foreground uppercase font-mono mb-1">Agent Query</div>
              <div className="flex items-center gap-2 text-xs font-mono text-foreground h-4">
                 <span className="text-primary">{`>`}</span>
@@ -198,7 +198,7 @@ function RetrievalSimulation() {
              {step === 2 && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.6, type: "spring" }}
-                  className="absolute bottom-4 right-4 bg-card border border-border shadow-lg rounded-lg px-3 py-2 flex items-center gap-2 z-20"
+                  className="absolute bottom-4 right-4 bg-card border border-border shadow-lg rounded-md px-3 py-2 flex items-center gap-2 z-20"
                 >
                    <div className="w-2 h-2 rounded-full bg-chart-2 animate-pulse shadow-[0_0_8px_hsl(var(--chart-2) / 0.5)]" />
                    <span className="text-sm font-black font-sans tracking-tight">100% PRECISION</span>
@@ -236,7 +236,7 @@ function RetentionSimulation() {
   const droppedStandard = step > 3 && step <= incomingFacts.length ? incomingFacts[step - 4] : null;
 
   return (
-    <div className="w-full h-[320px] bg-card border border-border rounded-xl p-5 flex flex-col relative overflow-hidden group shadow-sm transition-all duration-500 hover:border-primary/40">
+    <div className="w-full h-[320px] bg-card border border-border rounded-md p-5 flex flex-col relative overflow-hidden group shadow-sm transition-all duration-500 hover:border-primary/40">
        <div className="flex items-center justify-between mb-3 relative z-10">
          <div className="flex items-center gap-2 text-foreground font-bold font-sans text-[13px]">
            <Database size={14} className="text-primary" /> Context Retention
@@ -246,14 +246,14 @@ function RetentionSimulation() {
        <div className="flex-1 flex gap-3 w-full relative z-10">
           
           {/* Left: Standard Session Agent */}
-          <div className="flex-1 bg-muted/20 border border-border/50 rounded-xl p-3 flex flex-col relative overflow-hidden">
+          <div className="flex-1 bg-muted/20 border border-border/50 rounded-md p-3 flex flex-col relative overflow-hidden">
              <div className="text-[9px] font-mono uppercase text-muted-foreground mb-2 flex items-center justify-between">
                 <span>Session Agent</span>
                 <span className="text-destructive bg-destructive/10 px-1 rounded">Decays</span>
              </div>
              
              {/* Context Window */}
-             <div className="border border-border/50 rounded-lg p-2 h-[120px] flex flex-col justify-end gap-1.5 overflow-hidden bg-card/50">
+             <div className="border border-border/50 rounded-md p-2 h-[120px] flex flex-col justify-end gap-1.5 overflow-hidden bg-card/50">
                <AnimatePresence mode="popLayout">
                  {visibleStandard.map((fact) => (
                    <motion.div 
@@ -271,7 +271,7 @@ function RetentionSimulation() {
              </div>
 
              {/* Overflow Area */}
-             <div className="mt-3 bg-destructive/5 border border-destructive/10 rounded-lg flex-1 flex flex-col items-center justify-center p-2">
+             <div className="mt-3 bg-destructive/5 border border-destructive/10 rounded-md flex-1 flex flex-col items-center justify-center p-2">
                <AnimatePresence mode="wait">
                  {droppedStandard ? (
                    <motion.div
@@ -292,14 +292,14 @@ function RetentionSimulation() {
           </div>
 
           {/* Right: MemoryOS */}
-          <div className="flex-1 bg-primary/5 border border-primary/20 rounded-xl p-3 flex flex-col relative overflow-hidden">
+          <div className="flex-1 bg-primary/5 border border-primary/20 rounded-md p-3 flex flex-col relative overflow-hidden">
              <div className="text-[9px] font-mono uppercase text-primary font-bold mb-2 flex items-center justify-between">
                 <span>MemoryOS</span>
                 <span className="text-chart-2 bg-chart-2/10 px-1 rounded">100%</span>
              </div>
              
              {/* Context Window */}
-             <div className="border border-primary/20 rounded-lg p-2 h-[120px] flex flex-col justify-end gap-1.5 overflow-hidden bg-card/50 relative z-10">
+             <div className="border border-primary/20 rounded-md p-2 h-[120px] flex flex-col justify-end gap-1.5 overflow-hidden bg-card/50 relative z-10">
                <AnimatePresence mode="popLayout">
                  {visibleStandard.map((fact) => (
                    <motion.div 
@@ -317,7 +317,7 @@ function RetentionSimulation() {
              </div>
 
              {/* Graph Archive Area */}
-             <div className="mt-3 bg-chart-2/5 border border-chart-2/20 rounded-lg flex-1 flex flex-col items-center justify-center p-2">
+             <div className="mt-3 bg-chart-2/5 border border-chart-2/20 rounded-md flex-1 flex flex-col items-center justify-center p-2">
                <AnimatePresence mode="wait">
                  {droppedStandard ? (
                    <motion.div
@@ -356,7 +356,7 @@ function ContradictionSimulation() {
   }, [step]);
 
   return (
-     <div className="w-full h-[320px] bg-card border border-border rounded-xl overflow-hidden flex flex-col relative group shadow-sm font-mono text-[10px] transition-all duration-500 hover:border-primary/40">
+     <div className="w-full h-[320px] bg-card border border-border rounded-md overflow-hidden flex flex-col relative group shadow-sm font-mono text-[10px] transition-all duration-500 hover:border-primary/40">
         <div className="bg-muted/30 px-4 py-3 border-b border-border flex items-center justify-between z-10 relative">
            <div className="flex items-center gap-2 text-foreground font-bold font-sans text-[13px]">
              <ShieldCheck size={14} className="text-primary" /> Contradiction Engine
@@ -379,7 +379,7 @@ function ContradictionSimulation() {
                   <div className="w-8 flex justify-center mt-2 shrink-0">
                      <div className="w-2 h-2 rounded-full bg-primary ring-4 ring-primary/20" />
                   </div>
-                  <div className="flex-1 bg-card border border-border/60 p-2.5 rounded-lg shadow-sm">
+                  <div className="flex-1 bg-card border border-border/60 p-2.5 rounded-md shadow-sm">
                      <div className="text-[9px] font-mono uppercase text-muted-foreground mb-1">Incoming Session Fact</div>
                      <div className="text-[10px] text-foreground font-bold leading-relaxed">"Disable rate limits for API key #110"</div>
                   </div>
@@ -397,7 +397,7 @@ function ContradictionSimulation() {
                   <div className="w-8 flex justify-center mt-2 shrink-0">
                      <div className="w-2 h-2 rounded-full bg-destructive ring-4 ring-destructive/20 animate-pulse" />
                   </div>
-                  <div className="flex-1 bg-destructive/5 border border-destructive/30 p-2.5 rounded-lg shadow-sm">
+                  <div className="flex-1 bg-destructive/5 border border-destructive/30 p-2.5 rounded-md shadow-sm">
                      <div className="text-destructive font-bold mb-1 flex items-center gap-1.5 text-[9px] uppercase tracking-wider"><AlertCircle size={10} /> Graph Conflict</div>
                      <p className="text-muted-foreground/80 leading-relaxed text-[9px]">Violates immutable rule <span className="bg-destructive/10 text-destructive px-1 py-0.5 rounded font-bold">#strict_rate_limits</span>.</p>
                   </div>
@@ -426,7 +426,7 @@ function ContradictionSimulation() {
                       <div className="w-8 flex justify-center mt-2 shrink-0">
                          <div className="w-2 h-2 rounded-full bg-chart-2 ring-4 ring-chart-2/20" />
                       </div>
-                      <div className="flex-1 bg-chart-2/5 border border-chart-2/30 p-2.5 rounded-lg shadow-sm">
+                      <div className="flex-1 bg-chart-2/5 border border-chart-2/30 p-2.5 rounded-md shadow-sm">
                          <div className="text-chart-2 font-bold mb-1 flex items-center gap-1.5 text-[9px] uppercase tracking-wider"><CheckCircle2 size={10} /> Resolved & Patched</div>
                          <p className="text-foreground/80 leading-relaxed text-[10px]">Fact discarded. Core rule retained.</p>
                       </div>
@@ -441,7 +441,7 @@ function ContradictionSimulation() {
 
 function InteroperabilitySimulation() {
   return (
-    <div className="w-full h-[320px] bg-card border border-border rounded-xl p-6 flex flex-col relative overflow-hidden group shadow-sm font-mono text-[10px] transition-all duration-500 hover:border-primary/40">
+    <div className="w-full h-[320px] bg-card border border-border rounded-md p-6 flex flex-col relative overflow-hidden group shadow-sm font-mono text-[10px] transition-all duration-500 hover:border-primary/40">
        <div className="flex items-center justify-between z-10 relative mb-4">
            <div className="flex items-center gap-2 text-foreground font-bold font-sans text-[13px]">
              <Network size={14} className="text-primary" /> Production Interoperability
@@ -473,7 +473,7 @@ function InteroperabilitySimulation() {
 
            {/* Center Node (MemoryOS) */}
            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }} className="w-16 h-16 bg-card border-2 border-primary rounded-xl flex flex-col items-center justify-center shadow-[0_0_20px_hsl(var(--primary) / 0.25)] relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }} className="w-16 h-16 bg-card border-2 border-primary rounded-md flex flex-col items-center justify-center shadow-[0_0_20px_hsl(var(--primary) / 0.25)] relative overflow-hidden">
                  <div className="absolute inset-0 bg-primary/10" />
                  <Database size={20} className="text-primary relative z-10" />
                  <span className="font-bold font-sans text-[10px] text-foreground relative z-10 mt-1">CORE</span>
@@ -482,7 +482,7 @@ function InteroperabilitySimulation() {
 
            {/* Top Node (TypeScript SDK) */}
            <div className="absolute top-[5%] left-1/2 -translate-x-1/2 z-10">
-              <div className="bg-card border border-border rounded-lg p-2.5 flex items-center gap-2 shadow-sm min-w-[130px] justify-center relative overflow-hidden group-hover:border-primary/40 transition-colors">
+              <div className="bg-card border border-border rounded-md p-2.5 flex items-center gap-2 shadow-sm min-w-[130px] justify-center relative overflow-hidden group-hover:border-primary/40 transition-colors">
                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
                  <Code2 size={12} className="text-muted-foreground" />
                  <span className="font-sans font-bold text-[11px] text-foreground">TypeScript SDK</span>
@@ -491,7 +491,7 @@ function InteroperabilitySimulation() {
 
            {/* Bottom Left Node (MCP Native) */}
            <div className="absolute bottom-[5%] left-[5%] z-10">
-              <div className="bg-card border border-border rounded-lg p-2.5 flex items-center gap-2 shadow-sm min-w-[120px] justify-center relative overflow-hidden group-hover:border-chart-2/40 transition-colors">
+              <div className="bg-card border border-border rounded-md p-2.5 flex items-center gap-2 shadow-sm min-w-[120px] justify-center relative overflow-hidden group-hover:border-chart-2/40 transition-colors">
                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-chart-2" />
                  <TerminalSquare size={12} className="text-muted-foreground" />
                  <span className="font-sans font-bold text-[11px] text-foreground">MCP Native</span>
@@ -500,7 +500,7 @@ function InteroperabilitySimulation() {
 
            {/* Bottom Right Node (HTTP API) */}
            <div className="absolute bottom-[5%] right-[5%] z-10">
-              <div className="bg-card border border-border rounded-lg p-2.5 flex items-center gap-2 shadow-sm min-w-[120px] justify-center relative overflow-hidden group-hover:border-destructive/40 transition-colors">
+              <div className="bg-card border border-border rounded-md p-2.5 flex items-center gap-2 shadow-sm min-w-[120px] justify-center relative overflow-hidden group-hover:border-destructive/40 transition-colors">
                  <div className="absolute right-0 top-0 bottom-0 w-1 bg-destructive" />
                  <Globe size={12} className="text-muted-foreground" />
                  <span className="font-sans font-bold text-[11px] text-foreground">HTTP API</span>

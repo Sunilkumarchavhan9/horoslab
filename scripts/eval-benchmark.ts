@@ -19,6 +19,7 @@ import {
   seedCaseMemories,
   type EvalCase,
 } from "./eval/harness";
+import { saveRun, type BenchmarkRun } from "../lib/benchmark/benchmarkStore";
 
 type BenchmarkCase = {
   id: string;
@@ -69,13 +70,6 @@ const BENCHMARK_CASES_PATH = path.join(
   "data",
   "eval",
   "benchmark-cases.json",
-);
-
-const BENCHMARK_REPORT_PATH = path.join(
-  process.cwd(),
-  "data",
-  "eval",
-  "benchmark-report.json",
 );
 
 function tokenize(text: string): string[] {
@@ -158,8 +152,8 @@ class LocalBenchmarkMemoryStoreAdapter implements MemoryStoreAdapter {
   }
 }
 
-function loadBenchmarkCases(): BenchmarkCase[] {
-  const jsonFile = fs.readFileSync(BENCHMARK_CASES_PATH, "utf8");
+async function loadBenchmarkCases(): Promise<BenchmarkCase[]> {
+  const jsonFile = await fs.promises.readFile(BENCHMARK_CASES_PATH, "utf8");
   const parsed: unknown = JSON.parse(jsonFile);
 
   if (!Array.isArray(parsed)) {
@@ -603,18 +597,90 @@ function buildBenchmarkReport(params: {
   };
 }
 
-function writeBenchmarkReport(report: BenchmarkReport): void {
-  fs.writeFileSync(BENCHMARK_REPORT_PATH, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+function reportToBenchmarkRun(report: BenchmarkReport): BenchmarkRun {
+  const runId = `eval_${new Date(report.generatedAt).getTime().toString(36)}`;
+  return {
+    runId,
+    generatedAt: report.generatedAt,
+    completedAt: report.generatedAt,
+    mode: "local",
+    environment: process.env.NODE_ENV ?? "development",
+    commitHash: null,
+    branch: null,
+    totalCases: report.totalCases,
+    passedCases: report.passedCases,
+    failedCases: report.failedCases,
+    passRate: report.passRate,
+    top3RetrievalPrecision: report.kpis.top3_retrieval_precision,
+    resumeSuccessRate: report.kpis.resume_success_rate ?? 0,
+    contradictionMissRate: report.kpis.contradiction_miss_rate ?? 0,
+    wrongMergeRate: report.kpis.wrong_merge_rate ?? 0,
+    p95RetrieveLatencyMs: report.kpis.p95_retrieve_latency,
+    abSummary: {
+      missingStepsImprovement: report.abSummary.missingStepsImprovement,
+      contradictionImprovement: 0,
+      timeToCorrectActionDeltaMs: 0,
+    },
+    status: report.failedCases > 0 ? "failed" : "passed",
+    suites: {
+      retrieve: {
+        passed: report.results.filter((result) => result.type === "retrieve" && result.passed).length,
+        total: report.results.filter((result) => result.type === "retrieve").length,
+      },
+      resume: {
+        passed: report.results.filter((result) => result.type === "resume" && result.passed).length,
+        total: report.results.filter((result) => result.type === "resume").length,
+      },
+      contradiction: {
+        passed: report.results.filter((result) => result.type === "contradiction" && result.passed).length,
+        total: report.results.filter((result) => result.type === "contradiction").length,
+      },
+    },
+    caseResults: report.results.map((result) => ({
+      caseId: result.id,
+      runId,
+      suite: result.type,
+      input: "",
+      expectedOutput: "",
+      actualOutput: JSON.stringify(result.details),
+      retrievedMemories: [],
+      scores: { score: result.score },
+      passed: result.passed,
+      failureReason: result.passed ? null : "Benchmark case failed.",
+      traceSteps: [{ step: "eval-benchmark", data: result.details }],
+      ab: {
+        withMemory: {
+          passed: result.passed,
+          scores: { score: result.score },
+          actualOutput: JSON.stringify(result.details),
+          retrievedCount: 0,
+          latencyMs: 0,
+        },
+        withoutMemory: {
+          passed: false,
+          scores: {},
+          actualOutput: "",
+          retrievedCount: 0,
+          latencyMs: 0,
+        },
+        delta: {
+          missingStepsImprovement:
+            typeof result.details.missingStepsImprovement === "number"
+              ? result.details.missingStepsImprovement
+              : 0,
+          contradictionImprovement: 0,
+          timeToCorrectActionDeltaMs: 0,
+        },
+      },
+      createdAt: report.generatedAt,
+    })),
+  };
 }
 
 async function main(): Promise<void> {
-  const benchmarkCases = loadBenchmarkCases();
+  const benchmarkCases = await loadBenchmarkCases();
   validateBenchmarkCases(benchmarkCases);
-  const useMem0 = process.env.BENCHMARK_USE_MEM0 === "true";
-
-  if (!useMem0) {
-    setMemoryStoreAdapter(new LocalBenchmarkMemoryStoreAdapter());
-  }
+  setMemoryStoreAdapter(new LocalBenchmarkMemoryStoreAdapter());
 
   try {
     const results: BenchmarkCaseResult[] = [];
@@ -671,9 +737,9 @@ async function main(): Promise<void> {
       results,
     });
 
-    writeBenchmarkReport(report);
+    await saveRun(reportToBenchmarkRun(report));
 
-    console.log(useMem0 ? "\nBenchmark mode: Mem0" : "\nBenchmark mode: local adapter");
+    console.log("\nBenchmark mode: deterministic Prisma-compatible adapter");
     console.log("\nBenchmark report:");
     console.log(JSON.stringify(report, null, 2));
 

@@ -1,0 +1,108 @@
+services:
+  memoryostm-desktop-provider:
+    image: node:22-alpine
+    container_name: memoryostm-desktop-provider
+    working_dir: /app
+    command: sh -c "npm ci && npm run start"
+    volumes:
+      - ../../:/app
+      - memoryostm-desktop-provider-node-modules:/app/node_modules
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MEMORYOSTM_DESKTOP_PROVIDER_TOKEN: ${MEMORYOSTM_DESKTOP_PROVIDER_TOKEN:-dev-desktop-token}
+      MEMORYOSTM_DESKTOP_BRIDGE_MODE: fleet
+      MEMORYOSTM_DESKTOP_GATEWAY_TARGETS_JSON: >
+        [
+          {
+            "id":"ubuntu-vnc-a",
+            "label":"Ubuntu VNC A",
+            "osTypes":["ubuntu"],
+            "httpBaseUrl":"http://ubuntu-desktop-adapter:3090",
+            "inputUrlTemplate":"http://ubuntu-desktop-adapter:3090/input/{sessionId}",
+            "screenshotUrlTemplate":"http://ubuntu-desktop-adapter:3090/sessions/{sessionId}/screenshot.png",
+            "wsUrlTemplate":"ws://ubuntu-desktop-a:3000/websockify?token={sessionId}",
+            "healthy":true
+          },
+          {
+            "id":"windows-rdp-a",
+            "label":"Windows RDP A",
+            "osTypes":["windows"],
+            "httpBaseUrl":"${MEMORYOSTM_WINDOWS_DESKTOP_HTTP_BASE_URL:-https://windows-gateway.example}",
+            "inputUrlTemplate":"${MEMORYOSTM_WINDOWS_DESKTOP_INPUT_URL:-https://windows-gateway.example/sessions/{sessionId}/input}",
+            "screenshotUrlTemplate":"${MEMORYOSTM_WINDOWS_DESKTOP_SCREENSHOT_URL:-https://windows-gateway.example/sessions/{sessionId}/screenshot.png}",
+            "wsUrlTemplate":"${MEMORYOSTM_WINDOWS_DESKTOP_WS_URL:-wss://windows-gateway.example/sessions/{sessionId}/ws}",
+            "healthy":true
+          }
+        ]
+      MEMORYOSTM_DESKTOP_FLEET_JSON: >
+        [
+          {
+            "id":"ubuntu-vnc-a",
+            "label":"Ubuntu VNC A",
+            "osTypes":["ubuntu"],
+            "capacity":30,
+            "transportMode":"vnc",
+            "previewUrlTemplate":"http://localhost:3001/desktop-gateway/sessions/{sessionId}/view?target=ubuntu-vnc-a&token={token}",
+            "controlUrlTemplate":"http://localhost:3001/desktop-gateway/sessions/{sessionId}/view?target=ubuntu-vnc-a&token={token}",
+            "inputUrlTemplate":"http://memoryostm-desktop-provider:3001/desktop-gateway/sessions/{sessionId}/input?target=ubuntu-vnc-a",
+            "screenshotUrlTemplate":"http://localhost:3001/desktop-gateway/sessions/{sessionId}/screenshot?target=ubuntu-vnc-a&token={token}"
+          },
+          {
+            "id":"ubuntu-webrtc-a",
+            "label":"Ubuntu WebRTC A",
+            "osTypes":["ubuntu"],
+            "capacity":40,
+            "transportMode":"webrtc",
+            "previewUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/view?target=ubuntu-webrtc-a&token={token}",
+            "controlUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/view?target=ubuntu-webrtc-a&token={token}",
+            "inputUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/input?target=ubuntu-webrtc-a",
+            "screenshotUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/screenshot?target=ubuntu-webrtc-a&token={token}"
+          },
+          {
+            "id":"windows-rdp-a",
+            "label":"Windows RDP A",
+            "osTypes":["windows"],
+            "capacity":20,
+            "transportMode":"vnc",
+            "previewUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/view?target=windows-rdp-a&token={token}",
+            "controlUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/view?target=windows-rdp-a&token={token}",
+            "inputUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/input?target=windows-rdp-a",
+            "screenshotUrlTemplate":"https://desktop-gateway.example/desktop-gateway/sessions/{sessionId}/screenshot?target=windows-rdp-a&token={token}"
+          }
+        ]
+    ports:
+      - "3001:3001"
+    depends_on:
+      - ubuntu-desktop-adapter
+
+  ubuntu-desktop-a:
+    image: lscr.io/linuxserver/webtop:ubuntu-xfce
+    container_name: ubuntu-desktop-a
+    shm_size: "2gb"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - TITLE=MemoryOSTM Ubuntu Desktop A
+    ports:
+      - "6080:3000"
+    security_opt:
+      - seccomp:unconfined
+
+  ubuntu-desktop-adapter:
+    build:
+      context: .
+      dockerfile: ubuntu-desktop-adapter.Dockerfile
+    container_name: ubuntu-desktop-adapter
+    environment:
+      PORT: 3090
+      MEMORYOSTM_UBUNTU_WEBTOP_BASE_URL: http://ubuntu-desktop-a:3000
+      MEMORYOSTM_DESKTOP_ADAPTER_AUTHORIZE_URL: ${MEMORYOSTM_DESKTOP_ADAPTER_AUTHORIZE_URL:-http://host.docker.internal:3011/internal/desktop-provider/desktop/gateway/authorize}
+    ports:
+      - "6090:3090"
+    depends_on:
+      - ubuntu-desktop-a
+
+volumes:
+  memoryostm-desktop-provider-node-modules:

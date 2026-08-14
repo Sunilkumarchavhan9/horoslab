@@ -1,0 +1,3 @@
+{
+  "/api/memory-doctor/[...doctorPath]/route": "app/api/memory-doctor/[...doctorPath]/route.js"
+}

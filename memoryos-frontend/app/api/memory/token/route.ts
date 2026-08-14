@@ -9,6 +9,9 @@ export async function GET(): Promise<NextResponse> {
   if (isClerkEnabled()) {
     const authState = await auth();
     userId = authState.userId;
+    if (!userId && process.env.NODE_ENV === "development") {
+      userId = process.env.MEMORYOS_DEV_USER_ID?.trim() || "user-demo";
+    }
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

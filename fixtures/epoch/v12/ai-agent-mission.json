@@ -1,0 +1,27 @@
+{
+  "contractVersion": "epoch.runtime.v1",
+  "scenario": "ai-agent-mission",
+  "worker": {
+    "id": "worker_agent_001",
+    "kind": "ai_agent",
+    "name": "Research Agent",
+    "status": "available",
+    "capabilities": ["research", "summarize", "cite"],
+    "correlation": { "correlationId": "corr_agent_001", "traceId": "trace_agent_001" }
+  },
+  "mission": {
+    "id": "mission_agent_001",
+    "workspaceId": "workspace_fixture",
+    "institutionId": "institution_research",
+    "title": "Prepare a cited vendor brief",
+    "objective": "Collect source-backed findings for human approval.",
+    "state": "running",
+    "plan": ["Search sources", "Extract claims", "Attach evidence", "Request approval"],
+    "currentStep": "Extract claims",
+    "budgetCents": 1000,
+    "deadlineAt": null,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:05:00.000Z",
+    "correlation": { "correlationId": "corr_agent_001", "traceId": "trace_agent_001" }
+  }
+}

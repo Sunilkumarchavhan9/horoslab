@@ -1,0 +1,19 @@
+{
+  "contractVersion": "epoch.runtime.v1",
+  "scenario": "software-mission",
+  "mission": {
+    "id": "mission_software_001",
+    "workspaceId": "workspace_fixture",
+    "institutionId": "institution_engineering",
+    "title": "Ship a typed API change",
+    "objective": "Add a backwards-compatible endpoint with tests and evidence.",
+    "state": "draft",
+    "plan": ["Define contract", "Implement endpoint", "Run tests", "Review evidence"],
+    "currentStep": null,
+    "budgetCents": 500,
+    "deadlineAt": null,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "correlation": { "correlationId": "corr_software_001", "traceId": "trace_software_001" }
+  }
+}

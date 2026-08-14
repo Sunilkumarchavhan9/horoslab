@@ -459,7 +459,7 @@ export function ClerkPersonalSignUp({ redirectTo }: ClerkPersonalSignUpProps) {
         </Link>
       </p>
 
-      <div id="clerk-captcha" className="min-h-[70px] w-full" aria-hidden="true" />
+      <div id="clerk-captcha" className="relative min-h-[70px] w-full" aria-hidden="true" />
     </div>
   );
 }

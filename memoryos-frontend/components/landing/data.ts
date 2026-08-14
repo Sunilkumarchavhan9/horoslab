@@ -1,49 +1,49 @@
 export const NAV_LINKS = [
-  { label: "What We Do", href: "#what-we-do" },
-  { label: "Context Stack", href: "#context-stack" },
-  { label: "Under The Hood", href: "#under-the-hood" },
-  { label: "Proof", href: "#benchmarks" },
-  { label: "Integrate", href: "#developer-experience" },
+  { label: "Institution Runtime", href: "#what-we-do" },
+  { label: "Authority", href: "#institution-runtime" },
+  { label: "Proof", href: "#verification" },
+  { label: "Evolution", href: "#reality-settlement" },
+  { label: "Integrations", href: "#developer-experience" },
 ];
 
 export const CONTEXT_LAYERS = [
   {
     id: "01",
-    title: "Memory Contract",
-    desc: "Turns conversations into structured memory candidates with extraction and contract scoring.",
+    title: "Mission Contract",
+    desc: "Turns intent into a governed mission with scope, roles, budget, evidence duties, and authority.",
     active: true,
   },
   {
     id: "02",
-    title: "Memory Graph",
-    desc: "Compares candidate memories against stored memories to detect overlap before writing new state.",
+    title: "Reality Fabric",
+    desc: "Connects company memory, decisions, institutions, evidence, and fitness into one operating graph.",
   },
   {
     id: "03",
-    title: "Context Injection",
-    desc: "Retrieves relevant context and reranks by semantic score, type relevance, importance, and recency before model runs.",
+    title: "Authority Runtime",
+    desc: "Issues short-lived capability leases so agents act only inside approved institutional boundaries.",
   },
   {
     id: "04",
-    title: "Memory Evolution",
-    desc: "Merges duplicates and evolves memories when stronger follow-up evidence is processed.",
+    title: "Verification Runtime",
+    desc: "Challenges claims with independent evidence and returns PASS, FAIL, or UNKNOWN.",
   },
   {
     id: "05",
-    title: "Audit Timeline",
-    desc: "Explains why memory exists using timeline events, revision diffs, and explain endpoints.",
+    title: "Evolution Runtime",
+    desc: "Turns outcomes into fitness scores, mutation proposals, simulations, and next institution versions.",
   },
 ];
 
 export const BENCHMARK_ROWS = [
-  ["Ingest pipeline", "Included", "Extract + score + merge/evolve", "Turns raw messages into durable company memory"],
-  ["Retrieval layer", "Included", "Semantic + type + importance + recency", "Reranks memory before continuity injection"],
-  ["Continuity routes", "Included", "/continue + /resume", "Helps agents pick up work with usable next-step context"],
-  ["Audit layer", "Included", "/timeline + /revisions + /explain", "Shows why memory exists and how it changed"],
-  ["Storage options", "Included", "Unified memory + local persistence", "Keeps context accessible across tools and sessions"],
-  ["Auth + validation", "Included", "JWT + schema validation", "Keeps the API predictable for real integrations"],
-  ["Observability", "Included", "Metrics + health checks", "Makes continuity quality measurable in production"],
-  ["Integrations", "Included", "SDK + MCP + HTTP workflow hooks", "Fits directly into existing coding and agent loops"],
+  ["Mission Runtime", "Included", "Goal + roles + evidence + settlement", "Turns intent into governed executable work"],
+  ["Authority Runtime", "Included", "Capability leases + policy checks", "Prevents ambient authority for agents and tools"],
+  ["Execution Runtime", "Included", "Planner + workers + reviewers", "Coordinates multi-agent work with traceable state"],
+  ["Verification Runtime", "Included", "Evidence + verifiers + certificates", "Separates action from proof"],
+  ["Reality Fabric", "Included", "Memory + decisions + evidence + fitness", "Makes the company queryable as operating reality"],
+  ["Evolution Runtime", "Included", "Fitness + mutation + simulation", "Improves institutions after each outcome"],
+  ["SDK + MCP", "Included", "API + hooks + tool adapters", "Fits into agent-native developer workflows"],
+  ["Marketplace-ready packages", "Planned", "Institution templates + manifests", "Turns proven operating units into installable institutions"],
 ];
 
 export const INTEGRATIONS = [
@@ -63,8 +63,8 @@ export const INTEGRATIONS = [
   "LangChain",
   "CrewAI",
   "Custom agents",
-  "Control plane",
-  "Team workspaces",
-  "Timeline + revisions",
-  "Continuity routes",
+  "Institution Runtime",
+  "Mission Runtime",
+  "Authority Runtime",
+  "Proof Runtime",
 ];

@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/profile-preferences/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"C:\\projects\\MemoryOS\\memoryos-frontend\\app\\api\\profile-preferences\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

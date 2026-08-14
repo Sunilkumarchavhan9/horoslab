@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MEMORY_RULES } from "../lib/config/memoryRules";
 import {
   resetRetrievalWeights,
@@ -7,14 +7,11 @@ import {
 import { filterAcceptedMemories, type ScoredMemoryCandidate } from "../lib/memory/scoreMemory";
 import { mergeMemory } from "../lib/memory/mergeMemory";
 import type { Memory } from "../lib/memory/types";
+import { setMemoryStoreAdapter } from "../lib/adapters/registry";
+import { TestMemoryStoreAdapter } from "./helpers/testMemoryStoreAdapter";
 
 const mocks = vi.hoisted(() => ({
-  searchMemoryFromMem0: vi.fn(),
   getRecentMemories: vi.fn(),
-}));
-
-vi.mock("../lib/integrations/mem0", () => ({
-  searchMemoryFromMem0: mocks.searchMemoryFromMem0,
 }));
 
 vi.mock("../lib/memory/recentMemoryStore", () => ({
@@ -22,6 +19,8 @@ vi.mock("../lib/memory/recentMemoryStore", () => ({
 }));
 
 import { retrieveRelevantMemory } from "../lib/memory/retrieveRelevantMemory";
+
+const testMemoryStore = new TestMemoryStoreAdapter();
 
 function makeScoredCandidate(score: number, content: string): ScoredMemoryCandidate {
   return {
@@ -60,9 +59,13 @@ function makeMemory(input: {
   };
 }
 
+beforeEach(() => {
+  testMemoryStore.clear();
+  setMemoryStoreAdapter(testMemoryStore);
+});
+
 afterEach(() => {
   resetRetrievalWeights();
-  mocks.searchMemoryFromMem0.mockReset();
   mocks.getRecentMemories.mockReset();
 });
 
@@ -107,7 +110,7 @@ describe("Memory rule boundaries", () => {
   it("changes retrieval order when ranking weights change", async () => {
     const now = new Date().toISOString();
     mocks.getRecentMemories.mockReturnValue([]);
-    mocks.searchMemoryFromMem0.mockResolvedValue([
+    testMemoryStore.seed([
       {
         id: "sem-high",
         memory: "High semantic but low importance",
@@ -162,7 +165,7 @@ describe("Memory rule boundaries", () => {
   it("favors project over preference for build-next intent when semantic scores are close", async () => {
     const now = new Date().toISOString();
     mocks.getRecentMemories.mockReturnValue([]);
-    mocks.searchMemoryFromMem0.mockResolvedValue([
+    testMemoryStore.seed([
       {
         id: "pref-close",
         memory: "User prefers TypeScript",
@@ -204,7 +207,7 @@ describe("Memory rule boundaries", () => {
   it("favors preference over project for stack-fit intent when semantic scores are close", async () => {
     const now = new Date().toISOString();
     mocks.getRecentMemories.mockReturnValue([]);
-    mocks.searchMemoryFromMem0.mockResolvedValue([
+    testMemoryStore.seed([
       {
         id: "proj-close",
         memory: "User is building MemoryOS backend",

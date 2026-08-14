@@ -118,6 +118,7 @@ export function CompanyBrainFlowerCanvas({
   const idleRef = useRef(idle);
   const visibleRef = useRef(true);
   const reducedMotionRef = useRef(false);
+  const darkSchemeRef = useRef(false);
 
   useEffect(() => {
     progressRef.current = progress;
@@ -215,6 +216,13 @@ export function CompanyBrainFlowerCanvas({
     };
     reduced.addEventListener("change", onReducedChange);
 
+    const darkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    darkSchemeRef.current = darkScheme.matches;
+    const onDarkSchemeChange = (event: MediaQueryListEvent) => {
+      darkSchemeRef.current = event.matches;
+    };
+    darkScheme.addEventListener("change", onDarkSchemeChange);
+
     resize();
     const loop = (time: number) => {
       if (!visibleRef.current) {
@@ -234,6 +242,7 @@ export function CompanyBrainFlowerCanvas({
       observer.disconnect();
       visibilityObserver.disconnect();
       reduced.removeEventListener("change", onReducedChange);
+      darkScheme.removeEventListener("change", onDarkSchemeChange);
     };
   }, []);
 

@@ -1,9 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
+import type { NextFetchEvent, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { isClerkEnabled } from "./lib/clerk";
 
 const isDeveloperProtectedRoute = createRouteMatcher([
-  "/developer-console",
-  "/developer-console/(.*)",
+  "/mission-control",
+  "/mission-control/(.*)",
   "/playground",
 ]);
 
@@ -15,9 +17,9 @@ const isPersonalProtectedRoute = createRouteMatcher([
 const isPublicAuthRoute = createRouteMatcher([
   "/",
   "/sign-up",
-  "/developer-console/sign-in",
-  "/developer-console/choose-organization",
-  "/developer-console/verify-link",
+  "/auth/sign-in",
+  "/auth/sign-up",
+  "/auth/verify-link",
   "/personal-app/sign-in",
   "/personal-app/sign-up",
   "/personal-app/verify-link",
@@ -25,14 +27,14 @@ const isPublicAuthRoute = createRouteMatcher([
   "/sso-callback/(.*)",
   "/sso-callback-developer",
   "/sso-callback-developer/(.*)",
+  "/sso-callback-developer-sign-up",
+  "/sso-callback-developer-sign-up/(.*)",
   "/sso-callback-personal",
   "/sso-callback-personal/(.*)",
 ]);
 
-const isMemoryTokenRoute = createRouteMatcher(["/api/memory/token"]);
-
 const protectedMiddleware = clerkMiddleware(async (auth, req) => {
-  const developerSignInUrl = new URL("/developer-console/sign-in", req.url).toString();
+  const developerSignInUrl = new URL("/auth/sign-in", req.url).toString();
   const personalSignInUrl = new URL("/personal-app/sign-in", req.url).toString();
 
   if (isPublicAuthRoute(req)) {
@@ -56,6 +58,19 @@ const protectedMiddleware = clerkMiddleware(async (auth, req) => {
 });
 
 export default function proxy(req: NextRequest, event: NextFetchEvent) {
+  // OAuth callbacks from older sessions can still target the retired console
+  // root. Keep those sessions useful by landing in the current console while
+  // preserving callback status query parameters.
+  if (req.nextUrl.pathname === "/developer-console") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/mission-control";
+    return NextResponse.redirect(url);
+  }
+
+  if (!isClerkEnabled()) {
+    return NextResponse.next();
+  }
+
   return protectedMiddleware(req, event);
 }
 

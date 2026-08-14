@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ensureCompanyBrainEvalBaseline, runEvalHarness } from "../lib/companyBrain/platform";
-import { existsSync, readFileSync } from "fs";
-import { mkdirSync, writeFileSync } from "fs";
+import { access, readFile } from "fs/promises";
 import path from "path";
+import { saveOperationalArtifact } from "../lib/operational/artifactStore";
 
 function parseThreshold(): number {
   const raw = process.env.COMPANY_BRAIN_EVAL_MIN_SCORE;
@@ -37,12 +37,16 @@ type Scenario = {
   requiredChecks: string[];
 };
 
-function loadScenarios(): Scenario[] {
+async function loadScenarios(): Promise<Scenario[]> {
   const filePath = process.env.COMPANY_BRAIN_SCENARIO_FILE_PATH
     ? path.resolve(process.cwd(), process.env.COMPANY_BRAIN_SCENARIO_FILE_PATH)
     : path.resolve(process.cwd(), "data/eval/company-brain-scenarios.json");
-  if (!existsSync(filePath)) return [];
-  const raw = readFileSync(filePath, "utf8");
+  try {
+    await access(filePath);
+  } catch {
+    return [];
+  }
+  const raw = await readFile(filePath, "utf8");
   const parsed = JSON.parse(raw) as { scenarios?: Scenario[] } | Scenario[];
   if (Array.isArray(parsed)) return parsed;
   if (parsed && Array.isArray(parsed.scenarios)) return parsed.scenarios;
@@ -54,7 +58,7 @@ async function main(): Promise<void> {
   const strictMode = isStrictMode();
   const bootstrapBaseline = shouldBootstrapEvalBaseline(strictMode);
   if (bootstrapBaseline) {
-    const seeded = ensureCompanyBrainEvalBaseline(userId);
+    const seeded = await ensureCompanyBrainEvalBaseline(userId);
     console.log(
       `[CompanyBrain Gate] baseline seeded user=${userId} sources=${seeded.sources} graphNodes=${seeded.graphNodes} skills=${seeded.skills} scheduler=${seeded.schedulerEnabled}`,
     );
@@ -65,13 +69,13 @@ async function main(): Promise<void> {
   const scenarioThreshold = process.env.COMPANY_BRAIN_SCENARIO_MIN_PASS_RATE
     ? parseScenarioThreshold()
     : strictMode ? 100 : 0;
-  const evalResult = runEvalHarness(userId);
+  const evalResult = await runEvalHarness(userId);
   const total = evalResult.checks.length;
   const score = total === 0 ? 0 : (evalResult.passed / total) * 100;
   const failedChecks = evalResult.checks.filter((check) => !check.passed);
   const checksMap = new Map(evalResult.checks.map((check) => [check.name, check.passed]));
 
-  const scenarios = loadScenarios();
+  const scenarios = await loadScenarios();
   const scenarioResults = scenarios.map((scenario) => {
     const missing = scenario.requiredChecks.filter((name) => !checksMap.has(name));
     const failed = scenario.requiredChecks.filter((name) => checksMap.get(name) === false);
@@ -103,34 +107,27 @@ async function main(): Promise<void> {
     ? (scoreFailed || checkFailed || scenarioFailed || strictScenarioMissing)
     : (scoreFailed || scenarioFailed));
 
-  const reportPath = process.env.COMPANY_BRAIN_GATE_REPORT_PATH
-    ? path.resolve(process.cwd(), process.env.COMPANY_BRAIN_GATE_REPORT_PATH)
-    : path.resolve(process.cwd(), "data/eval/reports/company-brain-gate-latest.json");
   try {
-    mkdirSync(path.dirname(reportPath), { recursive: true });
-    writeFileSync(
-      reportPath,
-      JSON.stringify(
-        {
-          at: new Date().toISOString(),
-          userId,
-          strictMode,
-          threshold,
-          scenarioThreshold,
-          score,
-          scenarioPassRate,
-          passed,
-          checks: evalResult.checks,
-          scenarioResults,
-        },
-        null,
-        2,
-      ),
-      "utf8",
-    );
-    console.log(`[CompanyBrain Gate] report=${reportPath}`);
+    await saveOperationalArtifact({
+      kind: "company_brain_gate",
+      name: "company-brain-gate-latest",
+      status: passed ? "pass" : "fail",
+      data: {
+        at: new Date().toISOString(),
+        userId,
+        strictMode,
+        threshold,
+        scenarioThreshold,
+        score,
+        scenarioPassRate,
+        passed,
+        checks: evalResult.checks,
+        scenarioResults,
+      },
+    });
+    console.log("[CompanyBrain Gate] artifact=company_brain_gate/company-brain-gate-latest");
   } catch (error) {
-    console.warn(`[CompanyBrain Gate] unable to write report: ${error instanceof Error ? error.message : String(error)}`);
+    console.warn(`[CompanyBrain Gate] unable to save report artifact: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   if (strictMode && (scoreFailed || checkFailed || scenarioFailed || strictScenarioMissing)) {

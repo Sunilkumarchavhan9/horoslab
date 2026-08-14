@@ -1,0 +1,23 @@
+title = "memoryos-gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "MemoryOS non-secret placeholders and generated folders"
+paths = [
+  '''node_modules/''',
+  '''packages/sdk/node_modules/''',
+  '''memoryos-frontend/\.next/''',
+  '''memoryos-frontend/dev-.*\.log''',
+  '''package-lock\.json''',
+  '''bun\.lock''',
+  '''pnpm-lock\.yaml''',
+  '''yarn\.lock'''
+]
+regexes = [
+  '''replace_with_[A-Za-z0-9_]+''',
+  '''ci[-_][A-Za-z0-9_-]+placeholder''',
+  '''ci-test-secret''',
+  '''ci-release-secret'''
+]

@@ -10,7 +10,7 @@ describe("Environment config loader", () => {
   });
 
   it("loads valid env values", () => {
-    process.env.MEMORY_STORE_PROVIDER = "local";
+    process.env.MEMORY_STORE_PROVIDER = "prisma";
     process.env.JWT_SECRET = "this-is-a-long-test-secret";
     process.env.JWT_ISSUER = "memoryos-test";
     process.env.JWT_AUDIENCE = "memoryos-api";

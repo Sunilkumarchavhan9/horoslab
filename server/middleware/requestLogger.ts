@@ -1,4 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
+import { randomUUID } from "crypto";
+import { redactSensitiveText as redactSecretLikeText } from "../services/secret-policy";
 
 const MAX_REQUEST_LOG_ENTRIES = 400;
 const MAX_CAPTURED_JSON_CHARS = 20_000;
@@ -39,6 +41,14 @@ function inferRouteType(method: string, path: string): string {
   const loweredPath = path.toLowerCase();
   const loweredMethod = method.toUpperCase();
 
+  if (loweredPath.includes("/memoryignition/brief")) return "memoryignition_brief";
+  if (loweredPath.includes("/memoryignition/send-now")) return "memoryignition_send_now";
+  if (loweredPath.includes("/memoryignition/risk-check")) return "memoryignition_risk_check";
+  if (loweredPath.includes("/memoryignition/outcome")) return "memoryignition_outcome";
+  if (loweredPath.includes("/memoryignition/handoff")) return "memoryignition_handoff";
+  if (loweredPath.includes("/trace-proof")) return "trace_proof";
+  if (loweredPath.includes("/api-keys")) return "api_keys";
+  if (loweredPath.includes("/api/mcp") || loweredPath.includes("/mcp/")) return "mcp";
   if (loweredPath.includes("/retrieve/why-not")) return "retrieve_why_not";
   if (loweredPath.includes("/retrieve/explain")) return "retrieve_explain";
   if (loweredPath.includes("/retrieve/debug")) return "retrieve_debug";
@@ -48,6 +58,7 @@ function inferRouteType(method: string, path: string): string {
   if (loweredPath.includes("/continue")) return "continue";
   if (loweredPath.includes("/insights")) return "insights";
   if (loweredPath.includes("/list")) return "memory_list";
+  if (loweredPath.includes("/requests")) return "request_history";
   if (loweredPath.includes("/timeline")) return "timeline";
   if (loweredPath.includes("/revisions")) return "revisions";
   if (loweredPath.includes("/explain")) return "explain";
@@ -104,15 +115,70 @@ function pushRequestHistoryEntry(entry: RequestHistoryEntry): void {
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function findStandardInheritancePackage(value: unknown, depth = 0): Record<string, unknown> | null {
+  if (!isRecord(value) || depth > 8) return null;
+  if (isRecord(value.standard_inheritance_package)) {
+    return value.standard_inheritance_package;
+  }
+  for (const nested of Object.values(value)) {
+    const found = findStandardInheritancePackage(nested, depth + 1);
+    if (found) return found;
+  }
+  return null;
+}
+
+function countArray(value: unknown): number {
+  return Array.isArray(value) ? value.length : 0;
+}
+
+function compactStandardInheritancePackage(value: unknown): Record<string, unknown> | null {
+  const pkg = findStandardInheritancePackage(value);
+  if (!pkg) return null;
+  const gates = isRecord(pkg.gates) ? pkg.gates : {};
+  const proofGate = isRecord(gates.proof) ? gates.proof : {};
+  const task = isRecord(pkg.task) ? pkg.task : {};
+  const outcomeContract = isRecord(pkg.outcome_contract)
+    ? pkg.outcome_contract
+    : isRecord(pkg.outcome) && isRecord(pkg.outcome.contract)
+      ? pkg.outcome.contract
+      : null;
+  return {
+    version: typeof pkg.version === "string" ? pkg.version : null,
+    delivery: typeof pkg.delivery === "string" ? pkg.delivery : null,
+    target_agent: typeof task.target_agent === "string" ? task.target_agent : null,
+    memories: countArray(pkg.memories),
+    experiences: countArray(pkg.experiences),
+    executable_skills: countArray(pkg.executable_skills),
+    required_tests: countArray(pkg.required_tests),
+    trace_proof: countArray(pkg.trace_proof),
+    gate_status: typeof proofGate.status === "string" ? proofGate.status : null,
+    outcome_contract: outcomeContract
+      ? {
+          version: typeof outcomeContract.version === "string" ? outcomeContract.version : null,
+          required: typeof outcomeContract.required === "boolean" ? outcomeContract.required : null,
+          endpoint: typeof outcomeContract.endpoint === "string" ? outcomeContract.endpoint : null,
+          sdk_method: typeof outcomeContract.sdk_method === "string" ? outcomeContract.sdk_method : null,
+          mcp_tool: typeof outcomeContract.mcp_tool === "string" ? outcomeContract.mcp_tool : null,
+        }
+      : null,
+  };
+}
+
 function compactForHistory(value: any, maxChars = MAX_RESPONSE_SUMMARY_CHARS): any {
   if (value === undefined || value === null) return value;
   try {
+    const standardPackage = compactStandardInheritancePackage(value);
     const seen = new WeakSet<object>();
     const raw = JSON.stringify(value, (_key, nested) => {
       if (typeof nested === "string") {
-        return nested.length > MAX_STRING_FIELD_CHARS
-          ? `${nested.slice(0, MAX_STRING_FIELD_CHARS)}...[TRUNCATED]`
-          : nested;
+        const redacted = redactSecretLikeText(nested) ?? nested;
+        return redacted.length > MAX_STRING_FIELD_CHARS
+          ? `${redacted.slice(0, MAX_STRING_FIELD_CHARS)}...[TRUNCATED]`
+          : redacted;
       }
       if (typeof nested === "object" && nested !== null) {
         if (seen.has(nested)) return "[Circular]";
@@ -125,6 +191,7 @@ function compactForHistory(value: any, maxChars = MAX_RESPONSE_SUMMARY_CHARS): a
       truncated: true,
       preview: raw.slice(0, maxChars),
       originalChars: raw.length,
+      ...(standardPackage ? { standard_inheritance_package: standardPackage } : {}),
     };
   } catch {
     const text = String(value);
@@ -172,6 +239,44 @@ export function listRequestHistory(options?: {
   }
 }
 
+export function recordRequestHistoryEntry(input: {
+  method: string;
+  path: string;
+  statusCode: number;
+  userId: string;
+  durationMs?: number;
+  requestId?: string;
+  apiKeyId?: string;
+  payloadSummary?: any;
+  responseSummary?: any;
+  errorDetails?: any;
+}): RequestHistoryEntry {
+  const method = input.method.toUpperCase();
+  const path = sanitizeRequestPath(input.path);
+  const status: "Success" | "Error" = input.statusCode < 400 ? "Success" : "Error";
+  const requestId = input.requestId ?? `synthetic_${randomUUID()}`;
+  const entry: RequestHistoryEntry = {
+    id: requestId,
+    method,
+    path,
+    routeType: inferRouteType(method, path),
+    statusCode: input.statusCode,
+    status,
+    durationMs: input.durationMs ?? 0,
+    userId: input.userId,
+    ...(input.apiKeyId ? { apiKeyId: input.apiKeyId } : {}),
+    requestId,
+    createdAt: new Date().toISOString(),
+    payloadSummary: compactForHistory(redactPayload(input.payloadSummary)),
+    responseSummary:
+      status === "Success" ? compactForHistory(redactPayload(input.responseSummary)) : undefined,
+    errorDetails:
+      status === "Error" ? compactForHistory(redactPayload(input.errorDetails ?? input.responseSummary)) : undefined,
+  };
+  pushRequestHistoryEntry(entry);
+  return entry;
+}
+
 function redactPayload(payload: any): any {
   if (!payload) return payload;
   try {
@@ -195,7 +300,7 @@ function redactPayload(payload: any): any {
       for (const [pattern, replacement] of patterns) {
         next = next.replace(pattern, replacement);
       }
-      return next;
+      return redactSecretLikeText(next) ?? next;
     };
 
     const redact = (obj: any) => {
@@ -277,6 +382,7 @@ export function requestLogger(
 
     const shouldCaptureResponseBody =
       routeType !== "memory_list" &&
+      routeType !== "request_history" &&
       routeType !== "timeline" &&
       routeType !== "revisions" &&
       routeType !== "insights";

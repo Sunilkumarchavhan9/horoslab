@@ -23,7 +23,7 @@ type PlanCardProps = {
 
 function PlanCard({ name, price, limits, features, overage, ctaLabel, onClick, disabled = false }: PlanCardProps) {
   return (
-    <div className="rounded-xl border border-slate-200 p-6">
+    <div className="rounded-md border border-slate-200 p-6">
       <h2 className="text-xl font-semibold">{name}</h2>
       <p className="mt-2 text-3xl font-semibold tracking-tight">{price}</p>
       <p className="mt-2 text-sm text-slate-700">{limits}</p>
@@ -168,19 +168,19 @@ export default function PricingPage() {
           Scale: {formatLimit(PLAN_CATALOG.Scale.tokenLimit ?? 0)} + {formatLimit(PLAN_CATALOG.Scale.searchLimit ?? 0)} per month.
         </p>
         <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Usage</p>
             <p className="mt-1 text-sm text-slate-700">Billed by monthly tokens and retrieval/search calls.</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Plan tier</p>
             <p className="mt-1 text-sm text-slate-700">Feature unlocks by plan: workflows, governance, connectors.</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Team seats</p>
             <p className="mt-1 text-sm text-slate-700">Scale/Enterprise can include seat bundles for team expansion.</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-900">Add-ons</p>
             <p className="mt-1 text-sm text-slate-700">Extra token/search packs, premium connectors, and SLA support.</p>
           </div>
@@ -199,7 +199,7 @@ export default function PricingPage() {
             overage="Blocked until reset or upgrade."
             ctaLabel="Start free"
             onClick={() => {
-              window.location.href = "/developer-console/sign-in";
+              window.location.href = "/auth/sign-in";
             }}
           />
           <PlanCard
@@ -237,7 +237,7 @@ export default function PricingPage() {
           </p>
         ) : null}
 
-        <div className="mt-8 rounded-xl border border-slate-200 p-6">
+        <div className="mt-8 rounded-md border border-slate-200 p-6">
           <h3 className="text-lg font-semibold">Enterprise</h3>
           <p className="mt-2 text-slate-700">Custom pricing, security, and dedicated support.</p>
           <ul className="mt-4 space-y-2 text-sm text-slate-700">
@@ -254,7 +254,7 @@ export default function PricingPage() {
           </a>
         </div>
 
-        <div className="mt-6 rounded-xl border border-slate-200 p-6 text-sm text-slate-700">
+        <div className="mt-6 rounded-md border border-slate-200 p-6 text-sm text-slate-700">
           <p>
             <span className="font-semibold text-slate-900">Limit reset:</span> Usage resets monthly on billing anniversary.
           </p>

@@ -2,13 +2,16 @@
 
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useAuth } from "@clerk/nextjs";
+import { useSignIn } from "@clerk/nextjs/legacy";
 import { useSignUp } from "@clerk/nextjs/legacy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type ClerkConsoleSignUpProps = {
-  redirectTo: "/developer-console";
+  redirectTo: "/personal-app" | "/mission-control";
+  emailLinkCompleteUrl?: string;
+  authError?: string | null;
 };
 
 const AUTH_LOADING_MESSAGE =
@@ -66,11 +69,18 @@ function ActionButton({
   );
 }
 
-export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
+export function ClerkConsoleSignUp({ redirectTo, emailLinkCompleteUrl, authError }: ClerkConsoleSignUpProps) {
   const { isLoaded: isSignUpLoaded, signUp, setActive } = useSignUp();
+  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const { isSignedIn } = useAuth();
   const router = useRouter();
-  const authReady = !isSignedIn && isSignUpLoaded && Boolean(signUp) && Boolean(setActive);
+  const authReady =
+    !isSignedIn &&
+    isSignUpLoaded &&
+    isSignInLoaded &&
+    Boolean(signUp) &&
+    Boolean(signIn) &&
+    Boolean(setActive);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pendingStrategy, setPendingStrategy] = useState<"google" | "github" | "email" | null>(null);
@@ -89,6 +99,34 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
 
     if (error instanceof Error) {
       return error.message.toLowerCase().includes("already signed in");
+    }
+
+    return false;
+  }
+
+  function isIdentifierExistsError(error: unknown): boolean {
+    if (isClerkAPIResponseError(error)) {
+      return error.errors.some((item) => {
+        const code = (item.code ?? "").toLowerCase();
+        const message = `${item.message ?? ""} ${item.longMessage ?? ""}`.toLowerCase();
+        return (
+          code.includes("exists") ||
+          code.includes("identifier") ||
+          message.includes("already exists") ||
+          message.includes("already in use") ||
+          message.includes("account exists")
+        );
+      });
+    }
+
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+      return (
+        message.includes("already exists") ||
+        message.includes("already in use") ||
+        message.includes("account exists") ||
+        message.includes("identifier_exists")
+      );
     }
 
     return false;
@@ -136,6 +174,21 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
   }, [authReady]);
 
   useEffect(() => {
+    if (!authError) return;
+
+    if (authError === "account_exists") {
+      setStatusMessage("That account already exists. Continue with the same Google, GitHub, or email link to sign in.");
+      setStatusTone("info");
+      return;
+    }
+
+    if (authError === "oauth_callback") {
+      setStatusMessage("OAuth sign-up could not finish. Try again or use sign in.");
+      setStatusTone("error");
+    }
+  }, [authError]);
+
+  useEffect(() => {
     if (!authReady || !signUp || !setActive) {
       return;
     }
@@ -145,9 +198,9 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
     let cancelled = false;
 
     function buildUsernameFromEmail(inputEmail: string): string {
-      const localPart = inputEmail.split("@")[0] ?? "memoryos";
+      const localPart = inputEmail.split("@")[0] ?? "epoch";
       const sanitized = localPart.toLowerCase().replace(/[^a-z0-9_]/g, "_").replace(/_+/g, "_");
-      const base = sanitized.length > 0 ? sanitized : "memoryos";
+      const base = sanitized.length > 0 ? sanitized : "epoch";
       const suffix = Date.now().toString().slice(-6);
       const candidate = `${base}_${suffix}`.slice(0, 30);
       return candidate.replace(/^_+/, "mem_");
@@ -243,6 +296,17 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       const shortMessage = firstError?.message ?? "";
 
       if (
+        code.includes("exists") ||
+        code.includes("identifier") ||
+        longMessage.toLowerCase().includes("already exists") ||
+        longMessage.toLowerCase().includes("already in use") ||
+        shortMessage.toLowerCase().includes("already exists") ||
+        shortMessage.toLowerCase().includes("already in use")
+      ) {
+        return "That account already exists. Use sign in instead.";
+      }
+
+      if (
         code.includes("oauth") ||
         longMessage.toLowerCase().includes("oauth") ||
         longMessage.toLowerCase().includes("social")
@@ -265,7 +329,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
   }
 
   async function handleOauth(strategy: "oauth_google" | "oauth_github", completeUrl: string) {
-    if (!authReady || !signUp) {
+    if (!authReady || !signIn) {
       setStatusMessage(AUTH_LOADING_MESSAGE);
       setStatusTone("info");
       return;
@@ -275,31 +339,21 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       return;
     }
 
-    const trimmedUsername = username.trim();
-    if (!trimmedUsername) {
-      setStatusMessage("Enter a username first.");
-      setStatusTone("error");
-      return;
-    }
-
     setPendingStrategy(strategy === "oauth_google" ? "google" : "github");
     setStatusMessage(null);
     setStatusTone(null);
     try {
-      await signUp.authenticateWithRedirect({
+      await signIn.authenticateWithRedirect({
         strategy,
         redirectUrl: buildAbsoluteUrl("/sso-callback-developer"),
         redirectUrlComplete: buildAbsoluteUrl(completeUrl),
-        unsafeMetadata: {
-          preferredUsername: trimmedUsername,
-        },
       });
     } catch (error) {
       if (isAlreadySignedInError(error)) {
         await redirectSignedInUser();
         return;
       }
-      console.error("[MemoryOS Auth] Developer OAuth sign-up failed", error);
+      console.error("[Epoch Auth] Developer OAuth sign-up failed", error);
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -308,7 +362,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
   }
 
   async function handleMagicLinkSignUp() {
-    if (!authReady || !signUp || !setActive) {
+    if (!authReady || !signUp || !signIn || !setActive) {
       setStatusMessage(AUTH_LOADING_MESSAGE);
       setStatusTone("info");
       return;
@@ -352,17 +406,47 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
       }
 
       await startEmailLinkFlow({
-        redirectUrl: buildAbsoluteUrl("/sso-callback-developer"),
+        redirectUrl: buildAbsoluteUrl("/sso-callback-developer-sign-up"),
       });
 
-      setStatusMessage(
-        `Magic sign-up link sent to ${trimmedEmail}. Open it in this browser to finish account creation.`,
-      );
+      setStatusMessage(`Email link sent to ${trimmedEmail}. Open it in this browser to finish account creation.`);
       setStatusTone("success");
     } catch (error) {
       if (isAlreadySignedInError(error)) {
         await redirectSignedInUser();
         return;
+      }
+      if (isIdentifierExistsError(error)) {
+        try {
+          const { startEmailLinkFlow } = signIn.createEmailLinkFlow();
+          const signInAttempt = await signIn.create({
+            strategy: "email_link",
+            identifier: trimmedEmail,
+            redirectUrl: buildAbsoluteUrl(emailLinkCompleteUrl ?? "/auth/verify-link"),
+          });
+          const emailLinkFactor = signInAttempt.supportedFirstFactors?.find(
+            (factor) => factor.strategy === "email_link" && "emailAddressId" in factor,
+          );
+
+          if (!emailLinkFactor || !("emailAddressId" in emailLinkFactor)) {
+            throw new Error(
+              "Email link sign-in is not enabled in Clerk. Enable Email verification link for sign-in.",
+            );
+          }
+
+          await startEmailLinkFlow({
+            emailAddressId: emailLinkFactor.emailAddressId,
+            redirectUrl: buildAbsoluteUrl(emailLinkCompleteUrl ?? "/auth/verify-link"),
+          });
+
+          setStatusMessage(`Account already exists. Login link sent to ${trimmedEmail}.`);
+          setStatusTone("success");
+          return;
+        } catch (signInError) {
+          setStatusMessage(getErrorMessage(signInError));
+          setStatusTone("error");
+          return;
+        }
       }
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
@@ -399,7 +483,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
           {!authReady
             ? "PREPARING SIGN-UP..."
             : pendingStrategy === "email"
-              ? "SENDING MAGIC LINK..."
+              ? "SENDING EMAIL LINK..."
               : "CREATE ACCOUNT WITH EMAIL LINK"}
         </button>
       </div>
@@ -440,7 +524,7 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
 
       <ActionButton
         onClick={() => handleOauth("oauth_github", redirectTo)}
-          disabled={pendingStrategy !== null || !authReady || isResolvingMissingFields}
+        disabled={pendingStrategy !== null || !authReady || isResolvingMissingFields}
       >
         <GithubMark />
         <span>
@@ -454,12 +538,12 @@ export function ClerkConsoleSignUp({ redirectTo }: ClerkConsoleSignUpProps) {
 
       <p className="pt-1 text-center text-[13px] text-[#8a919c] sm:text-[14px]">
         Already have an account?{" "}
-        <Link href="/developer-console/sign-in" className="text-[#c9defd] underline-offset-2 hover:underline">
+        <Link href="/auth/sign-in" className="text-[#c9defd] underline-offset-2 hover:underline">
           Sign in
         </Link>
       </p>
 
-      <div id="clerk-captcha" className="min-h-[70px] w-full" aria-hidden="true" />
+      <div id="clerk-captcha" className="relative min-h-[70px] w-full" aria-hidden="true" />
     </div>
   );
 }

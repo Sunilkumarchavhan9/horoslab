@@ -1,4 +1,6 @@
 import { resolveBackendOrigin } from "./app/api/_lib/backend-origin";
+
+type CaptureRequestError = typeof import("@sentry/nextjs").captureRequestError;
 /**
  * Next.js instrumentation hook — runs once when the server starts.
  * https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
@@ -8,6 +10,8 @@ import { resolveBackendOrigin } from "./app/api/_lib/backend-origin";
  * A clear error at startup is far easier to debug than silent 401s later.
  */
 export async function register() {
+  await registerSentry();
+
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
 
   const secret =
@@ -46,3 +50,38 @@ export async function register() {
     console.log(`[MemoryOS] API proxy target → ${backendOrigin}`);
   }
 }
+
+async function registerSentry() {
+  const dsn =
+    process.env.SENTRY_DSN?.trim() ||
+    process.env.NEXT_PUBLIC_SENTRY_DSN?.trim();
+
+  if (!dsn) return;
+  if (process.env.NODE_ENV !== "production") return;
+
+  const Sentry = await import("@sentry/nextjs");
+  Sentry.init({
+    dsn,
+    environment:
+      process.env.SENTRY_ENVIRONMENT ||
+      process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ||
+      process.env.NODE_ENV,
+    tracesSampleRate: Number(
+      process.env.SENTRY_TRACES_SAMPLE_RATE ??
+        process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE ??
+        0.1,
+    ),
+  });
+}
+
+export const onRequestError: CaptureRequestError = (error, request, errorContext) => {
+  const dsn =
+    process.env.SENTRY_DSN?.trim() ||
+    process.env.NEXT_PUBLIC_SENTRY_DSN?.trim();
+
+  if (!dsn || process.env.NODE_ENV !== "production") return;
+
+  void import("@sentry/nextjs").then((Sentry) => {
+    Sentry.captureRequestError(error, request, errorContext);
+  });
+};

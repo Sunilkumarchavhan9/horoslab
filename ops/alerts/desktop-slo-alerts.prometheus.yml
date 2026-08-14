@@ -1,0 +1,42 @@
+groups:
+  - name: memoryostm-desktop-slo
+    interval: 30s
+    rules:
+      - alert: MemoryOSTMDesktopProviderUnhealthy
+        expr: min_over_time(memoryos_desktop_provider_health_state[5m]) < 1
+        for: 5m
+        labels:
+          severity: page
+          service: memoryostm-desktop
+        annotations:
+          summary: "Desktop provider unhealthy"
+          description: "Desktop provider health state is unhealthy for at least 5 minutes."
+
+      - alert: MemoryOSTMDesktopLifecycleErrorRateHigh
+        expr: |
+          (
+            sum(rate(memoryos_desktop_lifecycle_total{result="error"}[10m]))
+            /
+            clamp_min(sum(rate(memoryos_desktop_lifecycle_total[10m])), 0.001)
+          ) > 0.05
+        for: 10m
+        labels:
+          severity: page
+          service: memoryostm-desktop
+        annotations:
+          summary: "Desktop lifecycle error rate high"
+          description: "Desktop lifecycle API error rate > 5% for 10 minutes."
+
+      - alert: MemoryOSTMDesktopStatusP95LatencyHigh
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum(rate(memoryos_desktop_lifecycle_duration_ms_bucket{operation="status"}[10m])) by (le)
+          ) > 1500
+        for: 10m
+        labels:
+          severity: warning
+          service: memoryostm-desktop
+        annotations:
+          summary: "Desktop status latency high (p95)"
+          description: "Desktop status p95 latency is above 1500ms for 10 minutes."

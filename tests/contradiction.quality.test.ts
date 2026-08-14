@@ -1,53 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { runIngestFlowLangGraph } from "../lib/workflows/ingestGraphLangGraph";
 import { retrieveRelevantMemory } from "../lib/memory/retrieveRelevantMemory";
-import { resetRuntimeDataStores } from "./helpers/resetDataDir";
+import { resetRuntimeDataStoresForTests } from "./helpers/resetDataDir";
+import { setMemoryStoreAdapter } from "../lib/adapters/registry";
+import { TestMemoryStoreAdapter } from "./helpers/testMemoryStoreAdapter";
 
-const mem0Store: Array<{
-  id: string;
-  memory?: string;
-  score?: number;
-  metadata?: Record<string, unknown>;
-}> = [];
+const testMemoryStore = new TestMemoryStoreAdapter();
 
-vi.mock("../lib/integrations/mem0", () => ({
-  saveMemoryToMem0: vi.fn(async ({ memory }) => {
-    const idx = mem0Store.findIndex((x) => x.metadata?.memoryId === memory.id);
-    const row = {
-      id: memory.id,
-      memory: memory.content,
-      score: 1,
-      metadata: {
-        memoryId: memory.id,
-        userId: memory.userId,
-        type: memory.type,
-        summary: memory.summary,
-        importanceScore: String(memory.importanceScore),
-        confidence: String(memory.confidence),
-        source: memory.source,
-        status: memory.status,
-        createdAt: memory.createdAt,
-        updatedAt: memory.updatedAt,
-        evidenceCount: String(memory.evidenceCount),
-        developerSignals: memory.developerSignals,
-      },
-    };
-    if (idx >= 0) mem0Store[idx] = row;
-    else mem0Store.push(row);
-    return { id: memory.id };
-  }),
-  searchMemoryFromMem0: vi.fn(async ({ userId }) =>
-    mem0Store.filter((x) => x.metadata?.userId === userId),
-  ),
-  getMemoryById: vi.fn(async ({ id }: { id: string }) =>
-    mem0Store.find((x) => x.id === id) ?? null,
-  ),
-}));
 
 describe("Contradiction diagnostics retrieval", () => {
-  beforeEach(() => {
-    mem0Store.length = 0;
-    resetRuntimeDataStores();
+  beforeEach(async () => {
+    testMemoryStore.clear();
+    setMemoryStoreAdapter(testMemoryStore);
+    await resetRuntimeDataStoresForTests();
   });
 
   it("default retrieval excludes contradicted memories, includeArchived=true can return them", async () => {

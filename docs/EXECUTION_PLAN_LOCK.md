@@ -3,13 +3,37 @@
 Status: Locked on April 10, 2026
 Owner: Founder (Product + Engineering)
 
+## Current First Launch Lock
+
+The current launch target is the smaller MVP in `docs/FIRST_LAUNCH_MVP_LOCK.md`.
+
+Build only the loop that proves:
+
+```text
+GitHub / Markdown docs / manual notes / agent chat paste
+  -> SourceItem
+  -> Company Brain
+  -> MemoryIgnition
+  -> Inheritance Contract
+  -> Inheritance Package
+  -> AgentRun + Agent Black Box
+  -> Outcome Required
+  -> Future Instruction
+  -> Mistake Immunity
+  -> Skill Installed
+  -> Evaluation Replay Proof
+```
+
+The primary launch metric is Mistake Repeat Rate. Full-vision modules such as Agent Workforce OS, Marketplace, Robot / Machine Inheritance, Compliance Evidence Room, Cost Governor, and Model Router stay parked until the core inheritance loop is proven.
+
 ## 1) Strategy
 
 Category: Developer Continuity Infrastructure for humans and agents.
 
 Positioning:
-- Mem0 stores memory.
-- Supermemory brings external context.
+- MemoryOS canonical memory lives in Postgres/local store (`MEMORY_STORE_PROVIDER=local`).
+- Supermemory is the external context + connector ingestion plane when `SUPERMEMORY_API_KEY` is set.
+- Mem0 remains an optional legacy memory-store adapter (`MEMORY_STORE_PROVIDER=mem0`).
 - LangGraph and LangChain orchestrate workflows.
 - MemoryOS is the intelligence and trust layer.
 
@@ -24,7 +48,7 @@ MemoryOS wins on outcomes, not endpoint count:
 3. Best trust and explainability (why this memory, what changed, confidence).
 4. Best agent handoff continuity across sessions and tools.
 
-## 3) Company KPI Dashboard
+## 3) Company KPI Control Plane
 
 Track and optimize:
 1. `resume_success_rate`
@@ -41,9 +65,10 @@ Sprint rule:
 
 1. LangGraph: ingest, retrieve, continue, resume, handoff workflows + checkpointed state.
 2. LangChain: retriever/tool interfaces + model abstraction.
-3. Mem0 adapter: long-term memory persistence and search.
-4. Supermemory adapter: connector + context ingestion.
-5. MemoryOS Core:
+3. Local/Postgres memory store (default): canonical MemoryOS persistence and search.
+4. Supermemory context adapter: connector + external context ingestion.
+5. Mem0 adapter (optional): legacy long-term memory persistence when explicitly enabled.
+6. MemoryOS Core:
    - extraction + scoring
    - merge + evolve + contradiction resolver
    - reranking + intent model
@@ -121,7 +146,7 @@ Weekly output minimum:
 As of lock date:
 - Ingest is graph-based.
 - Retrieve/continue/resume are not fully graph-first yet.
-- Mem0 coupling still exists in core memory modules.
+- Production dev stack uses Supermemory for context + Postgres/local for memory; Mem0 compat layer remains for tests/legacy.
 
 Next engineering focus:
 - Complete Phase A decoupling before expanding feature surface.

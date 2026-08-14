@@ -30,6 +30,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Start API For Phase 1 Gate
+        env:
+          MEMORY_STORE_PROVIDER: local
+          MEMORY_STORE_BACKEND: sqlite
+        run: |
+          npm run dev > .tmp-phase1-api.log 2>&1 &
+          echo "PHASE1_API_PID=$!" >> $GITHUB_ENV
+          for i in {1..45}; do
+            if curl -fsS http://localhost:3001/api/health > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Phase 1 gate API did not become healthy in time."
+          cat .tmp-phase1-api.log
+          exit 1
+
+      - name: Mint Phase 1 Gate Token
+        run: |
+          TOKEN=$(npm run --silent token -- u_phase1_ci | tail -n 1)
+          echo "PHASE1_GATE_TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      - name: Phase 1 End-to-End Gate
+        env:
+          PHASE1_GATE_BASE_URL: http://localhost:3001
+          PHASE1_GATE_TOKEN: ${{ env.PHASE1_GATE_TOKEN }}
+        run: npm run phase1:e2e:gate
+
       - name: Lint (Shipping Surfaces)
         run: npm run lint:ci
 
@@ -63,3 +91,24 @@ jobs:
         with:
           name: company-brain-gate-release-report
           path: data/eval/reports/company-brain-gate-release.json
+
+      - name: Upload Phase 1 Gate Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-e2e-gate-release-report
+          path: data/eval/reports/phase1-e2e-gate.json
+
+      - name: Upload Phase 1 API Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-api-release-log
+          path: .tmp-phase1-api.log
+
+      - name: Stop Phase 1 Gate API
+        if: always()
+        run: |
+          if [ -n "${PHASE1_API_PID:-}" ]; then
+            kill "$PHASE1_API_PID" || true
+          fi

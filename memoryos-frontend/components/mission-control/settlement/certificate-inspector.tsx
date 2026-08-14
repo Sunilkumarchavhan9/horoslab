@@ -1,0 +1,194 @@
+"use client";
+
+import React from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+    Activity, FileJson, Link as LinkIcon, 
+    Copy, Download, ExternalLink, Network,
+    Database, Settings, BrainCircuit, Play, History,
+    CheckCircle2, XCircle, Share, ArchiveRestore, Clock, Gavel, FileCheck, ShieldCheck
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export function CertificateInspector({ entityData }: { entityData: any }) {
+    return (
+        <Tabs defaultValue="overview" className="flex-1 flex flex-col w-full h-full">
+            <div className="px-6 border-b border-border bg-muted/10 shrink-0">
+                <TabsList className="bg-transparent h-12 w-full justify-start gap-6 rounded-none p-0">
+                    <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 h-full text-xs font-medium uppercase tracking-wider">
+                        <Activity className="size-3.5 mr-2" />
+                        Overview
+                    </TabsTrigger>
+                    <TabsTrigger value="provenance" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 h-full text-xs font-medium uppercase tracking-wider">
+                        <ShieldCheck className="size-3.5 mr-2" />
+                        Provenance
+                    </TabsTrigger>
+                    <TabsTrigger value="history" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 h-full text-xs font-medium uppercase tracking-wider">
+                        <History className="size-3.5 mr-2" />
+                        Audit Trail
+                    </TabsTrigger>
+                    <TabsTrigger value="json" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-0 h-full text-xs font-medium uppercase tracking-wider">
+                        <FileJson className="size-3.5 mr-2" />
+                        Raw Payload
+                    </TabsTrigger>
+                </TabsList>
+            </div>
+
+            <ScrollArea className="flex-1 w-full bg-background/50">
+                <div className="p-6">
+                    <TabsContent value="overview" className="m-0 focus-visible:outline-none flex flex-col gap-6">
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1 p-3 rounded-md bg-card border border-border">
+                                <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-widest">Issuer</span>
+                                <span className="text-sm font-medium text-foreground">{entityData.issuer}</span>
+                            </div>
+                            <div className="flex flex-col gap-1 p-3 rounded-md bg-card border border-border">
+                                <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-widest">Version</span>
+                                <span className="text-sm font-medium text-foreground font-mono">{entityData.version}</span>
+                            </div>
+                            <div className="flex flex-col gap-1 p-3 rounded-md bg-card border border-border">
+                                <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-widest">Status</span>
+                                <span className="text-sm font-medium text-foreground">{entityData.status}</span>
+                            </div>
+                            <div className="flex flex-col gap-1 p-3 rounded-md bg-card border border-border">
+                                <span className="text-[10px] uppercase font-semibold text-muted-foreground tracking-widest">Issued</span>
+                                <span className="text-sm font-medium text-foreground font-mono">{entityData.issued}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Certificate Metadata</span>
+                            <div className="bg-card border border-border rounded-md p-4 flex flex-col gap-2">
+                                <span className="text-sm text-foreground leading-relaxed">
+                                    Cryptographic proof of mission completion. This certificate guarantees that the mission adhered to the institution's genome and governance policies.
+                                </span>
+                                <div className="mt-2 text-xs font-mono text-muted-foreground break-all bg-muted/50 p-2 rounded border border-border">
+                                    0x7F8B9C4E3D2A1F6C5B4A3928170F9E8D7C6B5A4938271605F4E3D2C1B0A98765
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Verification Source</span>
+                                <div className="bg-card border border-border rounded-md p-3">
+                                    <span className="text-sm text-foreground leading-relaxed font-mono">
+                                        VER-8991-A
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Settlement Source</span>
+                                <div className="bg-card border border-border rounded-md p-3">
+                                    <span className="text-sm text-foreground leading-relaxed font-mono">
+                                        SET-7001
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Relations & Assets</span>
+                            <div className="flex flex-col divide-y divide-border/50 border border-border rounded-md bg-card">
+                                <button className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-muted-foreground">Related Mission</span>
+                                        <span className="text-sm font-medium text-foreground">{entityData.mission}</span>
+                                    </div>
+                                    <ExternalLink className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                                </button>
+                                <button className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-muted-foreground">Related Evidence</span>
+                                        <span className="text-sm font-medium text-foreground">View execution artifacts</span>
+                                    </div>
+                                    <ExternalLink className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                                </button>
+                                <button className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-muted-foreground">Downloads</span>
+                                        <span className="text-sm font-medium text-foreground">certificate.pem, signature.sig</span>
+                                    </div>
+                                    <Download className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                                </button>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="provenance" className="m-0 focus-visible:outline-none">
+                        <div className="flex flex-col space-y-4 py-4">
+                            <div className="flex gap-4">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                    <div className="w-px h-full bg-border my-1" />
+                                </div>
+                                <div className="pb-4">
+                                    <span className="text-xs font-mono text-muted-foreground">{entityData.issued}</span>
+                                    <div className="text-sm font-medium mt-1">Certificate Issued (Active)</div>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                    <div className="w-px h-full bg-border my-1" />
+                                </div>
+                                <div className="pb-4">
+                                    <span className="text-xs font-mono text-muted-foreground">Mission Runtime</span>
+                                    <div className="text-sm font-medium mt-1">Settlement Consensus Achieved</div>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                </div>
+                                <div>
+                                    <span className="text-xs font-mono text-muted-foreground">Verification Runtime</span>
+                                    <div className="text-sm font-medium mt-1">Cryptographic Signature Validated</div>
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="history" className="m-0 focus-visible:outline-none">
+                        <div className="flex flex-col divide-y divide-border/50 border border-border bg-card rounded-md">
+                            <div className="flex items-center justify-between p-4">
+                                <div className="flex items-center gap-3">
+                                    <ShieldCheck className="size-4 text-emerald-500" />
+                                    <span className="text-sm text-foreground">Certificate Minted</span>
+                                </div>
+                                <span className="text-xs text-muted-foreground">{entityData.issued}</span>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="json" className="m-0 focus-visible:outline-none">
+                        <div className="bg-[#0d1117] border border-border/50 rounded-md p-4 overflow-x-auto text-[13px]">
+                            <pre className="text-[#c9d1d9] font-mono leading-relaxed">
+                                {JSON.stringify(entityData, null, 2)}
+                            </pre>
+                        </div>
+                    </TabsContent>
+                </div>
+            </ScrollArea>
+
+            {/* Actions Bar */}
+            <div className="flex items-center gap-2 p-4 border-t border-border bg-muted/10 shrink-0 overflow-x-auto custom-scrollbar">
+                <button className="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors rounded-md text-xs font-medium whitespace-nowrap shadow-sm">
+                    <ShieldCheck className="size-3.5" />
+                    Verify Provenance
+                </button>
+                <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
+                <button className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+                    <FileCheck className="size-3.5" />
+                    View
+                </button>
+                <button className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm ml-auto">
+                    <Download className="size-3.5" />
+                    Download
+                </button>
+            </div>
+        </Tabs>
+    );
+}

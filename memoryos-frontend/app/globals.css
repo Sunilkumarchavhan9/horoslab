@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@xterm/xterm/css/xterm.css";
+
+@theme {
+  --font-sans: "Canela", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -27,7 +32,7 @@
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.546 0.245 262.881);
@@ -76,8 +81,9 @@
 }
 
 @theme inline {
-  --font-heading: var(--font-mono);
-  --font-mono: var(--font-mono);
+  --font-sans: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -124,18 +130,32 @@
     @apply border-border outline-ring/50;
   }
 
-  :not(.developer-console-root):not(.developer-console-root *) {
-    border-radius: 0;
-  }
-
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
   }
-  button:not(:disabled), [role="button"]:not(:disabled) {
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
   html {
-    @apply font-mono;
+    font-family: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  pre,
+  code,
+  kbd,
+  samp {
+    font-family: var(--font-plex-mono), var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 }
 
@@ -147,88 +167,582 @@
   border-radius: 0 !important;
 }
 
-/* Developer console — shadcn preset b1Zh6vkO2 (scoped; site tokens unchanged) */
-.developer-console-root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.488 0.243 264.376);
-  --primary-foreground: oklch(0.97 0.014 254.604);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --console-radius-sm: 0;
-  --console-radius: 0;
-  --console-radius-lg: 0;
+/* Landing Watchtower intentionally opts out of the global square-corner rule. */
+.landing-root .watchtower-glass.watchtower-glass {
+  border-radius: 18px !important;
+}
+
+.landing-root .watchtower-glass .border {
+  border-radius: 10px !important;
+}
+
+.landing-root .watchtower-source-wall .border {
+  border-radius: 11px !important;
+}
+
+/* Landing page stays pure white; app/dashboard routes own their own themes. */
+.landing-root {
+  --background: #ffffff;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --muted: #ffffff;
+  --secondary: #ffffff;
+  --input: #ffffff;
+  --border: #c9d8ee;
+  --landing-bg: #ffffff;
+  --landing-surface: #ffffff;
+  --landing-surface-muted: #ffffff;
+  --landing-surface-soft: #ffffff;
+  --landing-border: #c9d8ee;
+  --landing-border-soft: #dbe6f7;
+  --landing-foreground: #0f172a;
+  --landing-muted: #516882;
+  --landing-subtle: #6a7f9a;
+  --landing-accent: #356acc;
+  background: var(--landing-bg) !important;
+  color: var(--landing-foreground);
   font-family: var(--font-space-grotesk), var(--font-sora), ui-sans-serif, system-ui, sans-serif;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
+}
+
+/* Mission Control still contains a lot of legacy light utility classes.
+   This scope remaps those surfaces to theme variables in dark mode so the
+   toggle is visibly reflected without changing the layout. */
+html.dark .mission-control-root {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #161619;
+  --card-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
   background: var(--background);
   color: var(--foreground);
 }
 
-.developer-console-root.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.424 0.199 265.638);
-  --primary-foreground: oklch(0.97 0.014 254.604);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.623 0.214 259.815);
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+html.dark .mission-control-root>aside,
+html.dark .mission-control-root>main,
+html.dark .mission-control-root>main>header,
+html.dark .mission-control-root>main>div {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
 }
 
-.developer-console-root .memoryos-console-scroll {
-  background: var(--background);
+html.dark .mission-control-root>aside,
+html.dark .mission-control-root>main>header {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .mission-control-root [class*="bg-white"] {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+}
+
+html.dark .mission-control-root .bg-\[\#fafafa\],
+html.dark .mission-control-root .bg-\[\#FAFAFA\],
+html.dark .mission-control-root .bg-\[\#fcfcfc\],
+html.dark .mission-control-root .bg-\[\#FCFCFC\],
+html.dark .mission-control-root .bg-\[\#f9fafb\],
+html.dark .mission-control-root .bg-\[\#F9FAFB\],
+html.dark .mission-control-root .bg-\[\#f9f9f9\],
+html.dark .mission-control-root .bg-\[\#F9F9F9\],
+html.dark .mission-control-root .bg-\[\#f8f9fa\],
+html.dark .mission-control-root .bg-\[\#F8F9FA\],
+html.dark .mission-control-root .bg-\[\#f8f8fa\],
+html.dark .mission-control-root .bg-\[\#f8f8f8\],
+html.dark .mission-control-root .bg-\[\#f5f5f5\],
+html.dark .mission-control-root .bg-\[\#F5F5F5\],
+html.dark .mission-control-root .bg-\[\#f0f0f0\],
+html.dark .mission-control-root .bg-\[\#F0F0F0\],
+html.dark .mission-control-root .bg-\[\#fbfbfb\],
+html.dark .mission-control-root .bg-\[\#FBFBFB\],
+html.dark .mission-control-root .bg-\[\#fbfbfd\],
+html.dark .mission-control-root .bg-\[\#FBFBFD\],
+html.dark .mission-control-root .bg-\[\#fdfdfd\],
+html.dark .mission-control-root .bg-\[\#FDFDFD\],
+html.dark .mission-control-root .bg-\[\#f4f4f6\],
+html.dark .mission-control-root .bg-\[\#f4f4f5\],
+html.dark .mission-control-root .bg-\[\#fafafa\],
+html.dark .mission-control-root .bg-\[\#FAFAFA\],
+html.dark .mission-control-root .bg-\[\#fcfcfc\],
+html.dark .mission-control-root .bg-\[\#FCFCFC\],
+html.dark .mission-control-root .bg-\[\#f9fafb\],
+html.dark .mission-control-root .bg-\[\#F9FAFB\],
+html.dark .mission-control-root .bg-\[\#f9f9f9\],
+html.dark .mission-control-root .bg-\[\#F9F9F9\],
+html.dark .mission-control-root .bg-\[\#f8f9fa\],
+html.dark .mission-control-root .bg-\[\#F8F9FA\],
+html.dark .mission-control-root .bg-\[\#f8f8fa\],
+html.dark .mission-control-root .bg-\[\#f8f8f8\],
+html.dark .mission-control-root .bg-\[\#f5f5f5\],
+html.dark .mission-control-root .bg-\[\#F5F5F5\],
+html.dark .mission-control-root .bg-\[\#f0f0f0\],
+html.dark .mission-control-root .bg-\[\#F0F0F0\],
+html.dark .mission-control-root .bg-\[\#fbfbfb\],
+html.dark .mission-control-root .bg-\[\#FBFBFB\],
+html.dark .mission-control-root .bg-\[\#fbfbfd\],
+html.dark .mission-control-root .bg-\[\#FBFBFD\],
+html.dark .mission-control-root .bg-\[\#f4f4f6\],
+html.dark .mission-control-root .bg-\[\#f4f4f5\],
+html.dark .mission-control-root .bg-\[\#eef2f7\],
+html.dark .mission-control-root .bg-\[\#f9fafc\],
+html.dark .mission-control-root .bg-\[\#f7f9fc\],
+html.dark .mission-control-root .bg-\[\#f3f6fb\],
+html.dark .mission-control-root .bg-\[\#f6f9ff\],
+html.dark .mission-control-root .bg-\[\#f8fbff\],
+html.dark .mission-control-root .bg-\[\#f9fbff\],
+html.dark .mission-control-root .bg-\[\#e8e8e8\],
+html.dark .mission-control-root .bg-\[\#f1f1f1\],
+html.dark .mission-control-root .bg-\[\#f7f7f8\],
+html.dark .mission-control-root .bg-gray-50,
+html.dark .mission-control-root .bg-gray-100,
+html.dark .mission-control-root .bg-slate-50,
+html.dark .mission-control-root .bg-\[\#f8f9fc\],
+html.dark .mission-control-root [class*="bg-[#fafafa]"],
+html.dark .mission-control-root [class*="bg-[#FAFAFA]"],
+html.dark .mission-control-root [class*="bg-[#fcfcfc]"],
+html.dark .mission-control-root [class*="bg-[#FCFCFC]"],
+html.dark .mission-control-root [class*="bg-[#f9fafb]"],
+html.dark .mission-control-root [class*="bg-[#F9FAFB]"],
+html.dark .mission-control-root [class*="bg-[#f9f9f9]"],
+html.dark .mission-control-root [class*="bg-[#F9F9F9]"],
+html.dark .mission-control-root [class*="bg-[#f8f9fa]"],
+html.dark .mission-control-root [class*="bg-[#F8F9FA]"],
+html.dark .mission-control-root [class*="bg-[#f8f8fa]"],
+html.dark .mission-control-root [class*="bg-[#f8f8f8]"],
+html.dark .mission-control-root [class*="bg-[#f5f5f5]"],
+html.dark .mission-control-root [class*="bg-[#F5F5F5]"],
+html.dark .mission-control-root [class*="bg-[#f0f0f0]"],
+html.dark .mission-control-root [class*="bg-[#F0F0F0]"],
+html.dark .mission-control-root [class*="bg-[#fbfbfb]"],
+html.dark .mission-control-root [class*="bg-[#FBFBFB]"],
+html.dark .mission-control-root [class*="bg-[#fbfbfd]"],
+html.dark .mission-control-root [class*="bg-[#FBFBFD]"],
+html.dark .mission-control-root [class*="bg-[#fdfdfd]"],
+html.dark .mission-control-root [class*="bg-[#FDFDFD]"],
+html.dark .mission-control-root [class*="bg-[#f4f4f6]"],
+html.dark .mission-control-root [class*="bg-[#f4f4f5]"],
+html.dark .mission-control-root [class*="bg-[#eef2f7]"],
+html.dark .mission-control-root [class*="bg-[#f9fafc]"],
+html.dark .mission-control-root [class*="bg-[#f7f9fc]"],
+html.dark .mission-control-root [class*="bg-[#f3f6fb]"],
+html.dark .mission-control-root [class*="bg-[#f6f9ff]"],
+html.dark .mission-control-root [class*="bg-[#f8fbff]"],
+html.dark .mission-control-root [class*="bg-[#f9fbff]"],
+html.dark .mission-control-root [class*="bg-[#e8e8e8]"],
+html.dark .mission-control-root [class*="bg-[#f1f1f1]"],
+html.dark .mission-control-root [class*="bg-[#f7f7f8]"],
+html.dark .mission-control-root [class*="bg-gray-50"],
+html.dark .mission-control-root [class*="bg-gray-100"],
+html.dark .mission-control-root [class*="bg-slate-50"],
+html.dark .mission-control-root [class*="bg-[#f8f9fc]"] {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Exact hover and selected overrides for dropdown items in dark mode */
+html.dark .mission-control-root .hover\:bg-\[\#f7f9fc\]:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: var(--foreground) !important;
+}
+
+html.dark .mission-control-root .bg-\[\#eef4ff\],
+html.dark .mission-control-root .bg-\[\#f4f7ff\] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .mission-control-root [class*="text-black"],
+html.dark .mission-control-root [class*="text-[#0a2540]"],
+html.dark .mission-control-root [class*="text-[#111]"],
+html.dark .mission-control-root [class*="text-[#111827]"],
+html.dark .mission-control-root [class*="text-[#222]"],
+html.dark .mission-control-root [class*="text-[#333]"],
+html.dark .mission-control-root [class*="text-[#444]"],
+html.dark .mission-control-root [class*="text-[#445]"],
+html.dark .mission-control-root [class*="text-[#1f2f57]"],
+html.dark .mission-control-root [class*="text-[#334155]"],
+html.dark .mission-control-root [class*="text-[#475569]"],
+html.dark .mission-control-root [class*="text-[#555]"],
+html.dark .mission-control-root [class*="text-[#666]"],
+html.dark .mission-control-root [class*="text-[#777]"],
+html.dark .mission-control-root [class*="text-[#888]"],
+html.dark .mission-control-root [class*="text-[#999]"],
+html.dark .mission-control-root [class*="text-[#aaa]"],
+html.dark .mission-control-root [class*="text-black/"] {
+  color: var(--foreground) !important;
+}
+
+html.dark .mission-control-root .bg-black\/5,
+html.dark .mission-control-root .bg-black\/\[0\.02\],
+html.dark .mission-control-root .bg-black\/\[0\.03\],
+html.dark .mission-control-root .bg-\[\#eaeaea\],
+html.dark .mission-control-root [class*="bg-[#eaeaea]"] {
+  background-color: var(--muted) !important;
+}
+
+/* Mission Control dark mode keeps neutral structure visible. Colored status
+   borders retain their original meaning; only legacy black/light neutrals are
+   remapped here. */
+html.dark .mission-control-root .border-\[\#e2e2e2\],
+html.dark .mission-control-root .border-\[\#e5e5e5\],
+html.dark .mission-control-root .border-\[\#e2e2e7\],
+html.dark .mission-control-root .border-\[\#e2e2e8\],
+html.dark .mission-control-root .border-\[\#eee\],
+html.dark .mission-control-root .border-\[\#f0f0f2\],
+html.dark .mission-control-root .border-\[\#f0f0f0\],
+html.dark .mission-control-root .border-\[\#edf1f5\],
+html.dark .mission-control-root .border-\[\#dfe3ea\],
+html.dark .mission-control-root .border-\[\#e5e9ef\],
+html.dark .mission-control-root .border-\[\#eaeaea\],
+html.dark .mission-control-root .border-\[\#dcdcdc\],
+html.dark .mission-control-root [class*="border-black/"],
+html.dark .mission-control-root [class*="border-black/["],
+html.dark .mission-control-root [class*="border-[#e2e2e2]"],
+html.dark .mission-control-root [class*="border-[#e5e5e5]"],
+html.dark .mission-control-root [class*="border-[#e2e2e7]"],
+html.dark .mission-control-root [class*="border-[#e2e2e8]"],
+html.dark .mission-control-root [class*="border-[#eee]"],
+html.dark .mission-control-root [class*="border-[#f0f0f2]"],
+html.dark .mission-control-root [class*="border-[#f0f0f0]"],
+html.dark .mission-control-root [class*="border-[#edf1f5]"],
+html.dark .mission-control-root [class*="border-[#dfe3ea]"],
+html.dark .mission-control-root [class*="border-[#e5e9ef]"],
+html.dark .mission-control-root [class*="border-[#eaeaea]"],
+html.dark .mission-control-root [class*="border-[#dcdcdc]"] {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .mission-control-root .divide-\[\#e2e2e2\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#e5e5e5\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#e2e2e7\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#e2e2e8\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#f0f0f2\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#f0f0f0\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#eee\]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#e2e2e2]"]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#e5e5e5]"]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#e2e2e7]"]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#e2e2e8]"]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#f0f0f2]"]> :not([hidden])~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#f0f0f0]"]> :not([hidden])~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Remap portalled Radix dropdowns, selects, and dialogs in dark mode */
+html.dark [data-radix-menu-content],
+html.dark [role="menu"],
+html.dark [role="dialog"],
+html.dark [role="listbox"],
+html.dark [data-radix-popper-content-wrapper]>div {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark [data-radix-menu-content] [class*="text-"],
+html.dark [role="menu"] [class*="text-"],
+html.dark [role="dialog"] [class*="text-"],
+html.dark [role="dialog"] [class*="text-[#"],
+html.dark [role="dialog"] [class*="text-black"],
+html.dark [role="listbox"] [class*="text-"],
+html.dark [data-radix-popper-content-wrapper]>div [class*="text-"],
+html.dark [role="menuitem"],
+html.dark [role="menuitemradio"],
+html.dark [role="option"] {
+  color: var(--foreground) !important;
+}
+
+html.dark [role="dialog"] [class*="bg-white"],
+html.dark [role="dialog"] [class*="bg-[#fafafa]"],
+html.dark [role="dialog"] [class*="bg-[#FAFAFA]"],
+html.dark [role="dialog"] [class*="bg-[#fcfcfc]"],
+html.dark [role="dialog"] [class*="bg-[#FCFCFC]"],
+html.dark [role="dialog"] [class*="bg-[#f9fafb]"],
+html.dark [role="dialog"] [class*="bg-[#F9FAFB]"],
+html.dark [role="dialog"] [class*="bg-[#f9f9f9]"],
+html.dark [role="dialog"] [class*="bg-[#F9F9F9]"],
+html.dark [role="dialog"] [class*="bg-[#fbfbfb]"],
+html.dark [role="dialog"] [class*="bg-[#FBFBFB]"],
+html.dark [role="dialog"] input {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark [role="dialog"] input::placeholder {
+  color: var(--muted-foreground) !important;
+}
+
+html.dark [data-radix-menu-content] [data-highlighted],
+html.dark [role="menu"] [data-highlighted],
+html.dark [role="listbox"] [data-highlighted],
+html.dark [role="menuitem"]:hover,
+html.dark [role="menuitemradio"]:hover,
+html.dark [role="option"]:hover,
+html.dark [data-radix-menu-content] button:hover,
+html.dark [role="menu"] button:hover,
+html.dark [role="listbox"] button:hover {
+  background-color: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+/* Exact hover and selected overrides for portalled dropdown items in dark mode */
+html.dark [data-radix-popper-content-wrapper] .hover\:bg-\[\#f7f9fc\]:hover,
+html.dark [role="menu"] .hover\:bg-\[\#f7f9fc\]:hover,
+html.dark [role="dialog"] .hover\:bg-\[\#f7f9fc\]:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: var(--foreground) !important;
+}
+
+html.dark [data-radix-popper-content-wrapper] .bg-\[\#eef4ff\],
+html.dark [role="menu"] .bg-\[\#eef4ff\],
+html.dark [role="dialog"] .bg-\[\#eef4ff\],
+html.dark [data-radix-popper-content-wrapper] .bg-\[\#f4f7ff\],
+html.dark [role="menu"] .bg-\[\#f4f7ff\],
+html.dark [role="dialog"] .bg-\[\#f4f7ff\] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Hover overrides for background colors in dark mode */
+html.dark .mission-control-root .hover\:bg-\[\#f4f4f6\]:hover,
+html.dark .mission-control-root .hover\:bg-\[\#f4f4f5\]:hover,
+html.dark .mission-control-root .hover\:bg-\[\#f5f5f5\]:hover,
+html.dark .mission-control-root .hover\:bg-\[\#f8f8fa\]:hover,
+html.dark .mission-control-root .hover\:bg-black\/5:hover,
+html.dark .mission-control-root .hover\:bg-black\/\[0\.03\]:hover,
+html.dark .mission-control-root .hover\:bg-gray-50:hover {
+  background-color: var(--muted) !important;
+}
+
+/* Remap blue banners, highlights, and active elements in dark mode */
+html.dark .mission-control-root [class*="bg-blue-50"],
+html.dark .mission-control-root .bg-blue-50,
+html.dark .mission-control-root .bg-\[\#f5f8ff\],
+html.dark .mission-control-root [class*="bg-[#f5f8ff]"] {
+  background-color: rgba(15, 82, 255, 0.08) !important;
+}
+
+/* Active/selected list elements in dark mode */
+html.dark .mission-control-root .bg-\[\#f0f4ff\],
+html.dark .mission-control-root [class*="bg-[#f0f4ff]"],
+html.dark .mission-control-root .bg-\[\#eef4ff\],
+html.dark .mission-control-root [class*="bg-[#eef4ff]"],
+html.dark .mission-control-root .bg-\[\#f4f7ff\],
+html.dark .mission-control-root [class*="bg-[#f4f7ff]"] {
+  background-color: var(--muted) !important;
+}
+
+html.dark .mission-control-root [class*="border-blue-"],
+html.dark .mission-control-root .border-\[\#d9e4ff\],
+html.dark .mission-control-root .border-\[\#d4def8\],
+html.dark .mission-control-root [class*="border-[#d9e4ff]"],
+html.dark .mission-control-root [class*="border-[#d4def8]"] {
+  border-color: rgba(15, 82, 255, 0.25) !important;
+}
+
+html.dark .mission-control-root .text-\[\#0f52ff\],
+html.dark .mission-control-root .text-\[\#2457ff\],
+html.dark .mission-control-root [class*="text-[#2457ff]"],
+html.dark .mission-control-root .group:hover .group-hover\:text-\[\#0f52ff\],
+html.dark .mission-control-root .hover\:text-\[\#0f52ff\]:hover,
+html.dark .mission-control-root [class*="text-blue-"] {
+  color: #58a6ff !important;
+}
+
+/* Remap SVG grid lines and chart borders in dark mode to keep them dark and subtle */
+html.dark .mission-control-root svg [stroke="#f0f0f4"],
+html.dark .mission-control-root svg [stroke="#e2e2e2"],
+html.dark .mission-control-root svg [stroke="#f0f0f0"],
+html.dark .mission-control-root svg [stroke="#eee"],
+html.dark .mission-control-root svg [stroke="#f0f0f2"],
+html.dark .mission-control-root svg line[stroke="#f0f0f4"],
+html.dark .mission-control-root svg line[stroke="#e2e2e2"],
+html.dark .mission-control-root svg line[stroke="#f0f0f0"],
+html.dark .mission-control-root svg line[stroke="#eee"] {
+  stroke: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Remap Recharts tooltips in dark mode */
+html.dark .mission-control-root .recharts-default-tooltip {
+  background-color: var(--card) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--foreground) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .mission-control-root .recharts-default-tooltip * {
+  color: var(--foreground) !important;
+}
+
+/* Remap background radial-gradient dot matrix grids in dark mode */
+html.dark .mission-control-root .bg-\[radial-gradient\(\#e2e2e2_1px\,transparent_1px\)\],
+html.dark .mission-control-root [class*="bg-[#e2e2e2_1px"],
+html.dark .mission-control-root [class*="bg-[radial-gradient(#e2e2e2"],
+html.dark .mission-control-root .bg-\[radial-gradient\(\#d1d5db_1px\,transparent_1px\)\],
+html.dark .mission-control-root [class*="bg-[#d1d5db_1px"],
+html.dark .mission-control-root [class*="bg-[radial-gradient(#d1d5db"] {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px) !important;
+}
+
+/* The landing page keeps wheel/touch/keyboard scrolling but removes the
+   oversized native scrollbar track from the visual surface. */
+.landing-scroll-shell {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.landing-scroll-shell::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.landing-root [class*="bg-[#f7f9fc]"],
+.landing-root [class*="bg-[#f3f6fb]"],
+.landing-root [class*="bg-[#f6f9ff]"],
+.landing-root [class*="bg-[#f8fbff]"],
+.landing-root [class*="bg-[#f9fbff]"] {
+  background-color: var(--landing-surface-muted) !important;
+}
+
+.personal-memory-dark-section {
+  --background: #0f0f0f;
+  --foreground: #ffffff;
+  --card: #1a1a1a;
+  --card-foreground: #ffffff;
+  --muted: #141414;
+  --muted-foreground: rgb(255 255 255 / 0.52);
+  --secondary: #141414;
+  --input: #141414;
+  --border: rgb(255 255 255 / 0.08);
+  --landing-bg: #0f0f0f;
+  --landing-surface: #0f0f0f;
+  --landing-surface-muted: #141414;
+  --landing-surface-soft: #1a1a1a;
+  --landing-border: rgb(255 255 255 / 0.08);
+  --landing-border-soft: rgb(255 255 255 / 0.12);
+  --landing-foreground: #ffffff;
+  --landing-muted: rgb(255 255 255 / 0.68);
+  --landing-subtle: rgb(255 255 255 / 0.45);
+  --landing-accent: #60a5fa;
+  background: var(--landing-bg);
+  color: var(--landing-foreground);
+}
+
+.personal-memory-dark-section .bg-white,
+.personal-memory-dark-section .hover\:bg-white:hover {
+  background-color: var(--landing-surface) !important;
+}
+
+.personal-memory-dark-section [class*="bg-[#f7f9fc]"],
+.personal-memory-dark-section [class*="bg-[#f3f6fb]"],
+.personal-memory-dark-section [class*="bg-[#f6f9ff]"],
+.personal-memory-dark-section [class*="bg-[#f8fbff]"],
+.personal-memory-dark-section [class*="bg-[#f9fbff]"] {
+  background-color: var(--landing-surface-muted) !important;
+}
+
+.personal-memory-dark-section [class*="border-[#c9d8ee]"],
+.personal-memory-dark-section [class*="border-[#dbe6f7]"],
+.personal-memory-dark-section [class*="border-[#d5e2f5]"] {
+  border-color: var(--landing-border) !important;
+}
+
+.personal-memory-dark-section .text-slate-900,
+.personal-memory-dark-section [class*="text-[#101827]"] {
+  color: var(--landing-foreground) !important;
+}
+
+.personal-memory-dark-section [class*="text-[#516882]"],
+.personal-memory-dark-section [class*="text-[#6a7f9a]"] {
+  color: var(--landing-muted) !important;
+}
+
+.personal-memory-dark-section [class*="text-[#356acc]"] {
+  color: var(--landing-accent) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .landing-root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --muted: #ffffff;
+    --muted-foreground: #516882;
+    --secondary: #ffffff;
+    --input: #ffffff;
+    --border: #c9d8ee;
+    --landing-bg: #ffffff;
+    --landing-surface: #ffffff;
+    --landing-surface-muted: #ffffff;
+    --landing-surface-soft: #ffffff;
+    --landing-border: #c9d8ee;
+    --landing-border-soft: #dbe6f7;
+    --landing-foreground: #0f172a;
+    --landing-muted: #516882;
+    --landing-subtle: #6a7f9a;
+    --landing-accent: #356acc;
+  }
+
+  .landing-root.bg-white,
+  .landing-root .bg-white,
+  .landing-root .hover\:bg-white:hover {
+    background-color: var(--landing-surface) !important;
+  }
+
+  .landing-root [class*="border-[#c9d8ee]"],
+  .landing-root [class*="border-[#dbe6f7]"],
+  .landing-root [class*="border-[#bfd1ee]"],
+  .landing-root [class*="border-[#b6c8e8]"],
+  .landing-root [class*="border-[#d0def3]"],
+  .landing-root [class*="border-[#d5e2f5]"],
+  .landing-root [class*="border-[#bfd0ea]"],
+  .landing-root .border-slate-200\/80 {
+    border-color: var(--landing-border) !important;
+  }
+
+  .landing-root .text-slate-900,
+  .landing-root .text-slate-800,
+  .landing-root [class*="text-[#101827]"],
+  .landing-root [class*="text-[#111827]"] {
+    color: var(--landing-foreground) !important;
+  }
+
+  .landing-root .text-slate-600,
+  .landing-root [class*="text-[#0f213f]"],
+  .landing-root [class*="text-[#516882]"],
+  .landing-root [class*="text-[#5d6f87]"],
+  .landing-root [class*="text-[#5f6f84]"],
+  .landing-root [class*="text-[#5f6f86]"],
+  .landing-root [class*="text-[#61738d]"],
+  .landing-root [class*="text-[#6a778a]"],
+  .landing-root [class*="text-[#6b7c95]"],
+  .landing-root [class*="text-[#6f7d91]"],
+  .landing-root [class*="text-[#7b8798]"],
+  .landing-root [class*="text-[#7f8da3]"],
+  .landing-root [class*="text-[#7f8da5]"],
+  .landing-root [class*="text-[#4d6281]"],
+  .landing-root [class*="text-[#3f5477]"],
+  .landing-root [class*="text-[#2f4968]"],
+  .landing-root [class*="text-[#4f6481]"],
+  .landing-root [class*="text-[#27466e]"],
+  .landing-root [class*="text-[#365888]"],
+  .landing-root [class*="text-[#6b7280]"] {
+    color: var(--landing-muted) !important;
+  }
+
+  .landing-root [class*="text-[#6a7f9a]"],
+  .landing-root [class*="text-[#8a9ab1]"],
+  .landing-root [class*="text-[#a1b1c7]"],
+  .landing-root [class*="text-[#a3b0c3]"] {
+    color: var(--landing-subtle) !important;
+  }
+
+  .landing-root [class*="text-[#356acc]"],
+  .landing-root [class*="text-[#243f67]"],
+  .landing-root [class*="text-[#28456f]"],
+  .landing-root [class*="text-[#3f66a3]"] {
+    color: var(--landing-accent) !important;
+  }
 }
 
 /* Prody-style light console shell */
@@ -321,6 +835,15 @@
   --border: #e5e7eb;
   --primary: #111827;
   --primary-foreground: #ffffff;
+  --memory-graph-canvas-bg: #fbfbfc;
+  --memory-graph-plot-bg: #ffffff;
+  --memory-graph-grid: #dfe3e8;
+  --memory-graph-grid-soft: #e5e7eb;
+  --memory-graph-hatch: #e5e7eb;
+  --memory-graph-hatch-soft: #eef0f3;
+  --memory-graph-allocation: #e5e7eb;
+  --memory-graph-signal: #44d7b6;
+  --memory-graph-axis: #697386;
 }
 
 .memoryos-prody-shell .intel-section-content.intel-section-root {
@@ -336,13 +859,6 @@
   flex: 1 1 auto;
   min-height: 0;
   -webkit-overflow-scrolling: touch;
-}
-
-/* Legacy flat console (non-Prody) — square corners */
-.developer-console-root:not(.memoryos-prody-shell) :not(.rounded-full):not([class*="rounded-full"]),
-.developer-console-root:not(.memoryos-prody-shell) :not(.rounded-full):not([class*="rounded-full"])::before,
-.developer-console-root:not(.memoryos-prody-shell) :not(.rounded-full):not([class*="rounded-full"])::after {
-  border-radius: 0 !important;
 }
 
 /* Prody premium surfaces inside intelligence workspace */
@@ -387,12 +903,12 @@
   border-radius: 0 !important;
 }
 
-/* Connector catalog — square actions (Integrations line-grid style) */
+/* Connector catalog — rounded source actions */
 .memoryos-prody-shell .intel-section-content .connector-action-btn,
 .memoryos-prody-shell .intel-section-content button.connector-action-btn {
-  border-radius: 0 !important;
+  border-radius: 9999px !important;
   box-shadow: none !important;
-  min-height: 2.5rem;
+  min-height: 1.75rem;
 }
 
 .memoryos-prody-shell .intel-section-content .connector-action-btn .pixel-load-btn__label {
@@ -405,15 +921,125 @@
 }
 
 .memoryos-prody-shell .intel-section-content .connector-action-btn--disconnect {
-  border: none !important;
-  background: #111827 !important;
-  color: #ffffff !important;
+  border-color: #fecaca !important;
+  background: #fff7f7 !important;
+  color: #b91c1c !important;
 }
 
 .memoryos-prody-shell .intel-section-content .connector-action-btn--disconnect:hover {
-  background: #1f2937 !important;
-  color: #ffffff !important;
+  background: #fff1f1 !important;
+  color: #991b1b !important;
 }
+
+.memoryos-prody-shell .intel-section-content .connector-live-dot {
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  border-radius: 9999px;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35);
+  animation: connector-live-pulse 1.8s ease-out infinite;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-live-dot--danger {
+  background: #ef4444;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.35);
+  animation-name: connector-danger-pulse;
+}
+
+@keyframes connector-live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes connector-danger-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.35);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-track {
+  position: relative;
+  display: inline-flex;
+  width: 4.8rem;
+  height: 2.32rem;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.34);
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-thumb {
+  position: absolute;
+  left: 0.22rem;
+  top: 0.22rem;
+  display: grid;
+  width: 1.88rem;
+  height: 1.88rem;
+  place-items: center;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #0284c7;
+  box-shadow:
+    0 9px 18px rgba(15, 23, 42, 0.18),
+    0 1px 2px rgba(15, 23, 42, 0.16);
+  transition: transform 190ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 190ms ease;
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-btn:hover .connector-toggle-thumb {
+  box-shadow:
+    0 10px 22px rgba(15, 23, 42, 0.22),
+    0 1px 2px rgba(15, 23, 42, 0.16);
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-btn--on .connector-toggle-track {
+  background: #0284c7;
+  box-shadow:
+    inset 0 0 0 1px rgba(2, 132, 199, 0.18),
+    0 9px 22px rgba(2, 132, 199, 0.24);
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-btn--on .connector-toggle-thumb {
+  transform: translateX(2.48rem);
+}
+
+.memoryos-prody-shell .intel-section-content .connector-toggle-btn--disabled .connector-toggle-track {
+  background: #f1f5f9;
+  box-shadow: inset 0 0 0 1px rgba(203, 213, 225, 0.65);
+}
+
 
 /* Connector catalog — full-height 1px tile gutters (Integrations line-grid) */
 .memoryos-prody-shell .intel-section-content .connector-tile-grid {
@@ -444,21 +1070,21 @@
   }
 }
 
-.memoryos-prody-shell .intel-section-content .connector-tile-grid > * {
+.memoryos-prody-shell .intel-section-content .connector-tile-grid>* {
   background-color: #ffffff !important;
   min-height: 220px;
   min-width: 0;
 }
 
-.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--tall > * {
+.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--tall>* {
   min-height: 360px;
 }
 
-.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--short > * {
+.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--short>* {
   min-height: 120px;
 }
 
-.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--health > * {
+.memoryos-prody-shell .intel-section-content .connector-tile-grid.connector-tile-grid--health>* {
   min-height: 200px;
 }
 
@@ -479,7 +1105,7 @@
   }
 }
 
-/* Stacked panels + hatch gutters — square, no side inset */
+/* Stacked panels + flat gutters — square, no side inset */
 .memoryos-prody-shell .intel-section-content .connector-panel-run {
   display: flex;
   flex-direction: column;
@@ -501,7 +1127,7 @@
   box-shadow: none !important;
 }
 
-/* Section gutter band — solid line + hatch + solid line (Overview / Connectors) */
+/* Section gutter band — 1px rules + diagonal hatch gap (Overview / Connectors / line-grid) */
 .memoryos-prody-shell .intel-section-gutter-band {
   display: flex;
   flex-direction: column;
@@ -509,6 +1135,7 @@
   min-width: 100% !important;
   flex-shrink: 0;
   margin: 0 !important;
+  background-color: #f3f4f6;
 }
 
 .memoryos-prody-shell .intel-section-gutter-line {
@@ -520,46 +1147,25 @@
 }
 
 .memoryos-prody-shell .connector-section-gutter,
-.memoryos-prody-shell .intel-section-content .connector-section-gutter {
-  display: block;
-  width: 100% !important;
-  min-width: 100% !important;
-  height: 12px;
-  flex-shrink: 0;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-  border-left: none;
-  border-right: none;
-  background-color: #ffffff;
-  background-image: repeating-linear-gradient(
-    115deg,
-    #ffffff 0,
-    #ffffff 7px,
-    #e5e7eb 7px,
-    #e5e7eb 8px
-  );
-}
-
+.memoryos-prody-shell .intel-section-content .connector-section-gutter,
 .memoryos-prody-shell .intel-section-gutter,
 .memoryos-prody-shell .intel-section-content .intel-section-gutter {
   display: block;
   width: 100% !important;
   min-width: 100% !important;
-  height: 12px;
+  height: 10px;
+  min-height: 10px;
   flex-shrink: 0;
   margin: 0 !important;
   border-radius: 0 !important;
   border: none !important;
-  background-color: #ffffff;
-  background-image: repeating-linear-gradient(
-    115deg,
-    #ffffff 0,
-    #ffffff 7px,
-    #e5e7eb 7px,
-    #e5e7eb 8px
-  );
+  background-color: #f3f4f6;
+  background-image: repeating-linear-gradient(-45deg,
+      #e5e7eb 0,
+      #e5e7eb 1px,
+      transparent 1px,
+      transparent 7px);
+  background-size: 10px 10px;
 }
 
 /* Overview / intel line-grid — same tile gutters as connectors */
@@ -573,6 +1179,7 @@
 }
 
 @media (min-width: 640px) {
+
   .memoryos-prody-shell .intel-full-bleed,
   .memoryos-prody-shell .intel-section-content .intel-full-bleed {
     margin-left: -1rem !important;
@@ -624,14 +1231,15 @@
 }
 
 @media (min-width: 768px) {
+
   .memoryos-prody-shell .overview-chart-row,
   .memoryos-prody-shell .intel-section-content .overview-chart-row {
     grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr) !important;
   }
 }
 
-.memoryos-prody-shell .overview-chart-row > .overview-chart-cell,
-.memoryos-prody-shell .intel-section-content .overview-chart-row > .overview-chart-cell {
+.memoryos-prody-shell .overview-chart-row>.overview-chart-cell,
+.memoryos-prody-shell .intel-section-content .overview-chart-row>.overview-chart-cell {
   display: flex !important;
   flex-direction: column !important;
   min-height: 320px;
@@ -670,8 +1278,8 @@
   height: 280px !important;
 }
 
-.memoryos-prody-shell .overview-chart-row > .overview-flow-insight,
-.memoryos-prody-shell .intel-section-content .overview-chart-row > .overview-flow-insight {
+.memoryos-prody-shell .overview-chart-row>.overview-flow-insight,
+.memoryos-prody-shell .intel-section-content .overview-chart-row>.overview-flow-insight {
   min-height: 320px;
   background-color: #f3f4f6 !important;
 }
@@ -687,14 +1295,15 @@
 }
 
 @media (min-width: 1024px) {
+
   .memoryos-prody-shell .memory-graph-chart-row,
   .memoryos-prody-shell .intel-section-content .memory-graph-chart-row {
     grid-template-columns: minmax(0, 1fr) minmax(240px, 22rem) !important;
   }
 }
 
-.memoryos-prody-shell .memory-graph-chart-row > .memory-graph-stage-cell,
-.memoryos-prody-shell .intel-section-content .memory-graph-chart-row > .memory-graph-stage-cell {
+.memoryos-prody-shell .memory-graph-chart-row>.memory-graph-stage-cell,
+.memoryos-prody-shell .intel-section-content .memory-graph-chart-row>.memory-graph-stage-cell {
   position: relative;
   min-height: 560px;
   min-width: 0 !important;
@@ -703,8 +1312,8 @@
   background-color: #ffffff !important;
 }
 
-.memoryos-prody-shell .memory-graph-chart-row > .memory-evolution-stage-cell,
-.memoryos-prody-shell .intel-section-content .memory-graph-chart-row > .memory-evolution-stage-cell {
+.memoryos-prody-shell .memory-graph-chart-row>.memory-evolution-stage-cell,
+.memoryos-prody-shell .intel-section-content .memory-graph-chart-row>.memory-evolution-stage-cell {
   min-height: 0;
   overflow: visible;
 }
@@ -720,8 +1329,8 @@
   align-content: start;
 }
 
-.memoryos-prody-shell .memory-graph-sidebar-stack > .memory-graph-sidebar-cell,
-.memoryos-prody-shell .intel-section-content .memory-graph-sidebar-stack > .memory-graph-sidebar-cell {
+.memoryos-prody-shell .memory-graph-sidebar-stack>.memory-graph-sidebar-cell,
+.memoryos-prody-shell .intel-section-content .memory-graph-sidebar-stack>.memory-graph-sidebar-cell {
   min-width: 0 !important;
   background-color: #ffffff !important;
 }
@@ -734,6 +1343,7 @@
 }
 
 @media (min-width: 768px) {
+
   .memoryos-prody-shell .intel-tile-grid--kpi,
   .memoryos-prody-shell .intel-tile-grid--cards,
   .memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi,
@@ -743,6 +1353,7 @@
 }
 
 @media (min-width: 1024px) {
+
   .memoryos-prody-shell .intel-tile-grid--kpi,
   .memoryos-prody-shell .intel-tile-grid--cards,
   .memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi,
@@ -750,26 +1361,31 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .memoryos-prody-shell .governance-kpi-grid,
+  .memoryos-prody-shell .intel-section-content .governance-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
 }
 
-.memoryos-prody-shell .intel-tile-grid > *,
-.memoryos-prody-shell .intel-section-content .intel-tile-grid > * {
+.memoryos-prody-shell .intel-tile-grid>*,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid>* {
   background-color: #ffffff !important;
   min-width: 0;
 }
 
-.memoryos-prody-shell .intel-tile-grid--kpi > *,
-.memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi > * {
+.memoryos-prody-shell .intel-tile-grid--kpi>*,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--kpi>* {
   min-height: 108px;
 }
 
-.memoryos-prody-shell .intel-tile-grid--chart > *,
-.memoryos-prody-shell .intel-section-content .intel-tile-grid--chart > * {
+.memoryos-prody-shell .intel-tile-grid--chart>*,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--chart>* {
   min-height: 320px;
 }
 
-.memoryos-prody-shell .intel-tile-grid--cards > *,
-.memoryos-prody-shell .intel-section-content .intel-tile-grid--cards > * {
+.memoryos-prody-shell .intel-tile-grid--cards>*,
+.memoryos-prody-shell .intel-section-content .intel-tile-grid--cards>* {
   min-height: 148px;
 }
 
@@ -828,96 +1444,584 @@
   background: #ffffff;
 }
 
-.memoryos-prody-shell .developer-console-sections {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  flex: 1 1 auto;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-}
-
-.memoryos-prody-shell .developer-console-sections > * {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  min-height: 0;
-  flex: 1 1 auto;
-}
-
-.memoryos-prody-shell .developer-console-sections .intel-workspace-fill {
-  min-height: 0;
-  flex: 1 1 auto;
-}
-
 /* Developer console — thin scrollbars, no arrow buttons */
 .memoryos-prody-shell,
-.memoryos-prody-shell *,
-.developer-console-root,
-.developer-console-root * {
+.memoryos-prody-shell * {
   scrollbar-width: thin;
   scrollbar-color: rgba(17, 24, 39, 0.22) transparent;
 }
 
 .memoryos-prody-shell::-webkit-scrollbar,
-.memoryos-prody-shell *::-webkit-scrollbar,
-.developer-console-root::-webkit-scrollbar,
-.developer-console-root *::-webkit-scrollbar {
+.memoryos-prody-shell *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 .memoryos-prody-shell::-webkit-scrollbar-button,
-.memoryos-prody-shell *::-webkit-scrollbar-button,
-.developer-console-root::-webkit-scrollbar-button,
-.developer-console-root *::-webkit-scrollbar-button {
+.memoryos-prody-shell *::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
 }
 
 .memoryos-prody-shell::-webkit-scrollbar-track,
-.memoryos-prody-shell *::-webkit-scrollbar-track,
-.developer-console-root::-webkit-scrollbar-track,
-.developer-console-root *::-webkit-scrollbar-track {
+.memoryos-prody-shell *::-webkit-scrollbar-track {
   background: transparent;
 }
 
 .memoryos-prody-shell::-webkit-scrollbar-thumb,
-.memoryos-prody-shell *::-webkit-scrollbar-thumb,
-.developer-console-root::-webkit-scrollbar-thumb,
-.developer-console-root *::-webkit-scrollbar-thumb {
+.memoryos-prody-shell *::-webkit-scrollbar-thumb {
   background-color: rgba(17, 24, 39, 0.18);
   border-radius: 9999px;
 }
 
 .memoryos-prody-shell::-webkit-scrollbar-thumb:hover,
-.memoryos-prody-shell *::-webkit-scrollbar-thumb:hover,
-.developer-console-root::-webkit-scrollbar-thumb:hover,
-.developer-console-root *::-webkit-scrollbar-thumb:hover {
+.memoryos-prody-shell *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(17, 24, 39, 0.32);
 }
 
-.developer-console-root .rounded-full,
-.developer-console-root [class*="rounded-full"] {
-  border-radius: 9999px !important;
+/* Line-grid cells — theme via shell class */
+.memoryos-prody-shell .intel-line-cell {
+  background-color: #ffffff;
 }
 
-.developer-console-root :not(pre):not(code):not(.keep-mono).font-mono {
-  font-family: inherit;
-  letter-spacing: inherit;
+.memoryos-prody-shell .intel-line-frame {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
 }
 
-.developer-console-root pre,
-.developer-console-root code,
-.developer-console-root .keep-mono {
-  font-family: var(--font-mono), ui-monospace, monospace;
+/* Mission Control dark — matte black + LED accents */
+.memoryos-prody-shell.dark {
+  --background: #050505;
+  --foreground: #ffffff;
+  --card: #0d0d0d;
+  --card-foreground: #ffffff;
+  --muted: #101010;
+  --muted-foreground: rgb(255 255 255 / 0.45);
+  --border: #252525;
+  --primary: #38bdf8;
+  --primary-foreground: #020617;
+  --input: #252525;
+  background: #050505;
+  color: #ffffff;
 }
 
-.developer-console-sections > div > * {
-  animation: console-fade-in 0.28s ease-out;
+.memoryos-prody-shell.dark .intel-section-content {
+  --background: #050505;
+  --foreground: #ffffff;
+  --card: #0d0d0d;
+  --card-foreground: #ffffff;
+  --muted: #101010;
+  --muted-foreground: rgb(255 255 255 / 0.45);
+  --border: #252525;
+  --primary: #38bdf8;
+  --primary-foreground: #020617;
+  --memory-graph-canvas-bg: #050505;
+  --memory-graph-plot-bg: #070707;
+  --memory-graph-grid: #252525;
+  --memory-graph-grid-soft: #1f1f1f;
+  --memory-graph-hatch: #181818;
+  --memory-graph-hatch-soft: #141414;
+  --memory-graph-allocation: #111827;
+  --memory-graph-signal: #38bdf8;
+  --memory-graph-axis: rgb(255 255 255 / 0.55);
+  background: #050505 !important;
+  color: #ffffff !important;
+}
+
+.memoryos-prody-shell.dark .intel-line-cell,
+.memoryos-prody-shell.dark .intel-line-frame {
+  background-color: #0d0d0d;
+}
+
+.memoryos-prody-shell.dark .intel-line-frame {
+  border-color: #252525;
+}
+
+/* Overview / connector stacked runs — light mode uses #fff panel shell */
+.memoryos-prody-shell.dark .intel-panel-run,
+.memoryos-prody-shell.dark .intel-section-content .intel-panel-run,
+.memoryos-prody-shell.dark .intel-section-content .connector-panel-run {
+  background-color: #0f0f0f !important;
+  border-top-color: #252525 !important;
+  border-bottom-color: #252525 !important;
+}
+
+.memoryos-prody-shell.dark .overview-chart-row>.overview-chart-cell,
+.memoryos-prody-shell.dark .intel-section-content .overview-chart-row>.overview-chart-cell {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .memory-graph-chart-row>.memory-graph-stage-cell,
+.memoryos-prody-shell.dark .intel-section-content .memory-graph-chart-row>.memory-graph-stage-cell,
+.memoryos-prody-shell.dark .memory-graph-sidebar-stack>.memory-graph-sidebar-cell,
+.memoryos-prody-shell.dark .intel-section-content .memory-graph-sidebar-stack>.memory-graph-sidebar-cell {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .memory-graph-stage-cell .memoryos-neural-grid {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.06) 1px, transparent 0);
+}
+
+.memoryos-prody-shell.dark .memoryos-neural-grid {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.06) 1px, transparent 0);
+}
+
+.memoryos-prody-shell.dark .memoryos-console-scroll {
+  background: #050505 !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content select,
+.memoryos-prody-shell.dark .intel-section-content input:not([type="checkbox"]):not([type="radio"]),
+.memoryos-prody-shell.dark .intel-section-content textarea {
+  border: 1px solid rgb(255 255 255 / 0.06) !important;
+  background: rgb(255 255 255 / 0.03) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content select:focus,
+.memoryos-prody-shell.dark .intel-section-content input:focus,
+.memoryos-prody-shell.dark .intel-section-content textarea:focus {
+  border-color: rgb(255 255 255 / 0.12) !important;
+  box-shadow: none !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content [data-slot="button"].bg-primary,
+.memoryos-prody-shell.dark .intel-section-content button.bg-primary,
+.memoryos-prody-shell.dark .intel-section-content [data-slot="button"][class*="bg-[#111827]"],
+.memoryos-prody-shell.dark .intel-section-content button[class*="bg-[#111827]"] {
+  background: #0d0d0d !important;
+  color: #ffffff !important;
+  border: 1px solid #252525 !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content [data-slot="button"][data-variant="outline"],
+.memoryos-prody-shell.dark .intel-section-content [data-slot="button"][data-variant="ghost"] {
+  border-color: #252525 !important;
+  background: rgb(255 255 255 / 0.03) !important;
+  color: rgb(255 255 255 / 0.85) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .prody-input {
+  border: 1px solid rgb(255 255 255 / 0.06);
+  background: rgb(255 255 255 / 0.03);
+  color: #ffffff;
+}
+
+.memoryos-prody-shell.dark .console-premium-panel,
+.memoryos-prody-shell.dark .console-section-surface,
+.memoryos-prody-shell.dark .console-stat-surface,
+.memoryos-prody-shell.dark .console-surface {
+  border-color: #252525 !important;
+  background: #0d0d0d !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03) !important;
+}
+
+.memoryos-prody-shell.dark .console-toolbar {
+  border: 1px solid #252525 !important;
+  background: #080808 !important;
+}
+
+.memoryos-prody-shell.dark .console-empty-state {
+  border: 1px dashed #2f2f2f !important;
+  background: #080808 !important;
+  color: rgb(255 255 255 / 0.45);
+}
+
+.memoryos-prody-shell.dark .intel-section-content .connector-tile-grid>*,
+.memoryos-prody-shell.dark .intel-tile-grid>*,
+.memoryos-prody-shell.dark .intel-section-content .intel-tile-grid>* {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .intel-tile-grid,
+.memoryos-prody-shell.dark .intel-section-content .intel-tile-grid,
+.memoryos-prody-shell.dark .intel-section-content .connector-tile-grid,
+.memoryos-prody-shell.dark .overview-chart-row,
+.memoryos-prody-shell.dark .intel-section-content .overview-chart-row,
+.memoryos-prody-shell.dark .memory-graph-chart-row,
+.memoryos-prody-shell.dark .intel-section-content .memory-graph-chart-row,
+.memoryos-prody-shell.dark .memory-graph-sidebar-stack,
+.memoryos-prody-shell.dark .intel-section-content .memory-graph-sidebar-stack {
+  background-color: #252525 !important;
+}
+
+.memoryos-prody-shell.dark .overview-flow-insight,
+.memoryos-prody-shell.dark .overview-chart-row>.overview-flow-insight,
+.memoryos-prody-shell.dark .intel-section-content .overview-chart-row>.overview-flow-insight {
+  background-color: #141414 !important;
+  color: #ffffff;
+}
+
+.memoryos-prody-shell.dark .overview-flow-insight .bg-white,
+.memoryos-prody-shell.dark .intel-section-content .overview-flow-insight .bg-white {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .overview-flow-insight .divide-\[\#E5E7EB\]> :not([hidden])~ :not([hidden]),
+.memoryos-prody-shell.dark .intel-section-content .overview-flow-insight .divide-\[\#E5E7EB\]> :not([hidden])~ :not([hidden]) {
+  border-color: rgb(255 255 255 / 0.06);
+}
+
+.memoryos-prody-shell.dark .intel-chart-plot,
+.memoryos-prody-shell.dark .intel-section-content .intel-chart-plot {
+  background-color: #141414;
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+}
+
+/* Dark shell — hatch gutters on #0a0a0a (subtle tilted lines, not flat or bright white) */
+.memoryos-prody-shell.dark .intel-section-gutter-band {
+  display: flex;
+  flex-direction: column;
+  background-color: #050505;
+}
+
+.memoryos-prody-shell.dark .intel-section-gutter-line {
+  display: block;
+  height: 1px;
+  background-color: #252525;
+}
+
+.memoryos-prody-shell.dark .connector-section-gutter,
+.memoryos-prody-shell.dark .intel-section-content .connector-section-gutter,
+.memoryos-prody-shell.dark .intel-section-gutter,
+.memoryos-prody-shell.dark .intel-section-content .intel-section-gutter {
+  display: block;
+  height: 10px;
+  min-height: 10px;
+  border: none !important;
+  background-color: #050505;
+  background-image: repeating-linear-gradient(-45deg,
+      #252525 0,
+      #252525 1px,
+      transparent 1px,
+      transparent 7px);
+  background-size: 10px 10px;
+}
+
+.memoryos-prody-shell.dark .overview-prody-stack.intel-panel-run,
+.memoryos-prody-shell.dark .intel-section-content .overview-prody-stack.intel-panel-run {
+  background-color: #0f0f0f !important;
+  border-top-color: #252525 !important;
+  border-bottom-color: #252525 !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .bg-\[\#FAFAFA\] {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .gap-px.bg-\[\#E5E7EB\],
+.memoryos-prody-shell.dark .intel-section-content .gap-px.border-\[\#E5E7EB\] {
+  border-color: #252525 !important;
+  background-color: #252525 !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .intel-line-table th,
+.memoryos-prody-shell.dark .intel-section-content .intel-line-table td {
+  border-color: #252525;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .intel-line-table thead th {
+  background-color: #080808;
+  color: rgb(255 255 255 / 0.45);
+}
+
+.memoryos-prody-shell.dark .intel-section-content .intel-line-table tbody tr:hover {
+  background-color: rgb(255 255 255 / 0.03);
+}
+
+.memoryos-prody-shell.dark .intel-workspace-fill {
+  background: #050505 !important;
+}
+
+.memoryos-prody-shell.dark,
+.memoryos-prody-shell.dark * {
+  scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+}
+
+.memoryos-prody-shell.dark::-webkit-scrollbar-thumb,
+.memoryos-prody-shell.dark *::-webkit-scrollbar-thumb {
+  background-color: rgb(255 255 255 / 0.14);
+}
+
+.memoryos-prody-shell.dark::-webkit-scrollbar-thumb:hover,
+.memoryos-prody-shell.dark *::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(255 255 255 / 0.28);
+}
+
+/* Remap legacy Prody hex text inside dashboard sections (dark shell only) */
+.memoryos-prody-shell.dark .intel-section-content .text-\[\#111827\] {
+  color: #ffffff !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .text-\[\#374151\] {
+  color: rgb(255 255 255 / 0.85) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .text-\[\#6B7280\] {
+  color: rgb(255 255 255 / 0.45) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .text-\[\#9CA3AF\] {
+  color: rgb(255 255 255 / 0.35) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .border-\[\#E5E7EB\] {
+  border-color: rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .bg-\[\#F9FAFB\] {
+  background-color: rgb(255 255 255 / 0.03) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .bg-\[\#F3F4F6\] {
+  background-color: #141414 !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .bg-white {
+  background-color: #1a1a1a !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .border-\[\#E0E7FF\],
+.memoryos-prody-shell.dark .intel-section-content .border-\[\#C7D2FE\],
+.memoryos-prody-shell.dark .intel-section-content .border-\[\#D1FAE5\],
+.memoryos-prody-shell.dark .intel-section-content .border-\[\#A7F3D0\] {
+  border-color: rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .from-\[\#EEF2FF\],
+.memoryos-prody-shell.dark .intel-section-content .from-\[\#ECFDF5\] {
+  --tw-gradient-from: rgb(255 255 255 / 0.06) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .to-white,
+.memoryos-prody-shell.dark .intel-section-content .to-\[\#F9FAFB\] {
+  --tw-gradient-to: #1a1a1a var(--tw-gradient-to-position) !important;
+}
+
+.memoryos-prody-shell.dark .intel-section-content .hover\:bg-\[\#F9FAFB\]:hover,
+.memoryos-prody-shell.dark .intel-section-content .hover\:bg-\[\#EEF2FF\]:hover {
+  background-color: rgb(255 255 255 / 0.04) !important;
+}
+
+/* Shell-wide legacy token remap (header, frames, modals outside nested content) */
+.memoryos-prody-shell.dark .text-\[\#111827\] {
+  color: #ffffff !important;
+}
+
+.memoryos-prody-shell.dark .text-\[\#374151\] {
+  color: rgb(255 255 255 / 0.85) !important;
+}
+
+.memoryos-prody-shell.dark .text-\[\#6B7280\] {
+  color: rgb(255 255 255 / 0.45) !important;
+}
+
+.memoryos-prody-shell.dark .text-\[\#9CA3AF\] {
+  color: rgb(255 255 255 / 0.35) !important;
+}
+
+.memoryos-prody-shell.dark .border-\[\#E5E7EB\],
+.memoryos-prody-shell.dark .border-\[\#F3F4F6\] {
+  border-color: rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .border-\[\#D1D5DB\] {
+  border-color: rgb(255 255 255 / 0.12) !important;
+}
+
+.memoryos-prody-shell.dark .bg-\[\#F9FAFB\],
+.memoryos-prody-shell.dark .bg-\[\#FAFAFA\] {
+  background-color: rgb(255 255 255 / 0.03) !important;
+}
+
+.memoryos-prody-shell.dark .bg-\[\#F3F4F6\] {
+  background-color: #141414 !important;
+}
+
+.memoryos-prody-shell.dark .bg-white,
+.memoryos-prody-shell.dark .bg-white\/80,
+.memoryos-prody-shell.dark .bg-white\/95 {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .bg-\[\#fafafa\],
+.memoryos-prody-shell.dark .bg-\[\#FAFAFA\],
+.memoryos-prody-shell.dark .bg-\[\#f9fafb\],
+.memoryos-prody-shell.dark .bg-\[\#F9FAFB\] {
+  background-color: #0d0d0d !important;
+}
+
+.memoryos-prody-shell.dark .border-white,
+.memoryos-prody-shell.dark .border-\[\#e5e7eb\],
+.memoryos-prody-shell.dark .border-\[\#E5E7EB\],
+.memoryos-prody-shell.dark .border-\[\#dfe3e8\],
+.memoryos-prody-shell.dark .border-\[\#eef0f3\] {
+  border-color: #252525 !important;
+}
+
+.memoryos-prody-shell.dark .gap-px.bg-\[\#E5E7EB\],
+.memoryos-prody-shell.dark .gap-px.border-\[\#E5E7EB\] {
+  border-color: rgb(255 255 255 / 0.06) !important;
+  background-color: rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .divide-\[\#E5E7EB\]> :not([hidden])~ :not([hidden]),
+.memoryos-prody-shell.dark .divide-\[\#F3F4F6\]> :not([hidden])~ :not([hidden]) {
+  border-color: rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .ring-\[\#E5E7EB\] {
+  --tw-ring-color: rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .hover\:bg-\[\#F9FAFB\]:hover,
+.memoryos-prody-shell.dark .hover\:bg-\[\#EEF2FF\]:hover,
+.memoryos-prody-shell.dark .hover\:border-\[\#C7D2FE\]:hover {
+  background-color: rgb(255 255 255 / 0.04) !important;
+}
+
+.memoryos-prody-shell.dark .to-white,
+.memoryos-prody-shell.dark .to-\[\#F9FAFB\] {
+  --tw-gradient-to: #1a1a1a var(--tw-gradient-to-position) !important;
+}
+
+.memoryos-prody-shell.dark .from-\[\#EEF2FF\],
+.memoryos-prody-shell.dark .from-\[\#ECFDF5\] {
+  --tw-gradient-from: rgb(255 255 255 / 0.06) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.memoryos-prody-shell.dark [data-console-header-chrome] [data-slot="button"],
+.memoryos-prody-shell.dark [data-console-header-chrome] button {
+  box-shadow: none !important;
+}
+
+.memoryos-prody-shell.dark [data-console-header-chrome] .bg-white,
+.memoryos-prody-shell.dark [data-console-header-chrome] [class*="bg-white"] {
+  background-color: rgb(255 255 255 / 0.04) !important;
+  border-color: rgb(255 255 255 / 0.08) !important;
+  color: #ffffff !important;
+}
+
+.memoryos-prody-shell.dark select,
+.memoryos-prody-shell.dark input:not([type="checkbox"]):not([type="radio"]),
+.memoryos-prody-shell.dark textarea {
+  border-color: rgb(255 255 255 / 0.06) !important;
+  background-color: rgb(255 255 255 / 0.03) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.memoryos-prody-shell.dark [data-slot="button"].bg-primary,
+.memoryos-prody-shell.dark button.bg-primary,
+.memoryos-prody-shell.dark [data-slot="button"][class*="bg-[#111827]"],
+.memoryos-prody-shell.dark button[class*="bg-[#111827]"] {
+  background: rgb(255 255 255 / 0.08) !important;
+  color: #ffffff !important;
+  border: 1px solid rgb(255 255 255 / 0.06) !important;
+}
+
+.memoryos-prody-shell.dark .shadow-sm,
+.memoryos-prody-shell.dark .shadow-xl,
+.memoryos-prody-shell.dark .shadow-lg {
+  box-shadow: 0 8px 32px rgb(0 0 0 / 0.45) !important;
+}
+
+/* Continuity Lab — Devin-style surfaces */
+.continuity-lab-root {
+  --cl-sidebar: #000000;
+  --cl-main: #0f0f0f;
+  --cl-panel: #1a1a1a;
+  --cl-panel-soft: #141414;
+  --cl-composer: #1a1a1a;
+  --cl-border: rgb(255 255 255 / 0.06);
+  --cl-border-strong: rgb(255 255 255 / 0.1);
+  background: var(--cl-main);
+  color: #ffffff;
+  color-scheme: dark;
+}
+
+.continuity-lab-root [class*="bg-[#050505]"],
+.continuity-lab-root [class*="bg-[#0A0A0A]"],
+.continuity-lab-root [class*="bg-[#0a0a0a]"] {
+  background-color: var(--cl-main) !important;
+}
+
+.continuity-lab-root [class*="bg-[#0B0B0D]"],
+.continuity-lab-root [class*="bg-[#0E0E10]"],
+.continuity-lab-root [class*="bg-[#0F1013]"],
+.continuity-lab-root [class*="bg-[#101010]"],
+.continuity-lab-root [class*="bg-[#111111]"] {
+  background-color: var(--cl-panel-soft) !important;
+}
+
+.continuity-lab-root [class*="bg-[#0f0f0f]"] {
+  background-color: var(--cl-main) !important;
+}
+
+.continuity-lab-root [class*="bg-[#141414]"],
+.continuity-lab-root [class*="bg-[#141416]"],
+.continuity-lab-root [class*="bg-[#171717]"],
+.continuity-lab-root [class*="bg-[#181818]"],
+.continuity-lab-root [class*="bg-[#1a1a1a]"],
+.continuity-lab-root [class*="bg-[#1F1F1F]"] {
+  background-color: var(--cl-panel) !important;
+}
+
+.continuity-lab-root [class*="border-[#2F2F2F]"],
+.continuity-lab-root [class*="border-[#3A3A3A]"] {
+  border-color: var(--cl-border-strong) !important;
+}
+
+/* Continuity Lab sidebar — recent lists scroll without visible scrollbar */
+.continuity-lab-sidebar-recent-scroll {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.continuity-lab-sidebar-recent-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Continuity Lab main — dark thumb, visible only while scrolling */
+.continuity-lab-root [data-continuity-lab-scroll-root] {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+}
+
+.continuity-lab-root [data-continuity-lab-scroll-root].is-scrolling {
+  scrollbar-color: rgb(255 255 255 / 0.26) transparent;
+}
+
+.continuity-lab-root [data-continuity-lab-scroll-root]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.continuity-lab-root [data-continuity-lab-scroll-root]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.continuity-lab-root [data-continuity-lab-scroll-root]::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.18);
+  border-radius: 999px;
+}
+
+.continuity-lab-root [data-continuity-lab-scroll-root].is-scrolling::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.26);
+}
+
+.continuity-lab-root [data-continuity-lab-scroll-root]::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.34);
 }
 
 @keyframes console-fade-in {
@@ -925,6 +2029,7 @@
     opacity: 0;
     transform: translateY(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -950,6 +2055,120 @@ button:not([data-no-pixel-load]),
 
 .pixel-load-btn--loading .pixel-load-btn__label {
   opacity: 0.92;
+}
+
+.theme-pixel-motion-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+  background: #050505;
+  will-change: opacity, transform;
+  transform: translateZ(0);
+}
+
+.theme-pixel-motion-overlay--light,
+.theme-pixel-motion-overlay--system {
+  background: #f8fafc;
+}
+
+.theme-pixel-motion-overlay--dark {
+  background: #050505;
+}
+
+.theme-pixel-motion-fill,
+.theme-pixel-motion-square {
+  position: absolute;
+  image-rendering: pixelated;
+  transform: translateZ(0);
+  will-change: transform, opacity, clip-path;
+}
+
+.theme-pixel-motion-fill {
+  inset: -8%;
+  background: currentColor;
+}
+
+.theme-pixel-motion-overlay--light {
+  color: #f8fafc;
+}
+
+.theme-pixel-motion-overlay--dark {
+  color: #050505;
+}
+
+.theme-pixel-motion-square {
+  display: block;
+  background: #111827;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 48px rgba(0, 0, 0, 0.18);
+}
+
+.theme-pixel-motion-overlay--light .theme-pixel-motion-square {
+  background: #111827;
+}
+
+.theme-pixel-motion-overlay--light .theme-pixel-motion-square:nth-child(3n) {
+  background: #ffffff;
+}
+
+.theme-pixel-motion-overlay--light .theme-pixel-motion-square:nth-child(4n) {
+  background: #e5e7eb;
+}
+
+.theme-pixel-motion-overlay--dark .theme-pixel-motion-square {
+  background: #f9fafb;
+}
+
+.theme-pixel-motion-overlay--dark .theme-pixel-motion-square:nth-child(3n) {
+  background: #111827;
+}
+
+.theme-pixel-motion-overlay--dark .theme-pixel-motion-square:nth-child(4n) {
+  background: #27272a;
+}
+
+.theme-toggle-pixels {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.24;
+  background-image:
+    repeating-conic-gradient(from 0deg,
+      rgba(0, 0, 0, 0.62) 0deg 90deg,
+      transparent 90deg 180deg,
+      rgba(0, 0, 0, 0.38) 180deg 270deg,
+      transparent 270deg 360deg);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+  animation: memoryos-theme-toggle-scan 520ms steps(8, end) both;
+}
+
+html[data-theme="dark"] .theme-toggle-pixels {
+  opacity: 0.18;
+}
+
+@keyframes memoryos-theme-toggle-scan {
+  0% {
+    transform: translateX(-52%);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.44;
+  }
+
+  60% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateX(52%);
+    opacity: 0;
+  }
 }
 
 .pixel-load-overlay-host {
@@ -990,15 +2209,18 @@ button:not([data-no-pixel-load]),
 }
 
 @keyframes pixel-load-flicker {
+
   0%,
   100% {
     opacity: 0.04;
     transform: scale(0.78);
   }
+
   40% {
     opacity: 0.55;
     transform: scale(1);
   }
+
   72% {
     opacity: 0.1;
     transform: scale(0.88);
@@ -1025,11 +2247,256 @@ button[data-pixel-loading="true"] .pixel-load-btn__label,
 
 @layer utilities {
   @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
+    0% {
+      transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
   }
 
   .animate-marquee {
     animation: marquee 35s linear infinite;
   }
+}
+
+/* Continuity Lab — MemoryOS star mark shimmer (7-color sweep) */
+@keyframes memoryos-logo-shimmer {
+
+  0%,
+  100% {
+    transform: translateX(-55%);
+  }
+
+  50% {
+    transform: translateX(35%);
+  }
+}
+
+.memoryos-logo-mark {
+  color: #d4d4d8;
+}
+
+.memoryos-logo-mark__shimmer {
+  opacity: 0.72;
+  will-change: transform;
+  animation: memoryos-logo-shimmer 3.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memoryos-logo-mark__shimmer {
+    animation: none;
+    transform: translateX(-12%);
+    opacity: 0.4;
+  }
+}
+
+
+/* Custom Sidebar Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Glossy 3D Blue Button UI (Matching Reference Images 1 & 2) */
+.btn-glossy-blue,
+.button-glossy-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2b7cff 0%, #1765ec 52%, #115bd9 100%);
+  color: #ffffff !important;
+  border: 1.5px solid #0d53c9;
+  box-shadow:
+    inset 0 1.5px 0.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1.5px 1.5px 0 rgba(0, 0, 0, 0.15),
+    0 2px 6px 0 rgba(17, 91, 217, 0.35);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Hover & touched state (Image 2) */
+.btn-glossy-blue:hover,
+.btn-glossy-blue:focus-visible,
+.button-glossy-primary:hover,
+.button-glossy-primary:focus-visible {
+  background: linear-gradient(180deg, #2272f8 0%, #125cdb 52%, #0d4eb8 100%);
+  border-color: #0947ba;
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px 0 rgba(17, 91, 217, 0.45);
+  transform: scale(0.985);
+}
+
+.btn-glossy-blue:active,
+.button-glossy-primary:active {
+  background: linear-gradient(180deg, #1d67e0 0%, #0e50c4 52%, #0a43a0 100%);
+  border-color: #073a94;
+  transform: scale(0.97);
+  box-shadow:
+    inset 0 1.5px 2px 0 rgba(0, 0, 0, 0.25),
+    0 1px 3px 0 rgba(17, 91, 217, 0.3);
+}
+
+/* Mission control invite CTA — pill-shaped and touch-safe */
+.mission-control-invite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 1.5px solid #0d53c9;
+  background: linear-gradient(180deg, #2f83ff 0%, #1d6af2 52%, #145fdf 100%);
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1.5px 0.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.14),
+    0 2px 7px 0 rgba(17, 91, 217, 0.28);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  transform: translateY(0);
+  transition:
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  touch-action: manipulation;
+}
+
+.mission-control-invite-button:hover,
+.mission-control-invite-button:focus-visible {
+  border-color: #0947ba;
+  background: linear-gradient(180deg, #4690ff 0%, #2d7af5 52%, #1767eb 100%);
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.18),
+    0 4px 14px 0 rgba(17, 91, 217, 0.38);
+  transform: translateY(-1px);
+}
+
+.mission-control-invite-button:active {
+  border-color: #073a94;
+  background: linear-gradient(180deg, #1e6ceb 0%, #155bd2 52%, #0f4fb9 100%);
+  box-shadow:
+    inset 0 1.5px 2px 0 rgba(0, 0, 0, 0.2),
+    0 1px 3px 0 rgba(17, 91, 217, 0.26);
+  transform: translateY(0) scale(0.985);
+}
+
+.mission-control-invite-button .pixel-load-btn__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1;
+}
+
+.mission-control-invite-button svg {
+  flex-shrink: 0;
+}
+
+/* Custom dark mode border/divider overrides to resolve white lines */
+.memoryos-prody-shell.dark .border-\[\#ddd\],
+.memoryos-prody-shell.dark .border-\[\#eee\],
+.memoryos-prody-shell.dark .border-\[\#e5e5e5\],
+.memoryos-prody-shell.dark .border-\[\#e2e2e2\],
+.memoryos-prody-shell.dark .border-black\/10,
+.memoryos-prody-shell.dark .border-black\/5,
+html.dark .mission-control-root .border-\[\#ddd\],
+html.dark .mission-control-root [class*="border-[#ddd]"],
+html.dark .mission-control-root .border-\[\#eee\],
+html.dark .mission-control-root [class*="border-[#eee]"],
+html.dark .mission-control-root .border-\[\#e5e5e5\],
+html.dark .mission-control-root [class*="border-[#e5e5e5]"],
+html.dark .mission-control-root .border-\[\#ccc\],
+html.dark .mission-control-root [class*="border-[#ccc]"],
+html.dark .mission-control-root .border-\[\#e2e2e2\],
+html.dark .mission-control-root [class*="border-[#e2e2e2]"],
+html.dark .mission-control-root [class*="border-black/10"],
+html.dark .mission-control-root [class*="border-black/5"] {
+  border-color: #252525 !important;
+}
+
+.memoryos-prody-shell.dark .divide-\[\#eee\] > :not([hidden]) ~ :not([hidden]),
+.memoryos-prody-shell.dark .divide-\[\#e2e2e2\] > :not([hidden]) ~ :not([hidden]),
+.memoryos-prody-shell.dark .divide-\[\#e5e5e5\] > :not([hidden]) ~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#eee\] > :not([hidden]) ~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#eee]"] > :not([hidden]) ~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#e2e2e2\] > :not([hidden]) ~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#e2e2e2]"] > :not([hidden]) ~ :not([hidden]),
+html.dark .mission-control-root .divide-\[\#e5e5e5\] > :not([hidden]) ~ :not([hidden]),
+html.dark .mission-control-root [class*="divide-[#e5e5e5]"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #252525 !important;
+}
+
+/* Scoped border-radius overrides for Mission Control (cards, buttons, dropdowns, inputs, dialogs) */
+body.in-mission-control,
+body.in-mission-control * {
+  --radius: 6px !important;
+  --radius-sm: 6px !important;
+  --radius-md: 6px !important;
+  --radius-lg: 6px !important;
+  --radius-xl: 6px !important;
+  --radius-2xl: 6px !important;
+  --radius-3xl: 6px !important;
+  --radius-4xl: 6px !important;
+}
+
+/* Force 6px border radius on cards, buttons, dropdowns, inputs, popovers, select fields and items in Mission Control, excluding fully rounded elements */
+body.in-mission-control [class*="rounded-"]:not(.rounded-full):not([class*="rounded-full"]):not([class*="rounded-r-"]):not([class*="rounded-l-"]):not([class*="rounded-t-"]):not([class*="rounded-b-"]),
+body.in-mission-control button:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control input:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control select:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control textarea:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [role="button"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [role="dialog"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [role="menu"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [role="listbox"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [data-radix-menu-content]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [data-radix-popper-content-wrapper]>div:not(.rounded-full):not([class*="rounded-full"]) {
+  border-radius: 6px !important;
+}
+
+/* Directional border radius overrides (rounded-l, rounded-r, rounded-t, rounded-b) in Mission Control */
+body.in-mission-control [class*="rounded-l-"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [class*="rounded-l"]:not(.rounded-full):not([class*="rounded-full"]) {
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}
+
+body.in-mission-control [class*="rounded-r-"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [class*="rounded-r"]:not(.rounded-full):not([class*="rounded-full"]) {
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+}
+
+body.in-mission-control [class*="rounded-t-"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [class*="rounded-t"]:not(.rounded-full):not([class*="rounded-full"]) {
+  border-top-left-radius: 6px !important;
+  border-top-right-radius: 6px !important;
+}
+
+body.in-mission-control [class*="rounded-b-"]:not(.rounded-full):not([class*="rounded-full"]),
+body.in-mission-control [class*="rounded-b"]:not(.rounded-full):not([class*="rounded-full"]) {
+  border-bottom-left-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
 }

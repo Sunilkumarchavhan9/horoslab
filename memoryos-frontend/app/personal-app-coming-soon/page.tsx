@@ -1,7 +1,7 @@
 export default function PersonalAppComingSoonPage() {
   return (
     <main className="min-h-screen bg-white px-6 py-20">
-      <div className="mx-auto max-w-2xl rounded-2xl border border-[#c9d8ee] bg-[#f8fbff] p-8 md:p-10">
+      <div className="mx-auto max-w-2xl rounded-md border border-[#c9d8ee] bg-[#f8fbff] p-8 md:p-10">
         <p className="font-mono text-[12px] tracking-[0.2em] text-[#4a6283]">PERSONAL APP</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-slate-900 md:text-4xl">
           Page Coming Soon

@@ -14,6 +14,7 @@ import type { Memory, TimelineEvent } from "../memory/types";
 import type { ScoredMemoryCandidate } from "../memory/scoreMemory";
 import { toInternalMemory, toMemory } from "./ingestShared";
 import { resolveLifecycleTransition } from "../memory/contradictionResolver";
+import { scheduleMemoryEmbedding } from "../memory/persistMemoryEmbedding";
 
 export interface PersistAcceptedResult {
   acceptedMemories: Memory[];
@@ -34,11 +35,11 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
       query: memory.content,
       topK: 5,
     });
-    const mem0Memories = searchResults
+    const providerMemories = searchResults
       .map((result) => toInternalMemory(result, memory.userId))
       .filter((item): item is Memory => item !== null);
 
-    const existingMemories = [...recentMemories, ...mem0Memories];
+    const existingMemories = [...recentMemories, ...providerMemories];
     const uniqueExistingMemories = Array.from(
       new Map(existingMemories.map((item) => [item.id, item])).values(),
     );
@@ -138,6 +139,7 @@ export async function persistAcceptedMemories( accepted: ScoredMemoryCandidate[]
 
     acceptedMemories.push(memoryToPersist);
     await upsertRecentMemory(memoryToPersist);
+    scheduleMemoryEmbedding(memoryToPersist);
 
     const timelineEvent =  await (bestMerge
       ? recordMemoryMergedEvent(memoryToPersist, timelineReason)

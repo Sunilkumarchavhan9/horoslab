@@ -1,12 +1,4 @@
-/**
- * Benchmark Store — JSON file-backed storage for benchmark runs and case results.
- *
- * Stores everything under data/eval/benchmark-runs.json so it persists across
- * restarts without requiring a Postgres migration (design-partner friendly).
- */
-
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
-import path from "path";
+import { prisma } from "../storage/prismaClient";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -85,119 +77,105 @@ export interface BenchmarkRun {
   caseResults: BenchmarkCaseResult[];
 }
 
-interface BenchmarkStoreFile {
-  runs: BenchmarkRun[];
-}
-
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const DATA_DIR = path.join(process.cwd(), "data", "eval");
-const STORE_PATH = path.join(DATA_DIR, "benchmark-runs.json");
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function ensureDataDir(): void {
-  if (!existsSync(DATA_DIR)) {
-    mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
-
-function readStore(): BenchmarkStoreFile {
-  ensureDataDir();
-  if (!existsSync(STORE_PATH)) {
-    return { runs: [] };
-  }
+function parseRun(raw: string): BenchmarkRun | null {
   try {
-    const raw = readFileSync(STORE_PATH, "utf8");
-    const parsed = JSON.parse(raw) as BenchmarkStoreFile;
-    if (!Array.isArray(parsed.runs)) {
-      return { runs: [] };
-    }
+    const parsed = JSON.parse(raw) as BenchmarkRun;
     return parsed;
   } catch {
-    return { runs: [] };
+    return null;
   }
-}
-
-function writeStore(store: BenchmarkStoreFile): void {
-  ensureDataDir();
-  writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
 }
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
-export function getAllRuns(): BenchmarkRun[] {
-  return readStore().runs;
+export async function getAllRuns(): Promise<BenchmarkRun[]> {
+  const rows = await prisma.benchmarkRun.findMany({ orderBy: { generatedAt: "desc" } });
+  return rows
+    .map((row) => parseRun(row.dataJson))
+    .filter((run): run is BenchmarkRun => run !== null);
 }
 
-export function getLatestRun(): BenchmarkRun | null {
-  const runs = readStore().runs;
-  if (runs.length === 0) return null;
-  return runs.reduce((latest, run) =>
-    new Date(run.generatedAt).getTime() > new Date(latest.generatedAt).getTime()
-      ? run
-      : latest,
-  );
+export async function getLatestRun(): Promise<BenchmarkRun | null> {
+  const row = await prisma.benchmarkRun.findFirst({ orderBy: { generatedAt: "desc" } });
+  return row ? parseRun(row.dataJson) : null;
 }
 
-export function getRunById(runId: string): BenchmarkRun | null {
-  return readStore().runs.find((r) => r.runId === runId) ?? null;
+export async function getRunById(runId: string): Promise<BenchmarkRun | null> {
+  const row = await prisma.benchmarkRun.findUnique({ where: { runId } });
+  return row ? parseRun(row.dataJson) : null;
 }
 
-export function getRunHistory(range: "7d" | "30d" | "90d" | "all"): BenchmarkRun[] {
-  const runs = readStore().runs;
+export async function getRunHistory(range: "7d" | "30d" | "90d" | "all"): Promise<BenchmarkRun[]> {
+  const where =
+    range === "all"
+      ? undefined
+      : {
+          generatedAt: {
+            gte: new Date(
+              Date.now() -
+                (range === "7d" ? 7 : range === "30d" ? 30 : 90) * 24 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
+        };
+  const rows = await prisma.benchmarkRun.findMany({
+    ...(where ? { where } : {}),
+    orderBy: { generatedAt: "asc" },
+  });
+  const runs = rows
+    .map((row) => parseRun(row.dataJson))
+    .filter((run): run is BenchmarkRun => run !== null);
   if (range === "all") {
-    return runs.sort(
-      (a, b) => new Date(a.generatedAt).getTime() - new Date(b.generatedAt).getTime(),
-    );
+    return runs;
   }
-
-  const days = range === "7d" ? 7 : range === "30d" ? 30 : 90;
-  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
-  return runs
-    .filter((r) => new Date(r.generatedAt).getTime() >= cutoff)
-    .sort(
-      (a, b) => new Date(a.generatedAt).getTime() - new Date(b.generatedAt).getTime(),
-    );
+  return runs;
 }
 
-export function getCaseResultsForRun(runId: string): BenchmarkCaseResult[] {
-  const run = getRunById(runId);
+export async function getCaseResultsForRun(runId: string): Promise<BenchmarkCaseResult[]> {
+  const run = await getRunById(runId);
   return run?.caseResults ?? [];
 }
 
-export function getCaseResultById(
+export async function getCaseResultById(
   runId: string,
   caseId: string,
-): BenchmarkCaseResult | null {
-  const results = getCaseResultsForRun(runId);
+): Promise<BenchmarkCaseResult | null> {
+  const results = await getCaseResultsForRun(runId);
   return results.find((r) => r.caseId === caseId) ?? null;
 }
 
-export function saveRun(run: BenchmarkRun): void {
-  const store = readStore();
-  const existingIndex = store.runs.findIndex((r) => r.runId === run.runId);
-  if (existingIndex >= 0) {
-    store.runs[existingIndex] = run;
-  } else {
-    store.runs.push(run);
-  }
-  writeStore(store);
+export async function saveRun(run: BenchmarkRun): Promise<void> {
+  await prisma.benchmarkRun.upsert({
+    where: { runId: run.runId },
+    create: {
+      runId: run.runId,
+      generatedAt: run.generatedAt,
+      completedAt: run.completedAt,
+      mode: run.mode,
+      status: run.status,
+      dataJson: JSON.stringify(run),
+    },
+    update: {
+      generatedAt: run.generatedAt,
+      completedAt: run.completedAt,
+      mode: run.mode,
+      status: run.status,
+      dataJson: JSON.stringify(run),
+    },
+  });
 }
 
-export function updateRunStatus(
+export async function updateRunStatus(
   runId: string,
   updates: Partial<Pick<BenchmarkRun, "status" | "completedAt" | "passedCases" | "failedCases" | "passRate" | "totalCases" | "top3RetrievalPrecision" | "resumeSuccessRate" | "contradictionMissRate" | "wrongMergeRate" | "p95RetrieveLatencyMs" | "abSummary" | "suites" | "caseResults">>,
-): BenchmarkRun | null {
-  const store = readStore();
-  const run = store.runs.find((r) => r.runId === runId);
+): Promise<BenchmarkRun | null> {
+  const run = await getRunById(runId);
   if (!run) return null;
   Object.assign(run, updates);
-  writeStore(store);
+  await saveRun(run);
   return run;
 }
 
 /** Check if there is a run currently in "running" status */
-export function hasRunningBenchmark(): boolean {
-  return readStore().runs.some((r) => r.status === "running");
+export async function hasRunningBenchmark(): Promise<boolean> {
+  return (await prisma.benchmarkRun.count({ where: { status: "running" } })) > 0;
 }

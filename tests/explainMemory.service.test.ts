@@ -1,13 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { setMemoryStoreAdapter } from "../lib/adapters/registry";
+import { TestMemoryStoreAdapter } from "./helpers/testMemoryStoreAdapter";
 
 const mocks = vi.hoisted(() => ({
-  getMemoryById: vi.fn(),
   listRevisionEvents: vi.fn(),
   listTimelineEvents: vi.fn(),
-}));
-
-vi.mock("../lib/integrations/mem0", () => ({
-  getMemoryById: mocks.getMemoryById,
 }));
 
 vi.mock("../lib/memory/revisionMemory", () => ({
@@ -55,8 +52,9 @@ vi.mock("../lib/memory/timelineMemory", () => ({
 import { explainMemory } from "../lib/memory/explainMemory";
 
 const NOW_ISO = "2026-03-23T00:00:00.000Z";
+const testMemoryStore = new TestMemoryStoreAdapter();
 
-function makeMem0Memory(updatedAt: string) {
+function makeStoredMemory(updatedAt: string) {
   return {
     id: "m_explain_1",
     memory: "User is learning transformers",
@@ -78,7 +76,8 @@ function makeMem0Memory(updatedAt: string) {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(NOW_ISO));
-  mocks.getMemoryById.mockReset();
+  testMemoryStore.clear();
+  setMemoryStoreAdapter(testMemoryStore);
   mocks.listRevisionEvents.mockReset();
   mocks.listTimelineEvents.mockReset();
 });
@@ -89,9 +88,7 @@ afterEach(() => {
 
 describe("explainMemory service", () => {
   it("includes trust counters and status in explanation", async () => {
-    mocks.getMemoryById.mockResolvedValue(
-      makeMem0Memory("2026-03-20T00:00:00.000Z"),
-    );
+    testMemoryStore.seed([makeStoredMemory("2026-03-20T00:00:00.000Z")]);
     mocks.listRevisionEvents.mockReturnValue([
       {
         id: "r1",
@@ -180,7 +177,7 @@ describe("explainMemory service", () => {
   ])(
     "computes staleness bucket for updatedAt=$updatedAt",
     async ({ updatedAt, expectedDays, expectedBucket }) => {
-      mocks.getMemoryById.mockResolvedValue(makeMem0Memory(updatedAt));
+      testMemoryStore.seed([makeStoredMemory(updatedAt)]);
       mocks.listRevisionEvents.mockReturnValue([]);
       mocks.listTimelineEvents.mockReturnValue([]);
 

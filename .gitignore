@@ -3,7 +3,6 @@
 # dependencies
 /node_modules
 /memoryos-frontend/node_modules
-/memoryos-ide/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -20,18 +19,27 @@
 /memoryos-frontend/.next/
 /memoryos-frontend/out/
 /out/
-/memoryos-ide/src-tauri/target/
 
 # production
 /build
 
 # misc
 .tmp-*
+.epoch-github-tmp/
 lint_errors.txt
 lint_output.txt
 .recovery-backup-before-vscode-restore/
 .DS_Store
 *.pem
+
+# Local Epoch model/artifact caches are not source-controlled.
+/.epoch-cache/
+/.epoch-runtime-models/
+/.epoch-github-tmp/
+/.codex-logs/
+/.memoryos/
+/.memoryostm/
+/test-results/
 /data
 !/data
 /data/*
@@ -65,3 +73,11 @@ next-env.d.ts
 __pycache__/
 *.pyc
 .blackboxcli/
+.memoryostm/runtime/
+.memoryostm/config.local.json
+
+# local Codex MCP config; keep repo-scoped skills commit-friendly
+/.codex/config.toml
+!/.codex/
+!/.codex/skills/
+!/.codex/skills/**

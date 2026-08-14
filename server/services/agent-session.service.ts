@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/storage/prismaClient";
 import { ChatOpenAI } from "@langchain/openai";
 import { SessionStatus, VerificationStatus, MemoryStatus } from "@prisma/client";
+import { redactSensitiveObject, redactSensitiveText } from "./secret-policy";
 
 function openRouterBaseUrl(): string {
   return (
@@ -127,19 +128,11 @@ function normalizeProposedMemoryType(raw: unknown): string {
 
 function redactSecrets(payload: any): any {
   if (typeof payload === 'string') {
-    return payload.replace(/(sk-[a-zA-Z0-9]{20,})/g, '[REDACTED]');
+    return redactSensitiveText(payload) ?? payload;
   } else if (Array.isArray(payload)) {
     return payload.map(redactSecrets);
   } else if (typeof payload === 'object' && payload !== null) {
-    const redacted: any = {};
-    for (const [key, value] of Object.entries(payload)) {
-      if (/api[_-]?key|secret|password|token/i.test(key)) {
-        redacted[key] = '[REDACTED]';
-      } else {
-        redacted[key] = redactSecrets(value);
-      }
-    }
-    return redacted;
+    return redactSensitiveObject(payload);
   }
   return payload;
 }

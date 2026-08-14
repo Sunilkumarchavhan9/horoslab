@@ -1,0 +1,3 @@
+{
+  "/api/connector/[...connectorPath]/route": "app/api/connector/[...connectorPath]/route.js"
+}

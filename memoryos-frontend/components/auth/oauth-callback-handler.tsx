@@ -9,6 +9,8 @@ type OAuthCallbackHandlerProps = {
   signInUrl: string;
   signUpUrl: string;
   continueSignUpUrl: string;
+  accountExistsRedirectUrl?: string;
+  errorRedirectUrl?: string;
   surface?: "dark" | "light";
 };
 
@@ -17,6 +19,8 @@ export function OAuthCallbackHandler({
   signInUrl,
   signUpUrl,
   continueSignUpUrl,
+  accountExistsRedirectUrl,
+  errorRedirectUrl,
 }: OAuthCallbackHandlerProps) {
   const clerk = useClerk();
   const { isLoaded: isSessionLoaded, isSignedIn } = useAuth();
@@ -55,13 +59,42 @@ export function OAuthCallbackHandler({
       .catch((callbackError) => {
         if (!active) return;
         console.error("[MemoryOS Auth] OAuth callback failed", callbackError);
-        router.replace(`${signInUrl}?auth_error=oauth_callback`);
+        const errorText =
+          callbackError instanceof Error
+            ? callbackError.message.toLowerCase()
+            : typeof callbackError === "string"
+              ? callbackError.toLowerCase()
+              : "";
+        const isAccountExistsError =
+          errorText.includes("identifier_exists") ||
+          errorText.includes("already exists") ||
+          errorText.includes("email already") ||
+          errorText.includes("username already") ||
+          errorText.includes("account exists") ||
+          errorText.includes("identifier already exists");
+        if (isAccountExistsError) {
+          router.replace(accountExistsRedirectUrl ?? completeUrl);
+          return;
+        }
+        const redirectBase = errorRedirectUrl ?? signInUrl;
+        router.replace(`${redirectBase}?auth_error=oauth_callback`);
       });
 
     return () => {
       active = false;
     };
-  }, [clerk, completeUrl, continueSignUpUrl, isSessionLoaded, isSignedIn, router, signInUrl, signUpUrl]);
+  }, [
+    clerk,
+    completeUrl,
+    continueSignUpUrl,
+    accountExistsRedirectUrl,
+    errorRedirectUrl,
+    isSessionLoaded,
+    isSignedIn,
+    router,
+    signInUrl,
+    signUpUrl,
+  ]);
 
-  return <div id="clerk-captcha" className="hidden" aria-hidden="true" />;
+  return <div id="clerk-captcha" className="relative hidden" aria-hidden="true" />;
 }

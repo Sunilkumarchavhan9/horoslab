@@ -5,7 +5,7 @@ Use this to upgrade from localhost proof to public proof before Ship-It.
 ## 1) Public URL
 
 - Backend URL: https://memoryos-backend-production.up.railway.app
-- Frontend/Console URL: https://memoryos-backend-production.up.railway.app/developer-console
+- Frontend/Console URL: https://memoryos-backend-production.up.railway.app/mission-control
 - Region: us-east (Railway)
 - Deployed at (timestamp): 2026-04-17T22:15:00Z
 
@@ -15,7 +15,8 @@ Use this to upgrade from localhost proof to public proof before Ship-It.
 - [x] `JWT_ISSUER` set
 - [x] `JWT_AUDIENCE` set
 - [x] `MEMORY_STORE_BACKEND` set (`sqlite` preferred for demo persistence)
-- [x] `MEM0_API_KEY` present only if using Mem0 path
+- [x] `SUPERMEMORY_API_KEY` configured for connector/context ingestion
+- [x] `MEM0_API_KEY` present only if using optional Mem0 memory-store path
 
 ## 3) Public Smoke Test (copy output links/screenshots)
 

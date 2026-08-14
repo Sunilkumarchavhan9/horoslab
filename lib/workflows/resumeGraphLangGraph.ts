@@ -20,6 +20,15 @@ const ResumeGraphStateAnnotation = Annotation.Root({
 
 type ResumeGraphState = typeof ResumeGraphStateAnnotation.State;
 
+function pruneCheckpoint(
+  checkpoint: Record<string, unknown> | null,
+): Record<string, unknown> | null {
+  if (!checkpoint) return null;
+  const result = checkpoint.result;
+  if (!result || typeof result !== "object") return null;
+  return { result };
+}
+
 async function runPlannerNode(
   state: ResumeGraphState,
 ): Promise<Partial<ResumeGraphState>> {
@@ -50,7 +59,9 @@ export async function runResumeFlowLangGraph(
 ): Promise<ResumePlannerResult> {
   const stateAdapter = getWorkflowStateAdapter();
   const workflowKey = buildWorkflowKey(input);
-  const previousCheckpoint = await stateAdapter.loadCheckpoint({ key: workflowKey });
+  const previousCheckpoint = pruneCheckpoint(
+    await stateAdapter.loadCheckpoint({ key: workflowKey }),
+  );
 
   const result = await compiledResumeGraph.invoke({
     input,
@@ -67,7 +78,6 @@ export async function runResumeFlowLangGraph(
     state: {
       updatedAt: new Date().toISOString(),
       input,
-      previousCheckpoint,
       result: result.result,
     },
   });

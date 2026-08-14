@@ -2,7 +2,14 @@
 
 export default function MemoryOssvg2() {
     return(
-        <svg className="h-auto w-full" width="697" height="946" viewBox="0 0 697 946" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className="h-auto w-full" width="697" height="946" viewBox="0 0 697 946" fill="none" xmlns="http://www.w3.org/2000/svg" data-diagram-palette="memoryos">
+<style>{`
+  [data-diagram-palette="memoryos"] [fill="#2B5FC6"] { fill: #2563EB; }
+  [data-diagram-palette="memoryos"] [fill="black"] { fill: #090808; }
+  [data-diagram-palette="memoryos"] [fill="#46629C"] { fill: #16A34A; }
+  [data-diagram-palette="memoryos"] [fill="#D9D9D9"] { fill: #EF4444; }
+  [data-diagram-palette="memoryos"] [fill="#ABC5F0"] { fill: #f8fafc; stroke: #c9d8ee; stroke-width: 1.5px; }
+`}</style>
 <rect width="254.824" height="252" transform="matrix(0.866025 0.5 -0.866025 0.5 226.238 676)" fill="black"/>
 <rect width="255.045" height="252.277" transform="matrix(0.866025 0.5 -0.866025 0.5 218.478 0)" fill="#2B5FC6"/>
 <path d="M236 922.5L241 919.5L247 926L245.5 935L249.5 943L244 946L240 936.5L241 929L236 922.5Z" fill="#D9D9D9"/>

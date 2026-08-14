@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "debugId": "b0a6d561-e173-1425-7aa7-fe315c83fa63",
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["../../../../lib/clerk.ts"],"sourcesContent":["export function isClerkEnabled() {\n  return Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);\n}\n"],"names":["isClerkEnabled","Boolean"],"mappings":"gEAAO,SAASA,EACd,OAAOC,CACT"}}]
+}

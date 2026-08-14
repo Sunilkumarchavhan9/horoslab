@@ -1,6 +1,6 @@
 ---
 name: memoryos-ship-loop
-description: Operate as the MemoryOS product operating-system skill: plan, design, implement, validate, and hand off full-stack AI product work. Use when Codex is asked to ship MemoryOS features, evolve the developer console UI, continue the roadmap, improve AI workflow orchestration, fix connectors or memory runtime issues, prepare production-safe changes, or decide the next implementation slice.
+description: Operate as the MemoryOS product operating-system skill: plan, design, implement, validate, and hand off full-stack AI product work. Use when Codex is asked to ship MemoryOS features, evolve the Mission Control UI, continue the roadmap, improve AI workflow orchestration, fix connectors or memory runtime issues, prepare production-safe changes, or decide the next implementation slice.
 ---
 
 # MemoryOS Product Operating System
@@ -151,10 +151,10 @@ Avoid:
 - delayed user feedback
 - background work with no visible state
 
-## Developer Console UI Rules
+## Mission Control UI Rules
 
-- Use the MemoryOS-native console primitives from `memoryos-frontend/components/developer-console/console-ui.tsx` for console cards, badges, inputs, dividers, empty states, and status badges.
-- Do not introduce direct shadcn `Card`, `Badge`, or `Input` imports inside `memoryos-frontend/components/developer-console/**`; route console UI through `console-ui.tsx`.
+- Use the MemoryOS-native console primitives from `memoryos-frontend/components/memoryos/console-ui.tsx` for console cards, badges, inputs, dividers, empty states, and status badges.
+- Do not introduce direct shadcn `Card`, `Badge`, or `Input` imports inside `memoryos-frontend/components/memoryos/**`; route console UI through `console-ui.tsx`.
 - Keep the console black, square, and operational: no rounded card polish, no decorative shadows, no mixed light sections, and no accidental white page backgrounds.
 - Prefer page-level panels and clean information hierarchy over many nested bordered boxes.
 - Keep borders subtle and consistent. If a surface feels noisy, remove inner borders before adding more visual styling.

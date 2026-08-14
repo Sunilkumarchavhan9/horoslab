@@ -100,19 +100,18 @@ export function CompanyBrainThesisSection() {
             COMPANY BRAIN THESIS
           </p>
           <h2 className={`${fade(reveal.title)} max-w-[780px] text-3xl font-semibold leading-[1.05] tracking-[-0.04em] text-slate-900 md:text-4xl`}>
-            Models are ready. Company knowledge is the bottleneck.
+            Agents should inherit company work, not start from zero.
           </h2>
           <p className={`${fade(reveal.body)} max-w-[780px] text-[16px] leading-[1.55] text-[#516882]`}>
-            MemoryOS turns scattered company knowledge into a living, executable skills layer for agents.
-            We ingest context from real systems, structure it as decisions and policies, and make it safe to execute with governance.
+            MemoryOS turns scattered company work into memory, experience, and governed execution so future agents can inherit the rules, proof, and lessons the company already earned.
           </p>
 
           <div className={fade(reveal.is)}>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#6a7f9a]">What MemoryOS Is</p>
             <ul className="mt-3 space-y-2 text-[14px] text-[#2f4968]">
-              <li>- Living map of incidents, decisions, workflows, and constraints</li>
-              <li>- Evidence-backed skills generated from real company signals</li>
-              <li>- Policy-gated execution with approvals and audit trail</li>
+              <li>- Inheritance packages built from real company sources and live proof</li>
+              <li>- Evidence-backed skills and runbooks generated from real execution</li>
+              <li>- Policy-gated action with approvals, trace proof, and outcome learning</li>
             </ul>
           </div>
 
@@ -121,6 +120,7 @@ export function CompanyBrainThesisSection() {
             <ul className="mt-3 space-y-2 text-[14px] text-[#2f4968]">
               <li>- Not a simple document chatbot</li>
               <li>- Not keyword search over static files</li>
+              <li>- Not a generic shared-memory layer</li>
             </ul>
           </div>
         </div>
@@ -128,4 +128,5 @@ export function CompanyBrainThesisSection() {
     </section>
   );
 }
+
 

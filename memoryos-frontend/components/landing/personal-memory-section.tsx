@@ -1,548 +1,354 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { Reveal } from "./motion";
-import { AnimatePresence, motion } from "framer-motion";
-import { MessageSquare, GitPullRequest, Activity, FileText, Shield, Database, GitBranch, Hash, Terminal, Cloud, Brain } from "lucide-react";
-import { MemoryStarLogo } from "./memory-star-logo";
-import { NavAsciiTile } from "./nav-ascii-tile";
-import { DEV_FEATURE_ASCII } from "@/lib/nav-ascii-variants";
+import React, { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import { MemoryOSFullLogo } from "@/components/landing/memoryos-full-logo";
+import Dither from "../ui/Dither";
 
-function ClaudeMark() {
-  return (
-    <svg viewBox="0 0 16 16" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
-      <g fill="currentColor">
-        <path d="m14.375 6.48l.49.28v.209l-.14.489l-5.937 1.397l-.558-1.387zm0 0" />
-        <path d="m12.155 2.373l.683.143l.182.224l.173.535l-.072.342l-3.983 5.447L7.81 7.737l3.673-4.82z" />
-        <path d="m8.719 1.522l.419-.28l.349.14l.349.49l-.957 5.748l-.65-.441l-.279-.769l.49-4.33z" />
-        <path d="m4.239 1.614l.43-.55L4.95 1l.558.081l.275.216l2.004 4.442l.724 2.11l-.848.471l-3.231-5.864z" />
-        <path d="m2.154 4.665l-.14-.56l.42-.488l.488.07h.14l2.933 2.165l.908.698l1.257.978l-.698 1.187l-.629-.489l-.419-.419l-4.05-2.863z" />
-        <path d="M1.316 8.296L1 7.946v-.31l.316-.108l3.562.21l3.491.279l-.113.695l-6.66-.346z" />
-        <path d="M3.411 11.931h-.698l-.278-.32v-.382l1.186-.838l4.82-3.068l.487.833z" />
-        <path d="m4.738 13.883l-.28.07l-.418-.21l.07-.35l4.12-5.446l.558.768l-3.072 4.05z" />
-        <path d="m8.23 14.581l-.21.28l-.419.14l-.349-.28l-.21-.42L8.09 8.646l.629.07z" />
-        <path d="M11.791 13.045v.558l-.07.21l-.279.14l-.489-.066l-3.356-4.996l1.331-1.014l1.117 2.025l.105.733z" />
-        <path d="m13.398 12.207l.07.349l-.21.279l-.21-.07l-1.187-.838l-1.815-1.606l-1.397-.978l.419-1.326l.698.419l.42.768z" />
-        <path d="m12.49 8.645l1.746.14l.419.28l.279.418v.302l-.768.327l-3.911-.978l-1.606-.07l.419-1.466l1.117.838z" />
-      </g>
+const AppIcons = {
+  observability: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-cyan-500 fill-current">
+      <path d="M3 3v18h18V3H3zm16 16H5V5h14v14zM7 14h2v3H7v-3zm4-5h2v8h-2V9zm4 3h2v5h-2v-5z" />
     </svg>
-  );
-}
-
-function CursorMark() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="m20.42 6.73l-8-4.62a.82.82 0 0 0-.83 0L3.58 6.73c-.22.12-.35.36-.35.61v9.32c0 .25.13.48.35.61l8.01 4.62c.26.15.57.15.83 0l8.01-4.62c.22-.12.35-.36.35-.61V7.34c0-.25-.13-.48-.35-.61Zm-.5.98L12.19 21.1c-.05.09-.19.05-.19-.05v-8.77c0-.18-.09-.34-.25-.43L4.16 7.47c-.09-.05-.05-.19.05-.19h15.46c.22 0 .36.24.25.43"
-      />
+  ),
+  terminal: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-green-500 fill-current">
+      <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.11-.9-2-2-2zm0 14H4V8h16v10zm-2-1h-6v-2h6v2zM7.5 17l-1.41-1.41L8.67 13l-2.58-2.59L7.5 9l4 4-4 4z" />
     </svg>
-  );
-}
-
-function VSCodeMark() {
-  return (
-    <svg viewBox="0 0 128 128" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
-      <mask
-        id="memoryos-vscode-mask"
-        width="128"
-        height="128"
-        x="0"
-        y="0"
-        maskUnits="userSpaceOnUse"
-        style={{ maskType: "alpha" }}
-      >
-        <path
-          fill="#fff"
-          fillRule="evenodd"
-          d="M90.767 127.126a7.97 7.97 0 0 0 6.35-.244l26.353-12.681a8 8 0 0 0 4.53-7.209V21.009a8 8 0 0 0-4.53-7.21L97.117 1.12a7.97 7.97 0 0 0-9.093 1.548l-50.45 46.026L15.6 32.013a5.33 5.33 0 0 0-6.807.302l-7.048 6.411a5.335 5.335 0 0 0-.006 7.888L20.796 64 1.74 81.387a5.336 5.336 0 0 0 .006 7.887l7.048 6.411a5.33 5.33 0 0 0 6.807.303l21.974-16.68 50.45 46.025a8 8 0 0 0 2.743 1.793Zm5.252-92.183L57.74 64l38.28 29.058V34.943Z"
-          clipRule="evenodd"
-        />
-      </mask>
-      <g mask="url(#memoryos-vscode-mask)">
-        <path
-          fill="currentColor"
-          d="M123.471 13.82 97.097 1.12A7.97 7.97 0 0 0 88 2.668L1.662 81.387a5.333 5.333 0 0 0 .006 7.887l7.052 6.411a5.33 5.33 0 0 0 6.811.303l103.971-78.875c3.488-2.646 8.498-.158 8.498 4.22v-.306a8 8 0 0 0-4.529-7.208Z"
-        />
-        <path
-          fill="currentColor"
-          d="m123.471 114.181-26.374 12.698A7.97 7.97 0 0 1 88 125.333L1.662 46.613a5.333 5.333 0 0 1 .006-7.887l7.052-6.411a5.33 5.33 0 0 1 6.811-.303l103.971 78.874c3.488 2.647 8.498.159 8.498-4.219v.306a8 8 0 0 1-4.529 7.208"
-        />
-        <path
-          fill="currentColor"
-          d="M97.098 126.882A7.98 7.98 0 0 1 88 125.333c2.952 2.952 8 .861 8-3.314V5.98c0-4.175-5.048-6.266-8-3.313a7.98 7.98 0 0 1 9.098-1.549L123.467 13.8A8 8 0 0 1 128 21.01v85.982a8 8 0 0 1-4.533 7.21Z"
-        />
-      </g>
+  ),
+  kubernetes: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-blue-500 fill-current">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
     </svg>
-  );
-}
-
-function OpenCodeMark() {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/opencode.svg"
-      alt=""
-      className="opacity-90 brightness-0 invert"
-      style={{ height: "24px", width: "auto" }}
-      aria-hidden="true"
-    />
-  );
-}
-
-function WindsurfMark() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[24px] w-[24px]" fill="none" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M23.55 5.067a2.177 2.177 0 0 0-2.18 2.177v4.867a1.77 1.77 0 0 1-1.76 1.76a1.82 1.82 0 0 1-1.472-.766l-4.971-7.1a2.2 2.2 0 0 0-1.81-.942c-1.134 0-2.154.964-2.154 2.153v4.896c0 .972-.797 1.76-1.76 1.76c-.57 0-1.136-.287-1.472-.766L.408 5.16A.224.224 0 0 0 0 5.288v4.245c0 .215.066.423.188.6l5.475 7.818c.324.462.8.805 1.351.93a2.164 2.164 0 0 0 2.645-2.098V11.89c0-.972.787-1.76 1.76-1.76h.002a1.8 1.8 0 0 1 1.472.766l4.972 7.1a2.172 2.172 0 0 0 3.96-1.212v-4.895a1.76 1.76 0 0 1 1.76-1.76h.195a.22.22 0 0 0 .22-.22V5.287a.22.22 0 0 0-.22-.22Z"
-      />
+  ),
+  shield: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-indigo-500 fill-current">
+      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
     </svg>
-  );
-}
-
-function MoreMark() {
-  return (
-    <svg viewBox="0 0 64 18" className="h-[24px] w-auto" fill="none" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M6.9 14c-2.7 0-4.9-2.2-4.9-5s2.2-5 4.9-5s4.9 2.2 4.9 5s-2.2 5-4.9 5m16.5-5c0 2.8-2.2 5-4.9 5s-4.9-2.2-4.9-5s2.2-5 4.9-5s4.9 2.2 4.9 5m11.5 5C32.2 14 30 11.8 30 9s2.2-5 4.9-5s4.9 2.2 4.9 5s-2.2 5-4.9 5m12.4-.3v-1.6h2.3V5.9h-2.3V4.3h6.5c3.2 0 5.3 1.8 5.3 4.7c0 2.9-2.1 4.7-5.3 4.7zm4.4-3.4h1.9c1.7 0 2.8-.9 2.8-2.5s-1.1-2.5-2.8-2.5h-1.9z"
-      />
+  ),
+  certificate: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-amber-500 fill-current">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
     </svg>
-  );
-}
-
-const LOGO_URLS = {
-  mastra: "https://mastra.ai/brand/logo.svg",
-  langgraph: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/langgraph.png",
-  zapier: "https://cdn.simpleicons.org/zapier/ff4f00",
-  n8n: "https://cdn.simpleicons.org/n8n/ffffff",
+  ),
+  git: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-orange-500 fill-current">
+      <path d="M15.5 11h-2V7.5C13.5 6.12 12.38 5 11 5S8.5 6.12 8.5 7.5v6C8.5 14.88 9.62 16 11 16c.9 0 1.69-.47 2.13-1.19l1.67 1.05C13.88 17.5 12.56 18 11 18c-2.21 0-4-1.79-4-4V7.5C7 5.01 9.01 3 11.5 3S16 5.01 16 7.5V11zM11 7c-.28 0-.5.22-.5.5v6c0 .28.22.5.5.5s.5-.22.5-.5v-6c0-.28-.22-.5-.5-.5z" />
+    </svg>
+  ),
+  network: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-purple-500 fill-current">
+      <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3 0 .16.03.31.06.46l-4.71 2.36A2.991 2.991 0 005 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.87 0 1.66-.37 2.21-.96l4.9 2.45c-.06.22-.11.45-.11.7 0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3c-.93 0-1.77.43-2.32 1.1l-4.81-2.4c.08-.24.13-.5.13-.76s-.05-.52-.13-.76l4.81-2.4A2.992 2.992 0 0016 11zm0-4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM5 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm11 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
+    </svg>
+  ),
+  bolt: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-yellow-500 fill-current">
+      <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.18 11.47 10.5 7.43 14 2h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z" />
+    </svg>
+  ),
 };
 
-function MastraMark() {
-  return <img src={LOGO_URLS.mastra} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
-}
-
-function LangGraphMark() {
-  return <img src={LOGO_URLS.langgraph} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
-}
-
-function N8nMark() {
-  return <img src={LOGO_URLS.n8n} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
-}
-
-function ZapierMark() {
-  return <img src={LOGO_URLS.zapier} alt="" className="h-[24px] w-auto opacity-70 brightness-0 invert transition-all duration-300" aria-hidden="true" />;
-}
-
-function ToolPill({ label, icon }: { label: string; icon: ReactNode }) {
-  return (
-    <span className="inline-flex h-16 min-w-16 items-center justify-center text-muted-foreground opacity-70 transition duration-300 hover:opacity-100 hover:text-foreground hover:-translate-y-1">
-      <span className="grid h-[30px] place-items-center text-current transition duration-300">
-        {icon}
-      </span>
-      <span className="sr-only">{label}</span>
-    </span>
-  );
-}
-
-function FloatingPill({ delay, x, icon, text }: { delay: number; x: number; icon: ReactNode; text: string }) {
-  // Use text length to create varied, organic floating speeds and heights across the pills
-  const floatDuration = 3 + (text.length % 3);
-  const floatY = 6 + (text.length % 6);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: x - 20, y: 15 }}
-      whileInView={{ opacity: 1, x: x, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, delay, type: "spring", stiffness: 60 }}
-      style={{ marginLeft: `${x}px` }}
-      className="w-fit pointer-events-auto z-10"
-    >
-      <motion.div
-        animate={{ y: [0, -floatY, 0] }}
-        transition={{ duration: floatDuration, repeat: Infinity, ease: "easeInOut", delay }}
-        className="flex items-center gap-3 bg-card border border-border shadow-lg rounded-xl px-4 py-3 w-fit hover:shadow-primary/20 hover:border-primary/50 transition-all cursor-default"
-      >
-        <div className="shrink-0">{icon}</div>
-        <p className="text-[13px] font-semibold text-foreground tracking-tight whitespace-nowrap">{text}</p>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-const PM_FEATURES = [
+const comparisonRows = [
   {
-    num: "01",
-    tab: "CONTEXT CAPTURE",
-    heading: "Capture developer context from anywhere",
-    description: "Capture execution context from code findings, decisions, debugging notes, docs, links, and task history across daily tools.",
-    bullets: [
-      "Code findings and logic decisions",
-      "Debugging notes and stack traces",
-      "Docs, links, and task history"
-    ],
-    bgClass: "bg-blue-500/10",
-    visualContent: (
-      <div className="bg-background rounded-lg border border-border/20 overflow-hidden p-6 shadow-sm flex flex-col items-center justify-center min-h-[300px] w-full">
-        <div className="w-full max-w-sm">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"><GitBranch className="text-primary w-6 h-6"/></div>
-            <div>
-              <div className="w-32 h-3 bg-muted rounded-full mb-2"></div>
-              <div className="w-20 h-3 bg-muted/50 rounded-full"></div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div className="w-full h-16 bg-muted/30 rounded-xl border border-border/10 flex items-center px-4 gap-4">
-               <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center"><FileText className="w-4 h-4 text-blue-500" /></div>
-               <div className="w-40 h-2 bg-muted rounded-full"></div>
-            </div>
-            <div className="w-full h-16 bg-muted/30 rounded-xl border border-border/10 flex items-center px-4 gap-4">
-               <div className="w-8 h-8 rounded-lg bg-chart-2/20 flex items-center justify-center"><Activity className="w-4 h-4 text-chart-2" /></div>
-               <div className="w-48 h-2 bg-muted rounded-full"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+    prompt: "Why did the checkout service latency spike?",
+    genericAi: {
+      badge: "Observability Agent",
+      icon: (
+        <span className="w-3.5 h-3.5 rounded-full bg-cyan-500 block" />
+      ),
+      text: `"Here is a dashboard showing a 400% latency increase. Here are 50 correlated errors and log traces."`,
+    },
+    memoryOs: {
+      steps: [
+        { icon: AppIcons.network, text: "Gathering telemetry and resolving dependency graph" },
+        { icon: AppIcons.observability, text: "Generating hypotheses and searching for evidence" },
+        { icon: AppIcons.git, text: "Root cause verified: PR #1042 introduced unindexed queries" },
+        { icon: AppIcons.bolt, text: "Creating a mission to patch and routing for approval" },
+      ],
+      summaryBold: (
+        <span>
+          Root cause verified and mission created. <strong>Awaiting human approval</strong> for high-risk action.
+        </span>
+      ),
+    },
   },
   {
-    num: "02",
-    tab: "CONNECTED GRAPH",
-    heading: "Turn scattered work into connected memory",
-    description: "MemoryOS links related context across sessions so retrieval, revisions, and continuity planning operate from one connected memory graph.",
-    bullets: [
-      "Unified graph of all developer activity",
-      "Seamless retrieval across multiple sessions",
-      "Continuity planning grounded in truth"
-    ],
-    bgClass: "bg-chart-2/10",
-    visualContent: (
-      <div className="w-full h-full min-h-[300px] bg-background rounded-lg border border-border/20 overflow-hidden p-6 flex items-center justify-center relative">
-         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M 30,30 L 70,70 M 70,30 L 30,70 M 50,20 L 50,80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" className="text-foreground" />
-         </svg>
-         <div className="relative z-10 flex flex-wrap gap-8 items-center justify-center">
-            <div className="w-20 h-20 rounded-2xl bg-card border border-border/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"><Brain className="text-primary w-10 h-10"/></div>
-            <div className="w-20 h-20 rounded-2xl bg-card border border-border/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"><Database className="text-chart-2 w-10 h-10"/></div>
-            <div className="w-20 h-20 rounded-2xl bg-card border border-border/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"><Terminal className="text-blue-500 w-10 h-10"/></div>
-         </div>
-      </div>
-    )
+    prompt: "Deploy the new inference engine configuration to production.",
+    genericAi: {
+      badge: "Script Agent",
+      icon: (
+        <span className="w-3.5 h-3.5 rounded-full bg-slate-500 block" />
+      ),
+      text: `"I have generated the Kubernetes manifests. Review the code and run kubectl apply."`,
+    },
+    memoryOs: {
+      steps: [
+        { icon: AppIcons.shield, text: "Mission created. Capability lease granted for infrastructure change" },
+        { icon: AppIcons.terminal, text: "Spec defined, implementation generated, and properties formally checked" },
+        { icon: AppIcons.observability, text: "Independent verifier challenges the outcome in a sandboxed execution" },
+        { icon: AppIcons.certificate, text: "PASS confirmed. Correctness Certificate issued" },
+      ],
+      summaryBold: (
+        <span>
+          <strong>PASS confirmed.</strong> The inference engine has been safely deployed with a cryptographic Correctness Certificate.
+        </span>
+      ),
+    },
   },
   {
-    num: "03",
-    tab: "GLOBAL SEARCH",
-    heading: "Ask MemoryOS across everything you have stored",
-    description: "Query company memory directly and get answers grounded in prior work, documents, conversations, constraints, and technical decisions.",
-    bullets: [
-      "Summarize notes",
-      "Connect retrieval + trust",
-      "Themes across workspace"
-    ],
-    bgClass: "bg-purple-500/10",
-    visualContent: (
-      <div className="bg-background rounded-lg border border-border/20 overflow-hidden p-6 flex flex-col items-center justify-center h-full min-h-[300px]">
-        <div className="w-full flex flex-col gap-4 max-w-sm">
-          {["Summarize notes", "Connect retrieval + trust", "Themes across workspace"].map((q, i) => (
-            <div key={i} className="flex items-center gap-4 bg-card border border-border/20 rounded-full px-6 py-4 shadow-sm transform transition-transform hover:scale-105">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                 <MessageSquare className="w-4 h-4 text-primary" />
-              </div>
-              <span className="text-[15px] text-foreground font-medium truncate">{q}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
+    prompt: "Refactor the authentication service to support OAuth2.",
+    genericAi: {
+      badge: "Coding Copilot",
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-purple-600">
+          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm-1-11h2v4h-2zm0 6h2v2h-2z" />
+        </svg>
+      ),
+      text: `"Here is a suggested snippet for OAuth2 implementation. Make sure to update your tests."`,
+    },
+    memoryOs: {
+      steps: [
+        { icon: AppIcons.kubernetes, text: "Engaging institutional roles: Planner, Architect, Implementer, and Tester" },
+        { icon: AppIcons.git, text: "Code rewritten and property tests generated" },
+        { icon: AppIcons.shield, text: "Independent Verification role separated from Implementation" },
+        { icon: AppIcons.certificate, text: "Merge Decision Certificate generated with full evidence trail" },
+      ],
+      summaryBold: (
+        <span>
+          Refactoring complete. <strong>Independent verification confirms 100% correctness</strong> before merging.
+        </span>
+      ),
+    },
   },
   {
-    num: "04",
-    tab: "WORKSPACE SCOPING",
-    heading: "Separate memory by workspace and project",
-    description: "Scope memory by products, repos, teams, research tracks, or debugging streams so context stays clean, governed, and reusable.",
-    bullets: [
-      "Frontend",
-      "Backend",
-      "Research & Debugging Streams"
-    ],
-    bgClass: "bg-amber-500/10",
-    visualContent: (
-      <div className="bg-background rounded-lg border border-border/20 overflow-hidden p-6 flex items-center justify-center h-full min-h-[300px] gap-8">
-        <div className="w-48 h-56 bg-card border border-border/20 rounded-xl shadow-lg p-5 rotate-[-6deg] hover:rotate-0 transition-transform">
-           <div className="text-[13px] font-bold text-foreground mb-6 flex items-center gap-3 tracking-widest uppercase"><div className="w-3 h-3 rounded-full bg-blue-500"></div>Frontend</div>
-           <div className="space-y-4">
-              <div className="w-full h-6 bg-muted/30 rounded"></div>
-              <div className="w-3/4 h-6 bg-muted/30 rounded"></div>
-              <div className="w-5/6 h-6 bg-muted/30 rounded"></div>
-           </div>
-        </div>
-        <div className="w-48 h-56 bg-card border border-border/20 rounded-xl shadow-lg p-5 rotate-[6deg] hover:rotate-0 transition-transform -ml-16 mt-16">
-           <div className="text-[13px] font-bold text-foreground mb-6 flex items-center gap-3 tracking-widest uppercase"><div className="w-3 h-3 rounded-full bg-chart-2"></div>Backend</div>
-           <div className="space-y-4">
-              <div className="w-full h-6 bg-muted/30 rounded"></div>
-              <div className="w-4/5 h-6 bg-muted/30 rounded"></div>
-              <div className="w-2/3 h-6 bg-muted/30 rounded"></div>
-           </div>
-        </div>
-      </div>
-    )
-  }
+    prompt: "We've had three incidents this month from bad database migrations.",
+    genericAi: {
+      badge: "ChatGPT",
+      icon: (
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-slate-800">
+          <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0813 4.779-2.7582a.7947.7947 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4952 4.4952zm-10.12-4.1165a4.4755 4.4755 0 0 1-.5355-3.0039l.142.083 4.779 2.7583a.7947.7947 0 0 0 .7902 0l5.8342-3.369v2.3372a.071.071 0 0 1-.0285.057l-4.8361 2.7963a4.504 4.504 0 0 1-6.1453-1.6589zm-1.0957-10.96a4.4755 4.4755 0 0 1 2.3409-1.9631l-.0047.1637v5.5163a.7947.7947 0 0 0 .3975.6813l5.8342 3.369-2.02 1.1686a.071.071 0 0 1-.0664.0047l-4.8361-2.7963a4.504 4.504 0 0 1-1.6454-6.1444zm16.597 3.0242l-5.8342-3.369 2.02-1.1686a.071.071 0 0 1 .0664-.0047l4.8361 2.7963a4.504 4.504 0 0 1 1.6454 6.1444 4.4755 4.4755 0 0 1-2.3409 1.9631l.0047-.1637V9.0536a.7947.7947 0 0 0-.3975-.6813zm2.502 4.9749l-.142-.083-4.779-2.7583a.7947.7947 0 0 0-.7902 0l-5.8342 3.369V11.5835a.071.071 0 0 1 .0285-.057l4.8361-2.7963a4.504 4.504 0 0 1 6.1453 1.6589 4.4755 4.4755 0 0 1 .5355 3.0039z" />
+        </svg>
+      ),
+      text: `"You should implement stricter PR review policies and add a checklist for database changes."`,
+    },
+    memoryOs: {
+      steps: [
+        { icon: AppIcons.network, text: "Measuring fitness drop across trust, time, and human effort" },
+        { icon: AppIcons.git, text: "Proposing institutional mutation: inserting 'DB Verifier' role" },
+        { icon: AppIcons.observability, text: "Running counterfactual simulations across past 50 migrations" },
+        { icon: AppIcons.bolt, text: "Simulation confirms 100% incident prevention" },
+      ],
+      summaryBold: (
+        <span>
+          Simulation complete. <strong>Institutional genome mutated</strong> to require independent DB Verification. Rollout recommended.
+        </span>
+      ),
+    },
+  },
+  {
+    prompt: "Give the deployment agent access to the AWS production account to fix the outage.",
+    genericAi: {
+      badge: "IAM Agent",
+      icon: (
+        <span className="w-3.5 h-3.5 rounded-full bg-orange-500 block" />
+      ),
+      text: `"I've granted the 'AdministratorAccess' role to the agent. Don't forget to remove it later."`,
+    },
+    memoryOs: {
+      steps: [
+        { icon: AppIcons.shield, text: "Authority bound to mission, not identity. Zero ambient authority" },
+        { icon: AppIcons.terminal, text: "Short-lived capability lease granted explicitly for AWS EC2 restart" },
+        { icon: AppIcons.kubernetes, text: "Execution contained within an isolated institutional trust boundary" },
+        { icon: AppIcons.certificate, text: "Mission complete. Evidence backed audit trail logged" },
+      ],
+      summaryBold: (
+        <span>
+          Mission complete. <strong>Capability lease instantly revoked</strong> and immutable evidence recorded.
+        </span>
+      ),
+    },
+  },
 ];
 
-function PersonalMemoryFeaturesGrid() {
-  const [activeTab, setActiveTab] = useState("01");
-  const activeFeature = PM_FEATURES.find((feature) => feature.num === activeTab) ?? PM_FEATURES[0];
-
-  const metrics: Record<string, Array<{ label: string; value: string }>> = {
-    "01": [
-      { label: "Events / month", value: "12.4M" },
-      { label: "Ingest latency", value: "84ms" },
-      { label: "Sources online", value: "18" },
-    ],
-    "02": [
-      { label: "Knowledge nodes", value: "3.8M" },
-      { label: "Relations", value: "12.9M" },
-      { label: "Contradiction checks", value: "99.2%" },
-    ],
-    "03": [
-      { label: "Search p95", value: "176ms" },
-      { label: "Top-3 precision", value: "96.8%" },
-      { label: "Explainable traces", value: "100%" },
-    ],
-    "04": [
-      { label: "Workspaces", value: "240" },
-      { label: "Policy rules", value: "1.2k" },
-      { label: "Audit events / day", value: "480k" },
-    ],
-  };
+function InViewDither({ waveColor }: { waveColor: [number, number, number] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { margin: "200px 0px" });
 
   return (
-    <section className="mt-20 border-t border-[#c9d8ee] bg-white px-5 py-14">
-      <div className="mx-auto max-w-[1240px]">
-        <div className="mb-8 grid gap-4 md:grid-cols-[1.3fr_1fr]">
-          <h3 className="font-sans text-[36px] leading-[0.96] tracking-[-0.03em] text-[#101827] md:text-[56px]">
-            How we scale company memory infrastructure.
-          </h3>
-          <p className="max-w-[44ch] self-start pt-2 font-mono text-[13px] leading-6 text-[#516882]">
-            Click each surface to inspect deeper capacity, retrieval performance, and workspace governance at production scale.
-          </p>
-        </div>
-
-        <div className="grid gap-5 xl:grid-cols-4">
-          {PM_FEATURES.map((feature) => {
-            const isActive = feature.num === activeTab;
-            return (
-              <motion.button
-                key={feature.num}
-                type="button"
-                onClick={() => setActiveTab(feature.num)}
-                className="group border border-[#c9d8ee] bg-white text-left"
-                initial={false}
-                animate={{ y: isActive ? -3 : 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              >
-                <div className="relative h-[220px] border-b border-[#dbe6f7] bg-white p-3">
-                  <div className="absolute left-3 top-3 z-10 border border-[#c9d8ee] bg-white px-2 py-1 font-mono text-[10px] tracking-[0.2em] text-[#356acc]">
-                    {feature.num}
-                  </div>
-                  <div className="h-full w-full border border-[#dbe6f7] bg-white">
-                    <NavAsciiTile
-                      variant={DEV_FEATURE_ASCII[feature.num] ?? "grid"}
-                      active={isActive}
-                      className="h-full w-full"
-                    />
-                  </div>
-                </div>
-
-                <div className="bg-[#0b0f17] p-4">
-                  <p className="font-mono text-[11px] tracking-[0.2em] text-[#8ca5cc]">{feature.tab}</p>
-                  <h4 className="mt-2 font-sans text-[20px] leading-tight text-white">{feature.heading}</h4>
-                  <p className="mt-3 font-mono text-[12px] leading-6 text-[#9fb2cf] line-clamp-3">{feature.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {feature.bullets.slice(0, 3).map((bullet) => (
-                      <span
-                        key={`${feature.num}-${bullet}`}
-                        className="border border-[#334766] bg-[#0f1728] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.13em] text-[#c7d6f0]"
-                      >
-                        {bullet}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeFeature.num}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22 }}
-            className="mt-6 border border-[#c9d8ee] bg-white p-5"
-          >
-            <div className="grid gap-6 md:grid-cols-[1.15fr_1fr]">
-              <div>
-                <p className="font-mono text-[11px] tracking-[0.2em] text-[#356acc]">{activeFeature.num} / {activeFeature.tab}</p>
-                <h4 className="mt-2 font-sans text-[30px] leading-[1.03] tracking-[-0.02em] text-[#101827]">
-                  {activeFeature.heading}
-                </h4>
-                <p className="mt-3 max-w-[70ch] font-mono text-[14px] leading-7 text-[#516882]">
-                  {activeFeature.description}
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-1">
-                {(metrics[activeFeature.num] ?? []).map((metric) => (
-                  <div key={metric.label} className="border border-[#d5e2f5] bg-[#f8fbff] px-4 py-3">
-                    <p className="font-mono text-[11px] tracking-[0.14em] text-[#6a7f9a]">{metric.label}</p>
-                    <p className="mt-1 font-sans text-[26px] font-semibold tracking-[-0.02em] text-[#101827]">{metric.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </section>
+    <div ref={ref} className="w-full h-full">
+      {isInView && (
+        <Dither
+          waveColor={waveColor}
+          disableAnimation={false}
+          enableMouseInteraction
+          mouseRadius={0.3}
+          colorNum={4}
+          pixelSize={1}
+          waveAmplitude={0.75}
+          waveFrequency={3.5}
+          waveSpeed={0.08}
+        />
+      )}
+    </div>
   );
 }
 
 export function PersonalMemorySection() {
   return (
-    <section className="dark bg-background text-foreground font-sans overflow-hidden">
-      
-      {/* 1. COMPOSIO STYLE HEADER (Light theme, side by side) */}
-      <div className="px-6 py-24">
-         <Reveal className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-8">
-           
-           {/* LEFT: Text Block */}
-           <div className="flex-1 w-full text-left lg:pr-10">
-             <div className="flex items-center gap-3 mb-8">
-                <MemoryStarLogo />
-                <span className="px-2 py-0.5 rounded border border-primary/30 bg-primary/5 text-[11px] font-bold tracking-widest text-primary uppercase">Workspace</span>
-             </div>
-             
-             <h3 className="text-[40px] lg:text-[52px] font-semibold tracking-[-0.03em] text-foreground leading-[1.05] mb-6">
-               One company brain layer.<br/>
-               <span className="text-muted-foreground">Across every workflow.</span>
-             </h3>
-             
-             <p className="text-muted-foreground text-[17px] leading-relaxed mb-8 max-w-lg">
-               MemoryOS keeps goals, constraints, decisions, risks, and execution context available across cloud models, local agents, control planes, and shared workspaces.
-             </p>
-             
-             <button className="bg-foreground text-background px-8 py-4 font-bold text-[11px] tracking-[0.2em] uppercase hover:opacity-90 transition-opacity rounded-sm">
-               Learn More
-             </button>
-           </div>
+    <div className="w-full bg-white text-[#111]" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+      <div className="w-full mx-auto py-12 md:py-16">
+        {/* Main Section Header (Clean, borderless, full width with side padding) */}
+        <div className="mb-14 text-center space-y-4 w-full max-w-[1240px] mx-auto px-4 md:px-8">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-slate-900 leading-[1.1] mb-6 w-full text-center">
+            Agents are workers.<br className="md:hidden" /> <span className="italic font-light">Institutions are the <span className="text-[#0015FF]">runtime.</span></span>
+          </h2>
+          <p className="text-slate-600 text-[15px] md:text-[17px] max-w-[920px] mx-auto leading-relaxed text-center">
+            Epoch turns repeatable agent work into programmable institutions with mission, authority, roles, budgets, policies, communication, evidence contracts, verification, settlement, memory, fitness, and evolution.
+          </p>
+        </div>
 
-           {/* RIGHT: Floating Pills Graphic */}
-           <div className="flex-1 w-full relative min-h-[460px] flex items-center justify-end">
-             {/* Faint background terminal graphic */}
-             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full max-w-[500px] h-[380px] bg-muted/10 border border-border rounded-xl shadow-sm overflow-hidden hidden sm:flex flex-col">
-               <div className="h-10 border-b border-border bg-card flex items-center px-4 gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                  <div className="mx-auto text-[10px] font-mono text-muted-foreground tracking-widest">agent-memory.log</div>
-               </div>
-               <div className="p-8 font-mono text-xs md:text-[13px] text-muted-foreground/80 leading-relaxed space-y-5">
-                  <div>
-                    <p className="text-primary font-semibold">{`$ memoryos.search({ query: 'session_context' })`}</p>
-                    <p className="text-muted-foreground">{`-> Retrieved 3 graph nodes`}</p>
-                  </div>
-                  <div>
-                    <p className="text-primary font-semibold">{`$ POST /v1/http/sync`}</p>
-                    <p className="text-muted-foreground">{`-> 200 OK (Timeline updated)`}</p>
-                  </div>
-                  <div>
-                    <p className="text-primary font-semibold">{`$ memoryos.add({ context: 'resolved_bug_404' })`}</p>
-                    <p className="text-muted-foreground">{`-> Appended to team memory workspace`}</p>
-                  </div>
-                  
-                  <div className="pt-4 text-6xl font-bold opacity-[0.03] text-foreground tracking-tighter">
-                     MEMORYOS
-                  </div>
-               </div>
-             </div>
+        {/* 3-Column Engineering Dot-Pattern Comparison Grid Container (Full Width #c9d8ee Connection) */}
+        <div className="w-full bg-white border-t border-dashed border-[#c9d8ee] divide-y divide-dashed divide-[#c9d8ee]">
+          {comparisonRows.map((row, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.04 }}
+              className="grid grid-cols-1 lg:grid-cols-12 relative"
+            >
+              {/* Column 1: "When you ask" (Clean White Background, lg:col-span-3) */}
+              <div className="lg:col-span-3 p-6 md:p-8 bg-white border-b lg:border-b-0 lg:border-r border-dashed border-[#c9d8ee] flex flex-col justify-start relative overflow-hidden">
+                
+                {/* Background Dither (Conditionally mounted via IntersectionObserver to prevent WebGL crashes) */}
+                <div className="absolute top-0 left-0 z-0 pointer-events-auto mix-blend-multiply opacity-20" style={{ width: '1080px', height: '1080px' }}>
+                  <InViewDither
+                    waveColor={
+                      idx === 0 ? [0.38823529411764707,0.08627450980392157,0.1411764705882353] :
+                      idx === 1 ? [0.023529411764705882,0.7137254901960784,0.8313725490196079] :
+                      idx === 2 ? [0.023529411764705882,0.8313725490196079,0.2196078431372549] :
+                      idx === 3 ? [0.5686274509803921,0.8313725490196079,0.023529411764705882] :
+                      idx === 4 ? [0.8313725490196079,0.5568627450980392,0.023529411764705882] :
+                      [0.8313725490196079,0.25098039215686274,0.023529411764705882]
+                    }
+                  />
+                </div>
 
-             {/* Floating Cascading Pills */}
-             <div className="relative w-full max-w-[500px] flex flex-col gap-4 z-10 sm:pr-8 ">
-                <FloatingPill x={0} icon={<FileText className="text-blue-500" size={16}/>} text="Summarize the key ideas from my notes" delay={0.1} />
-                <FloatingPill x={40} icon={<Activity className="text-chart-2" size={16}/>} text="Which memories connect retrieval and trust?" delay={0.2} />
-                <FloatingPill x={80} icon={<MessageSquare className="text-purple-500" size={16}/>} text="What are the main themes across this workspace?" delay={0.3} />
-                <FloatingPill x={30} icon={<GitPullRequest className="text-amber-500" size={16}/>} text="Capture developer context from anywhere" delay={0.4} />
-                <FloatingPill x={100} icon={<Database className="text-indigo-500" size={16}/>} text="Scope memory by products and repos" delay={0.5} />
-                <FloatingPill x={20} icon={<Shield className="text-destructive" size={16}/>} text="Turn scattered work into connected memory" delay={0.6} />
-             </div>
-           </div>
-         </Reveal>
+                <div className="relative z-10">
+                  <span className="text-[12px] font-medium text-slate-400 mb-3 block">
+                    When you ask
+                  </span>
+                  <h3 className="text-[18px] md:text-[20px] font-normal text-slate-900 leading-[1.35] tracking-tight">
+                    {row.prompt}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Ultra-Fine Dotted Mesh Canvas Area for Columns 2 & 3 */}
+              <div className="lg:col-span-9 grid grid-cols-1 lg:grid-cols-12 relative bg-[radial-gradient(#d4d4d8_1px,transparent_1px)] [background-size:8px_8px]">
+
+                {/* Column 2: Generic AI Quote (lg:col-span-6) */}
+                <div className="lg:col-span-6 p-6 md:p-10 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-r border-dashed border-[#c9d8ee] pt-10">
+
+                  {/* Floating Trapezoid Notch Badge Tab for Generic AI extending DOWN */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center justify-center z-10 w-[180px] h-[28px]">
+                    {/* Dither Background Clipped to Trapezoid */}
+                    <div 
+                      className="absolute inset-0 w-full h-full opacity-40 mix-blend-multiply" 
+                      style={{ clipPath: 'polygon(0 0, 25px 0, 38px 28px, 142px 28px, 155px 0, 180px 0)' }}
+                    >
+                      <InViewDither waveColor={[0.6, 0.7, 0.9]} />
+                    </div>
+                    {/* Outline SVG */}
+                    <svg width="180" height="28" viewBox="0 0 180 28" className="absolute top-0 overflow-visible pointer-events-none">
+                      <path
+                        d="M 0 0 L 25 0 L 38 28 L 142 28 L 155 0 L 180 0"
+                        fill="transparent"
+                        stroke="#c9d8ee"
+                        strokeWidth="1"
+                        strokeDasharray="2 2"
+                      />
+                    </svg>
+                    <div className="absolute top-1.5 flex items-center justify-center gap-1.5 text-[11px] text-slate-800 font-medium z-10">
+                      <span>{row.genericAi.icon}</span>
+                      <span>{row.genericAi.badge}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-slate-200/90 rounded-md p-6 text-center text-[12px] md:text-[13px] text-slate-700 leading-relaxed shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full max-w-[340px] mt-4">
+                    {row.genericAi.text}
+                  </div>
+                </div>
+
+                {/* Central Floating Calligraphic Warm Copper VS Badge */}
+                <div className="hidden lg:flex items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+                  <div className="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center">
+                    <span className="italic text-[#b45309] text-[15px] font-light tracking-wide">
+                      vs
+                    </span>
+                  </div>
+                </div>
+
+                {/* Column 3: Official Navbar Logo Badge Tab (lg:col-span-6) */}
+                <div className="lg:col-span-6 p-6 md:p-10 flex flex-col items-center justify-center relative pt-10">
+
+                  {/* Floating Trapezoid Notch Badge Tab for Epoch Navbar Logo extending DOWN */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center justify-center z-10 w-[180px] h-[28px]">
+                    {/* Dither Background Clipped to Trapezoid */}
+                    <div 
+                      className="absolute inset-0 w-full h-full opacity-40 mix-blend-multiply" 
+                      style={{ clipPath: 'polygon(0 0, 25px 0, 38px 28px, 142px 28px, 155px 0, 180px 0)' }}
+                    >
+                      <InViewDither waveColor={[0.9, 0.7, 0.4]} />
+                    </div>
+                    {/* Outline SVG */}
+                    <svg width="180" height="28" viewBox="0 0 180 28" className="absolute top-0 overflow-visible pointer-events-none">
+                      <path
+                        d="M 0 0 L 25 0 L 38 28 L 142 28 L 155 0 L 180 0"
+                        fill="transparent"
+                        stroke="#c9d8ee"
+                        strokeWidth="1"
+                        strokeDasharray="2 2"
+                      />
+                    </svg>
+                    <div className="absolute top-1 flex items-center justify-center z-10">
+                      <MemoryOSFullLogo className="h-5 w-auto text-slate-900" />
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-slate-200/90 rounded-md p-6 text-[11px] md:text-[12px] text-slate-600 space-y-4 shadow-[0_4px_20px_rgba(0,0,0,0.04)] w-full max-w-[360px] mt-4">
+
+                    {/* Live Icon Execution Steps connected by Vertical Timeline Spine */}
+                    <div className="relative pl-7 space-y-3.5">
+                      {/* Continuous Vertical Timeline Spine Line */}
+                      <div className="absolute left-[7px] top-2 bottom-2 w-[3px] bg-slate-200/90 rounded-full" />
+
+                      {row.memoryOs.steps.map((step, sIdx) => (
+                        <div key={sIdx} className="flex items-start gap-3 relative z-10 leading-snug">
+                          {/* SVG Brand Icon centered on top of spine */}
+                          <div className="absolute -left-[23px] top-0.5 bg-white p-0.5 rounded-full shadow-25">
+                            {step.icon}
+                          </div>
+                          <span className="text-slate-500 text-[11px] leading-relaxed">{step.text}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bottom Summary Rationale */}
+                    <div className="pt-3 border-t border-slate-100 text-[11.5px] text-slate-800 leading-relaxed">
+                      {row.memoryOs.summaryBold}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-
-      {/* 2. AVAILABLE ACROSS */}
-      <div className="px-6 pt-16">
-         <Reveal delay={0.06} className="mx-auto max-w-4xl text-center">
-           <p className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase font-semibold">
-             AVAILABLE ACROSS
-           </p>
-           <div 
-             className="mt-8 relative flex overflow-hidden w-[100vw] max-w-[100vw] left-1/2 right-1/2 -mx-[50vw] pb-4 group"
-             style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}
-           >
-             <div className="flex shrink-0 min-w-max items-center justify-around gap-10 md:gap-14 animate-marquee group-hover:[animation-play-state:paused] pr-10 md:pr-14">
-               <ToolPill label="Claude" icon={<ClaudeMark />} />
-               <ToolPill label="Mastra" icon={<MastraMark />} />
-               <ToolPill label="GPT Agents" icon={<CursorMark />} />
-               <ToolPill label="Ollama" icon={<VSCodeMark />} />
-               <ToolPill label="LangGraph" icon={<LangGraphMark />} />
-               <ToolPill label="n8n" icon={<N8nMark />} />
-               <ToolPill label="Zapier" icon={<ZapierMark />} />
-               <ToolPill label="Qwen" icon={<OpenCodeMark />} />
-               <ToolPill label="DeepSeek" icon={<WindsurfMark />} />
-               <ToolPill label="More" icon={<MoreMark />} />
-             </div>
-             <div className="flex shrink-0 min-w-max items-center justify-around gap-10 md:gap-14 animate-marquee group-hover:[animation-play-state:paused] pr-10 md:pr-14" aria-hidden="true">
-               <ToolPill label="Claude" icon={<ClaudeMark />} />
-               <ToolPill label="Mastra" icon={<MastraMark />} />
-               <ToolPill label="GPT Agents" icon={<CursorMark />} />
-               <ToolPill label="Ollama" icon={<VSCodeMark />} />
-               <ToolPill label="LangGraph" icon={<LangGraphMark />} />
-               <ToolPill label="n8n" icon={<N8nMark />} />
-               <ToolPill label="Zapier" icon={<ZapierMark />} />
-               <ToolPill label="Qwen" icon={<OpenCodeMark />} />
-               <ToolPill label="DeepSeek" icon={<WindsurfMark />} />
-               <ToolPill label="More" icon={<MoreMark />} />
-             </div>
-           </div>
-         </Reveal>
-      </div>
-
-      {/* 3. STICKY FEATURE SCROLL (Replaces 2x2 grid) */}
-      <PersonalMemoryFeaturesGrid />
-
-      {/* 4. FOOTER STATS */}
-      <div className="px-6 pb-24 dark bg-background text-foreground border-b border-border">
-         <Reveal delay={0.16} className="mx-auto max-w-4xl">
-           <div className="grid gap-8 pt-12 text-center sm:grid-cols-3">
-             {[
-               ["Shared", "team memory"],
-               ["Multi-tool", "integrations"],
-               ["Fast", "context recall"],
-             ].map(([value, label]) => (
-               <div key={label} className="group">
-                 <p className="text-[32px] md:text-[40px] font-semibold tracking-[-0.03em] text-foreground group-hover:text-primary transition-colors">{value}</p>
-                 <p className="mt-2 text-[15px] text-muted-foreground uppercase tracking-widest font-mono text-[11px]">{label}</p>
-               </div>
-             ))}
-           </div>
-         </Reveal>
-      </div>
-
-    </section>
+    </div>
   );
 }
+
+

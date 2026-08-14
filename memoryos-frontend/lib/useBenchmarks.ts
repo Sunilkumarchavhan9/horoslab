@@ -12,6 +12,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getMemoryOSOrgHeaders } from "./org-scope-client";
 import { getOrCreateMemoryToken } from "./memory-token";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -256,6 +257,7 @@ async function executeBenchmarkApi<T>(
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      ...getMemoryOSOrgHeaders(),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",

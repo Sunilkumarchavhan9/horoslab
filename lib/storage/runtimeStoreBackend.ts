@@ -1,21 +1,11 @@
-export type RuntimeStoreBackend = "json" | "sqlite" | "postgres";
+export type RuntimeStoreBackend = "postgres";
 
 export function getRuntimeStoreBackend(): RuntimeStoreBackend {
-  const raw = process.env.MEMORY_STORE_BACKEND?.trim().toLowerCase();
-
-  if (raw === "sqlite" || raw === "json" || raw === "postgres") {
-    return raw;
-  }
-
-  if (process.env.NODE_ENV === "production") {
-    return "postgres";
-  }
-
-  return "json";
+  return "postgres";
 }
 
 export function isSqliteRuntimeStore(): boolean {
-  return getRuntimeStoreBackend() === "sqlite";
+  return false;
 }
 
 export function isPostgresRuntimeStore(): boolean {
@@ -23,6 +13,5 @@ export function isPostgresRuntimeStore(): boolean {
 }
 
 export function isRelationalRuntimeStore(): boolean {
-  const backend = getRuntimeStoreBackend();
-  return backend === "sqlite" || backend === "postgres";
+  return isPostgresRuntimeStore();
 }

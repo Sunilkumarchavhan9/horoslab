@@ -5,11 +5,16 @@ import {
   type ContinuityPlannerResult,
 } from "../memory/continuityPlanner";
 import { getWorkflowStateAdapter } from "../adapters/workflowStateAdapter";
+import type { ContinuityScope } from "../adapters/adapters";
 
 type ContinueFlowInput = ContinuityPlannerInput & {
   workspace?: string;
   project?: string;
   threadId?: string;
+  repo?: ContinuityScope["repo"];
+  service?: ContinuityScope["service"];
+  environment?: ContinuityScope["environment"];
+  taskId?: ContinuityScope["taskId"];
   omitNullPreviousCheckpoint?: boolean;
 };
 
@@ -50,7 +55,11 @@ function buildWorkflowKey(input: ContinueFlowInput): string {
   const workspace = input.workspace ?? "default";
   const project = input.project ?? "default";
   const thread = input.threadId ?? "default";
-  return `continue:${input.userId}:${workspace}:${project}:${thread}`;
+  const repo = input.repo ?? "default";
+  const service = input.service ?? "default";
+  const environment = input.environment ?? "default";
+  const taskId = input.taskId ?? "default";
+  return `continue:${input.userId}:${workspace}:${project}:${thread}:${repo}:${service}:${environment}:${taskId}`;
 }
 
 export async function runContinueFlowLangGraph(

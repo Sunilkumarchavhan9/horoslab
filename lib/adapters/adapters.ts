@@ -4,6 +4,8 @@ export interface MemoryStoreSearchResult {
   id: string;
   score?: number;
   memory?: string;
+  sourceRef?: string;
+  traceProof?: Memory["traceProof"];
   metadata?: Record<string, unknown>;
 }
 
@@ -11,6 +13,10 @@ export interface ContinuityScope {
   workspace?: string;
   project?: string;
   threadId?: string;
+  repo?: string;
+  service?: string;
+  environment?: string;
+  taskId?: string;
 }
 
 export interface MemoryStoreAdapter {

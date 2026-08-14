@@ -1,79 +1,86 @@
+"use client";
+
 import { AnimatedRailTicks } from "./animated-rail-ticks";
-import { Reveal } from "./motion";
 import { HeroAnnouncementStrip } from "./hero-announcement-strip";
-import { HeroBrainCyberCanvas } from "./hero-brain-cyber-canvas";
+import { HeroCornerSvg } from "./hero-corner-svg";
+import { HeroBottomCornerSvg } from "./hero-bottom-corner-svg";
+import { HeroLeftBottomSvg } from "./hero-left-bottom-svg";
 
 export function HeroSection() {
   return (
-    <section className="border-b border-[#c9d8ee]">
-      <div className="relative h-11 border-y border-dashed border-[#c9d8ee]">
+    <section className="relative z-0 overflow-hidden border-b border-[#c9d8ee] bg-white">
+      {/* Background Video */}
+      <video
+        src="/grrek.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        className="absolute inset-0 z-[-1] h-full w-full object-cover pointer-events-none"
+        style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', willChange: 'transform' }}
+      />
+
+      <HeroCornerSvg />
+      <HeroBottomCornerSvg />
+      <HeroLeftBottomSvg />
+
+      <div className="relative h-8 border-y border-dashed border-[#c9d8ee]">
         <AnimatedRailTicks positions={["24%", "50%", "76%"]} />
       </div>
 
       <HeroAnnouncementStrip />
 
-      <div className="grid gap-6 px-5 py-8 lg:grid-cols-[1.28fr_0.72fr] lg:px-7">
-        <Reveal>
-          <p className="font-mono text-[11px] tracking-[0.22em] text-[#356acc]">
-            COMPANY BRAIN INFRASTRUCTURE
-          </p>
-          <h1 className="max-w-[760px] text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-slate-900 md:text-5xl lg:text-[56px]">
-            Turn scattered company knowledge into executable agent skills
+      <div className="mx-auto flex max-w-[1440px] justify-center px-6 pb-24 pt-10 sm:px-10 lg:px-16 lg:pb-32 lg:pt-14 xl:px-20 xl:pb-40">
+        <div className="flex w-full max-w-[1200px] flex-col items-center text-center">
+
+          {/* Eyebrow */}
+          <div className="mb-4 text-[13px] font-bold tracking-widest text-white/80 uppercase">
+            AUTONOMOUS ORGANIZATION INFRASTRUCTURE
+          </div>
+
+          <h1 className="glitch-text mt-2 w-full max-w-[1100px] text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-5xl lg:text-[56px] xl:text-[64px]">
+            Agents are becoming<br />
+            organizations.
           </h1>
 
-          <a
-            href="https://f.inc"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex w-fit items-center gap-2 border border-[#c9d8ee] bg-white px-3 py-1.5 text-[12px] text-[#4f6481] transition hover:border-[#9db8e3] hover:text-[hsl(var(--primary))]"
-          >
-            <img
-              src="https://www.google.com/s2/favicons?domain=f.inc&sz=64"
-              alt="Founders, Inc. logo"
-              className="h-4 w-4"
-            />
-            <span>Part of Founders, Inc.</span>
-          </a>
-
-          <p className="mt-5 max-w-[560px] text-[15px] leading-[1.5] text-[#5f6f86] md:text-[16px]">
-            MemoryOS ingests context from real company systems, structures it into decisions, policies, and workflows,
-            and injects the right memory for safe execution across sessions, tools, and agents.
-          </p>
-
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            <a
-              href="/developer-console/sign-in"
-              className="bg-blue-600 px-5 py-2.5 text-[15px] font-medium text-white transition hover:bg-blue-800"
-            >
-              Start Building →
-            </a>
-            <a
-              href="#contact"
-              className="border border-[#c9d8ee] bg-white px-5 py-2.5 text-[15px] font-medium text-slate-800 transition hover:border-[#9db8e3] hover:text-[hsl(var(--primary))]"
-            >
-              Talk to Founder
-            </a>
+          <div className="mx-auto mt-6 max-w-[800px] text-[16px] leading-relaxed text-white sm:text-[18px] space-y-4">
+            <p>
+              Epoch is the institution runtime for the autonomous enterprise: mission-scoped authority, governed execution, independent proof, settlement, and institutional evolution for AI workforces.
+            </p>
           </div>
 
-          <a
-            href="#company-brain-thesis"
-            className="mt-3 inline-flex text-[14px] text-[#516882] underline-offset-4 transition hover:text-[hsl(var(--primary))] hover:underline"
-          >
-            See the company brain thesis ↗
-          </a>
+          <div className="mt-8 flex flex-col items-center gap-2">
+            <div className="inline-flex flex-wrap justify-center items-center gap-2 text-[13px] font-medium text-white/70 text-center">
+              <span className="border-b border-dashed border-white/40 pb-[1px]">
+                Sign up, connect GitHub and Slack, ask Reality, and run the first mission.
+              </span>
+            </div>
 
-          <div className="mt-2.5 inline-flex w-fit items-center gap-2 border border-[#c9d8ee] bg-white px-3.5 py-2 font-mono text-[12px] text-[#5f6f86]">
-            <span className="text-[#8a9ab1]">$</span>
-            <span>npm install @memoryostm/sdk</span>
-            <span className="text-[#a1b1c7]">TypeScript • Python • REST</span>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <a
+                href="/auth/sign-up"
+                className="flex items-center bg-[#0015FF] text-[14px] font-medium text-white transition hover:bg-[#0015FF]/90"
+              >
+                <span className="px-6 py-2.5">Open Institution Runtime</span>
+                <span className="border-l border-[#0015FF] px-4 py-2.5">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </a>
+              <a
+                href="https://cal.com/vegito"
+                target="_blank"
+                rel="noreferrer"
+                className="border border-slate-200 bg-white px-6 py-2.5 text-[14px] font-medium text-slate-800 transition hover:border-slate-300 hover:bg-slate-50"
+              >
+                Book Founder Call
+              </a>
+            </div>
           </div>
-        </Reveal>
 
-        <Reveal delay={0.1} className="grid place-items-center">
-          <div className="relative aspect-square w-full max-w-[360px] overflow-hidden">
-            <HeroBrainCyberCanvas className="h-full w-full" src="/braine.png" />
-          </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

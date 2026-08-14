@@ -1,0 +1,3 @@
+{
+  "/api/benchmarks/[...benchmarkPath]/route": "app/api/benchmarks/[...benchmarkPath]/route.js"
+}

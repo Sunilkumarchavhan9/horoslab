@@ -1,0 +1,573 @@
+"use client";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { epochAdapter } from "@/lib/adapters/epoch-adapter";
+import {
+  Program,
+  ModelEntity,
+  RunEntity,
+  DeploymentEntity,
+  RegistryArtifact,
+  EvidenceItem,
+  EpochRuntimeOverview,
+  CandidateProfile,
+} from "@/lib/epoch-types";
+import { EpochHeader } from "../epoch/shell/epoch-header";
+import { EpochSubnav, EpochNavRoute } from "../epoch/shell/epoch-subnav";
+import { EpochSidebar } from "../epoch/shell/epoch-sidebar";
+import { EpochCommandDialog } from "../epoch/shell/epoch-command-dialog";
+import { EpochShortcutsDialog } from "../epoch/shell/epoch-shortcuts-dialog";
+import { HomeView } from "../epoch/views/home-view";
+import { ProgramsListView } from "../epoch/views/programs-list-view";
+import { ProgramDetailView } from "../epoch/views/program-detail-view";
+import { PipelineWorkspaceView } from "../epoch/views/pipeline-workspace-view";
+import { NewProgramModal } from "../epoch/views/new-program-modal";
+import { ModelsCatalogView } from "../epoch/views/models-catalog-view";
+import { ModelDetailView } from "../epoch/views/model-detail-view";
+import { RunsListView } from "../epoch/views/runs-list-view";
+import { RunDetailView } from "../epoch/views/run-detail-view";
+import { DeploymentsView } from "../epoch/views/deployments-view";
+import { RegistryView } from "../epoch/views/registry-view";
+import { EvidenceView } from "../epoch/views/evidence-view";
+import { SettingsView } from "../epoch/views/settings-view";
+
+interface EpochInferenceControlPlaneProps {
+  workspaceId: string;
+}
+
+export function EpochInferenceControlPlane({
+  workspaceId,
+}: EpochInferenceControlPlaneProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Navigation state
+  const rawView = searchParams.get("view") as EpochNavRoute | null;
+  const initialView: EpochNavRoute = rawView && [
+    "home",
+    "programs",
+    "models",
+    "runs",
+    "deployments",
+    "registry",
+    "evidence",
+    "settings",
+  ].includes(rawView)
+    ? rawView
+    : "home";
+
+  const [activeRoute, setActiveRoute] = useState<EpochNavRoute>(initialView);
+  const [settingsTab, setSettingsTab] = useState<"workspace" | "notifications" | "billing" | "cost" | "keys" | "clouds" | "security">("workspace");
+
+  const [activePipelineWorkspace, setActivePipelineWorkspace] = useState<{
+    title: string;
+    prompt: string;
+    programId?: string;
+    runId?: string;
+    runStatus?: string;
+    runError?: string;
+  } | null>(null);
+
+  const [displayLayout, setDisplayLayout] = useState<"top_bar" | "sidebar">("top_bar");
+
+  const [selectedProgramId, setSelectedProgramId] = useState<string | null>(
+    searchParams.get("programId") || null
+  );
+  const [selectedModelId, setSelectedModelId] = useState<string | null>(
+    searchParams.get("modelId") || null
+  );
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(
+    searchParams.get("runId") || null
+  );
+
+  // Modal states
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [newProgramModalOpen, setNewProgramModalOpen] = useState(false);
+  const [newProgramInitialPrompt, setNewProgramInitialPrompt] = useState("");
+  const [dark, setDark] = useState(true);
+  const [activeWorkspace, setActiveWorkspace] = useState("Production US-East");
+
+  // Data state
+  const [overview, setOverview] = useState<EpochRuntimeOverview | null>(null);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [selectedProgramRuns, setSelectedProgramRuns] = useState<Record<string, unknown>[]>([]);
+  const [models, setModels] = useState<ModelEntity[]>([]);
+  const [runs, setRuns] = useState<RunEntity[]>([]);
+  const [deployments, setDeployments] = useState<DeploymentEntity[]>([]);
+  const [registry, setRegistry] = useState<RegistryArtifact[]>([]);
+  const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+
+  // Keep the control plane synchronized with live backend state while it is open.
+  const loadData = useCallback(async () => {
+    try {
+      setDataError(null);
+      const [o, p, m, r, d, reg, ev] = await Promise.all([
+        epochAdapter.getOverview(workspaceId),
+        epochAdapter.getPrograms(workspaceId),
+        epochAdapter.getModels(workspaceId),
+        epochAdapter.getRuns(workspaceId),
+        epochAdapter.getDeployments(workspaceId),
+        epochAdapter.getRegistry(workspaceId),
+        epochAdapter.getEvidence(workspaceId),
+      ]);
+      setOverview(o);
+      setPrograms(p);
+      setModels(m);
+      setRuns(r);
+      setDeployments(d);
+      setRegistry(reg);
+      setEvidence(ev);
+    } catch (err) {
+      setDataError(err instanceof Error ? err.message : "Epoch runtime data could not be loaded.");
+      console.error("Failed to fetch Epoch runtime data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [workspaceId]);
+
+  useEffect(() => {
+    void loadData();
+    const refreshTimer = window.setInterval(() => {
+      if (document.visibilityState === "visible") void loadData();
+    }, 10_000);
+
+    return () => window.clearInterval(refreshTimer);
+  }, [loadData]);
+
+  const loadProgramRuns = useCallback(async (programId: string) => {
+    try {
+      const programRuns = await epochAdapter.listProgramRuns(workspaceId, programId);
+      setSelectedProgramRuns(programRuns);
+    } catch (error) {
+      console.error("Failed to fetch persisted program runs:", error);
+      setSelectedProgramRuns([]);
+    }
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (selectedProgramId) void loadProgramRuns(selectedProgramId);
+    else setSelectedProgramRuns([]);
+  }, [loadProgramRuns, selectedProgramId]);
+
+  // Route changer with URL sync
+  function handleNavigate(route: string) {
+    setActivePipelineWorkspace(null);
+    if (route.startsWith("settings-")) {
+      const tab = route.replace("settings-", "") as typeof settingsTab;
+      setSettingsTab(tab);
+      setActiveRoute("settings");
+      router.push(`/mission-control?view=settings`);
+      return;
+    }
+
+    const castedRoute = route as EpochNavRoute;
+    setActiveRoute(castedRoute);
+    setSelectedProgramId(null);
+    setSelectedModelId(null);
+    setSelectedRunId(null);
+    router.push(`/mission-control?view=${castedRoute}`);
+  }
+
+  function handleSelectProgram(id: string) {
+    setActivePipelineWorkspace(null);
+    setSelectedProgramId(id);
+    setSelectedProgramRuns([]);
+    setActiveRoute("programs");
+    router.push(`/mission-control?view=programs&programId=${id}`);
+  }
+
+  function handleSelectModel(id: string) {
+    setActivePipelineWorkspace(null);
+    setSelectedModelId(id);
+    setActiveRoute("models");
+    router.push(`/mission-control?view=models&modelId=${id}`);
+  }
+
+  function handleSelectRun(id: string) {
+    setActivePipelineWorkspace(null);
+    setSelectedRunId(id);
+    setActiveRoute("runs");
+    router.push(`/mission-control?view=runs&runId=${id}`);
+  }
+
+  async function handleCreateProgram(payload: {
+    name: string;
+    objective: string;
+    modelTarget: string;
+    targetHardware?: string;
+    maxCostPerReq?: number;
+    p95LatencyMsTarget?: number;
+    minQualityRetentionPct?: number;
+  }) {
+    const created = await epochAdapter.createProgram(workspaceId, payload);
+    await loadData();
+    handleSelectProgram(created.id);
+  }
+
+  function handleLaunchPrompt(prompt: string, metadata?: Record<string, unknown>) {
+    // Open the full Interactive Pipeline Workspace
+    setActivePipelineWorkspace({
+      title: metadata?.model ? `Optimize ${metadata.model}` : "Untitled Pipeline",
+      prompt,
+    });
+  }
+
+  async function handleAcceptAndRun(payload: { title: string; prompt: string }) {
+    setActivePipelineWorkspace((current) => current ? {
+      ...current,
+      runStatus: "submitting",
+      runError: undefined,
+    } : current);
+
+    try {
+      let programId = activePipelineWorkspace?.programId;
+      if (!programId) {
+        const created = await epochAdapter.createProgram(workspaceId, {
+          name: payload.title || "Untitled Pipeline",
+          objective: payload.prompt,
+          questions: [payload.prompt],
+        });
+        programId = created.id;
+      }
+
+      const run = await epochAdapter.createProgramRun(workspaceId, programId, {
+        name: payload.title || "Untitled Pipeline run",
+        prompt: payload.prompt,
+        source: "pipeline_workspace",
+      });
+
+      setActivePipelineWorkspace((current) => current ? {
+        ...current,
+        programId,
+        runId: String(run.id),
+        runStatus: String(run.status ?? "queued"),
+        runError: undefined,
+      } : current);
+      await loadData();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to queue pipeline run.";
+      setActivePipelineWorkspace((current) => current ? {
+        ...current,
+        runStatus: undefined,
+        runError: message,
+      } : current);
+      throw error;
+    }
+  }
+
+  async function handleDeployCandidate(candidate: CandidateProfile) {
+    try {
+      await epochAdapter.createDeployment(workspaceId, {
+        name: candidate.name,
+        model: candidate.name,
+        environment: "staging",
+        executionDomain: candidate.executionDomain,
+        activeVersion: candidate.id,
+      });
+      await loadData();
+      handleNavigate("deployments");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Deployment could not be created.");
+    }
+  }
+
+  async function handleRollbackDeployment(depId: string) {
+    try {
+      await epochAdapter.rollbackDeployment(workspaceId, depId);
+      await loadData();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Deployment rollback is not available through the live Epoch API.");
+    }
+  }
+
+  async function handleRunSweep(programId: string) {
+    try {
+      const updated = await epochAdapter.updateProgramStatus(workspaceId, programId, "benchmarking");
+      if (!updated) throw new Error("Program could not be updated through the live Epoch API.");
+      await loadData();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Benchmark sweep could not be started.");
+    }
+  }
+
+  const selectedProgram = selectedProgramId
+    ? programs.find((p) => p.id === selectedProgramId)
+    : null;
+
+  const selectedModel = selectedModelId
+    ? (models.find((m) => m.id === selectedModelId) || {
+        id: selectedModelId,
+        name: "DeepSeek V4 Flash",
+        provider: "DeepSeek",
+        task: "text-generation",
+        parameters: "37B",
+        contextWindow: 131072,
+        license: "deepseek-license",
+        format: "FP8",
+        status: "paused",
+        capabilities: ["chat", "code", "serverless", "streaming", "json_mode"],
+        description: "DeepSeek V4 Flash high-throughput MoE hosted serverless endpoint",
+        bestObservedProfile: {
+          engine: "vLLM",
+          hardware: "H100 SXM5",
+          executionDomain: "cloud",
+          p95LatencyMs: 84,
+          costPer1M: 0.28,
+        },
+        variants: [],
+      } as ModelEntity)
+    : null;
+
+  const selectedRun = selectedRunId
+    ? runs.find((r) => r.id === selectedRunId)
+    : null;
+
+  // If in interactive pipeline workspace view
+  if (activePipelineWorkspace) {
+    return (
+      <PipelineWorkspaceView
+        pipelineTitle={activePipelineWorkspace.title}
+        initialPrompt={activePipelineWorkspace.prompt}
+        onBack={() => setActivePipelineWorkspace(null)}
+        onNavigateToPipelines={() => {
+          setActivePipelineWorkspace(null);
+          handleNavigate("programs");
+        }}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
+        dark={dark}
+        onToggleTheme={() => setDark(!dark)}
+        onAcceptAndRun={handleAcceptAndRun}
+        runStatus={activePipelineWorkspace.runStatus}
+        runError={activePipelineWorkspace.runError}
+      />
+    );
+  }
+
+  return (
+    <div className={dark ? "min-h-screen bg-[#151515] text-[#f0f3ee] font-sans antialiased flex" : "min-h-screen bg-[#fbfbfa] text-[#151515] font-sans antialiased flex"}>
+      {/* Optional Left Sidebar Layout matching Screenshot 1 */}
+      {displayLayout === "sidebar" && (
+        <EpochSidebar
+          activeRoute={activeRoute}
+          onNavigate={(r) => handleNavigate(r)}
+          onOpenCommand={() => setCommandOpen(true)}
+          dark={dark}
+          onToggleTheme={() => setDark(!dark)}
+          userBalance={overview?.balanceUsd ?? 10.0}
+          displayLayout={displayLayout}
+          onToggleLayout={(l) => setDisplayLayout(l)}
+          settingsTab={settingsTab}
+          onSelectSettingsTab={(tab) => setSettingsTab(tab)}
+          onBackFromSettings={() => handleNavigate("home")}
+          onSelectPipeline={() => {
+            setActivePipelineWorkspace({
+              title: "Untitled Pipeline",
+              prompt: "Describe the objective, constraints, and evidence required for this optimization run.",
+            });
+          }}
+        />
+      )}
+
+      {/* Main Column */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header */}
+        {displayLayout === "top_bar" && (
+          <>
+            <EpochHeader
+              onOpenCommand={() => setCommandOpen(true)}
+              dark={dark}
+              onToggleTheme={() => setDark(!dark)}
+              activeWorkspace={activeWorkspace}
+              onSelectWorkspace={setActiveWorkspace}
+              balanceUsd={overview?.balanceUsd ?? 10.0}
+              displayLayout={displayLayout}
+              onToggleLayout={(l) => setDisplayLayout(l)}
+            />
+
+            {/* Primary Subnav */}
+            <EpochSubnav
+              activeRoute={activeRoute}
+              onNavigate={(r) => handleNavigate(r)}
+              dark={dark}
+            />
+          </>
+        )}
+
+        {/* Main Content Workspace Container */}
+        <main className="mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 md:py-10 flex-1">
+          {dataError && (
+            <div className="mb-4 flex items-center justify-between gap-4 border border-[#d7a8a8] bg-[#fff7f7] px-4 py-3 text-xs text-[#8f3030]">
+              <span>Live Epoch data is unavailable: {dataError}</span>
+              <button className="font-medium underline" onClick={() => void loadData()}>Retry</button>
+            </div>
+          )}
+          {loading && !overview ? (
+            <div className="flex min-h-[400px] flex-col items-center justify-center border border-dashed border-[#c9cec4] bg-white p-12 text-center">
+              <span className="h-6 w-6 animate-spin rounded-full border-2 border-[#75bf00] border-t-transparent mb-3" />
+              <p className="text-xs font-mono uppercase tracking-[0.14em] text-[#6b7367]">
+                Initializing Epoch AI Control Plane Runtime...
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* View Switching */}
+              {activeRoute === "home" && (
+                <HomeView
+                  overview={overview || undefined}
+                  programs={programs}
+                  onSelectProgram={handleSelectProgram}
+                  onLaunchPrompt={handleLaunchPrompt}
+                  onNavigateToEvidence={() => handleNavigate("evidence")}
+                  onNavigateToPipelines={() => handleNavigate("programs")}
+                  onRefresh={loadData}
+                  onSelectPipeline={(pipeline) => {
+                    setActivePipelineWorkspace({
+                      title: pipeline.title,
+                      prompt: pipeline.prompt,
+                    });
+                  }}
+                  dark={dark}
+                />
+              )}
+
+              {activeRoute === "programs" && (
+                selectedProgram ? (
+                  <ProgramDetailView
+                    program={selectedProgram}
+                    runs={selectedProgramRuns}
+                    onBack={() => setSelectedProgramId(null)}
+                    onDeployCandidate={handleDeployCandidate}
+                    onReviewEvidence={() => handleNavigate("evidence")}
+                    onPauseProgram={async (pid) => {
+                      await epochAdapter.updateProgramStatus(workspaceId, pid, "paused");
+                      await loadData();
+                    }}
+                    onRunSweep={handleRunSweep}
+                  />
+                ) : (
+                  <ProgramsListView
+                    programs={programs}
+                    onSelectProgram={handleSelectProgram}
+                    onOpenNewProgram={() => {
+                      handleNavigate("home");
+                    }}
+                    onSelectPipeline={(pipeline) => {
+                      setActivePipelineWorkspace({
+                        title: pipeline.title,
+                        prompt: pipeline.prompt,
+                      });
+                    }}
+                    dark={dark}
+                  />
+                )
+              )}
+
+              {activeRoute === "models" && (
+                selectedModel ? (
+                  <ModelDetailView
+                    model={selectedModel}
+                    onBack={() => setSelectedModelId(null)}
+                    onStartProgramWithModel={(mName) => {
+                      setActivePipelineWorkspace({
+                        title: `Optimize ${mName}`,
+                        prompt: `Optimize @${mName} for production latency and cost budgets`,
+                      });
+                    }}
+                    onManageKeys={() => handleNavigate("settings-keys")}
+                    dark={dark}
+                  />
+                ) : (
+                  <ModelsCatalogView
+                    models={models}
+                    onSelectModel={handleSelectModel}
+                    onOpenImport={() => {
+                      setNewProgramInitialPrompt("Import model weights from Hugging Face");
+                      setNewProgramModalOpen(true);
+                    }}
+                    onManageKeys={() => handleNavigate("settings-keys")}
+                    dark={dark}
+                  />
+                )
+              )}
+
+              {activeRoute === "deployments" && (
+                <DeploymentsView
+                  deployments={deployments}
+                  onRollback={handleRollbackDeployment}
+                  onSelectProgram={handleSelectProgram}
+                  dark={dark}
+                />
+              )}
+
+              {activeRoute === "runs" && (
+                selectedRun ? (
+                  <RunDetailView
+                    run={selectedRun}
+                    onBack={() => setSelectedRunId(null)}
+                    dark={dark}
+                  />
+                ) : (
+                  <RunsListView
+                    runs={runs}
+                    onSelectRun={handleSelectRun}
+                    onRefresh={loadData}
+                    dark={dark}
+                  />
+                )
+              )}
+
+              {activeRoute === "registry" && (
+                <RegistryView artifacts={registry} dark={dark} />
+              )}
+
+              {activeRoute === "evidence" && (
+                <EvidenceView
+                  evidenceList={evidence}
+                  onSelectProgram={handleSelectProgram}
+                  dark={dark}
+                />
+              )}
+
+              {activeRoute === "settings" && (
+                <SettingsView
+                  initialTab={settingsTab}
+                  onBack={() => handleNavigate("home")}
+                  displayLayout={displayLayout}
+                  onDisplayNavChange={(layout) => setDisplayLayout(layout)}
+                  dark={dark}
+                />
+              )}
+            </>
+          )}
+        </main>
+
+      </div>
+
+      {/* Global Command Palette Dialog matching Screenshot 1 */}
+      <EpochCommandDialog
+        open={commandOpen}
+        onOpenChange={setCommandOpen}
+        onNavigate={handleNavigate}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
+      />
+
+      {/* Keyboard Shortcuts Dialog matching Screenshot 2 */}
+      <EpochShortcutsDialog
+        open={shortcutsOpen}
+        onOpenChange={setShortcutsOpen}
+      />
+
+      {/* New Program Command Creation Modal */}
+      <NewProgramModal
+        open={newProgramModalOpen}
+        onClose={() => setNewProgramModalOpen(false)}
+        onCreateProgram={handleCreateProgram}
+        initialPrompt={newProgramInitialPrompt}
+      />
+    </div>
+  );
+}

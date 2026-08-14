@@ -1,0 +1,27 @@
+{
+  "contractVersion": "epoch.runtime.v1",
+  "scenario": "simulated-edge-mission",
+  "worker": {
+    "id": "worker_edge_001",
+    "kind": "simulated_edge",
+    "name": "Edge Sensor Simulator",
+    "status": "busy",
+    "capabilities": ["sample", "report", "offline-retry"],
+    "correlation": { "correlationId": "corr_edge_001", "traceId": "trace_edge_001" }
+  },
+  "mission": {
+    "id": "mission_edge_001",
+    "workspaceId": "workspace_fixture",
+    "institutionId": "institution_edge",
+    "title": "Validate edge telemetry",
+    "objective": "Sample simulated telemetry and report a verifiable result.",
+    "state": "waiting_review",
+    "plan": ["Start simulator", "Capture sample", "Validate bounds", "Review result"],
+    "currentStep": "Review result",
+    "budgetCents": 250,
+    "deadlineAt": null,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:10:00.000Z",
+    "correlation": { "correlationId": "corr_edge_001", "traceId": "trace_edge_001" }
+  }
+}

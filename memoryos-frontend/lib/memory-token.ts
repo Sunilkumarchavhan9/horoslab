@@ -5,6 +5,14 @@ const TOKEN_STORAGE_KEYS = [
   "MEMORYOS_API_TOKEN",
 ] as const;
 
+const TOKEN_BRIDGE_UNAUTHORIZED_COOLDOWN_MS = Math.max(
+  1_000,
+  Number(process.env.NEXT_PUBLIC_MEMORYOS_TOKEN_UNAUTHORIZED_COOLDOWN_MS ?? 2_500),
+);
+
+let tokenBridgeRequest: Promise<string | null> | null = null;
+let tokenBridgeUnauthorizedUntil = 0;
+
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   const parts = token.split(".");
   if (parts.length < 2) {
@@ -90,6 +98,21 @@ export async function fetchMemoryTokenFromBridge(): Promise<string | null> {
     return null;
   }
 
+  if (Date.now() < tokenBridgeUnauthorizedUntil) {
+    return null;
+  }
+
+  if (tokenBridgeRequest) {
+    return tokenBridgeRequest;
+  }
+
+  tokenBridgeRequest = fetchMemoryTokenFromBridgeOnce().finally(() => {
+    tokenBridgeRequest = null;
+  });
+  return tokenBridgeRequest;
+}
+
+async function fetchMemoryTokenFromBridgeOnce(): Promise<string | null> {
   let response: Response;
   try {
     response = await fetch("/api/memory/token", {
@@ -105,8 +128,13 @@ export async function fetchMemoryTokenFromBridge(): Promise<string | null> {
   }
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      tokenBridgeUnauthorizedUntil = Date.now() + TOKEN_BRIDGE_UNAUTHORIZED_COOLDOWN_MS;
+    }
     return null;
   }
+
+  tokenBridgeUnauthorizedUntil = 0;
 
   let payload: unknown = null;
   try {

@@ -45,6 +45,12 @@ class EmailSink implements AlertSink {
     // If target exists, keep a no-op side effect in logs for now.
     const to = process.env.COMPANY_BRAIN_ALERT_EMAIL_TO?.trim();
     if (!to) return;
+    if (
+      input.level === "info" &&
+      process.env.COMPANY_BRAIN_ALERT_LOG_INFO !== "true"
+    ) {
+      return;
+    }
     console.log("[company-brain][alert-email]", { to, level: input.level, message: input.message, at: input.at });
   }
 }

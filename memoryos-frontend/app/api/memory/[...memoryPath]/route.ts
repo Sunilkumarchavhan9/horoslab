@@ -1,4 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { isClerkEnabled } from "@/lib/clerk";
+import { applyProxyOrgIdHeader } from "@/lib/org-scope-server";
+import { createBackendAuthHeader } from "../../_lib/backend-auth";
 import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 type RouteContext = {
@@ -27,7 +31,7 @@ const FORWARDED_HEADER_ALLOWLIST = new Set([
   "x-api-key",
   "x-request-id",
 ]);
-const DEFAULT_UPSTREAM_TIMEOUT_MS = 8_000;
+const DEFAULT_UPSTREAM_TIMEOUT_MS = 15_000;
 const METERED_GET_PATHS = new Set<string>([
   "/retrieve/explain",
 ]);
@@ -35,9 +39,34 @@ const METERED_GET_PATHS = new Set<string>([
 function resolveTimeoutMs(pathSegments: string[], method: string): number {
   const path = `/${pathSegments.join("/")}`;
   if (method === "GET" && path === "/events") return 5_000;
-  if (method === "POST" && (path === "/handoff" || path === "/resume")) return 18_000;
+  if (method === "GET" && path === "/automations/events") return 10 * 60_000;
+  if (path.startsWith("/memoryignition/")) return 120_000;
+  if (path.startsWith("/company-brain/inheritance-spine")) return 60_000;
+  if (path.startsWith("/company-brain/")) return 30_000;
+  if (method === "POST" && (path === "/handoff" || path === "/resume" || path === "/resume/brief")) return 45_000;
   if (method === "POST" && path === "/contract/validate") return 15_000;
-  if (method === "GET" && (path === "/requests" || path === "/list" || path === "/insights" || path === "/timeline")) return 8_000;
+  if (path === "/wiki-diagram") return 90_000;
+  if (method === "POST" && path === "/lab-skills-rules/refresh") return 60_000;
+  if (method === "GET" && path === "/lab-skills-rules/discover") return 30_000;
+  if (method === "GET" && path === "/lab-skills-rules-settings") return 60_000;
+  if (method === "PATCH" && path === "/lab-skills-rules-settings") return 60_000;
+  if (method === "GET" && path === "/lab-skills-rules/content") return 15_000;
+  if ((method === "PUT" || method === "PATCH") && path === "/lab-skills-rules/content") return 30_000;
+  if (method === "GET" && path === "/lab-environment-settings") return 15_000;
+  if (method === "PATCH" && path === "/lab-environment-settings") return 15_000;
+  if (method === "POST" && path === "/lab-environment-settings/build-snapshot") return 30_000;
+  if (method === "GET" && path === "/lab-environment-settings/context") return 15_000;
+  if (method === "POST" && path === "/lab-environment-settings/save-blueprint") return 30_000;
+  if (method === "DELETE" && path === "/lab-environment-settings/blueprint") return 15_000;
+  if (method === "POST" && path === "/lab-environment-settings/blueprint-secrets") return 15_000;
+  if (method === "POST" && path === "/lab-environment-settings/blueprint-secrets/import")
+    return 30_000;
+  if (method === "POST" && path === "/lab-environment-settings/blueprint-files") return 30_000;
+  if (method === "GET" && path === "/lab-shell-integration-settings") return 15_000;
+  if (method === "PATCH" && path === "/lab-shell-integration-settings") return 15_000;
+  if (method === "POST" && path === "/lab-skills-rules/compile") return 120_000;
+  if (method === "GET" && path === "/lab-skills-rules/context") return 60_000;
+  if (method === "GET" && (path === "/requests" || path === "/list" || path === "/insights" || path === "/timeline")) return 20_000;
   return DEFAULT_UPSTREAM_TIMEOUT_MS;
 }
 
@@ -93,7 +122,8 @@ async function forwardMemoryRequestWithRetry(
     const isIdempotent = request.method === "GET" || request.method === "HEAD";
     const normalizedPath = `/${pathSegments.join("/")}`;
     const isMeteredGetPath = METERED_GET_PATHS.has(normalizedPath);
-    if (isIdempotent && normalizedPath !== "/events" && !isMeteredGetPath && isRetriableProxyError(error)) {
+    const isEventStream = normalizedPath === "/events" || normalizedPath === "/automations/events";
+    if (isIdempotent && !isEventStream && !isMeteredGetPath && isRetriableProxyError(error)) {
       return forwardMemoryRequest(request, url, headers, body, timeoutMs);
     }
     throw error;
@@ -119,11 +149,26 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
     }
   });
   const normalizedPath = `/${memoryPath.join("/")}`;
-  if (normalizedPath === "/events" && !headers.get("authorization")) {
+  const tokenAuthEventPath =
+    normalizedPath === "/events" || normalizedPath === "/automations/events";
+  if (tokenAuthEventPath && !headers.get("authorization")) {
     const eventToken = request.nextUrl.searchParams.get("token");
     if (eventToken && eventToken.trim().length > 0) {
       headers.set("authorization", `Bearer ${eventToken.trim()}`);
     }
+  }
+  if (!headers.get("authorization")) {
+    const authHeader = await createBackendAuthHeader();
+    if (authHeader) {
+      headers.set("authorization", authHeader);
+    }
+  }
+
+  if (isClerkEnabled()) {
+    const clerkAuth = await auth();
+    applyProxyOrgIdHeader(headers, request, clerkAuth.orgId);
+  } else {
+    applyProxyOrgIdHeader(headers, request, null);
   }
 
   let response: globalThis.Response;
@@ -268,6 +313,60 @@ async function proxyMemoryRequest(request: NextRequest, context: RouteContext): 
         warning: "memory_requests_upstream_5xx",
       },
       { status: 200 },
+    );
+  }
+
+  if (response.status === 402 && request.method === "POST" && normalizedPath === "/retrieve") {
+    return NextResponse.json(
+      {
+        memories: [],
+        count: 0,
+        warning: "memory_retrieve_quota_unavailable",
+      },
+      {
+        status: 200,
+        headers: {
+          "x-memoryos-upstream-status": "402",
+          "x-memoryos-warning": "memory_retrieve_quota_unavailable",
+        },
+      },
+    );
+  }
+
+  if (response.status === 402 && request.method === "POST" && normalizedPath === "/handoff") {
+    return NextResponse.json(
+      {
+        summary: "Company memory handoff is unavailable because the workspace memory quota is exhausted.",
+        currentState: "",
+        openLoops: [],
+        recommendedNextActions: [],
+        keyMemories: [],
+        warning: "memory_handoff_quota_unavailable",
+      },
+      {
+        status: 200,
+        headers: {
+          "x-memoryos-upstream-status": "402",
+          "x-memoryos-warning": "memory_handoff_quota_unavailable",
+        },
+      },
+    );
+  }
+
+  if (response.status === 402 && request.method === "POST" && normalizedPath === "/resume/brief") {
+    return NextResponse.json(
+      {
+        data: null,
+        brief: null,
+        warning: "memory_resume_brief_quota_unavailable",
+      },
+      {
+        status: 200,
+        headers: {
+          "x-memoryos-upstream-status": "402",
+          "x-memoryos-warning": "memory_resume_brief_quota_unavailable",
+        },
+      },
     );
   }
 

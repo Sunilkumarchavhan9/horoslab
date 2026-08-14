@@ -1,0 +1,133 @@
+[Datadog] tracing disabled (check DD_TRACE_ENABLED/DD_ENV/NODE_ENV)
+[MemoryOS] PRISMA_DB_PUSH_ON_START: syncing schema to Postgres
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "memoryos", schema "public" at "localhost:5432"
+
+The database is already in sync with the Prisma schema.
+
+[ConnectorAutoSync] active=false sweepSeconds=15
+[EngineeringSignalLiveWatch] active=true intervalMs=2000
+Loaded retrieval config default@0.65 (threshold=0.65, backend=postgres)
+[MemoryOS] OpenRouter key loaded (73 chars). LLM ready.
+MemoryOS Express API running on http://localhost:3011
+[CompanyBrain] Runtime bootstrap restored schedulers=0 users=14
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=618 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=892b2ccf-5f82-46e7-a2ab-3397e7d7c1f6
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=501 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=e30f1086-ccc9-43d3-8f04-f5910f8a8910
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=547 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=4db78626-0ec2-4e8a-8fc2-36657787419e
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=1137 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=20b5c84c-b0ec-463f-bcb3-60f3c0ac1c06
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=581 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=dda3c0d5-4d9b-44aa-9902-6f95f05021fd
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=796 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=2f62ca51-6d66-4b26-92a1-00bdeb36829a
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=574 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=179254f1-42d5-40bc-b845-c803ba8d174f
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=629 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=b737c8ad-8bc3-4c34-b770-8bbbbed919a4
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=558 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=bb644071-6587-46a5-b0a9-fef2019a03af
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=561 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=042ae0f2-ec83-4a14-87a8-baa330c91c77
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=587 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=bf23be30-ed36-4f4c-a09c-ecd23b16b642
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=603 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=b895d617-9c0b-4956-ac41-9a2ebba45552
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=753 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=ce3a9305-d869-4479-a562-a5fc1e2efcbd
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=458 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=6ac45170-7947-4cbb-8885-238f88eddec6
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=547 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=8c13b799-4818-4ff9-aee0-0103699c5446
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=935 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=ee74926c-85b9-4d2c-af6f-cfe77d7fd303
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=497 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=b7cc51bd-478e-4373-b85c-50b06acb9e1d
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=502 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=c4419998-2f89-490c-9e4f-bb02a6460998
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=489 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=9d386ae4-0df9-4c9e-bece-62e54df38847
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=540 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=f169e0bf-0f73-4f00-b5f4-cdad437e7639
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=767 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=6b05619f-adb2-41d0-964a-59d30a26c01e
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=575 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=3a9572d3-8a05-4a6b-9972-623ed74e4b62
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=587 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=5481cc37-1871-4070-a684-4d0b3c7bdb0b
+[request] method=GET path=/api/memory/lab-preferences status=200 durationMs=506 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d3ecbdd5-e062-4630-90ee-e450dd81fb42
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=461 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=4d6fd867-18cd-4025-80a3-d53c6a4e71b6
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=537 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=23f22962-a9a4-4b40-94f7-d6bb8a693618
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=537 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d1571a57-90f4-4d3e-816c-5ba4c55ad8ec
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=270 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d4a7b66c-f4c1-4b08-937a-1fa03c016e6c
+[request] method=GET path=/api/connector status=200 durationMs=71 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=13996ae4-a7e9-4c3d-9cf1-907e6d9555d3
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=515 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=75b3ae6c-c28f-4d3f-92b6-3bb66b7ee1a9
+[request] method=GET path=/api/memory/lab-continuity-lab-settings status=200 durationMs=475 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=ad1a0bb4-4fe6-4fe8-8771-7e9e2f791f15
+[request] method=GET path=/api/memory/company-brain/funnel status=200 durationMs=481 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=596bc7ff-616d-4b59-be95-f616a21a2cf2
+[request] method=GET path=/api/connector/github/runtime-token status=200 durationMs=275 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=63b268bf-05c4-4bda-88f7-5afb52e98c31
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=289 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d102735f-8202-4005-91e9-b70bb9895b59
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=289 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=25cd5cd2-ad36-49e2-aa0c-c30917fcb9aa
+[request] method=GET path=/api/connector/github/profile status=200 durationMs=676 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=27bde431-f1b8-46c1-a4ab-ecfe05e27fde
+[request] method=GET path=/api/connector/github/repos?limit=20 status=200 durationMs=904 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=637cd3c5-6f3d-4bcb-a494-4612e8a3c79d
+[request] method=PUT path=/api/connector/openrouter/company-model status=200 durationMs=304 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=739c1fb0-b5ee-447d-a00a-3d583e92f338
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=289 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=f6ad4b87-1e41-4d4c-8e81-1d0ef3cce1ff
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=1509 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=4b9fb4c4-83bb-44bc-925d-83b24198f8dd
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=438 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=c5f86596-d2b4-4f77-b6f9-1a37b89b2647
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=616 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=7ce88578-2075-4dfe-95ab-2461cd74395e
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=724 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=0a3f7cff-5777-462c-b409-c853422b0c99
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=551 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=0fff1be0-371d-4cba-915f-ec130f9eeef7
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=556 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=2e93b762-b3f1-481b-95dc-8d9f58b51555
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=396 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=459820cf-549d-45c3-9a17-8cc0ce340cda
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=368 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=75676d02-77e7-4541-afc6-92b354406c80
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=597 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=5d204532-eebd-4022-9ec6-4d69da330a68
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=769 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=9e0a95fd-5193-4a8b-aae6-3ce59f43878d
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=454 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=2b6d7d72-7e99-477e-aa4f-84691541e372
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=523 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=471dd238-2233-40a2-9666-bfe297caceec
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=498 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=8085d1d3-7a69-48ef-9762-f2d5629f2a75
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=1193 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=6ce7b416-1ca6-4900-abd3-deb3f570fc4a
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=608 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=10a90618-c2cf-4552-bd80-bf730a03dbf5
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=474 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=e3528ab0-e3aa-4774-8496-2051b11f6f8b
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=635 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=6c8c09d8-405e-41d7-8947-9d7fdaa365e4
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=431 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=fa5778f4-f3d3-42c7-ab38-c7d9ba26d23d
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=571 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=10322639-bd5d-4305-af78-39839118593b
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=1102 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=61b74492-52f3-4c83-a1e4-78d81ebca346
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=366 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=ecd45b6b-e27b-4495-a03e-6bad0b6a9307
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=487 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d39dd420-fff1-48ff-aeaf-0051b1ba4c62
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=788 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=0bb55c6c-795b-497d-b17f-fa373d1566c5
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=568 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=770d8eca-7b33-43c1-97d5-93cf17039326
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=603 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=9408e9d4-c025-4167-8fdd-9a446a3fab94
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=1098 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=b955ff09-f906-45e8-834b-2fa8fd2c8473
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=603 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=5018e60a-7edf-4a81-b9af-9bacac384e7c
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=406 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=3db22f7e-dc58-44b8-a4c7-68e5263e3713
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=517 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=4880759c-ee8b-4dad-9cfd-0146ab24cd40
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=487 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d1095160-8642-430e-b521-6329361de056
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=670 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=5f35ed94-b99c-412d-81ae-ed5f99037207
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=589 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=1b8b7974-673a-4d49-9c43-0b7323433d93
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=609 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=ad94c7db-6b40-4fdd-9b6d-c52625afe877
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=627 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=929aff76-2aaf-479d-bff4-04fbee019332
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=636 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=6906e41b-cbf0-45b8-bf17-3101c227b8f2
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=566 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=76435369-4e56-41c6-8e4d-dace56c8cc0f
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=579 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=d49083ea-624a-44c5-abba-7c0b91f20252
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=1018 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=a9c5eb4e-3cb0-453d-beb5-3c12dce869ed
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=466 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=93012a4d-eb25-4655-a465-74777f108dcf
+[request] method=GET path=/api/memory/lab-preferences status=200 durationMs=307 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=8a18aac5-9ed4-4f2b-8add-e91d4c6c960b
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=313 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=aad119cb-aec3-4441-8da2-0db0d1892fc7
+[request] method=POST path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq/approval status=200 durationMs=286 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=f030182e-0e9b-45b4-a9bd-d0bbb635794a
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=289 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=3ca14860-2270-4f82-90f5-e68189755a06
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=323 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=41f8e7a8-56bd-4479-9cd7-d93c7c1a9ecb
+[request] method=POST path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq/approval status=200 durationMs=365 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=32a5ca24-d43b-46ef-9970-885639487f2e
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=383 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=b3bb2444-d587-484c-8e7d-d882b698f897
+[request] method=POST path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq/approval status=200 durationMs=367 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=5f856f34-869e-4324-b262-b058d83870ea
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=394 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=f4da0929-739f-4f3e-8408-8aeabeef35f3
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=293 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=7927efca-1ee2-45aa-9c41-bd35a15d523f
+[request] method=POST path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq/approval status=200 durationMs=513 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=11720748-e49d-4993-ba3b-e684fde3d43e
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=275 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=07a19e9e-03db-4e82-a2f2-c3d8b1b06671
+[request] method=POST path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq/approval status=200 durationMs=401 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=ea930b7e-6f88-4a64-9666-a44b7d844259
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=290 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=33cb7a7b-d4f9-4afc-b2b6-8951f741d19a
+[request] method=POST path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq/approval status=200 durationMs=283 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=7ce77684-afac-4180-b027-8e632323b1eb
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions/cmsimaooi0003v1dwate1hndq status=200 durationMs=385 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=88b7d113-0f61-4c0f-a19d-20a8268b3aad
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=362 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=0adaea03-cb31-476e-a48e-01eb76080c51
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=571 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=0cfbdd6a-3930-4389-8e9b-6504bdcb8093
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=561 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=1b0f2c2a-8ba5-483e-8962-65a89a810444
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=607 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=e579a65c-d6c3-4c5a-b11a-68a4a8f7ebb4
+[request] method=GET path=/api/workspaces status=200 durationMs=407 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=477839a0-a35c-44ef-ad63-afbf493eb024
+[request] method=GET path=/api/connector status=200 durationMs=82 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=c7ccb527-5418-4f14-91fd-71001bc87039
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=280 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=f7862cef-4c89-4d4d-ae81-1630bf511c93
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=426 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=c8fb599d-4ee9-4241-8feb-7e2e1c57fb8d
+[request] method=GET path=/api/memory/lab-continuity-lab-settings status=200 durationMs=431 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=76c49c12-7aa4-4cdf-8e06-5d4d59b58211
+[request] method=GET path=/api/memory/lab-preferences status=200 durationMs=559 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=3098a37f-b6be-43f7-a243-2251a9f423d8
+[request] method=GET path=/api/memory/company-brain/funnel status=200 durationMs=451 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=11570f4f-89cb-42b6-83a0-6e44c354adcc
+[request] method=GET path=/api/memory/lab-continuity-lab-settings status=200 durationMs=288 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=07688d35-06c7-48f3-bcb3-85403f8ac56c
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=317 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=7eca834e-c2d5-4895-8852-b3f96e1ca146
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/institutions status=200 durationMs=300 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=43405c38-c6ae-4254-9242-b58c6eb2785b
+[request] method=GET path=/api/connector/github/profile status=200 durationMs=525 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=96b61270-b041-41b8-9bdb-c1e048cc8226
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=292 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=fb4fc02a-5704-47bf-aa5e-700b31cfc977
+[request] method=GET path=/api/memory/lab-continuity-lab-settings status=200 durationMs=248 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=e4274e69-d224-4c4b-a4c8-6783fa9aa44c
+[request] method=GET path=/api/connector/github/repos?limit=20 status=200 durationMs=688 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=fde80675-2b2a-499a-b5ac-f64aae7965d1
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=264 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=dc147c5c-542b-457f-8daf-57276b04feed
+[request] method=GET path=/api/connector/github/runtime-token status=200 durationMs=312 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=8c975b40-9a9e-4e04-9199-49308446e86c
+[request] method=PUT path=/api/connector/openrouter/company-model status=200 durationMs=270 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=5ddc8585-deae-4ec8-9db1-6ff6254ff3cc
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=285 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=983222b3-441b-401b-9484-4de58c7a4fd3
+[request] method=GET path=/api/connector/openrouter/runtime-config status=200 durationMs=304 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=8ea6b489-698c-42c9-9217-7e426231cf67
+[request] method=PUT path=/api/connector/openrouter/company-model status=200 durationMs=376 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=fcbaf95e-38f9-4e84-8f13-3c1150b7cd97
+[request] method=PUT path=/api/connector/openrouter/company-model status=200 durationMs=296 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=2d0a3c30-c76e-4d20-bf90-85521ae51169
+[request] method=GET path=/api/epoch/workspaces/cmshgezmb000gv1ikz45v64a0/missions status=200 durationMs=578 userId=user_3C7cIe3BzQR2mkhtAG5W2n17dPt requestId=fbcc987e-c976-4645-ae43-2420ca55c009

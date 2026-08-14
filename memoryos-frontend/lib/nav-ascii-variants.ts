@@ -26,7 +26,7 @@ const LABEL_VARIANTS: Record<string, NavAsciiVariant> = {
   "Starter (Free)": "rocket",
   "Personal App": "blocks",
   Plugins: "plug",
-  "Developer Console": "console",
+  "Mission Control": "console",
 };
 
 export function getNavAsciiVariant(label: string): NavAsciiVariant {

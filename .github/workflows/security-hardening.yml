@@ -1,0 +1,101 @@
+name: security-hardening
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  static-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    env:
+      CI: "true"
+      NODE_ENV: test
+      JWT_SECRET: ci-test-secret-ci-test-secret-ci-test-secret
+      MEMORYOS_JWT_SECRET: ci-test-secret-ci-test-secret-ci-test-secret
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci_placeholder
+      CLERK_SECRET_KEY: sk_test_ci_placeholder
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/memoryos?schema=public
+      UPSTASH_REDIS_REST_URL: https://ci-upstash-placeholder.upstash.io
+      UPSTASH_REDIS_REST_TOKEN: ci_upstash_placeholder_token
+      CLOUDFLARE_ACCOUNT_ID: ci_cloudflare_account
+      CLOUDFLARE_API_TOKEN: ci_cloudflare_token
+      INFISICAL_PROJECT_ID: ci_infisical_project
+      SENTRY_DSN: https://00000000000000000000000000000000@example.ingest.sentry.io/1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Security stack structure gate
+        run: npm run security:stack:gate
+
+      - name: Cloudflare rules gate
+        run: npm run security:cloudflare:gate
+
+      - name: Local secret leak gate
+        run: npm run security:secrets:scan
+
+      - name: Gitleaks secret scan
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          config-path: .gitleaks.toml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-security:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    env:
+      CI: "true"
+      NODE_ENV: production
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_RESTORE_TEST_URL: ${{ secrets.DATABASE_RESTORE_TEST_URL }}
+      UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+      UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+      INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Strict security stack gate
+        run: npm run security:stack:gate:strict
+
+      - name: Cloudflare rules gate
+        run: npm run security:cloudflare:gate
+
+      - name: Install Postgres client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Postgres backup and restore rehearsal
+        run: npm run security:backup:gate:strict

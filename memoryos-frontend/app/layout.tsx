@@ -1,35 +1,44 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 import { IBM_Plex_Mono, Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { isClerkEnabled } from "@/lib/clerk";
-import { DatadogRumInit } from "@/components/observability/datadog-rum-init";
+import { DatadogRumInitLoader } from "@/components/observability/datadog-rum-init-loader";
 import { GlobalPixelButtonLoader } from "@/components/ui/global-pixel-button-loader";
+import { ThemePreferenceRoot } from "@/components/memoryos/theme-preference-root";
+import { ClerkRootProvider } from "@/components/auth/clerk-root-provider";
+import { KernelProvider } from "@/components/providers/kernel-provider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 const sora = Sora({
   variable: "--font-sora",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "memoryos™",
+  title: "Epoch",
   description:
-    "MemoryOS helps AI remember developer context across projects, decisions, and workflows.",
+    "Epoch is the agent work control plane for AI-native companies: inheritance, control, proof, and outcome learning before and after agent work.",
   icons: {
     icon: "/memoryostmlogoofficial.png",
     shortcut: "/memoryostmlogoofficial.png",
@@ -45,23 +54,20 @@ export default function RootLayout({
   const clerkEnabled = isClerkEnabled();
 
   return (
-    <html lang="en" className={cn(sora.variable, spaceGrotesk.variable, plexMono.variable, "font-mono", jetbrainsMono.variable)}>
+    <html lang="en" className={cn(sora.variable, spaceGrotesk.variable, plexMono.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <body>
-        <DatadogRumInit />
-        <GlobalPixelButtonLoader />
-        {clerkEnabled ? (
-          <ClerkProvider
-            signInUrl="/developer-console/sign-in"
-            signUpUrl="/sign-up"
-            signInFallbackRedirectUrl="/developer-console"
-            signUpFallbackRedirectUrl="/developer-console"
-            prefetchUI={false}
-          >
-            {children}
-          </ClerkProvider>
-        ) : (
-          children
-        )}
+        {process.env.NODE_ENV !== "development" ? (
+          <DatadogRumInitLoader />
+        ) : null}
+        <KernelProvider>
+          <ThemePreferenceRoot>
+            {clerkEnabled ? (
+              <ClerkRootProvider>{children}</ClerkRootProvider>
+            ) : (
+              children
+            )}
+          </ThemePreferenceRoot>
+        </KernelProvider>
       </body>
     </html>
   );

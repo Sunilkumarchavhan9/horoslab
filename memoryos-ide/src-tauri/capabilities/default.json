@@ -1,6 +1,0 @@
-{
-  "identifier": "default",
-  "description": "MemoryOS IDE default capabilities",
-  "windows": ["main"],
-  "permissions": ["core:default"]
-}

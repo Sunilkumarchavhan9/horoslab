@@ -1,0 +1,3 @@
+{
+  "/api/runtime/github-provider-token/route": "app/api/runtime/github-provider-token/route.js"
+}

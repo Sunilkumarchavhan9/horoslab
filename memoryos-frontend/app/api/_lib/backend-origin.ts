@@ -5,12 +5,12 @@ export function resolveBackendOrigin(): string {
 
   if (isDevelopment) {
     // In local dev, prefer local backend unless explicitly overridden.
-    const preferred = devOverride || configured || "http://127.0.0.1:3001";
+    const preferred = devOverride || configured || "http://127.0.0.1:3011";
     return normalizeLocalBackendOrigin(preferred);
   }
 
   return normalizeLocalBackendOrigin(
-    configured && configured !== "same-origin" ? configured : "http://127.0.0.1:3001",
+    configured && configured !== "same-origin" ? configured : "http://127.0.0.1:3011",
   );
 }
 

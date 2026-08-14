@@ -1,88 +1,36 @@
 "use client";
 
+import { useState } from "react";
+import { MCP_SOURCE_CARDS, McpSourceNetwork } from "./mcp-source-network";
 import { Reveal } from "./motion";
-import {
-  DeveloperExperienceCard,
-  type DeveloperExperienceFeature,
-} from "./developer-experience-card";
-
-const FEATURES: DeveloperExperienceFeature[] = [
-  {
-    num: "01",
-    tab: "AGENT MEMORY",
-    heading: "Persistent context for coding agents",
-    description:
-      "Preferences, project state, bug history, and prior decisions stay available across sessions.",
-    bullets: [
-      "List unresolved bugs and continue last decision thread",
-      "Retrieve prior architecture decisions to avoid drift",
-      "Inject latest bug fix context automatically",
-    ],
-  },
-  {
-    num: "02",
-    tab: "TEAM MEMORY",
-    heading: "Shared workspace intelligence",
-    description:
-      "MemoryOS stores project-level memory so teams and agents can resume work with the same context model.",
-    bullets: [
-      "Resume current sprint from continuity contract",
-      "Load MemoryOS retrieval + trust diagnostics",
-      "Generate plan from prior decisions and open risks",
-    ],
-  },
-  {
-    num: "03",
-    tab: "TRUST LAYER",
-    heading: "Every memory is inspectable",
-    description:
-      "Explain, timeline, and revisions turn memory recall into something developers can verify and debug.",
-    bullets: [
-      "Inspect timeline of all memory events",
-      "Trace revisions to previous execution contexts",
-      "Full explainability for diagnostic debugging",
-    ],
-  },
-  {
-    num: "04",
-    tab: "CONTROL SURFACE",
-    heading: "Control plane, APIs, and policies",
-    description:
-      "Search, archive, review, and govern memory through the MemoryOS control plane and unified API surface.",
-    bullets: [
-      "Write memory: /process + status + archive",
-      "Recover context: /retrieve + /continue + /resume",
-      "Inspect trust: /timeline + /revisions + /explain",
-    ],
-  },
-];
+import { WatchtowerModal } from "./watchtower-modal";
 
 export function DeveloperExperienceSection() {
+  const [activeMcpSource, setActiveMcpSource] = useState(MCP_SOURCE_CARDS[0]);
+
   return (
-    <section id="developer-experience" className="border-t border-[#c9d8ee] bg-white">
-      <div className="mx-auto max-w-[1400px]">
+    <section id="developer-experience" className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden border-t border-[#e5e7eb] bg-white pb-8 pt-24 lg:pb-12 lg:pt-32">
+      <div className="relative z-10 mx-auto max-w-[1720px] px-4 sm:px-8 lg:px-12 xl:px-16">
         <Reveal>
-          <div className="px-6 py-16 lg:px-12 lg:py-20">
-            <h2 className="max-w-4xl text-[40px] font-semibold leading-[1.08] tracking-[-0.04em] text-slate-900 md:text-[56px]">
-              Your agents are smart.
-              <br />
-              Their memory should be too.
+          <div className="mx-auto mb-16 max-w-4xl text-center lg:mb-20">
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#356acc]">Agent-native integrations</p>
+            <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-slate-900 leading-[1.1]">
+              Built above identity, inboxes, wallets, MCP, and <span className="text-[#0015FF]">tools.</span>
             </h2>
-            <p className="mt-6 max-w-3xl text-[17px] leading-relaxed text-[#516882] md:text-[18px]">
-              Continuity infrastructure for real coding sessions. MemoryOS is designed for developer
-              workflows where preference, project state, bug history, and prior decisions need to
-              survive across threads, tools, and model sessions.
+            <p className="mx-auto mt-7 max-w-2xl text-[15px] leading-7 text-[#5a6f89] md:text-[17px] md:leading-8">
+              Invoke governed institutions from the tools agents and humans already use. Every surface connects to the same mission context, authority system, evidence graph, and settlement trail.
             </p>
           </div>
         </Reveal>
 
-        <div className="border-t border-[#e8f0fc] px-6 pb-20 pt-12 lg:px-12 lg:pb-28 lg:pt-16">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 xl:gap-5">
-            {FEATURES.map((feature, index) => (
-              <DeveloperExperienceCard key={feature.num} feature={feature} index={index} />
-            ))}
+        <Reveal>
+          <div className="relative mx-auto max-w-[1600px]">
+            <McpSourceNetwork selectedSourceId={activeMcpSource.id} onSourceSelect={setActiveMcpSource} />
+            <div className="relative z-30 mx-auto -mt-[390px] w-[min(1240px,calc(100%-32px))] overflow-x-auto sm:-mt-[440px] lg:-mt-[500px] lg:overflow-visible">
+              <WatchtowerModal mcpSource={activeMcpSource} />
+            </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

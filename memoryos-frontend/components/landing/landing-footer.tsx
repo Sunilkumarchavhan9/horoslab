@@ -1,35 +1,34 @@
-import { FooterAsciiStars } from "./footer-ascii-stars";
 import { Reveal } from "./motion";
-import { MemoryStarLogo } from "./memory-star-logo";
+import { MemoryStarIcon } from "./memory-star-icon";
 
 const FOOTER_COLUMNS = [
   {
-    title: "PRODUCT",
+    title: "PLATFORM",
     links: [
-      { label: "Developer Console", href: "/developer-console/sign-in" },
-      { label: "API + SDK", href: "#developer-experience" },
-      { label: "Proof", href: "#benchmarks" },
-      { label: "Pricing", href: "/pricing" },
+      { label: "Reality Fabric", href: "#" },
+      { label: "Institution Runtime", href: "#" },
+      { label: "Decision Graph", href: "#" },
+      { label: "Correctness Engine", href: "#" },
+      { label: "Evolution Runtime", href: "#" },
+      { label: "Institutional Genome", href: "#" },
     ],
   },
   {
-    title: "DEVELOPERS",
+    title: "SOLUTIONS",
     links: [
-      { label: "Quickstart", href: "#developer-experience" },
-      { label: "Context Stack", href: "#context-stack" },
-      { label: "Under The Hood", href: "#under-the-hood" },
-      { label: "GitHub", href: "https://github.com/Sunilkumarchavhan9/MemoryOS" },
+      { label: "Root Cause Intelligence", href: "#" },
+      { label: "Autonomous Engineering", href: "#" },
+      { label: "Inference Assurance", href: "#" },
+      { label: "Evolution Lab", href: "#" },
     ],
   },
   {
     title: "COMPANY",
     links: [
-      { label: "About", href: "#what-we-do" },
-      { label: "Enterprise", href: "#enterprise" },
-      { label: "Terms", href: "/terms-of-service" },
-      { label: "Privacy", href: "/privacy-policy" },
-      { label: "Refunds", href: "/refund-policy" },
-      { label: "Contact", href: "mailto:chavhansunilkumar753@gmail.com" },
+      { label: "About", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Privacy", href: "#" },
+      { label: "Terms", href: "#" },
     ],
   },
 ];
@@ -37,28 +36,27 @@ const FOOTER_COLUMNS = [
 function ConnectIcons() {
   return (
     <div>
-      <p className="font-mono text-[12px] tracking-[0.2em] text-slate-900">CONNECT</p>
-      <div className="mt-4 flex items-center gap-4 text-[#6b7280]">
-        <a
-          href="https://github.com/Sunilkumarchavhan9/MemoryOS"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="GitHub"
-          className="transition hover:text-slate-900"
-        >
-          <svg viewBox="0 0 16 16" className="h-[22px] w-[22px]" fill="currentColor" aria-hidden="true">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" />
-          </svg>
+      <p className="font-mono text-[10px] tracking-widest text-white/70 uppercase">CONNECT</p>
+      <div className="mt-6 flex items-center gap-3 text-white">
+        {/* X (Twitter) */}
+        <a href="#" className="hover:opacity-80 transition-opacity">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z" /></svg>
         </a>
-        <a href="https://x.com/memoryostm" aria-label="X (Twitter)" target="_blank" rel="noreferrer" className="transition hover:text-slate-900">
-          <svg viewBox="0 0 16 16" className="h-[22px] w-[22px]" fill="currentColor" aria-hidden="true">
-            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z" />
-          </svg>
+        {/* GitHub */}
+        <a href="#" className="hover:opacity-80 transition-opacity">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" /></svg>
         </a>
-        <a href="https://discord.gg/JtwaRJaeR" aria-label="Discord" target="_blank" rel="noreferrer" className="transition hover:text-slate-900">
-          <svg viewBox="0 0 16 16" className="h-[22px] w-[22px]" fill="currentColor" aria-hidden="true">
-            <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612" />
-          </svg>
+        {/* LinkedIn */}
+        <a href="#" className="hover:opacity-80 transition-opacity">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor"><path d="M14.82 0H1.18A1.16 1.16 0 000 1.15v13.7A1.16 1.16 0 001.18 16h13.64A1.16 1.16 0 0016 14.85V1.15A1.16 1.16 0 0014.82 0zM4.74 13.68H2.38V5.37h2.36v8.31zM3.56 4.24a1.37 1.37 0 11.02-2.74 1.37 1.37 0 01-.02 2.74zm9.9 9.44h-2.36v-4.04c0-1 0-2.28-1.4-2.28-1.4 0-1.61 1.08-1.61 2.2v4.12H5.73V5.37h2.27v1.14h.03a2.49 2.49 0 012.24-1.23c2.4 0 2.84 1.58 2.84 3.63v4.77z" /></svg>
+        </a>
+        {/* Reddit */}
+        <a href="#" className="hover:opacity-80 transition-opacity">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor"><path d="M16 8.04c0-.98-.78-1.77-1.74-1.77-.42 0-.8.15-1.1.4A5.6 5.6 0 008.35 4.8l.94-2.8 2.7.58a1.3 1.3 0 101.32-2.14 1.3 1.3 0 00-1.12.63L8.8 1.4a.17.17 0 00-.2.11L7.54 4.86c-1.92.21-3.6 1.13-4.5 2.18-.3-.25-.7-.4-1.12-.4a1.76 1.76 0 000 3.52c0 .24.03.48.07.7a5.53 5.53 0 005.7 4.14A5.53 5.53 0 0013.4 11c.04-.22.07-.46.07-.7a1.76 1.76 0 002.54-1.4v-.86zM5.52 7.77a1.08 1.08 0 11-2.17.02 1.08 1.08 0 012.17-.02zm3.3 4.25a2.53 2.53 0 01-1.8.69 2.53 2.53 0 01-1.8-.7.21.21 0 01.3-.29 2.12 2.12 0 001.5.57 2.12 2.12 0 001.5-.58.21.21 0 11.3.3zm2.5-3.15a1.08 1.08 0 110-2.16 1.08 1.08 0 010 2.16z" /></svg>
+        </a>
+        {/* Discord */}
+        <a href="#" className="hover:opacity-80 transition-opacity">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor"><path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612" /></svg>
         </a>
       </div>
     </div>
@@ -67,41 +65,35 @@ function ConnectIcons() {
 
 export function LandingFooter() {
   return (
-    <footer id="contact" className="relative border-[#c9d8ee] bg-white">
-      <Reveal className="relative overflow-hidden border-b border-[#c9d8ee] px-5 py-20 text-center lg:px-7 lg:py-24">
-        <FooterAsciiStars />
+    <footer id="contact" className="relative overflow-hidden bg-[#0A62F8] text-white pt-5 font-sans">
 
-        <div className="relative z-10 mx-auto max-w-[1120px]">
-          <h2 className="text-[40px] font-semibold tracking-[-0.06em] text-slate-900 md:text-[68px]">
-            Build faster with <span className="text-blue-600">a company brain that compounds.</span>
-          </h2>
-          <div className="mt-8">
-            <a
-              href="/developer-console/sign-in"
-              className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 transition-colors px-8 py-3 text-[16px] font-medium text-white md:text-[18px]"
-            >
-              Start Building &rarr;
-            </a>
+      {/* Top Links Section */}
+      <div className="mx-auto max-w-[1240px] px-8 lg:px-12 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
+
+          {/* Left Text */}
+          <div className="lg:col-span-5">
+            <h2 className="text-[26px] font-semibold leading-[1.2] text-white">
+              Autonomous organization<br />infrastructure.
+            </h2>
+            <p className="mt-4 text-[12px] text-white/80 leading-relaxed max-w-xs">
+              Epoch runs the institutions that agents become: mission, authority, execution, proof, settlement, and evolution.
+            </p>
           </div>
-        </div>
-      </Reveal>
 
-      <Reveal className="relative px-5 py-10 lg:px-7 lg:py-12">
-        <div className="mx-auto max-w-[1120px]">
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+          {/* Right Columns */}
+          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-6">
             {FOOTER_COLUMNS.map((column) => (
               <div key={column.title}>
-                <p className="font-mono text-[12px] tracking-[0.2em] text-slate-900">
+                <p className="font-mono text-[10px] tracking-widest text-white/70 uppercase">
                   {column.title}
                 </p>
-                <div className="mt-4 grid gap-3">
+                <div className="mt-6 flex flex-col gap-4">
                   {column.links.map((link) => (
                     <a
                       key={link.label}
                       href={link.href}
-                      target={link.href.startsWith("http") ? "_blank" : undefined}
-                      rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                      className="text-[15px] text-[#516882] transition hover:text-slate-900"
+                      className="text-[12px] text-white font-medium hover:text-white/80 transition-colors"
                     >
                       {link.label}
                     </a>
@@ -109,20 +101,34 @@ export function LandingFooter() {
                 </div>
               </div>
             ))}
+
             <ConnectIcons />
           </div>
 
-          <div className="mt-10 flex flex-col gap-4 border-t border-[#c9d8ee] pt-6 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3">
-              <MemoryStarLogo />
-            </div>
-            <p className="text-[14px] text-[#61738d]">
-              ©2026 memoryos™ Inc. All rights reserved.
-            </p>
-          </div>
         </div>
-      </Reveal>
+      </div>
+
+      {/* Copyright text placed in the solid blue area just above the image */}
+      <div className="w-full flex justify-end px-8 md:px-12 pb-4 pt-4 relative z-20">
+        <div className="text-[10px] font-mono tracking-widest text-white/70">
+          © 2026 · EPOCH INC. · ALL RIGHTS RESERVED
+        </div>
+      </div>
+
+      {/* Giant Background Text */}
+      <div
+        className="relative w-full overflow-hidden pt-1 pb-12 z-10 flex flex-col items-center bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/footer-columns-bg.jpg')" }}
+      >
+
+        {/* Huge "Epoch." text container with relative positioning for the icon */}
+        <div className="relative inline-flex items-center justify-center pb-4">
+          <h1 className="text-[35vw] md:text-[35vw] lg:text-[400px] font-bold tracking-tighter leading-[0.8] text-[#D4AF37]/40 select-none whitespace-nowrap">
+            ep<span className="relative">o<div className="absolute top-[56%] left-[53%] -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"><MemoryStarIcon className="h-[8vw] w-[8vw] md:h-[100px] md:w-[100px] text-white" /></div></span>ch.
+          </h1>
+        </div>
+      </div>
+
     </footer>
   );
 }
-

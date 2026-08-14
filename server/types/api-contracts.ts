@@ -9,6 +9,7 @@ export type ApiMeta = {
   requestId: string;
   latencyMs: number;
   intent?: string;
+  degraded?: boolean;
 };
 
 export type ApiErrorBody = {

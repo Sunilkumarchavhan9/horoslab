@@ -1,0 +1,303 @@
+{
+  "cookies": [
+    {
+      "name": "__cf_bm",
+      "value": "IazjNTnJzuiz_ThyQ.Ca13PvGPK0kz87UaL4OpqKbik-1786013601-1.0.1.1-oqVgkiE7gf6xQhlK2ssAgLHygpgBrda_HfBa5dVNyRxitv4YO2dcn71RCqK8NF0qdJOe0jgzDZf.tQX0opKGxQ0VPbElDlQy59nEfM1bda0",
+      "domain": ".talented-shrew-57.clerk.accounts.dev",
+      "path": "/",
+      "expires": 1786015402.210072,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_cfuvid",
+      "value": "ZrcsSlCGZLOYp6tx1n_6awT6pkhDqOpXRD9TY5fn2X4-1786013601919-0.0.1.1-604800000",
+      "domain": ".talented-shrew-57.clerk.accounts.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_octo",
+      "value": "GH1.1.1622674715.1786013641",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": 1817549641.969203,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cpu_bucket",
+      "value": "xlg",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "tz",
+      "value": "Asia%2FCalcutta",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_device_id",
+      "value": "6879505124e34d2e4adea58e5b9b6da7",
+      "domain": "github.com",
+      "path": "/",
+      "expires": 1817549643.573729,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "saved_user_sessions",
+      "value": "178977380%3AZWqf6hRrn9sM56Uvu1KONvpmA9MVE71hzsB-LcB73K1WL_dI",
+      "domain": "github.com",
+      "path": "/",
+      "expires": 1793789715.774773,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "user_session",
+      "value": "ZWqf6hRrn9sM56Uvu1KONvpmA9MVE71hzsB-LcB73K1WL_dI",
+      "domain": "github.com",
+      "path": "/",
+      "expires": 1787223315.774912,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__Host-user_session_same_site",
+      "value": "ZWqf6hRrn9sM56Uvu1KONvpmA9MVE71hzsB-LcB73K1WL_dI",
+      "domain": "github.com",
+      "path": "/",
+      "expires": 1787223315.774943,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "tz",
+      "value": "Asia%2FCalcutta",
+      "domain": "github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "color_mode",
+      "value": "%7B%22color_mode%22%3A%22auto%22%2C%22light_theme%22%3A%7B%22name%22%3A%22dark_tritanopia%22%2C%22color_mode%22%3A%22dark%22%7D%2C%22dark_theme%22%3A%7B%22name%22%3A%22dark_tritanopia%22%2C%22color_mode%22%3A%22dark%22%7D%7D",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "logged_in",
+      "value": "yes",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": 1817549715.775041,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "dotcom_user",
+      "value": "Sunilkumarchavhan9",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": 1817549715.775091,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "last_write_ms",
+      "value": "1786013715177",
+      "domain": "github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gh_sess",
+      "value": "5ymXDA0tjKnyoh0JZ8%2BxaF9f5JLgChyHhhnoceyJ4knlaiUuCFG6BCtLrg30usWUFHwo9aRWhM%2BOieqzji7iJjVJ863E2hRxwphCesXSUqvBz7gvbwytmgXgbJLvOUI5XUrZlm01BaK0iCYQAmraIYmNVE2Hxc1ookMm1rmOCW%2Flz%2FU0WqdJkmrgDa96TzidMVIPTr0BTeTXrpZ2dICTvRanAFcYaQfbZM7v%2BzirowsnQfZ5IxQ3NqhTxEL3%2BsgG54faT6TeuLKSOlo0heHPT%2BuxAiTjh8zgotoBECT3u0xxdfPgKc0PnOa%2BBx9Q%2BYqz2dTuAm8PkRqU1Y%2BxtDuMZWeVmrnqkcAo%2FTR47iwGx7dP4%2BWvkqBHDaUxN8DTvZ0d4PSHIQFBNcOQS0YnNZHMWircTjaAII3RCuhXoaOZSMHuKYiMu0bKR5kawxL3fRf3SH%2F2tCHCGfHvNk%2BCq6nbP4i3nLeQMYe%2FfsiVVJI37f7jRhG7%2FLHKRqz%2B3UARhDnxNyhN8ZAhVzuUeeLV09tQRPSq7xrrMFsj8%2F1grPLTZVMFYAkRwU%2FmFkOWiAQsaeqKjQtC%2BaV5Yz1siJ4ucDxWdE7kPS0tmHfTXInKiBHcHntZ9jSH0pV%2FmxODmBj3WMoXbcvus%2F1dZ9O81Mpk4oVK0ncBC7rYHUvn8D7M2dDcclazWmXSzP5bx8WvD29NEQXlIE0rZD4wvIrwpehodv1oJgNO1hZd1kHa91XwhQXZaAdd99bTTP0ZjCHYnHWwpp2kK3pGplzVbK8RscPGI7v%2F2PsLpbGIjrap2u1pQXGtzFpPL%2F78vrlIRi9wylR30xsLnwnzW%2Fs%2Fjacf04arjW0EIJlOQPHUz25kkx9ALaD4q%2BFqZHXkew3QHXvBOXu4sn9MDeyfoF%2BCz%2FHkAasTcVDmzxi4%2BcFwaZEbzaTw8WRB2PMJ%2FPPTWc%2BklsWIgOSmhJOssiPH13j9xIig%2BW03esnCJT16kHiqakGwQr3o4AOn1Wb7V0wOdKR3EMTTONdYOVTGSEFp60cWZuJBW%2FFJ--UZn6dGWW3XxczvUD--0z0Vc62WmfwApa8mpFCcjw%3D%3D",
+      "domain": "github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "eugfEVo9h8_OCwr1e78vJeY6AM87Jq1N8.Gt17tm6e0-1786013718-1.0.1.1-lkFi_X3_1lMddJUnqFOfEneyrAD5rLVHVfNmvrO6_ci8vIEVXswajOaM1ViB6AZR2sGP_ArcbZ_yKM5XY40OB7huTpN_l0RflGIDTWzmHro",
+      "domain": ".clerk.shared.lcl.dev",
+      "path": "/",
+      "expires": 1786015519.205308,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_cfuvid",
+      "value": "KYASNk4pBKu.m3t7QnkmV51qWMD_mNnbZreACfiRtwo-1786013718914-0.0.1.1-604800000",
+      "domain": ".clerk.shared.lcl.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "preferred_color_mode",
+      "value": "dark",
+      "domain": ".github.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__refresh_2y_onLCt",
+      "value": "JyEKzz26qrIpDP3w2Bci",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549718.795101,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "clerk_active_context",
+      "value": "sess_3HXU4sshDEelxC1fEeBESO2WpwF:org_3C7cJuf1D2Voc5tttZY6o5C5bYu",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__session",
+      "value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zQzdLUTAzeFdVTGRrRVBvSFlldElRalZMVkgiLCJvaWF0IjoxNzg2MDEzNzIxLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3ODYwMTM3ODEsImZ2YSI6WzAsLTFdLCJpYXQiOjE3ODYwMTM3MjEsImlzcyI6Imh0dHBzOi8vdGFsZW50ZWQtc2hyZXctNTcuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzg2MDEzNzExLCJvIjp7ImlkIjoib3JnXzNDN2NKdWYxRDJWb2M1dHR0Wlk2bzVDNWJZdSIsInJvbCI6ImFkbWluIiwic2xnIjoidmVnaXRvLXMtb3JnYW5pemF0aW9uLTE3NzU3Mzk5ODAxODY0OTUzNDkifSwic2lkIjoic2Vzc18zSFhVNHNzaERFZWx4QzFmRWVCRVNPMldwd0YiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzNDN2NJZTNCelFSMm1raHRBRzVXMm4xN2RQdCIsInYiOjJ9.1UEZveoxkjwvgJ-nLofjGtzW64hhQjnCjXZ5F9jym5HaJjBs6YyxfMSF3MAvw-0gmQZUQU4XIUuaGV7Gc-TSWfbYuoat25jqQdv951hK6mTSOI0PUJM54HKWWZNO_yxi7-W3W-j_opuRPtVo67ZP_H5ZcraPdMF-u070Xge754DqfTDyA6gx6E0_yPfMotAz8mqCmt4MkwwreAmW5KA_OKDt5jEeVDPk6ryZNt2Ifa3FXMv5GgDWLxlLIAsrtiZ00KJJVDGrPGlZNZt0VKc_BS7R9-yY9iZEDMz7tVgwqrKLhfSC2A1bwOtxKozw4w6liq_3Q8eJycnGeI1SlP6epw",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549736,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__session_2y_onLCt",
+      "value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zQzdLUTAzeFdVTGRrRVBvSFlldElRalZMVkgiLCJvaWF0IjoxNzg2MDEzNzIxLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3ODYwMTM3ODEsImZ2YSI6WzAsLTFdLCJpYXQiOjE3ODYwMTM3MjEsImlzcyI6Imh0dHBzOi8vdGFsZW50ZWQtc2hyZXctNTcuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzg2MDEzNzExLCJvIjp7ImlkIjoib3JnXzNDN2NKdWYxRDJWb2M1dHR0Wlk2bzVDNWJZdSIsInJvbCI6ImFkbWluIiwic2xnIjoidmVnaXRvLXMtb3JnYW5pemF0aW9uLTE3NzU3Mzk5ODAxODY0OTUzNDkifSwic2lkIjoic2Vzc18zSFhVNHNzaERFZWx4QzFmRWVCRVNPMldwd0YiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzNDN2NJZTNCelFSMm1raHRBRzVXMm4xN2RQdCIsInYiOjJ9.1UEZveoxkjwvgJ-nLofjGtzW64hhQjnCjXZ5F9jym5HaJjBs6YyxfMSF3MAvw-0gmQZUQU4XIUuaGV7Gc-TSWfbYuoat25jqQdv951hK6mTSOI0PUJM54HKWWZNO_yxi7-W3W-j_opuRPtVo67ZP_H5ZcraPdMF-u070Xge754DqfTDyA6gx6E0_yPfMotAz8mqCmt4MkwwreAmW5KA_OKDt5jEeVDPk6ryZNt2Ifa3FXMv5GgDWLxlLIAsrtiZ00KJJVDGrPGlZNZt0VKc_BS7R9-yY9iZEDMz7tVgwqrKLhfSC2A1bwOtxKozw4w6liq_3Q8eJycnGeI1SlP6epw",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549736,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__clerk_db_jwt_2y_onLCt",
+      "value": "dvb_3HXTq84Gos8l3Z79N0dYskPtICe",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549721,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__clerk_db_jwt",
+      "value": "dvb_3HXTq84Gos8l3Z79N0dYskPtICe",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549721,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__client_uat_2y_onLCt",
+      "value": "1786013718",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549736,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "__client_uat",
+      "value": "1786013718",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1817549736,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "memoryos-lab-preferences",
+          "value": "{\"theme\":\"dark\",\"displayName\":\"\",\"inAppNotifications\":true,\"playSound\":true,\"browserNotificationsEnabled\":false,\"slackNotifications\":false,\"newsletter\":false,\"gitCommitAuthor\":\"\",\"gitCommitEmail\":\"\",\"openPullRequestsAsDrafts\":false,\"reviewTrigger\":\"manual\"}"
+        },
+        {
+          "name": "memoryos.continuity-lab.sandboxOs.default",
+          "value": "{\"org\":\"ubuntu\"}"
+        },
+        {
+          "name": "memoryos-profile-preferences",
+          "value": "{\"language\":\"en\",\"timezone\":\"Asia/Kolkata\"}"
+        },
+        {
+          "name": "__clerk_environment",
+          "value": "{\"value\":{\"object\":\"environment\",\"auth_config\":{\"claimed_at\":null,\"id\":\"\",\"object\":\"auth_config\",\"reverification\":true,\"single_session_mode\":true,\"session_minter\":false},\"display_config\":{\"object\":\"display_config\",\"after_create_organization_url\":\"http://localhost:3000\",\"after_join_waitlist_url\":\"http://localhost:3000\",\"after_leave_organization_url\":\"http://localhost:3000\",\"after_sign_in_url\":\"http://localhost:3000\",\"after_sign_out_all_url\":\"https://talented-shrew-57.accounts.dev/sign-in\",\"after_sign_out_one_url\":\"https://talented-shrew-57.accounts.dev/sign-in/choose\",\"after_sign_up_url\":\"http://localhost:3000\",\"after_switch_session_url\":\"http://localhost:3000\",\"application_name\":\"My Application\",\"branded\":true,\"captcha_heartbeat\":false,\"captcha_oauth_bypass\":[],\"captcha_provider\":\"turnstile\",\"captcha_public_key_invisible\":\"0x4AAAAAAAFV93qQdS0ycilX\",\"captcha_public_key\":\"0x4AAAAAAAWXJGBD7bONzLBd\",\"captcha_widget_type\":\"smart\",\"clerk_js_version\":\"5\",\"create_organization_url\":\"https://talented-shrew-57.accounts.dev/create-organization\",\"favicon_image_url\":\"\",\"home_url\":\"http://localhost:3000\",\"id\":\"display_config_3C7KPspc7LxIyiS7JC949DAblG0\",\"instance_environment_type\":\"development\",\"logo_image_url\":\"\",\"organization_profile_url\":\"https://talented-shrew-57.accounts.dev/organization\",\"preferred_sign_in_strategy\":\"password\",\"privacy_policy_url\":\"\",\"show_devmode_warning\":true,\"sign_in_url\":\"https://talented-shrew-57.accounts.dev/sign-in\",\"sign_up_url\":\"https://talented-shrew-57.accounts.dev/sign-up\",\"support_email\":\"\",\"terms_url\":\"\",\"theme\":{\"buttons\":{\"font_color\":\"#ffffff\",\"font_family\":\"\\\"Source Sans Pro\\\", sans-serif\",\"font_weight\":\"600\"},\"general\":{\"color\":\"#6c47ff\",\"padding\":\"1em\",\"box_shadow\":\"0 2px 8px rgba(0, 0, 0, 0.2)\",\"font_color\":\"#151515\",\"font_family\":\"\\\"Source Sans Pro\\\", sans-serif\",\"border_radius\":\"0.5em\",\"background_color\":\"#ffffff\",\"label_font_weight\":\"600\"},\"accounts\":{\"background_color\":\"#ffffff\"}},\"user_profile_url\":\"https://talented-shrew-57.accounts.dev/user\",\"waitlist_url\":\"https://talented-shrew-57.accounts.dev/waitlist\"},\"id\":\"\",\"maintenance_mode\":false,\"client_debug_mode\":false,\"partitioned_cookies\":false,\"organization_settings\":{\"actions\":{\"admin_delete\":true},\"domains\":{\"enabled\":false,\"enrollment_modes\":[],\"default_role\":\"org:member\"},\"enabled\":true,\"max_allowed_memberships\":5},\"user_settings\":{\"actions\":{\"delete_self\":true,\"create_organization\":true,\"create_organizations_limit\":null},\"attack_protection\":{\"enumeration_protection\":{\"enabled\":false}},\"attributes\":{\"email_address\":{\"enabled\":true,\"required\":true,\"used_for_first_factor\":true,\"first_factors\":[\"email_code\",\"email_link\"],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[\"email_code\"],\"verify_at_sign_up\":true,\"immutable\":false,\"name\":\"email_address\"},\"phone_number\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"phone_number\"},\"username\":{\"enabled\":true,\"required\":true,\"used_for_first_factor\":true,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":true,\"name\":\"username\"},\"web3_wallet\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"web3_wallet\"},\"first_name\":{\"enabled\":true,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"first_name\"},\"last_name\":{\"enabled\":true,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"last_name\"},\"password\":{\"enabled\":true,\"required\":true,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"password\"},\"authenticator_app\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"authenticator_app\"},\"ticket\":{\"enabled\":true,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"ticket\"},\"backup_code\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"backup_code\"},\"passkey\":{\"enabled\":false,\"required\":false,\"used_for_first_factor\":false,\"first_factors\":[],\"used_for_second_factor\":false,\"second_factors\":[],\"verifications\":[],\"verify_at_sign_up\":false,\"immutable\":false,\"name\":\"passkey\"}},\"passkey_settings\":{\"allow_autofill\":true,\"show_sign_in_button\":true,\"satisfies_second_factor\":false},\"password_settings\":{\"disable_hibp\":false,\"min_length\":8,\"max_length\":72,\"require_special_char\":false,\"require_numbers\":false,\"require_uppercase\":false,\"require_lowercase\":false,\"show_zxcvbn\":false,\"min_zxcvbn_strength\":0,\"enforce_hibp_on_sign_in\":true,\"allowed_special_characters\":\"!\\\"#$%&'()*+,-./:;<=>?@[]^_`{|}~\"},\"sign_in\":{\"second_factor\":{\"required\":false}},\"sign_up\":{\"captcha_enabled\":true,\"captcha_widget_type\":\"smart\",\"custom_action_required\":false,\"progressive\":true,\"mode\":\"public\",\"legal_consent_enabled\":false,\"mfa\":{\"required\":false}},\"social\":{\"oauth_github\":{\"enabled\":true,\"required\":false,\"authenticatable\":true,\"block_email_subaddresses\":false,\"strategy\":\"oauth_github\",\"not_selectable\":false,\"deprecated\":false,\"name\":\"GitHub\",\"logo_url\":\"https://img.clerk.com/static/github.png\"},\"oauth_google\":{\"enabled\":true,\"required\":false,\"authenticatable\":true,\"block_email_subaddresses\":true,\"strategy\":\"oauth_google\",\"not_selectable\":false,\"deprecated\":false,\"name\":\"Google\",\"logo_url\":\"https://img.clerk.com/static/google.png\"}}},\"commerce_settings\":{\"billing\":{\"stripe_publishable_key\":\"pk_test_51RCql19lSID4XqgvVgE5G29Venvohe7wYddntzuLSooTjSStaiFPtPfs3GcdekNwrq3qdyIR6fELqckpKeD0YUat00bFn04tID\",\"organization\":{\"enabled\":false,\"has_paid_plans\":false},\"user\":{\"enabled\":true,\"has_paid_plans\":false}}},\"api_keys_settings\":{\"user_api_keys_enabled\":false,\"orgs_api_keys_enabled\":false},\"protect_config\":{\"object\":\"protect_config\",\"id\":\"\"}},\"exp\":1786100121870}"
+        },
+        {
+          "name": "memoryos.epoch.activeWorkspaceId:org_3C7cJuf1D2Voc5tttZY6o5C5bYu",
+          "value": "cmshdg5ds000fv14gkfbo3gc7"
+        },
+        {
+          "name": "memoryos-lab-continuity-lab-settings",
+          "value": "{\"secureMode\":false,\"computerUse\":true,\"defaultAgent\":\"agent\",\"defaultPlatform\":\"ubuntu\",\"customCommands\":[],\"batchLimit\":30,\"messageUsageLimitUsd\":null,\"sharePromptsInPrs\":true,\"requireMemoryosToRespond\":false,\"autoAddReviewer\":false,\"openPrsAs\":\"memoryos\",\"respondingToBots\":\"selected\"}"
+        },
+        {
+          "name": "memoryos.theme.preference",
+          "value": "dark"
+        },
+        {
+          "name": "memoryos.apiToken",
+          "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLWRlbW8iLCJpc3MiOiJtZW1vcnlvcyIsImF1ZCI6Im1lbW9yeW9zLWFwaSIsImlhdCI6MTc4NjAxMzYwNiwiZXhwIjoxNzg2MDE3MjA2fQ.oy5I7RJHzdhfeOYFxOMBL6OLIlSl0qA0BRGEUkqJbR8"
+        }
+      ]
+    }
+  ]
+}

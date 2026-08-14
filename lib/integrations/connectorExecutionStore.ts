@@ -1,6 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
 import { randomUUID } from "crypto";
+import { prisma } from "../storage/prismaClient";
 
 export type ConnectorExecutionType = "slack" | "jira";
 
@@ -22,17 +21,6 @@ export type ConnectorExecutionProposal = {
   externalId: string | null;
   error: string | null;
 };
-
-type Store = {
-  proposals: ConnectorExecutionProposal[];
-};
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const STORE_PATH = path.join(DATA_DIR, "connector-execution-proposals.json");
-
-function ensureDir(): void {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-}
 
 function normalizeProposal(raw: Partial<ConnectorExecutionProposal>): ConnectorExecutionProposal {
   const connectorType: ConnectorExecutionType =
@@ -63,28 +51,34 @@ function normalizeProposal(raw: Partial<ConnectorExecutionProposal>): ConnectorE
   };
 }
 
-function readStore(): Store {
-  ensureDir();
-  if (!existsSync(STORE_PATH)) return { proposals: [] };
-  try {
-    const parsed = JSON.parse(readFileSync(STORE_PATH, "utf8")) as Partial<Store>;
-    const proposals = Array.isArray(parsed.proposals)
-      ? parsed.proposals.map((item) =>
-          normalizeProposal(item as Partial<ConnectorExecutionProposal>),
-        )
-      : [];
-    return { proposals };
-  } catch {
-    return { proposals: [] };
-  }
+function rowToProposal(row: {
+  id: string;
+  userId: string;
+  connectorType: string;
+  kind: string;
+  targetId: string;
+  targetLabel: string | null;
+  body: string;
+  status: string;
+  createdAt: string;
+  reviewedAt: string | null;
+  executedAt: string | null;
+  resultUrl: string | null;
+  externalId: string | null;
+  error: string | null;
+}): ConnectorExecutionProposal {
+  return normalizeProposal(row as Partial<ConnectorExecutionProposal>);
 }
 
-function writeStore(store: Store): void {
-  ensureDir();
-  writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+async function persistProposal(proposal: ConnectorExecutionProposal): Promise<void> {
+  await prisma.connectorExecutionProposal.upsert({
+    where: { id: proposal.id },
+    create: proposal,
+    update: proposal,
+  });
 }
 
-export function createConnectorExecutionProposal(
+export async function createConnectorExecutionProposal(
   input: Omit<
     ConnectorExecutionProposal,
     | "id"
@@ -96,7 +90,7 @@ export function createConnectorExecutionProposal(
     | "externalId"
     | "error"
   >,
-): ConnectorExecutionProposal {
+): Promise<ConnectorExecutionProposal> {
   const proposal: ConnectorExecutionProposal = {
     ...input,
     id: `conn_exec_${randomUUID().slice(0, 12)}`,
@@ -108,40 +102,41 @@ export function createConnectorExecutionProposal(
     externalId: null,
     error: null,
   };
-  const store = readStore();
-  store.proposals.unshift(proposal);
-  writeStore(store);
+  await persistProposal(proposal);
   return proposal;
 }
 
-export function listConnectorExecutionProposalsForUser(
+export async function listConnectorExecutionProposalsForUser(
   userId: string,
   connectorType?: ConnectorExecutionType,
   limit = 20,
-): ConnectorExecutionProposal[] {
-  return readStore()
-    .proposals.filter(
-      (p) => p.userId === userId && (!connectorType || p.connectorType === connectorType),
-    )
-    .slice(0, limit);
+): Promise<ConnectorExecutionProposal[]> {
+  const rows = await prisma.connectorExecutionProposal.findMany({
+    where: {
+      userId,
+      ...(connectorType ? { connectorType } : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    take: Math.max(1, Math.min(limit, 200)),
+  });
+  return rows.map(rowToProposal);
 }
 
-export function getConnectorExecutionProposal(
+export async function getConnectorExecutionProposal(
   userId: string,
   proposalId: string,
-): ConnectorExecutionProposal | null {
-  return (
-    readStore().proposals.find((p) => p.userId === userId && p.id === proposalId) ?? null
-  );
+): Promise<ConnectorExecutionProposal | null> {
+  const row = await prisma.connectorExecutionProposal.findUnique({
+    where: { id: proposalId },
+  });
+  if (!row) return null;
+  const proposal = rowToProposal(row);
+  return proposal?.userId === userId ? proposal : null;
 }
 
-export function updateConnectorExecutionProposal(
+export async function updateConnectorExecutionProposal(
   proposal: ConnectorExecutionProposal,
-): ConnectorExecutionProposal {
-  const store = readStore();
-  const index = store.proposals.findIndex((p) => p.id === proposal.id);
-  if (index >= 0) store.proposals[index] = proposal;
-  else store.proposals.unshift(proposal);
-  writeStore(store);
+): Promise<ConnectorExecutionProposal> {
+  await persistProposal(proposal);
   return proposal;
 }

@@ -1,9 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
-import { withFileLock } from "../memory/jsonStoreLock";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const VOICE_SESSION_STORE_PATH = path.join(DATA_DIR, "voice-sessions.json");
+import { prisma } from "../storage/prismaClient";
 
 export type VoiceSessionSource = "pipecat";
 export type VoiceSessionStatus = "active" | "ended";
@@ -23,10 +18,6 @@ export interface VoiceSessionRecord {
   chunkCount: number;
   totalCharacters: number;
   metadata?: Record<string, string>;
-}
-
-interface VoiceSessionStore {
-  sessions: VoiceSessionRecord[];
 }
 
 export interface StartVoiceSessionInput {
@@ -55,17 +46,6 @@ export interface EndVoiceSessionInput {
 
 function nowIso(): string {
   return new Date().toISOString();
-}
-
-function ensureVoiceSessionStore(): void {
-  if (!existsSync(DATA_DIR)) {
-    mkdirSync(DATA_DIR, { recursive: true });
-  }
-
-  if (!existsSync(VOICE_SESSION_STORE_PATH)) {
-    const initial: VoiceSessionStore = { sessions: [] };
-    writeFileSync(VOICE_SESSION_STORE_PATH, JSON.stringify(initial, null, 2), "utf8");
-  }
 }
 
 function sanitizeMetadata(
@@ -100,76 +80,78 @@ function sanitizeMetadata(
   return Object.fromEntries(pairs);
 }
 
-function readVoiceSessionStore(): VoiceSessionStore {
-  ensureVoiceSessionStore();
-
+function parseMetadata(raw: string | null): Record<string, string> | undefined {
+  if (!raw) return undefined;
   try {
-    const raw = readFileSync(VOICE_SESSION_STORE_PATH, "utf8");
     const parsed = JSON.parse(raw) as unknown;
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      Array.isArray((parsed as { sessions?: unknown }).sessions)
-    ) {
-      return parsed as VoiceSessionStore;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      const entries = Object.entries(parsed as Record<string, unknown>)
+        .filter((entry): entry is [string, string] => typeof entry[1] === "string");
+      return entries.length > 0 ? Object.fromEntries(entries) : undefined;
     }
   } catch {
-    // Fall through to default.
+    return undefined;
   }
-
-  return { sessions: [] };
+  return undefined;
 }
 
-function writeVoiceSessionStore(store: VoiceSessionStore): void {
-  ensureVoiceSessionStore();
-  writeFileSync(VOICE_SESSION_STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+function toVoiceSessionRecord(row: {
+  sessionId: string;
+  userId: string;
+  source: string;
+  status: string;
+  workspace: string | null;
+  project: string | null;
+  threadId: string | null;
+  startedAt: string;
+  updatedAt: string;
+  lastChunkAt: string | null;
+  endedAt: string | null;
+  chunkCount: number;
+  totalCharacters: number;
+  metadataJson: string | null;
+}): VoiceSessionRecord {
+  return {
+    sessionId: row.sessionId,
+    userId: row.userId,
+    source: row.source as VoiceSessionSource,
+    status: row.status as VoiceSessionStatus,
+    startedAt: row.startedAt,
+    updatedAt: row.updatedAt,
+    chunkCount: row.chunkCount,
+    totalCharacters: row.totalCharacters,
+    ...(row.workspace ? { workspace: row.workspace } : {}),
+    ...(row.project ? { project: row.project } : {}),
+    ...(row.threadId ? { threadId: row.threadId } : {}),
+    ...(row.lastChunkAt ? { lastChunkAt: row.lastChunkAt } : {}),
+    ...(row.endedAt ? { endedAt: row.endedAt } : {}),
+    ...(parseMetadata(row.metadataJson) ? { metadata: parseMetadata(row.metadataJson) } : {}),
+  };
 }
 
-export function getVoiceSession(
+export async function getVoiceSession(
   userId: string,
   sessionId: string,
-): VoiceSessionRecord | null {
-  const store = readVoiceSessionStore();
-  return (
-    store.sessions.find(
-      (session) => session.userId === userId && session.sessionId === sessionId,
-    ) ?? null
-  );
+): Promise<VoiceSessionRecord | null> {
+  const row = await prisma.voiceSession.findUnique({
+    where: { userId_sessionId: { userId, sessionId } },
+  });
+  return row ? toVoiceSessionRecord(row) : null;
 }
 
 export async function startVoiceSession(
   input: StartVoiceSessionInput,
 ): Promise<VoiceSessionRecord> {
-  return withFileLock(VOICE_SESSION_STORE_PATH, async () => {
-    const store = readVoiceSessionStore();
-    const existingIndex = store.sessions.findIndex(
-      (session) =>
-        session.userId === input.userId && session.sessionId === input.sessionId,
-    );
-    const timestamp = nowIso();
-    const sanitizedMetadata = sanitizeMetadata(input.metadata);
-
-    if (existingIndex >= 0) {
-      const existing = store.sessions[existingIndex];
-      const updated: VoiceSessionRecord = {
-        ...existing,
-        source: input.source,
-        status: "active",
-        workspace: input.workspace ?? existing.workspace,
-        project: input.project ?? existing.project,
-        threadId: input.threadId ?? existing.threadId,
-        metadata: {
-          ...(existing.metadata ?? {}),
-          ...(sanitizedMetadata ?? {}),
-        },
-        updatedAt: timestamp,
-      };
-      store.sessions[existingIndex] = updated;
-      writeVoiceSessionStore(store);
-      return updated;
-    }
-
-    const created: VoiceSessionRecord = {
+  const timestamp = nowIso();
+  const existing = await getVoiceSession(input.userId, input.sessionId);
+  const sanitizedMetadata = sanitizeMetadata(input.metadata);
+  const metadata = {
+    ...(existing?.metadata ?? {}),
+    ...(sanitizedMetadata ?? {}),
+  };
+  const row = await prisma.voiceSession.upsert({
+    where: { userId_sessionId: { userId: input.userId, sessionId: input.sessionId } },
+    create: {
       sessionId: input.sessionId,
       userId: input.userId,
       source: input.source,
@@ -178,77 +160,59 @@ export async function startVoiceSession(
       updatedAt: timestamp,
       chunkCount: 0,
       totalCharacters: 0,
-      ...(input.workspace ? { workspace: input.workspace } : {}),
-      ...(input.project ? { project: input.project } : {}),
-      ...(input.threadId ? { threadId: input.threadId } : {}),
-      ...(sanitizedMetadata ? { metadata: sanitizedMetadata } : {}),
-    };
-
-    store.sessions.push(created);
-    writeVoiceSessionStore(store);
-    return created;
+      workspace: input.workspace ?? null,
+      project: input.project ?? null,
+      threadId: input.threadId ?? null,
+      metadataJson: Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : null,
+    },
+    update: {
+      source: input.source,
+      status: "active",
+      workspace: input.workspace ?? existing?.workspace ?? null,
+      project: input.project ?? existing?.project ?? null,
+      threadId: input.threadId ?? existing?.threadId ?? null,
+      metadataJson: Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : null,
+      updatedAt: timestamp,
+    },
   });
+  return toVoiceSessionRecord(row);
 }
 
 export async function recordVoiceChunk(
   input: RecordVoiceChunkInput,
 ): Promise<VoiceSessionRecord | null> {
-  return withFileLock(VOICE_SESSION_STORE_PATH, async () => {
-    const store = readVoiceSessionStore();
-    const existingIndex = store.sessions.findIndex(
-      (session) =>
-        session.userId === input.userId && session.sessionId === input.sessionId,
-    );
-
-    if (existingIndex < 0) {
-      return null;
-    }
-
-    const existing = store.sessions[existingIndex];
-    const timestamp = nowIso();
-    const updated: VoiceSessionRecord = {
-      ...existing,
+  const existing = await getVoiceSession(input.userId, input.sessionId);
+  if (!existing) return null;
+  const timestamp = nowIso();
+  const row = await prisma.voiceSession.update({
+    where: { userId_sessionId: { userId: input.userId, sessionId: input.sessionId } },
+    data: {
       status: "active",
       chunkCount: existing.chunkCount + 1,
       totalCharacters: existing.totalCharacters + Math.max(0, input.chunkCharacters),
       updatedAt: timestamp,
       lastChunkAt: timestamp,
-      workspace: input.workspace ?? existing.workspace,
-      project: input.project ?? existing.project,
-      threadId: input.threadId ?? existing.threadId,
-    };
-
-    store.sessions[existingIndex] = updated;
-    writeVoiceSessionStore(store);
-    return updated;
+      workspace: input.workspace ?? existing.workspace ?? null,
+      project: input.project ?? existing.project ?? null,
+      threadId: input.threadId ?? existing.threadId ?? null,
+    },
   });
+  return toVoiceSessionRecord(row);
 }
 
 export async function endVoiceSession(
   input: EndVoiceSessionInput,
 ): Promise<VoiceSessionRecord | null> {
-  return withFileLock(VOICE_SESSION_STORE_PATH, async () => {
-    const store = readVoiceSessionStore();
-    const existingIndex = store.sessions.findIndex(
-      (session) =>
-        session.userId === input.userId && session.sessionId === input.sessionId,
-    );
-
-    if (existingIndex < 0) {
-      return null;
-    }
-
-    const existing = store.sessions[existingIndex];
-    const timestamp = nowIso();
-    const ended: VoiceSessionRecord = {
-      ...existing,
+  const existing = await getVoiceSession(input.userId, input.sessionId);
+  if (!existing) return null;
+  const timestamp = nowIso();
+  const row = await prisma.voiceSession.update({
+    where: { userId_sessionId: { userId: input.userId, sessionId: input.sessionId } },
+    data: {
       status: "ended",
       updatedAt: timestamp,
       endedAt: timestamp,
-    };
-
-    store.sessions[existingIndex] = ended;
-    writeVoiceSessionStore(store);
-    return ended;
+    },
   });
+  return toVoiceSessionRecord(row);
 }

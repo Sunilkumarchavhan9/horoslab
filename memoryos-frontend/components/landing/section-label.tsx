@@ -6,12 +6,16 @@ type SectionLabelProps = {
   title: string;
   index: string;
   className?: string;
+  dark?: boolean;
 };
 
-export function SectionLabel({ title, index, className }: SectionLabelProps) {
+export function SectionLabel({ title, index, className, dark }: SectionLabelProps) {
+  const defaultColors = "border-y border-[#c9d8ee] bg-white text-[#28456f]";
+  const darkColors = "border-y border-[#222] bg-transparent text-[#666]";
+  
   return (
     <div
-      className={`relative flex items-center justify-between overflow-hidden border-b border-[#c9d8ee] bg-white px-4 py-4 font-mono text-[15px] tracking-[0.18em] text-[#28456f] ${className ?? ""}`}
+      className={`relative flex items-center justify-between overflow-hidden px-4 py-4 font-mono text-[15px] tracking-[0.18em] ${dark ? darkColors : defaultColors} ${className ?? ""}`}
     >
       <motion.span
         aria-hidden="true"
@@ -31,3 +35,5 @@ export function SectionLabel({ title, index, className }: SectionLabelProps) {
     </div>
   );
 }
+
+

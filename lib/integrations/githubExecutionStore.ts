@@ -1,6 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
 import { randomUUID } from "crypto";
+import { prisma } from "../storage/prismaClient";
 
 export type GitHubExecutionKind = "issue_comment" | "brief_file_commit" | "pull_request";
 
@@ -25,17 +24,6 @@ export type GitHubExecutionProposal = {
   githubResultUrl: string | null;
   error: string | null;
 };
-
-type Store = {
-  proposals: GitHubExecutionProposal[];
-};
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const STORE_PATH = path.join(DATA_DIR, "github-execution-proposals.json");
-
-function ensureDir(): void {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-}
 
 function normalizeProposal(raw: Partial<GitHubExecutionProposal>): GitHubExecutionProposal {
   return {
@@ -76,28 +64,41 @@ function normalizeProposal(raw: Partial<GitHubExecutionProposal>): GitHubExecuti
   };
 }
 
-function readStore(): Store {
-  ensureDir();
-  if (!existsSync(STORE_PATH)) return { proposals: [] };
-  try {
-    const parsed = JSON.parse(readFileSync(STORE_PATH, "utf8")) as Partial<Store>;
-    const proposals = Array.isArray(parsed.proposals)
-      ? parsed.proposals.map((item) => normalizeProposal(item as Partial<GitHubExecutionProposal>))
-      : [];
-    return { proposals };
-  } catch {
-    return { proposals: [] };
-  }
+function rowToProposal(row: {
+  id: string;
+  userId: string;
+  kind: string;
+  owner: string;
+  repo: string;
+  issueNumber: number | null;
+  body: string;
+  pullTitle: string | null;
+  headBranch: string | null;
+  baseBranch: string | null;
+  filePath: string | null;
+  status: string;
+  createdAt: string;
+  reviewedAt: string | null;
+  executedAt: string | null;
+  githubCommentId: number | null;
+  githubPrNumber: number | null;
+  githubResultUrl: string | null;
+  error: string | null;
+}): GitHubExecutionProposal {
+  return normalizeProposal(row as Partial<GitHubExecutionProposal>);
 }
 
-function writeStore(store: Store): void {
-  ensureDir();
-  writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+async function persistProposal(proposal: GitHubExecutionProposal): Promise<void> {
+  await prisma.gitHubExecutionProposal.upsert({
+    where: { id: proposal.id },
+    create: proposal,
+    update: proposal,
+  });
 }
 
-export function createGitHubExecutionProposal(
+export async function createGitHubExecutionProposal(
   input: Omit<GitHubExecutionProposal, "id" | "status" | "createdAt" | "reviewedAt" | "executedAt" | "githubCommentId" | "githubPrNumber" | "githubResultUrl" | "error">,
-): GitHubExecutionProposal {
+): Promise<GitHubExecutionProposal> {
   const proposal: GitHubExecutionProposal = {
     ...input,
     id: `gh_exec_${randomUUID().slice(0, 12)}`,
@@ -110,37 +111,37 @@ export function createGitHubExecutionProposal(
     githubResultUrl: null,
     error: null,
   };
-  const store = readStore();
-  store.proposals.unshift(proposal);
-  writeStore(store);
+  await persistProposal(proposal);
   return proposal;
 }
 
-export function listGitHubExecutionProposalsForUser(
+export async function listGitHubExecutionProposalsForUser(
   userId: string,
   limit = 20,
-): GitHubExecutionProposal[] {
-  return readStore()
-    .proposals.filter((p) => p.userId === userId)
-    .slice(0, limit);
+): Promise<GitHubExecutionProposal[]> {
+  const rows = await prisma.gitHubExecutionProposal.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: Math.max(1, Math.min(limit, 200)),
+  });
+  return rows.map(rowToProposal);
 }
 
-export function getGitHubExecutionProposal(
+export async function getGitHubExecutionProposal(
   userId: string,
   proposalId: string,
-): GitHubExecutionProposal | null {
-  return (
-    readStore().proposals.find((p) => p.userId === userId && p.id === proposalId) ?? null
-  );
+): Promise<GitHubExecutionProposal | null> {
+  const row = await prisma.gitHubExecutionProposal.findUnique({
+    where: { id: proposalId },
+  });
+  if (!row) return null;
+  const proposal = rowToProposal(row);
+  return proposal?.userId === userId ? proposal : null;
 }
 
-export function updateGitHubExecutionProposal(
+export async function updateGitHubExecutionProposal(
   proposal: GitHubExecutionProposal,
-): GitHubExecutionProposal {
-  const store = readStore();
-  const index = store.proposals.findIndex((p) => p.id === proposal.id);
-  if (index >= 0) store.proposals[index] = proposal;
-  else store.proposals.unshift(proposal);
-  writeStore(store);
+): Promise<GitHubExecutionProposal> {
+  await persistProposal(proposal);
   return proposal;
 }

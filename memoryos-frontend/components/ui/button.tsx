@@ -7,31 +7,33 @@ import { PixelLoadOverlay } from "@/components/ui/pixel-load-overlay"
 import { inferPixelToneFromClassName } from "@/lib/pixel-button-runtime"
 
 const buttonVariants = cva(
-  "pixel-load-btn group/button relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-none border border-transparent bg-clip-padding text-xs font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md text-xs font-medium whitespace-nowrap transition-all duration-200 outline-none select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2b7cff]/50 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97] [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        default:
+          "btn-glossy-blue bg-gradient-to-b from-[#2b7cff] via-[#1765ec] to-[#115bd9] text-white border border-[#0d53c9] shadow-[inset_0_1.5px_0.5px_0_rgba(255,255,255,0.45),inset_0_-1.5px_1.5px_0_rgba(0,0,0,0.15),0_2px_6px_0_rgba(17,91,217,0.35)] hover:from-[#2272f8] hover:via-[#125cdb] hover:to-[#0d4eb8] hover:border-[#0947ba] hover:shadow-[inset_0_1px_0.5px_0_rgba(255,255,255,0.35),inset_0_-1px_1px_0_rgba(0,0,0,0.2),0_4px_12px_0_rgba(17,91,217,0.45)] hover:scale-[0.985] active:scale-[0.97]",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border border-black/10 bg-white/90 text-black/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.04)] hover:bg-white hover:text-black hover:border-black/20 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_4px_rgba(0,0,0,0.06)] hover:scale-[0.985] active:scale-[0.97] dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "border border-black/5 bg-black/[0.04] text-black/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)] hover:bg-black/[0.07] hover:scale-[0.985] active:scale-[0.97] dark:bg-white/10 dark:text-white dark:hover:bg-white/15",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "hover:bg-black/5 hover:text-black hover:scale-[0.985] active:scale-[0.97] dark:hover:bg-white/10 dark:hover:text-white",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+          "bg-gradient-to-b from-[#ef4444] to-[#dc2626] text-white border border-[#b91c1c] shadow-[inset_0_1.5px_0.5px_0_rgba(255,255,255,0.35),0_2px_6px_0_rgba(220,38,38,0.3)] hover:from-[#dc2626] hover:to-[#b91c1c] hover:scale-[0.985] active:scale-[0.97]",
         link: "text-primary underline-offset-4 hover:underline",
+        glossy: "btn-glossy-blue",
       },
       size: {
         default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
-        xs: "h-6 gap-1 rounded-none px-2 text-xs has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-none px-2.5 has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
-        icon: "size-8",
-        "icon-xs": "size-6 rounded-none [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-7 rounded-none",
-        "icon-lg": "size-9",
+          "h-9 gap-1.5 px-4 text-xs rounded-md",
+        xs: "h-6 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7.5 gap-1.5 rounded-md px-3 text-xs [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-10 gap-2 px-5 text-sm rounded-md [&_svg:not([class*='size-'])]:size-4.5",
+        icon: "size-9 rounded-md",
+        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-7.5 rounded-md",
+        "icon-lg": "size-10 rounded-md",
       },
     },
     defaultVariants: {
@@ -57,10 +59,8 @@ function Button({
   }) {
   const Comp = asChild ? Slot.Root : "button"
   const resolvedClassName = cn(
-    buttonVariants({ variant, size, className }),
-    !asChild && loading && "pixel-load-btn--loading",
+    buttonVariants({ variant, size, className })
   )
-  const pixelTone = inferPixelToneFromClassName(resolvedClassName)
 
   if (asChild) {
     return (
@@ -68,10 +68,9 @@ function Button({
         data-slot="button"
         data-variant={variant}
         data-size={size}
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={resolvedClassName}
         disabled={disabled}
         aria-busy={loading || undefined}
-        data-pixel-loading={loading ? "true" : undefined}
         {...props}
       >
         {children}
@@ -84,14 +83,12 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      data-pixel-loading={loading ? "true" : undefined}
       disabled={disabled}
       aria-busy={loading || undefined}
       className={resolvedClassName}
       {...props}
     >
-      {loading ? <PixelLoadOverlay tone={pixelTone} /> : null}
-      <span className="pixel-load-btn__label">{children}</span>
+      {children}
     </Comp>
   )
 }

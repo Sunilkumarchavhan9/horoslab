@@ -1,0 +1,45 @@
+rules:
+  - id: memoryos-no-hardcoded-secret
+    message: Do not commit hardcoded secrets. Use Infisical-managed environment variables.
+    severity: ERROR
+    languages:
+      - typescript
+      - javascript
+    patterns:
+      - pattern-either:
+          - pattern: $KEY = "$VALUE"
+          - pattern: $KEY: "$VALUE"
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i).*(secret|token|api[_-]?key|password|private[_-]?key).*
+      - metavariable-regex:
+          metavariable: $VALUE
+          regex: ^(?!test-secret$|ci-test-secret$|user-demo$|memoryos-api$|memoryos-test$).{16,}$
+    paths:
+      exclude:
+        - node_modules/**
+        - packages/sdk/node_modules/**
+        - memoryos-frontend/.next/**
+        - memoryos-frontend/out/**
+        - "*.lock"
+
+  - id: memoryos-no-raw-org-header-trust
+    message: Backend tenant scope must come from signed auth context, not direct client header trust.
+    severity: WARNING
+    languages:
+      - typescript
+    pattern: readOrgIdFromRequest($REQ)
+    paths:
+      exclude:
+        - lib/auth/orgScope.ts
+        - server/middleware/auth.ts
+
+  - id: memoryos-no-dangerous-git-reset
+    message: Destructive git reset must not be scripted in product code.
+    severity: ERROR
+    languages:
+      - typescript
+      - javascript
+    pattern-either:
+      - pattern: execSync("git reset --hard ...")
+      - pattern: $EXEC("git reset --hard ...")

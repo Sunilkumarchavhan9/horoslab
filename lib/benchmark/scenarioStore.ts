@@ -1,6 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
 import { randomUUID } from "crypto";
+import { prisma } from "../storage/prismaClient";
 
 export type BenchmarkScenario = {
   id: string;
@@ -11,82 +10,71 @@ export type BenchmarkScenario = {
   updatedAt: string;
 };
 
-type ScenarioStore = {
-  scenarios: BenchmarkScenario[];
-};
-
-const DATA_DIR = path.join(process.cwd(), "data", "eval");
-const STORE_PATH = path.join(DATA_DIR, "benchmark-scenarios.json");
-
-function ensureDir(): void {
-  if (!existsSync(DATA_DIR)) {
-    mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
-
-function readStore(): ScenarioStore {
-  ensureDir();
-  if (!existsSync(STORE_PATH)) {
-    return { scenarios: [] };
-  }
+function parseCaseIds(raw: string): string[] {
   try {
-    const raw = readFileSync(STORE_PATH, "utf8");
-    const parsed = JSON.parse(raw) as ScenarioStore;
-    return Array.isArray(parsed.scenarios) ? parsed : { scenarios: [] };
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === "string")
+      : [];
   } catch {
-    return { scenarios: [] };
+    return [];
   }
 }
 
-function writeStore(store: ScenarioStore): void {
-  ensureDir();
-  writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+function toScenario(row: {
+  id: string;
+  name: string;
+  mode: string;
+  caseIdsJson: string;
+  createdAt: string;
+  updatedAt: string;
+}): BenchmarkScenario {
+  return {
+    id: row.id,
+    name: row.name,
+    mode: row.mode === "preview" || row.mode === "production" ? row.mode : "local",
+    caseIds: parseCaseIds(row.caseIdsJson),
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  };
 }
 
-export function listBenchmarkScenarios(): BenchmarkScenario[] {
-  return readStore().scenarios.sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-  );
+export async function listBenchmarkScenarios(): Promise<BenchmarkScenario[]> {
+  const rows = await prisma.benchmarkScenario.findMany({ orderBy: { updatedAt: "desc" } });
+  return rows.map(toScenario);
 }
 
-export function getBenchmarkScenario(id: string): BenchmarkScenario | null {
-  return readStore().scenarios.find((s) => s.id === id) ?? null;
+export async function getBenchmarkScenario(id: string): Promise<BenchmarkScenario | null> {
+  const row = await prisma.benchmarkScenario.findUnique({ where: { id } });
+  return row ? toScenario(row) : null;
 }
 
-export function upsertBenchmarkScenario(input: {
+export async function upsertBenchmarkScenario(input: {
   id?: string;
   name: string;
   mode: "local" | "preview" | "production";
   caseIds: string[];
-}): BenchmarkScenario {
+}): Promise<BenchmarkScenario> {
   const now = new Date().toISOString();
-  const store = readStore();
-  const existingIndex =
-    input.id ? store.scenarios.findIndex((s) => s.id === input.id) : -1;
-
-  if (existingIndex >= 0) {
-    const updated: BenchmarkScenario = {
-      ...store.scenarios[existingIndex],
+  const id = input.id ?? `scenario_${randomUUID().slice(0, 8)}`;
+  const existing = await prisma.benchmarkScenario.findUnique({ where: { id } });
+  const row = await prisma.benchmarkScenario.upsert({
+    where: { id },
+    create: {
+      id,
       name: input.name,
       mode: input.mode,
-      caseIds: input.caseIds,
+      caseIdsJson: JSON.stringify(input.caseIds),
+      createdAt: now,
       updatedAt: now,
-    };
-    store.scenarios[existingIndex] = updated;
-    writeStore(store);
-    return updated;
-  }
-
-  const created: BenchmarkScenario = {
-    id: input.id ?? `scenario_${randomUUID().slice(0, 8)}`,
-    name: input.name,
-    mode: input.mode,
-    caseIds: input.caseIds,
-    createdAt: now,
-    updatedAt: now,
-  };
-  store.scenarios.push(created);
-  writeStore(store);
-  return created;
+    },
+    update: {
+      name: input.name,
+      mode: input.mode,
+      caseIdsJson: JSON.stringify(input.caseIds),
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+    },
+  });
+  return toScenario(row);
 }
-

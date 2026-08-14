@@ -1,4 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import {
+  MEMORYOS_ORG_ID_HEADER,
+  applyProxyOrgIdHeader,
+} from "@/lib/org-scope-server";
+import { createBackendAuthHeader } from "../../_lib/backend-auth";
 import { resolveBackendOrigin } from "../../_lib/backend-origin";
 
 type RouteContext = {
@@ -24,13 +30,17 @@ const FORWARDED_HEADER_ALLOWLIST = new Set([
   "content-type",
   "x-api-key",
   "x-request-id",
+  MEMORYOS_ORG_ID_HEADER,
 ]);
 
 function backendOrigin(): string {
   return resolveBackendOrigin();
 }
 
-async function proxyCompanyBrainRequest(request: NextRequest, context: RouteContext): Promise<Response> {
+async function proxyCompanyBrainRequest(
+  request: NextRequest,
+  context: RouteContext,
+): Promise<Response> {
   const { path = [] } = await context.params;
   const encodedPath = path.map(encodeURIComponent).join("/");
   const search = request.nextUrl.search;
@@ -39,13 +49,28 @@ async function proxyCompanyBrainRequest(request: NextRequest, context: RouteCont
   const headers = new Headers();
   request.headers.forEach((value, key) => {
     const lowered = key.toLowerCase();
-    if (!HOP_BY_HOP_HEADERS.has(lowered) && FORWARDED_HEADER_ALLOWLIST.has(lowered)) {
+    if (
+      !HOP_BY_HOP_HEADERS.has(lowered) &&
+      FORWARDED_HEADER_ALLOWLIST.has(lowered)
+    ) {
       headers.set(lowered, value);
     }
   });
 
+  if (!headers.get("authorization")) {
+    const authHeader = await createBackendAuthHeader();
+    if (authHeader) {
+      headers.set("authorization", authHeader);
+    }
+  }
+
+  const clerkAuth = await auth();
+  applyProxyOrgIdHeader(headers, request, clerkAuth.orgId);
+
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
-  const body = hasBody ? new Uint8Array(await request.arrayBuffer()) : undefined;
+  const body = hasBody
+    ? new Uint8Array(await request.arrayBuffer())
+    : undefined;
   const response = await fetch(url, {
     method: request.method,
     headers,
@@ -66,10 +91,16 @@ async function proxyCompanyBrainRequest(request: NextRequest, context: RouteCont
   });
 }
 
-export async function GET(request: NextRequest, context: RouteContext): Promise<Response> {
+export async function GET(
+  request: NextRequest,
+  context: RouteContext,
+): Promise<Response> {
   return proxyCompanyBrainRequest(request, context);
 }
 
-export async function POST(request: NextRequest, context: RouteContext): Promise<Response> {
+export async function POST(
+  request: NextRequest,
+  context: RouteContext,
+): Promise<Response> {
   return proxyCompanyBrainRequest(request, context);
 }

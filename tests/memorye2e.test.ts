@@ -3,66 +3,18 @@ import { retrieveRelevantMemory } from "../lib/memory/retrieveRelevantMemory";
 import { listTimelineEvents } from "../lib/memory/timelineMemory";
 import { listRevisionEvents } from "../lib/memory/revisionMemory";
 import { runIngestFlowLangGraph } from "../lib/workflows/ingestGraphLangGraph";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { resetRuntimeDataStores } from "./helpers/resetDataDir";
+import { beforeEach, describe, expect, it } from "vitest";
+import { resetRuntimeDataStoresForTests } from "./helpers/resetDataDir";
+import { setMemoryStoreAdapter } from "../lib/adapters/registry";
+import { TestMemoryStoreAdapter } from "./helpers/testMemoryStoreAdapter";
 
-const mem0Store: Array<{
-  id: string;
-  memory?: string;
-  score?: number;
-  metadata?: Record<string, unknown>;
-}> = [];
+const testMemoryStore = new TestMemoryStoreAdapter();
 
-vi.mock("../lib/integrations/mem0", () => {
-  return {
-    saveMemoryToMem0: vi.fn(async ({ memory }) => {
-      const existingIndex = mem0Store.findIndex(
-        (item) => item.metadata?.memoryId === memory.id,
-      );
 
-      const nextItem = {
-        id: memory.id,
-        memory: memory.content,
-        score: 1,
-        metadata: { 
-          memoryId: memory.id,
-          userId: memory.userId,
-          type: memory.type,
-          summary: memory.summary,
-          importanceScore: String(memory.importanceScore),
-          confidence: String(memory.confidence),
-          source: memory.source,
-          status: memory.status,
-          createdAt: memory.createdAt,
-          updatedAt: memory.updatedAt,
-          evidenceCount: String(memory.evidenceCount),
-        },
-      };
-
-      if (existingIndex !== -1) {
-        mem0Store[existingIndex] = nextItem;
-      } else {
-        mem0Store.push(nextItem);
-      }
-
-      return { id: memory.id };
-    }),
-
-    searchMemoryFromMem0: vi.fn(async ({ userId }) => {
-      return mem0Store.filter(
-        (item) => item.metadata?.userId === userId,
-      );
-    }),
-
-    getMemoryById: vi.fn(async (id: string) => {
-      return mem0Store.find((item) => item.id === id) ?? null;
-    }),
-  };
-});
-
-beforeEach(() => {
-  mem0Store.length = 0;
-  resetRuntimeDataStores();
+beforeEach(async () => {
+  testMemoryStore.clear();
+  setMemoryStoreAdapter(testMemoryStore);
+  await resetRuntimeDataStoresForTests();
 });
 
 describe("MemoryOS E2E", () => {
@@ -97,8 +49,8 @@ describe("MemoryOS E2E", () => {
     const timeline = await listTimelineEvents("u_test_e2e");
     expect(timeline).toHaveLength(2);
     expect(timeline.map((event) => event.eventType)).toEqual([
-      "memory_evolved",
       "memory_created",
+      "memory_evolved",
     ]);
 
     const revisions = await listRevisionEvents({ userId: "u_test_e2e" });

@@ -22,7 +22,7 @@ function getErrorMessage(error: unknown) {
     return error.message;
   }
 
-  return "Verification failed. Try requesting a new magic link.";
+  return "Verification failed. Try requesting a new email link.";
 }
 
 export function EmailLinkVerification({
@@ -32,7 +32,7 @@ export function EmailLinkVerification({
 }: EmailLinkVerificationProps) {
   const clerk = useClerk();
   const [state, setState] = useState<VerificationState>("verifying");
-  const [message, setMessage] = useState("Verifying your magic link...");
+  const [message, setMessage] = useState("Verifying your email link...");
 
   const styles = useMemo(
     () =>
@@ -96,7 +96,7 @@ export function EmailLinkVerification({
             href={signInUrl}
             className={`mt-8 inline-flex min-h-[46px] items-center justify-center px-5 text-[14px] font-medium transition sm:text-[15px] ${styles.button}`}
           >
-            Back to sign in
+            Back to Epoch sign in
           </Link>
         ) : null}
       </div>

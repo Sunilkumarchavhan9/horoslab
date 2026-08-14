@@ -20,8 +20,8 @@ const LIGHT_THEME = {
 } as const;
 
 const DARK_THEME = {
-  bg: "#05070d",
-  grid: "#17243d",
+  bg: "#0f0f0f",
+  grid: "#1a1a1a",
   faint: { r: 88, g: 126, b: 198 },
   mid: { r: 118, g: 167, b: 250 },
   accent: { r: 153, g: 196, b: 255 },
@@ -148,7 +148,7 @@ function beamBoostAlongEdge(
 type LiveBrainMapDitherCanvasProps = {
   className?: string;
   graph: BrainMapGraph;
-  theme?: "light" | "dark";
+  theme?: "light" | "dark" | "system";
   selectedItem?: BrainMapSelection;
   onSelectNode?: (id: string) => void;
   onSelectEdge?: (id: string) => void;
@@ -186,6 +186,7 @@ export function LiveBrainMapDitherCanvas({
     let cell = 6;
     let raf = 0;
     let lastPaintTime = 0;
+    let systemTheme: "light" | "dark" = "light";
     const frameIntervalMs = 1000 / 24;
 
     const resize = () => {
@@ -202,7 +203,8 @@ export function LiveBrainMapDitherCanvas({
     };
 
     const drawFrame = (time: number) => {
-      const palette = theme === "dark" ? DARK_THEME : LIGHT_THEME;
+      const activeTheme = theme === "system" ? systemTheme : theme;
+      const palette = activeTheme === "dark" ? DARK_THEME : LIGHT_THEME;
       const t = time * 0.001;
       const currentGraph = graphRef.current;
       const selected = selectedRef.current;
@@ -235,7 +237,7 @@ export function LiveBrainMapDitherCanvas({
           const threshold = (BAYER_4X4[((gyCell & 3) * 4) + (gxCell & 3)] + 0.5) / 16;
           if (threshold > 0.72) {
             ctx.fillStyle =
-              theme === "dark"
+              activeTheme === "dark"
                 ? "rgba(159, 190, 235, 0.55)"
                 : "rgba(201, 216, 238, 0.55)";
             ctx.fillText(".", Math.floor(p.x / cell) * cell, Math.floor(p.y / cell) * cell);
@@ -350,7 +352,7 @@ export function LiveBrainMapDitherCanvas({
                 ? mixColor(palette.mid, palette.accent, (intensity - 0.35) / 0.35)
                 : mixColor(palette.accent, palette.deep, (intensity - 0.7) / 0.3);
 
-          const alpha = theme === "dark"
+          const alpha = activeTheme === "dark"
             ? clamp(0.58 + intensity * 0.5 + shimmer, 0.45, 1)
             : clamp(0.32 + intensity * 0.58 + shimmer, 0.25, 0.95);
           ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha.toFixed(3)})`;
@@ -450,6 +452,13 @@ export function LiveBrainMapDitherCanvas({
     };
     reduced.addEventListener("change", onReducedChange);
 
+    const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    systemTheme = colorScheme.matches ? "dark" : "light";
+    const onColorSchemeChange = (event: MediaQueryListEvent) => {
+      systemTheme = event.matches ? "dark" : "light";
+    };
+    colorScheme.addEventListener("change", onColorSchemeChange);
+
     canvas.addEventListener("click", handleClick);
     resize();
     const loop = (time: number) => {
@@ -470,6 +479,7 @@ export function LiveBrainMapDitherCanvas({
       observer.disconnect();
       visibilityObserver.disconnect();
       reduced.removeEventListener("change", onReducedChange);
+      colorScheme.removeEventListener("change", onColorSchemeChange);
       canvas.removeEventListener("click", handleClick);
     };
   }, [onSelectNode, onSelectEdge, theme]);

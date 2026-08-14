@@ -1,0 +1,3 @@
+{
+  "/api/policy-center/[...path]/route": "app/api/policy-center/[...path]/route.js"
+}

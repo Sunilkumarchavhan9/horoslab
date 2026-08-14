@@ -1,6 +1,6 @@
 # MemoryOS Startup Execution Status
 
-Last updated: 2026-05-18
+Last updated: 2026-06-16
 Owner: MemoryOS core build
 
 ## Company Brain Completion Snapshot
@@ -58,9 +58,37 @@ Owner: MemoryOS core build
  - Secrets ops next-actions added (Doppler + 1Password execution steps).
 
 ## In Progress
-- End-to-end product refactor from “feature dashboard” to “continuity operating system”
-- Real-time backend wiring across developer console sections (removing static/fake fallback data)
+- End-to-end product refactor from “feature surface” to “continuity operating system”
+- Real-time backend wiring across mission control sections (removing static/fake fallback data)
 - Token-preset UI migration (shadcn tokens) across console surfaces
+- Phase 1 lock execution:
+  - Engineering-only scope guardrail
+  - Weekly-active-team scoreboard in Mission Control
+  - Design partner loop tracking toward 10 weekly teams
+
+## Phase 1 Lock (2026-06-16)
+Goal: **Never explain your codebase twice.**
+
+Locked customer:
+- Startups
+- AI-native companies
+- Engineering teams
+
+Locked build scope:
+- GitHub ingestion
+- Slack ingestion
+- Jira ingestion
+- Memory contracts
+- Resume API
+- Handoff API
+- MCP server
+- Continuity Lab flows for resume/continue/human-agent collaboration
+
+Success metric:
+- **10 engineering teams using MemoryOS weekly**
+
+Execution rule:
+- No broadening beyond engineering use-cases until the continuity loop is repeatable.
 
 ## Next (Execution Queue)
 1. Stabilize backend reliability under load:
@@ -105,7 +133,7 @@ This order is now the execution source of truth.
 - [ ] Remove all static fallback visuals where backend data is available
 - [ ] Ensure Agent Flight Recorder and Requests are consistently live and non-erroring
 - [ ] Verify Agents/Workflows/Connectors pages with authenticated real token path
-- [ ] Finish shadcn token cleanup on all developer console sections
+- [ ] Finish shadcn token cleanup on all mission control sections
 - [ ] Confirm Cloudflare status is `Active` and HTTPS policies are enabled
 - [ ] Run full benchmark + gate and capture artifact in docs
 - [ ] Prepare founder demo script using only organic live data

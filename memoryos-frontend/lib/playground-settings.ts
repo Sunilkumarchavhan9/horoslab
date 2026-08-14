@@ -3,6 +3,9 @@ export type PlaygroundSettings = {
   workspace: string;
   project: string;
   threadId: string;
+  /** P2.3 product agent preset */
+  productAgentId?: string;
+  productAgentSessionId?: string;
 };
 
 const STORAGE_KEY = "memoryos.playground.settings";

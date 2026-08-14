@@ -6,8 +6,10 @@ Owner: Product + GTM
 ## Positioning Core
 - MemoryOS is a `company brain for agents`.
 - MemoryOS is `continuity infrastructure`, not a generic memory app.
+- MemoryOS is the `inheritance runtime for AI-native companies`.
 - MemoryOS converts conversations into `structured memory contracts`.
 - MemoryOS `injects context before model runs` and keeps memory behavior inspectable.
+- `MemoryIgnition` is the agent layer that retrieves memory, selects skills, and prepares future agents to act.
 
 ## Primary Headline Options
 - `Your company brain for agents`
@@ -20,6 +22,7 @@ Owner: Product + GTM
 - `Memory contracts`
 - `Context injection`
 - `Cross-agent portability`
+- `MemoryIgnition`
 - `Governance controls`
 - `Audit timeline`
 - `Control plane`
@@ -30,6 +33,7 @@ Owner: Product + GTM
 - Use `control plane` instead of generic `dashboard` when talking about product capability.
 - Use `cross-agent` and `interoperability` for ecosystem messaging.
 - Use `structured memory` or `contract memory` for storage semantics.
+- Use `inheritance` when describing how future agents start with company experience.
 
 ## Avoid These Phrases
 - `Just a memory layer`

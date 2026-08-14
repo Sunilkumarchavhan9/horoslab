@@ -13,7 +13,7 @@ describe("API Versioning Contract", () => {
     expect(res.body?.companyBrain).toMatchObject({
       activeSchedulers: expect.any(Number),
       bootstrappedUsers: expect.any(Number),
-      queueBackendMode: expect.stringMatching(/^(file|redis)$/),
+      queueBackendMode: expect.stringMatching(/^(file|redis|postgres)$/),
       staleWorkers: expect.any(Number),
       totalUsers: expect.any(Number),
       usersWithEnabledSources: expect.any(Number),

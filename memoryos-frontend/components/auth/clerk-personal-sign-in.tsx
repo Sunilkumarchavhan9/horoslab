@@ -331,13 +331,13 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
             ? "Preparing sign-in..."
             : pendingStrategy === "email"
               ? "Logging in..."
-              : "Log in with MemoryOS"}
+              : "Log in with Epoch"}
         </span>
       </button>
 
       <div
         id="clerk-captcha"
-        className="min-h-[70px] w-full"
+        className="relative min-h-[70px] w-full"
         aria-hidden="true"
       />
 

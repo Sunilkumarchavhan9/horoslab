@@ -30,23 +30,39 @@ enum MemoryStatus {
 }
 
 model RecentMemory {
-  userId    String @map("user_id")
-  memoryId  String @map("memory_id")
-  dataJson  String @map("data_json")
-  updatedAt String @map("updated_at")
+  userId    String  @map("user_id")
+  orgId     String? @map("org_id")
+  memoryId  String  @map("memory_id")
+  dataJson  String  @map("data_json")
+  updatedAt String  @map("updated_at")
 
   @@id([userId, memoryId])
   @@index([userId, updatedAt], map: "idx_recent_memories_user_updated")
+  @@index([userId, orgId, updatedAt], map: "idx_recent_memories_user_org_updated")
   @@map("recent_memories")
 }
 
+model MemoryEmbedding {
+  userId        String  @map("user_id")
+  orgId         String? @map("org_id")
+  memoryId      String  @map("memory_id")
+  model         String
+  embeddingJson String  @map("embedding_json")
+  updatedAt     String  @map("updated_at")
+
+  @@id([userId, memoryId])
+  @@index([userId, updatedAt], map: "idx_memory_embeddings_user_updated")
+  @@index([userId, orgId, updatedAt], map: "idx_memory_embeddings_user_org_updated")
+  @@map("memory_embeddings")
+}
+
 model TimelineEvent {
-  id          String  @id
-  userId      String  @map("user_id")
-  memoryId    String  @map("memory_id")
-  eventType   String  @map("event_type")
-  reason      String
-  timestamp   String
+  id           String  @id
+  userId       String  @map("user_id")
+  memoryId     String  @map("memory_id")
+  eventType    String  @map("event_type")
+  reason       String
+  timestamp    String
   metadataJson String? @map("metadata_json")
 
   @@index([userId, timestamp], map: "idx_timeline_user_ts")
@@ -54,13 +70,13 @@ model TimelineEvent {
 }
 
 model RevisionEvent {
-  id        String @id
-  userId    String @map("user_id")
-  memoryId  String @map("memory_id")
-  version   Int
-  changedAt String @map("changed_at")
-  changedBy String @map("changed_by")
-  reason    String
+  id          String @id
+  userId      String @map("user_id")
+  memoryId    String @map("memory_id")
+  version     Int
+  changedAt   String @map("changed_at")
+  changedBy   String @map("changed_by")
+  reason      String
   changesJson String @map("changes_json")
 
   @@index([memoryId, version], map: "idx_revision_memory_version")
@@ -69,19 +85,39 @@ model RevisionEvent {
 }
 
 model Connector {
-  id            String   @id @default(cuid())
-  userId        String   @map("user_id")
-  name          String   // e.g., "GitHub", "Notion"
-  type          String   // e.g., "github", "notion"
-  status        String   @default("not_connected") // connected, error, syncing
-  configJson    String?  @map("config_json") // encrypted tokens/credentials
-  lastSyncAt    String?  @map("last_sync_at")
-  recordCount   Int      @default(0) @map("record_count")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  orgId       String?  @map("org_id")
+  name        String // e.g., "GitHub", "Notion"
+  type        String // e.g., "github", "notion"
+  status      String   @default("not_connected") // connected, error, syncing
+  configJson  String?  @map("config_json") // encrypted tokens/credentials
+  lastSyncAt  String?  @map("last_sync_at")
+  recordCount Int      @default(0) @map("record_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@index([userId])
+  @@index([userId, orgId], map: "idx_connectors_user_org")
   @@map("connectors")
+}
+
+/// Per-connector sync run history (user + optional org scoped).
+model ConnectorSyncLog {
+  id            String  @id
+  userId        String  @map("user_id")
+  orgId         String? @map("org_id")
+  connectorType String  @map("connector_type")
+  status        String
+  startedAt     String  @map("started_at")
+  finishedAt    String? @map("finished_at")
+  itemsSynced   Int     @default(0) @map("items_synced")
+  errorMessage  String? @map("error_message")
+  metadataJson  String? @map("metadata_json")
+
+  @@index([userId, startedAt], map: "idx_connector_sync_logs_user_started")
+  @@index([userId, orgId, startedAt], map: "idx_connector_sync_logs_user_org_started")
+  @@map("connector_sync_logs")
 }
 
 model AgentProfile {
@@ -106,15 +142,15 @@ model AgentProfile {
 }
 
 model AgentSession {
-  id                 String    @id @default(uuid())
+  id                 String              @id @default(uuid())
   projectId          String?
   agentId            String
   model              String
   tool               String
   task               String?
   mode               String
-  status             SessionStatus @default(IDLE)
-  startedAt          DateTime  @default(now())
+  status             SessionStatus       @default(IDLE)
+  startedAt          DateTime            @default(now())
   endedAt            DateTime?
   preflightId        String?
   handoffId          String?
@@ -141,15 +177,81 @@ model AgentSessionEvent {
   @@index([sessionId, timestamp])
 }
 
+model ProductAgentSession {
+  id        String  @id
+  userId    String  @map("user_id")
+  orgId     String? @map("org_id")
+  agentId   String  @map("agent_id")
+  projectId String? @map("project_id")
+  goal      String?
+  goalId    String? @map("goal_id")
+  status    String
+  model     String?
+  createdAt String  @map("created_at")
+  updatedAt String  @map("updated_at")
+
+  @@index([userId, orgId, updatedAt])
+  @@index([agentId, status])
+  @@map("product_agent_sessions")
+}
+
+model ConnectorExecutionProposal {
+  id            String  @id
+  userId        String  @map("user_id")
+  connectorType String  @map("connector_type")
+  kind          String
+  targetId      String  @map("target_id")
+  targetLabel   String? @map("target_label")
+  body          String
+  status        String
+  createdAt     String  @map("created_at")
+  reviewedAt    String? @map("reviewed_at")
+  executedAt    String? @map("executed_at")
+  resultUrl     String? @map("result_url")
+  externalId    String? @map("external_id")
+  error         String?
+
+  @@index([userId, connectorType, createdAt])
+  @@index([status])
+  @@map("connector_execution_proposals")
+}
+
+model GitHubExecutionProposal {
+  id              String  @id
+  userId          String  @map("user_id")
+  kind            String
+  owner           String
+  repo            String
+  issueNumber     Int?    @map("issue_number")
+  body            String
+  pullTitle       String? @map("pull_title")
+  headBranch      String? @map("head_branch")
+  baseBranch      String? @map("base_branch")
+  filePath        String? @map("file_path")
+  status          String
+  createdAt       String  @map("created_at")
+  reviewedAt      String? @map("reviewed_at")
+  executedAt      String? @map("executed_at")
+  githubCommentId Int?    @map("github_comment_id")
+  githubPrNumber  Int?    @map("github_pr_number")
+  githubResultUrl String? @map("github_result_url")
+  error           String?
+
+  @@index([userId, createdAt])
+  @@index([owner, repo])
+  @@index([status])
+  @@map("github_execution_proposals")
+}
+
 model ProposedMemory {
-  id          String   @id @default(uuid())
-  sessionId   String
-  type        String
-  content     String
-  confidence  Float
-  source      String
-  status      MemoryStatus @default(PENDING)
-  createdAt   DateTime @default(now())
+  id         String       @id @default(uuid())
+  sessionId  String
+  type       String
+  content    String
+  confidence Float
+  source     String
+  status     MemoryStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
 
   session AgentSession @relation(fields: [sessionId], references: [id])
 
@@ -157,61 +259,3231 @@ model ProposedMemory {
 }
 
 model VerificationResult {
-  id          String   @id @default(uuid())
-  sessionId   String   @unique
-  status      VerificationStatus
-  confidence  Float
-  checksJson  Json
+  id           String             @id @default(uuid())
+  sessionId    String             @unique
+  status       VerificationStatus
+  confidence   Float
+  checksJson   Json
   warningsJson Json?
-  createdAt   DateTime @default(now())
+  createdAt    DateTime           @default(now())
 
   session AgentSession @relation(fields: [sessionId], references: [id])
 }
 
 model BillingAccount {
-  userId              String   @id @map("user_id")
-  plan                String   @default("Free")
-  customerId          String?  @unique @map("customer_id")
-  subscriptionId      String?  @map("subscription_id")
-  subscriptionStatus  String   @default("unknown") @map("subscription_status")
-  currentPeriodEnd    String?  @map("current_period_end")
-  connectorSyncUsed   Int      @default(0) @map("connector_sync_used")
-  tokenUsed           Int      @default(0) @map("token_used")
-  searchUsed          Int      @default(0) @map("search_used")
-  usagePeriodStart    String?  @map("usage_period_start")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
-  invoices            BillingInvoice[]
+  userId             String           @id @map("user_id")
+  plan               String           @default("Free")
+  customerId         String?          @unique @map("customer_id")
+  subscriptionId     String?          @map("subscription_id")
+  subscriptionStatus String           @default("unknown") @map("subscription_status")
+  currentPeriodEnd   String?          @map("current_period_end")
+  connectorSyncUsed  Int              @default(0) @map("connector_sync_used")
+  tokenUsed          Int              @default(0) @map("token_used")
+  searchUsed         Int              @default(0) @map("search_used")
+  usagePeriodStart   String?          @map("usage_period_start")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  invoices           BillingInvoice[]
 
   @@index([plan], map: "idx_billing_account_plan")
   @@map("billing_accounts")
 }
 
 model BillingInvoice {
-  id              String   @id
-  userId          String   @map("user_id")
-  amountCents     Int      @map("amount_cents")
-  currency        String
-  status          String
-  issuedAt        String   @map("issued_at")
-  hostedInvoiceUrl String? @map("hosted_invoice_url")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  account         BillingAccount @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  id               String         @id
+  userId           String         @map("user_id")
+  amountCents      Int            @map("amount_cents")
+  currency         String
+  status           String
+  issuedAt         String         @map("issued_at")
+  hostedInvoiceUrl String?        @map("hosted_invoice_url")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  account          BillingAccount @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([userId, issuedAt], map: "idx_billing_invoice_user_issued")
   @@map("billing_invoices")
 }
 
 model BillingEvent {
-  id        String   @id
-  userId    String?  @map("user_id")
+  id        String  @id
+  userId    String? @map("user_id")
   provider  String
   type      String
   status    String
   summary   String
-  createdAt String   @map("created_at")
+  createdAt String  @map("created_at")
 
   @@index([userId, createdAt], map: "idx_billing_event_user_created")
   @@map("billing_events")
+}
+
+model VoiceSession {
+  userId          String  @map("user_id")
+  sessionId       String  @map("session_id")
+  source          String
+  status          String
+  workspace       String?
+  project         String?
+  threadId        String? @map("thread_id")
+  startedAt       String  @map("started_at")
+  updatedAt       String  @map("updated_at")
+  lastChunkAt     String? @map("last_chunk_at")
+  endedAt         String? @map("ended_at")
+  chunkCount      Int     @default(0) @map("chunk_count")
+  totalCharacters Int     @default(0) @map("total_characters")
+  metadataJson    String? @map("metadata_json")
+
+  @@id([userId, sessionId])
+  @@index([userId, updatedAt], map: "idx_voice_sessions_user_updated")
+  @@index([userId, status], map: "idx_voice_sessions_user_status")
+  @@map("voice_sessions")
+}
+
+model SkillsRulesCache {
+  orgId        String  @map("org_id")
+  repo         String
+  repoKey      String  @map("repo_key")
+  ref          String
+  itemsJson    String  @map("items_json")
+  skillCount   Int     @default(0) @map("skill_count")
+  ruleCount    Int     @default(0) @map("rule_count")
+  discoveredAt String  @map("discovered_at")
+  expiresAt    String  @map("expires_at")
+  error        String?
+
+  @@id([orgId, repoKey])
+  @@index([orgId, expiresAt], map: "idx_skills_rules_cache_org_expires")
+  @@map("skills_rules_cache")
+}
+
+model WikiDiagramCache {
+  cacheKey     String  @id @map("cache_key")
+  userId       String  @map("user_id")
+  orgId        String? @map("org_id")
+  projectId    String  @map("project_id")
+  repoFullName String  @map("repo_full_name")
+  branch       String
+  diagramType  String  @map("diagram_type")
+  mermaid      String
+  sourcesJson  String  @map("sources_json")
+  title        String
+  generatedAt  String  @map("generated_at")
+  expiresAt    String  @map("expires_at")
+
+  @@index([userId, expiresAt], map: "idx_wiki_diagram_cache_user_expires")
+  @@index([orgId, expiresAt], map: "idx_wiki_diagram_cache_org_expires")
+  @@map("wiki_diagram_cache")
+}
+
+model BenchmarkScenario {
+  id          String @id
+  name        String
+  mode        String
+  caseIdsJson String @map("case_ids_json")
+  createdAt   String @map("created_at")
+  updatedAt   String @map("updated_at")
+
+  @@index([updatedAt], map: "idx_benchmark_scenarios_updated")
+  @@map("benchmark_scenarios")
+}
+
+model BenchmarkRun {
+  runId       String  @id @map("run_id")
+  generatedAt String  @map("generated_at")
+  completedAt String? @map("completed_at")
+  mode        String
+  status      String
+  dataJson    String  @map("data_json")
+
+  @@index([generatedAt], map: "idx_benchmark_runs_generated")
+  @@index([status], map: "idx_benchmark_runs_status")
+  @@map("benchmark_runs")
+}
+
+model OperationalArtifact {
+  id        String @id
+  kind      String
+  scope     String @default("")
+  name      String
+  status    String
+  dataJson  String @map("data_json")
+  createdAt String @map("created_at")
+  updatedAt String @map("updated_at")
+
+  @@unique([kind, scope, name], map: "uniq_operational_artifact_kind_scope_name")
+  @@index([kind, scope, updatedAt], map: "idx_operational_artifacts_kind_scope_updated")
+  @@index([status, updatedAt], map: "idx_operational_artifacts_status_updated")
+  @@map("operational_artifacts")
+}
+
+model GovernancePolicySetting {
+  userId    String @id @map("user_id")
+  dataJson  String @map("data_json")
+  savedAt   String @map("saved_at")
+  updatedAt String @map("updated_at")
+
+  @@index([updatedAt], map: "idx_governance_policy_settings_updated")
+  @@map("governance_policy_settings")
+}
+
+model ConflictAction {
+  id        String @id
+  userId    String @map("user_id")
+  type      String
+  result    String
+  createdAt String @map("created_at")
+  dataJson  String @map("data_json")
+
+  @@index([userId, createdAt], map: "idx_conflict_actions_user_created")
+  @@index([userId, type, createdAt], map: "idx_conflict_actions_user_type_created")
+  @@map("conflict_actions")
+}
+
+model ConflictQueueItemRecord {
+  id        String @id
+  userId    String @map("user_id")
+  state     String
+  severity  String
+  createdAt String @map("created_at")
+  updatedAt String @map("updated_at")
+  dataJson  String @map("data_json")
+
+  @@index([userId, state, createdAt], map: "idx_conflict_queue_user_state_created")
+  @@index([userId, severity, createdAt], map: "idx_conflict_queue_user_severity_created")
+  @@map("conflict_queue_items")
+}
+
+model GovernanceReviewQueueItem {
+  id        String @id
+  userId    String @map("user_id")
+  state     String
+  reason    String
+  createdAt String @map("created_at")
+  updatedAt String @map("updated_at")
+  dataJson  String @map("data_json")
+
+  @@index([userId, state, createdAt], map: "idx_governance_review_user_state_created")
+  @@map("governance_review_queue_items")
+}
+
+model PluginUserStateSetting {
+  userId    String @id @map("user_id")
+  dataJson  String @map("data_json")
+  updatedAt String @map("updated_at")
+
+  @@index([updatedAt], map: "idx_plugin_user_state_settings_updated")
+  @@map("plugin_user_state_settings")
+}
+
+model ContinuityThread {
+  id        String  @id
+  userId    String  @map("user_id")
+  orgId     String? @map("org_id")
+  workspace String
+  project   String
+  status    String
+  updatedAt String  @map("updated_at")
+  dataJson  String  @map("data_json")
+
+  @@index([userId, updatedAt], map: "idx_continuity_threads_user_updated")
+  @@index([userId, status], map: "idx_continuity_threads_user_status")
+  @@index([userId, orgId, updatedAt], map: "idx_continuity_threads_user_org_updated")
+  @@map("continuity_threads")
+}
+
+model ContinuityFileChange {
+  id        String  @id
+  userId    String  @map("user_id")
+  orgId     String? @map("org_id")
+  threadId  String  @map("thread_id")
+  status    String
+  createdAt String  @map("created_at")
+  dataJson  String  @map("data_json")
+
+  @@index([userId, threadId, createdAt], map: "idx_continuity_file_changes_user_thread_created")
+  @@index([userId, status], map: "idx_continuity_file_changes_user_status")
+  @@index([userId, orgId, threadId, createdAt], map: "idx_continuity_file_changes_user_org_thread_created")
+  @@map("continuity_file_changes")
+}
+
+/// Per-user (and optional org) Company Brain onboarding funnel progress.
+model CompanyBrainFunnel {
+  userId    String @map("user_id")
+  orgId     String @default("") @map("org_id")
+  updatedAt String @map("updated_at")
+  dataJson  String @map("data_json")
+
+  @@id([userId, orgId])
+  @@index([updatedAt], map: "idx_company_brain_funnel_updated")
+  @@index([userId, orgId], map: "idx_company_brain_funnel_user_org")
+  @@map("company_brain_funnel_states")
+}
+
+/// Per-user (and optional org) Company Brain control-plane blob.
+model CompanyBrainPlatformState {
+  userId    String @map("user_id")
+  orgId     String @default("") @map("org_id")
+  updatedAt String @map("updated_at")
+  dataJson  String @map("data_json")
+
+  @@id([userId, orgId])
+  @@index([updatedAt], map: "idx_company_brain_platform_updated")
+  @@index([userId, orgId], map: "idx_company_brain_platform_user_org")
+  @@map("company_brain_platform_states")
+}
+
+/// Generic user/org scoped settings blob. Settings pages read one section at a time.
+model ScopedSetting {
+  userId    String @map("user_id")
+  orgId     String @default("") @map("org_id")
+  section   String
+  updatedAt String @map("updated_at")
+  dataJson  String @map("data_json")
+
+  @@id([userId, orgId, section])
+  @@index([userId, section, updatedAt], map: "idx_scoped_settings_user_section_updated")
+  @@index([orgId, section, updatedAt], map: "idx_scoped_settings_org_section_updated")
+  @@map("scoped_settings")
+}
+
+/// Organization-level non-human users for API automation.
+model ServiceUser {
+  id        String  @id
+  userId    String  @map("user_id")
+  orgId     String  @default("") @map("org_id")
+  name      String
+  scope     String
+  role      String
+  createdAt String  @map("created_at")
+  expiresAt String? @map("expires_at")
+
+  @@index([userId, orgId, createdAt], map: "idx_service_users_user_org_created")
+  @@index([orgId, createdAt], map: "idx_service_users_org_created")
+  @@map("service_users")
+}
+
+/// Personal API keys for MemoryOS API access.
+model ApiKey {
+  id              String  @id
+  userId          String  @map("user_id")
+  name            String
+  keyPrefix       String  @map("key_prefix")
+  keyHash         String  @unique @map("key_hash")
+  mode            String
+  endpointsJson   String  @map("endpoints_json")
+  contentTag      String  @map("content_tag")
+  creditLimit     Int?    @map("credit_limit")
+  resetLimitEvery String? @map("reset_limit_every")
+  expires         String
+  createdAt       String  @map("created_at")
+  lastUsedAt      String? @map("last_used_at")
+  status          String
+  revokedAt       String? @map("revoked_at")
+
+  @@index([userId, createdAt], map: "idx_api_keys_user_created")
+  @@index([keyHash, status], map: "idx_api_keys_hash_status")
+  @@map("api_keys")
+}
+
+/// Durable async job queue when MEMORY_STORE_BACKEND=postgres (optional; file/redis otherwise).
+model CompanyBrainQueueJob {
+  id        String @id
+  userId    String @map("user_id")
+  jobType   String @map("job_type")
+  status    String
+  createdAt String @map("created_at")
+  dataJson  String @map("data_json")
+
+  @@index([userId, status, createdAt], map: "idx_company_brain_queue_user_status_created")
+  @@map("company_brain_queue_jobs")
+}
+
+/// Company Brain skills export history (user + optional org scoped).
+model CompanyBrainExport {
+  id          String  @id
+  userId      String  @map("user_id")
+  orgId       String? @map("org_id")
+  workspace   String
+  format      String  @default("skills_markdown")
+  status      String  @default("completed")
+  generatedAt String  @map("generated_at")
+  dataJson    String  @map("data_json")
+
+  @@index([userId, generatedAt], map: "idx_company_brain_exports_user_generated")
+  @@index([userId, orgId, generatedAt], map: "idx_company_brain_exports_user_org_generated")
+  @@map("company_brain_exports")
+}
+
+enum ActionMemoryOutcome {
+  success
+  failed
+  rolled_back
+}
+
+enum ActionMemorySourceType {
+  github_execution
+  continuity
+  manual
+}
+
+enum ApprovalDecision {
+  approved
+  rejected
+}
+
+/// Operational action lineage — durable record of executed actions and outcomes.
+model ActionMemory {
+  id               String                  @id
+  userId           String                  @map("user_id")
+  orgId            String?                 @map("org_id")
+  projectId        String?                 @map("project_id")
+  workspace        String?
+  action           String
+  reason           String
+  approvedBy       String?                 @map("approved_by")
+  approvedAt       String?                 @map("approved_at")
+  filesChangedJson String                  @default("[]") @map("files_changed_json")
+  outcome          ActionMemoryOutcome
+  followUpsJson    String                  @default("[]") @map("follow_ups_json")
+  sourceType       ActionMemorySourceType? @map("source_type")
+  sourceId         String?                 @map("source_id")
+  metadataJson     String?                 @map("metadata_json")
+  createdAt        String                  @map("created_at")
+  updatedAt        String                  @map("updated_at")
+
+  executionOutcomes ExecutionOutcome[]
+  approvalTraces    ApprovalTrace[]
+
+  @@index([userId, orgId, createdAt], map: "idx_action_memories_user_org_created")
+  @@index([sourceId], map: "idx_action_memories_source_id")
+  @@map("action_memories")
+}
+
+/// Audit record of execution result tied to an action memory entry.
+model ExecutionOutcome {
+  id               String  @id
+  actionMemoryId   String? @map("action_memory_id")
+  userId           String  @map("user_id")
+  orgId            String? @map("org_id")
+  goal             String?
+  planSummary      String? @map("plan_summary")
+  resultSummary    String? @map("result_summary")
+  status           String
+  errorMessage     String? @map("error_message")
+  connectorAdapter String? @map("connector_adapter")
+  externalRef      String? @map("external_ref")
+  createdAt        String  @map("created_at")
+
+  actionMemory ActionMemory? @relation(fields: [actionMemoryId], references: [id], onDelete: SetNull)
+
+  @@index([actionMemoryId], map: "idx_execution_outcomes_action_memory")
+  @@index([userId, orgId, createdAt], map: "idx_execution_outcomes_user_org_created")
+  @@map("execution_outcomes")
+}
+
+/// Approval decision trace for governed execution proposals.
+model ApprovalTrace {
+  id             String           @id
+  actionMemoryId String?          @map("action_memory_id")
+  userId         String           @map("user_id")
+  orgId          String?          @map("org_id")
+  approverId     String           @map("approver_id")
+  decision       ApprovalDecision
+  reason         String?
+  riskTier       String?          @map("risk_tier")
+  proposalId     String?          @map("proposal_id")
+  createdAt      String           @map("created_at")
+
+  actionMemory ActionMemory? @relation(fields: [actionMemoryId], references: [id], onDelete: SetNull)
+
+  @@index([actionMemoryId], map: "idx_approval_traces_action_memory")
+  @@index([proposalId], map: "idx_approval_traces_proposal_id")
+  @@index([userId, orgId, createdAt], map: "idx_approval_traces_user_org_created")
+  @@map("approval_traces")
+}
+
+/// Human feedback on continuity, handoffs, and model context quality.
+model ContinuityFeedback {
+  id                 String  @id
+  userId             String  @map("user_id")
+  orgId              String? @map("org_id")
+  kind               String
+  rating             Int
+  useful             Boolean
+  requestId          String? @map("request_id")
+  project            String?
+  agentId            String? @map("agent_id")
+  missingContextJson String  @default("[]") @map("missing_context_json")
+  wrongContextJson   String  @default("[]") @map("wrong_context_json")
+  shouldRememberJson String  @default("[]") @map("should_remember_json")
+  note               String?
+  createdAt          String  @map("created_at")
+
+  @@index([userId, orgId, createdAt], map: "idx_continuity_feedback_user_org_created")
+  @@index([kind, createdAt], map: "idx_continuity_feedback_kind_created")
+  @@map("continuity_feedback")
+}
+
+/// Durable MemoryIgnition approval gate requests and outcome links.
+model MemoryIgnitionApprovalRequest {
+  id                          String  @id
+  userId                      String  @map("user_id")
+  orgId                       String? @map("org_id")
+  source                      String
+  runtimeEventId              String  @map("runtime_event_id")
+  guardMoment                 String  @map("guard_moment")
+  action                      String
+  status                      String
+  riskLevel                   String  @map("risk_level")
+  reason                      String
+  approvalRequired            Boolean @map("approval_required")
+  blocked                     Boolean
+  matchedRiskyFilesJson       String  @default("[]") @map("matched_risky_files_json")
+  matchedForbiddenActionsJson String  @default("[]") @map("matched_forbidden_actions_json")
+  missingRequiredTestsJson    String  @default("[]") @map("missing_required_tests_json")
+  nextRequiredActionsJson     String  @default("[]") @map("next_required_actions_json")
+  traceProofIdsJson           String  @default("[]") @map("trace_proof_ids_json")
+  guardProofJson              String  @default("{}") @map("guard_proof_json")
+  outcomeLinksJson            String  @default("[]") @map("outcome_links_json")
+  createdAt                   String  @map("created_at")
+  updatedAt                   String  @map("updated_at")
+  reviewedAt                  String? @map("reviewed_at")
+  reviewedBy                  String? @map("reviewed_by")
+  reviewNote                  String? @map("review_note")
+
+  @@index([userId, orgId, status, updatedAt], map: "idx_mi_approvals_user_org_status_updated")
+  @@index([runtimeEventId], map: "idx_mi_approvals_runtime_event")
+  @@index([guardMoment, action], map: "idx_mi_approvals_guard_action")
+  @@map("memoryignition_approval_requests")
+}
+
+/// Realtime product-loop event stream used by dashboard projections and SSE surfaces.
+model MemoryRealtimeEvent {
+  id              String  @id
+  userId          String  @map("user_id")
+  orgId           String? @map("org_id")
+  contractVersion String  @default("epoch.event.v1") @map("contract_version")
+  correlationId   String? @map("correlation_id")
+  causationId     String? @map("causation_id")
+  traceId         String? @map("trace_id")
+  kind            String
+  stage           String
+  source          String
+  subjectJson     String? @map("subject_json")
+  payloadJson     String  @default("{}") @map("payload_json")
+  occurredAt      String  @map("occurred_at")
+
+  @@index([userId, occurredAt], map: "idx_memory_realtime_events_user_occurred")
+  @@index([orgId, occurredAt], map: "idx_memory_realtime_events_org_occurred")
+  @@index([kind, occurredAt], map: "idx_memory_realtime_events_kind_occurred")
+  @@index([correlationId, occurredAt], map: "idx_memory_realtime_events_correlation_occurred")
+  @@index([traceId, occurredAt], map: "idx_memory_realtime_events_trace_occurred")
+  @@map("memory_realtime_events")
+}
+
+/// Governed cross-adapter execution proposals (proposal → review → execute).
+model CompanyBrainExecutionProposal {
+  id                   String  @id
+  userId               String  @map("user_id")
+  orgId                String? @map("org_id")
+  adapter              String
+  actionType           String  @map("action_type")
+  riskTier             String  @map("risk_tier")
+  status               String
+  payloadJson          String  @map("payload_json")
+  resultJson           String? @map("result_json")
+  createdAt            String  @map("created_at")
+  updatedAt            String  @map("updated_at")
+  reviewedAt           String? @map("reviewed_at")
+  reviewedByUserId     String? @map("reviewed_by_user_id")
+  executedAt           String? @map("executed_at")
+  rejectionReason      String? @map("rejection_reason")
+  secondFactorVerified Boolean @default(false) @map("second_factor_verified")
+  error                String?
+
+  @@index([userId, status, createdAt], map: "idx_cb_exec_proposals_user_status_created")
+  @@index([userId, orgId, status, createdAt], map: "idx_cb_exec_proposals_user_org_status_created")
+  @@map("company_brain_execution_proposals")
+}
+
+/// Goal → action → outcome closed loop (P2.1).
+model OperationalLoop {
+  id                        String  @id
+  userId                    String  @map("user_id")
+  orgId                     String? @map("org_id")
+  goal                      String
+  projectId                 String? @map("project_id")
+  currentState              String  @map("current_state")
+  linkedProposalIdsJson     String  @default("[]") @map("linked_proposal_ids_json")
+  linkedActionMemoryIdsJson String  @default("[]") @map("linked_action_memory_ids_json")
+  metadataJson              String? @map("metadata_json")
+  createdAt                 String  @map("created_at")
+  updatedAt                 String  @map("updated_at")
+
+  @@index([userId, orgId, updatedAt], map: "idx_operational_loops_user_org_updated")
+  @@index([userId, projectId, updatedAt], map: "idx_operational_loops_user_project_updated")
+  @@map("operational_loops")
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  orgId     String?  @map("org_id")
+  name      String
+  ownerId   String   @map("owner_id")
+  plan      String   @default("Free")
+  region    String   @default("us")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  sources                       Source[]
+  sourceItems                   SourceItem[]
+  memories                      Memory[]
+  inheritanceContracts          InheritanceContract[]
+  inheritancePackages           InheritancePackage[]
+  agentRoles                    AgentRole[]
+  agentRuns                     AgentRun[]
+  agentRunEvents                AgentRunEvent[]
+  outcomes                      Outcome[]
+  futureInstructions            FutureAgentInstruction[]
+  futureInstructionApplications FutureInstructionApplication[]
+  instructionTransformations    InstructionTransformation[]
+  mistakeImmunityRules          MistakeImmunityRule[]
+  mistakeRuleTriggers           MistakeRuleTrigger[]
+  mistakeReplayTests            MistakeReplayTest[]
+  policies                      Policy[]
+  policyChecks                  PolicyCheck[]
+  policyViolations              PolicyViolation[]
+  policyExceptions              PolicyException[]
+  policyAuditLogs               PolicyAuditLog[]
+  policyVersions                PolicyVersion[]
+  riskRecords                   RiskRecord[]
+  approvals                     Approval[]
+  sensitiveSystems              SensitiveSystem[]
+  blockedActions                BlockedAction[]
+  workflowBlueprints            WorkflowBlueprint[]
+  epochInstitutionTemplates     EpochInstitutionTemplate[]
+  epochInstitutions             EpochInstitution[]
+  epochInstitutionVersions      EpochInstitutionVersion[]
+  epochMissions                 EpochMission[]
+  epochArchitectureRuns         EpochArchitectureRun[]
+  epochOutcomes                 EpochOutcome[]
+  epochExperiences              EpochExperience[]
+  epochAuthorityPolicies        EpochAuthorityPolicy[]
+  epochExecutionRuns            EpochExecutionRun[]
+  epochEvidence                 EpochEvidence[]
+  epochVerificationRuns         EpochVerificationRun[]
+  epochVerifierAssignments      EpochVerifierAssignment[]
+  epochCertificates             EpochCertificate[]
+  epochMemoryRecords            EpochMemoryRecord[]
+  epochIntegrationConnections   EpochIntegrationConnection[]
+  epochProjects                 EpochProject[]
+  epochEnvironments             EpochEnvironment[]
+  epochWorldStates              EpochWorldState[]
+  epochDataCenterObservations   EpochDataCenterObservation[]
+  epochOutboxEvents             EpochOutboxEvent[]
+  epochSimulationEnvironments   EpochSimulationEnvironment[]
+  epochSimulationRuns           EpochSimulationRun[]
+  epochSimulationObservations   EpochSimulationObservation[]
+  epochSimulationVerifications  EpochSimulationVerification[]
+  epochAutomations              EpochAutomation[]
+  epochAutomationRuns           EpochAutomationRun[]
+  epochAutomationActions        EpochAutomationAction[]
+  epochCapabilityRegistries     EpochCapabilityRegistry[]
+  epochCapabilityGaps           EpochCapabilityGap[]
+  epochCapabilityPlans          EpochCapabilityPlan[]
+  epochWorkers                  EpochWorker[]
+  epochWorkerLeases             EpochWorkerLease[]
+  epochWorkerEvaluations        EpochWorkerEvaluation[]
+  epochQueueJobs                EpochQueueJob[]
+  epochRecoveryEscalations      EpochRecoveryEscalation[]
+  epochSettlements              EpochSettlement[]
+  epochCopilotDrafts            EpochCopilotDraft[]
+  epochMarketplaceManifests     EpochMarketplaceManifest[]
+  epochProductionInteractions   EpochProductionInteraction[]
+  epochFailureClusters          EpochFailureCluster[]
+  epochRegressionDrafts         EpochRegressionDraft[]
+  epochUnknowns                 EpochUnknown[]
+  epochDiscoveryPrograms        EpochDiscoveryProgram[]
+  epochHypotheses               EpochHypothesis[]
+  epochExperiments              EpochExperiment[]
+  epochObservations             EpochObservation[]
+  epochFailureSignals           EpochFailureSignal[]
+  epochRootCauseRecords         EpochRootCauseRecord[]
+  epochRegressionEvaluations    EpochRegressionEvaluation[]
+  epochReplaySessions           EpochReplaySession[]
+  epochReplayResults            EpochReplayResult[]
+  epochFixProposals             EpochFixProposal[]
+  epochReliabilityMetrics       EpochReliabilityMetric[]
+  epochImprovementMetrics       EpochImprovementMetric[]
+  agentSkills                   AgentSkill[]
+  installedAgentSkills          InstalledAgentSkill[]
+  agentSkillQualityReports      AgentSkillQualityReport[]
+  agentSkillReferences          AgentSkillReference[]
+  agentSkillConflicts           AgentSkillConflict[]
+  agentSkillRouterRules         AgentSkillRouterRule[]
+  agentAccessKeys               AgentAccessKey[]
+  agentTokens                   AgentToken[]
+  mcpConnections                MCPConnection[]
+  connectedAgents               ConnectedAgent[]
+  agentAccessEvents             AgentAccessEvent[]
+  webhookEndpoints              WebhookEndpoint[]
+  webhookDeliveries             WebhookDelivery[]
+  protocolGateRuns              ProtocolGateRun[]
+  runtimeProofs                 RuntimeProof[]
+  agentBlackBoxRecords          AgentBlackBoxRecord[]
+  agentExperienceGraphNodes     AgentExperienceGraphNode[]
+  agentExperienceGraphEdges     AgentExperienceGraphEdge[]
+  evaluationRuns                EvaluationRun[]
+  evaluationResults             EvaluationResult[]
+  modelProviders                ModelProvider[]
+  modelUsageEvents              ModelUsageEvent[]
+  epochAiExecutionCaches        EpochAiExecutionCache[]
+  epochAiProviderHealthChecks   EpochAiProviderHealthCheck[]
+  costEvents                    CostEvent[]
+  complianceEvidenceItems       ComplianceEvidenceItem[]
+  auditLogs                     AuditLog[]
+
+  @@index([userId, orgId], map: "idx_workspaces_user_org")
+  @@index([ownerId, createdAt], map: "idx_workspaces_owner_created")
+  @@map("workspaces")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  orgId        String?  @map("org_id")
+  workspaceId  String?  @map("workspace_id")
+  actorType    String   @default("user") @map("actor_type")
+  actorId      String   @map("actor_id")
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  status       String   @default("success")
+  riskLevel    String   @default("low") @map("risk_level")
+  ipHash       String?  @map("ip_hash")
+  userAgent    String?  @map("user_agent")
+  requestId    String?  @map("request_id")
+  metadata     Json     @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  workspace Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  @@index([userId, orgId, createdAt], map: "idx_audit_logs_user_org_created")
+  @@index([workspaceId, createdAt], map: "idx_audit_logs_workspace_created")
+  @@index([action, createdAt], map: "idx_audit_logs_action_created")
+  @@index([resourceType, resourceId, createdAt], map: "idx_audit_logs_resource_created")
+  @@map("audit_logs")
+}
+
+model Source {
+  id           String    @id @default(cuid())
+  workspaceId  String    @map("workspace_id")
+  provider     String
+  type         String
+  status       String    @default("not_connected")
+  permissions  Json?
+  lastSyncedAt DateTime? @map("last_synced_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  items     SourceItem[]
+
+  @@index([workspaceId, provider], map: "idx_sources_workspace_provider")
+  @@index([workspaceId, status], map: "idx_sources_workspace_status")
+  @@map("sources")
+}
+
+model SourceItem {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  sourceId    String   @map("source_id")
+  type        String
+  title       String
+  content     String
+  url         String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  source    Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  memories  Memory[]
+
+  @@index([workspaceId, sourceId, createdAt], map: "idx_source_items_workspace_source_created")
+  @@index([workspaceId, type], map: "idx_source_items_workspace_type")
+  @@map("source_items")
+}
+
+model Memory {
+  id              String   @id @default(cuid())
+  workspaceId     String   @map("workspace_id")
+  sourceItemId    String?  @map("source_item_id")
+  type            String
+  title           String
+  summary         String
+  content         String
+  proof           Json
+  confidenceScore Int      @default(70) @map("confidence_score")
+  freshnessScore  Int      @default(70) @map("freshness_score")
+  qualityScore    Int      @default(70) @map("quality_score")
+  riskLevel       String   @default("low") @map("risk_level")
+  relatedFiles    Json     @default("[]") @map("related_files")
+  relatedTests    Json     @default("[]") @map("related_tests")
+  status          String   @default("pending")
+  linkedWorkflow  String?  @map("linked_workflow")
+  linkedOutcome   String?  @map("linked_outcome")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  sourceItem SourceItem? @relation(fields: [sourceItemId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, type, status], map: "idx_memories_workspace_type_status")
+  @@index([workspaceId, qualityScore], map: "idx_memories_workspace_quality")
+  @@index([sourceItemId], map: "idx_memories_source_item")
+  @@map("memories")
+}
+
+model InheritanceContract {
+  id             String   @id @default(cuid())
+  workspaceId    String   @map("workspace_id")
+  task           String
+  targetAgent    String   @map("target_agent")
+  targetFormat   String   @map("target_format")
+  memory         Json     @default("[]")
+  rules          Json     @default("[]")
+  risks          Json     @default("[]")
+  requiredTests  Json     @default("[]") @map("required_tests")
+  permissions    Json     @default("{}")
+  approvedSkills Json     @default("[]") @map("approved_skills")
+  blockedActions Json     @default("[]") @map("blocked_actions")
+  proof          Json     @default("{}")
+  outcomeSchema  Json     @default("{}") @map("outcome_schema")
+  status         String   @default("prepared")
+  readinessScore Int      @default(0) @map("readiness_score")
+  memoryQuality  Int      @default(0) @map("memory_quality")
+  riskLevel      String   @default("low") @map("risk_level")
+  sourceType     String   @default("memoryignition") @map("source_type")
+  sourceRef      String?  @map("source_ref")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  workspace       Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  packages        InheritancePackage[]
+  agentRuns       AgentRun[]
+  blackBoxRecords AgentBlackBoxRecord[]
+  evaluationRuns  EvaluationRun[]
+
+  @@index([workspaceId, status, createdAt], map: "idx_inheritance_contracts_workspace_status_created")
+  @@index([workspaceId, targetAgent], map: "idx_inheritance_contracts_workspace_agent")
+  @@map("inheritance_contracts")
+}
+
+model InheritancePackage {
+  id                  String   @id @default(cuid())
+  workspaceId         String   @map("workspace_id")
+  contractId          String?  @map("contract_id")
+  task                String
+  targetAgent         String   @map("target_agent")
+  targetFormat        String   @map("target_format")
+  autonomyLevel       String   @map("autonomy_level")
+  safetyMode          String   @map("safety_mode")
+  agentReadinessScore Int      @default(0) @map("agent_readiness_score")
+  memoryQualityScore  Int      @default(0) @map("memory_quality_score")
+  reliabilityScore    Int      @default(0) @map("reliability_score")
+  payload             Json
+  proof               Json
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contract  InheritanceContract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  agentRuns AgentRun[]
+
+  @@index([workspaceId, createdAt], map: "idx_inheritance_packages_workspace_created")
+  @@index([workspaceId, targetAgent], map: "idx_inheritance_packages_workspace_agent")
+  @@index([contractId], map: "idx_inheritance_packages_contract")
+  @@map("inheritance_packages")
+}
+
+model AgentRole {
+  id                     String   @id @default(cuid())
+  workspaceId            String   @map("workspace_id")
+  name                   String
+  purpose                String
+  allowedMemories        Json     @default("[]") @map("allowed_memories")
+  allowedTools           Json     @default("[]") @map("allowed_tools")
+  allowedDomains         Json     @default("[]") @map("allowed_domains")
+  allowedActions         Json     @default("[]") @map("allowed_actions")
+  blockedActions         Json     @default("[]") @map("blocked_actions")
+  approvalRules          Json     @default("[]") @map("approval_rules")
+  defaultBlueprints      Json     @default("[]") @map("default_blueprints")
+  evaluationRequirements Json     @default("[]") @map("evaluation_requirements")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentRuns AgentRun[]
+
+  @@index([workspaceId, name], map: "idx_agent_roles_workspace_name")
+  @@map("agent_roles")
+}
+
+model AgentRun {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  contractId  String?   @map("contract_id")
+  packageId   String?   @map("package_id")
+  agentRoleId String?   @map("agent_role_id")
+  targetAgent String    @map("target_agent")
+  status      String    @default("Preparing")
+  cost        Float     @default(0)
+  startedAt   DateTime  @default(now()) @map("started_at")
+  endedAt     DateTime? @map("ended_at")
+  outcomeId   String?   @unique @map("outcome_id")
+
+  workspace               Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  inheritanceContract     InheritanceContract?  @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  inheritancePackage      InheritancePackage?   @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  agentRole               AgentRole?            @relation(fields: [agentRoleId], references: [id], onDelete: SetNull)
+  events                  AgentRunEvent[]
+  outcome                 Outcome?
+  blackBoxRecords         AgentBlackBoxRecord[]
+  baselineEvaluationRuns  EvaluationRun[]       @relation("BaselineEvaluationRun")
+  inheritedEvaluationRuns EvaluationRun[]       @relation("InheritedEvaluationRun")
+  modelUsageEvents        ModelUsageEvent[]
+  costEvents              CostEvent[]
+
+  @@index([workspaceId, status, startedAt], map: "idx_agent_runs_workspace_status_started")
+  @@index([contractId], map: "idx_agent_runs_contract")
+  @@index([packageId], map: "idx_agent_runs_package")
+  @@map("agent_runs")
+}
+
+model AgentRunEvent {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  agentRunId  String   @map("agent_run_id")
+  type        String
+  payload     Json
+  proof       Json?
+  timestamp   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentRun  AgentRun  @relation(fields: [agentRunId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, timestamp], map: "idx_agent_run_events_workspace_timestamp")
+  @@index([agentRunId, timestamp], map: "idx_agent_run_events_run_timestamp")
+  @@map("agent_run_events")
+}
+
+model AgentBlackBoxRecord {
+  id                  String   @id @default(cuid())
+  workspaceId         String   @map("workspace_id")
+  agentRunId          String   @map("agent_run_id")
+  contractId          String?  @map("contract_id")
+  packageId           String?  @map("package_id")
+  task                String
+  contextUsed         Json     @default("[]") @map("context_used")
+  memoriesUsed        Json     @default("[]") @map("memories_used")
+  filesTouched        Json     @default("[]") @map("files_touched")
+  toolsCalled         Json     @default("[]") @map("tools_called")
+  commandsRun         Json     @default("[]") @map("commands_run")
+  testsRun            Json     @default("[]") @map("tests_run")
+  policyChecks        Json     @default("[]") @map("policy_checks")
+  mistakes            Json     @default("[]")
+  humanCorrections    Json     @default("[]") @map("human_corrections")
+  outcomeId           String?  @map("outcome_id")
+  futureInstructionId String?  @map("future_instruction_id")
+  proof               Json     @default("{}")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentRun  AgentRun             @relation(fields: [agentRunId], references: [id], onDelete: Cascade)
+  contract  InheritanceContract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_agent_black_box_workspace_created")
+  @@index([contractId], map: "idx_agent_black_box_contract")
+  @@index([agentRunId, createdAt], map: "idx_agent_black_box_run_created")
+  @@map("agent_black_box_records")
+}
+
+model AgentExperienceGraphNode {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  type        String
+  refId       String   @map("ref_id")
+  label       String
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace     Workspace                  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  outgoingEdges AgentExperienceGraphEdge[] @relation("ExperienceGraphFromNode")
+  incomingEdges AgentExperienceGraphEdge[] @relation("ExperienceGraphToNode")
+
+  @@unique([workspaceId, type, refId], map: "uniq_experience_graph_node_workspace_type_ref")
+  @@index([workspaceId, type], map: "idx_experience_graph_nodes_workspace_type")
+  @@map("agent_experience_graph_nodes")
+}
+
+model AgentExperienceGraphEdge {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  fromNodeId  String   @map("from_node_id")
+  toNodeId    String   @map("to_node_id")
+  type        String
+  proof       Json     @default("{}")
+  weight      Float    @default(1)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  fromNode  AgentExperienceGraphNode @relation("ExperienceGraphFromNode", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode    AgentExperienceGraphNode @relation("ExperienceGraphToNode", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, type], map: "idx_experience_graph_edges_workspace_type")
+  @@index([fromNodeId], map: "idx_experience_graph_edges_from")
+  @@index([toNodeId], map: "idx_experience_graph_edges_to")
+  @@map("agent_experience_graph_edges")
+}
+
+model Outcome {
+  id              String   @id @default(cuid())
+  workspaceId     String   @map("workspace_id")
+  agentRunId      String   @unique @map("agent_run_id")
+  summary         String
+  filesChanged    Json     @default("[]") @map("files_changed")
+  testsPassed     Json     @default("[]") @map("tests_passed")
+  testsFailed     Json     @default("[]") @map("tests_failed")
+  worked          String
+  failed          String
+  humanCorrection Boolean  @default(false) @map("human_correction")
+  futureLesson    String   @map("future_lesson")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentRun  AgentRun  @relation(fields: [agentRunId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt], map: "idx_outcomes_workspace_created")
+  @@map("outcomes")
+}
+
+model ExperienceRecord {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  outcomeId   String   @map("outcome_id")
+  title       String
+  summary     String
+  lesson      String
+  proof       Json
+  confidence  Int      @default(80)
+  status      String   @default("captured")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([workspaceId, createdAt], map: "idx_experience_records_workspace_created")
+  @@index([outcomeId], map: "idx_experience_records_outcome")
+  @@map("experience_records")
+}
+
+model HumanCorrection {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  outcomeId   String   @map("outcome_id")
+  correction  String
+  proof       Json
+  status      String   @default("open")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([workspaceId, status, createdAt], map: "idx_human_corrections_workspace_status_created")
+  @@index([outcomeId], map: "idx_human_corrections_outcome")
+  @@map("human_corrections")
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  outcomeId   String?  @map("outcome_id")
+  title       String
+  content     String
+  count       Int      @default(1)
+  proof       Json
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([workspaceId, status, createdAt], map: "idx_lessons_workspace_status_created")
+  @@index([outcomeId], map: "idx_lessons_outcome")
+  @@map("lessons")
+}
+
+model FutureAgentInstruction {
+  id             String   @id @default(cuid())
+  workspaceId    String   @map("workspace_id")
+  triggerContext Json     @map("trigger_context")
+  instruction    String
+  affectedFiles  Json     @default("[]") @map("affected_files")
+  requiredTests  Json     @default("[]") @map("required_tests")
+  riskLevel      String   @default("low") @map("risk_level")
+  proof          Json
+  status         String   @default("candidate")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  workspace       Workspace                      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  applications    FutureInstructionApplication[]
+  transformations InstructionTransformation[]
+
+  @@index([workspaceId, status, createdAt], map: "idx_future_agent_instructions_workspace_status_created")
+  @@map("future_agent_instructions")
+}
+
+model FutureInstructionApplication {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  instructionId String   @map("instruction_id")
+  agentRunId    String?  @map("agent_run_id")
+  outcomeId     String?  @map("outcome_id")
+  status        String   @default("applied")
+  impact        Json
+  proof         Json
+  appliedAt     DateTime @default(now()) @map("applied_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  instruction FutureAgentInstruction @relation(fields: [instructionId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, appliedAt], map: "idx_future_instruction_applications_workspace_applied")
+  @@index([instructionId, appliedAt], map: "idx_future_instruction_applications_instruction_applied")
+  @@index([agentRunId], map: "idx_future_instruction_applications_agent_run")
+  @@map("future_instruction_applications")
+}
+
+model InstructionTransformation {
+  id               String   @id @default(cuid())
+  workspaceId      String   @map("workspace_id")
+  instructionId    String   @map("instruction_id")
+  outcomeId        String?  @map("outcome_id")
+  sourceType       String   @default("outcome") @map("source_type")
+  rawTitle         String   @map("raw_title")
+  rawRef           String   @map("raw_ref")
+  instructionTitle String   @map("instruction_title")
+  proof            Json
+  confidence       Int      @default(80)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  instruction FutureAgentInstruction @relation(fields: [instructionId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt], map: "idx_instruction_transformations_workspace_created")
+  @@index([instructionId], map: "idx_instruction_transformations_instruction")
+  @@index([outcomeId], map: "idx_instruction_transformations_outcome")
+  @@map("instruction_transformations")
+}
+
+model MistakeImmunityRule {
+  id                    String    @id @default(cuid())
+  workspaceId           String    @map("workspace_id")
+  pattern               String
+  riskCategory          String    @default("Reliability") @map("risk_category")
+  riskLevel             String    @default("medium") @map("risk_level")
+  triggerContext        Json      @map("trigger_context")
+  preventionInstruction String    @map("prevention_instruction")
+  riskyFiles            Json      @default("[]") @map("risky_files")
+  requiredTests         Json      @default("[]") @map("required_tests")
+  approvalRequirement   String?   @map("approval_requirement")
+  status                String    @default("candidate")
+  sourceType            String    @default("manual") @map("source_type")
+  sourceRef             String?   @map("source_ref")
+  proof                 Json
+  mistakesAvoided       Int       @default(0) @map("mistakes_avoided")
+  lastTriggeredAt       DateTime? @map("last_triggered_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  triggers    MistakeRuleTrigger[]
+  replayTests MistakeReplayTest[]
+
+  @@index([workspaceId, status, createdAt], map: "idx_mistake_rules_workspace_status_created")
+  @@index([workspaceId, riskLevel], map: "idx_mistake_rules_workspace_risk")
+  @@map("mistake_immunity_rules")
+}
+
+model MistakeRuleTrigger {
+  id             String   @id @default(cuid())
+  workspaceId    String   @map("workspace_id")
+  ruleId         String   @map("rule_id")
+  agentRunId     String?  @map("agent_run_id")
+  outcomeId      String?  @map("outcome_id")
+  source         String   @default("runtime")
+  matchedContext Json     @map("matched_context")
+  status         String   @default("matched")
+  proof          Json
+  triggeredAt    DateTime @default(now()) @map("triggered_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  rule      MistakeImmunityRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, triggeredAt], map: "idx_mistake_triggers_workspace_triggered")
+  @@index([ruleId, triggeredAt], map: "idx_mistake_triggers_rule_triggered")
+  @@index([agentRunId], map: "idx_mistake_triggers_agent_run")
+  @@index([outcomeId], map: "idx_mistake_triggers_outcome")
+  @@map("mistake_rule_triggers")
+}
+
+model MistakeReplayTest {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  ruleId      String    @map("rule_id")
+  name        String
+  command     String?
+  status      String    @default("pending")
+  result      Json      @default("{}")
+  proof       Json
+  runAt       DateTime? @map("run_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  rule      MistakeImmunityRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_mistake_replay_tests_workspace_status_created")
+  @@index([ruleId, createdAt], map: "idx_mistake_replay_tests_rule_created")
+  @@map("mistake_replay_tests")
+}
+
+model SkillCandidate {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  outcomeId     String?  @map("outcome_id")
+  name          String
+  trigger       Json
+  requiredTools Json     @default("[]") @map("required_tools")
+  requiredTests Json     @default("[]") @map("required_tests")
+  proof         Json
+  confidence    Int      @default(80)
+  status        String   @default("candidate")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([workspaceId, status, createdAt], map: "idx_skill_candidates_workspace_status_created")
+  @@index([outcomeId], map: "idx_skill_candidates_outcome")
+  @@map("skill_candidates")
+}
+
+model Policy {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  name               String
+  scope              String
+  condition          Json
+  action             String
+  severity           String
+  status             String   @default("active")
+  description        String   @default("")
+  enforcement        String   @default("Enforce")
+  domain             String   @default("Security")
+  ownerName          String   @default("Policy Owner") @map("owner_name")
+  ownerRole          String   @default("Governance") @map("owner_role")
+  version            String   @default("1.0.0")
+  isTemplate         Boolean  @default(false) @map("is_template")
+  ruleLogic          String   @default("") @map("rule_logic")
+  triggerConditions  Json     @default("[]") @map("trigger_conditions")
+  allowedActions     Json     @default("[]") @map("allowed_actions")
+  blockedActionNames Json     @default("[]") @map("blocked_action_names")
+  requiredApprover   String?  @map("required_approver")
+  metadata           Json     @default("{}")
+  proof              Json     @default("{}")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  workspace      Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  riskRecords    RiskRecord[]
+  approvals      Approval[]
+  blockedActions BlockedAction[]
+  checks         PolicyCheck[]
+  violations     PolicyViolation[]
+  exceptions     PolicyException[]
+  auditLogs      PolicyAuditLog[]
+  versions       PolicyVersion[]
+
+  @@index([workspaceId, status], map: "idx_policies_workspace_status")
+  @@index([workspaceId, domain, status], map: "idx_policies_workspace_domain_status")
+  @@index([workspaceId, isTemplate], map: "idx_policies_workspace_template")
+  @@map("policies")
+}
+
+model PolicyCheck {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  policyId    String?  @map("policy_id")
+  action      String
+  target      String
+  allowed     Boolean  @default(true)
+  blocked     Boolean  @default(false)
+  result      Json     @default("{}")
+  proof       Json     @default("{}")
+  checkedAt   DateTime @default(now()) @map("checked_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy    Policy?   @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, checkedAt], map: "idx_policy_checks_workspace_checked")
+  @@index([policyId, checkedAt], map: "idx_policy_checks_policy_checked")
+  @@map("policy_checks")
+}
+
+model PolicyViolation {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  policyId    String?  @map("policy_id")
+  action      String
+  target      String
+  severity    String   @default("medium")
+  status      String   @default("blocked")
+  outcome     String   @default("blocked")
+  proof       Json     @default("{}")
+  occurredAt  DateTime @default(now()) @map("occurred_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy    Policy?   @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, occurredAt], map: "idx_policy_violations_workspace_occurred")
+  @@index([workspaceId, status, occurredAt], map: "idx_policy_violations_workspace_status_occurred")
+  @@index([policyId, occurredAt], map: "idx_policy_violations_policy_occurred")
+  @@map("policy_violations")
+}
+
+model PolicyException {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  policyId    String?   @map("policy_id")
+  reason      String
+  requester   String?
+  approver    String?
+  status      String    @default("active")
+  expiresAt   DateTime? @map("expires_at")
+  proof       Json      @default("{}")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy    Policy?   @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, createdAt], map: "idx_policy_exceptions_workspace_status_created")
+  @@index([policyId, createdAt], map: "idx_policy_exceptions_policy_created")
+  @@map("policy_exceptions")
+}
+
+model PolicyAuditLog {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  policyId    String?  @map("policy_id")
+  action      String
+  actor       String?
+  summary     String
+  diff        Json     @default("{}")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy    Policy?   @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_policy_audit_logs_workspace_created")
+  @@index([policyId, createdAt], map: "idx_policy_audit_logs_policy_created")
+  @@map("policy_audit_logs")
+}
+
+model PolicyVersion {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  policyId    String   @map("policy_id")
+  version     String
+  snapshot    Json
+  createdBy   String?  @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy    Policy    @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt], map: "idx_policy_versions_workspace_created")
+  @@index([policyId, createdAt], map: "idx_policy_versions_policy_created")
+  @@map("policy_versions")
+}
+
+model RiskRecord {
+  id               String   @id @default(cuid())
+  displayId        String   @unique @map("display_id")
+  workspaceId      String   @map("workspace_id")
+  policyId         String?  @map("policy_id")
+  type             String
+  affectedArea     String   @map("affected_area")
+  severity         String   @default("medium")
+  requiredApprover String?  @map("required_approver")
+  status           String   @default("pending")
+  agentRunId       String?  @map("agent_run_id")
+  relatedRun       String?  @map("related_run")
+  artifacts        Json     @default("[]")
+  proof            Json     @default("{}")
+  reasoning        String   @default("")
+  potentialImpact  Json     @default("[]") @map("potential_impact")
+  mitigation       String   @default("")
+  riskyFiles       Json     @default("[]") @map("risky_files")
+  sourceType       String   @default("runtime") @map("source_type")
+  sourceRef        String?  @map("source_ref")
+  detectedAt       DateTime @default(now()) @map("detected_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  workspace      Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  policy         Policy?         @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  approvals      Approval[]
+  blockedActions BlockedAction[]
+
+  @@index([workspaceId, status, detectedAt], map: "idx_risk_records_workspace_status_detected")
+  @@index([workspaceId, severity, detectedAt], map: "idx_risk_records_workspace_severity_detected")
+  @@index([policyId], map: "idx_risk_records_policy")
+  @@map("risk_records")
+}
+
+model Approval {
+  id           String    @id @default(cuid())
+  workspaceId  String    @map("workspace_id")
+  riskRecordId String?   @map("risk_record_id")
+  policyId     String?   @map("policy_id")
+  title        String
+  requester    String?   @map("requester")
+  approver     String?   @map("approver")
+  status       String    @default("pending")
+  decision     String?
+  response     Json      @default("{}")
+  proof        Json      @default("{}")
+  requestedAt  DateTime  @default(now()) @map("requested_at")
+  reviewedAt   DateTime? @map("reviewed_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  riskRecord RiskRecord? @relation(fields: [riskRecordId], references: [id], onDelete: SetNull)
+  policy     Policy?     @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, requestedAt], map: "idx_approvals_workspace_status_requested")
+  @@index([riskRecordId], map: "idx_approvals_risk_record")
+  @@index([policyId], map: "idx_approvals_policy")
+  @@map("approvals")
+}
+
+model SensitiveSystem {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  name        String
+  category    String   @default("system")
+  severity    String   @default("high")
+  riskCount   Int      @default(0) @map("risk_count")
+  owner       String?
+  status      String   @default("active")
+  metadata    Json     @default("{}")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, severity, status], map: "idx_sensitive_systems_workspace_severity_status")
+  @@map("sensitive_systems")
+}
+
+model BlockedAction {
+  id           String   @id @default(cuid())
+  workspaceId  String   @map("workspace_id")
+  riskRecordId String?  @map("risk_record_id")
+  policyId     String?  @map("policy_id")
+  action       String
+  target       String
+  severity     String   @default("medium")
+  reason       String
+  status       String   @default("blocked")
+  proof        Json     @default("{}")
+  blockedAt    DateTime @default(now()) @map("blocked_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  riskRecord RiskRecord? @relation(fields: [riskRecordId], references: [id], onDelete: SetNull)
+  policy     Policy?     @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, blockedAt], map: "idx_blocked_actions_workspace_status_blocked")
+  @@index([riskRecordId], map: "idx_blocked_actions_risk_record")
+  @@index([policyId], map: "idx_blocked_actions_policy")
+  @@map("blocked_actions")
+}
+
+model AgentAccessKey {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  name        String
+  keyPrefix   String    @map("key_prefix")
+  keyHash     String    @unique @map("key_hash")
+  mode        String    @default("agent-access")
+  status      String    @default("active")
+  contentTag  String    @default("agent_memory_protocol") @map("content_tag")
+  endpoints   Json      @default("[]")
+  usage       Json      @default("{}")
+  expiresAt   DateTime? @map("expires_at")
+  lastUsedAt  DateTime? @map("last_used_at")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tokens    AgentToken[]
+  events    AgentAccessEvent[]
+
+  @@index([workspaceId, status, createdAt], map: "idx_agent_access_keys_workspace_status_created")
+  @@map("agent_access_keys")
+}
+
+model AgentToken {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  keyId       String?   @map("key_id")
+  name        String
+  tokenPrefix String    @map("token_prefix")
+  tokenHash   String    @unique @map("token_hash")
+  scopes      Json      @default("[]")
+  status      String    @default("active")
+  lastUsedAt  DateTime? @map("last_used_at")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  key       AgentAccessKey? @relation(fields: [keyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, createdAt], map: "idx_agent_tokens_workspace_status_created")
+  @@index([keyId], map: "idx_agent_tokens_key")
+  @@map("agent_tokens")
+}
+
+model MCPConnection {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  name        String
+  client      String    @default("mcp")
+  status      String    @default("connected")
+  config      Json      @default("{}")
+  lastTestAt  DateTime? @map("last_test_at")
+  proof       Json      @default("{}")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_mcp_connections_workspace_status_updated")
+  @@map("mcp_connections")
+}
+
+model ConnectedAgent {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  name        String
+  agentId     String    @map("agent_id")
+  kind        String    @default("agent")
+  status      String    @default("offline")
+  metadata    Json      @default("{}")
+  lastSeenAt  DateTime? @map("last_seen_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_connected_agents_workspace_status_updated")
+  @@index([workspaceId, agentId], map: "idx_connected_agents_workspace_agent")
+  @@map("connected_agents")
+}
+
+model AgentAccessEvent {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  keyId       String?  @map("key_id")
+  agent       String?
+  type        String
+  method      String   @default("GET")
+  route       String
+  status      String   @default("Success")
+  statusCode  Int?     @map("status_code")
+  latencyMs   Int?     @map("latency_ms")
+  requestId   String?  @map("request_id")
+  payload     Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  key       AgentAccessKey? @relation(fields: [keyId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_agent_access_events_workspace_created")
+  @@index([keyId, createdAt], map: "idx_agent_access_events_key_created")
+  @@map("agent_access_events")
+}
+
+model WebhookEndpoint {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  url         String
+  events      Json      @default("[]")
+  secretHash  String?   @map("secret_hash")
+  secret      String?   @map("secret")
+  status      String    @default("active")
+  lastTestAt  DateTime? @map("last_test_at")
+  proof       Json      @default("{}")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace  Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deliveries WebhookDelivery[]
+
+  @@index([workspaceId, status, createdAt], map: "idx_webhook_endpoints_workspace_status_created")
+  @@map("webhook_endpoints")
+}
+
+model WebhookDelivery {
+  id             String    @id @default(cuid())
+  workspaceId    String    @map("workspace_id")
+  endpointId     String    @map("endpoint_id")
+  eventType      String    @map("event_type")
+  eventId        String?   @map("event_id")
+  status         String    @default("pending")
+  attemptCount   Int       @default(0) @map("attempt_count")
+  maxAttempts    Int       @default(8) @map("max_attempts")
+  requestBody    Json      @map("request_body")
+  requestHeaders Json      @map("request_headers")
+  responseStatus Int?      @map("response_status")
+  responseBody   Json?     @map("response_body")
+  errorMessage   String?   @map("error_message")
+  nextRetryAt    DateTime? @map("next_retry_at")
+  deliveredAt    DateTime? @map("delivered_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  endpoint  WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, nextRetryAt], map: "idx_webhook_deliveries_workspace_status_retry")
+  @@index([endpointId, createdAt], map: "idx_webhook_deliveries_endpoint_created")
+  @@index([workspaceId, createdAt], map: "idx_webhook_deliveries_workspace_created")
+  @@map("webhook_deliveries")
+}
+
+model ProtocolGateRun {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  status      String   @default("completed")
+  ready       Boolean  @default(false)
+  passed      Int      @default(0)
+  total       Int      @default(0)
+  checks      Json     @default("[]")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt], map: "idx_protocol_gate_runs_workspace_created")
+  @@map("protocol_gate_runs")
+}
+
+model RuntimeProof {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  version     String   @default("runtime_proof.v1")
+  status      String   @default("ready")
+  ready       Boolean  @default(false)
+  proof       Json     @default("{}")
+  totalEvents Int      @default(0) @map("total_events")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, updatedAt], map: "idx_runtime_proofs_workspace_updated")
+  @@map("runtime_proofs")
+}
+
+model WorkflowBlueprint {
+  id               String   @id @default(cuid())
+  workspaceId      String   @map("workspace_id")
+  name             String
+  trigger          Json
+  steps            Json
+  requiredMemories Json     @default("[]") @map("required_memories")
+  requiredTools    Json     @default("[]") @map("required_tools")
+  riskChecks       Json     @default("[]") @map("risk_checks")
+  approvalRules    Json     @default("[]") @map("approval_rules")
+  successCriteria  Json     @default("[]") @map("success_criteria")
+  outcomeSchema    Json     @map("outcome_schema")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, name], map: "idx_workflow_blueprints_workspace_name")
+  @@map("workflow_blueprints")
+}
+
+model EvaluationRun {
+  id                   String   @id @default(cuid())
+  workspaceId          String   @map("workspace_id")
+  contractId           String?  @map("contract_id")
+  name                 String
+  task                 String
+  agent                String
+  baselinePrompt       String   @map("baseline_prompt")
+  inheritancePackageId String?  @map("inheritance_package_id")
+  baselineAgentRunId   String?  @map("baseline_agent_run_id")
+  inheritedAgentRunId  String?  @map("inherited_agent_run_id")
+  status               String   @default("pending")
+  metrics              Json     @default("{}")
+  proof                Json     @default("{}")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  workspace         Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contract          InheritanceContract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  baselineAgentRun  AgentRun?            @relation("BaselineEvaluationRun", fields: [baselineAgentRunId], references: [id], onDelete: SetNull)
+  inheritedAgentRun AgentRun?            @relation("InheritedEvaluationRun", fields: [inheritedAgentRunId], references: [id], onDelete: SetNull)
+  results           EvaluationResult[]
+
+  @@index([workspaceId, status, createdAt], map: "idx_evaluation_runs_workspace_status_created")
+  @@index([contractId], map: "idx_evaluation_runs_contract")
+  @@map("evaluation_runs")
+}
+
+model EvaluationResult {
+  id                      String   @id @default(cuid())
+  workspaceId             String   @map("workspace_id")
+  evaluationRunId         String   @map("evaluation_run_id")
+  success                 Boolean  @default(false)
+  inheritanceLift         Int      @default(0) @map("inheritance_lift")
+  testsRememberedScore    Int      @default(0) @map("tests_remembered_score")
+  riskDetectionScore      Int      @default(0) @map("risk_detection_score")
+  humanCorrectionRequired Boolean  @default(false) @map("human_correction_required")
+  mistakesRepeated        Int      @default(0) @map("mistakes_repeated")
+  costPerSuccessfulTask   Float    @default(0) @map("cost_per_successful_task")
+  qualityScore            Int      @default(0) @map("quality_score")
+  proof                   Json     @default("{}")
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  workspace     Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  evaluationRun EvaluationRun @relation(fields: [evaluationRunId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt], map: "idx_evaluation_results_workspace_created")
+  @@index([evaluationRunId], map: "idx_evaluation_results_run")
+  @@map("evaluation_results")
+}
+
+model ModelProvider {
+  id                     String   @id @default(cuid())
+  workspaceId            String   @map("workspace_id")
+  provider               String
+  displayName            String   @map("display_name")
+  authType               String   @default("api_key") @map("auth_type")
+  encryptedCredentialRef String?  @map("encrypted_credential_ref")
+  baseUrl                String?  @map("base_url")
+  status                 String   @default("not_connected")
+  defaultModel           String?  @map("default_model")
+  allowedAgents          Json     @default("[]") @map("allowed_agents")
+  allowedRuntimes        Json     @default("[]") @map("allowed_runtimes")
+  monthlyBudget          Float?   @map("monthly_budget")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  usageEvents ModelUsageEvent[]
+
+  @@index([workspaceId, provider, status], map: "idx_model_providers_workspace_provider_status")
+  @@map("model_providers")
+}
+
+model EpochAiExecutionCache {
+  id           String    @id @default(cuid())
+  workspaceId  String    @map("workspace_id")
+  cacheKey     String    @map("cache_key")
+  provider     String
+  model        String
+  privacy      String    @default("tenant")
+  response     String
+  inputTokens  Int       @default(0) @map("input_tokens")
+  outputTokens Int       @default(0) @map("output_tokens")
+  provenance   Json      @default("{}")
+  expiresAt    DateTime  @map("expires_at")
+  hitCount     Int       @default(0) @map("hit_count")
+  lastHitAt    DateTime? @map("last_hit_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, cacheKey], map: "uq_epoch_ai_cache_workspace_key")
+  @@index([workspaceId, expiresAt], map: "idx_epoch_ai_cache_workspace_expires")
+  @@map("epoch_ai_execution_caches")
+}
+
+model EpochAiProviderHealthCheck {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  provider    String
+  status      String
+  configured  Boolean
+  reachable   Boolean
+  latencyMs   Int?     @map("latency_ms")
+  httpStatus  Int?     @map("http_status")
+  errorCode   String?  @map("error_code")
+  checkedAt   DateTime @default(now()) @map("checked_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, provider, checkedAt], map: "idx_epoch_ai_health_workspace_provider_checked")
+  @@index([workspaceId, checkedAt], map: "idx_epoch_ai_health_workspace_checked")
+  @@map("epoch_ai_provider_health_checks")
+}
+
+model ModelUsageEvent {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  providerId    String?  @map("provider_id")
+  model         String?
+  agentRunId    String?  @map("agent_run_id")
+  taskType      String   @default("agent_run") @map("task_type")
+  inputTokens   Int      @default(0) @map("input_tokens")
+  outputTokens  Int      @default(0) @map("output_tokens")
+  estimatedCost Float    @default(0) @map("estimated_cost")
+  latencyMs     Int      @default(0) @map("latency_ms")
+  success       Boolean  @default(true)
+  error         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  workspace Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  provider  ModelProvider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  agentRun  AgentRun?      @relation(fields: [agentRunId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_model_usage_workspace_created")
+  @@index([providerId, createdAt], map: "idx_model_usage_provider_created")
+  @@index([agentRunId], map: "idx_model_usage_agent_run")
+  @@map("model_usage_events")
+}
+
+model CostEvent {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  agentRunId         String?  @map("agent_run_id")
+  category           String
+  amount             Float    @default(0)
+  currency           String   @default("USD")
+  savedByInheritance Float    @default(0) @map("saved_by_inheritance")
+  metadata           Json     @default("{}")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentRun  AgentRun? @relation(fields: [agentRunId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_cost_events_workspace_created")
+  @@index([agentRunId], map: "idx_cost_events_agent_run")
+  @@map("cost_events")
+}
+
+model ComplianceEvidenceItem {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  domain      String
+  title       String
+  sourceType  String   @map("source_type")
+  sourceRef   String?  @map("source_ref")
+  status      String   @default("ready")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, domain, status], map: "idx_compliance_evidence_workspace_domain_status")
+  @@map("compliance_evidence_items")
+}
+
+model EpochInstitutionTemplate {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  userId      String   @map("user_id")
+  orgId       String?  @map("org_id")
+  name        String
+  category    String   @default("general")
+  description String   @default("")
+  version     String   @default("1.0.0")
+  definition  Json     @default("{}")
+  status      String   @default("active")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace    Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  institutions EpochInstitution[]
+  versions     EpochInstitutionVersion[]
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_templates_workspace_status_updated")
+  @@index([workspaceId, category, status], map: "idx_epoch_templates_workspace_category_status")
+  @@map("epoch_institution_templates")
+}
+
+model EpochInstitution {
+  id           String    @id @default(cuid())
+  workspaceId  String    @map("workspace_id")
+  templateId   String?   @map("template_id")
+  userId       String    @map("user_id")
+  orgId        String?   @map("org_id")
+  name         String
+  category     String    @default("general")
+  version      String    @default("1.0.0")
+  status       String    @default("active")
+  summary      String    @default("")
+  currentState String    @default("draft") @map("current_state")
+  missionCount Int       @default(0) @map("mission_count")
+  metadata     Json      @default("{}")
+  proof        Json      @default("{}")
+  archivedAt   DateTime? @map("archived_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  workspace         Workspace                    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  template          EpochInstitutionTemplate?    @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  versions          EpochInstitutionVersion[]
+  missions          EpochMission[]
+  authorityPolicies EpochAuthorityPolicy[]
+  memoryRecords     EpochMemoryRecord[]
+  integrations      EpochIntegrationConnection[]
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_institutions_workspace_status_updated")
+  @@index([workspaceId, templateId], map: "idx_epoch_institutions_workspace_template")
+  @@map("epoch_institutions")
+}
+
+model EpochInstitutionVersion {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  institutionId String   @map("institution_id")
+  templateId    String?  @map("template_id")
+  version       String
+  snapshot      Json
+  createdBy     String?  @map("created_by")
+  proof         Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  workspace   Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  institution EpochInstitution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  template    EpochInstitutionTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_epoch_institution_versions_workspace_created")
+  @@index([institutionId, version], map: "idx_epoch_institution_versions_institution_version")
+  @@map("epoch_institution_versions")
+}
+
+model EpochMission {
+  id            String    @id @default(cuid())
+  workspaceId   String    @map("workspace_id")
+  institutionId String    @map("institution_id")
+  userId        String    @map("user_id")
+  orgId         String?   @map("org_id")
+  title         String
+  objective     String
+  repository    String?
+  baseBranch    String?   @map("base_branch")
+  workingBranch String?   @map("working_branch")
+  state         String    @default("draft")
+  timeline      Json      @default("[]")
+  plan          Json      @default("[]")
+  result        Json      @default("{}")
+  budgetCents   Int       @default(0) @map("budget_cents")
+  deadlineAt    DateTime? @map("deadline_at")
+  currentStep   String?   @map("current_step")
+  proof         Json      @default("{}")
+  startedAt     DateTime? @map("started_at")
+  completedAt   DateTime? @map("completed_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  workspace              Workspace                    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  institution            EpochInstitution             @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  authorityPolicies      EpochAuthorityPolicy[]
+  executionRun           EpochExecutionRun?
+  verificationRun        EpochVerificationRun?
+  verifierAssignments    EpochVerifierAssignment[]
+  certificate            EpochCertificate?
+  memoryRecord           EpochMemoryRecord?
+  evidence               EpochEvidence[]
+  recoveryEscalations    EpochRecoveryEscalation[]
+  simulationRuns         EpochSimulationRun[]
+  settlements            EpochSettlement[]
+  outcome                EpochOutcome?
+  productionInteractions EpochProductionInteraction[]
+  copilotDrafts          EpochCopilotDraft[]
+  architectureRun        EpochArchitectureRun?
+
+  @@index([workspaceId, state, updatedAt], map: "idx_epoch_missions_workspace_state_updated")
+  @@index([institutionId, createdAt], map: "idx_epoch_missions_institution_created")
+  @@map("epoch_missions")
+}
+
+model EpochOutcome {
+  id             String   @id @default(cuid())
+  workspaceId    String   @map("workspace_id")
+  missionId      String   @unique @map("mission_id")
+  userId         String   @map("user_id")
+  orgId          String?  @map("org_id")
+  status         String
+  summary        String
+  verificationId String?  @map("verification_id")
+  evidenceIds    Json     @default("[]") @map("evidence_ids")
+  customerResult Json     @default("{}") @map("customer_result")
+  correlationId  String   @map("correlation_id")
+  traceId        String   @map("trace_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  workspace  Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission    EpochMission     @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  experience EpochExperience?
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_outcomes_workspace_status_updated")
+  @@map("epoch_outcomes")
+}
+
+model EpochExperience {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  outcomeId     String   @unique @map("outcome_id")
+  summary       String
+  lessons       Json     @default("[]")
+  confidence    Float
+  reusable      Boolean  @default(true)
+  context       Json     @default("{}")
+  correlationId String   @map("correlation_id")
+  traceId       String   @map("trace_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  outcome   EpochOutcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, reusable, updatedAt], map: "idx_epoch_experiences_workspace_reusable_updated")
+  @@map("epoch_experiences")
+}
+
+model EpochArchitectureRun {
+  id              String   @id
+  workspaceId     String   @map("workspace_id")
+  missionId       String   @unique @map("mission_id")
+  environment     String
+  status          String
+  currentStage    String   @map("current_stage")
+  stages          Json     @default("[]")
+  evidenceIds     Json     @default("[]") @map("evidence_ids")
+  verificationIds Json     @default("[]") @map("verification_ids")
+  outcomeId       String?  @map("outcome_id")
+  experienceId    String?  @map("experience_id")
+  correlationId   String   @map("correlation_id")
+  traceId         String   @map("trace_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission   EpochMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, missionId], map: "uq_epoch_architecture_runs_workspace_mission")
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_architecture_runs_workspace_status_updated")
+  @@map("epoch_architecture_runs")
+}
+
+model EpochAuthorityPolicy {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  institutionId String   @map("institution_id")
+  missionId     String?  @map("mission_id")
+  userId        String   @map("user_id")
+  orgId         String?  @map("org_id")
+  name          String
+  canExecute    Boolean  @default(false) @map("can_execute")
+  needsApproval Boolean  @default(true) @map("needs_approval")
+  blocked       Boolean  @default(false)
+  permissions   Json     @default("[]")
+  budgets       Json     @default("{}")
+  approvals     Json     @default("[]")
+  checks        Json     @default("[]")
+  proof         Json     @default("{}")
+  status        String   @default("active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  institution EpochInstitution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  mission     EpochMission?    @relation(fields: [missionId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_authority_workspace_status_updated")
+  @@index([institutionId, createdAt], map: "idx_epoch_authority_institution_created")
+  @@map("epoch_authority_policies")
+}
+
+model EpochAutomation {
+  id                   String   @id @default(cuid())
+  workspaceId          String   @map("workspace_id")
+  institutionId        String?  @map("institution_id")
+  userId               String   @map("user_id")
+  orgId                String?  @map("org_id")
+  name                 String
+  trigger              Json     @default("{}")
+  level                String   @default("A0")
+  status               String   @default("draft")
+  policyId             String   @map("policy_id")
+  actionIds            Json     @default("[]") @map("action_ids")
+  verificationRequired Boolean  @default(true) @map("verification_required")
+  budgetCents          Int      @default(0) @map("budget_cents")
+  spentCents           Int      @default(0) @map("spent_cents")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  runs      EpochAutomationRun[]
+  actions   EpochAutomationAction[]
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_automations_workspace_status_updated")
+  @@map("epoch_automations")
+}
+
+model EpochAutomationAction {
+  id               String   @id @default(cuid())
+  workspaceId      String   @map("workspace_id")
+  automationId     String   @map("automation_id")
+  missionId        String?  @map("mission_id")
+  userId           String   @map("user_id")
+  orgId            String?  @map("org_id")
+  environment      String
+  name             String
+  status           String   @default("proposed")
+  parameters       Json     @default("{}")
+  policyDecisionId String   @map("policy_decision_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  workspace  Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  automation EpochAutomation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, automationId, status], map: "idx_epoch_automation_actions_scope_status")
+  @@map("epoch_automation_actions")
+}
+
+model EpochAutomationRun {
+  id             String    @id @default(cuid())
+  workspaceId    String    @map("workspace_id")
+  automationId   String    @map("automation_id")
+  userId         String    @map("user_id")
+  orgId          String?   @map("org_id")
+  triggerType    String    @map("trigger_type")
+  triggerPayload Json      @default("{}") @map("trigger_payload")
+  status         String    @default("pending")
+  requestedCents Int       @default(0) @map("requested_cents")
+  spentCents     Int       @default(0) @map("spent_cents")
+  missionId      String?   @map("mission_id")
+  actionIds      Json      @default("[]") @map("action_ids")
+  result         Json      @default("{}")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  completedAt    DateTime? @map("completed_at")
+
+  workspace  Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  automation EpochAutomation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, automationId, createdAt], map: "idx_epoch_automation_runs_scope_created")
+  @@map("epoch_automation_runs")
+}
+
+model EpochExecutionRun {
+  id          String    @id @default(cuid())
+  workspaceId String    @map("workspace_id")
+  missionId   String    @unique @map("mission_id")
+  userId      String    @map("user_id")
+  orgId       String?   @map("org_id")
+  status      String    @default("running")
+  planner     Json      @default("{}")
+  executor    Json      @default("{}")
+  reviewer    Json      @default("{}")
+  human       Json      @default("{}")
+  logs        Json      @default("[]")
+  retries     Int       @default(0)
+  proof       Json      @default("{}")
+  startedAt   DateTime  @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  workspace           Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission             EpochMission              @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  evidence            EpochEvidence[]
+  verification        EpochVerificationRun?
+  verifierAssignments EpochVerifierAssignment[]
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_executions_workspace_status_updated")
+  @@map("epoch_execution_runs")
+}
+
+model EpochEvidence {
+  id             String   @id @default(cuid())
+  workspaceId    String   @map("workspace_id")
+  missionId      String   @map("mission_id")
+  executionRunId String?  @map("execution_run_id")
+  userId         String   @map("user_id")
+  kind           String
+  url            String?  @map("url")
+  filePath       String?  @map("file_path")
+  contentType    String?  @map("content_type")
+  summary        String   @default("")
+  payload        Json     @default("{}")
+  proof          Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  workspace    Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission      EpochMission       @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  executionRun EpochExecutionRun? @relation(fields: [executionRunId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt], map: "idx_epoch_evidence_workspace_created")
+  @@index([missionId, createdAt], map: "idx_epoch_evidence_mission_created")
+  @@map("epoch_evidence")
+}
+
+model EpochVerificationRun {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  missionId          String   @unique @map("mission_id")
+  executionRunId     String?  @unique @map("execution_run_id")
+  userId             String   @map("user_id")
+  orgId              String?  @map("org_id")
+  status             String   @default("completed")
+  checklist          Json     @default("[]")
+  evidenceIds        Json     @default("[]") @map("evidence_ids")
+  evidenceValidation Json     @default("{}") @map("evidence_validation")
+  policyValidation   Json     @default("{}") @map("policy_validation")
+  confidence         Int      @default(0)
+  finalDecision      String   @default("review") @map("final_decision")
+  output             Json     @default("{}")
+  proof              Json     @default("{}")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  workspace    Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission      EpochMission       @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  executionRun EpochExecutionRun? @relation(fields: [executionRunId], references: [id], onDelete: SetNull)
+  certificate  EpochCertificate?
+
+  @@index([workspaceId, finalDecision, createdAt], map: "idx_epoch_verifications_workspace_decision_created")
+  @@map("epoch_verification_runs")
+}
+
+model EpochVerifierAssignment {
+  id             String    @id @default(cuid())
+  workspaceId    String    @map("workspace_id")
+  missionId      String    @map("mission_id")
+  executionRunId String?   @map("execution_run_id")
+  verifierId     String    @map("verifier_id")
+  verifierKind   String    @map("verifier_kind")
+  status         String    @default("queued")
+  evidenceIds    Json      @default("[]") @map("evidence_ids")
+  checklist      Json      @default("[]")
+  decision       String?
+  confidence     Int?
+  result         Json      @default("{}")
+  proof          Json      @default("{}")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  completedAt    DateTime? @map("completed_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  workspace    Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission      EpochMission       @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  executionRun EpochExecutionRun? @relation(fields: [executionRunId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_verifier_assignments_workspace_status_created")
+  @@index([missionId, verifierId], map: "idx_epoch_verifier_assignments_mission_verifier")
+  @@map("epoch_verifier_assignments")
+}
+
+model EpochCertificate {
+  id                String   @id @default(cuid())
+  workspaceId       String   @map("workspace_id")
+  missionId         String   @unique @map("mission_id")
+  verificationRunId String?  @unique @map("verification_run_id")
+  userId            String   @map("user_id")
+  orgId             String?  @map("org_id")
+  status            String   @default("issued")
+  summary           String   @default("")
+  evidenceSummary   Json     @default("{}") @map("evidence_summary")
+  approvals         Json     @default("[]")
+  auditTrail        Json     @default("[]") @map("audit_trail")
+  proof             Json     @default("{}")
+  issuedAt          DateTime @default(now()) @map("issued_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  workspace    Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission      EpochMission          @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  verification EpochVerificationRun? @relation(fields: [verificationRunId], references: [id], onDelete: SetNull)
+  memoryRecord EpochMemoryRecord?
+
+  @@index([workspaceId, status, issuedAt], map: "idx_epoch_certificates_workspace_status_issued")
+  @@map("epoch_certificates")
+}
+
+model EpochMemoryRecord {
+  id                    String   @id @default(cuid())
+  workspaceId           String   @map("workspace_id")
+  institutionId         String   @map("institution_id")
+  missionId             String?  @unique @map("mission_id")
+  certificateId         String?  @unique @map("certificate_id")
+  userId                String   @map("user_id")
+  orgId                 String?  @map("org_id")
+  history               Json     @default("[]")
+  lessons               Json     @default("[]")
+  mistakes              Json     @default("[]")
+  suggestedImprovements Json     @default("[]") @map("suggested_improvements")
+  proof                 Json     @default("{}")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  institution EpochInstitution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  mission     EpochMission?     @relation(fields: [missionId], references: [id], onDelete: SetNull)
+  certificate EpochCertificate? @relation(fields: [certificateId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, updatedAt], map: "idx_epoch_memory_records_workspace_updated")
+  @@index([institutionId, createdAt], map: "idx_epoch_memory_records_institution_created")
+  @@map("epoch_memory_records")
+}
+
+model EpochIntegrationConnection {
+  id            String    @id @default(cuid())
+  workspaceId   String    @map("workspace_id")
+  environmentId String?   @map("environment_id")
+  institutionId String?   @map("institution_id")
+  userId        String    @map("user_id")
+  orgId         String?   @map("org_id")
+  name          String
+  provider      String
+  status        String    @default("connected")
+  config        Json      @default("{}")
+  proof         Json      @default("{}")
+  lastSyncAt    DateTime? @map("last_sync_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  workspace   Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  institution EpochInstitution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  environment EpochEnvironment? @relation(fields: [environmentId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, provider, status], map: "idx_epoch_integrations_workspace_provider_status")
+  @@index([environmentId, status], map: "idx_epoch_integrations_environment_status")
+  @@map("epoch_integration_connections")
+}
+
+model EpochUnknown {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  projectId     String?  @map("project_id")
+  environmentId String?  @map("environment_id")
+  title         String
+  question      String
+  impact        String   @default("medium")
+  status        String   @default("open")
+  evidence      Json     @default("[]")
+  correlationId String   @map("correlation_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_unknowns_workspace_status_updated")
+  @@map("epoch_unknowns")
+}
+
+model EpochDiscoveryProgram {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  unknownId     String   @map("unknown_id")
+  name          String
+  objective     String
+  status        String   @default("planned")
+  questions     Json     @default("[]")
+  hypothesisIds Json     @default("[]") @map("hypothesis_ids")
+  experimentIds Json     @default("[]") @map("experiment_ids")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_discovery_programs_workspace_status_updated")
+  @@map("epoch_discovery_programs")
+}
+
+model EpochHypothesis {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  discoveryProgramId String   @map("discovery_program_id")
+  statement          String
+  confidence         Float    @default(0.5)
+  status             String   @default("draft")
+  evidence           Json     @default("[]")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_hypotheses_workspace_status_updated")
+  @@map("epoch_hypotheses")
+}
+
+model EpochExperiment {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  discoveryProgramId String   @map("discovery_program_id")
+  hypothesisId       String?  @map("hypothesis_id")
+  missionId          String?  @map("mission_id")
+  simulationRunId    String?  @map("simulation_run_id")
+  name               String
+  design             Json     @default("{}")
+  status             String   @default("planned")
+  result             Json     @default("{}")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_experiments_workspace_status_updated")
+  @@map("epoch_experiments")
+}
+
+model EpochObservation {
+  id           String   @id @default(cuid())
+  workspaceId  String   @map("workspace_id")
+  experimentId String?  @map("experiment_id")
+  missionId    String?  @map("mission_id")
+  kind         String
+  value        Json     @default("{}")
+  evidenceIds  Json     @default("[]") @map("evidence_ids")
+  observedAt   DateTime @map("observed_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, observedAt], map: "idx_epoch_observations_workspace_observed")
+  @@index([experimentId], map: "idx_epoch_observations_experiment")
+  @@map("epoch_observations")
+}
+
+model EpochEnvironment {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  projectId   String?  @map("project_id")
+  orgId       String?  @map("org_id")
+  kind        String
+  name        String
+  status      String   @default("unknown")
+  region      String?
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace              Workspace                    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project                EpochProject?                @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  connections            EpochIntegrationConnection[]
+  worldStates            EpochWorldState[]
+  dataCenterObservations EpochDataCenterObservation[]
+  simulations            EpochSimulationEnvironment[]
+
+  @@index([projectId, updatedAt], map: "idx_epoch_environments_project_updated")
+  @@index([workspaceId, kind, status], map: "idx_epoch_environments_workspace_kind_status")
+  @@index([workspaceId, updatedAt], map: "idx_epoch_environments_workspace_updated")
+  @@map("epoch_environments")
+}
+
+model EpochProject {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  orgId       String   @map("org_id")
+  name        String
+  status      String   @default("active")
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace              Workspace                    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  environments           EpochEnvironment[]
+  worldStates            EpochWorldState[]
+  dataCenterObservations EpochDataCenterObservation[]
+  simulations            EpochSimulationEnvironment[]
+
+  @@unique([workspaceId, name], map: "uq_epoch_projects_workspace_name")
+  @@index([workspaceId, orgId, updatedAt], map: "idx_epoch_projects_workspace_org_updated")
+  @@map("epoch_projects")
+}
+
+model EpochWorldState {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  projectId     String   @map("project_id")
+  environmentId String   @map("environment_id")
+  version       Int      @default(1)
+  snapshot      Json
+  sourceIds     Json     @default("[]") @map("source_ids")
+  freshness     String   @default("fresh")
+  correlationId String   @map("correlation_id")
+  traceId       String   @map("trace_id")
+  observedAt    DateTime @map("observed_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     EpochProject     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  environment EpochEnvironment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, projectId, environmentId, observedAt], map: "idx_epoch_world_states_scope_observed")
+  @@map("epoch_world_states")
+}
+
+model EpochDataCenterObservation {
+  id            String   @id
+  workspaceId   String   @map("workspace_id")
+  projectId     String   @map("project_id")
+  environmentId String   @map("environment_id")
+  provider      String
+  status        String
+  snapshot      Json
+  sourceIds     Json     @default("[]") @map("source_ids")
+  correlationId String   @map("correlation_id")
+  traceId       String   @map("trace_id")
+  observedAt    DateTime @map("observed_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     EpochProject     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  environment EpochEnvironment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, projectId, environmentId, observedAt], map: "idx_epoch_dc_observations_scope_observed")
+  @@map("epoch_data_center_observations")
+}
+
+model EpochOutboxEvent {
+  id             String    @id
+  workspaceId    String?   @map("workspace_id")
+  aggregateType  String    @map("aggregate_type")
+  aggregateId    String    @map("aggregate_id")
+  eventType      String    @map("event_type")
+  idempotencyKey String    @unique @map("idempotency_key")
+  payload        Json
+  status         String    @default("pending")
+  attempts       Int       @default(0)
+  availableAt    DateTime  @default(now()) @map("available_at")
+  publishedAt    DateTime? @map("published_at")
+  lastError      String?   @map("last_error")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([status, availableAt], map: "idx_epoch_outbox_status_available")
+  @@index([workspaceId, createdAt], map: "idx_epoch_outbox_workspace_created")
+  @@map("epoch_outbox_events")
+}
+
+model EpochSimulationEnvironment {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  projectId     String   @map("project_id")
+  environmentId String   @map("environment_id")
+  name          String
+  mode          String   @default("replay")
+  status        String   @default("configured")
+  configuration Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     EpochProject         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  environment EpochEnvironment     @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  runs        EpochSimulationRun[]
+
+  @@index([workspaceId, projectId, updatedAt], map: "idx_epoch_sim_env_workspace_project_updated")
+  @@map("epoch_simulation_environments")
+}
+
+model EpochSimulationRun {
+  id                      String    @id @default(cuid())
+  workspaceId             String    @map("workspace_id")
+  simulationEnvironmentId String    @map("simulation_environment_id")
+  missionId               String?   @map("mission_id")
+  workerId                String?   @map("worker_id")
+  mode                    String
+  status                  String    @default("configured")
+  seed                    Int
+  variables               Json      @default("{}")
+  faults                  Json      @default("[]")
+  result                  Json      @default("{}")
+  startedAt               DateTime? @map("started_at")
+  completedAt             DateTime? @map("completed_at")
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  workspace    Workspace                    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  environment  EpochSimulationEnvironment   @relation(fields: [simulationEnvironmentId], references: [id], onDelete: Cascade)
+  mission      EpochMission?                @relation(fields: [missionId], references: [id], onDelete: SetNull)
+  observations EpochSimulationObservation[]
+  verification EpochSimulationVerification?
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_sim_runs_workspace_status_updated")
+  @@index([missionId, createdAt], map: "idx_epoch_sim_runs_mission_created")
+  @@map("epoch_simulation_runs")
+}
+
+model EpochSimulationObservation {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  runId       String   @map("run_id")
+  kind        String
+  label       String   @default("SIMULATED")
+  value       Json     @default("{}")
+  observedAt  DateTime @map("observed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  run       EpochSimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, runId, observedAt], map: "idx_epoch_sim_observations_workspace_run_observed")
+  @@map("epoch_simulation_observations")
+}
+
+model EpochSimulationVerification {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  runId       String   @unique @map("run_id")
+  userId      String   @map("user_id")
+  status      String   @default("completed")
+  decision    String   @default("UNKNOWN")
+  confidence  Int      @default(0)
+  checklist   Json     @default("[]")
+  output      Json     @default("{}")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  run       EpochSimulationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, decision, createdAt], map: "idx_epoch_sim_verifications_workspace_decision_created")
+  @@map("epoch_simulation_verifications")
+}
+
+model EpochWorker {
+  id              String    @id @default(cuid())
+  workspaceId     String    @map("workspace_id")
+  userId          String    @map("user_id")
+  orgId           String?   @map("org_id")
+  kind            String
+  name            String
+  protocolVersion String    @default("epoch.worker.v1") @map("protocol_version")
+  status          String    @default("available")
+  capabilities    Json      @default("[]")
+  projectScope    Json      @default("{}") @map("project_scope")
+  maxConcurrency  Int       @default(1) @map("max_concurrency")
+  activeLeases    Int       @default(0) @map("active_leases")
+  lastHeartbeat   DateTime  @default(now()) @map("last_heartbeat")
+  metadata        Json      @default("{}")
+  history         Json      @default("[]")
+  retiredAt       DateTime? @map("retired_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  workspace   Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  leases      EpochWorkerLease[]
+  evaluations EpochWorkerEvaluation[]
+
+  @@index([workspaceId, status, lastHeartbeat], map: "idx_epoch_workers_workspace_status_heartbeat")
+  @@index([workspaceId, kind, status], map: "idx_epoch_workers_workspace_kind_status")
+  @@map("epoch_workers")
+}
+
+model EpochCapabilityRegistry {
+  id           String   @id @default(cuid())
+  workspaceId  String   @map("workspace_id")
+  userId       String   @map("user_id")
+  orgId        String?  @map("org_id")
+  name         String
+  source       String
+  version      String
+  status       String   @default("active")
+  capabilities Json     @default("[]")
+  metadata     Json     @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_capability_registry_scope_status")
+  @@map("epoch_capability_registries")
+}
+
+model EpochCapabilityGap {
+  id                    String   @id @default(cuid())
+  workspaceId           String   @map("workspace_id")
+  userId                String   @map("user_id")
+  orgId                 String?  @map("org_id")
+  name                  String
+  description           String
+  requiredCapabilities  Json     @default("[]") @map("required_capabilities")
+  availableCapabilities Json     @default("[]") @map("available_capabilities")
+  missingCapabilities   Json     @default("[]") @map("missing_capabilities")
+  status                String   @default("identified")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  plans     EpochCapabilityPlan[]
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_capability_gaps_scope_status")
+  @@map("epoch_capability_gaps")
+}
+
+model EpochCapabilityPlan {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  gapId              String   @map("gap_id")
+  userId             String   @map("user_id")
+  orgId              String?  @map("org_id")
+  status             String   @default("planned")
+  sandboxResult      Json     @default("{}") @map("sandbox_result")
+  testResult         Json     @default("{}") @map("test_result")
+  verificationResult Json     @default("{}") @map("verification_result")
+  promotedRegistryId String?  @map("promoted_registry_id")
+  rollbackResult     Json     @default("{}") @map("rollback_result")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  gap       EpochCapabilityGap @relation(fields: [gapId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, updatedAt], map: "idx_epoch_capability_plans_scope_status")
+  @@map("epoch_capability_plans")
+}
+
+model EpochWorkerEvaluation {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  workerId    String   @map("worker_id")
+  missionId   String?  @map("mission_id")
+  outcome     String
+  score       Int
+  latencyMs   Int?     @map("latency_ms")
+  evidence    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  worker    EpochWorker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, workerId, createdAt], map: "idx_epoch_worker_evaluations_worker_created")
+  @@index([workspaceId, missionId], map: "idx_epoch_worker_evaluations_mission")
+  @@map("epoch_worker_evaluations")
+}
+
+model EpochQueueJob {
+  id               String    @id
+  workspaceId      String    @map("workspace_id")
+  institutionId    String?   @map("institution_id")
+  missionId        String?   @map("mission_id")
+  type             String
+  payload          Json      @default("{}")
+  status           String    @default("queued")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  leasedAt         DateTime? @map("leased_at")
+  leaseOwner       String?   @map("lease_owner")
+  error            String?
+  lastError        String?   @map("last_error")
+  retryCount       Int       @default(0) @map("retry_count")
+  maxRetries       Int       @default(3) @map("max_retries")
+  nextRetryAt      DateTime? @map("next_retry_at")
+  lastFailedAt     DateTime? @map("last_failed_at")
+  deadLetteredAt   DateTime? @map("dead_lettered_at")
+  deadLetterReason String?   @map("dead_letter_reason")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_queue_jobs_workspace_status_created")
+  @@index([workspaceId, missionId, type, status], map: "idx_epoch_queue_jobs_mission_type_status")
+  @@map("epoch_queue_jobs")
+}
+
+model EpochRecoveryEscalation {
+  id             String    @id @default(cuid())
+  workspaceId    String    @map("workspace_id")
+  missionId      String    @map("mission_id")
+  executionRunId String?   @map("execution_run_id")
+  reason         String
+  status         String    @default("open")
+  payload        Json      @default("{}")
+  resolution     String?
+  resolvedBy     String?   @map("resolved_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  resolvedAt     DateTime? @map("resolved_at")
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission   EpochMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_recovery_escalations_workspace_status")
+  @@index([workspaceId, missionId, createdAt], map: "idx_epoch_recovery_escalations_mission_created")
+  @@map("epoch_recovery_escalations")
+}
+
+model EpochSettlement {
+  id               String   @id @default(cuid())
+  workspaceId      String   @map("workspace_id")
+  missionId        String   @map("mission_id")
+  decision         String
+  status           String
+  reason           String
+  evidenceHash     String   @map("evidence_hash")
+  learningEligible Boolean  @default(false) @map("learning_eligible")
+  learningPayload  Json     @default("{}") @map("learning_payload")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission   EpochMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, missionId], map: "uq_epoch_settlements_workspace_mission")
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_settlements_workspace_status")
+  @@map("epoch_settlements")
+}
+
+model EpochWorkerLease {
+  id           String    @id @default(cuid())
+  workspaceId  String    @map("workspace_id")
+  workerId     String    @map("worker_id")
+  jobId        String    @unique @map("job_id")
+  fencingToken Int       @map("fencing_token")
+  status       String    @default("active")
+  leasedAt     DateTime  @default(now()) @map("leased_at")
+  expiresAt    DateTime  @map("expires_at")
+  releasedAt   DateTime? @map("released_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  workspace Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  worker    EpochWorker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, workerId, status], map: "idx_epoch_worker_leases_worker_status")
+  @@index([workspaceId, expiresAt, status], map: "idx_epoch_worker_leases_expiry_status")
+  @@map("epoch_worker_leases")
+}
+
+model EpochCopilotDraft {
+  id          String    @id
+  workspaceId String    @map("workspace_id")
+  missionId   String?   @map("mission_id")
+  kind        String
+  authorId    String    @map("author_id")
+  content     Json      @default("{}")
+  risk        String    @default("medium")
+  status      String    @default("draft")
+  approvedBy  String?   @map("approved_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  approvedAt  DateTime? @map("approved_at")
+
+  workspace Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission   EpochMission? @relation(fields: [missionId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_copilot_drafts_workspace_status_created")
+  @@index([workspaceId, missionId], map: "idx_epoch_copilot_drafts_workspace_mission")
+  @@map("epoch_copilot_drafts")
+}
+
+model EpochMarketplaceManifest {
+  id            String    @id
+  workspaceId   String    @map("workspace_id")
+  version       String
+  kind          String
+  publisherId   String    @map("publisher_id")
+  compatibleApi String    @map("compatible_api")
+  permissions   Json      @default("[]")
+  contentHash   String    @map("content_hash")
+  signature     String
+  status        String    @default("active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  revokedAt     DateTime? @map("revoked_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, id, version], map: "uq_epoch_marketplace_workspace_asset_version")
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_marketplace_workspace_status_created")
+  @@map("epoch_marketplace_manifests")
+}
+
+model EpochProductionInteraction {
+  id           String   @id
+  workspaceId  String   @map("workspace_id")
+  missionId    String   @map("mission_id")
+  executionId  String?  @map("execution_id")
+  workerId     String?  @map("worker_id")
+  input        String
+  output       String
+  latencyMs    Int      @map("latency_ms")
+  toolFailures Int      @default(0) @map("tool_failures")
+  retries      Int      @default(0)
+  userFeedback String?  @map("user_feedback")
+  turns        Int      @default(1)
+  abandoned    Boolean  @default(false)
+  failureScore Int      @default(0) @map("failure_score")
+  signals      Json     @default("[]")
+  fingerprint  String
+  capturedAt   DateTime @default(now()) @map("captured_at")
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission   EpochMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, capturedAt], map: "idx_epoch_production_interactions_workspace_captured")
+  @@index([workspaceId, fingerprint, capturedAt], map: "idx_epoch_production_interactions_workspace_fingerprint")
+  @@index([missionId, capturedAt], map: "idx_epoch_production_interactions_mission_captured")
+  @@map("epoch_production_interactions")
+}
+
+model EpochFailureCluster {
+  id                  String   @id
+  workspaceId         String   @map("workspace_id")
+  fingerprint         String
+  interactionIds      Json     @default("[]") @map("interaction_ids")
+  count               Int      @default(0)
+  averageFailureScore Int      @default(0) @map("average_failure_score")
+  likelyCause         String?  @map("likely_cause")
+  status              String   @default("open")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, fingerprint], map: "uq_epoch_failure_clusters_workspace_fingerprint")
+  @@index([workspaceId, status, averageFailureScore], map: "idx_epoch_failure_clusters_workspace_status_score")
+  @@map("epoch_failure_clusters")
+}
+
+model EpochRegressionDraft {
+  id           String    @id
+  workspaceId  String    @map("workspace_id")
+  clusterId    String    @map("cluster_id")
+  input        String
+  expected     String
+  verification String
+  status       String    @default("draft")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  approvedAt   DateTime? @map("approved_at")
+  approvedBy   String?   @map("approved_by")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, clusterId], map: "idx_epoch_regression_drafts_workspace_cluster")
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_regression_drafts_workspace_status_created")
+  @@map("epoch_regression_drafts")
+}
+
+model EpochFailureSignal {
+  id            String   @id
+  workspaceId   String   @map("workspace_id")
+  interactionId String   @map("interaction_id")
+  missionId     String   @map("mission_id")
+  kind          String
+  severity      String
+  score         Int
+  evidence      Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, kind, createdAt], map: "idx_epoch_failure_signals_workspace_kind_created")
+  @@index([workspaceId, missionId, createdAt], map: "idx_epoch_failure_signals_workspace_mission_created")
+  @@map("epoch_failure_signals")
+}
+
+model EpochRootCauseRecord {
+  id          String    @id
+  workspaceId String    @map("workspace_id")
+  clusterId   String    @map("cluster_id")
+  hypothesis  String
+  confidence  Int
+  evidence    Json      @default("{}")
+  status      String    @default("draft")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  reviewedAt  DateTime? @map("reviewed_at")
+  reviewedBy  String?   @map("reviewed_by")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_root_causes_workspace_status_created")
+  @@index([workspaceId, clusterId], map: "idx_epoch_root_causes_workspace_cluster")
+  @@map("epoch_root_cause_records")
+}
+
+model EpochRegressionEvaluation {
+  id           String    @id
+  workspaceId  String    @map("workspace_id")
+  clusterId    String    @map("cluster_id")
+  input        String
+  expected     String
+  verification String
+  status       String    @default("draft")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  approvedAt   DateTime? @map("approved_at")
+  approvedBy   String?   @map("approved_by")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_regression_evaluations_workspace_status_created")
+  @@index([workspaceId, clusterId], map: "idx_epoch_regression_evaluations_workspace_cluster")
+  @@map("epoch_regression_evaluations")
+}
+
+model EpochReplaySession {
+  id          String    @id
+  workspaceId String    @map("workspace_id")
+  missionId   String    @map("mission_id")
+  sourceRunId String?   @map("source_run_id")
+  variant     Json      @default("{}")
+  status      String    @default("created")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_replay_sessions_workspace_status_created")
+  @@index([workspaceId, missionId, createdAt], map: "idx_epoch_replay_sessions_workspace_mission_created")
+  @@map("epoch_replay_sessions")
+}
+
+model EpochReplayResult {
+  id              String   @id
+  workspaceId     String   @map("workspace_id")
+  replaySessionId String   @map("replay_session_id")
+  baseline        Json     @default("{}")
+  candidate       Json     @default("{}")
+  comparison      Json     @default("{}")
+  status          String   @default("unknown")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, replaySessionId], map: "idx_epoch_replay_results_workspace_session")
+  @@map("epoch_replay_results")
+}
+
+model EpochFixProposal {
+  id          String    @id
+  workspaceId String    @map("workspace_id")
+  clusterId   String    @map("cluster_id")
+  proposedBy  String?   @map("proposed_by")
+  kind        String
+  proposal    String
+  risk        String
+  rollback    String
+  status      String    @default("draft")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  approvedAt  DateTime? @map("approved_at")
+  approvedBy  String?   @map("approved_by")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_epoch_fix_proposals_workspace_status_created")
+  @@index([workspaceId, clusterId], map: "idx_epoch_fix_proposals_workspace_cluster")
+  @@map("epoch_fix_proposals")
+}
+
+model EpochReliabilityMetric {
+  id                    String   @id
+  workspaceId           String   @map("workspace_id")
+  workerId              String?  @map("worker_id")
+  windowStart           DateTime @map("window_start")
+  windowEnd             DateTime @map("window_end")
+  sampleSize            Int      @map("sample_size")
+  successRate           Float    @map("success_rate")
+  failureRate           Float    @map("failure_rate")
+  recoveryRate          Float    @map("recovery_rate")
+  humanInterventionRate Float    @map("human_intervention_rate")
+  confidence            Float
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, workerId, windowEnd], map: "idx_epoch_reliability_workspace_worker_window")
+  @@map("epoch_reliability_metrics")
+}
+
+model EpochImprovementMetric {
+  id          String   @id
+  workspaceId String   @map("workspace_id")
+  clusterId   String   @map("cluster_id")
+  baseline    Json     @default("{}")
+  after       Json     @default("{}")
+  delta       Json     @default("{}")
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, clusterId, createdAt], map: "idx_epoch_improvement_workspace_cluster_created")
+  @@map("epoch_improvement_metrics")
+}
+
+model AgentSkill {
+  id               String    @id @default(cuid())
+  workspaceId      String    @map("workspace_id")
+  name             String
+  description      String    @default("")
+  domain           String    @default("Engineering")
+  trigger          Json
+  requiredMemories Json      @default("[]") @map("required_memories")
+  requiredTools    Json      @default("[]") @map("required_tools")
+  requiredTests    Json      @default("[]") @map("required_tests")
+  approvalRules    Json      @default("[]") @map("approval_rules")
+  qualityScore     Int       @default(80) @map("quality_score")
+  usageCount       Int       @default(0) @map("usage_count")
+  successRate      Float     @default(0) @map("success_rate")
+  version          String    @default("1.0.0")
+  status           String    @default("candidate")
+  proof            Json      @default("{}")
+  sourceType       String    @default("manual") @map("source_type")
+  sourceRef        String?   @map("source_ref")
+  lastUsedAt       DateTime? @map("last_used_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  workspace            Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  installations        InstalledAgentSkill[]
+  qualityReports       AgentSkillQualityReport[]
+  references           AgentSkillReference[]
+  primaryConflicts     AgentSkillConflict[]      @relation("PrimarySkillConflicts")
+  conflictingConflicts AgentSkillConflict[]      @relation("ConflictingSkillConflicts")
+  routerRules          AgentSkillRouterRule[]
+
+  @@index([workspaceId, status], map: "idx_agent_skills_workspace_status")
+  @@index([workspaceId, domain, status], map: "idx_agent_skills_workspace_domain_status")
+  @@map("agent_skills")
+}
+
+model InstalledAgentSkill {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  skillId     String   @map("skill_id")
+  repoPath    String?  @map("repo_path")
+  installPath String   @map("install_path")
+  status      String   @default("installed")
+  version     String   @default("1.0.0")
+  metadata    Json     @default("{}")
+  proof       Json     @default("{}")
+  installedAt DateTime @default(now()) @map("installed_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  skill     AgentSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, installedAt], map: "idx_installed_agent_skills_workspace_status_installed")
+  @@index([skillId, installedAt], map: "idx_installed_agent_skills_skill_installed")
+  @@map("installed_agent_skills")
+}
+
+model AgentSkillQualityReport {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  skillId     String   @map("skill_id")
+  score       Int      @default(80)
+  dimensions  Json     @default("[]")
+  issues      Json     @default("[]")
+  status      String   @default("passed")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  skill     AgentSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt], map: "idx_agent_skill_quality_workspace_status_created")
+  @@index([skillId, createdAt], map: "idx_agent_skill_quality_skill_created")
+  @@map("agent_skill_quality_reports")
+}
+
+model AgentSkillReference {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  skillId     String   @map("skill_id")
+  type        String   @default("memory")
+  title       String
+  url         String?
+  sourceRef   String?  @map("source_ref")
+  content     String?
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  skill     AgentSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, type, createdAt], map: "idx_agent_skill_references_workspace_type_created")
+  @@index([skillId, createdAt], map: "idx_agent_skill_references_skill_created")
+  @@map("agent_skill_references")
+}
+
+model AgentSkillConflict {
+  id                 String   @id @default(cuid())
+  workspaceId        String   @map("workspace_id")
+  primarySkillId     String   @map("primary_skill_id")
+  conflictingSkillId String?  @map("conflicting_skill_id")
+  type               String   @default("overlap")
+  severity           String   @default("medium")
+  status             String   @default("open")
+  reason             String
+  proof              Json     @default("{}")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  workspace        Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  primarySkill     AgentSkill  @relation("PrimarySkillConflicts", fields: [primarySkillId], references: [id], onDelete: Cascade)
+  conflictingSkill AgentSkill? @relation("ConflictingSkillConflicts", fields: [conflictingSkillId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, severity], map: "idx_agent_skill_conflicts_workspace_status_severity")
+  @@index([primarySkillId], map: "idx_agent_skill_conflicts_primary")
+  @@index([conflictingSkillId], map: "idx_agent_skill_conflicts_conflicting")
+  @@map("agent_skill_conflicts")
+}
+
+model AgentSkillRouterRule {
+  id          String   @id @default(cuid())
+  workspaceId String   @map("workspace_id")
+  skillId     String   @map("skill_id")
+  name        String
+  trigger     Json
+  priority    Int      @default(100)
+  status      String   @default("active")
+  proof       Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  skill     AgentSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, priority], map: "idx_agent_skill_router_workspace_status_priority")
+  @@index([skillId], map: "idx_agent_skill_router_skill")
+  @@map("agent_skill_router_rules")
 }

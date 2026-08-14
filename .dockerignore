@@ -8,3 +8,32 @@ memoryos-frontend/node_modules
 memoryos-frontend/.next
 *.tsbuildinfo
 .env
+
+# Local runtime/model caches and development state are never part of an image.
+.epoch-cache
+.epoch-runtime-models
+.epoch-github-tmp
+.codex-logs
+.memoryos
+.memoryostm
+.recovery-backup-before-vscode-restore
+.tmp
+.tmp-runtime
+test-results
+data/dev-logs
+data/*.json
+data/*/*.json
+!data/eval/
+!data/eval/*.json
+*.log
+*.err.log
+
+# Local tooling and editor metadata.
+.vscode
+.codex
+.agents
+docs
+fixtures
+ops
+tools
+scripts

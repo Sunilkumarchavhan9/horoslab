@@ -51,7 +51,7 @@ Use this reference when deciding what to ship next or when keeping a change alig
 2. Product contract is primary; service accelerates adoption.
 3. Keep one canonical onboarding playbook.
 
-## Developer Console
+## Mission Control
 
 Sidebar groups: Intelligence, Workspaces (Continuity Lab + Playground open in separate tabs), Developer, Organization.
 

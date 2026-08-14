@@ -1,28 +1,17 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
 import { createHash, randomUUID } from "crypto";
 import { listMemories } from "../memory/listMemory";
 import { ConnectorManager, type ConnectorType } from "../integrations/connectorManager";
+import { DEFAULT_MEMORY_PIPELINE_CONNECTOR } from "../integrations/defaultConnector";
 import { runIngestFlowLangGraph } from "../workflows/ingestGraphLangGraph";
 import { google } from "googleapis";
 import { deliverAlert } from "./alertDelivery";
-import { ackQueueJob, failQueueJob, getQueueBackend, getQueueBackendInfo } from "./queueBackend";
+import { ackQueueJob, failQueueJob, getQueueBackend, getQueueBackendInfo, type QueueBackendMode } from "./queueBackend";
 import { prisma } from "../storage/prismaClient";
 import { Client as NotionClient } from "@notionhq/client";
 import { Octokit } from "@octokit/rest";
 import { fetchCrmProvider, fetchDbProvider, fetchSupportProvider } from "./providerAdapters";
 
-type SourceType =
-  | "github"
-  | "notion"
-  | "local_files"
-  | "slack"
-  | "gmail"
-  | "zendesk"
-  | "jira"
-  | "support"
-  | "crm"
-  | "db";
+type SourceType = "github" | "notion" | "local_files" | "slack" | "gmail" | "zendesk" | "jira" | "support" | "crm" | "db";
 
 type SourceConfig = {
   id: string;
@@ -46,7 +35,7 @@ type GraphNode = {
   attributes?: Record<string, unknown>;
 };
 
-type GraphEdge = {
+type GraphEdge = {   
   id: string;
   from: string;
   to: string;
@@ -63,7 +52,7 @@ type GraphEdge = {
     | "decides_for";
   confidence: number;
   evidenceMemoryIds: string[];
-  firstSeenAt: string;
+  firstSeenAt: string;     
   lastSeenAt: string;
 };
 
@@ -209,8 +198,6 @@ type StoreFile = {
   users: Record<string, UserState>;
 };
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const STORE_PATH = path.join(DATA_DIR, "company-brain-platform.json");
 const schedulerTimers = new Map<string, NodeJS.Timeout>();
 const runtimeBootstrappedUsers = new Set<string>();
 const SOURCE_EVENT_MAX_ATTEMPTS = Number(process.env.COMPANY_BRAIN_SOURCE_EVENT_MAX_ATTEMPTS ?? 5);
@@ -226,25 +213,104 @@ function addSeconds(iso: string, seconds: number): string {
   return new Date(new Date(iso).getTime() + seconds * 1000).toISOString();
 }
 
-function readStore(): StoreFile {
-  if (!existsSync(STORE_PATH)) {
-    return { users: {} };
-  }
+function parseUserState(dataJson: string): UserState | null {
   try {
-    const raw = readFileSync(STORE_PATH, "utf8");
-    const parsed = JSON.parse(raw) as StoreFile;
-    if (!parsed || typeof parsed !== "object" || !parsed.users || typeof parsed.users !== "object") {
-      return { users: {} };
-    }
-    return parsed;
+    const parsed = JSON.parse(dataJson) as Partial<UserState>;
+    if (!parsed || typeof parsed !== "object") return null;
+    return {
+      ...defaultUserState(),
+      ...parsed,
+      sources: Array.isArray(parsed.sources) ? parsed.sources : [],
+      graph: parsed.graph && typeof parsed.graph === "object"
+        ? {
+            nodes: Array.isArray(parsed.graph.nodes) ? parsed.graph.nodes : [],
+            edges: Array.isArray(parsed.graph.edges) ? parsed.graph.edges : [],
+            updatedAt: parsed.graph.updatedAt ?? null,
+          }
+        : { nodes: [], edges: [], updatedAt: null },
+      skills: parsed.skills && typeof parsed.skills === "object"
+        ? {
+            items: Array.isArray(parsed.skills.items) ? parsed.skills.items : [],
+            updatedAt: parsed.skills.updatedAt ?? null,
+          }
+        : { items: [], updatedAt: null },
+      actions: Array.isArray(parsed.actions) ? parsed.actions : [],
+      audit: Array.isArray(parsed.audit) ? parsed.audit : [],
+      queue: Array.isArray(parsed.queue) ? parsed.queue : [],
+      scheduler: parsed.scheduler && typeof parsed.scheduler === "object"
+        ? {
+            enabled: Boolean(parsed.scheduler.enabled),
+            intervalSeconds: Number(parsed.scheduler.intervalSeconds) || 300,
+            lastTickAt: parsed.scheduler.lastTickAt ?? null,
+            lastError: parsed.scheduler.lastError ?? null,
+          }
+        : defaultUserState().scheduler,
+      roles: Array.isArray(parsed.roles) ? parsed.roles : [],
+      governance: parsed.governance && typeof parsed.governance === "object"
+        ? parsed.governance as UserState["governance"]
+        : defaultUserState().governance,
+      compliance: parsed.compliance && typeof parsed.compliance === "object"
+        ? parsed.compliance as UserState["compliance"]
+        : defaultUserState().compliance,
+      auditReplayApprovals: Array.isArray(parsed.auditReplayApprovals) ? parsed.auditReplayApprovals : [],
+      sourceEvents: Array.isArray(parsed.sourceEvents) ? parsed.sourceEvents : [],
+      sre: parsed.sre && typeof parsed.sre === "object"
+        ? {
+            alerts: Array.isArray(parsed.sre.alerts) ? parsed.sre.alerts : [],
+            workers: Array.isArray(parsed.sre.workers) ? parsed.sre.workers : [],
+          }
+        : { alerts: [], workers: [] },
+    };
   } catch {
-    return { users: {} };
+    return null;
   }
 }
 
-function writeStore(store: StoreFile): void {
-  mkdirSync(DATA_DIR, { recursive: true });
-  writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+async function persistUserState(userId: string, state: UserState): Promise<void> {
+  const updatedAt = nowIso();
+  await prisma.companyBrainPlatformState.upsert({
+    where: { userId_orgId: { userId, orgId: "" } },
+    create: {
+      userId,
+      orgId: "",
+      updatedAt,
+      dataJson: JSON.stringify(state),
+    },
+    update: {
+      updatedAt,
+      dataJson: JSON.stringify(state),
+    },
+  });
+}
+
+async function readUserState(userId: string): Promise<UserState> {
+  const row = await prisma.companyBrainPlatformState.findUnique({
+    where: { userId_orgId: { userId, orgId: "" } },
+    select: { dataJson: true },
+  });
+  if (!row) return defaultUserState();
+  return parseUserState(row.dataJson) ?? defaultUserState();
+}
+
+export async function hydrateCompanyBrainRuntimeState(): Promise<void> {
+  await prisma.$connect();
+}
+
+export async function flushCompanyBrainRuntimeState(): Promise<void> {
+  await prisma.$connect();
+}
+
+async function snapshotPlatformStore(): Promise<StoreFile> {
+  const rows = await prisma.companyBrainPlatformState.findMany({
+    where: { orgId: "" },
+    select: { userId: true, dataJson: true },
+  });
+  const users: Record<string, UserState> = {};
+  for (const row of rows) {
+    const state = parseUserState(row.dataJson);
+    if (state) users[row.userId] = state;
+  }
+  return { users };
 }
 
 function defaultUserState(): UserState {
@@ -271,8 +337,8 @@ function defaultUserState(): UserState {
         local_files: { redactPII: true, retentionClass: "extended", ttlHours: 24 * 180, requireReplayApproval: false },
         slack: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 30, requireReplayApproval: true },
         gmail: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 30, requireReplayApproval: true },
-        zendesk: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 30, requireReplayApproval: true },
-        jira: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 60, requireReplayApproval: true },
+        zendesk: { redactPII: true, retentionClass: "short", ttlHours: 24 * 30, requireReplayApproval: true },
+        jira: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 90, requireReplayApproval: true },
         support: { redactPII: true, retentionClass: "short", ttlHours: 24 * 30, requireReplayApproval: true },
         crm: { redactPII: true, retentionClass: "extended", ttlHours: 24 * 180, requireReplayApproval: true },
         db: { redactPII: true, retentionClass: "standard", ttlHours: 24 * 90, requireReplayApproval: true },
@@ -287,30 +353,28 @@ function defaultUserState(): UserState {
   };
 }
 
-function mutateUser<T>(userId: string, fn: (state: UserState) => T): T {
-  const store = readStore();
-  const state = store.users[userId] ?? defaultUserState();
+async function mutateUser<T>(userId: string, fn: (state: UserState) => T): Promise<T> {
+  const state = await readUserState(userId);
   const result = fn(state);
-  store.users[userId] = state;
-  writeStore(store);
+  await persistUserState(userId, state);
   return result;
 }
 
-function audit(userId: string, type: string, detail: string): void {
-  mutateUser(userId, (state) => {
+async function audit(userId: string, type: string, detail: string): Promise<void> {
+  await mutateUser(userId, (state) => {
     state.audit.unshift({ id: randomUUID(), userId, type, detail, at: nowIso() });
     state.audit = state.audit.slice(0, 500);
   });
 }
 
-function pushAlert(
+async function pushAlert(
   userId: string,
   level: "info" | "warning" | "critical",
   message: string,
   context?: Record<string, unknown>,
-): void {
+): Promise<void> {
   const at = nowIso();
-  mutateUser(userId, (state) => {
+  await mutateUser(userId, (state) => {
     state.sre.alerts.unshift({
       id: randomUUID(),
       at,
@@ -327,6 +391,49 @@ function pushAlert(
     at,
     ...(context ? { context } : {}),
   });
+}
+
+function isSourceAuthFailure(error: unknown): boolean {
+  const status =
+    error && typeof error === "object" && "status" in error
+      ? Number((error as { status?: unknown }).status)
+      : NaN;
+  if (Number.isFinite(status) && (status === 401 || status === 403)) {
+    return true;
+  }
+  const message =
+    error instanceof Error
+      ? error.message.toLowerCase()
+      : typeof error === "string"
+        ? error.toLowerCase()
+        : "";
+  return (
+    message.includes("bad credentials") ||
+    message.includes("invalid credentials") ||
+    message.includes("invalid token") ||
+    message.includes("expired token") ||
+    message.includes("unauthorized") ||
+    message.includes("forbidden")
+  );
+}
+
+async function markSourceAuthFailed(userId: string, source: SourceConfig, message: string): Promise<void> {
+  const now = nowIso();
+  await mutateUser(userId, (state) => {
+    const existing = state.sources.find((item) => item.id === source.id);
+    if (!existing) return;
+    existing.enabled = false;
+    existing.updatedAt = now;
+    const { accessToken: _accessToken, refreshToken: _refreshToken, ...safeConfig } = existing.config;
+    existing.config = {
+      ...safeConfig,
+      tokenHealth: "invalid",
+      lastFailureAt: now,
+      lastFailureReason: message,
+      reconnectRequired: true,
+    };
+  });
+  await audit(userId, "source.auth_failed", `${source.type}: reconnect required`);
 }
 
 function sanitize(text: string): string {
@@ -374,8 +481,6 @@ function sourceTypeFromActionName(name: string): SourceType | null {
   if (n.includes("notion_")) return "notion";
   if (n.includes("slack_")) return "slack";
   if (n.includes("gmail_")) return "gmail";
-  if (n.includes("zendesk_")) return "zendesk";
-  if (n.includes("jira_")) return "jira";
   if (n.includes("support_")) return "support";
   if (n.includes("crm_")) return "crm";
   if (n.includes("db_")) return "db";
@@ -411,7 +516,7 @@ function maxRetentionHoursForState(state: UserState): number {
   return values.length > 0 ? Math.max(...values) : 24 * 90;
 }
 
-function runComplianceRetentionSweep(userId: string, state: UserState): { pruned: number } {
+function pruneComplianceRetention(state: UserState): { pruned: number } {
   const now = Date.now();
   let pruned = 0;
 
@@ -447,18 +552,23 @@ function runComplianceRetentionSweep(userId: string, state: UserState): { pruned
   });
   pruned += beforeActions - state.actions.length;
 
-  if (pruned > 0) {
-    audit(userId, "compliance.retention_pruned", `records=${pruned}`);
-  }
   return { pruned };
 }
 
-function sourcePolicy(userId: string, source: SourceType): UserState["compliance"]["sourcePolicies"][SourceType] {
+async function runComplianceRetentionSweep(userId: string, state: UserState): Promise<{ pruned: number }> {
+  const result = pruneComplianceRetention(state);
+  if (result.pruned > 0) {
+    await audit(userId, "compliance.retention_pruned", `records=${result.pruned}`);
+  }
+  return result;
+}
+
+async function sourcePolicy(userId: string, source: SourceType): Promise<UserState["compliance"]["sourcePolicies"][SourceType]> {
   return mutateUser(userId, (state) => state.compliance.sourcePolicies[source]);
 }
 
-function updateSourceConfig(userId: string, sourceType: SourceType, patch: Record<string, unknown>): void {
-  mutateUser(userId, (state) => {
+async function updateSourceConfig(userId: string, sourceType: SourceType, patch: Record<string, unknown>): Promise<void> {
+  await mutateUser(userId, (state) => {
     const source = state.sources.find((item) => item.type === sourceType);
     if (!source) return;
     source.config = {
@@ -469,23 +579,22 @@ function updateSourceConfig(userId: string, sourceType: SourceType, patch: Recor
   });
 }
 
-export function listSources(userId: string): SourceConfig[] {
+export async function listSources(userId: string): Promise<SourceConfig[]> {
   return mutateUser(userId, (state) => state.sources);
 }
 
-export function upsertSource(userId: string, input: {
+export async function upsertSource(userId: string, input: {
   type: SourceType;
   enabled?: boolean;
   config?: Record<string, unknown>;
-}): SourceConfig {
-  return mutateUser(userId, (state) => {
+}): Promise<SourceConfig> {
+  const source = await mutateUser(userId, (state) => {
     const existing = state.sources.find((item) => item.type === input.type);
     const updatedAt = nowIso();
     if (existing) {
       existing.enabled = input.enabled ?? existing.enabled;
       existing.updatedAt = updatedAt;
       existing.config = { ...existing.config, ...(input.config ?? {}) };
-      audit(userId, "source.updated", `${input.type} enabled=${String(existing.enabled)}`);
       if (existing.enabled && !runtimeBootstrappedUsers.has(userId)) {
         runtimeBootstrappedUsers.add(userId);
       }
@@ -501,73 +610,103 @@ export function upsertSource(userId: string, input: {
       config: input.config ?? {},
     };
     state.sources.push(created);
-    audit(userId, "source.created", `${input.type} enabled=${String(created.enabled)}`);
     if (created.enabled && !runtimeBootstrappedUsers.has(userId)) {
       runtimeBootstrappedUsers.add(userId);
     }
     return created;
   });
+  await audit(userId, source.createdAt === source.updatedAt ? "source.created" : "source.updated", `${input.type} enabled=${String(source.enabled)}`);
+  return source;
 }
 
 async function syncOneSource(userId: string, source: SourceConfig): Promise<number> {
   if (!source.enabled) return 0;
-  const needsOAuthToken =
-    source.type === "github"
-    || source.type === "notion"
-    || source.type === "slack"
-    || source.type === "gmail"
-    || source.type === "zendesk"
-    || source.type === "jira";
-  const accessToken = typeof source.config.accessToken === "string" ? source.config.accessToken : undefined;
-  if (needsOAuthToken && (!accessToken || accessToken.trim().length === 0)) {
-    audit(userId, "sync.skipped", `${source.type} skipped (missing access token)`);
-    return 0;
+  if (source.type === "github" || source.type === "notion") {
+    const accessToken = typeof source.config.accessToken === "string" ? source.config.accessToken : "";
+    if (!accessToken) {
+      await audit(userId, "sync.skipped", `${source.type} missing access token`);
+      return 0;
+    }
+    const result = await ConnectorManager.triggerSync(
+      userId,
+      source.type as ConnectorType,
+      accessToken,
+      undefined,
+      undefined,
+      source.config,
+    );
+    return result.extractedCount ?? 0;
   }
-  if (
-    source.type === "github"
-    || source.type === "notion"
-    || source.type === "local_files"
-    || source.type === "slack"
-    || source.type === "gmail"
-    || source.type === "zendesk"
-    || source.type === "jira"
-  ) {
-    const result = await ConnectorManager.triggerSync(userId, source.type as ConnectorType, accessToken);
+  if (source.type === "local_files") {
+    const result = await ConnectorManager.triggerSync(userId, source.type as ConnectorType);
     return result.extractedCount ?? 0;
   }
   // External enterprise sources ingest via push API/webhooks into memory; keep as 0 pull count.
   return 0;
 }
 
-export async function syncAllSources(userId: string): Promise<{ syncedSources: number; extractedCount: number }> {
-  enforceSourceEventRetention(userId);
-  const sources = listSources(userId).filter((item) => item.enabled);
+export async function syncAllSources(userId: string): Promise<{
+  syncedSources: number;
+  extractedCount: number;
+  failedSources: number;
+}> {
+  await enforceSourceEventRetention(userId);
+  const sources = (await listSources(userId))
+    .filter((item) => item.enabled)
+    .sort((a, b) => {
+      const aIsDefault = a.type === DEFAULT_MEMORY_PIPELINE_CONNECTOR;
+      const bIsDefault = b.type === DEFAULT_MEMORY_PIPELINE_CONNECTOR;
+      if (aIsDefault === bIsDefault) return 0;
+      return aIsDefault ? -1 : 1;
+    });
   let syncedSources = 0;
   let extractedCount = 0;
+  let failedSources = 0;
   for (const source of sources) {
-    let count = 0;
-    if (source.type === "slack") {
-      count = await syncSlackSource(userId, source);
-    } else if (source.type === "gmail") {
-      count = await syncGmailSource(userId, source);
-    } else if (source.type === "support") {
-      count = await syncPullSource(userId, source, "support");
-    } else if (source.type === "crm") {
-      count = await syncPullSource(userId, source, "crm");
-    } else if (source.type === "db") {
-      count = await syncPullSource(userId, source, "db");
-    } else {
-      count = await syncOneSource(userId, source);
+    try {
+      let count = 0;
+      if (source.type === "slack") {
+        count = await syncSlackSource(userId, source);
+      } else if (source.type === "gmail") {
+        count = await syncGmailSource(userId, source);
+      } else if (source.type === "support") {
+        count = await syncPullSource(userId, source, "support");
+      } else if (source.type === "crm") {
+        count = await syncPullSource(userId, source, "crm");
+      } else if (source.type === "db") {
+        count = await syncPullSource(userId, source, "db");
+      } else {
+        count = await syncOneSource(userId, source);
+      }
+      extractedCount += count;
+    } catch (error) {
+      failedSources += 1;
+      const message = error instanceof Error ? error.message : "source_sync_failed";
+      if (isSourceAuthFailure(error)) {
+        await markSourceAuthFailed(userId, source, message);
+        await pushAlert(userId, "warning", "Source reconnect required", {
+          sourceType: source.type,
+          sourceId: source.id,
+          error: message,
+        });
+        await audit(userId, "sync.auth_failed", `${source.type}:${message}`);
+      } else {
+        await pushAlert(userId, "warning", "Source sync failed", {
+          sourceType: source.type,
+          sourceId: source.id,
+          error: message,
+        });
+        await audit(userId, "sync.failed", `${source.type}:${message}`);
+      }
     }
     syncedSources += 1;
-    extractedCount += count;
   }
-  audit(userId, "sync.completed", `sources=${syncedSources} extracted=${extractedCount}`);
-  return { syncedSources, extractedCount };
+  await audit(userId, "sync.completed", `sources=${syncedSources} extracted=${extractedCount} failed=${failedSources}`);
+  return { syncedSources, extractedCount, failedSources };
 }
 
-function ensureScope(userId: string, scope: string): void {
-  const hasScope = mutateUser(userId, (state) => {
+async function ensureScope(userId: string, scope: string): Promise<void> {
+  const hasScope = await mutateUser(userId, (state) => {
     if (state.roles.length === 0) {
       state.roles.push({ userId, role: "owner", scopes: ["*"] });
     }
@@ -581,7 +720,7 @@ function ensureScope(userId: string, scope: string): void {
 }
 
 async function ingestExternalText(userId: string, source: SourceType, content: string): Promise<number> {
-  const policy = sourcePolicy(userId, source);
+  const policy = await sourcePolicy(userId, source);
   const normalized = policy.redactPII ? sanitizeStrictPII(content) : content;
   const result = await runIngestFlowLangGraph({
     userId,
@@ -591,8 +730,8 @@ async function ingestExternalText(userId: string, source: SourceType, content: s
   return result.acceptedMemories.length;
 }
 
-function enforceSourceEventRetention(userId: string): void {
-  mutateUser(userId, (state) => {
+async function enforceSourceEventRetention(userId: string): Promise<void> {
+  await mutateUser(userId, (state) => {
     const now = Date.now();
     state.sourceEvents = state.sourceEvents.filter((event) => {
       const policy = state.compliance.sourcePolicies[event.sourceType];
@@ -636,7 +775,7 @@ async function syncSlackSource(userId: string, source: SourceConfig): Promise<nu
     }
     accepted += await ingestExternalText(userId, "slack", text.slice(0, 4000));
   }
-  updateSourceConfig(userId, "slack", {
+  await updateSourceConfig(userId, "slack", {
     lastMessageTs: maxTs || lastMessageTs || null,
     cursor: payload.response_metadata?.next_cursor ?? "",
     lastSyncedAt: nowIso(),
@@ -665,7 +804,7 @@ async function syncGmailSource(userId: string, source: SourceConfig): Promise<nu
     const refreshed = await refreshGoogleAccessToken(refreshToken);
     if (refreshed) {
       accessToken = refreshed;
-      updateSourceConfig(userId, "gmail", { accessToken: refreshed, lastTokenRefreshAt: nowIso() });
+      await updateSourceConfig(userId, "gmail", { accessToken: refreshed, lastTokenRefreshAt: nowIso() });
     }
   }
   if (!accessToken) return 0;
@@ -691,7 +830,7 @@ async function syncGmailSource(userId: string, source: SourceConfig): Promise<nu
       if (!refreshed) throw error;
       accessToken = refreshed;
       auth.setCredentials({ access_token: accessToken });
-      updateSourceConfig(userId, "gmail", { accessToken: refreshed, lastTokenRefreshAt: nowIso() });
+      await updateSourceConfig(userId, "gmail", { accessToken: refreshed, lastTokenRefreshAt: nowIso() });
       list = await gmail.users.messages.list({
         userId: "me",
         maxResults: 25,
@@ -727,7 +866,7 @@ async function syncGmailSource(userId: string, source: SourceConfig): Promise<nu
     if (!snippet.trim()) continue;
     accepted += await ingestExternalText(userId, "gmail", text.slice(0, 4000));
   }
-  updateSourceConfig(userId, "gmail", {
+  await updateSourceConfig(userId, "gmail", {
     lastCheckpointEpochMs: newestEpochMs || checkpointEpochMs || 0,
     lastMessageId: newestMessageId || checkpointMessageId || null,
     lastSyncedAt: nowIso(),
@@ -862,7 +1001,7 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
     accepted += await ingestExternalText(userId, sourceType, JSON.stringify(item).slice(0, 5000));
   }
 
-  updateSourceConfig(userId, sourceType, {
+  await updateSourceConfig(userId, sourceType, {
     cursor: nextCursor,
     lastCheckpointEpochMs: maxCheckpointEpochMs,
     recentItemHashes: [...nextHashes, ...recentHashes].slice(0, 400),
@@ -874,8 +1013,8 @@ async function syncPullSource(userId: string, source: SourceConfig, sourceType: 
   return accepted;
 }
 
-export function enqueueSourceEvent(userId: string, sourceType: SourceType, payload: Record<string, unknown>): { id: string } {
-  return mutateUser(userId, (state) => {
+export async function enqueueSourceEvent(userId: string, sourceType: SourceType, payload: Record<string, unknown>): Promise<{ id: string }> {
+  const result = await mutateUser(userId, (state) => {
     const event = {
       id: randomUUID(),
       sourceType,
@@ -888,14 +1027,15 @@ export function enqueueSourceEvent(userId: string, sourceType: SourceType, paylo
     };
     state.sourceEvents.unshift(event);
     state.sourceEvents = state.sourceEvents.slice(0, 1000);
-    audit(userId, "source_event.enqueued", `${sourceType}`);
     return { id: event.id };
   });
+  await audit(userId, "source_event.enqueued", `${sourceType}`);
+  return result;
 }
 
 export async function processQueuedSourceEvents(userId: string, sourceType?: SourceType): Promise<number> {
   const now = new Date();
-  const pending = mutateUser(userId, (state) =>
+  const pending = await mutateUser(userId, (state) =>
     state.sourceEvents
       .filter((entry) => {
         if (entry.status !== "pending") return false;
@@ -911,7 +1051,7 @@ export async function processQueuedSourceEvents(userId: string, sourceType?: Sou
       const content = JSON.stringify(event.payload);
       const count = await ingestExternalText(userId, event.sourceType, content.slice(0, 5000));
       accepted += count;
-      mutateUser(userId, (state) => {
+      await mutateUser(userId, (state) => {
         const target = state.sourceEvents.find((entry) => entry.id === event.id);
         if (target) {
           target.status = "processed";
@@ -920,7 +1060,7 @@ export async function processQueuedSourceEvents(userId: string, sourceType?: Sou
         }
       });
     } catch (error) {
-      mutateUser(userId, (state) => {
+      await mutateUser(userId, (state) => {
         const target = state.sourceEvents.find((entry) => entry.id === event.id);
         if (!target) return;
         target.attempts += 1;
@@ -938,7 +1078,7 @@ export async function processQueuedSourceEvents(userId: string, sourceType?: Sou
           target.nextAttemptAt = undefined;
         }
       });
-      pushAlert(userId, "warning", "Source event processing failed", {
+      await pushAlert(userId, "warning", "Source event processing failed", {
         sourceType: event.sourceType,
         eventId: event.id,
         error: error instanceof Error ? error.message : "source_event_failed",
@@ -1134,16 +1274,16 @@ export async function rebuildGraph(userId: string): Promise<{ nodes: number; edg
   const nodeList = Array.from(nodes.values());
   const edgeList = Array.from(edges.values());
 
-  mutateUser(userId, (state) => {
+  await mutateUser(userId, (state) => {
     state.graph.nodes = nodeList;
     state.graph.edges = edgeList;
     state.graph.updatedAt = nowIso();
   });
-  audit(userId, "graph.rebuilt", `nodes=${nodeList.length} edges=${edgeList.length}`);
+  await audit(userId, "graph.rebuilt", `nodes=${nodeList.length} edges=${edgeList.length}`);
   return { nodes: nodeList.length, edges: edgeList.length };
 }
 
-export function getGraph(userId: string): {
+export async function getGraph(userId: string): Promise<{
   nodes: GraphNode[];
   edges: GraphEdge[];
   updatedAt: string | null;
@@ -1153,7 +1293,7 @@ export function getGraph(userId: string): {
     avgNodeConfidence: number;
     avgEdgeConfidence: number;
   };
-} {
+}> {
   return mutateUser(userId, (state) => {
     const nodeTypes: Record<GraphNode["type"], number> = {
       person: 0,
@@ -1207,8 +1347,8 @@ export function getGraph(userId: string): {
   });
 }
 
-export function compileSkillsV2(userId: string): { skills: CompiledSkill[]; updatedAt: string } {
-  return mutateUser(userId, (state) => {
+export async function compileSkillsV2(userId: string): Promise<{ skills: CompiledSkill[]; updatedAt: string }> {
+  const result = await mutateUser(userId, (state) => {
     const incomingEdgesByNode = new Map<string, GraphEdge[]>();
     for (const edge of state.graph.edges) {
       const list = incomingEdgesByNode.get(edge.to) ?? [];
@@ -1298,12 +1438,13 @@ export function compileSkillsV2(userId: string): { skills: CompiledSkill[]; upda
             "includes provenance references in action report",
           ],
         };
-      });
+    });
     state.skills.items = skills;
     state.skills.updatedAt = nowIso();
-    audit(userId, "skills.compiled", `skills=${skills.length}`);
     return { skills, updatedAt: state.skills.updatedAt ?? nowIso() };
   });
+  await audit(userId, "skills.compiled", `skills=${result.skills.length}`);
+  return result;
 }
 
 function inferRisk(name: string, payload: Record<string, unknown>): "low" | "medium" | "high" {
@@ -1354,7 +1495,7 @@ async function executeActionExternally(userId: string, action: ActionRequest): P
       return null;
     }
   }
-  function sourceConfig(type: SourceType): Record<string, unknown> | null {
+  async function sourceConfig(type: SourceType): Promise<Record<string, unknown> | null> {
     return mutateUser(userId, (state) => {
       const source = state.sources.find((entry) => entry.type === type && entry.enabled);
       if (!source || !source.config || typeof source.config !== "object") return null;
@@ -1526,7 +1667,7 @@ async function executeActionExternally(userId: string, action: ActionRequest): P
   }
 
   if (actionName.includes("support_create_ticket")) {
-    const source = sourceConfig("support");
+    const source = await sourceConfig("support");
     const apiUrl = typeof source?.apiUrl === "string" ? source.apiUrl : "";
     const bearerToken = typeof source?.bearerToken === "string" ? source.bearerToken : "";
     const title = typeof action.payload.title === "string" ? action.payload.title : "";
@@ -1559,7 +1700,7 @@ async function executeActionExternally(userId: string, action: ActionRequest): P
   }
 
   if (actionName.includes("crm_upsert_contact")) {
-    const source = sourceConfig("crm");
+    const source = await sourceConfig("crm");
     const apiUrl = typeof source?.apiUrl === "string" ? source.apiUrl : "";
     const bearerToken = typeof source?.bearerToken === "string" ? source.bearerToken : "";
     const email = typeof action.payload.email === "string" ? action.payload.email : "";
@@ -1586,7 +1727,7 @@ async function executeActionExternally(userId: string, action: ActionRequest): P
   }
 
   if (actionName.includes("db_append_record")) {
-    const source = sourceConfig("db");
+    const source = await sourceConfig("db");
     const apiUrl = typeof source?.apiUrl === "string" ? source.apiUrl : "";
     const apiKey = typeof source?.apiKey === "string" ? source.apiKey : "";
     if (!apiUrl) {
@@ -1617,18 +1758,20 @@ async function executeActionExternally(userId: string, action: ActionRequest): P
   };
 }
 
-export function requestAction(userId: string, name: string, payload: Record<string, unknown>): ActionRequest {
-  ensureScope(userId, "actions.execute");
+export async function requestAction(userId: string, name: string, payload: Record<string, unknown>): Promise<ActionRequest> {
+  await ensureScope(userId, "actions.execute");
   const source = sourceTypeFromActionName(name);
   const complianceBlockReason = source
-    ? mutateUser(userId, (state) => {
+    ? await mutateUser(userId, (state) => {
       const policy = state.compliance.sourcePolicies[source];
       if (!policy.redactPII) return null;
       if (!payloadHasSensitivePII(payload)) return null;
       return `Compliance block: PII-like payload detected for source=${source} with redactPII=true`;
     })
     : null;
-  const action = mutateUser(userId, (state) => {
+  let auditType = "";
+  let auditDetail = "";
+  const action = await mutateUser(userId, (state) => {
     const action: ActionRequest = {
       id: randomUUID(),
       userId,
@@ -1650,7 +1793,8 @@ export function requestAction(userId: string, name: string, payload: Record<stri
       action.status = "rejected";
       action.executionResult = { ok: false, detail: complianceBlockReason };
       action.updatedAt = nowIso();
-      audit(userId, "action.compliance_blocked", `${name} reason=${complianceBlockReason}`);
+      auditType = "action.compliance_blocked";
+      auditDetail = `${name} reason=${complianceBlockReason}`;
       state.actions.unshift(action);
       state.actions = state.actions.slice(0, 200);
       return action;
@@ -1666,25 +1810,32 @@ export function requestAction(userId: string, name: string, payload: Record<stri
         decision: "approve",
         at: nowIso(),
       });
-      audit(userId, "action.auto_approved", `${name} risk=${action.risk} role=${role}`);
+      auditType = "action.auto_approved";
+      auditDetail = `${name} risk=${action.risk} role=${role}`;
     } else {
       action.status = "pending";
-      audit(userId, "action.pending_approval", `${name} risk=${action.risk} role=${role}`);
+      auditType = "action.pending_approval";
+      auditDetail = `${name} risk=${action.risk} role=${role}`;
     }
     state.actions.unshift(action);
     state.actions = state.actions.slice(0, 200);
     return action;
   });
+  if (auditType) {
+    await audit(userId, auditType, auditDetail);
+  }
   if (action.status === "approved") {
     void executeApprovedAction(userId, action.id);
   }
   return action;
 }
 
-export function reviewAction(userId: string, actionId: string, decision: "approve" | "reject"): ActionRequest | null {
-  ensureScope(userId, "actions.approve");
-  const reviewerRole = mutateUser(userId, (state) => getRoleForUser(state, userId));
-  const reviewed = mutateUser(userId, (state) => {
+export async function reviewAction(userId: string, actionId: string, decision: "approve" | "reject"): Promise<ActionRequest | null> {
+  await ensureScope(userId, "actions.approve");
+  const reviewerRole = await mutateUser(userId, (state) => getRoleForUser(state, userId));
+  let auditType = "";
+  let auditDetail = "";
+  const reviewed = await mutateUser(userId, (state) => {
     const action = state.actions.find((item) => item.id === actionId);
     if (!action) return null;
     action.approvals = action.approvals ?? [];
@@ -1706,17 +1857,23 @@ export function reviewAction(userId: string, actionId: string, decision: "approv
       action.status = fullyApproved ? "approved" : "pending";
       action.updatedAt = nowIso();
       if (fullyApproved) {
-        audit(userId, "action.approved", `${action.name} risk=${action.risk}`);
+        auditType = "action.approved";
+        auditDetail = `${action.name} risk=${action.risk}`;
       } else {
-        audit(userId, "action.approval_partial", `${action.name} role=${reviewerRole}`);
+        auditType = "action.approval_partial";
+        auditDetail = `${action.name} role=${reviewerRole}`;
       }
       return action;
     }
     action.status = "rejected";
     action.updatedAt = nowIso();
-    audit(userId, "action.rejected", `${action.name} risk=${action.risk}`);
+    auditType = "action.rejected";
+    auditDetail = `${action.name} risk=${action.risk}`;
     return action;
   });
+  if (auditType) {
+    await audit(userId, auditType, auditDetail);
+  }
   if (reviewed && reviewed.status === "approved") {
     void executeApprovedAction(userId, reviewed.id);
   }
@@ -1724,10 +1881,10 @@ export function reviewAction(userId: string, actionId: string, decision: "approv
 }
 
 export async function executeApprovedAction(userId: string, actionId: string): Promise<ActionRequest | null> {
-  const action = mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
+  const action = await mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
   if (!action) return null;
   if (action.status !== "approved") return action;
-  const blockedByExecutionCompliance = mutateUser(userId, (state) => {
+  const blockedByExecutionCompliance = await mutateUser(userId, (state) => {
     const target = state.actions.find((entry) => entry.id === actionId);
     if (!target) return null;
     const source = sourceTypeFromAction(target);
@@ -1744,15 +1901,15 @@ export async function executeApprovedAction(userId: string, actionId: string): P
     return target.executionResult.detail;
   });
   if (blockedByExecutionCompliance) {
-    audit(userId, "action.execution_blocked", `${action.name} reason=${blockedByExecutionCompliance}`);
-    pushAlert(userId, "warning", "Action execution blocked by PII compliance gate", {
+    await audit(userId, "action.execution_blocked", `${action.name} reason=${blockedByExecutionCompliance}`);
+    await pushAlert(userId, "warning", "Action execution blocked by PII compliance gate", {
       actionId,
       actionName: action.name,
       detail: blockedByExecutionCompliance,
     });
     return mutateUser(userId, (state) => state.actions.find((entry) => entry.id === actionId) ?? null);
   }
-  const blockedByRiskGate = mutateUser(userId, (state) => {
+  const blockedByRiskGate = await mutateUser(userId, (state) => {
     const target = state.actions.find((entry) => entry.id === actionId);
     if (!target) return null;
     if (target.risk !== "high") return null;
@@ -1770,8 +1927,8 @@ export async function executeApprovedAction(userId: string, actionId: string): P
     return target.executionResult.detail;
   });
   if (blockedByRiskGate) {
-    audit(userId, "action.execution_blocked", `${action.name} reason=${blockedByRiskGate}`);
-    pushAlert(userId, "warning", "Action execution blocked by compliance gate", {
+    await audit(userId, "action.execution_blocked", `${action.name} reason=${blockedByRiskGate}`);
+    await pushAlert(userId, "warning", "Action execution blocked by compliance gate", {
       actionId,
       actionName: action.name,
       detail: blockedByRiskGate,
@@ -1780,7 +1937,7 @@ export async function executeApprovedAction(userId: string, actionId: string): P
   }
   try {
     const result = await executeActionExternally(userId, action);
-    const next = mutateUser(userId, (state) => {
+    const next = await mutateUser(userId, (state) => {
       const target = state.actions.find((entry) => entry.id === actionId);
       if (!target) return null;
       target.executionResult = result;
@@ -1789,10 +1946,10 @@ export async function executeApprovedAction(userId: string, actionId: string): P
       return target;
     });
     if (result.ok) {
-      audit(userId, "action.executed", `${action.name} risk=${action.risk}`);
+      await audit(userId, "action.executed", `${action.name} risk=${action.risk}`);
     } else {
-      audit(userId, "action.execution_failed", `${action.name} reason=${result.detail}`);
-      pushAlert(userId, "warning", "Action runner failed", {
+      await audit(userId, "action.execution_failed", `${action.name} reason=${result.detail}`);
+      await pushAlert(userId, "warning", "Action runner failed", {
         actionId,
         actionName: action.name,
         detail: result.detail,
@@ -1801,7 +1958,7 @@ export async function executeApprovedAction(userId: string, actionId: string): P
     return next;
   } catch (error) {
     const detail = error instanceof Error ? error.message : "action_execution_failed";
-    const failed = mutateUser(userId, (state) => {
+    const failed = await mutateUser(userId, (state) => {
       const target = state.actions.find((entry) => entry.id === actionId);
       if (!target) return null;
       target.status = "failed";
@@ -1809,8 +1966,8 @@ export async function executeApprovedAction(userId: string, actionId: string): P
       target.executionResult = { ok: false, detail };
       return target;
     });
-    audit(userId, "action.execution_failed", `${action.name} reason=${detail}`);
-    pushAlert(userId, "critical", "Action execution crashed", {
+    await audit(userId, "action.execution_failed", `${action.name} reason=${detail}`);
+    await pushAlert(userId, "critical", "Action execution crashed", {
       actionId,
       actionName: action.name,
       detail,
@@ -1819,13 +1976,13 @@ export async function executeApprovedAction(userId: string, actionId: string): P
   }
 }
 
-export function setRoleAssignment(
+export async function setRoleAssignment(
   userId: string,
   targetUserId: string,
   role: "owner" | "admin" | "operator" | "viewer",
   scopes: string[],
-): { ok: boolean } {
-  ensureScope(userId, "governance.roles.write");
+): Promise<{ ok: boolean }> {
+  await ensureScope(userId, "governance.roles.write");
   return mutateUser(userId, (state) => {
     const current = state.roles.find((entry) => entry.userId === targetUserId);
     if (current) {
@@ -1838,18 +1995,18 @@ export function setRoleAssignment(
   });
 }
 
-export function getGovernancePolicy(userId: string): UserState["governance"] {
+export async function getGovernancePolicy(userId: string): Promise<UserState["governance"]> {
   return mutateUser(userId, (state) => state.governance);
 }
 
-export function updateGovernancePolicy(
+export async function updateGovernancePolicy(
   userId: string,
   patch: Partial<Record<"low" | "medium" | "high", {
     autoExecute?: boolean;
     requiredApprovals?: Array<"owner" | "admin" | "operator">;
   }>>,
-): UserState["governance"] {
-  ensureScope(userId, "governance.policy.write");
+): Promise<UserState["governance"]> {
+  await ensureScope(userId, "governance.policy.write");
   return mutateUser(userId, (state) => {
     for (const risk of ["low", "medium", "high"] as const) {
       const next = patch[risk];
@@ -1867,16 +2024,16 @@ export function updateGovernancePolicy(
   });
 }
 
-export function listActions(userId: string): ActionRequest[] {
+export async function listActions(userId: string): Promise<ActionRequest[]> {
   return mutateUser(userId, (state) => state.actions);
 }
 
-export function listAudit(userId: string): AuditEvent[] {
+export async function listAudit(userId: string): Promise<AuditEvent[]> {
   return mutateUser(userId, (state) => state.audit.slice(0, 200));
 }
 
-export function enqueueJob(userId: string, type: QueueJob["type"]): QueueJob {
-  const job = mutateUser(userId, (state) => {
+export async function enqueueJob(userId: string, type: QueueJob["type"]): Promise<QueueJob> {
+  const job = await mutateUser(userId, (state) => {
     const job: QueueJob = {
       id: randomUUID(),
       userId,
@@ -1897,21 +2054,21 @@ function hasQueuedOrRunning(state: UserState, type: QueueJob["type"]): boolean {
   return state.queue.some((job) => job.type === type && (job.status === "queued" || job.status === "running"));
 }
 
-function enqueueJobIfMissing(userId: string, type: QueueJob["type"]): void {
-  const shouldEnqueue = mutateUser(userId, (state) => !hasQueuedOrRunning(state, type));
+async function enqueueJobIfMissing(userId: string, type: QueueJob["type"]): Promise<void> {
+  const shouldEnqueue = await mutateUser(userId, (state) => !hasQueuedOrRunning(state, type));
   if (shouldEnqueue) {
-    enqueueJob(userId, type);
+    await enqueueJob(userId, type);
   }
 }
 
-function seedContinuousPipeline(userId: string): void {
-  enqueueJobIfMissing(userId, "sync_all_sources");
-  enqueueJobIfMissing(userId, "rebuild_graph");
-  enqueueJobIfMissing(userId, "compile_skills");
+async function seedContinuousPipeline(userId: string): Promise<void> {
+  await enqueueJobIfMissing(userId, "sync_all_sources");
+  await enqueueJobIfMissing(userId, "rebuild_graph");
+  await enqueueJobIfMissing(userId, "compile_skills");
 }
 
-async function runJob(userId: string, job: QueueJob): Promise<void> {
-  mutateUser(userId, (state) => {
+async function runJob(userId: string, job: QueueJob): Promise<boolean> {
+  await mutateUser(userId, (state) => {
     const target = state.queue.find((entry) => entry.id === job.id);
     if (target) {
       target.status = "running";
@@ -1924,17 +2081,18 @@ async function runJob(userId: string, job: QueueJob): Promise<void> {
     } else if (job.type === "rebuild_graph") {
       await rebuildGraph(userId);
     } else if (job.type === "compile_skills") {
-      compileSkillsV2(userId);
+      await compileSkillsV2(userId);
     }
-    mutateUser(userId, (state) => {
+    await mutateUser(userId, (state) => {
       const target = state.queue.find((entry) => entry.id === job.id);
       if (target) {
         target.status = "completed";
         target.updatedAt = nowIso();
       }
     });
+    return true;
   } catch (error) {
-    mutateUser(userId, (state) => {
+    await mutateUser(userId, (state) => {
       const target = state.queue.find((entry) => entry.id === job.id);
       if (target) {
         target.status = "failed";
@@ -1943,19 +2101,21 @@ async function runJob(userId: string, job: QueueJob): Promise<void> {
       }
       state.scheduler.lastError = error instanceof Error ? error.message : "job_failed";
     });
-    pushAlert(userId, "critical", "Queue job failed", {
+    await pushAlert(userId, "critical", "Queue job failed", {
       jobId: job.id,
       type: job.type,
       error: error instanceof Error ? error.message : "job_failed",
     });
     await failQueueJob(userId, job.id, error instanceof Error ? error.message : "job_failed");
+    return false;
   }
 }
 
 export async function processQueueOnce(userId: string): Promise<{ processed: number }> {
-  mutateUser(userId, (state) => {
-    runComplianceRetentionSweep(userId, state);
-  });
+  const retention = await mutateUser(userId, (state) => pruneComplianceRetention(state));
+  if (retention.pruned > 0) {
+    await audit(userId, "compliance.retention_pruned", `records=${retention.pruned}`);
+  }
   const leased = await getQueueBackend().lease(userId, `worker:${process.pid}`, 5);
   if (leased.length > 0) {
     for (const job of leased) {
@@ -1967,59 +2127,61 @@ export async function processQueueOnce(userId: string): Promise<{ processed: num
         createdAt: job.createdAt,
         updatedAt: nowIso(),
       };
-      await runJob(userId, mapped);
-      await ackQueueJob(userId, job.id);
+      const ok = await runJob(userId, mapped);
+      if (ok) {
+        await ackQueueJob(userId, job.id);
+      }
     }
-    mutateUser(userId, (state) => {
+    await mutateUser(userId, (state) => {
       state.scheduler.lastTickAt = nowIso();
     });
     return { processed: leased.length };
   }
-  const queued = mutateUser(userId, (state) => state.queue.filter((job) => job.status === "queued").slice(0, 3));
+  const queued = await mutateUser(userId, (state) => state.queue.filter((job) => job.status === "queued").slice(0, 3));
   for (const job of queued) {
     await runJob(userId, job);
   }
-  mutateUser(userId, (state) => {
+  await mutateUser(userId, (state) => {
     state.scheduler.lastTickAt = nowIso();
   });
   return { processed: queued.length };
 }
 
-export function startScheduler(userId: string, intervalSeconds: number): { enabled: boolean; intervalSeconds: number } {
+export async function startScheduler(userId: string, intervalSeconds: number): Promise<{ enabled: boolean; intervalSeconds: number }> {
   const safeInterval = Math.max(30, Math.min(3600, Math.floor(intervalSeconds)));
   const existing = schedulerTimers.get(userId);
   if (existing) clearInterval(existing);
-  seedContinuousPipeline(userId);
+  await seedContinuousPipeline(userId);
   void processQueueOnce(userId);
   const timer = setInterval(() => {
-    seedContinuousPipeline(userId);
+    void seedContinuousPipeline(userId);
     void processQueueOnce(userId);
   }, safeInterval * 1000);
   schedulerTimers.set(userId, timer);
-  mutateUser(userId, (state) => {
+  await mutateUser(userId, (state) => {
     state.scheduler.enabled = true;
     state.scheduler.intervalSeconds = safeInterval;
   });
-  pushAlert(userId, "info", "Scheduler started", { intervalSeconds: safeInterval });
-  audit(userId, "scheduler.started", `intervalSeconds=${safeInterval}`);
+  await pushAlert(userId, "info", "Scheduler started", { intervalSeconds: safeInterval });
+  await audit(userId, "scheduler.started", `intervalSeconds=${safeInterval}`);
   return { enabled: true, intervalSeconds: safeInterval };
 }
 
-export function stopScheduler(userId: string): { enabled: boolean } {
+export async function stopScheduler(userId: string): Promise<{ enabled: boolean }> {
   const existing = schedulerTimers.get(userId);
   if (existing) {
     clearInterval(existing);
     schedulerTimers.delete(userId);
   }
-  mutateUser(userId, (state) => {
+  await mutateUser(userId, (state) => {
     state.scheduler.enabled = false;
   });
-  pushAlert(userId, "warning", "Scheduler stopped");
-  audit(userId, "scheduler.stopped", "manual stop");
+  await pushAlert(userId, "warning", "Scheduler stopped");
+  await audit(userId, "scheduler.stopped", "manual stop");
   return { enabled: false };
 }
 
-export function getStatus(userId: string): {
+export async function getStatus(userId: string): Promise<{
   sources: SourceConfig[];
   scheduler: UserState["scheduler"];
   queue: { queued: number; running: number; failed: number };
@@ -2028,7 +2190,7 @@ export function getStatus(userId: string): {
   approvals: { pending: number };
   sourceEvents: { pending: number; failed: number; deadLetter: number };
   sre: { alerts: number; workers: number };
-} {
+}> {
   return mutateUser(userId, (state) => ({
     sources: state.sources,
     scheduler: state.scheduler,
@@ -2061,11 +2223,11 @@ export function getStatus(userId: string): {
   }));
 }
 
-export function listAlerts(userId: string): UserState["sre"]["alerts"] {
+export async function listAlerts(userId: string): Promise<UserState["sre"]["alerts"]> {
   return mutateUser(userId, (state) => state.sre.alerts.slice(0, 100));
 }
 
-export function registerWorker(userId: string, name: string): { id: string; name: string } {
+export async function registerWorker(userId: string, name: string): Promise<{ id: string; name: string }> {
   return mutateUser(userId, (state) => {
     const existing = state.sre.workers.find((worker) => worker.name === name);
     if (existing) {
@@ -2086,15 +2248,15 @@ export function registerWorker(userId: string, name: string): { id: string; name
   });
 }
 
-export function workerHeartbeat(
+export async function workerHeartbeat(
   userId: string,
   workerId: string,
   status: "idle" | "running" | "error",
   error?: string,
-): { ok: boolean } {
+): Promise<{ ok: boolean }> {
   let alertWorkerName: string | null = null;
   let alertError: string | null = null;
-  const result = mutateUser(userId, (state) => {
+  const result = await mutateUser(userId, (state) => {
     const worker = state.sre.workers.find((entry) => entry.id === workerId);
     if (!worker) return { ok: false as const };
     worker.status = status;
@@ -2107,7 +2269,7 @@ export function workerHeartbeat(
     return { ok: true as const };
   });
   if (alertWorkerName && alertError) {
-    pushAlert(userId, "critical", "Worker reported error", {
+    await pushAlert(userId, "critical", "Worker reported error", {
       workerId,
       workerName: alertWorkerName,
       error: alertError,
@@ -2116,15 +2278,15 @@ export function workerHeartbeat(
   return result;
 }
 
-export function listWorkers(userId: string): UserState["sre"]["workers"] {
+export async function listWorkers(userId: string): Promise<UserState["sre"]["workers"]> {
   return mutateUser(userId, (state) => state.sre.workers);
 }
 
-export function simulateAction(
+export async function simulateAction(
   userId: string,
   name: string,
   payload: Record<string, unknown>,
-): {
+): Promise<{
   name: string;
   risk: "low" | "medium" | "high";
   requiredApprovals: Array<"owner" | "admin" | "operator">;
@@ -2132,8 +2294,8 @@ export function simulateAction(
   complianceBlocked: boolean;
   complianceBlockReason: string | null;
   autoExecutable: boolean;
-} {
-  ensureScope(userId, "actions.execute");
+}> {
+  await ensureScope(userId, "actions.execute");
   const source = sourceTypeFromActionName(name);
   return mutateUser(userId, (state) => {
     const risk = inferRisk(name, payload);
@@ -2165,9 +2327,9 @@ export function simulateAction(
   });
 }
 
-export function recoverFailedQueueJobs(userId: string): { recovered: number } {
-  ensureScope(userId, "governance.policy.write");
-  const recovered = mutateUser(userId, (state) => {
+export async function recoverFailedQueueJobs(userId: string): Promise<{ recovered: number }> {
+  await ensureScope(userId, "governance.policy.write");
+  const recovered = await mutateUser(userId, (state) => {
     let count = 0;
     for (const job of state.queue) {
       if (job.status !== "failed") continue;
@@ -2179,15 +2341,15 @@ export function recoverFailedQueueJobs(userId: string): { recovered: number } {
     return count;
   });
   if (recovered > 0) {
-    pushAlert(userId, "warning", "Recovered failed queue jobs", { recovered });
-    audit(userId, "sre.queue.recovered", `recovered=${recovered}`);
+    await pushAlert(userId, "warning", "Recovered failed queue jobs", { recovered });
+    await audit(userId, "sre.queue.recovered", `recovered=${recovered}`);
   }
   return { recovered };
 }
 
-export function backfillDeadLetterSourceEvents(userId: string): { requeued: number } {
-  ensureScope(userId, "governance.policy.write");
-  const requeued = mutateUser(userId, (state) => {
+export async function backfillDeadLetterSourceEvents(userId: string): Promise<{ requeued: number }> {
+  await ensureScope(userId, "governance.policy.write");
+  const requeued = await mutateUser(userId, (state) => {
     let count = 0;
     for (const event of state.sourceEvents) {
       if (event.status !== "dead_letter") continue;
@@ -2202,19 +2364,19 @@ export function backfillDeadLetterSourceEvents(userId: string): { requeued: numb
     return count;
   });
   if (requeued > 0) {
-    pushAlert(userId, "warning", "Backfilled dead-letter source events", { requeued });
-    audit(userId, "sre.source_events.backfilled", `requeued=${requeued}`);
+    await pushAlert(userId, "warning", "Backfilled dead-letter source events", { requeued });
+    await audit(userId, "sre.source_events.backfilled", `requeued=${requeued}`);
   }
   return { requeued };
 }
 
-export function getSreRunbook(userId: string): {
-  queueBackendMode: "file" | "redis";
+export async function getSreRunbook(userId: string): Promise<{
+  queueBackendMode: QueueBackendMode;
   steps: string[];
   warnings: string[];
-} {
-  const status = getStatus(userId);
-  const runtime = getRuntimeHealth();
+}> {
+  const status = await getStatus(userId);
+  const runtime = await getRuntimeHealth();
   const warnings: string[] = [];
   if (status.queue.failed > 0) warnings.push(`queue failed jobs=${status.queue.failed}`);
   if (status.sourceEvents.deadLetter > 0) warnings.push(`dead-letter events=${status.sourceEvents.deadLetter}`);
@@ -2228,9 +2390,7 @@ export function getSreRunbook(userId: string): {
     "Trigger worker run-once and verify queue failed count decreases.",
     "Review alerts and audit timeline for repeated failures.",
   ];
-  if (runtime.queueBackendMode === "file") {
-    steps.push("Switch COMPANY_BRAIN_QUEUE_BACKEND=redis in production for durable queue semantics.");
-  }
+  steps.push("Verify Prisma/Postgres queue tables are healthy before replaying failed jobs.");
 
   return {
     queueBackendMode: runtime.queueBackendMode,
@@ -2239,15 +2399,15 @@ export function getSreRunbook(userId: string): {
   };
 }
 
-export function getRuntimeHealth(): {
+export async function getRuntimeHealth(): Promise<{
   activeSchedulers: number;
   bootstrappedUsers: number;
   totalUsers: number;
   usersWithEnabledSources: number;
   staleWorkers: number;
-  queueBackendMode: "file" | "redis";
-} {
-  const store = readStore();
+  queueBackendMode: QueueBackendMode;
+}> {
+  const store = await snapshotPlatformStore();
   const states = Object.values(store.users);
   const now = Date.now();
   let staleWorkers = 0;
@@ -2274,11 +2434,12 @@ export function getRuntimeHealth(): {
   };
 }
 
-export function replayAudit(userId: string, from?: string, to?: string): {
+export async function replayAudit(userId: string, from?: string, to?: string): Promise<{
   events: AuditEvent[];
   summary: { total: number; byType: Record<string, number> };
-} {
-  const replayGuard = mutateUser(userId, (state) => {
+}> {
+  let consumedApprovalId = "";
+  const replayGuard = await mutateUser(userId, (state) => {
     const requiresApproval = Object.values(state.compliance.sourcePolicies).some((policy) => policy.requireReplayApproval);
     if (!requiresApproval) return { allowed: true, reason: "not_required" } as const;
 
@@ -2297,9 +2458,12 @@ export function replayAudit(userId: string, from?: string, to?: string): {
     const approval = state.auditReplayApprovals[approvedIdx];
     approval.usedAt = nowIso();
     approval.usedBy = userId;
-    audit(userId, "audit.replay.approval_consumed", `${approval.id}`);
+    consumedApprovalId = approval.id;
     return { allowed: true, reason: "approved" } as const;
   });
+  if (consumedApprovalId) {
+    await audit(userId, "audit.replay.approval_consumed", `${consumedApprovalId}`);
+  }
 
   if (!replayGuard.allowed) {
       return {
@@ -2328,7 +2492,7 @@ export function replayAudit(userId: string, from?: string, to?: string): {
   });
 }
 
-export function getExecutionEvidence(userId: string): {
+export async function getExecutionEvidence(userId: string): Promise<{
   generatedAt: string;
   actionSummary: {
     total: number;
@@ -2351,7 +2515,7 @@ export function getExecutionEvidence(userId: string): {
     updatedAt: string;
     executionDetail?: string;
   }>;
-} {
+}> {
   return mutateUser(userId, (state) => {
     const byType: Record<string, number> = {};
     for (const event of state.audit) {
@@ -2386,12 +2550,12 @@ export function getExecutionEvidence(userId: string): {
   });
 }
 
-export function requestAuditReplayApproval(
+export async function requestAuditReplayApproval(
   userId: string,
   from?: string,
   to?: string,
   note?: string,
-): { id: string; status: "pending" } {
+): Promise<{ id: string; status: "pending" }> {
   return mutateUser(userId, (state) => {
     const item = {
       id: randomUUID(),
@@ -2408,12 +2572,12 @@ export function requestAuditReplayApproval(
   });
 }
 
-export function reviewAuditReplayApproval(
+export async function reviewAuditReplayApproval(
   userId: string,
   approvalId: string,
   decision: "approve" | "reject",
-): { ok: boolean } {
-  ensureScope(userId, "governance.audit.replay.review");
+): Promise<{ ok: boolean }> {
+  await ensureScope(userId, "governance.audit.replay.review");
   return mutateUser(userId, (state) => {
     const item = state.auditReplayApprovals.find((entry) => entry.id === approvalId);
     if (!item) return { ok: false };
@@ -2424,19 +2588,19 @@ export function reviewAuditReplayApproval(
   });
 }
 
-export function listAuditReplayApprovals(userId: string): UserState["auditReplayApprovals"] {
+export async function listAuditReplayApprovals(userId: string): Promise<UserState["auditReplayApprovals"]> {
   return mutateUser(userId, (state) => state.auditReplayApprovals);
 }
 
-export function getCompliancePolicy(userId: string): UserState["compliance"] {
+export async function getCompliancePolicy(userId: string): Promise<UserState["compliance"]> {
   return mutateUser(userId, (state) => state.compliance);
 }
 
-export function updateCompliancePolicy(
+export async function updateCompliancePolicy(
   userId: string,
   patch: Partial<Record<SourceType, Partial<UserState["compliance"]["sourcePolicies"][SourceType]>>>,
-): UserState["compliance"] {
-  ensureScope(userId, "governance.compliance.write");
+): Promise<UserState["compliance"]> {
+  await ensureScope(userId, "governance.compliance.write");
   return mutateUser(userId, (state) => {
     for (const source of Object.keys(state.compliance.sourcePolicies) as SourceType[]) {
       const next = patch[source];
@@ -2462,13 +2626,13 @@ export function updateCompliancePolicy(
   });
 }
 
-export function runEvalHarness(userId: string): {
+export async function runEvalHarness(userId: string): Promise<{
   passed: number;
   failed: number;
   checks: Array<{ name: string; passed: boolean; detail: string }>;
-} {
-  const status = getStatus(userId);
-  const actions = listActions(userId);
+}> {
+  const status = await getStatus(userId);
+  const actions = await listActions(userId);
   const executedActions = actions.filter((action) => action.status === "executed").length;
   const pendingApprovals = actions.filter((action) => action.status === "pending").length;
   const configuredBusinessSources = status.sources.filter((source) =>
@@ -2520,12 +2684,12 @@ export function runEvalHarness(userId: string): {
   return { passed, failed: checks.length - passed, checks };
 }
 
-export function ensureCompanyBrainEvalBaseline(userId: string): {
+export async function ensureCompanyBrainEvalBaseline(userId: string): Promise<{
   sources: number;
   graphNodes: number;
   skills: number;
   schedulerEnabled: boolean;
-} {
+}> {
   return mutateUser(userId, (state) => {
     const now = nowIso();
     const ensureSource = (type: SourceType, config: Record<string, unknown>): void => {
@@ -2654,14 +2818,20 @@ export function ensureCompanyBrainEvalBaseline(userId: string): {
   });
 }
 
-export function bootstrapCompanyBrainRuntime(defaultIntervalSeconds = 300): {
+export async function bootstrapCompanyBrainRuntime(defaultIntervalSeconds = 300): Promise<{
   restoredSchedulers: number;
   totalUsers: number;
-} {
-  const schedulerEnabledRaw = process.env.COMPANY_BRAIN_SCHEDULER_ENABLED?.trim().toLowerCase();
-  const schedulerEnabled = schedulerEnabledRaw !== "false" && schedulerEnabledRaw !== "0";
+}> {
+  if (process.env.COMPANY_BRAIN_SCHEDULER_ENABLED === "false") {
+    const store = await snapshotPlatformStore();
+    return {
+      restoredSchedulers: 0,
+      totalUsers: Object.keys(store.users).length,
+    };
+  }
+
   const safeInterval = Math.max(30, Math.min(3600, Math.floor(defaultIntervalSeconds)));
-  const store = readStore();
+  const store = await snapshotPlatformStore();
   const userIds = Object.keys(store.users);
   let restoredSchedulers = 0;
 
@@ -2670,9 +2840,8 @@ export function bootstrapCompanyBrainRuntime(defaultIntervalSeconds = 300): {
     if (!state) continue;
     const hasEnabledSource = state.sources.some((source) => source.enabled);
     if (!hasEnabledSource) continue;
-    if (!schedulerEnabled) continue;
     const interval = state.scheduler.enabled ? state.scheduler.intervalSeconds : safeInterval;
-    startScheduler(userId, interval);
+    await startScheduler(userId, interval);
     runtimeBootstrappedUsers.add(userId);
     restoredSchedulers += 1;
   }

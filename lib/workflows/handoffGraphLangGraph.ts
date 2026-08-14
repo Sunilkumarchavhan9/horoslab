@@ -19,6 +19,15 @@ const HandoffGraphStateAnnotation = Annotation.Root({
 
 type HandoffGraphState = typeof HandoffGraphStateAnnotation.State;
 
+function pruneCheckpoint(
+  checkpoint: Record<string, unknown> | null,
+): Record<string, unknown> | null {
+  if (!checkpoint) return null;
+  const result = checkpoint.result;
+  if (!result || typeof result !== "object") return null;
+  return { result };
+}
+
 async function runPlannerNode(
   state: HandoffGraphState,
 ): Promise<Partial<HandoffGraphState>> {
@@ -48,7 +57,9 @@ export async function runHandoffFlowLangGraph(
 ): Promise<HandoffPlannerResult> {
   const stateAdapter = getWorkflowStateAdapter();
   const workflowKey = buildWorkflowKey(input);
-  const previousCheckpoint = await stateAdapter.loadCheckpoint({ key: workflowKey });
+  const previousCheckpoint = pruneCheckpoint(
+    await stateAdapter.loadCheckpoint({ key: workflowKey }),
+  );
 
   const result = await compiledHandoffGraph.invoke({
     input,
@@ -65,7 +76,6 @@ export async function runHandoffFlowLangGraph(
     state: {
       updatedAt: new Date().toISOString(),
       input,
-      previousCheckpoint,
       result: result.result,
     },
   });

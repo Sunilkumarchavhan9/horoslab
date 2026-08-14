@@ -2,15 +2,15 @@
 
 ## Positioning
 
-MemoryOS is **persistent company intelligence infrastructure** — not a chatbot, RAG wrapper, or generic AI dashboard.
+MemoryOS is **persistent company intelligence infrastructure** and the **Inheritance Runtime for AI-native companies** — not a chatbot, RAG wrapper, or generic AI control plane.
 
 It is:
 
 - organizational memory runtime
 - agent operating system for company knowledge
-- executable intelligence layer across GitHub, Notion, Jira, Slack, APIs, and repos
+- executable intelligence layer across GitHub, Notion, Jira, Slack, APIs, repos, and operational logs
 
-**One-line:** MemoryOS connects the tools companies already use, transforms scattered knowledge into structured memory (`memoryos.contract.v1`), and turns that memory into **executable intelligence** for developers and agents — with continuity, traceability, and governance.
+**One-line:** MemoryOS connects the tools companies already use, transforms scattered knowledge into structured memory (`memoryos.contract.v1`), and turns that memory into **executable intelligence** for developers and agents — with continuity, traceability, governance, and inheritance through MemoryIgnition.
 
 ## Five pillars (every console section maps here)
 
@@ -24,7 +24,7 @@ It is:
 
 Section mapping lives in `memoryos-frontend/lib/company-brain.ts` (`CONSOLE_SECTION_BRAIN`).
 
-## Developer Console — section audit
+## Mission Control — section audit
 
 | Section | Supports vision? | Tier |
 |---------|----------------|------|
@@ -40,31 +40,28 @@ Section mapping lives in `memoryos-frontend/lib/company-brain.ts` (`CONSOLE_SECT
 | Integrations & SDK | Wire agents and CI | Live |
 | Team / Billing / Settings / API Keys | Production operation | Live |
 
-## Continuity Lab
+## Core workspace
 
-**Product name:** Living Memory Workspace / Persistent Agent Workspace
+| Surface | Foundation |
+|---------|------------|
+| **Continuity Labs** | OpenHands fork — Codex-class execution workspace with Company Brain layers |
 
-**Today (live):**
+## Continuity Labs
 
-- Live chat with backend retrieval and company-brain skills (`useCompanyBrain`)
-- Multi-agent / multi-model handoff with memory injection
-- Continue project brief (`POST /api/memory/resume/brief`)
-- Risky-signal retrieve pass
-- Connected-source intelligence strip (connectors + memory list from APIs)
-- IDE handoff packet export
-- **Agent / Editor layout** in Continuity Lab (toggle in header)
-- **Agent Window** (Cursor-style): dedicated column with project plan, chat, composer — visible in both layouts
-- **Project plan panel:** auto-load continue brief; **Explain plan** sends agent narration
-- **Editor workbench:** GitHub repo explorer, Monaco (or fallback editor), local dirty files
-- **4-column Editor layout:** Threads | Agent | Explorer+Editor | Review
-- **Agents ↗** opens agent-focused tab (`?layout=agent`); `?layout=editor` opens IDE layout
-- **Review:** propose governed file commits (`brief_file_commit`) before push
+**Product name:** Company operational memory layer for autonomous engineering agents
 
-**Roadmap (honest):**
+**Foundation:**
 
-- Deep repo debug inside connected GitHub repos
-- Write-back: commits, PRs, Jira/Notion updates — **with approval gates**
-- Full execution layer (Phase 3 in ship loop)
+- Fork OpenHands as the core workspace/runtime
+- Keep task threads, terminal, file explorer, browser automation, sandbox handling, and agent execution loop from OpenHands
+- Add Company Brain layers on top: memory graph, connectors, risk intelligence, executable skills, context injection, deployment intelligence, incident memory, and LangGraph orchestration
+
+**Do not fork initially:**
+
+- LangGraph — use as package/service
+- Continue.dev — use as editor integration inspiration
+- SWE-agent — use for workflow patterns
+- OpenDevin — use for planning loop inspiration
 
 Capabilities matrix: `CONTINUITY_LAB_CAPABILITIES` in `company-brain.ts`.
 
@@ -86,12 +83,12 @@ MemoryOS turns workflows, decisions, repositories, and operational knowledge int
 
 ## Ship tracks A → B (in progress)
 
-### Track A — Connect → brief → Lab funnel
+### Track A — Connect → brief → OpenHands workspace funnel
 
 - Overview **Company Brain setup** panel (4 steps)
 - Onboarding activates funnel; defaults toward Developer Continuity
 - Connected Sources highlights GitHub when funnel active
-- Continuity Lab opens with `?autostart=1&autobrief=1` from funnel CTAs
+- Continuity Labs opens the OpenHands fork workspace from funnel CTAs
 
 ### Track B — Governed GitHub execution (write-back)
 
@@ -99,7 +96,7 @@ MemoryOS turns workflows, decisions, repositories, and operational knowledge int
 - `POST /api/connector/github/execution/propose` — kinds: `issue_comment`, `brief_file_commit`, `pull_request`
 - `POST /api/connector/github/execution/:id/approve` — executes approved proposal on GitHub
 - `GET /api/connector/github/execution/proposals`
-- Continuity Lab UI: repo select → propose → approve → run
+- OpenHands workspace: repo select → propose → approve → run
 - `GET/PATCH /api/memory/company-brain/funnel` — server-persisted onboarding progress
 
 ## Phases (Codex ship order)
@@ -108,6 +105,20 @@ MemoryOS turns workflows, decisions, repositories, and operational knowledge int
 2. **Phase 2** — Continuity Lab, graph, agent runtime → **~45%**
 3. **Phase 3** — Execution write-back to tools → **~15%**
 4. **Phase 4** — Enterprise governance, audit, multi-tenant → **~35%**
+
+Phase 1 focus is intentionally narrow:
+
+- start with the highest-signal engineering sources
+- prove resume/handoff/trace value end to end
+- only add connectors that improve continuity, trust, or execution
+- avoid expanding into generic control-surface behavior before the wedge is repeatable
+
+Connector ladder:
+
+- Core engineering: GitHub, Slack, Jira, Linear, docs, local files
+- Developer workflow: Cursor, VS Code, Windsurf, Codex, Claude Code
+- Observability and ops: Sentry, CI/CD, Vercel, DigitalOcean, cloud logs
+- Customer and business systems: Zendesk, email, meetings, CRM, tickets
 
 See also: `docs/COMPANY_BRAIN_P0_P1_P2_BACKLOG.md`, `docs/BILLING_TUNING.md`.
 
