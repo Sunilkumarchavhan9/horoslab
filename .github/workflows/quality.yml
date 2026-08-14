@@ -90,21 +90,21 @@ jobs:
 
       - name: Upload Company Brain Gate Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: company-brain-gate-quality-report
           path: data/eval/reports/company-brain-gate-quality.json
 
       - name: Upload Phase 1 Gate Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase1-e2e-gate-quality-report
           path: data/eval/reports/phase1-e2e-gate.json
 
       - name: Upload Phase 1 API Log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase1-api-quality-log
           path: .tmp-phase1-api.log
