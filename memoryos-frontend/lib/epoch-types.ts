@@ -19,9 +19,20 @@ export type ProgramStatus =
   | "paused"
   | "failed"
   | "uncertain";
-
 export type ExecutionDomain = "software" | "cloud" | "data_center";
-export type EvidenceTrustLevel = "OBSERVED" | "SIMULATED" | "INFERRED" | "USER_ASSERTED" | "EXTERNAL";
+
+export type EvidenceTrustLevel =
+  | "OBSERVED"
+  | "MEASURED"
+  | "USER_ASSERTED"
+  | "EXTERNAL"
+  | "INFERRED"
+  | "SIMULATED"
+  | "PREDICTED"
+  | "UNKNOWN"
+  | "STALE"
+  | "CONTRADICTED"
+  | "VERIFIED";
 export type VerificationVerdict =
   | "VERIFIED_SUCCESS"
   | "PARTIAL_SUCCESS"
@@ -359,3 +370,240 @@ export interface EpochRuntimeOverview {
   totalGpuHoursSavedPct: number;
   balanceUsd: number;
 }
+
+// ---------------------------------------------------------------------------
+// REALITY INTELLIGENCE FABRIC TYPES
+// ---------------------------------------------------------------------------
+
+export type RealityEntityType =
+  | "repository"
+  | "service"
+  | "api"
+  | "database"
+  | "model"
+  | "runtime"
+  | "hardware"
+  | "node"
+  | "cluster"
+  | "cloud_resource"
+  | "datacenter"
+  | "workload"
+  | "pipeline"
+  | "deployment"
+  | "incident"
+  | "policy";
+
+export interface RealityEntity {
+  id: string;
+  name: string;
+  type: RealityEntityType;
+  status: "healthy" | "degraded" | "failing" | "unknown";
+  environment: "production" | "staging" | "edge" | "datacenter";
+  version?: string;
+  source: string;
+  trustLevel: EvidenceTrustLevel;
+  properties: Record<string, unknown>;
+  updatedAt: string;
+}
+
+export interface RealityRelationship {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  relation:
+    | "owns"
+    | "contains"
+    | "depends_on"
+    | "deployed_on"
+    | "runs"
+    | "produces"
+    | "consumes"
+    | "located_in"
+    | "compatible_with"
+    | "alternative_to"
+    | "observed_by"
+    | "measured_by"
+    | "affected_by"
+    | "changed_by"
+    | "verified_by";
+  properties?: Record<string, unknown>;
+}
+
+export interface RealityConflict {
+  id: string;
+  entityId: string;
+  entityName: string;
+  signals: Array<{
+    source: string; // e.g. "Cloud API", "Kubernetes", "Telemetry"
+    claim: string;
+    trustLevel: EvidenceTrustLevel;
+    timestamp: string;
+    isHealthy: boolean;
+  }>;
+  resolutionStrategy: "source_priority" | "freshness" | "cross_validation" | "experiment" | "human_gate";
+  status: "active" | "investigating" | "resolved";
+}
+
+export interface DriftEvent {
+  id: string;
+  target: string;
+  driftType: "world" | "model" | "runtime" | "workload" | "quality" | "cost" | "capacity" | "hardware";
+  severity: "low" | "medium" | "critical";
+  delta: string;
+  detectedAt: string;
+  recommendedAction: string;
+  status: "detected" | "rediscovering" | "remediated" | "ignored";
+}
+
+// ---------------------------------------------------------------------------
+// CAPABILITY FABRIC & SYSTEM COMPOSER TYPES
+// ---------------------------------------------------------------------------
+
+export type ModalityType =
+  | "text"
+  | "code"
+  | "image"
+  | "audio"
+  | "video"
+  | "document"
+  | "tabular"
+  | "telemetry"
+  | "multimodal";
+
+export interface CapabilityNode {
+  id: string;
+  name: string;
+  inputModalities: ModalityType[];
+  outputModalities: ModalityType[];
+  task: string;
+  supportedRuntimes: string[];
+  supportedHardware: string[];
+  isVerified: boolean;
+  providerCount: number;
+}
+
+export interface CandidateSystemItem {
+  id: string;
+  name: string;
+  architecture: string[];
+  components: Array<{
+    role: "stt" | "retrieval" | "reranker" | "llm" | "tools" | "tts" | "custom";
+    model: string;
+    runtime: string;
+    hardware: string;
+  }>;
+  predictedMetrics: {
+    p95LatencyMs: number;
+    costPer1kReqUsd: number;
+    qualityRetentionPct: number;
+    vramGb: number;
+    monthlyTcoUsd: number;
+  };
+  paretoRank: number;
+  policyStatus: "compliant" | "requires_approval" | "violates_spend";
+  compatibilityScorePct: number;
+}
+
+// ---------------------------------------------------------------------------
+// EXPERIMENT, BENCHMARK & SIMULATION TYPES
+// ---------------------------------------------------------------------------
+
+export interface BenchmarkMatrixRow {
+  candidateId: string;
+  model: string;
+  runtime: string;
+  hardware: string;
+  batchSize: number;
+  ttftMs: number;
+  p50LatencyMs: number;
+  p95LatencyMs: number;
+  p99LatencyMs: number;
+  tokensPerSec: number;
+  vramUsageGb: number;
+  costPer1MTokensUsd: number;
+  qualityScore: number;
+  werCerRate?: number;
+  taskSuccessRatePct: number;
+  status: "verified" | "simulated" | "running";
+}
+
+export interface SandboxExecution {
+  id: string;
+  sandboxId: string;
+  containerImage: string;
+  resourceLimits: { cpu: string; memory: string; gpu: string; timeoutSec: number };
+  status: "provisioning" | "executing" | "completed" | "destroyed";
+  exitCode: number;
+  logsSnippet: string[];
+  capturedEvidenceDigest: string;
+}
+
+// ---------------------------------------------------------------------------
+// INDEPENDENT VERIFICATION & PROOF TYPES
+// ---------------------------------------------------------------------------
+
+export interface ProofPackage {
+  missionId: string;
+  objective: string;
+  targetOutcome: string;
+  observedBaseline: string;
+  testedCandidatesCount: number;
+  executedInterventions: string[];
+  actualConsequenceObserved: string;
+  cryptographicMerkleRoot: string;
+  verdict: VerificationVerdict;
+  verifierSource: string;
+  verifiedAt: string;
+  provenance: {
+    sourceInputsChecksum: string;
+    worldStateVersion: string;
+    evaluatorVersion: string;
+    operatorSignature: string;
+  };
+  uncertainPoints: string[];
+  nextAutonomousAction: string;
+}
+
+// ---------------------------------------------------------------------------
+// GOVERNANCE, AUTHORITY & HUMAN GATE TYPES
+// ---------------------------------------------------------------------------
+
+export type AutonomyLevel = "L0_OBSERVE" | "L1_RECOMMEND" | "L2_AUTO_EXPERIMENT" | "L3_SANDBOX" | "L4_BOUNDED_PROD" | "L5_ORGANIZATIONAL_AUTONOMY";
+
+export interface PolicyRule {
+  id: string;
+  name: string;
+  category: "spend" | "licenses" | "regions" | "downtime" | "hardware" | "approvals";
+  threshold: string;
+  actionOnBreach: "DENY" | "REQUIRES_APPROVAL" | "WARN";
+  isActive: boolean;
+}
+
+export interface HumanGate {
+  id: string;
+  missionId: string;
+  missionName: string;
+  gateType: "A_AMBIGUOUS_OBJECTIVE" | "B_MISSING_CONSTRAINT" | "C_HIGH_RISK_ACTION" | "D_SPEND_AUTHORITY" | "E_DESTRUCTIVE_ACTION" | "F_CONTRADICTORY_REALITY";
+  reason: string;
+  epochRecommendation: string;
+  expectedImpact: string;
+  rollbackPlan: string;
+  requiredAuthorityLevel: string;
+  createdAt: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "RESOLVED";
+}
+
+export interface LearningRecord {
+  id: string;
+  initialState: string;
+  intervention: string;
+  resultingState: string;
+  metricsDelta: {
+    latencyDeltaPct: number;
+    costDeltaPct: number;
+    qualityDeltaPct: number;
+  };
+  verifiedAt: string;
+  reproducibilityScorePct: number;
+}
+

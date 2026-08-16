@@ -87,3 +87,5 @@ export async function executeEpochTask(input: { target: "ollama" | "vllm" | "sgl
   const validated = outputFor(input.task, body);
   return { status: validated.reasons.length ? "FAILED" : "OBSERVED", task: input.task, model: input.model, output: validated.output ?? null, endpoint: path(resolved.base, request.suffix).toString(), httpStatus: response.status, latencyMs: Date.now() - startedAt, responseSha256: hash(bytes), validation: { valid: validated.reasons.length === 0, reasons: validated.reasons }, observedAt: new Date().toISOString() };
 }
+
+

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import type { SimpleIcon } from "simple-icons";
 
 interface BrandIconProps {
   className?: string;
@@ -216,20 +215,26 @@ export function GoogleLogo({ className, size = 14 }: BrandIconProps) {
   );
 }
 
+export interface SimpleBrandIconData {
+  title?: string;
+  path: string;
+  hex?: string;
+}
+
 /** Render a verified Simple Icons vector without loading an external image. */
-export function SimpleBrandLogo({ icon, className, size = 14 }: BrandIconProps & { icon: SimpleIcon }) {
+export function SimpleBrandLogo({ icon, className, size = 14 }: BrandIconProps & { icon: SimpleBrandIconData }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="currentColor"
-      aria-label={icon.title}
+      aria-label={icon.title || "Brand Logo"}
       role="img"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("shrink-0 inline-block align-middle", className)}
     >
-      <path d={icon.path} fill={`#${icon.hex}`} />
+      <path d={icon.path} fill={icon.hex ? `#${icon.hex}` : "currentColor"} />
     </svg>
   );
 }
@@ -277,5 +282,140 @@ export function DeepSeekLogo({ className, size = 18 }: BrandIconProps) {
         d="M55.6128,3.4712c-.5953-.2917-.8517.2642-1.1998.5466-.1191.0911-.2198.2095-.3206.3188-.8701.9292-1.8867,1.5398-3.2148,1.4668-1.9417-.1094-3.5995.5012-5.065,1.9863-.3114-1.8313-1.3463-2.9248-2.9217-3.6262-.8242-.3645-1.6577-.729-2.2348-1.5217-.403-.5647-.5129-1.1934-.7144-1.813-.1283-.3735-.2565-.7563-.687-.8201-.4671-.0728-.6503.3188-.8335.647-.7327,1.3394-1.0166,2.8154-.9892,4.3096.0641,3.3621,1.4838,6.0406,4.3047,7.9449.3206.2187.403.4372.3023.7563-.1924.656-.4214,1.2937-.6228,1.9497-.1283.4192-.3207.5103-.7694.3279-1.5479-.6467-2.8852-1.6035-4.0667-2.7605-2.0058-1.9407-3.8193-4.0818-6.0815-5.7583-.5312-.3918-1.0625-.7561-1.6121-1.1025-2.3081-2.2412.3023-4.0818.9068-4.3003.6319-.2278.2198-1.0115-1.8227-1.0022-2.0425.009-3.9109.6924-6.2922,1.6035-.348.1367-.7145.2368-1.09.3188-2.1615-.4099-4.4055-.5012-6.7502-.2368-4.4147.4919-7.9408,2.5784-10.5328,6.1409C.1914,13.1289-.5413,17.9941.3563,23.0691c.9434,5.3481,3.6727,9.7761,7.8676,13.2385,4.3506,3.5896,9.3606,5.3481,15.0758,5.011,3.4713-.2004,7.3364-.665,11.6961-4.355,1.099.5467,2.2531.7652,4.1674.9292,1.4746.1367,2.8943-.0728,3.9933-.3005,1.7219-.3645,1.6029-1.959.9801-2.2505-5.0466-2.3506-3.9385-1.394-4.9459-2.1685,2.5645-3.0339,6.4297-6.1865,7.9409-16.4001.119-.8108.0183-1.3211,0-1.9771-.0092-.4008.0824-.5556.5404-.6013,1.2639-.1458,2.4912-.4919,3.6178-1.1115,3.2698-1.7857,4.5886-4.7195,4.9-8.2364.0459-.5376-.0091-1.0935-.577-1.3757ZM27.119,35.123c-4.8909-3.8447-7.263-5.1113-8.2431-5.0566-.9159.0547-.751,1.1025-.5496,1.7859.2107.6741.4855,1.1389.8701,1.731.2656.3918.4489.9748-.2655,1.4123-1.5754.9749-4.314-.3281-4.4423-.3918-3.1872-1.877-5.8525-4.3553-7.7302-7.7444-1.8135-3.262-2.8667-6.7605-3.0408-10.4961-.0458-.9019.2198-1.221,1.1174-1.3848,1.1815-.2187,2.3997-.2644,3.5812-.0913,4.9918.729,9.2415,2.9612,12.8043,6.4963,2.0333,2.0135,3.572,4.419,5.1566,6.7696,1.6852,2.4963,3.4987,4.8745,5.8068,6.8242.8151.6833,1.4654,1.2026,2.0882,1.5854-1.8775.2095-5.01.2552-7.1532-1.4397ZM29.4637,20.0442c0-.4009.3206-.7197.7237-.7197.0916,0,.174.018.2473.0453.1008.0366.1924.0913.2656.1731.1283.1277.2015.3098.2015.5012,0,.4009-.3205.7197-.7234.7197s-.7145-.3188-.7145-.7197ZM36.7452,23.7798c-.4671.1914-.9342.3552-1.383.3735-.6961.0364-1.4563-.2461-1.8684-.5923-.6411-.5376-1.0991-.8381-1.2914-1.7766-.0825-.4009-.0367-1.0205.0367-1.3757.1648-.7654-.0184-1.2573-.5587-1.7039-.4397-.3645-.9984-.4646-1.6121-.4646-.229,0-.4395-.1003-.5953-.1823-.2565-.1275-.467-.4464-.2656-.8382.0641-.1274.3756-.4373.4489-.4919.8335-.4739,1.7952-.3189,2.6836.0364.8244.3371,1.4472.9567,2.3447,1.8313.9159,1.0568"
       />
     </svg>
+  );
+}
+
+// 12. Official Hugging Face TEI (Text Embeddings Inference) Logo
+export function TEILogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <span className={cn("inline-flex items-center shrink-0", className)}>
+      <HuggingFaceLogo size={size} />
+    </span>
+  );
+}
+
+// 13. Official ChatGLM / Zhipu AI (GLM) Brand Logo (Source: https://z-cdn.chatglm.cn/z-blog/z-icon.svg)
+export function GLMLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 30 30"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle", className)}
+    >
+      <path
+        fill="#2D2D2D"
+        stroke="#FFFFFF"
+        strokeWidth="0.6317"
+        strokeMiterlimit="10"
+        d="M24.51 28.51H5.49c-2.21 0-4-1.79-4-4V5.49c0-2.21 1.79-4 4-4h19.03c2.21 0 4 1.79 4 4v19.03c0 2.21-1.79 4-4 4z"
+      />
+      <g fill="#FFFFFF">
+        <path d="M15.47 7.1l-1.3 1.85c-0.2 0.29-0.54 0.47-0.9 0.47h-7.1V7.09C6.16 7.1 15.47 7.1 15.47 7.1z" />
+        <polygon points="24.3 7.1 13.14 22.91 5.7 22.91 16.86 7.1" />
+        <path d="M14.53 22.91l1.31-1.86c0.2-0.29 0.54-0.47 0.9-0.47h7.09v2.33H14.53z" />
+      </g>
+    </svg>
+  );
+}
+
+// 14. Mistral AI's current pixel-cat emblem.
+// Geometry and gradient colors match the current Mistral AI logo asset.
+export function MistralLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 129 91"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle", className)}
+      aria-hidden="true"
+    >
+      <rect x="18.292" y="0" width="18.293" height="18.123" fill="#FFD800" />
+      <rect x="91.473" y="0" width="18.293" height="18.123" fill="#FFD800" />
+      <rect x="18.292" y="18.121" width="36.586" height="18.123" fill="#FFAF00" />
+      <rect x="73.181" y="18.121" width="36.586" height="18.123" fill="#FFAF00" />
+      <rect x="18.292" y="36.243" width="91.476" height="18.122" fill="#FF8205" />
+      <rect x="18.292" y="54.37" width="18.293" height="18.123" fill="#FA500F" />
+      <rect x="54.883" y="54.37" width="18.293" height="18.123" fill="#F82004" />
+      <rect x="91.473" y="54.37" width="18.293" height="18.123" fill="#FA500F" />
+      <rect x="0" y="72.504" width="54.89" height="18.123" fill="#E10500" />
+      <rect x="73.181" y="72.504" width="54.89" height="18.123" fill="#C4001D" />
+    </svg>
+  );
+}
+
+// 15. Anthropic / Claude Logo
+export function AnthropicLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-[#D97706]", className)}
+    >
+      <path d="M13.827 3.518h3.916L24 20.482h-3.916l-1.92-4.524H11.53l-1.92 4.524H5.694zm-1.077 8.528l1.79-4.22 1.79 4.22zM0 20.482l5.447-16.964h3.916L3.916 20.482z" />
+    </svg>
+  );
+}
+
+// 16. Apple Logo
+export function AppleLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-white", className)}
+    >
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.64 1.35-.57.65-1.07 1.71-.93 2.73 1 .08 2.03-.49 2.65-1.23" />
+    </svg>
+  );
+}
+
+// 17. AMD Logo
+export function AMDLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-[#ED1C24]", className)}
+    >
+      <path d="M0 0v24h24V0H0zm21.564 21.564H2.436V2.436h19.128v19.128zM9.73 7.154H7.154v9.692h2.576V7.154zm7.116 0h-4.54v9.692h2.576v-7.116h1.964V7.154z" />
+    </svg>
+  );
+}
+
+// 18. Intel Logo
+export function IntelLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-[#0071C5]", className)}
+    >
+      <path d="M10.233 8.358v7.284H8.625V8.358h1.608zm5.142 0v7.284h-1.608V8.358h1.608zm-7.983 0v7.284H5.783V8.358h1.61z" />
+    </svg>
+  );
+}
+
+// 19. Moonshot AI / Kimi Logo
+export function KimiLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <span className={cn("inline-flex items-center justify-center font-mono font-bold text-[#6366F1] bg-[#6366F122] border border-[#6366F144] rounded-[3px] text-[9px] leading-none shrink-0", className)} style={{ width: size, height: size }}>
+      K
+    </span>
   );
 }

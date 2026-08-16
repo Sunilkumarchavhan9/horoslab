@@ -8,9 +8,19 @@ import {
   hasEpochQueuedJob,
   retryEpochJob,
   leaseEpochJobs,
+  releaseEpochJobLease,
   type EpochQueueJob,
   type EpochQueueJobType,
 } from "./epochQueue";
+import {
+  claimEpochWorkerLease,
+  ensureEpochProcessWorker,
+  recoverExpiredEpochWorkerLeases,
+  releaseEpochWorkerLease,
+  renewEpochWorkerLease,
+} from "./epochWorkers";
+import { persistEpochWorkerCheckpoint } from "./durableWorkerState";
+import { epochSqsConfigFromEnv, renewEpochSqsLease } from "./awsSqsQueueTransport";
 import {
   appendEpochEvidence,
   getEpochAuthorityGate,
@@ -38,6 +48,8 @@ import { planEpochDiscovery } from "./discoveryLoop";
 import { runEpochEvidenceExpiryTick } from "./evidenceExpiryWorker";
 import { processEpochPipelineJob } from "./durablePipelineWorker";
 import { buildEpochRuntimeBenchmark, evaluateEpochRuntimeQuality } from "./runtimeEvaluation";
+import { projectEpochObservationsToReality } from "./observationRealityProjector";
+import { runEpochRealityMaintenanceTick } from "./realityMaintenance";
 
 const WORKER_ID = `${process.pid}:${Math.random().toString(36).slice(2, 10)}`;
 
@@ -792,6 +804,34 @@ async function processPipelineJob(workspaceId: string, job: EpochQueueJob): Prom
   if (execution.status !== "completed") throw new Error(`epoch_pipeline_${execution.status}`);
 }
 
+function workerLeaseMs(): number {
+  const raw = Number(process.env.EPOCH_WORKER_LEASE_MS);
+  return Number.isFinite(raw) && raw >= 5_000 ? Math.floor(raw) : 60_000;
+}
+
+function workerHeartbeatMs(leaseMs: number): number {
+  const raw = Number(process.env.EPOCH_WORKER_HEARTBEAT_MS);
+  return Number.isFinite(raw) && raw >= 1_000 ? Math.min(Math.floor(raw), Math.max(1_000, Math.floor(leaseMs / 2))) : Math.max(1_000, Math.floor(leaseMs / 2));
+}
+
+async function processRealityProjectionJob(workspaceId: string, job: EpochQueueJob): Promise<void> {
+  const result = await projectEpochObservationsToReality({ workspaceId, missionId: job.missionId, limit: typeof job.payload?.limit === "number" ? job.payload.limit : 100 });
+  if (result.checked > 0 && result.projected === 0 && result.skipped < result.checked) throw new Error("epoch_reality_projection_no_progress");
+}
+
+async function processRealityMaintenanceJob(workspaceId: string, job: EpochQueueJob): Promise<void> {
+  const result = await runEpochRealityMaintenanceTick({ workspaceId, staleAfterMs: typeof job.payload?.staleAfterMs === "number" ? job.payload.staleAfterMs : undefined, limit: typeof job.payload?.limit === "number" ? job.payload.limit : undefined });
+  if (result.refreshRequests.length) {
+    await enqueueEpochJob({ workspaceId, missionId: job.missionId, type: "reality_rediscovery", payload: { refreshRequests: result.refreshRequests, maintenanceCheckedAt: result.checkedAt } });
+  }
+}
+
+async function processRealityRediscoveryJob(workspaceId: string, job: EpochQueueJob): Promise<void> {
+  const requests = Array.isArray(job.payload?.refreshRequests) ? job.payload.refreshRequests : [];
+  const plan = planEpochDiscovery({ trigger: "drift", failedStage: "current_reality", failureReason: requests.length ? `${requests.length} reality facts require refresh` : "reality refresh requested", now: new Date() });
+  await prisma.epochObservation.create({ data: { workspaceId, missionId: job.missionId, kind: "epoch_reality_rediscovery", value: JSON.parse(JSON.stringify({ plan, refreshRequests: requests, jobId: job.id })) as any, evidenceIds: [], observedAt: new Date() } });
+}
+
 async function processJob(workspaceId: string, job: EpochQueueJob): Promise<void> {
   const gate = job.missionId ? await getEpochAuthorityGate(workspaceId, job.missionId) : null;
   if (gate?.mission && isEpochMissionCancelled(gate.mission.proof)) {
@@ -882,11 +922,19 @@ async function processJob(workspaceId: string, job: EpochQueueJob): Promise<void
     case "runtime_quality":
       await processRuntimeQualityJob(workspaceId, job);
       break;
+    case "reality_projection":
+      await processRealityProjectionJob(workspaceId, job);
+      break;
+    case "reality_maintenance":
+      await processRealityMaintenanceJob(workspaceId, job);
+      break;
+    case "reality_rediscovery":
+      await processRealityRediscoveryJob(workspaceId, job);
+      break;
     default:
       break;
   }
 
-  await acknowledgeEpochJob(job.id, gate?.mission.userId, gate?.mission.orgId ?? undefined);
 }
 
 export async function runEpochWorkerTick(): Promise<{ processed: number; leased: number }> {
@@ -901,6 +949,15 @@ export async function runEpochWorkerTick(): Promise<{ processed: number; leased:
     }
     const workspaces = await prisma.workspace.findMany({ select: { id: true, userId: true, orgId: true } });
     for (const workspace of workspaces) {
+      await recoverExpiredEpochWorkerLeases(workspace.id).catch((error) => console.error("[epoch] expired worker lease recovery failed", error));
+      const processWorker = await ensureEpochProcessWorker({
+        workspaceId: workspace.id,
+        userId: workspace.userId,
+        orgId: workspace.orgId ?? undefined,
+        processId: WORKER_ID,
+        maxConcurrency: workerBatchSize(),
+        capabilities: ["mission", "pipeline", "benchmark", "quality", "model_sync", "reality"],
+      });
       let cycles = 0;
       while (cycles < 10) {
         cycles += 1;
@@ -914,8 +971,30 @@ export async function runEpochWorkerTick(): Promise<{ processed: number; leased:
         leasedTotal += jobs.length;
         if (jobs.length === 0) break;
         for (const job of jobs) {
+          const durableLease = await claimEpochWorkerLease({
+            workspaceId: workspace.id,
+            workerId: processWorker.id,
+            jobId: job.id,
+            leaseMs: workerLeaseMs(),
+          });
+          if (!durableLease) {
+            await releaseEpochJobLease(job.id, "worker_durable_lease_unavailable");
+            continue;
+          }
+          const leaseMs = workerLeaseMs();
+          const sqs = epochSqsConfigFromEnv();
+          const heartbeat = setInterval(() => {
+            void Promise.all([
+              renewEpochWorkerLease({ workspaceId: workspace.id, workerId: processWorker.id, jobId: job.id, fencingToken: durableLease.fencingToken, leaseMs }),
+              sqs ? renewEpochSqsLease(job.id, sqs).catch(() => false) : Promise.resolve(true),
+            ]).catch(() => undefined);
+          }, workerHeartbeatMs(leaseMs));
           try {
+            await persistEpochWorkerCheckpoint({ workspaceId: workspace.id, workerId: processWorker.id, jobId: job.id, fencingToken: durableLease.fencingToken, stage: "worker", status: "started", userId: workspace.userId, orgId: workspace.orgId ?? undefined });
             await processJob(workspace.id, job);
+            await persistEpochWorkerCheckpoint({ workspaceId: workspace.id, workerId: processWorker.id, jobId: job.id, fencingToken: durableLease.fencingToken, stage: "worker", status: "completed", progress: 1, userId: workspace.userId, orgId: workspace.orgId ?? undefined });
+            await acknowledgeEpochJob(job.id, workspace.userId, workspace.orgId ?? undefined);
+            await releaseEpochWorkerLease({ workspaceId: workspace.id, workerId: processWorker.id, jobId: job.id, fencingToken: durableLease.fencingToken, status: "completed" });
             processed += 1;
           } catch (error) {
             const message = error instanceof Error ? error.message : "epoch_worker_failed";
@@ -941,6 +1020,8 @@ export async function runEpochWorkerTick(): Promise<{ processed: number; leased:
                 orgId: workspace.orgId ?? undefined,
               });
             }
+            await persistEpochWorkerCheckpoint({ workspaceId: workspace.id, workerId: processWorker.id, jobId: job.id, fencingToken: durableLease.fencingToken, stage: "worker", status: retried ? "retrying" : "failed", data: { error: message, recovery: recovery.action }, userId: workspace.userId, orgId: workspace.orgId ?? undefined }).catch(() => undefined);
+            await releaseEpochWorkerLease({ workspaceId: workspace.id, workerId: processWorker.id, jobId: job.id, fencingToken: durableLease.fencingToken, status: retried ? "released" : "failed" }).catch(() => false);
             await recordWorkerRecovery({
               workspaceId: workspace.id,
               job,
@@ -965,6 +1046,8 @@ export async function runEpochWorkerTick(): Promise<{ processed: number; leased:
                 recoveryReason: recovery.reason,
               },
             });
+          } finally {
+            clearInterval(heartbeat);
           }
         }
       }

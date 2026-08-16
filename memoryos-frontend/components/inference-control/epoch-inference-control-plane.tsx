@@ -29,8 +29,15 @@ import { RunsListView } from "../epoch/views/runs-list-view";
 import { RunDetailView } from "../epoch/views/run-detail-view";
 import { DeploymentsView } from "../epoch/views/deployments-view";
 import { RegistryView } from "../epoch/views/registry-view";
+import { WeightsView } from "../epoch/views/weights-view";
+import { UsageAnalyticsView } from "../epoch/views/usage-analytics-view";
 import { EvidenceView } from "../epoch/views/evidence-view";
 import { SettingsView } from "../epoch/views/settings-view";
+import { RealityView } from "../epoch/views/reality-view";
+import { CapabilitiesView } from "../epoch/views/capabilities-view";
+import { SystemsView } from "../epoch/views/systems-view";
+import { ExperimentsView } from "../epoch/views/experiments-view";
+import { GovernanceView } from "../epoch/views/governance-view";
 
 interface EpochInferenceControlPlaneProps {
   workspaceId: string;
@@ -47,11 +54,18 @@ export function EpochInferenceControlPlane({
   const initialView: EpochNavRoute = rawView && [
     "home",
     "programs",
+    "reality",
+    "capabilities",
     "models",
+    "systems",
+    "experiments",
     "runs",
     "deployments",
+    "analytics",
+    "weights",
     "registry",
     "evidence",
+    "governance",
     "settings",
   ].includes(rawView)
     ? rawView
@@ -63,6 +77,7 @@ export function EpochInferenceControlPlane({
   const [activePipelineWorkspace, setActivePipelineWorkspace] = useState<{
     title: string;
     prompt: string;
+    executionContext?: Record<string, unknown>;
     programId?: string;
     runId?: string;
     runStatus?: string;
@@ -209,10 +224,27 @@ export function EpochInferenceControlPlane({
   }
 
   function handleLaunchPrompt(prompt: string, metadata?: Record<string, unknown>) {
-    // Open the full Interactive Pipeline Workspace
+    const requestedModel = typeof metadata?.model === "string" ? metadata.model : "";
+    const requestedEngine = typeof metadata?.engine === "string" ? metadata.engine : "";
+    const requestedGpu = typeof metadata?.gpu === "string" ? metadata.gpu : "";
+    const model = requestedModel && requestedModel !== "unselected" ? requestedModel : "Auto-selected model";
+    const engine = requestedEngine && requestedEngine !== "Auto" ? requestedEngine : "Auto-selected runtime";
+    const gpu = requestedGpu && requestedGpu !== "Auto" ? requestedGpu : "Auto-selected GPU";
+    const workload = typeof metadata?.workload === "string" ? metadata.workload : "Auto workload profile";
+
+    // Keep the structured decision inputs with the workspace so they reach
+    // the persisted program/run instead of remaining display-only state.
     setActivePipelineWorkspace({
-      title: metadata?.model ? `Optimize ${metadata.model}` : "Untitled Pipeline",
+      title: model !== "Auto-selected model" ? `Optimize ${model}` : "Untitled Pipeline",
       prompt,
+      executionContext: {
+        ...metadata,
+        model,
+        engine,
+        gpu,
+        workload,
+        capturedAt: new Date().toISOString(),
+      },
     });
   }
 
@@ -225,11 +257,12 @@ export function EpochInferenceControlPlane({
 
     try {
       let programId = activePipelineWorkspace?.programId;
+      const executionContext = activePipelineWorkspace?.executionContext ?? {};
       if (!programId) {
         const created = await epochAdapter.createProgram(workspaceId, {
           name: payload.title || "Untitled Pipeline",
           objective: payload.prompt,
-          questions: [payload.prompt],
+          questions: [payload.prompt, { type: "epoch_execution_context", ...executionContext }],
         });
         programId = created.id;
       }
@@ -238,6 +271,7 @@ export function EpochInferenceControlPlane({
         name: payload.title || "Untitled Pipeline run",
         prompt: payload.prompt,
         source: "pipeline_workspace",
+        executionContext,
       });
 
       setActivePipelineWorkspace((current) => current ? {
@@ -299,27 +333,7 @@ export function EpochInferenceControlPlane({
     : null;
 
   const selectedModel = selectedModelId
-    ? (models.find((m) => m.id === selectedModelId) || {
-        id: selectedModelId,
-        name: "DeepSeek V4 Flash",
-        provider: "DeepSeek",
-        task: "text-generation",
-        parameters: "37B",
-        contextWindow: 131072,
-        license: "deepseek-license",
-        format: "FP8",
-        status: "paused",
-        capabilities: ["chat", "code", "serverless", "streaming", "json_mode"],
-        description: "DeepSeek V4 Flash high-throughput MoE hosted serverless endpoint",
-        bestObservedProfile: {
-          engine: "vLLM",
-          hardware: "H100 SXM5",
-          executionDomain: "cloud",
-          p95LatencyMs: 84,
-          costPer1M: 0.28,
-        },
-        variants: [],
-      } as ModelEntity)
+    ? models.find((m) => m.id === selectedModelId) ?? null
     : null;
 
   const selectedRun = selectedRunId
@@ -332,6 +346,7 @@ export function EpochInferenceControlPlane({
       <PipelineWorkspaceView
         pipelineTitle={activePipelineWorkspace.title}
         initialPrompt={activePipelineWorkspace.prompt}
+        executionContext={activePipelineWorkspace.executionContext}
         onBack={() => setActivePipelineWorkspace(null)}
         onNavigateToPipelines={() => {
           setActivePipelineWorkspace(null);
@@ -381,11 +396,11 @@ export function EpochInferenceControlPlane({
               onOpenCommand={() => setCommandOpen(true)}
               dark={dark}
               onToggleTheme={() => setDark(!dark)}
-              activeWorkspace={activeWorkspace}
-              onSelectWorkspace={setActiveWorkspace}
-              balanceUsd={overview?.balanceUsd ?? 10.0}
-              displayLayout={displayLayout}
-              onToggleLayout={(l) => setDisplayLayout(l)}
+              onOpenSettings={() => {
+                setSettingsTab("workspace");
+                handleNavigate("settings");
+              }}
+              balanceUsd={overview?.balanceUsd ?? 9.51}
             />
 
             {/* Primary Subnav */}
@@ -419,6 +434,7 @@ export function EpochInferenceControlPlane({
                 <HomeView
                   overview={overview || undefined}
                   programs={programs}
+                  models={models}
                   onSelectProgram={handleSelectProgram}
                   onLaunchPrompt={handleLaunchPrompt}
                   onNavigateToEvidence={() => handleNavigate("evidence")}
@@ -484,6 +500,7 @@ export function EpochInferenceControlPlane({
                   <ModelsCatalogView
                     models={models}
                     onSelectModel={handleSelectModel}
+                    onSearchModels={(query) => epochAdapter.searchHuggingFaceModels(workspaceId, query)}
                     onOpenImport={() => {
                       setNewProgramInitialPrompt("Import model weights from Hugging Face");
                       setNewProgramModalOpen(true);
@@ -520,14 +537,116 @@ export function EpochInferenceControlPlane({
                 )
               )}
 
+              {activeRoute === "reality" && (
+                <RealityView
+                  dark={dark}
+                  onSelectEntity={(entId) => console.log("Selected reality entity:", entId)}
+                  onTriggerRediscovery={loadData}
+                />
+              )}
+
+              {activeRoute === "capabilities" && (
+                <CapabilitiesView
+                  dark={dark}
+                  onSelectModel={handleSelectModel}
+                  onComposePipeline={(cap) => {
+                    setActivePipelineWorkspace({
+                      title: `Pipeline for ${cap.name}`,
+                      prompt: `Compose optimized system for ${cap.name} (${cap.task})`,
+                    });
+                  }}
+                />
+              )}
+
+              {activeRoute === "systems" && (
+                <SystemsView
+                  dark={dark}
+                  onLaunchExperiment={(cand) => {
+                    setActivePipelineWorkspace({
+                      title: cand.name,
+                      prompt: `Benchmark and optimize candidate ${cand.name}`,
+                    });
+                  }}
+                  onDeploySystem={(cand) => {
+                    handleDeployCandidate({
+                      id: cand.id,
+                      name: cand.name,
+                      format: "FP8",
+                      engine: "vLLM",
+                      hardware: "1x A100",
+                      executionDomain: "cloud",
+                      metrics: {
+                        latencyMs: cand.predictedMetrics.p95LatencyMs,
+                        p95LatencyMs: cand.predictedMetrics.p95LatencyMs,
+                        costPer1kTokens: cand.predictedMetrics.costPer1kReqUsd,
+                        qualityScore: cand.predictedMetrics.qualityRetentionPct,
+                        vramGb: cand.predictedMetrics.vramGb,
+                        throughputTokensSec: 220,
+                      },
+                    });
+                  }}
+                />
+              )}
+
+              {activeRoute === "experiments" && (
+                <ExperimentsView
+                  dark={dark}
+                  onRunBenchmark={(bench) => {
+                    setActivePipelineWorkspace({
+                      title: `Benchmark: ${bench.model}`,
+                      prompt: `Execute benchmark run on ${bench.model} with ${bench.runtime}`,
+                    });
+                  }}
+                />
+              )}
+
+              {activeRoute === "governance" && (
+                <GovernanceView
+                  dark={dark}
+                  onApproveGate={(gateId) => {
+                    console.log("Approved human gate:", gateId);
+                  }}
+                  onRejectGate={(gateId) => {
+                    console.log("Rejected human gate:", gateId);
+                  }}
+                />
+              )}
+
+              {activeRoute === "analytics" && (
+                <UsageAnalyticsView
+                  dark={dark}
+                  onNavigateToModelApis={() => handleNavigate("models")}
+                  onNavigateToSettingsCost={() => {
+                    setSettingsTab("cost");
+                    handleNavigate("settings");
+                  }}
+                />
+              )}
+
+              {activeRoute === "weights" && (
+                <WeightsView
+                  dark={dark}
+                  onOpenNewPipeline={() => handleNavigate("home")}
+                  onContactSales={() => {
+                    setSettingsTab("workspace");
+                    handleNavigate("settings");
+                  }}
+                />
+              )}
+
               {activeRoute === "registry" && (
-                <RegistryView artifacts={registry} dark={dark} />
+                <RegistryView
+                  artifacts={registry}
+                  onNavigateToPipelines={() => handleNavigate("programs")}
+                  dark={dark}
+                />
               )}
 
               {activeRoute === "evidence" && (
                 <EvidenceView
                   evidenceList={evidence}
                   onSelectProgram={handleSelectProgram}
+                  onNavigateToPipelines={() => handleNavigate("programs")}
                   dark={dark}
                 />
               )}

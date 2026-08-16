@@ -3,8 +3,9 @@ import type { Prisma } from "@prisma/client";
 import { getRedisClient } from "../cache/redisClient";
 import { prisma } from "../storage/prismaClient";
 import { emitEpochRuntimeEvent } from "./epochEvents";
+import { acknowledgeEpochSqsJob, epochSqsConfigFromEnv, receiveEpochJobsFromSqs, requeueEpochJobToSqs, releaseEpochSqsJob, sendEpochJobToSqs } from "./awsSqsQueueTransport";
 
-export type EpochQueueJobType = "plan" | "execute" | "review" | "verify" | "certificate" | "memory" | "benchmark" | "quality" | "pipeline" | "model_sync" | "model_benchmark" | "model_quality" | "runtime_benchmark" | "runtime_quality";
+export type EpochQueueJobType = "plan" | "execute" | "review" | "verify" | "certificate" | "memory" | "benchmark" | "quality" | "pipeline" | "model_sync" | "model_benchmark" | "model_quality" | "runtime_benchmark" | "runtime_quality" | "reality_projection" | "reality_maintenance" | "reality_rediscovery";
 
 export type EpochQueueJobStatus = "queued" | "leased" | "done" | "failed" | "dead_lettered";
 
@@ -66,6 +67,38 @@ async function getRedis(): Promise<RedisLikeClient | null> {
 
 function cloneJob(job: EpochQueueJob): EpochQueueJob {
   return JSON.parse(JSON.stringify(job)) as EpochQueueJob;
+}
+
+async function acknowledgeSqsDeliveryWithEvidence(input: {
+  job: EpochQueueJob;
+  config: Parameters<typeof acknowledgeEpochSqsJob>[1];
+  userId?: string;
+  orgId?: string;
+  operation: "complete" | "retry" | "dead_letter";
+}): Promise<boolean> {
+  try {
+    const acknowledged = await acknowledgeEpochSqsJob(input.job.id, input.config);
+    if (acknowledged) return true;
+    throw new Error("epoch_sqs_receipt_missing");
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : "epoch_sqs_acknowledgement_failed";
+    emitEpochRuntimeEvent({
+      userId: input.userId ?? input.job.workspaceId,
+      orgId: input.orgId,
+      workspaceId: input.job.workspaceId,
+      kind: "epoch.queue.acknowledgement_pending",
+      label: "SQS acknowledgement pending redelivery safety",
+      subjectId: input.job.id,
+      payload: {
+        jobId: input.job.id,
+        operation: input.operation,
+        reason,
+        persistedStatus: input.job.status,
+        redeliveryExpected: true,
+      },
+    });
+    return false;
+  }
 }
 
 type EpochQueueCursor = {
@@ -317,6 +350,22 @@ export async function enqueueEpochJob(input: {
     maxRetries: 3,
   };
 
+  const sqs = epochSqsConfigFromEnv();
+  if (sqs) {
+    await persistDatabaseJob(job);
+    await sendEpochJobToSqs(job, sqs);
+    emitEpochRuntimeEvent({
+      userId: input.userId ?? input.workspaceId,
+      orgId: input.orgId,
+      workspaceId: input.workspaceId,
+      kind: "epoch.queue.enqueued",
+      label: `Queued ${input.type} job on SQS`,
+      subjectId: job.id,
+      payload: { jobId: job.id, type: input.type, transport: "sqs" },
+    });
+    return job;
+  }
+
   const redis = await getRedis();
   if (!redis) {
     await persistActiveJob(job);
@@ -355,6 +404,30 @@ export async function leaseEpochJobs(input: {
   limit?: number;
 }): Promise<EpochQueueJob[]> {
   const limit = Math.max(1, Math.min(20, Math.floor(input.limit ?? 5)));
+  const sqs = epochSqsConfigFromEnv();
+  if (sqs && !input.missionId) {
+    const deliveries = await receiveEpochJobsFromSqs({ ...sqs, maxInFlight: Math.min(sqs.maxInFlight ?? 50, limit) });
+    const leased: EpochQueueJob[] = [];
+    for (const delivery of deliveries) {
+      if (delivery.job.workspaceId !== input.workspaceId) {
+        await releaseEpochSqsJob(delivery.job.id, sqs).catch(() => undefined);
+        continue;
+      }
+      const now = new Date();
+      const updated = await prisma.epochQueueJob.updateMany({
+        where: { id: delivery.job.id, workspaceId: input.workspaceId, status: "queued" },
+        data: { status: "leased", leasedAt: now, leaseOwner: input.workerId },
+      });
+      if (updated.count !== 1) {
+        await releaseEpochSqsJob(delivery.job.id, sqs).catch(() => undefined);
+        continue;
+      }
+      const leasedJob = withRetryDefaults({ ...delivery.job, status: "leased", leasedAt: now.toISOString(), leaseOwner: input.workerId });
+      leased.push(leasedJob);
+      memoryJobs.set(leasedJob.id, cloneJob(leasedJob));
+    }
+    return leased;
+  }
   // Targeted leases must inspect durable storage so Redis cannot hand the
   // worker an unrelated job ahead of the requested mission.
   const redis = input.missionId ? null : await getRedis();
@@ -456,6 +529,7 @@ export async function leaseEpochJobs(input: {
 }
 
 export async function releaseEpochJobLease(jobId: string, reason?: string): Promise<EpochQueueJob | null> {
+  const sqs = epochSqsConfigFromEnv();
   const redis = await getRedis();
   const current = await getEpochJobById(jobId);
   if (!current || current.status !== "leased") return current;
@@ -466,6 +540,11 @@ export async function releaseEpochJobLease(jobId: string, reason?: string): Prom
     leaseOwner: undefined,
     lastError: reason ?? current.lastError,
   };
+  if (sqs) {
+    await persistDatabaseJob(queued);
+    await releaseEpochSqsJob(jobId, sqs).catch(() => undefined);
+    return queued;
+  }
   if (!redis) {
     await persistActiveJob(queued);
     return queued;
@@ -481,6 +560,7 @@ export async function retryEpochJob(jobId: string, error: string, input?: {
   delayMs?: number;
   payloadPatch?: Record<string, unknown>;
 }): Promise<EpochQueueJob | null> {
+  const sqs = epochSqsConfigFromEnv();
   const redis = await getRedis();
   const delayMs = Math.max(250, Math.floor(input?.delayMs ?? 0) || 0);
 
@@ -509,6 +589,28 @@ export async function retryEpochJob(jobId: string, error: string, input?: {
       leasedAt: undefined,
       leaseOwner: undefined,
     };
+
+    if (sqs) {
+      await persistDatabaseJob(queued);
+      await requeueEpochJobToSqs(queued, sqs, delayMs || retryDelayMs(nextRetryCount));
+      await acknowledgeSqsDeliveryWithEvidence({
+        job: queued,
+        config: sqs,
+        userId: input?.userId,
+        orgId: input?.orgId,
+        operation: "retry",
+      });
+      emitEpochRuntimeEvent({
+        userId: input?.userId ?? parsed.workspaceId,
+        orgId: input?.orgId,
+        workspaceId: parsed.workspaceId,
+        kind: "epoch.queue.enqueued",
+        label: "Queue job scheduled for retry",
+        subjectId: jobId,
+        payload: { jobId, error, retryCount: nextRetryCount, maxRetries, delayMs: delayMs || retryDelayMs(nextRetryCount) },
+      });
+      return queued;
+    }
 
     if (!redis) {
       await persistActiveJob(queued);
@@ -586,6 +688,7 @@ export async function deadLetterEpochJob(jobId: string, error: string, input?: {
   userId?: string;
   orgId?: string;
 }): Promise<EpochQueueJob | null> {
+  const sqs = epochSqsConfigFromEnv();
   const redis = await getRedis();
   const current = await getEpochJobById(jobId);
   if (!current) return null;
@@ -603,6 +706,27 @@ export async function deadLetterEpochJob(jobId: string, error: string, input?: {
       leasedAt: undefined,
       leaseOwner: undefined,
     };
+
+    if (sqs) {
+      await persistDeadLetterJob(dead);
+      await acknowledgeSqsDeliveryWithEvidence({
+        job: dead,
+        config: sqs,
+        userId: input?.userId,
+        orgId: input?.orgId,
+        operation: "dead_letter",
+      });
+      emitEpochRuntimeEvent({
+        userId: input?.userId ?? parsed.workspaceId,
+        orgId: input?.orgId,
+        workspaceId: parsed.workspaceId,
+        kind: "epoch.queue.failed",
+        label: "Queue job dead-lettered",
+        subjectId: jobId,
+        payload: { jobId, error, retryCount: parsed.retryCount, maxRetries: parsed.maxRetries },
+      });
+      return dead;
+    }
 
     if (!redis) {
       memoryJobs.delete(jobId);
@@ -633,6 +757,30 @@ export async function deadLetterEpochJob(jobId: string, error: string, input?: {
 }
 
 export async function acknowledgeEpochJob(jobId: string, userId?: string, orgId?: string): Promise<EpochQueueJob | null> {
+  const sqs = epochSqsConfigFromEnv();
+  if (sqs) {
+    const job = await getEpochJobById(jobId);
+    if (!job) return null;
+    const acked = { ...job, status: "done" as const, leasedAt: undefined, leaseOwner: undefined };
+    await persistDatabaseJob(acked);
+    await acknowledgeSqsDeliveryWithEvidence({
+      job: acked,
+      config: sqs,
+      userId,
+      orgId,
+      operation: "complete",
+    });
+    emitEpochRuntimeEvent({
+      userId: userId ?? job.workspaceId,
+      orgId,
+      workspaceId: job.workspaceId,
+      kind: "epoch.queue.acknowledged",
+      label: "Queue job acknowledged",
+      subjectId: jobId,
+      payload: { jobId },
+    });
+    return acked;
+  }
   const redis = await getRedis();
   if (!redis) {
     const job = await getEpochJobById(jobId);
@@ -809,6 +957,11 @@ export async function retryDeadLetterEpochJob(jobId: string, input?: { userId?: 
 }
 
 export async function getEpochJobById(jobId: string): Promise<EpochQueueJob | null> {
+  const sqs = epochSqsConfigFromEnv();
+  if (sqs) {
+    const row = await prisma.epochQueueJob.findUnique({ where: { id: jobId } });
+    return row ? mapDatabaseJob(row) : null;
+  }
   const redis = await getRedis();
   const raw = redis ? await redis.hGet(jobKey(jobId), "payload") : null;
   if (!redis) {
@@ -856,6 +1009,9 @@ export async function getEpochQueueStatus(workspaceId: string): Promise<{
     model_quality: jobs.filter((job) => job.type === "model_quality").length,
     runtime_benchmark: jobs.filter((job) => job.type === "runtime_benchmark").length,
     runtime_quality: jobs.filter((job) => job.type === "runtime_quality").length,
+    reality_projection: jobs.filter((job) => job.type === "reality_projection").length,
+    reality_maintenance: jobs.filter((job) => job.type === "reality_maintenance").length,
+    reality_rediscovery: jobs.filter((job) => job.type === "reality_rediscovery").length,
   } satisfies Record<EpochQueueJobType, number>;
   const byStatus = {
     queued: jobs.filter((job) => job.status === "queued").length,

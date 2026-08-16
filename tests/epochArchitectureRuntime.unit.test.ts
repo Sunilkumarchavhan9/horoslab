@@ -7,6 +7,7 @@ describe("Epoch architecture runtime", () => {
     runtime.transition("m1", "customer_outcome", { status: "completed", detail: "accepted" }); runtime.updateWorldModel("m1", { gpu: { value: "RTX 4050", source: "nvidia-smi", confidence: 0.99, classification: "OBSERVED" } });
     runtime.resolveFactConflict("m1", "region", [{ value: "us", source: "old", confidence: 0.4, observedAt: "2026-01-01", classification: "EXTERNAL" }, { value: "in", source: "probe", confidence: 0.9, observedAt: "2026-02-01", classification: "OBSERVED" }]);
     const replay = runtime.replay("m1")!; expect(created.worldModel.version).toBe("world-v1"); expect(replay.worldModel.version).toBe("world-v3"); expect(replay.worldModel.facts.region.value).toBe("in"); expect(replay.stages.find((stage) => stage.stage === "customer_outcome")?.status).toBe("completed");
+    expect(replay.history.length).toBeGreaterThanOrEqual(3); expect(runtime.replay("m1", { sequence: 1 })?.worldModel.facts.region).toBeUndefined();
   });
 
   it("chains evidence and requests rediscovery after a failure", () => {

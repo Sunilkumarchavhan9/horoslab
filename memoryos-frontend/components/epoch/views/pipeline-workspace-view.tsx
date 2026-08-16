@@ -62,6 +62,7 @@ import { EpochIcon } from "@/components/epoch/primitives/epoch-logo";
 interface PipelineWorkspaceViewProps {
   pipelineTitle?: string;
   initialPrompt?: string;
+  executionContext?: Record<string, unknown>;
   onBack?: () => void;
   onNavigateToPipelines?: () => void;
   onOpenShortcuts?: () => void;
@@ -89,6 +90,7 @@ type AgentViewMode = "split" | "hide_agent" | "focus_agent";
 export function PipelineWorkspaceView({
   pipelineTitle = "Untitled Pipeline",
   initialPrompt = "Describe the objective, model constraints, and evaluation criteria for this pipeline.",
+  executionContext = {},
   onBack,
   onNavigateToPipelines,
   onOpenShortcuts,
@@ -182,6 +184,15 @@ export function PipelineWorkspaceView({
     ? [{ time: new Date().toLocaleTimeString(), delta: "now", level: "INFO", cat: "pipeline", msg: `Pipeline run ${runStatus}` }]
     : [];
   const objective = initialPrompt.trim() || "No pipeline objective supplied.";
+  const contextValue = (key: string, fallback: string) => {
+    const value = executionContext[key];
+    return typeof value === "string" && value.trim() ? value : fallback;
+  };
+  const contextModel = contextValue("model", "Auto");
+  const contextEngine = contextValue("engine", "Auto");
+  const contextGpu = contextValue("gpu", "Auto");
+  const contextWorkload = contextValue("workload", "Auto");
+  const contextOutput = contextValue("outputFormat", "Auto");
   const displayedRunStatus = runSubmitting ? "submitting" : runStatus || "not_started";
   const measuredState = runStatus === "completed" ? "measured" : "not measured";
 
@@ -823,7 +834,6 @@ export function PipelineWorkspaceView({
                     <RotateCcw size={13} />
                   </button>
                 </div>
-
               </div>
             </div>
 
@@ -833,7 +843,6 @@ export function PipelineWorkspaceView({
               dark ? "border-[#282828] bg-[#151515]" : "border-[#d8ddd3] bg-[#fafbfa]"
             )}>
               <div className={cn(agentViewMode === "focus_agent" ? "max-w-[760px] mx-auto" : "")}>
-                {/* Unified Card Container matching Screenshot */}
                 <div className={cn(
                   "border p-2.5 rounded-lg space-y-2 transition-colors",
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
@@ -866,20 +875,20 @@ export function PipelineWorkspaceView({
                         )}>
                           <div className="flex items-center justify-between border-b border-[#282828] pb-1.5 font-bold text-white">
                             <span>RUN CONTEXT</span>
-                            <span className="text-[10px] text-[#788274]">vLLM</span>
+                            <span className="text-[10px] text-[#788274]">{contextEngine}</span>
                           </div>
                           <div className="space-y-1 text-[11px] text-[#889284]">
-                            <div className="flex justify-between"><span>Model:</span><span className="text-white">Llama 3.1 8B</span></div>
-                            <div className="flex justify-between"><span>Target GPU:</span><span className="text-white">A100-40GB</span></div>
-                            <div className="flex justify-between"><span>Engine:</span><span className="text-white">vLLM (Auto)</span></div>
-                            <div className="flex justify-between"><span>Budget:</span><span className="text-[#75bf00]">$0.49 / trial</span></div>
+                            <div className="flex justify-between gap-3"><span>Model:</span><span className="text-white text-right">{contextModel}</span></div>
+                            <div className="flex justify-between gap-3"><span>Target GPU:</span><span className="text-white text-right">{contextGpu}</span></div>
+                            <div className="flex justify-between gap-3"><span>Workload:</span><span className="text-white text-right">{contextWorkload}</span></div>
+                            <div className="flex justify-between gap-3"><span>Output:</span><span className="text-white text-right">{contextOutput}</span></div>
                           </div>
                         </div>
                       )}
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {/* Mode Switcher Trigger matching User Reference Image */}
+                      {/* Mode Switcher Trigger matching User Reference Image 1 */}
                       <div className="relative">
                         <button
                           type="button"
@@ -895,7 +904,7 @@ export function PipelineWorkspaceView({
                           )}
                         >
                           {selectedMode === "Experiment" ? (
-                            <FlaskConical size={13} className="text-[#788274]" />
+                            <FlaskConical size={13} className="text-[#75bf00]" />
                           ) : (
                             <Gauge size={13} className="text-[#75bf00]" />
                           )}
@@ -907,12 +916,12 @@ export function PipelineWorkspaceView({
                           )}
                         </button>
 
-                        {/* Mode Dropdown Popover matching User Reference Image */}
+                        {/* Mode Dropdown Popover matching User Reference Image 1 */}
                         {modeDropdownOpen && (
                           <div className={cn(
-                            "absolute right-0 bottom-full mb-2 w-80 border border-dashed shadow-2xl p-1.5 space-y-1 text-xs z-50 rounded-lg animate-in fade-in zoom-in-95 duration-100",
+                            "absolute right-0 bottom-full mb-2 w-80 border shadow-2xl p-1.5 space-y-1 text-xs z-50 rounded-xs animate-in fade-in zoom-in-95 duration-100",
                             dark
-                              ? "border-[#383838] bg-[#202020] text-white"
+                              ? "border-[#333] bg-[#181818] text-white"
                               : "border-[#c9cec4] bg-white text-[#171a17]"
                           )}>
                             {/* Optimize Option */}
@@ -922,21 +931,29 @@ export function PipelineWorkspaceView({
                                 setModeDropdownOpen(false);
                               }}
                               className={cn(
-                                "flex items-start gap-3 p-3 rounded-md cursor-pointer transition-colors text-left",
+                                "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-left",
                                 selectedMode === "Optimize"
-                                  ? dark ? "bg-[#282828]" : "bg-[#f3f6f0]"
-                                  : dark ? "hover:bg-[#282828]" : "hover:bg-[#f3f6f0]"
+                                  ? dark ? "bg-[#282828]" : "bg-[#f0f4ee]"
+                                  : dark ? "hover:bg-[#222222]" : "hover:bg-[#f8faf7]"
                               )}
                             >
-                              <Gauge size={16} className="text-[#75bf00] shrink-0 mt-0.5" />
-                              <div className="flex-1">
+                              <Gauge
+                                size={16}
+                                className={cn(
+                                  "shrink-0 mt-0.5",
+                                  selectedMode === "Optimize" ? "text-[#75bf00]" : dark ? "text-[#888]" : "text-[#788274]"
+                                )}
+                              />
+                              <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <span className="font-semibold text-white text-xs">Optimize</span>
+                                  <span className={cn("font-medium text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                                    Optimize
+                                  </span>
                                   {selectedMode === "Optimize" && (
                                     <Check size={14} className="text-[#75bf00]" />
                                   )}
                                 </div>
-                                <p className="text-[11px] text-[#888] mt-0.5 leading-relaxed">
+                                <p className={cn("text-[11px] mt-0.5 leading-relaxed", dark ? "text-[#888]" : "text-[#666]")}>
                                   Full run: measure candidates and apply the winner.
                                 </p>
                               </div>
@@ -949,22 +966,32 @@ export function PipelineWorkspaceView({
                                 setModeDropdownOpen(false);
                               }}
                               className={cn(
-                                "flex items-start gap-3 p-3 rounded-md cursor-pointer transition-colors text-left",
+                                "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-left",
                                 selectedMode === "Experiment"
-                                  ? dark ? "bg-[#282828]" : "bg-[#f3f6f0]"
-                                  : dark ? "hover:bg-[#282828]" : "hover:bg-[#f3f6f0]"
+                                  ? dark ? "bg-[#282828]" : "bg-[#f0f4ee]"
+                                  : dark ? "hover:bg-[#222222]" : "hover:bg-[#f8faf7]"
                               )}
                             >
-                              <FlaskConical size={16} className="text-[#788274] shrink-0 mt-0.5" />
-                              <div className="flex-1">
+                              <FlaskConical
+                                size={16}
+                                className={cn(
+                                  "shrink-0 mt-0.5",
+                                  selectedMode === "Experiment" ? "text-[#75bf00]" : dark ? "text-[#888]" : "text-[#788274]"
+                                )}
+                              />
+                              <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <span className="font-semibold text-white text-xs">Experiment</span>
+                                  <span className={cn("font-medium text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                                    Experiment
+                                  </span>
                                   {selectedMode === "Experiment" && (
                                     <Check size={14} className="text-[#75bf00]" />
                                   )}
                                 </div>
-                                <p className="text-[11px] text-[#888] mt-0.5 leading-relaxed">
-                                  Exploratory run: measure candidates side by side. No winner is applied.
+                                <p className={cn("text-[11px] mt-0.5 leading-relaxed", dark ? "text-[#888]" : "text-[#666]")}>
+                                  Exploratory run: measure candidates side by side.
+                                  <br />
+                                  No winner is applied.
                                 </p>
                               </div>
                             </div>
@@ -1004,7 +1031,7 @@ export function PipelineWorkspaceView({
               dark ? "border-[#282828] bg-[#151515]" : "border-[#edf0eb] bg-[#fafbfa]"
             )}>
               <div className="flex items-center gap-2 truncate">
-                  <span className="font-bold truncate">{objective}</span>
+                <span className="font-bold truncate">{objective}</span>
                 <span className="border border-[#d8ddd3] dark:border-[#383838] bg-[#202020] px-1.5 py-0.2 text-[10px] text-[#656d60] rounded-xs">
                   {displayedRunStatus}
                 </span>
@@ -1013,7 +1040,7 @@ export function PipelineWorkspaceView({
               <div className="flex items-center gap-2 shrink-0 font-sans text-xs">
                 <span className="text-[#656d60]">Execution data: {measuredState}</span>
                 <span>|</span>
-                <span className="font-mono text-[#788274] font-bold">No model selected</span>
+                <span className="font-mono text-[#788274] font-bold truncate max-w-[180px]">{contextModel}</span>
               </div>
             </div>
 

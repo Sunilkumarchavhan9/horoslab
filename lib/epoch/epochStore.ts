@@ -10,7 +10,10 @@ import { compileEpochMissionSpecification, type EpochMissionSpecification } from
 import { generateEpochCandidates } from "./candidateEngine";
 import { buildEpochExperimentPlans } from "./experimentEngine";
 import { compileEpochOutcomeContract, normalizeEpochInputEnvelope } from "./inputIntelligence";
+import { ingestEpochInput, validateEpochIntent } from "./inputIngestion";
+import { buildEpochCapabilityCompatibilityGraph } from "./capabilityGraph";
 import { loadEpochRuntimeProbeMap } from "./capabilityFabricProbe";
+import { enqueueEpochRealityMaintenance, enqueueEpochRealityProjection } from "./realityJobs";
 
 export type EpochMissionState = "draft" | "running" | "waiting_review" | "completed" | "failed" | "cancelled";
 export type EpochVerificationDecision = "PASS" | "FAIL" | "REVIEW";
@@ -511,6 +514,7 @@ export async function listEpochMissions(scope: { workspaceId: string; institutio
       verificationRun: true,
       certificate: true,
       memoryRecord: true,
+      inputEnvelopes: { orderBy: { capturedAt: "asc" } },
       evidence: { orderBy: { createdAt: "desc" } },
     },
   });
@@ -587,6 +591,7 @@ export async function listEpochSmokeRuns(input: {
       verificationRun: true,
       certificate: true,
       memoryRecord: true,
+      inputEnvelopes: { orderBy: { capturedAt: "asc" } },
       evidence: { orderBy: { createdAt: "desc" } },
     },
   });
@@ -628,6 +633,7 @@ export async function getEpochMission(workspaceId: string, missionId: string) {
       verificationRun: { include: { certificate: true } },
       certificate: true,
       memoryRecord: true,
+      inputEnvelopes: { orderBy: { capturedAt: "asc" } },
       evidence: { orderBy: { createdAt: "desc" } },
     },
   });
@@ -1104,6 +1110,9 @@ export async function getEpochMissionControl(workspaceId: string, missionId: str
 
 export async function createEpochMission(input: CreateEpochMissionInput) {
   const normalizedInput = input.inputEnvelope ? normalizeEpochInputEnvelope(input.inputEnvelope) : null;
+  const ingestion = normalizedInput ? ingestEpochInput(normalizedInput) : null;
+  if (normalizedInput && ingestion?.status === "invalid") throw new Error(`epoch_input_invalid:${ingestion.reasons.join(",")}`);
+  if (normalizedInput && ingestion && !validateEpochIntent(ingestion.intent, normalizedInput).valid && ingestion.status === "parsed") throw new Error("epoch_intent_validation_failed");
   const outcomeContract = normalizedInput
     ? compileEpochOutcomeContract({
         inputs: [normalizedInput],
@@ -1160,6 +1169,13 @@ export async function createEpochMission(input: CreateEpochMissionInput) {
   });
   candidateSearch.candidates = capabilityAwareCandidates;
   experimentPlan.plans = buildEpochExperimentPlans({ candidates: capabilityAwareCandidates, workload: input.workload });
+  const capabilityGraph = buildEpochCapabilityCompatibilityGraph({
+    model: input.model,
+    runtimeOptions: input.runtimeOptions,
+    hardwareOptions: input.hardwareOptions,
+    workload: input.workload,
+    capabilityProbes,
+  });
   const mission = await prisma.epochMission.create({
     data: {
       workspaceId: input.workspaceId,
@@ -1179,12 +1195,38 @@ export async function createEpochMission(input: CreateEpochMissionInput) {
       deadlineAt: input.deadlineAt ?? undefined,
       proof: json({
         ...(input.proof ?? {}),
-        ...(normalizedInput ? { inputEnvelope: normalizedInput, outcomeContract } : {}),
+        ...(normalizedInput ? { inputEnvelope: normalizedInput, ingestion, outcomeContract } : {}),
         missionLoop: loop,
         missionSpecification: specification,
         candidateSearch,
         experimentPlan,
+        capabilityGraph,
       }),
+      ...(normalizedInput
+        ? {
+            inputEnvelopes: {
+              create: {
+                workspaceId: input.workspaceId,
+                userId: input.userId,
+                orgId: input.orgId,
+                modality: normalizedInput.modality,
+                source: normalizedInput.source,
+                trust: normalizedInput.trust,
+                content: json(normalizedInput.content),
+                contentType: normalizedInput.contentType,
+                metadata: json(normalizedInput.metadata),
+                capturedAt: new Date(normalizedInput.capturedAt),
+                contentSha256: normalizedInput.contentSha256,
+                sensitivity: normalizedInput.sensitivity,
+                classification: normalizedInput.classification,
+                validFrom: new Date(normalizedInput.validFrom),
+                validUntil: normalizedInput.validUntil ? new Date(normalizedInput.validUntil) : undefined,
+                ingestionVersion: normalizedInput.ingestionVersion,
+                integritySha256: normalizedInput.integritySha256,
+              },
+            },
+          }
+        : {}),
     } as any,
   });
 
@@ -1233,6 +1275,13 @@ export async function createEpochMission(input: CreateEpochMissionInput) {
     where: { id: input.institutionId },
     data: { missionCount: { increment: 1 }, currentState: "draft" } as any,
   });
+
+  // Start the durable reality loop for every mission. These jobs are safe to
+  // retry and make observation projection/freshness independent of API uptime.
+  await Promise.all([
+    enqueueEpochRealityMaintenance({ workspaceId: input.workspaceId, missionId: mission.id }),
+    enqueueEpochRealityProjection({ workspaceId: input.workspaceId, missionId: mission.id }),
+  ]);
 
   emitEpochRuntimeEvent({
     userId: input.userId,

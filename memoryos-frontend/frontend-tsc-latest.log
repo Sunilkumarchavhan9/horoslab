@@ -1,7 +1,0 @@
-runtime/governance/workspace/GovernanceWorkspace.tsx(54,12): error TS2367: This comparison appears to be unintentional because the types 'GovernanceView' and '"approvals"' have no overlap.
-runtime/governance/workspace/GovernanceWorkspace.tsx(55,12): error TS2367: This comparison appears to be unintentional because the types 'GovernanceView' and '"recovery"' have no overlap.
-runtime/settlement/workspace/SettlementWorkspace.tsx(105,7): error TS2367: This comparison appears to be unintentional because the types 'SettlementView' and '"memory-preflight"' have no overlap.
-runtime/settlement/workspace/SettlementWorkspace.tsx(109,7): error TS2367: This comparison appears to be unintentional because the types 'SettlementView' and '"mission-outcomes"' have no overlap.
-runtime/settlement/workspace/SettlementWorkspace.tsx(113,7): error TS2367: This comparison appears to be unintentional because the types 'SettlementView' and '"learning-handoff"' have no overlap.
-runtime/settlement/workspace/SettlementWorkspace.tsx(117,7): error TS2367: This comparison appears to be unintentional because the types 'SettlementView' and '"settlement"' have no overlap.
-runtime/settlement/workspace/SettlementWorkspace.tsx(121,7): error TS2367: This comparison appears to be unintentional because the types 'SettlementView' and '"certificates"' have no overlap.

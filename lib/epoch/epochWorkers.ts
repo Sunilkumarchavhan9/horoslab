@@ -212,3 +212,134 @@ export async function completeEpochWorkerLease(input: {
   });
   return { accepted: true, idempotent: false };
 }
+
+/** Ensure the process has a durable identity before it claims a job. */
+export async function ensureEpochProcessWorker(input: {
+  workspaceId: string;
+  userId: string;
+  orgId?: string;
+  processId: string;
+  capabilities?: string[];
+  maxConcurrency?: number;
+}) {
+  const name = `epoch-process:${input.processId}`;
+  const existing = await prisma.epochWorker.findFirst({ where: { workspaceId: input.workspaceId, name } });
+  if (existing) {
+    if (existing.retiredAt || existing.status === "retired") {
+      return registerEpochWorker({
+        workspaceId: input.workspaceId,
+        userId: input.userId,
+        orgId: input.orgId,
+        kind: "software",
+        name: `${name}:${randomUUID().slice(0, 8)}`,
+        protocolVersion: "epoch.worker.v1",
+        capabilities: input.capabilities ?? [],
+        projectScope: {},
+        maxConcurrency: input.maxConcurrency ?? 1,
+        metadata: { source: "epoch-worker-process" },
+      });
+    }
+    return existing;
+  }
+  return registerEpochWorker({
+    workspaceId: input.workspaceId,
+    userId: input.userId,
+    orgId: input.orgId,
+    kind: "software",
+    name,
+    protocolVersion: "epoch.worker.v1",
+    capabilities: input.capabilities ?? [],
+    projectScope: {},
+    maxConcurrency: input.maxConcurrency ?? 1,
+    metadata: { source: "epoch-worker-process" },
+  });
+}
+
+/** Attach a durable, fenced worker lease to a job already leased from the queue. */
+export async function claimEpochWorkerLease(input: {
+  workspaceId: string;
+  workerId: string;
+  jobId: string;
+  leaseMs?: number;
+}): Promise<{ id: string; fencingToken: number; expiresAt: Date } | null> {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const worker = await tx.epochWorker.findFirst({ where: { id: input.workerId, workspaceId: input.workspaceId } });
+      if (!worker || worker.retiredAt || ["retired", "draining", "blocked", "offline"].includes(worker.status)) return null;
+      const active = await tx.epochWorkerLease.count({ where: { workerId: worker.id, status: "active", expiresAt: { gt: new Date() } } });
+      if (active >= worker.maxConcurrency) return null;
+      const previous = await tx.epochWorkerLease.findFirst({ where: { workerId: worker.id }, orderBy: { fencingToken: "desc" } });
+      const fencingToken = (previous?.fencingToken ?? 0) + 1;
+      const lease = await tx.epochWorkerLease.create({
+        data: {
+          workspaceId: input.workspaceId,
+          workerId: input.workerId,
+          jobId: input.jobId,
+          fencingToken,
+          expiresAt: new Date(Date.now() + Math.max(1_000, input.leaseMs ?? 60_000)),
+        },
+      });
+      await tx.epochWorker.update({ where: { id: worker.id }, data: { activeLeases: active + 1, status: "busy", lastHeartbeat: new Date() } });
+      return { id: lease.id, fencingToken: lease.fencingToken, expiresAt: lease.expiresAt };
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && ["P2002", "P2034"].includes(error.code)) return null;
+    throw error;
+  }
+}
+
+export async function renewEpochWorkerLease(input: {
+  workspaceId: string;
+  workerId: string;
+  jobId: string;
+  fencingToken: number;
+  leaseMs?: number;
+}): Promise<boolean> {
+  const updated = await prisma.epochWorkerLease.updateMany({
+    where: { workspaceId: input.workspaceId, workerId: input.workerId, jobId: input.jobId, fencingToken: input.fencingToken, status: "active" },
+    data: { expiresAt: new Date(Date.now() + Math.max(1_000, input.leaseMs ?? 60_000)) },
+  });
+  if (updated.count === 0) return false;
+  await heartbeatEpochWorker({ workspaceId: input.workspaceId, workerId: input.workerId, status: "busy" });
+  return true;
+}
+
+export async function releaseEpochWorkerLease(input: {
+  workspaceId: string;
+  workerId: string;
+  jobId: string;
+  fencingToken: number;
+  status?: "completed" | "released" | "failed" | "expired";
+}): Promise<boolean> {
+  const status = input.status ?? "released";
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.epochWorkerLease.updateMany({
+      where: { workspaceId: input.workspaceId, workerId: input.workerId, jobId: input.jobId, fencingToken: input.fencingToken, status: "active" },
+      data: { status, releasedAt: new Date() },
+    });
+    if (updated.count === 0) return false;
+    const active = await tx.epochWorkerLease.count({ where: { workerId: input.workerId, status: "active", expiresAt: { gt: new Date() } } });
+    const worker = await tx.epochWorker.findUnique({ where: { id: input.workerId } });
+    if (worker) await tx.epochWorker.update({ where: { id: worker.id }, data: { activeLeases: active, status: active > 0 ? "busy" : worker.status === "draining" ? "draining" : "available" } });
+    return true;
+  });
+}
+
+/** Requeue jobs whose process lease expired. SQS will redeliver after visibility expires. */
+export async function recoverExpiredEpochWorkerLeases(workspaceId?: string): Promise<number> {
+  const expired = await prisma.epochWorkerLease.findMany({ where: { ...(workspaceId ? { workspaceId } : {}), status: "active", expiresAt: { lte: new Date() } }, take: 100 });
+  let recovered = 0;
+  for (const lease of expired) {
+    const changed = await prisma.$transaction(async (tx) => {
+      const updated = await tx.epochWorkerLease.updateMany({ where: { id: lease.id, status: "active", fencingToken: lease.fencingToken }, data: { status: "expired", releasedAt: new Date() } });
+      if (updated.count === 0) return false;
+      await tx.epochQueueJob.updateMany({ where: { id: lease.jobId, workspaceId: lease.workspaceId, status: "leased", leaseOwner: { not: null } }, data: { status: "queued", leasedAt: null, leaseOwner: null, lastError: "worker_lease_expired" } });
+      const active = await tx.epochWorkerLease.count({ where: { workerId: lease.workerId, status: "active", expiresAt: { gt: new Date() } } });
+      const worker = await tx.epochWorker.findUnique({ where: { id: lease.workerId } });
+      if (worker) await tx.epochWorker.update({ where: { id: worker.id }, data: { activeLeases: active, status: active > 0 ? "busy" : "available" } });
+      return true;
+    });
+    if (changed) recovered += 1;
+  }
+  return recovered;
+}

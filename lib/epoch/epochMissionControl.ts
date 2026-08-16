@@ -310,6 +310,9 @@ export async function buildEpochMissionControlSnapshot(
       model_quality: 0,
       runtime_benchmark: 0,
       runtime_quality: 0,
+      reality_projection: 0,
+      reality_maintenance: 0,
+      reality_rediscovery: 0,
     },
     byStatus: {
       queued: 0,

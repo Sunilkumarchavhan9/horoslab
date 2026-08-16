@@ -867,6 +867,9 @@ model Workspace {
   epochInstitutions             EpochInstitution[]
   epochInstitutionVersions      EpochInstitutionVersion[]
   epochMissions                 EpochMission[]
+  epochInputEnvelopes           EpochInputEnvelope[]
+  epochRealityEntities          EpochRealityEntity[]
+  epochRealityRelationships     EpochRealityRelationship[]
   epochArchitectureRuns         EpochArchitectureRun[]
   epochOutcomes                 EpochOutcome[]
   epochExperiences              EpochExperience[]
@@ -2237,10 +2240,119 @@ model EpochMission {
   productionInteractions EpochProductionInteraction[]
   copilotDrafts          EpochCopilotDraft[]
   architectureRun        EpochArchitectureRun?
+  inputEnvelopes          EpochInputEnvelope[]
+  realityEntities         EpochRealityEntity[]
+  realityRelationships    EpochRealityRelationship[]
 
   @@index([workspaceId, state, updatedAt], map: "idx_epoch_missions_workspace_state_updated")
   @@index([institutionId, createdAt], map: "idx_epoch_missions_institution_created")
   @@map("epoch_missions")
+}
+
+model EpochInputEnvelope {
+  id            String   @id @default(cuid())
+  workspaceId   String   @map("workspace_id")
+  missionId     String   @map("mission_id")
+  userId        String   @map("user_id")
+  orgId         String?  @map("org_id")
+  modality      String
+  source        String
+  trust         String
+  content       Json
+  contentType   String?  @map("content_type")
+  metadata      Json     @default("{}")
+  capturedAt    DateTime @map("captured_at")
+  contentSha256 String   @map("content_sha256")
+  sensitivity   String   @default("internal")
+  classification String  @default("USER_ASSERTED")
+  validFrom     DateTime @default(now()) @map("valid_from")
+  validUntil    DateTime? @map("valid_until")
+  ingestionVersion String @default("epoch_input_ingestion.v1") @map("ingestion_version")
+  integritySha256 String @map("integrity_sha256")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  workspace Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission   EpochMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  realityEntities      EpochRealityEntity[]       @relation("EpochRealityEntitySourceInput")
+  realityRelationships EpochRealityRelationship[] @relation("EpochRealityRelationshipSourceInput")
+
+  @@index([workspaceId, createdAt], map: "idx_epoch_input_envelopes_workspace_created")
+  @@index([missionId, capturedAt], map: "idx_epoch_input_envelopes_mission_captured")
+  @@index([workspaceId, contentSha256], map: "idx_epoch_input_envelopes_workspace_hash")
+  @@map("epoch_input_envelopes")
+}
+
+model EpochRealityEntity {
+  id                  String    @id @default(cuid())
+  workspaceId         String    @map("workspace_id")
+  missionId           String?   @map("mission_id")
+  sourceInputId       String?   @map("source_input_id")
+  sourceObservationId String?   @map("source_observation_id")
+  canonicalKey        String    @map("canonical_key")
+  entityType          String    @map("entity_type")
+  name                String
+  attributes          Json      @default("{}")
+  confidence          Float     @default(0.5)
+  provenance          Json      @default("{}")
+  status              String    @default("active")
+  conflictStatus      String    @default("unresolved") @map("conflict_status")
+  refreshAfter        DateTime? @map("refresh_after")
+  validFrom           DateTime  @map("valid_from")
+  validUntil          DateTime? @map("valid_until")
+  observedAt          DateTime  @map("observed_at")
+  integritySha256     String    @map("integrity_sha256")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission     EpochMission?      @relation(fields: [missionId], references: [id], onDelete: SetNull)
+  sourceInput       EpochInputEnvelope? @relation("EpochRealityEntitySourceInput", fields: [sourceInputId], references: [id], onDelete: SetNull)
+  sourceObservation EpochObservation? @relation("EpochRealityEntitySourceObservation", fields: [sourceObservationId], references: [id], onDelete: SetNull)
+
+  outgoingRelationships EpochRealityRelationship[] @relation("EpochRealityRelationshipFrom")
+  incomingRelationships EpochRealityRelationship[] @relation("EpochRealityRelationshipTo")
+
+  @@index([workspaceId, canonicalKey, validFrom], map: "idx_epoch_reality_entities_key_valid")
+  @@index([workspaceId, entityType, status], map: "idx_epoch_reality_entities_type_status")
+  @@index([missionId, observedAt], map: "idx_epoch_reality_entities_mission_observed")
+  @@index([sourceInputId], map: "idx_epoch_reality_entities_source_input")
+  @@map("epoch_reality_entities")
+}
+
+model EpochRealityRelationship {
+  id                  String    @id @default(cuid())
+  workspaceId         String    @map("workspace_id")
+  missionId           String?   @map("mission_id")
+  sourceInputId       String?   @map("source_input_id")
+  sourceObservationId String?   @map("source_observation_id")
+  fromEntityId        String    @map("from_entity_id")
+  toEntityId          String    @map("to_entity_id")
+  relationType        String    @map("relation_type")
+  attributes          Json      @default("{}")
+  confidence          Float     @default(0.5)
+  provenance          Json      @default("{}")
+  status              String    @default("active")
+  conflictStatus      String    @default("unresolved") @map("conflict_status")
+  refreshAfter        DateTime? @map("refresh_after")
+  validFrom           DateTime  @map("valid_from")
+  validUntil          DateTime? @map("valid_until")
+  observedAt          DateTime  @map("observed_at")
+  integritySha256     String    @map("integrity_sha256")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  mission     EpochMission?      @relation(fields: [missionId], references: [id], onDelete: SetNull)
+  sourceInput       EpochInputEnvelope? @relation("EpochRealityRelationshipSourceInput", fields: [sourceInputId], references: [id], onDelete: SetNull)
+  sourceObservation EpochObservation? @relation("EpochRealityRelationshipSourceObservation", fields: [sourceObservationId], references: [id], onDelete: SetNull)
+  fromEntity  EpochRealityEntity @relation("EpochRealityRelationshipFrom", fields: [fromEntityId], references: [id], onDelete: Cascade)
+  toEntity    EpochRealityEntity @relation("EpochRealityRelationshipTo", fields: [toEntityId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, relationType, observedAt], map: "idx_epoch_reality_relationships_type_observed")
+  @@index([fromEntityId, relationType], map: "idx_epoch_reality_relationships_from_type")
+  @@index([toEntityId, relationType], map: "idx_epoch_reality_relationships_to_type")
+  @@index([sourceInputId], map: "idx_epoch_reality_relationships_source_input")
+  @@map("epoch_reality_relationships")
 }
 
 model EpochOutcome {
@@ -2685,6 +2797,8 @@ model EpochObservation {
   createdAt    DateTime @default(now()) @map("created_at")
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  realityEntities      EpochRealityEntity[]       @relation("EpochRealityEntitySourceObservation")
+  realityRelationships EpochRealityRelationship[] @relation("EpochRealityRelationshipSourceObservation")
 
   @@index([workspaceId, observedAt], map: "idx_epoch_observations_workspace_observed")
   @@index([experimentId], map: "idx_epoch_observations_experiment")

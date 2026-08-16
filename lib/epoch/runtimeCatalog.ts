@@ -209,6 +209,7 @@ export async function createEpochRuntimeProgramRun(
       design: {
         prompt: typeof input.prompt === "string" ? input.prompt : "",
         source: typeof input.source === "string" ? input.source : "pipeline_workspace",
+        executionContext: input.executionContext && typeof input.executionContext === "object" ? input.executionContext : {},
       },
       result: {},
     },

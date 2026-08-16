@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Search, GitBranch, Download } from "lucide-react";
+import { Plus, Search, GitBranch, Download, Play, Zap, ArrowRight, Layers, Clock, AlertCircle } from "lucide-react";
 import { Program } from "@/lib/epoch-types";
 import { cn } from "@/lib/utils";
 
@@ -18,17 +18,22 @@ export function ProgramsListView({
   onSelectProgram,
   onOpenNewProgram,
   onSelectPipeline,
-  dark = false,
+  dark = true,
 }: ProgramsListViewProps) {
   const [filterTab, setFilterTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("newest");
 
   const pipelines = [
     {
       id: "pipe-1",
       name: "Untitled Pipeline",
       modelsCount: 0,
-      time: "11h ago",
+      nodesCount: 0,
+      updatedAt: "Updated 4d ago",
+      latency: "—",
+      costPerReq: "—",
+      quality: "—",
       status: "Draft",
       prompt: "Optimize meta-llama/Llama-3.1-8B-Instruct on vLLM for cheapest GPU with latency and VRAM checks",
     },
@@ -45,18 +50,21 @@ export function ProgramsListView({
     }
   };
 
+  const primaryText = dark ? "text-white" : "text-[#171a17]";
+  const secondaryText = dark ? "text-[#889084]" : "text-[#687063]";
+
   return (
-    <div className="space-y-6 max-w-[1000px] mx-auto">
-      {/* Top Header matching Image 1 */}
+    <div className="space-y-6 max-w-[1240px] mx-auto animate-in fade-in duration-150">
+      {/* Top Header matching Reference Screenshot 1 */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold">
-            <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded font-bold inline-block">
+          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5">
+            <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans">
               Pipelines
             </span>
           </h1>
-          <p className="mt-1 text-xs text-[#788274]">
-            {pipelines.length} pipeline
+          <p className={cn("mt-1 text-xs", secondaryText)}>
+            Create, optimize, deploy, and reopen every pipeline in this workspace.
           </p>
         </div>
 
@@ -64,8 +72,10 @@ export function ProgramsListView({
           type="button"
           onClick={onOpenNewProgram}
           className={cn(
-            "flex items-center gap-1.5 border px-3 py-1.5 text-xs font-medium transition-colors rounded-xs",
-            dark ? "border-[#383838] bg-[#202020] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#171a17]"
+            "flex items-center gap-1.5 border border-dashed px-3 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono",
+            dark
+              ? "border-[#383838] bg-[#202020] text-white hover:border-[#75bf00]"
+              : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-black"
           )}
         >
           <Plus size={12} />
@@ -73,131 +83,170 @@ export function ProgramsListView({
         </button>
       </div>
 
-      {/* Filter Tabs & Search Bar matching Image 1 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+      {/* Filter Tabs & Search Bar matching Reference Screenshot 1 */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
         <div className="flex items-center gap-1 text-xs font-mono">
-          <button
-            type="button"
-            onClick={() => setFilterTab("all")}
-            className={cn(
-              "px-2.5 py-0.5 border transition-colors rounded-xs",
-              filterTab === "all"
-                ? dark ? "border-[#444] bg-[#282828] text-white font-bold" : "border-[#999] bg-[#eaeaea] text-[#111] font-bold"
-                : dark ? "border-transparent text-[#788274] hover:text-white" : "border-transparent text-[#687063] hover:text-[#171a17]"
-            )}
-          >
-            All {pipelines.length}
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterTab("live")}
-            className={cn(
-              "flex items-center gap-1 px-2.5 py-0.5 transition-colors rounded-xs",
-              filterTab === "live"
-                ? dark ? "bg-[#282828] text-white font-bold" : "bg-[#eaeaea] text-[#111] font-bold"
-                : dark ? "text-[#788274] hover:text-white" : "text-[#687063] hover:text-[#171a17]"
-            )}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
-            <span>Live</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterTab("stopped")}
-            className={cn(
-              "px-2.5 py-0.5 transition-colors rounded-xs",
-              filterTab === "stopped"
-                ? dark ? "bg-[#282828] text-white font-bold" : "bg-[#eaeaea] text-[#111] font-bold"
-                : dark ? "text-[#788274] hover:text-white" : "text-[#687063] hover:text-[#171a17]"
-            )}
-          >
-            Stopped {pipelines.length}
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterTab("optimizing")}
-            className={cn(
-              "px-2.5 py-0.5 transition-colors rounded-xs",
-              filterTab === "optimizing"
-                ? dark ? "bg-[#282828] text-white font-bold" : "bg-[#eaeaea] text-[#111] font-bold"
-                : dark ? "text-[#788274] hover:text-white" : "text-[#687063] hover:text-[#171a17]"
-            )}
-          >
-            Optimizing
-          </button>
+          {[
+            { id: "all", label: `All ${pipelines.length}` },
+            { id: "live", label: "Live" },
+            { id: "idle", label: "Idle 1" },
+            { id: "failed", label: "Failed" },
+            { id: "optimizing", label: "Optimizing..." },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setFilterTab(tab.id)}
+              className={cn(
+                "px-3 py-1 border border-dashed transition-colors rounded-xs",
+                filterTab === tab.id
+                  ? dark
+                    ? "border-[#555] bg-[#282828] text-white font-bold"
+                    : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
+                  : dark
+                  ? "border-transparent text-[#788274] hover:text-white"
+                  : "border-transparent text-[#687063] hover:text-[#171a17]"
+              )}
+            >
+              <span>{tab.label}</span>
+            </button>
+          ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <label className={cn(
-            "flex items-center gap-2 border px-2.5 py-1 text-xs transition-colors rounded-xs",
+            "flex items-center gap-2 border border-dashed px-3 py-1.5 text-xs rounded-xs min-w-[240px]",
             dark ? "border-[#2e2e2e] bg-[#202020] text-[#788274]" : "border-[#d8ddd3] bg-white text-[#687063]"
           )}>
-            <Search size={12} />
+            <Search size={13} />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search pipelines..."
-              className="bg-transparent outline-none placeholder:text-[#666] font-mono text-xs w-36"
+              placeholder="Search by name or model..."
+              className="bg-transparent outline-none placeholder:text-[#666] font-mono text-xs w-full"
             />
           </label>
+
+          <div className="flex items-center gap-2 text-[11px] font-mono text-[#788274]">
+            <span>{pipelines.length} pipelines</span>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setSortBy(sortBy === "newest" ? "oldest" : "newest")}
+              className="hover:text-white transition-colors"
+            >
+              Newest first
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Pipeline Card matching Image 1 */}
-      <div className="space-y-3">
+      {/* Pipelines Table Container matching Reference Screenshot 1 */}
+      <div className={cn(
+        "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
+        dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
+      )}>
+        {/* Table Header Row matching Reference Screenshot 1 */}
+        <div className={cn(
+          "grid grid-cols-12 gap-3 px-4 py-2.5 text-[11px] font-mono uppercase tracking-wider font-semibold border-b border-dashed",
+          dark ? "border-[#282828] bg-[#181818] text-[#889084]" : "border-[#edf0eb] bg-[#fafbfa] text-[#6b7367]"
+        )}>
+          <div className="col-span-3">Pipeline / Model</div>
+          <div className="col-span-3">Details</div>
+          <div className="col-span-1 text-right">Latency</div>
+          <div className="col-span-1 text-right">Cost / Req</div>
+          <div className="col-span-1 text-right">Quality</div>
+          <div className="col-span-1 text-center">Status</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
+
+        {/* Table Rows matching Reference Screenshot 1 */}
         {pipelines.map((pipe) => (
           <div
             key={pipe.id}
             className={cn(
-              "border border-dashed divide-y divide-dashed transition-colors rounded-xs",
-              dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
+              "grid grid-cols-12 gap-3 px-4 py-3.5 items-center text-xs transition-colors",
+              dark ? "hover:bg-[#232323]" : "hover:bg-[#fafbfa]"
             )}
           >
-            {/* Row 1: Header */}
-            <div className="flex items-center justify-between p-3.5">
-              <div className="flex items-center gap-3">
+            {/* 1. Pipeline / Model */}
+            <div className="col-span-3 flex items-center gap-2.5 truncate">
+              <div className={cn(
+                "flex h-7 w-7 items-center justify-center border border-dashed rounded-xs shrink-0",
+                dark ? "border-[#383838] bg-[#181818] text-[#889284]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#687063]"
+              )}>
+                <span className="font-mono text-xs">🔗</span>
+              </div>
+              <div className="truncate">
                 <div
-                  className={cn(
-                    "flex h-7 w-7 items-center justify-center border text-xs rounded-xs",
-                    dark ? "border-[#303030] bg-[#1a1a1a] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-                  )}
+                  onClick={() => handleOpenPipeline(pipe)}
+                  className={cn("font-semibold text-xs cursor-pointer hover:underline", primaryText)}
                 >
-                  <span className="font-mono text-xs">🔗</span>
+                  {pipe.name}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>{pipe.name}</span>
-                    <span className="border border-[#383838] bg-[#1a1a1a] px-1.5 py-0.2 text-[10px] text-[#889284] uppercase tracking-wider rounded-sm">
-                      {pipe.status}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#788274] mt-0.5">
-                    <span>{pipe.modelsCount} models</span>
-                    <span>•</span>
-                    <span>{pipe.time}</span>
-                  </div>
+                <div className="text-[11px] text-[#788274] font-mono mt-0.5 truncate">
+                  Empty pipeline
                 </div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => alert("Exporting pipeline configuration...")}
-                className="flex items-center gap-1.5 text-xs font-mono text-[#788274] hover:text-white transition-colors"
-              >
-                <Download size={12} />
-                <span>Export</span>
-              </button>
             </div>
 
-            {/* Row 2: Actions */}
-            <div className="flex items-center justify-between p-3.5 text-xs">
-              <span className="text-[#788274] font-mono">Empty pipeline</span>
+            {/* 2. Details */}
+            <div className="col-span-3 space-y-0.5 font-mono">
+              <span className="text-[10px] uppercase text-[#788274] block font-sans">Pipeline Summary</span>
+              <span className={cn("text-xs block", primaryText)}>
+                {pipe.nodesCount} nodes • {pipe.updatedAt}
+              </span>
+            </div>
+
+            {/* 3. Latency */}
+            <div className="col-span-1 text-right font-mono text-xs text-[#788274]">
+              {pipe.latency}
+            </div>
+
+            {/* 4. Cost / Req */}
+            <div className="col-span-1 text-right font-mono text-xs text-[#788274]">
+              {pipe.costPerReq}
+            </div>
+
+            {/* 5. Quality */}
+            <div className="col-span-1 text-right font-mono text-xs text-[#788274]">
+              {pipe.quality}
+            </div>
+
+            {/* 6. Status */}
+            <div className="col-span-1 text-center font-mono">
+              <span className={cn(
+                "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-xs font-bold border border-dashed",
+                dark ? "border-[#383838] bg-[#181818] text-[#a0a89d]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#656d60]"
+              )}>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#888]" />
+                <span>{pipe.status}</span>
+              </span>
+            </div>
+
+            {/* 7. Actions */}
+            <div className="col-span-2 flex items-center justify-end gap-2 font-mono">
+              <button
+                type="button"
+                onClick={() => alert("Exporting pipeline config...")}
+                className={cn(
+                  "flex items-center gap-1 border border-dashed px-2 py-1 text-[11px] rounded-xs transition-colors",
+                  dark ? "border-[#383838] bg-[#181818] text-[#889084] hover:text-white" : "border-[#d8ddd3] bg-white text-[#525a4d]"
+                )}
+              >
+                <Download size={11} />
+                <span>Export</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => handleOpenPipeline(pipe)}
-                className="font-semibold text-[#a0a89d] hover:text-[#75bf00] transition-colors"
+                className={cn(
+                  "flex items-center gap-1 border border-dashed px-2.5 py-1 text-[11px] font-semibold rounded-xs transition-colors",
+                  dark ? "border-[#383838] bg-[#222] text-[#75bf00] hover:bg-[#75bf00] hover:text-black" : "border-[#b9de78] bg-[#f5faee] text-[#2d5800]"
+                )}
               >
-                Optimize
+                <span>Optimize</span>
               </button>
             </div>
           </div>

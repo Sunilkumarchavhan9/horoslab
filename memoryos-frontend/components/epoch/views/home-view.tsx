@@ -2,13 +2,15 @@
 
 import React, { useState } from "react";
 import { Plus, Play, ChevronRight, Clock } from "lucide-react";
-import { Program, EpochRuntimeOverview } from "@/lib/epoch-types";
+import { ModelEntity, Program, EpochRuntimeOverview } from "@/lib/epoch-types";
 import { TokenPromptInput } from "../primitives/token-prompt-input";
+import { EpochFeedbackWidget } from "../primitives/epoch-feedback-widget";
 import { cn } from "@/lib/utils";
 
 interface HomeViewProps {
   overview?: EpochRuntimeOverview;
   programs?: Program[];
+  models?: ModelEntity[];
   onSelectProgram: (programId: string) => void;
   onLaunchPrompt: (prompt: string, metadata?: Record<string, unknown>) => void;
   onNavigateToEvidence?: () => void;
@@ -20,6 +22,7 @@ interface HomeViewProps {
 
 export function HomeView({
   programs = [],
+  models = [],
   onSelectProgram,
   onLaunchPrompt,
   onNavigateToPipelines,
@@ -28,18 +31,13 @@ export function HomeView({
 }: HomeViewProps) {
   const [filter, setFilter] = useState<"all" | "live" | "stopped">("all");
 
-  const sessions = [
-    {
-      id: "session-1",
-      title: "Untitled Pipeline",
-      model: "Llama-3.1-8B-Instruct",
-      runtime: "vLLM",
-      gpu: "H100 NVL",
-      status: "Draft",
-      updatedAt: "10h ago",
-      prompt: "Optimize meta-llama/Llama-3.1-8B-Instruct on vLLM for cheapest GPU with latency and VRAM checks",
-    },
-  ];
+  const sessions = programs.map((program) => ({
+    id: program.id,
+    title: program.name,
+    status: program.status === "deployed" ? "Live" : "Draft",
+    updatedAt: program.updatedAt || program.lastActivity,
+    prompt: program.objective || `Run ${program.modelTarget}`,
+  }));
 
   const filteredSessions = sessions.filter((s) => {
     if (filter === "live") return s.status === "Live";
@@ -62,10 +60,13 @@ export function HomeView({
     <div className="space-y-8 max-w-[840px] mx-auto">
       {/* Hero section with prompt input */}
       <section className="pt-2">
-        <TokenPromptInput onSubmit={onLaunchPrompt} dark={dark} />
+        <TokenPromptInput
+          onLaunchPrompt={(params) => onLaunchPrompt(params.prompt, params)}
+          dark={dark}
+        />
       </section>
 
-      {/* Workspace Recent Sessions section matching Image 2 */}
+      {/* Workspace Recent Sessions section */}
       <section className="space-y-3 pt-4">
         <div className="text-[10px] font-mono uppercase tracking-[0.14em] text-[#788274] dark:text-[#889284]">
           WORKSPACE
@@ -77,7 +78,7 @@ export function HomeView({
               Recent sessions
             </h2>
 
-            {/* Filter tabs matching Image 2 */}
+            {/* Filter tabs */}
             <div className="flex items-center gap-1.5 ml-2">
               <button
                 type="button"
@@ -140,26 +141,35 @@ export function HomeView({
           </button>
         </div>
 
-        {/* Sessions list with dashed borders matching Screenshot */}
+        {/* Sessions table */}
         <div
           className={cn(
-            "border border-dashed divide-y divide-dashed rounded-xs",
-            dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
+            "border border-dashed divide-y divide-dashed rounded-xs overflow-hidden",
+            dark ? "border-[#2e2e2e] bg-[#181818] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
           )}
         >
+          {/* Table Header */}
+          <div className={cn(
+            "flex items-center justify-between px-4 py-2 text-[10px] font-mono uppercase tracking-wider font-semibold border-b border-dashed",
+            dark ? "border-[#282828] bg-[#141414] text-[#788274]" : "border-[#edf0eb] bg-[#fafbfa] text-[#6b7367]"
+          )}>
+            <span>Pipeline</span>
+            <span>Updated Status</span>
+          </div>
+
           {filteredSessions.map((session) => (
             <div
               key={session.id}
               onClick={() => handleOpenSession(session)}
               className={cn(
                 "group flex items-center justify-between p-3.5 cursor-pointer transition-colors",
-                dark ? "hover:bg-[#282828]" : "hover:bg-[#f8faf7]"
+                dark ? "hover:bg-[#202020]" : "hover:bg-[#f8faf7]"
               )}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    "flex h-7 w-7 items-center justify-center border text-xs transition-colors rounded-xs",
+                    "flex h-7 w-7 items-center justify-center border border-dashed text-xs transition-colors rounded-xs",
                     dark
                       ? "border-[#303030] bg-[#1a1a1a] text-[#889284] group-hover:border-[#75bf00] group-hover:text-[#75bf00]"
                       : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063] group-hover:border-[#75bf00] group-hover:text-[#2d5800]"
@@ -176,14 +186,17 @@ export function HomeView({
                   >
                     {session.title}
                   </div>
+                  <div className="text-[11px] font-mono text-[#788274] mt-0.5">
+                    0 nodes
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-4 text-xs font-mono">
-                <span className="text-[#788274]">11h ago</span>
+                <span className="text-[#788274]">4d ago</span>
                 <span
                   className={cn(
-                    "border px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-sm",
+                    "border border-dashed px-2 py-0.5 text-[10px] tracking-wider rounded-xs flex items-center gap-1.5 font-bold",
                     session.status === "Live"
                       ? "border-[#75bf00] bg-[#75bf00]/10 text-[#75bf00]"
                       : dark
@@ -191,27 +204,23 @@ export function HomeView({
                       : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
                   )}
                 >
-                  {session.status}
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#888]" />
+                  <span>{session.status}</span>
                 </span>
+                <span className="text-[#666] group-hover:text-white transition-colors">→</span>
               </div>
             </div>
           ))}
+          {filteredSessions.length === 0 && (
+            <div className="p-4 text-xs font-mono text-[#788274]">
+              No persisted sessions yet. Launch a mission to create the first one.
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Floating Feedback button at bottom right matching Screenshot */}
-      <button
-        type="button"
-        className={cn(
-          "fixed bottom-4 right-4 z-40 flex items-center gap-2 border px-3 py-1.5 text-xs font-mono shadow-lg transition-colors rounded-xs",
-          dark
-            ? "border-[#383838] bg-[#202020] text-white hover:border-[#75bf00]"
-            : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#171a17]"
-        )}
-      >
-        <span className="font-bold text-[11px]">R</span>
-        <span className="font-sans text-[11px]">Feedback</span>
-      </button>
+      {/* Floating Feedback Widget */}
+      <EpochFeedbackWidget dark={dark} />
     </div>
   );
 }

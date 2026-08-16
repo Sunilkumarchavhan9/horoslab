@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, ChevronRight, BarChart2, Clock, Check, ArrowDown, ArrowUp, Braces } from "lucide-react";
 import { ModelEntity } from "@/lib/epoch-types";
-import { DeepSeekLogo } from "../primitives/brand-icons";
+import { AuthorMonogram, BAAILogo, DeepSeekLogo, GLMLogo, GoogleLogo, HuggingFaceLogo, MetaLogo, NvidiaLogo, QwenLogo } from "../primitives/brand-icons";
 import { cn } from "@/lib/utils";
 
 interface ModelsCatalogViewProps {
@@ -11,23 +11,72 @@ interface ModelsCatalogViewProps {
   onSelectModel: (modelId: string) => void;
   onOpenImport?: () => void;
   onManageKeys?: () => void;
+  onSearchModels?: (query: string) => Promise<ModelEntity[]>;
   dark?: boolean;
 }
 
 export function ModelsCatalogView({
   models = [],
   onSelectModel,
+  onSearchModels,
   dark = true,
 }: ModelsCatalogViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<ModelEntity[] | null>(null);
+  const [searching, setSearching] = useState(false);
 
-  const hostedModels = models.map((model) => ({
-    id: model.id, name: model.name, status: model.status,
+  useEffect(() => {
+    if (!onSearchModels || searchQuery.trim().length < 2) {
+      setSearchResults(null);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setSearching(true);
+      try {
+        const next = await onSearchModels(searchQuery.trim());
+        if (!cancelled) setSearchResults(next);
+      } catch {
+        if (!cancelled) setSearchResults([]);
+      } finally {
+        if (!cancelled) setSearching(false);
+      }
+    }, 350);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [onSearchModels, searchQuery]);
+
+  function iconFor(model: ModelEntity) {
+    const provider = (model.provider || "").toLowerCase().trim();
+    const repo = (model.hfIdentity?.repositoryId || "").toLowerCase().trim();
+    const orgFromRepo = repo.includes("/") ? repo.split("/")[0] : "";
+    const org = provider || orgFromRepo;
+
+    if (org === "zai-org" || org === "thudm" || org === "zhipuai" || org === "zhipu-ai" || org === "zhipu" || org.startsWith("zai-")) {
+      return <GLMLogo size={20} />;
+    }
+    if (org === "nvidia" || org.startsWith("nvidia-")) return <NvidiaLogo size={20} />;
+    if (org === "meta-llama" || org === "meta" || org === "facebook") return <MetaLogo size={20} />;
+    if (org === "qwen" || org === "alibaba-nlp" || org === "alibabacloud" || org === "alibaba") return <QwenLogo size={20} />;
+    if (org === "google") return <GoogleLogo size={20} />;
+    if (org === "baai" || org === "baai-lab") return <BAAILogo size={20} />;
+    if (org === "deepseek-ai" || org === "deepseek") return <DeepSeekLogo size={20} />;
+    if (model.importedFrom === "huggingface") return <HuggingFaceLogo size={20} />;
+    return <AuthorMonogram label={model.provider || "HF"} size={20} />;
+  }
+
+  const visibleModels = searchResults ?? models;
+  const hostedModels = visibleModels.map((model) => ({
+    id: model.id,
+    name: model.name,
+    status: model.status,
     hfId: model.hfIdentity?.repositoryId ?? model.name,
     inputPrice: model.pricing ? `$${model.pricing.inputPricePer1M}` : "—",
     outputPrice: model.pricing ? `$${model.pricing.outputPricePer1M}` : "—",
     contextWindow: model.contextWindow > 0 ? model.contextWindow.toLocaleString() : "Unknown",
-    icon: <DeepSeekLogo size={20} />,
+    icon: iconFor(model),
     statusColor: model.status === "ready" || model.status === "available" ? "text-[#75bf00]" : "text-[#fbbf24]",
   }));
 
@@ -93,7 +142,15 @@ export function ModelsCatalogView({
         "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
         dark ? "border-[#2e2e2e] bg-[#1a1a1a] divide-[#262626]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
       )}>
-        {filteredModels.map((m) => (
+        {searching && (
+          <div className="px-4 py-3 text-xs font-mono text-[#788274]">Searching Hugging Face…</div>
+        )}
+        {!searching && filteredModels.length === 0 && (
+          <div className="px-4 py-10 text-center text-xs font-mono text-[#788274]">
+            {searchQuery.trim().length >= 2 ? "No Hugging Face models found." : "No live models are available yet."}
+          </div>
+        )}
+        {!searching && filteredModels.map((m) => (
           <div
             key={m.id}
             onClick={() => onSelectModel(m.id)}

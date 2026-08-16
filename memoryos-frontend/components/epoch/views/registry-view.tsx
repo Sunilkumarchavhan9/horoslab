@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Database,
   Search,
@@ -11,20 +11,16 @@ import {
   Copy,
   Check,
   ShieldCheck,
-  HardDrive,
   GitBranch,
   Terminal,
   ExternalLink,
-  Lock,
-  ArrowUpRight,
+  ChevronDown,
+  ChevronUp,
   Download,
-  Share2,
-  Calendar,
-  Cpu,
   Fingerprint,
   RefreshCw,
-  Boxes,
   Zap,
+  Cpu,
 } from "lucide-react";
 import { RegistryArtifact } from "@/lib/epoch-types";
 import {
@@ -32,12 +28,13 @@ import {
   QwenLogo,
   VLLMLogo,
   NvidiaLogo,
-  DiffusersLogo,
+  HuggingFaceLogo,
 } from "../primitives/brand-icons";
 import { cn } from "@/lib/utils";
 
 interface RegistryViewProps {
   artifacts?: RegistryArtifact[];
+  onNavigateToPipelines?: () => void;
   dark?: boolean;
 }
 
@@ -113,26 +110,20 @@ const DEFAULT_ARTIFACTS: RegistryArtifact[] = [
 ];
 
 export function RegistryView({
-  artifacts = [],
+  artifacts = DEFAULT_ARTIFACTS,
+  onNavigateToPipelines,
   dark = true,
 }: RegistryViewProps) {
-  const combinedArtifacts = artifacts;
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [filterTab, setFilterTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedArtifact, setSelectedArtifact] = useState<RegistryArtifact | null>(artifacts[0] ?? null);
-  const [copiedHash, setCopiedHash] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+  const [copiedHashId, setCopiedHashId] = useState<string | null>(null);
   const [activeDeployTab, setActiveDeployTab] = useState<"docker" | "k8s" | "vllm">("vllm");
 
-  useEffect(() => {
-    setSelectedArtifact((current) => {
-      if (current && artifacts.some((artifact) => artifact.id === current.id)) return current;
-      return artifacts[0] ?? null;
-    });
-  }, [artifacts]);
+  const list = artifacts.length > 0 ? artifacts : DEFAULT_ARTIFACTS;
 
-  const filteredArtifacts = combinedArtifacts.filter((a) => {
-    const matchesTab = activeTab === "all" || a.type === activeTab;
+  const filteredArtifacts = list.filter((a) => {
+    const matchesTab = filterTab === "all" || a.type === filterTab;
     const matchesSearch =
       a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       a.integrityHash.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -140,47 +131,40 @@ export function RegistryView({
     return matchesTab && matchesSearch;
   });
 
-  function handleCopyHash(hash: string) {
+  const handleCopyHash = (hash: string, id: string) => {
     navigator.clipboard?.writeText(hash);
-    setCopiedHash(true);
-    setTimeout(() => setCopiedHash(false), 2000);
-  }
-
-  function handleCopyCode(code: string) {
-    navigator.clipboard?.writeText(code);
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
-  }
+    setCopiedHashId(id);
+    setTimeout(() => setCopiedHashId(null), 2000);
+  };
 
   const primaryText = dark ? "text-white" : "text-[#171a17]";
-  const subText = dark ? "text-[#90988c]" : "text-[#555d50]";
+  const secondaryText = dark ? "text-[#889084]" : "text-[#656d60]";
 
-  const getDeploySnippet = () => {
-    if (!selectedArtifact) return "";
+  const getDeploySnippet = (artifact: RegistryArtifact) => {
     switch (activeDeployTab) {
       case "docker":
         return `docker run --gpus all -p 8000:8000 \\
   -v epoch-weights:/root/.cache \\
-  ghcr.io/epoch-os/vllm:${selectedArtifact.version} \\
-  --model /root/.cache/${selectedArtifact.name} \\
+  ghcr.io/epoch-os/vllm:${artifact.version} \\
+  --model /root/.cache/${artifact.name} \\
   --quantization fp8 --gpu-memory-utilization 0.92`;
       case "k8s":
         return `apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${selectedArtifact.name}
+  name: ${artifact.name}
 spec:
   replicas: 2
   template:
     spec:
       containers:
       - name: inference-engine
-        image: ghcr.io/epoch-os/vllm:${selectedArtifact.version}
+        image: ghcr.io/epoch-os/vllm:${artifact.version}
         resources:
           limits:
             nvidia.com/gpu: 1`;
       default:
-        return `vllm serve ${selectedArtifact.name} \\
+        return `vllm serve ${artifact.name} \\
   --tensor-parallel-size 1 \\
   --max-model-len 8192 \\
   --enable-chunked-prefill \\
@@ -189,338 +173,338 @@ spec:
   };
 
   return (
-    <div className="space-y-6 max-w-[1240px] mx-auto pb-16">
-      {/* Top Header */}
-      <div className={cn(
-        "flex flex-wrap items-end justify-between gap-4 border-b pb-5",
-        dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
-      )}>
+    <div className="space-y-6 max-w-[1240px] mx-auto animate-in fade-in duration-150">
+      {/* Top Header matching RunInfra Design */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-[#75bf00]">
-              IMMUTABLE ARTIFACT LEDGER
-            </span>
-          </div>
-          <h1 className={cn("mt-1 text-2xl md:text-3xl font-medium tracking-tight", primaryText)}>
-            Artifact{" "}
-            <span className="bg-[#75bf00] text-black px-2 py-0.5 font-bold inline-block rounded-xs">
+          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5">
+            <span className={primaryText}>Artifact</span>
+            <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans">
               Registry
             </span>
           </h1>
-          <p className={cn("mt-1 text-xs md:text-sm", subText)}>
+          <p className={cn("mt-1 text-xs", secondaryText)}>
             Cryptographically signed model weights, container images, compiled engines, and verifiable version lineage.
           </p>
         </div>
 
-        {/* Global Storage Badge */}
+        {/* Global Storage Proof Badge */}
         <div className={cn(
           "flex items-center gap-2 border border-dashed px-3 py-1.5 text-xs font-mono rounded-xs",
-          dark ? "border-[#333] bg-[#202020] text-[#a0a89d]" : "border-[#d8ddd3] bg-white text-[#555]"
+          dark ? "border-[#333] bg-[#181818] text-[#a0a89d]" : "border-[#d8ddd3] bg-white text-[#555]"
         )}>
-          <ShieldCheck size={14} className="text-[#75bf00]" />
+          <ShieldCheck size={13} className="text-[#75bf00]" />
           <span>Merkle Root: 0x9bf4...27c3</span>
         </div>
       </div>
 
-      {/* Tabs & Search Toolbar */}
-      <div className={cn(
-        "flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-y border-dashed py-3",
-        dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
-      )}>
-        {/* Category Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto text-xs font-mono">
+      {/* Filter Tabs & Search Bar matching Image 1 Table Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+        {/* Left Filter Tabs */}
+        <div className="flex items-center gap-1 text-xs font-mono">
           {[
-            { id: "all", label: "All Artifacts" },
-            { id: "weights", label: "Quantized Weights" },
-            { id: "container", label: "Containers" },
-            { id: "variant", label: "Compiled Variants" },
-            { id: "snapshot", label: "Snapshots" },
+            { id: "all", label: `All ${list.length}` },
+            { id: "weights", label: `Quantized Weights ${list.filter((a) => a.type === "weights").length}` },
+            { id: "container", label: `Containers ${list.filter((a) => a.type === "container").length}` },
+            { id: "variant", label: `Compiled Variants ${list.filter((a) => a.type === "variant").length}` },
+            { id: "snapshot", label: `Snapshots ${list.filter((a) => a.type === "snapshot").length}` },
           ].map((tab) => (
             <button
               key={tab.id}
               type="button"
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setFilterTab(tab.id)}
               className={cn(
-                "px-2.5 py-1 text-xs transition-colors rounded-xs border border-dashed",
-                activeTab === tab.id
-                  ? dark ? "bg-[#282828] text-[#75bf00] font-bold border-[#75bf00]" : "bg-[#f0f4ec] text-[#2d5800] font-bold border-[#75bf00]"
-                  : dark ? "border-transparent text-[#888] hover:text-white" : "border-transparent text-[#666] hover:text-black"
+                "flex items-center gap-1.5 px-3 py-1 border border-dashed transition-colors rounded-xs",
+                filterTab === tab.id
+                  ? dark
+                    ? "border-[#555] bg-[#282828] text-white font-bold"
+                    : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
+                  : dark
+                  ? "border-transparent text-[#788274] hover:text-white"
+                  : "border-transparent text-[#687063] hover:text-[#171a17]"
               )}
             >
-              {tab.label}
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Search input */}
-        <div className={cn(
-          "flex items-center gap-2 border border-dashed px-3 py-1 text-xs rounded-xs w-full sm:w-72",
-          dark ? "border-[#333] bg-[#202020] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]"
-        )}>
-          <Search size={13} className="text-[#888]" />
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name or SHA..."
-            className={cn(
-              "w-full bg-transparent text-xs outline-none",
-              dark ? "placeholder:text-[#666] text-white" : "placeholder:text-[#90988c] text-[#171a17]"
-            )}
-          />
+        {/* Search Bar & Right Stats matching Image 1 */}
+        <div className="flex items-center gap-3">
+          <label className={cn(
+            "flex items-center gap-2 border border-dashed px-3 py-1.5 text-xs rounded-xs min-w-[240px]",
+            dark ? "border-[#2e2e2e] bg-[#202020] text-[#788274]" : "border-[#d8ddd3] bg-white text-[#687063]"
+          )}>
+            <Search size={13} />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search artifacts by name, SHA256..."
+              className="bg-transparent outline-none placeholder:text-[#666] font-mono text-xs w-full"
+            />
+          </label>
+
+          <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-[#788274]">
+            <span>{filteredArtifacts.length} total</span>
+            <span>•</span>
+            <span className="text-[#75bf00] flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+              Verified immutable
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* 2-Column Split: Left Artifacts Ledger & Right Lineage Inspector */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Left Column: Artifacts List (5 cols) */}
-        <div className="lg:col-span-5 space-y-2.5">
-          {filteredArtifacts.length === 0 && (
-            <div className={cn(
-              "border border-dashed p-6 text-xs font-mono",
-              dark ? "border-[#2e2e2e] bg-[#202020] text-[#90988c]" : "border-[#d8ddd3] bg-white text-[#656d60]"
-            )}>
-              {artifacts.length === 0 ? "No registry artifacts have been recorded for this workspace." : "No artifacts match the current filter."}
-            </div>
-          )}
-          {filteredArtifacts.map((art) => {
-            const isSelected = selectedArtifact?.id === art.id;
-            return (
+      {/* Artifacts Table Container with Dashed Borders matching Image 1 */}
+      <div className={cn(
+        "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
+        dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
+      )}>
+        {/* Table Header Row matching Image 1 proper columns */}
+        <div className={cn(
+          "grid grid-cols-12 gap-3 px-4 py-2.5 text-[11px] font-mono uppercase tracking-wider font-semibold border-b border-dashed",
+          dark ? "border-[#282828] bg-[#181818] text-[#889084]" : "border-[#edf0eb] bg-[#fafbfa] text-[#6b7367]"
+        )}>
+          <div className="col-span-4">Artifact / Model</div>
+          <div className="col-span-2">Type</div>
+          <div className="col-span-2">Digest (SHA256)</div>
+          <div className="col-span-1 text-right">Size</div>
+          <div className="col-span-1 text-center">Version</div>
+          <div className="col-span-1 text-center">Status</div>
+          <div className="col-span-1 text-right">Actions</div>
+        </div>
+
+        {/* Table Rows */}
+        {filteredArtifacts.map((artifact) => {
+          const isExpanded = expandedRowId === artifact.id;
+          const isCopied = copiedHashId === artifact.id;
+
+          return (
+            <div key={artifact.id} className="transition-colors">
+              {/* Main Summary Row */}
               <div
-                key={art.id}
-                onClick={() => setSelectedArtifact(art)}
+                onClick={() => setExpandedRowId(isExpanded ? null : artifact.id)}
                 className={cn(
-                  "cursor-pointer border border-dashed p-3.5 transition-all text-xs rounded-xs",
-                  isSelected
-                    ? dark
-                      ? "border-[#75bf00] bg-[#1a2416] shadow-sm"
-                      : "border-[#75bf00] bg-[#f5faee] shadow-xs"
-                    : dark
-                    ? "border-[#2e2e2e] bg-[#202020] hover:border-[#444] hover:bg-[#252525]"
-                    : "border-[#d8ddd3] bg-white hover:border-[#a8b0a2]"
+                  "grid grid-cols-12 gap-3 px-4 py-3.5 items-center cursor-pointer text-xs transition-colors",
+                  dark ? "hover:bg-[#232323]" : "hover:bg-[#fafbfa]",
+                  isExpanded ? dark ? "bg-[#252525]" : "bg-[#f5f7f3]" : ""
                 )}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    {art.type === "weights" && <QwenLogo size={16} />}
-                    {art.type === "container" && <VLLMLogo size={16} />}
-                    {art.type === "variant" && <NvidiaLogo size={16} />}
-                    {art.type === "snapshot" && <Database size={16} className="text-[#75bf00]" />}
-                    <div>
-                      <div className={cn("font-mono font-bold text-xs", primaryText)}>
-                        {art.name}
-                      </div>
-                      <div className="mt-0.5 text-[11px] text-[#788274] font-mono">
-                        {art.sizeBytes || "4.2 GB"} • {art.version}
-                      </div>
+                {/* 1. Artifact / Model */}
+                <div className="col-span-4 flex items-center gap-2.5 truncate">
+                  <div className={cn(
+                    "flex h-7 w-7 items-center justify-center border border-dashed rounded-xs shrink-0",
+                    dark ? "border-[#383838] bg-[#181818] text-[#889284]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#687063]"
+                  )}>
+                    {artifact.type === "weights" && <Layers size={14} className="text-[#75bf00]" />}
+                    {artifact.type === "container" && <Box size={14} className="text-[#60a5fa]" />}
+                    {artifact.type === "variant" && <Cpu size={14} className="text-[#a78bfa]" />}
+                    {artifact.type === "snapshot" && <Database size={14} className="text-[#f59e0b]" />}
+                  </div>
+                  <div className="truncate">
+                    <div className={cn("font-semibold text-xs truncate", primaryText)}>
+                      {artifact.name}
+                    </div>
+                    <div className="text-[11px] text-[#788274] font-mono mt-0.5 truncate">
+                      {artifact.source}
                     </div>
                   </div>
+                </div>
 
+                {/* 2. Type */}
+                <div className="col-span-2 font-mono text-xs">
                   <span className={cn(
-                    "font-mono text-[9px] uppercase px-1.5 py-0.5 rounded-xs tracking-wider border border-dashed",
-                    dark ? "border-[#383838] bg-[#181818] text-[#a0a89d]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#656d60]"
+                    "px-2 py-0.5 border border-dashed rounded-xs text-[10px] uppercase font-bold",
+                    artifact.type === "weights"
+                      ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00]"
+                      : artifact.type === "container"
+                      ? "border-[#60a5fa]/40 bg-[#60a5fa]/10 text-[#60a5fa]"
+                      : artifact.type === "variant"
+                      ? "border-[#a78bfa]/40 bg-[#a78bfa]/10 text-[#a78bfa]"
+                      : "border-[#f59e0b]/40 bg-[#f59e0b]/10 text-[#f59e0b]"
                   )}>
-                    {art.type}
+                    {artifact.type}
                   </span>
                 </div>
 
-                <div className={cn(
-                  "mt-3 flex items-center justify-between border-t border-dashed pt-2.5 font-mono text-[11px]",
-                  dark ? "border-[#282828]" : "border-[#edf0eb]"
-                )}>
-                  <div className="flex items-center gap-1.5 text-[#788274]">
-                    <span>SHA:</span>
-                    <span className={dark ? "text-[#a0a89d]" : "text-[#2a3028]"}>
-                      {art.integrityHash?.slice(0, 14)}...
-                    </span>
-                  </div>
-
+                {/* 3. Digest SHA256 */}
+                <div className="col-span-2 font-mono text-xs flex items-center gap-1.5">
+                  <span className="text-[#788274] truncate text-[11px]">
+                    {artifact.integrityHash.slice(0, 16)}...
+                  </span>
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (art.integrityHash) handleCopyHash(art.integrityHash);
+                      handleCopyHash(artifact.integrityHash, artifact.id);
                     }}
-                    className={cn(
-                      "flex items-center gap-1 text-[10px] font-mono",
-                      copiedHash ? "text-[#75bf00]" : dark ? "text-[#889084] hover:text-white" : "text-[#656d60] hover:text-black"
-                    )}
+                    className="text-[#666] hover:text-white transition-colors p-1"
+                    title="Copy SHA256 checksum"
                   >
-                    {copiedHash ? <Check size={10} /> : <Copy size={10} />}
-                    <span>{copiedHash ? "Copied" : "Copy"}</span>
+                    {isCopied ? <Check size={11} className="text-[#75bf00]" /> : <Copy size={11} />}
                   </button>
                 </div>
-              </div>
-            );
-          })}
-        </div>
 
-        {/* Right Column: Detailed Lineage & Attestation Inspector (7 cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          {selectedArtifact ? (
-            <div className={cn(
-              "border border-dashed p-5 rounded-xs space-y-5",
-              dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-white"
-            )}>
-              {/* Detail Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-dashed border-[#282828] pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#75bf00]">
-                      IMMUTABLE SPECIFICATION
-                    </span>
-                    <span className="border border-dashed border-[#75bf00]/40 bg-[#162916] text-[#75bf00] px-1.5 py-0.2 text-[9px] rounded-xs font-mono uppercase">
-                      {selectedArtifact.status}
-                    </span>
-                  </div>
-                  <h2 className={cn("text-base font-bold font-mono mt-1", primaryText)}>
-                    {selectedArtifact.name}
-                  </h2>
-                  <p className="text-xs text-[#788274] mt-0.5">
-                    {selectedArtifact.source}
-                  </p>
+                {/* 4. Size */}
+                <div className="col-span-1 text-right font-mono text-xs text-[#788274]">
+                  {artifact.sizeBytes}
                 </div>
 
-                <div className="flex items-center gap-2">
+                {/* 5. Version */}
+                <div className="col-span-1 text-center font-mono text-xs">
+                  <span className={cn(
+                    "px-1.5 py-0.5 border border-dashed rounded-xs text-[10px]",
+                    dark ? "border-[#383838] bg-[#181818] text-[#a0a89d]" : "border-[#d8ddd3] bg-white text-[#555]"
+                  )}>
+                    {artifact.version}
+                  </span>
+                </div>
+
+                {/* 6. Status */}
+                <div className="col-span-1 text-center font-mono">
+                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-xs font-bold border border-dashed border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                    <span>VERIFIED</span>
+                  </span>
+                </div>
+
+                {/* 7. Actions */}
+                <div className="col-span-1 flex items-center justify-end gap-1 font-mono">
                   <button
                     type="button"
-                    onClick={() => handleCopyHash(selectedArtifact.integrityHash)}
-                    className={cn(
-                      "flex items-center gap-1.5 border border-dashed px-2.5 py-1 text-xs font-mono transition-colors rounded-xs",
-                      dark ? "border-[#383838] bg-[#222] text-[#d1d5db] hover:border-[#555]" : "border-[#d8ddd3] bg-white text-[#333]"
-                    )}
+                    className="p-1 text-[#788274] hover:text-white transition-colors"
                   >
-                    {copiedHash ? <Check size={12} className="text-[#75bf00]" /> : <Copy size={12} />}
-                    <span>{copiedHash ? "Hash Copied" : "Copy Digest"}</span>
+                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
                 </div>
               </div>
 
-              {/* 4 Detail Stats */}
-              <div className={cn(
-                "grid grid-cols-2 sm:grid-cols-4 gap-4 p-3 border border-dashed rounded-xs text-xs font-mono",
-                dark ? "border-[#282828] bg-[#141414]" : "border-[#edf0eb] bg-[#fafbfa]"
-              )}>
-                <div>
-                  <div className="text-[#788274] text-[10px]">VERSION</div>
-                  <div className={cn("font-bold text-xs mt-0.5", primaryText)}>{selectedArtifact.version}</div>
-                </div>
-                <div>
-                  <div className="text-[#788274] text-[10px]">SIZE</div>
-                  <div className={cn("font-bold text-xs mt-0.5", primaryText)}>{selectedArtifact.sizeBytes || "-"}</div>
-                </div>
-                <div>
-                  <div className="text-[#788274] text-[10px]">FORMAT</div>
-                  <div className="font-bold text-xs text-[#75bf00] mt-0.5">{selectedArtifact.type}</div>
-                </div>
-                <div>
-                  <div className="text-[#788274] text-[10px]">SEAL</div>
-                  <div className="font-bold text-xs text-[#60a5fa] mt-0.5">Digest recorded</div>
-                </div>
-              </div>
-
-              {/* Version History Lineage Tree */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#788274] font-mono">
-                  <GitBranch size={13} />
-                  <span>VERSION LINEAGE & PROVENANCE GRAPH</span>
-                </div>
-
+              {/* Expandable Detail Panel (Version Lineage & Deployment Terminal) */}
+              {isExpanded && (
                 <div className={cn(
-                  "border border-dashed divide-y divide-dashed rounded-xs text-xs font-mono",
-                  dark ? "border-[#282828] bg-[#141414] divide-[#242424]" : "border-[#edf0eb] bg-white divide-[#edf0eb]"
+                  "p-4 border-t border-dashed space-y-4 text-xs font-mono",
+                  dark ? "bg-[#161616] border-[#2e2e2e]" : "bg-[#fafbfa] border-[#edf0eb]"
                 )}>
-                  {(selectedArtifact.historyTree || [
-                    { version: selectedArtifact.version, label: "Current Immutable State", isActive: true, createdAt: "2026-08-09" }
-                  ]).map((node, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        "flex items-center justify-between p-2.5 transition-colors",
-                        node.isActive
-                          ? dark ? "bg-[#1d2618]" : "bg-[#f5faee]"
-                          : dark ? "hover:bg-[#1a1a1a]" : "hover:bg-[#fafbfa]"
-                      )}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className={cn(
-                          "h-2 w-2 rounded-full shrink-0",
-                          node.isActive ? "bg-[#75bf00]" : "bg-[#555]"
-                        )} />
-                        <span className={cn("font-bold", node.isActive ? "text-[#75bf00]" : primaryText)}>
-                          {node.version}
-                        </span>
-                        <span className="text-[#788274]">{node.label}</span>
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    {/* Left: Version Lineage DAG */}
+                    <div className="lg:col-span-5 space-y-2">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#788274] uppercase">
+                        <GitBranch size={12} className="text-[#75bf00]" />
+                        <span>Cryptographic Version Lineage</span>
                       </div>
 
-                      <div className="flex items-center gap-2 text-[11px] text-[#788274]">
-                        <span>{node.createdAt}</span>
-                        {node.isActive && (
-                          <span className="border border-dashed border-[#75bf00]/40 bg-[#162916] text-[#75bf00] px-1.5 py-0.2 text-[9px] rounded-xs font-bold">
-                            Active
-                          </span>
-                        )}
+                      <div className="space-y-1.5 pl-2 border-l border-dashed border-[#333]">
+                        {artifact.historyTree?.map((ver, idx) => (
+                          <div
+                            key={idx}
+                            className={cn(
+                              "p-2 border border-dashed rounded-xs flex items-center justify-between text-[11px]",
+                              ver.isActive
+                                ? dark ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-white" : "border-[#75bf00]/50 bg-[#f5faee] text-[#111]"
+                                : dark ? "border-[#333] bg-[#111] text-[#777]" : "border-[#ddd] bg-white text-[#666]"
+                            )}
+                          >
+                            <div className="space-y-0.5 truncate">
+                              <div className="font-bold flex items-center gap-1.5">
+                                <span>{ver.version}</span>
+                                {ver.isActive && (
+                                  <span className="text-[9px] px-1 bg-[#75bf00] text-black font-extrabold rounded-xs leading-tight">
+                                    CURRENT
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-[10px] text-[#888] truncate">{ver.label}</div>
+                            </div>
+                            <span className="text-[10px] text-[#666] shrink-0">{ver.createdAt}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Deployment & Pull Commands */}
-              <div className="space-y-2 pt-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#788274] font-mono">
-                    <Terminal size={13} />
-                    <span>PULL & DEPLOY INSTRUCTIONS</span>
+                    {/* Right: Quick Deploy Terminal Snippet */}
+                    <div className="lg:col-span-7 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Terminal size={12} className="text-[#75bf00]" />
+                          <span className="text-[11px] font-bold text-[#788274] uppercase">Deployment Recipe</span>
+                        </div>
+
+                        {/* Subtabs for deploy runtime */}
+                        <div className="flex items-center gap-1">
+                          {(["vllm", "docker", "k8s"] as const).map((tab) => (
+                            <button
+                              key={tab}
+                              type="button"
+                              onClick={() => setActiveDeployTab(tab)}
+                              className={cn(
+                                "px-2 py-0.5 text-[10px] uppercase border border-dashed rounded-xs transition-colors",
+                                activeDeployTab === tab
+                                  ? "border-[#75bf00] bg-[#75bf00]/10 text-[#75bf00] font-bold"
+                                  : "border-transparent text-[#788274] hover:text-white"
+                              )}
+                            >
+                              {tab}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className={cn(
+                        "p-3 border border-dashed rounded-xs relative group overflow-x-auto text-[11px] leading-relaxed",
+                        dark ? "border-[#333] bg-[#0f0f0f] text-[#a3e635]" : "border-[#ddd] bg-[#111] text-[#a3e635]"
+                      )}>
+                        <pre className="font-mono">{getDeploySnippet(artifact)}</pre>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyHash(getDeploySnippet(artifact), artifact.id + "-code")}
+                          className="absolute top-2 right-2 p-1.5 bg-[#222] border border-dashed border-[#444] rounded-xs text-[#888] hover:text-white transition-colors"
+                          title="Copy snippet"
+                        >
+                          <Copy size={11} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex items-center gap-1 border border-dashed border-[#333] p-0.5 rounded-xs text-[11px] font-mono">
-                    {(["vllm", "docker", "k8s"] as const).map((tab) => (
-                      <button
-                        key={tab}
-                        type="button"
-                        onClick={() => setActiveDeployTab(tab)}
-                        className={cn(
-                          "px-2 py-0.5 rounded-xs transition-colors uppercase",
-                          activeDeployTab === tab
-                            ? "bg-[#75bf00] text-black font-bold"
-                            : dark ? "text-[#888] hover:text-white" : "text-[#666] hover:text-black"
-                        )}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
                 </div>
-
-                <div className={cn(
-                  "relative border border-dashed p-3 rounded-xs font-mono text-xs overflow-x-auto",
-                  dark ? "border-[#2e2e2e] bg-[#111111] text-[#a3e635]" : "border-[#d8ddd3] bg-[#1a1f18] text-[#a3e635]"
-                )}>
-                  <pre className="whitespace-pre">{getDeploySnippet()}</pre>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyCode(getDeploySnippet())}
-                    className="absolute top-2.5 right-2.5 flex items-center gap-1 border border-dashed border-[#383838] bg-[#222] px-2 py-0.5 text-[10px] text-[#d1d5db] hover:border-[#555] rounded-xs font-mono"
-                  >
-                    {copiedCode ? <Check size={10} className="text-[#75bf00]" /> : <Copy size={10} />}
-                    <span>{copiedCode ? "Copied" : "Copy Command"}</span>
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
-          ) : (
+          );
+        })}
+
+        {/* Empty State matching Image 1 */}
+        {filteredArtifacts.length === 0 && (
+          <div className="py-20 flex flex-col items-center justify-center text-center p-6 space-y-3 font-mono">
             <div className={cn(
-              "flex min-h-[300px] flex-col items-center justify-center border border-dashed p-8 text-center rounded-xs",
-              dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-white"
+              "flex h-10 w-10 items-center justify-center border border-dashed rounded-xs",
+              dark ? "border-[#383838] bg-[#1a1a1a] text-[#888]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#555]"
             )}>
-              <Database size={24} className="text-[#788274] mb-2" />
-              <div className={cn("font-bold text-xs", primaryText)}>No artifact selected</div>
-              <p className="text-[11px] text-[#788274] mt-0.5">
-                Select an artifact from the left list to view version lineage and cryptographic proofs.
+              <Database size={18} className="text-[#888]" />
+            </div>
+
+            <div className="space-y-1 max-w-sm">
+              <h3 className={cn("font-bold text-xs", primaryText)}>
+                No registry artifacts yet
+              </h3>
+              <p className={cn("text-[11px]", secondaryText)}>
+                Deploy a pipeline or compile a model variant to record your first immutable artifact.
               </p>
             </div>
-          )}
-        </div>
+
+            <button
+              type="button"
+              onClick={onNavigateToPipelines}
+              className={cn(
+                "flex items-center gap-1.5 border border-dashed px-3.5 py-1.5 text-xs font-medium transition-colors rounded-xs",
+                dark
+                  ? "border-[#383838] bg-[#222] text-white hover:border-[#75bf00] hover:text-[#75bf00]"
+                  : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-black"
+              )}
+            >
+              <span>Go to pipelines</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -25,6 +25,9 @@ import {
   Key,
   Cloud,
   Shield,
+  Globe,
+  ShieldAlert,
+  Database,
 } from "lucide-react";
 import { EpochNavRoute } from "./epoch-subnav";
 import { cn } from "@/lib/utils";
@@ -276,7 +279,7 @@ export function EpochSidebar({
             </div>
           </div>
         ) : (
-          /* STANDARD BUILD & OPERATE GROUPS */
+          /* STANDARD BUILD, DISCOVER, OPERATE & GOVERN GROUPS */
           <>
             {/* Group: Build */}
             <div className="space-y-1">
@@ -291,8 +294,8 @@ export function EpochSidebar({
                   "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
                   activeRoute === "home"
                     ? dark
-                      ? "text-white"
-                      : "text-[#171a17]"
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
@@ -315,8 +318,8 @@ export function EpochSidebar({
                   "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
                   activeRoute === "programs"
                     ? dark
-                      ? "text-white"
-                      : "text-[#171a17]"
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
@@ -325,10 +328,137 @@ export function EpochSidebar({
                 <GitBranch size={14} className={activeRoute === "programs" ? "text-[#75bf00]" : "text-[#889083]"} />
                 {activeRoute === "programs" ? (
                   <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Pipelines
+                    Programs
                   </span>
                 ) : (
-                  <span>Pipelines</span>
+                  <span>Programs</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("systems")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "systems"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Sparkles size={14} className={activeRoute === "systems" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "systems" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Systems
+                  </span>
+                ) : (
+                  <span>Systems</span>
+                )}
+              </button>
+            </div>
+
+            {/* Group: Discover */}
+            <div className="space-y-1">
+              <span className="px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8e968b] block">
+                Discover
+              </span>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("reality")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "reality"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Globe size={14} className={activeRoute === "reality" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "reality" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Reality Graph
+                  </span>
+                ) : (
+                  <span>Reality Graph</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("capabilities")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "capabilities"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Cpu size={14} className={activeRoute === "capabilities" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "capabilities" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Capabilities
+                  </span>
+                ) : (
+                  <span>Capabilities</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("models")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "models"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Gauge size={14} className={activeRoute === "models" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "models" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Models
+                  </span>
+                ) : (
+                  <span>Models</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("experiments")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "experiments"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Zap size={14} className={activeRoute === "experiments" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "experiments" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Experiments
+                  </span>
+                ) : (
+                  <span>Experiments</span>
                 )}
               </button>
             </div>
@@ -341,37 +471,13 @@ export function EpochSidebar({
 
               <button
                 type="button"
-                onClick={() => onNavigate("models")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "models"
-                    ? dark
-                      ? "text-white"
-                      : "text-[#171a17]"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Gauge size={14} className={activeRoute === "models" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "models" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Model APIs
-                  </span>
-                ) : (
-                  <span>Model APIs</span>
-                )}
-              </button>
-
-              <button
-                type="button"
                 onClick={() => onNavigate("deployments")}
                 className={cn(
                   "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
                   activeRoute === "deployments"
                     ? dark
-                      ? "text-white"
-                      : "text-[#171a17]"
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
@@ -389,20 +495,44 @@ export function EpochSidebar({
 
               <button
                 type="button"
-                onClick={() => onNavigate("registry")}
+                onClick={() => onNavigate("analytics")}
                 className={cn(
                   "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "registry"
+                  activeRoute === "analytics"
                     ? dark
-                      ? "text-white"
-                      : "text-[#171a17]"
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
-                <Box size={14} className={activeRoute === "registry" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "registry" ? (
+                <BarChart3 size={14} className={activeRoute === "analytics" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "analytics" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Usage Analytics
+                  </span>
+                ) : (
+                  <span>Usage Analytics</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("weights")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "weights"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Box size={14} className={activeRoute === "weights" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "weights" ? (
                   <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
                     Weights
                   </span>
@@ -413,25 +543,73 @@ export function EpochSidebar({
 
               <button
                 type="button"
-                onClick={() => onNavigate("evidence")}
+                onClick={() => onNavigate("registry")}
                 className={cn(
                   "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "evidence"
+                  activeRoute === "registry"
                     ? dark
-                      ? "text-white"
-                      : "text-[#171a17]"
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
-                <Cpu size={14} className={activeRoute === "evidence" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "evidence" ? (
+                <Database size={14} className={activeRoute === "registry" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "registry" ? (
                   <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Optimized Models
+                    Registry
                   </span>
                 ) : (
-                  <span>Optimized Models</span>
+                  <span>Registry</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("evidence")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "evidence"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <Shield size={14} className={activeRoute === "evidence" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "evidence" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Evidence
+                  </span>
+                ) : (
+                  <span>Evidence</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("governance")}
+                className={cn(
+                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  activeRoute === "governance"
+                    ? dark
+                      ? "text-white font-bold"
+                      : "text-[#171a17] font-bold"
+                    : dark
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
+                )}
+              >
+                <ShieldAlert size={14} className={activeRoute === "governance" ? "text-[#75bf00]" : "text-[#889083]"} />
+                {activeRoute === "governance" ? (
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                    Governance
+                  </span>
+                ) : (
+                  <span>Governance</span>
                 )}
               </button>
             </div>

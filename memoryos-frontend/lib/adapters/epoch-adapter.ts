@@ -9,6 +9,7 @@ import {
   listEpochDeployments,
   listEpochEvidence,
   listEpochHuggingFaceModels,
+  searchEpochHuggingFaceModels,
   listEpochPrograms,
   listEpochProgramRuns,
   listEpochRegistryArtifacts,
@@ -297,6 +298,40 @@ export const epochAdapter = {
     if (!search) return models;
     const query = search.toLowerCase();
     return models.filter((model) => [model.name, model.provider, model.task, ...model.capabilities].some((value) => value.toLowerCase().includes(query)));
+  },
+
+  async searchHuggingFaceModels(workspaceId: string, query: string): Promise<ModelEntity[]> {
+    const results = await searchEpochHuggingFaceModels(workspaceId, query);
+    return results.map((result): ModelEntity => ({
+      id: result.repositoryId,
+      name: result.repositoryId,
+      provider: "Hugging Face",
+      task: result.task ?? "unknown",
+      parameters: "Unknown",
+      contextWindow: 0,
+      license: "Unknown until inspected",
+      format: result.library ?? "Unknown",
+      status: "paused",
+      hfIdentity: {
+        repositoryId: result.repositoryId,
+        revision: "unresolved",
+        commitSha: "unresolved",
+        license: "Unknown until inspected",
+        isGated: false,
+        retrievedAt: new Date().toISOString(),
+      },
+      bestObservedProfile: {
+        engine: "Not verified",
+        hardware: "Not verified",
+        executionDomain: "software",
+        p95LatencyMs: 0,
+        costPer1M: 0,
+      },
+      capabilities: result.tags,
+      variants: [],
+      importedFrom: "huggingface",
+      description: `${result.repositoryId} discovered on Hugging Face. Inspect and sync it before execution.`,
+    }));
   },
 
   async getModelById(workspaceId: string, id: string): Promise<ModelEntity | null> {

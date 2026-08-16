@@ -1,37 +1,32 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Search,
-  Sparkles,
+  ArrowRight,
   ArrowUp,
-  ChevronDown,
-  ChevronUp,
-  Layers,
   Cpu,
   Zap,
-  Check,
-  Plus,
-  Cloud,
-  HardDrive,
-  Activity,
   Sliders,
-  ExternalLink,
-  Download,
-  Heart,
+  ChevronDown,
+  ChevronUp,
+  LoaderCircle,
+  Check,
+  Cloud,
+  Boxes,
   Gauge,
   FlaskConical,
-  Radio,
-  FileCode,
-  Box,
-  Server,
-  Settings,
-  ArrowRight,
-  Lock,
+  Paperclip,
+  TrendingDown,
+  Timer,
+  Sparkles,
+  HardDrive,
   Laptop,
-  Home,
-  Boxes,
+  Box,
   CircleDashed,
+  Lock,
+  Download,
+  Heart,
 } from "lucide-react";
 import {
   MetaLogo,
@@ -45,13 +40,232 @@ import {
   OpenAILogo,
   DiffusersLogo,
   GoogleLogo,
-  SimpleBrandLogo,
+  DeepSeekLogo,
+  MistralLogo,
+  TEILogo,
+  GLMLogo,
 } from "./brand-icons";
-import { siAlibabacloud, siAmd, siAnthropic, siApple, siDeepseek, siFacebook, siFlux, siHuggingface, siIntel, siKimi, siMeta, siMistralai, siNvidia, siQwen } from "simple-icons";
 import { cn } from "@/lib/utils";
 import { resolveActiveEpochWorkspaceId, searchEpochHuggingFaceModels } from "@/lib/epoch-api";
+import { ModelEntity } from "@/lib/epoch-types";
 
-interface TokenPromptInputProps {
+export interface HfModelItem {
+  id: string;
+  name: string;
+  org: string;
+  task: string;
+  downloads: string;
+  likes: string;
+  iconType: "glm" | "meta" | "qwen" | "baai" | "flux" | "openai" | "kimi" | "nvidia" | "google" | "deepseek" | "mistral" | "hf";
+}
+
+export function ModelBrandIcon({ model, size = 13 }: { model?: HfModelItem | { iconType?: string; name?: string }; size?: number }) {
+  if (!model) return <HuggingFaceLogo size={size} />;
+  if (model.iconType === "glm") return <GLMLogo size={size} />;
+  if (model.iconType === "meta") return <MetaLogo size={size} />;
+  if (model.iconType === "qwen") return <QwenLogo size={size} />;
+  if (model.iconType === "baai") return <BAAILogo size={size} />;
+  if (model.iconType === "flux") return <FluxLogo size={size} />;
+  if (model.iconType === "openai") return <OpenAILogo size={size} />;
+  if (model.iconType === "google") return <GoogleLogo size={size} />;
+  if (model.iconType === "deepseek") return <DeepSeekLogo size={size} />;
+  if (model.iconType === "mistral") return <MistralLogo size={size} />;
+  if (model.iconType === "nvidia") return <NvidiaLogo size={size} />;
+  return <HuggingFaceLogo size={size} />;
+}
+
+export function EngineBrandIcon({ engine, size = 13 }: { engine: string; size?: number }) {
+  if (engine === "vLLM" || engine === "vLLM-Omni" || engine === "vLLM Omni") return <VLLMLogo size={size} />;
+  if (engine === "SGLang") return <SGLangLogo size={size} />;
+  if (engine === "TEI") return <TEILogo size={size} />;
+  if (engine === "Diffusers") return <DiffusersLogo size={size} />;
+  if (engine === "TensorRT-LLM") return <NvidiaLogo size={size} />;
+  return <Cpu size={size} />;
+}
+
+export const POPULAR_HF_MODELS: HfModelItem[] = [
+  {
+    id: "Qwen/Qwen3-0.6B",
+    name: "Qwen3-0.6B",
+    org: "Qwen, text generation",
+    task: "text-generation",
+    downloads: "29.2M",
+    likes: "1.5K",
+    iconType: "qwen",
+  },
+  {
+    id: "facebook/opt-125m",
+    name: "opt-125m",
+    org: "facebook, text generation",
+    task: "text-generation",
+    downloads: "17.0M",
+    likes: "292",
+    iconType: "baai",
+  },
+  {
+    id: "Qwen/Qwen3-8B",
+    name: "Qwen3-8B",
+    org: "Qwen, text generation",
+    task: "text-generation",
+    downloads: "16.0M",
+    likes: "1.3K",
+    iconType: "qwen",
+  },
+  {
+    id: "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+    name: "tiny-Qwen2ForCausalLM-2.5",
+    org: "trl-internal-testing, text generation",
+    task: "text-generation",
+    downloads: "15.6M",
+    likes: "20",
+    iconType: "qwen",
+  },
+  {
+    id: "openai-community/gpt2",
+    name: "gpt2",
+    org: "openai-community, text generation",
+    task: "text-generation",
+    downloads: "13.7M",
+    likes: "3.4K",
+    iconType: "openai",
+  },
+  {
+    id: "Qwen/Qwen2.5-7B-Instruct",
+    name: "Qwen2.5-7B-Instruct",
+    org: "Qwen, text generation",
+    task: "text-generation",
+    downloads: "12.3M",
+    likes: "1.5K",
+    iconType: "qwen",
+  },
+  {
+    id: "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    name: "Qwen3.6-35B-A3B-NVFP4",
+    org: "nvidia, text generation",
+    task: "text-generation",
+    downloads: "12.2M",
+    likes: "554",
+    iconType: "nvidia",
+  },
+  {
+    id: "meta-llama/Llama-3.1-8B-Instruct",
+    name: "Llama 3.1 8B",
+    org: "meta-llama, text generation",
+    task: "text-generation",
+    downloads: "32.4M",
+    likes: "4.8K",
+    iconType: "meta",
+  },
+  {
+    id: "mistralai/Mistral-7B-Instruct-v0.3",
+    name: "Mistral 7B",
+    org: "mistralai, text generation",
+    task: "text-generation",
+    downloads: "24.1M",
+    likes: "3.7K",
+    iconType: "mistral",
+  },
+];
+
+export const SERVING_ENGINES = {
+  core: [
+    { id: "vLLM", name: "vLLM", desc: "llm, embedding, vision-language, +1", icon: <VLLMLogo size={14} /> },
+    { id: "SGLang", name: "SGLang", desc: "llm, vision-language", icon: <SGLangLogo size={14} /> },
+    { id: "TensorRT-LLM", name: "TensorRT-LLM", desc: "llm, vision-language", icon: <NvidiaLogo size={14} /> },
+  ],
+  experiments: [
+    { id: "vLLM-Omni", name: "vLLM Omni", badge: "Experiment", desc: "asr, tts, audio-language, +2", icon: <VLLMLogo size={14} /> },
+    { id: "Diffusers", name: "Diffusers", badge: "Experiment", desc: "image-gen, video-gen", icon: <DiffusersLogo size={14} /> },
+    { id: "TEI", name: "TEI", badge: "Experiment", desc: "embedding, rerank, classification", icon: <TEILogo size={14} /> },
+  ],
+  expanding: [
+    { id: "NVIDIA Dynamo", name: "NVIDIA Dynamo", desc: "Dynamo has no live RunInfra Cloud image or Modal stress-test worker in this workspace yet.", icon: <Cpu size={14} /> },
+  ],
+};
+
+export const GPU_OPTIONS = [
+  { id: "T4", name: "T4", vram: "16 GB", desc: "Budget, tiny models" },
+  { id: "L4", name: "L4", vram: "24 GB", desc: "Budget, quantized 7B-14B" },
+  { id: "A10G", name: "A10G", vram: "24 GB", desc: "Balanced, quantized 13B" },
+  { id: "L40S", name: "L40S", vram: "48 GB", desc: "Great cost/performance" },
+  { id: "A100-40GB", name: "A100-40GB", vram: "40 GB", desc: "Mid-tier, 70B quantized" },
+  { id: "A100-80GB", name: "A100-80GB", vram: "80 GB", desc: "Large models, 70B quantized" },
+  { id: "H100", name: "H100", vram: "80 GB", desc: "Maximum throughput, FP8" },
+  { id: "H200", name: "H200", vram: "141 GB", desc: "70B FP16, large MoE" },
+  { id: "B200", name: "B200", vram: "192 GB", desc: "Flagship, 70B+ FP16" },
+];
+
+export interface SuggestionItem {
+  id: string;
+  action: string;
+  modelBadge: { icon: React.ReactNode; text: string; iconType: "baai" | "meta" | "qwen" | "openai" | "flux" | "mistral" };
+  secondaryText?: string;
+  secondaryModelBadge?: { icon: React.ReactNode; text: string; iconType: "meta" };
+  engineBadge: { icon: React.ReactNode; text: string };
+  rest: string;
+  fullPrompt: string;
+  modelId: string;
+  engine: string;
+}
+
+export const SUGGESTIONS: SuggestionItem[] = [
+  {
+    id: "sug-1",
+    action: "Optimize",
+    modelBadge: { icon: <MetaLogo size={13} />, text: "Llama 3.1 8B", iconType: "meta" },
+    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM" },
+    rest: "for cheapest GPU with latency and VRAM checks",
+    fullPrompt: "Optimize Llama 3.1 8B on vLLM for cheapest GPU with latency and VRAM checks",
+    modelId: "meta-llama/Llama-3.1-8B-Instruct",
+    engine: "vLLM",
+  },
+  {
+    id: "sug-2",
+    action: "Optimize",
+    modelBadge: { icon: <QwenLogo size={13} />, text: "Qwen 2.5 7B", iconType: "qwen" },
+    engineBadge: { icon: <SGLangLogo size={13} />, text: "SGLang" },
+    rest: "with prefix cache and batch tuning",
+    fullPrompt: "Optimize Qwen 2.5 7B on SGLang with prefix cache and batch tuning",
+    modelId: "Qwen/Qwen2.5-7B-Instruct",
+    engine: "SGLang",
+  },
+  {
+    id: "sug-3",
+    action: "Optimize",
+    modelBadge: { icon: <BAAILogo size={13} />, text: "BGE-M3", iconType: "baai" },
+    secondaryText: "embeddings on",
+    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM" },
+    rest: "with /v1/embeddings batch and a recall sweep",
+    fullPrompt: "Optimize BGE-M3 embeddings on vLLM with /v1/embeddings batch and a recall sweep",
+    modelId: "BAAI/bge-m3",
+    engine: "vLLM",
+  },
+  {
+    id: "sug-4",
+    action: "Optimize",
+    modelBadge: { icon: <OpenAILogo size={13} />, text: "Whisper Large V3", iconType: "openai" },
+    secondaryModelBadge: { icon: <MetaLogo size={13} />, text: "Llama 3.2 3B", iconType: "meta" },
+    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM-Omni" },
+    rest: "for RTF and streaming latency",
+    fullPrompt: "Optimize Whisper Large V3 + Llama 3.2 3B on vLLM-Omni for RTF and streaming latency",
+    modelId: "openai/whisper-large-v3",
+    engine: "vLLM-Omni",
+  },
+  {
+    id: "sug-5",
+    action: "Optimize",
+    modelBadge: { icon: <FluxLogo size={13} />, text: "FLUX.1 Schnell", iconType: "flux" },
+    engineBadge: { icon: <DiffusersLogo size={13} />, text: "Diffusers" },
+    rest: "with FP8, compile, and step tuning",
+    fullPrompt: "Optimize FLUX.1 Schnell on Diffusers with FP8, compile, and step tuning",
+    modelId: "black-forest-labs/FLUX.1-schnell",
+    engine: "Diffusers",
+  },
+];
+
+export type FlyoutTab = "models" | "engine" | "gpu" | "runs_on" | "output_format";
+
+export interface TokenPromptInputProps {
   onSubmit?: (prompt: string, metadata?: Record<string, unknown>) => void;
   onLaunchPrompt?: (params: {
     prompt: string;
@@ -63,249 +277,16 @@ interface TokenPromptInputProps {
     mode: "Optimize" | "Experiment";
   }) => void;
   initialPrompt?: string;
+  availableModels?: ModelEntity[];
   dark?: boolean;
   className?: string;
 }
 
-interface HfModelItem {
-  id: string;
-  name: string;
-  org: string;
-  task: string;
-  downloads: string;
-  likes: string;
-  iconType: "meta" | "qwen" | "baai" | "flux" | "openai" | "kimi" | "nvidia" | "google" | "hf" | "simple" | "author";
-  brandIcon?: typeof siQwen;
-}
-
-function modelBrand(author: string | null, repositoryId: string): Pick<HfModelItem, "iconType" | "brandIcon"> {
-  // Brand identity comes from the HF author/org, never from a model name.
-  // A user can publish a model named "claude" or "qwen" and must not inherit
-  // the upstream company's branding.
-  const value = (author ?? "").toLowerCase();
-  if (value.includes("moonshot") || value === "kimi") return { iconType: "simple", brandIcon: siKimi };
-  if (value.includes("nvidia")) return { iconType: "simple", brandIcon: siNvidia };
-  if (value.includes("google") || value === "gemma") return { iconType: "google" };
-  if (value.includes("qwen")) return { iconType: "simple", brandIcon: siQwen };
-  if (value.includes("meta-llama") || value.includes("meta")) return { iconType: "simple", brandIcon: siMeta };
-  if (value.includes("flux") || value.includes("black-forest-labs")) return { iconType: "simple", brandIcon: siFlux };
-  if (value.includes("openai")) return { iconType: "openai" };
-  if (value.includes("deepseek")) return { iconType: "simple", brandIcon: siDeepseek };
-  if (value.includes("mistral")) return { iconType: "simple", brandIcon: siMistralai };
-  if (value.includes("anthropic") || value.includes("claude")) return { iconType: "simple", brandIcon: siAnthropic };
-  if (value.includes("facebook")) return { iconType: "simple", brandIcon: siFacebook };
-  if (value.includes("apple")) return { iconType: "simple", brandIcon: siApple };
-  if (value.includes("amd")) return { iconType: "simple", brandIcon: siAmd };
-  if (value.includes("intel")) return { iconType: "simple", brandIcon: siIntel };
-  if (value.includes("alibaba")) return { iconType: "simple", brandIcon: siAlibabacloud };
-  // HF has many individual authors and organizations without a verified public
-  // brand asset. Do not guess or hotlink arbitrary avatars; use HF branding.
-  return { iconType: "hf", brandIcon: siHuggingface };
-}
-
-const POPULAR_HF_MODELS: HfModelItem[] = [
-  {
-    id: "Qwen/Qwen3-0.6B",
-    name: "Qwen3-0.6B",
-    org: "Qwen",
-    task: "text generation",
-    downloads: "27.7M",
-    likes: "1.5K",
-    iconType: "qwen",
-  },
-  {
-    id: "facebook/opt-125m",
-    name: "opt-125m",
-    org: "facebook",
-    task: "text generation",
-    downloads: "17.2M",
-    likes: "289",
-    iconType: "hf",
-  },
-  {
-    id: "Qwen/Qwen3-8B",
-    name: "Qwen3-8B",
-    org: "Qwen",
-    task: "text generation",
-    downloads: "15.2M",
-    likes: "1.3K",
-    iconType: "qwen",
-  },
-  {
-    id: "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
-    name: "tiny-Qwen2ForCausalLM-2.5",
-    org: "trl-internal-testing",
-    task: "text generation",
-    downloads: "14.1M",
-    likes: "19",
-    iconType: "qwen",
-  },
-  {
-    id: "openai-community/gpt2",
-    name: "gpt2",
-    org: "openai-community",
-    task: "text generation",
-    downloads: "12.8M",
-    likes: "3.4K",
-    iconType: "openai",
-  },
-  {
-    id: "Qwen/Qwen2.5-1.5B-Instruct",
-    name: "Qwen2.5-1.5B-Instruct",
-    org: "Qwen",
-    task: "text generation",
-    downloads: "12.4M",
-    likes: "792",
-    iconType: "qwen",
-  },
-  {
-    id: "Qwen/Qwen2.5-7B-Instruct",
-    name: "Qwen2.5-7B-Instruct",
-    org: "Qwen",
-    task: "text generation",
-    downloads: "11.3M",
-    likes: "1.5K",
-    iconType: "qwen",
-  },
-  {
-    id: "meta-llama/Llama-3.1-8B-Instruct",
-    name: "Llama-3.1-8B-Instruct",
-    org: "meta-llama",
-    task: "text generation",
-    downloads: "32.4M",
-    likes: "4.8K",
-    iconType: "meta",
-  },
-  {
-    id: "BAAI/bge-m3",
-    name: "bge-m3",
-    org: "BAAI",
-    task: "feature extraction",
-    downloads: "18.9M",
-    likes: "2.1K",
-    iconType: "baai",
-  },
-  {
-    id: "black-forest-labs/FLUX.1-schnell",
-    name: "FLUX.1-schnell",
-    org: "black-forest-labs",
-    task: "text-to-image",
-    downloads: "8.4M",
-    likes: "3.2K",
-    iconType: "flux",
-  },
-];
-
-const SUGGESTIONS = [
-  {
-    id: "sug-1",
-    action: "Optimize",
-    modelBadge: { icon: <MetaLogo size={13} />, text: "Llama 3.1 8B" },
-    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM" },
-    rest: "for cheapest GPU with latency and VRAM checks",
-    fullPrompt: "Optimize meta-llama/Llama-3.1-8B-Instruct on vLLM for cheapest GPU with latency and VRAM checks",
-    modelId: "meta-llama/Llama-3.1-8B-Instruct",
-    engine: "vLLM",
-  },
-  {
-    id: "sug-2",
-    action: "Optimize",
-    modelBadge: { icon: <QwenLogo size={13} />, text: "Qwen 2.5 7B" },
-    engineBadge: { icon: <SGLangLogo size={13} />, text: "SGLang" },
-    rest: "with prefix cache and batch tuning",
-    fullPrompt: "Optimize Qwen/Qwen2.5-7B-Instruct on SGLang with prefix cache and batch tuning",
-    modelId: "Qwen/Qwen2.5-7B-Instruct",
-    engine: "SGLang",
-  },
-  {
-    id: "sug-3",
-    action: "Optimize",
-    modelBadge: { icon: <BAAILogo size={13} />, text: "BGE-M3" },
-    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM" },
-    rest: "embeddings on vLLM with /v1/embeddings batch and a recall sweep",
-    fullPrompt: "Optimize BAAI/bge-m3 embeddings on vLLM with /v1/embeddings batch and a recall sweep",
-    modelId: "BAAI/bge-m3",
-    engine: "vLLM",
-  },
-  {
-    id: "sug-4",
-    action: "Optimize",
-    modelBadge: { icon: <OpenAILogo size={13} />, text: "Whisper Large V3" },
-    secondaryModelBadge: { icon: <MetaLogo size={13} />, text: "Llama 3.2 3B" },
-    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM-Omni" },
-    rest: "for RTF and streaming latency",
-    fullPrompt: "Optimize Whisper Large V3 + meta-llama/Llama-3.2-3B on vLLM-Omni for RTF and streaming latency",
-    modelId: "openai/whisper-large-v3",
-    engine: "vLLM Omni",
-  },
-  {
-    id: "sug-5",
-    action: "Optimize",
-    modelBadge: { icon: <FluxLogo size={13} />, text: "FLUX.1 Schnell" },
-    engineBadge: { icon: <DiffusersLogo size={13} />, text: "Diffusers" },
-    rest: "with FP8, compile, and step tuning",
-    fullPrompt: "Optimize black-forest-labs/FLUX.1-schnell on Diffusers with FP8, compile, and step tuning",
-    modelId: "black-forest-labs/FLUX.1-schnell",
-    engine: "Diffusers",
-  },
-  {
-    id: "sug-6",
-    action: "Run",
-    modelBadge: { icon: <QwenLogo size={13} />, text: "Qwen 3 0.6B" },
-    engineBadge: { icon: <CircleDashed size={13} />, text: "Ollama" },
-    rest: "locally on the smallest viable GPU for fast prototyping",
-    fullPrompt: "Run Qwen/Qwen3-0.6B on Ollama locally for fast prototyping",
-    modelId: "Qwen/Qwen3-0.6B",
-    engine: "Ollama",
-  },
-  {
-    id: "sug-7",
-    action: "Optimize",
-    modelBadge: { icon: <BAAILogo size={13} />, text: "BGE-M3" },
-    engineBadge: { icon: <HuggingFaceLogo size={13} />, text: "TEI" },
-    rest: "embeddings and reranking for high-recall search",
-    fullPrompt: "Optimize BAAI/bge-m3 on TEI for embeddings and reranking",
-    modelId: "BAAI/bge-m3",
-    engine: "TEI",
-  },
-  {
-    id: "sug-8",
-    action: "Benchmark",
-    modelBadge: { icon: <MetaLogo size={13} />, text: "Llama 3.2 3B" },
-    engineBadge: { icon: <VLLMLogo size={13} />, text: "vLLM" },
-    rest: "for throughput, latency, and quality tradeoffs",
-    fullPrompt: "Benchmark meta-llama/Llama-3.2-3B on vLLM for throughput and latency",
-    modelId: "meta-llama/Llama-3.2-3B",
-    engine: "vLLM",
-  },
-  {
-    id: "sug-9",
-    action: "Optimize",
-    modelBadge: { icon: <QwenLogo size={13} />, text: "Qwen 2.5 VL 7B" },
-    engineBadge: { icon: <SGLangLogo size={13} />, text: "SGLang" },
-    rest: "for vision-language serving with batching",
-    fullPrompt: "Optimize Qwen/Qwen2.5-VL-7B-Instruct on SGLang for vision-language batching",
-    modelId: "Qwen/Qwen2.5-VL-7B-Instruct",
-    engine: "SGLang",
-  },
-  {
-    id: "sug-10",
-    action: "Generate",
-    modelBadge: { icon: <FluxLogo size={13} />, text: "FLUX.1 Schnell" },
-    engineBadge: { icon: <DiffusersLogo size={13} />, text: "Diffusers" },
-    rest: "images with low-step inference and memory checks",
-    fullPrompt: "Generate images with black-forest-labs/FLUX.1-schnell on Diffusers with memory checks",
-    modelId: "black-forest-labs/FLUX.1-schnell",
-    engine: "Diffusers",
-  },
-];
-
-type FlyoutTab = "models" | "engine" | "gpu" | "runs_on" | "output_format";
-
 export function TokenPromptInput({
   onSubmit,
   onLaunchPrompt,
-  initialPrompt = "Build a voice pipeline with Whisper on vLLM Omni ...",
+  initialPrompt = "",
+  availableModels = [],
   dark = true,
   className,
 }: TokenPromptInputProps) {
@@ -318,28 +299,29 @@ export function TokenPromptInput({
   const [selectedOutputFormat, setSelectedOutputFormat] = useState<string>("Managed endpoint");
   const [selectedMode, setSelectedMode] = useState<"Optimize" | "Experiment">("Optimize");
 
-  // Dropdown popover states
+  // Autocomplete / Flyout states
   const [flyoutOpen, setFlyoutOpen] = useState(false);
   const [activeFlyoutTab, setActiveFlyoutTab] = useState<FlyoutTab>("models");
   const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
   const [hfSearchQuery, setHfSearchQuery] = useState("");
   const [hfModels, setHfModels] = useState<HfModelItem[]>([]);
+  const [hfSearchLoading, setHfSearchLoading] = useState(false);
+  const [hfSearchError, setHfSearchError] = useState<string | null>(null);
   const [animatedSuggestionIndex, setAnimatedSuggestionIndex] = useState(0);
-
-  // Cycle the same rich chip rows shown below the prompt. Clicking or typing
-  // immediately reveals the real editor.
-  useEffect(() => {
-    if (promptEdited) return;
-    const cycleTimer = window.setInterval(() => {
-      setAnimatedSuggestionIndex((current) => (current + 1) % SUGGESTIONS.length);
-    }, 3500);
-    return () => window.clearInterval(cycleTimer);
-  }, [animatedSuggestionIndex, promptEdited]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Close menus when clicking outside
+  // Cycle suggestions when idle
+  useEffect(() => {
+    if (promptEdited) return;
+    const cycleTimer = window.setInterval(() => {
+      setAnimatedSuggestionIndex((current) => (current + 1) % SUGGESTIONS.length);
+    }, 4000);
+    return () => window.clearInterval(cycleTimer);
+  }, [animatedSuggestionIndex, promptEdited]);
+
+  // Close menus on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -351,35 +333,55 @@ export function TokenPromptInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // HF Search debounced
   useEffect(() => {
     const query = hfSearchQuery.trim();
     let cancelled = false;
-    const timer = window.setTimeout(async () => {
-      const workspaceId = await resolveActiveEpochWorkspaceId().catch(() => null);
-      if (!workspaceId) return;
-      const results = await searchEpochHuggingFaceModels(workspaceId, query).catch(() => []);
-      if (cancelled) return;
-      setHfModels(results.map((result) => {
-        const brand = modelBrand(result.author, result.repositoryId);
-        return {
-          id: result.repositoryId,
-          name: result.repositoryId.split("/").pop() ?? result.repositoryId,
-          org: result.author ?? result.repositoryId.split("/")[0] ?? "Hugging Face",
-          task: result.task ?? result.library ?? "model",
-          downloads: result.downloads >= 1_000_000 ? `${(result.downloads / 1_000_000).toFixed(1)}M` : result.downloads >= 1_000 ? `${(result.downloads / 1_000).toFixed(1)}K` : String(result.downloads),
-          likes: result.likes >= 1_000 ? `${(result.likes / 1_000).toFixed(1)}K` : String(result.likes),
-          ...brand,
-        };
-      }));
+    if (!query) {
+      setHfModels([]);
+      setHfSearchLoading(false);
+      setHfSearchError(null);
+      return;
+    }
+    setHfSearchLoading(true);
+    setHfSearchError(null);
+    const timer = setTimeout(async () => {
+      try {
+        const wsId = await resolveActiveEpochWorkspaceId();
+        if (!wsId) return;
+        const results = await searchEpochHuggingFaceModels(wsId, query);
+        if (cancelled) return;
+        setHfModels(
+          results.map((r) => ({
+            id: r.repositoryId,
+            name: r.repositoryId.split("/").pop() ?? r.repositoryId,
+            org: r.author ?? r.repositoryId.split("/")[0] ?? "Hugging Face",
+            task: r.task ?? r.library ?? "model",
+            downloads: r.downloads >= 1_000_000 ? `${(r.downloads / 1_000_000).toFixed(1)}M` : String(r.downloads),
+            likes: String(r.likes),
+            iconType: "hf",
+          }))
+        );
+      } catch {
+        if (!cancelled) {
+          setHfModels([]);
+          setHfSearchError("Hugging Face search is unavailable right now.");
+        }
+      } finally {
+        if (!cancelled) setHfSearchLoading(false);
+      }
     }, 250);
-    return () => { cancelled = true; window.clearTimeout(timer); };
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [hfSearchQuery]);
 
   const handleSubmit = () => {
-    if (!prompt.trim()) return;
+    const finalPrompt = prompt.trim() || SUGGESTIONS[animatedSuggestionIndex].fullPrompt;
     if (onLaunchPrompt) {
       onLaunchPrompt({
-        prompt: prompt.trim(),
+        prompt: finalPrompt,
         model: selectedModel.id,
         engine: selectedEngine,
         gpu: selectedGpu,
@@ -388,7 +390,7 @@ export function TokenPromptInput({
         mode: selectedMode,
       });
     } else if (onSubmit) {
-      onSubmit(prompt.trim(), {
+      onSubmit(finalPrompt, {
         model: selectedModel.id,
         engine: selectedEngine,
         gpu: selectedGpu,
@@ -409,24 +411,27 @@ export function TokenPromptInput({
     }
   };
 
-  const handleSelectSuggestion = (sug: typeof SUGGESTIONS[0]) => {
+  const handleSelectSuggestion = (sug: SuggestionItem) => {
     setPromptEdited(true);
     setPrompt(sug.fullPrompt);
     setSelectedEngine(sug.engine);
-    const matched = POPULAR_HF_MODELS.find((m) => m.id === sug.modelId);
-    if (matched) setSelectedModel(matched);
+    const matched = POPULAR_HF_MODELS.find((m) => m.id === sug.modelId) || {
+      id: sug.modelId,
+      name: sug.modelBadge.text,
+      org: sug.modelId.split("/")[0] || "model",
+      task: "inference",
+      downloads: "10M+",
+      likes: "1K+",
+      iconType: sug.modelBadge.iconType,
+    };
+    setSelectedModel(matched);
   };
 
-  const filteredHfModels = hfModels.filter(
-    (m) =>
-      m.name.toLowerCase().includes(hfSearchQuery.toLowerCase()) ||
-      m.org.toLowerCase().includes(hfSearchQuery.toLowerCase())
-  );
   const animatedSuggestion = SUGGESTIONS[animatedSuggestionIndex];
 
   return (
     <div ref={containerRef} className={cn("w-full space-y-4", className)}>
-      {/* Title & Subtitle */}
+      {/* Title & Subtitle Matching Image 2 */}
       <div className="text-left">
         <h1 className={cn(
           "text-2xl font-medium tracking-[-0.03em] sm:text-3xl",
@@ -442,379 +447,341 @@ export function TokenPromptInput({
         </p>
       </div>
 
-      {/* Main Interactive Prompt Card */}
-      <div className={cn(
-        "relative max-w-[840px] border p-4 transition-all rounded-xs",
-        dark
-          ? "border-[#333333] bg-[#1a1a1a] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
-          : "border-[#d8ddd3] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
-      )}>
-        {/* Prompt Input Area */}
-        <div className="relative min-h-[56px]">
-          {!promptEdited && (
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => {
-                setPromptEdited(true);
-                setPrompt(SUGGESTIONS[animatedSuggestionIndex].fullPrompt);
-                textareaRef.current?.focus();
-              }}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
+      {/* Main Interactive Prompt Card (Matching Image 2 & 3) */}
+      <div className="relative max-w-[840px]">
+        <div className={cn(
+          "relative border p-4 transition-all rounded-xs",
+          dark
+            ? "border-[#282828] bg-[#141414] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
+            : "border-[#d8ddd3] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+        )}>
+          {/* Prompt Input Area / Placeholder */}
+          <div className="relative min-h-[52px]">
+            {!promptEdited && (
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => {
                   setPromptEdited(true);
                   setPrompt(SUGGESTIONS[animatedSuggestionIndex].fullPrompt);
                   textareaRef.current?.focus();
-                }
-              }}
-              className={cn("absolute inset-0 z-10 flex min-h-[56px] cursor-text items-start gap-2 overflow-hidden whitespace-nowrap text-xs md:text-sm transition-opacity", dark ? "text-[#d1d5db]" : "text-[#374151]")}
-            >
-              <ArrowRight size={13} className="mt-1 text-[#788274] shrink-0" />
-              <span className="mt-0.5 shrink-0">{animatedSuggestion.action}</span>
-              <span className="inline-flex shrink-0 items-center gap-1 border border-[#383838] bg-[#242424] px-1.5 py-0.5 rounded-xs font-medium text-white">
-                {animatedSuggestion.modelBadge.icon}
-                {animatedSuggestion.modelBadge.text}
-              </span>
-              {animatedSuggestion.secondaryModelBadge && (
-                <>
-                  <span className="mt-0.5 shrink-0">+</span>
-                  <span className="inline-flex shrink-0 items-center gap-1 border border-[#383838] bg-[#242424] px-1.5 py-0.5 rounded-xs font-medium text-white">
-                    {animatedSuggestion.secondaryModelBadge.icon}
-                    {animatedSuggestion.secondaryModelBadge.text}
-                  </span>
-                </>
-              )}
-              <span className="mt-0.5 shrink-0">on</span>
-              <span className="inline-flex shrink-0 items-center gap-1 border border-[#383838] bg-[#242424] px-1.5 py-0.5 rounded-xs font-medium text-white">
-                {animatedSuggestion.engineBadge.icon}
-                {animatedSuggestion.engineBadge.text}
-              </span>
-              <span className="mt-0.5 truncate">{animatedSuggestion.rest}</span>
-            </div>
-          )}
-          <textarea
-            ref={textareaRef}
-            value={prompt}
-            onChange={(e) => {
-              setPromptEdited(true);
-              setPrompt(e.target.value);
-            }}
-            onFocus={() => {
-              if (!promptEdited) {
-                setPromptEdited(true);
-                setPrompt(SUGGESTIONS[animatedSuggestionIndex].fullPrompt);
-              }
-            }}
-            rows={2}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit();
-              }
-            }}
-            placeholder="Build a voice pipeline with Whisper on vLLM Omni ..."
-            className={cn(
-              "min-h-[56px] w-full resize-none bg-transparent p-0 text-sm md:text-base font-normal outline-none",
-              !promptEdited && "pointer-events-none opacity-0",
-              dark ? "text-white placeholder:text-[#666]" : "text-[#171a17] placeholder:text-[#90988c]"
-            )}
-          />
-        </div>
-
-        {/* Structured Token Controls Row */}
-        <div className={cn(
-          "mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-dashed pt-3",
-          dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
-        )}>
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs">
-            {/* 1. Models Token Pill */}
-            <button
-              type="button"
-              onClick={() => handleOpenFlyout("models")}
-              className={cn(
-                "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs",
-                flyoutOpen && activeFlyoutTab === "models"
-                  ? "border-[#75bf00] bg-[#1a2416] text-[#a3e635] font-medium"
-                  : dark
-                  ? "border-[#383838] bg-[#222222] text-white hover:border-[#555]"
-                  : "border-[#d8ddd3] bg-[#fafbfa] text-[#2a3028] hover:border-[#8ec840]"
-              )}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
-              <span>Models</span>
-              {flyoutOpen && activeFlyoutTab === "models" ? (
-                <ChevronUp size={12} className="text-[#888]" />
-              ) : (
-                <ChevronDown size={12} className="text-[#888]" />
-              )}
-            </button>
-
-            {/* 2. Output format Pill */}
-            <button
-              type="button"
-              onClick={() => handleOpenFlyout("output_format")}
-              className={cn(
-                "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs",
-                flyoutOpen && activeFlyoutTab === "output_format"
-                  ? "border-[#75bf00] bg-[#1a2416] text-[#a3e635] font-medium"
-                  : dark
-                  ? "border-[#383838] bg-[#222222] text-white hover:border-[#555]"
-                  : "border-[#d8ddd3] bg-white text-[#2a3028] hover:border-[#a8b0a2]"
-              )}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
-              <span>Output format</span>
-              {flyoutOpen && activeFlyoutTab === "output_format" ? (
-                <ChevronUp size={12} className="text-[#888]" />
-              ) : (
-                <ChevronDown size={12} className="text-[#888]" />
-              )}
-            </button>
-
-            {/* 3. Grouped Token Pill [ vLLM | Nvidia | Cloud | Auto ] */}
-            <div
-              onClick={() => handleOpenFlyout("engine")}
-              className={cn(
-                "flex items-center gap-1.5 border px-2.5 py-1 text-xs rounded-xs font-mono text-[11px] cursor-pointer hover:border-[#555] transition-colors",
-                dark ? "border-[#383838] bg-[#222222] text-[#888]" : "border-[#d8ddd3] bg-white text-[#666]"
-              )}
-            >
-              <VLLMLogo size={13} />
-              <NvidiaLogo size={13} />
-              <Cloud size={13} />
-              <span className="text-[10px]">Auto</span>
-            </div>
-          </div>
-
-          {/* Right Token Actions: Mode Switcher + Launch Button */}
-          <div className="flex items-center gap-2">
-            {/* Mode Switcher Popover Trigger */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  setModeDropdownOpen(!modeDropdownOpen);
-                  setFlyoutOpen(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setPromptEdited(true);
+                    setPrompt(SUGGESTIONS[animatedSuggestionIndex].fullPrompt);
+                    textareaRef.current?.focus();
+                  }
                 }}
                 className={cn(
-                  "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs",
-                  dark
-                    ? "border-[#383838] bg-[#222222] text-white hover:border-[#555]"
+                  "absolute inset-0 z-10 flex min-h-[52px] cursor-text items-center gap-2 overflow-hidden whitespace-nowrap text-xs md:text-sm transition-opacity",
+                  dark ? "text-[#888]" : "text-[#777]"
+                )}
+              >
+                <span>What do you want to optimize? Use @ to pick models...</span>
+              </div>
+            )}
+
+            <textarea
+              ref={textareaRef}
+              value={prompt}
+              onChange={(e) => {
+                setPromptEdited(true);
+                setPrompt(e.target.value);
+              }}
+              onFocus={() => {
+                if (!promptEdited) {
+                  setPromptEdited(true);
+                }
+              }}
+              rows={2}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+              placeholder="What do you want to optimize? Use @ to pick models..."
+              className={cn(
+                "min-h-[52px] w-full resize-none bg-transparent p-0 text-xs md:text-sm font-normal outline-none",
+                !promptEdited && "pointer-events-none opacity-0",
+                dark ? "text-white placeholder:text-[#666]" : "text-[#171a17] placeholder:text-[#90988c]"
+              )}
+            />
+          </div>
+
+          {/* Bottom Tool Rail (Matching Image 2 & 3 exact 4-group structure) */}
+          <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#222222] pt-3 overflow-x-auto no-scrollbar">
+            {/* Left Controls (3 pills) */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* 1. Models Pill */}
+              <button
+                type="button"
+                onClick={() => handleOpenFlyout("models")}
+                className={cn(
+                  "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs font-sans shrink-0 whitespace-nowrap",
+                  activeFlyoutTab === "models" && flyoutOpen
+                    ? "border-[#75bf00] bg-[#222222] text-white"
+                    : dark
+                    ? "border-[#383838] bg-[#1a1a1a] text-[#d1d5db] hover:border-[#555]"
                     : "border-[#d8ddd3] bg-white text-[#2a3028] hover:border-[#171a17]"
                 )}
               >
-                {selectedMode === "Experiment" ? (
-                  <FlaskConical size={13} className="text-[#788274]" />
-                ) : (
-                  <Gauge size={13} className="text-[#75bf00]" />
-                )}
-                <span className="font-medium">{selectedMode}</span>
-                {modeDropdownOpen ? (
+                <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                <span>Models</span>
+                {activeFlyoutTab === "models" && flyoutOpen ? (
                   <ChevronUp size={11} className="text-[#788274]" />
                 ) : (
                   <ChevronDown size={11} className="text-[#788274]" />
                 )}
               </button>
 
-              {/* Mode Dropdown Popover */}
-              {modeDropdownOpen && (
-                <div className={cn(
-                  "absolute right-0 top-full mt-2 w-80 border shadow-2xl p-1.5 space-y-1 text-xs z-50 rounded-xs animate-in fade-in zoom-in-95 duration-100",
-                  dark
-                    ? "border-[#383838] bg-[#202020] text-white"
-                    : "border-[#c9cec4] bg-white text-[#171a17]"
-                )}>
-                  <div
-                    onClick={() => {
-                      setSelectedMode("Optimize");
-                      setModeDropdownOpen(false);
-                    }}
-                    className={cn(
-                      "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-left",
-                      selectedMode === "Optimize"
-                        ? dark ? "bg-[#282828]" : "bg-[#f3f6f0]"
-                        : dark ? "hover:bg-[#282828]" : "hover:bg-[#f3f6f0]"
-                    )}
-                  >
-                    <Gauge size={15} className="text-[#75bf00] shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-white text-xs">Optimize</span>
-                        {selectedMode === "Optimize" && (
-                          <Check size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <p className="text-[11px] text-[#888] mt-0.5 leading-relaxed">
-                        Full run: measure candidates and apply the winner.
-                      </p>
-                    </div>
-                  </div>
+              {/* 2. Output Format Pill */}
+              <button
+                type="button"
+                onClick={() => handleOpenFlyout("output_format")}
+                className={cn(
+                  "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs font-sans shrink-0 whitespace-nowrap",
+                  activeFlyoutTab === "output_format" && flyoutOpen
+                    ? "border-[#75bf00] bg-[#222222] text-white"
+                    : dark
+                    ? "border-[#383838] bg-[#1a1a1a] text-[#d1d5db] hover:border-[#555]"
+                    : "border-[#d8ddd3] bg-white text-[#2a3028] hover:border-[#171a17]"
+                )}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                <span>Output format</span>
+                {activeFlyoutTab === "output_format" && flyoutOpen ? (
+                  <ChevronUp size={11} className="text-[#788274]" />
+                ) : (
+                  <ChevronDown size={11} className="text-[#788274]" />
+                )}
+              </button>
 
-                  <div
-                    onClick={() => {
-                      setSelectedMode("Experiment");
-                      setModeDropdownOpen(false);
-                    }}
-                    className={cn(
-                      "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-left",
-                      selectedMode === "Experiment"
-                        ? dark ? "bg-[#282828]" : "bg-[#f3f6f0]"
-                        : dark ? "hover:bg-[#282828]" : "hover:bg-[#f3f6f0]"
-                    )}
-                  >
-                    <FlaskConical size={15} className="text-[#788274] shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-white text-xs">Experiment</span>
-                        {selectedMode === "Experiment" && (
-                          <Check size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <p className="text-[11px] text-[#888] mt-0.5 leading-relaxed">
-                        Test candidates against constraints without applying changes.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* 3. Combined Engine / GPU Auto Pill */}
+              <button
+                type="button"
+                onClick={() => handleOpenFlyout("engine")}
+                className={cn(
+                  "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs font-sans shrink-0 whitespace-nowrap",
+                  (activeFlyoutTab === "engine" || activeFlyoutTab === "gpu") && flyoutOpen
+                    ? "border-[#75bf00] bg-[#222222] text-white"
+                    : dark
+                    ? "border-[#383838] bg-[#1a1a1a] text-[#888] hover:border-[#555] hover:text-white"
+                    : "border-[#d8ddd3] bg-white text-[#666] hover:border-[#171a17]"
+                )}
+              >
+                <VLLMLogo size={12} />
+                <NvidiaLogo size={12} className="text-[#76b900]" />
+                <Cpu size={12} className="text-[#788274]" />
+                <span className="font-mono text-xs text-[#888]">Auto</span>
+              </button>
             </div>
 
-            {/* Launch / Send Button */}
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className={cn(
-                "flex h-7 w-7 items-center justify-center transition-all rounded-xs",
-                prompt.trim()
-                  ? "bg-[#75bf00] text-black hover:bg-[#68ab00] active:scale-95 shadow-sm"
-                  : "border border-[#383838] bg-[#222] text-[#666] cursor-not-allowed"
-              )}
-              title="Launch pipeline optimization (Enter)"
-            >
-              <ArrowUp size={15} strokeWidth={2.5} />
-            </button>
+            {/* Right Controls: Mode Switcher + Launch */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModeDropdownOpen(!modeDropdownOpen);
+                    setFlyoutOpen(false);
+                  }}
+                  className={cn(
+                    "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs font-mono shrink-0 whitespace-nowrap",
+                    dark
+                      ? "border-[#383838] bg-[#1a1a1a] text-[#d1d5db] hover:border-[#555]"
+                      : "border-[#d8ddd3] bg-white text-[#2a3028] hover:border-[#171a17]"
+                  )}
+                >
+                  {selectedMode === "Experiment" ? (
+                    <FlaskConical size={12} className="text-[#75bf00]" />
+                  ) : (
+                    <Gauge size={12} className="text-[#75bf00]" />
+                  )}
+                  <span>{selectedMode}</span>
+                  {modeDropdownOpen ? (
+                    <ChevronUp size={11} className="text-[#788274]" />
+                  ) : (
+                    <ChevronDown size={11} className="text-[#788274]" />
+                  )}
+                </button>
+
+                {/* Mode Dropdown Popover */}
+                {modeDropdownOpen && (
+                  <div className={cn(
+                    "absolute right-0 top-full mt-1.5 w-80 border shadow-2xl p-1.5 space-y-1 text-xs z-50 rounded-xs animate-in fade-in zoom-in-95 duration-100",
+                    dark
+                      ? "border-[#333] bg-[#181818] text-white"
+                      : "border-[#c9cec4] bg-white text-[#171a17]"
+                  )}>
+                    <div
+                      onClick={() => {
+                        setSelectedMode("Optimize");
+                        setModeDropdownOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-left",
+                        selectedMode === "Optimize"
+                          ? dark ? "bg-[#282828]" : "bg-[#f0f4ee]"
+                          : dark ? "hover:bg-[#222222]" : "hover:bg-[#f8faf7]"
+                      )}
+                    >
+                      <Gauge size={16} className="text-[#75bf00] shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-xs text-white">Optimize</span>
+                          {selectedMode === "Optimize" && <Check size={14} className="text-[#75bf00]" />}
+                        </div>
+                        <p className="text-[11px] text-[#888] mt-0.5 leading-relaxed">
+                          Full run: measure candidates and apply the winner.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => {
+                        setSelectedMode("Experiment");
+                        setModeDropdownOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-left",
+                        selectedMode === "Experiment"
+                          ? dark ? "bg-[#282828]" : "bg-[#f0f4ee]"
+                          : dark ? "hover:bg-[#222222]" : "hover:bg-[#f8faf7]"
+                      )}
+                    >
+                      <FlaskConical size={16} className="text-[#75bf00] shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-xs text-white">Experiment</span>
+                          {selectedMode === "Experiment" && <Check size={14} className="text-[#75bf00]" />}
+                        </div>
+                        <p className="text-[11px] text-[#888] mt-0.5 leading-relaxed">
+                          Exploratory run: measure candidates side by side. No winner is applied.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Launch Action Button */}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center transition-all rounded-xs border shrink-0",
+                  dark
+                    ? "border-[#444] bg-[#222222] text-[#888] hover:text-white hover:bg-[#333] active:scale-95 shadow-sm cursor-pointer"
+                    : "border-[#171a17] bg-[#171a17] text-white hover:bg-[#2a2a2a] active:scale-95 shadow-sm cursor-pointer"
+                )}
+                title="Launch Mission"
+              >
+                <ArrowUp size={14} strokeWidth={2.5} />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 2-COLUMN SPLIT FLYOUT MODAL (Exact match for all user screenshots!) */}
+        {/* 2-Column Split Flyout Drawer (Anchored Popover matching Image 3) */}
         {flyoutOpen && (
           <div className={cn(
-            "absolute left-0 right-0 top-full mt-2 z-50 border border-dashed shadow-2xl rounded-xs overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col md:flex-row min-h-[410px]",
-            dark ? "border-[#383838] bg-[#181818] text-white" : "border-[#c9cec4] bg-white text-[#171a17]"
+            "absolute left-0 right-0 top-full mt-2 z-50 border border-dashed shadow-2xl rounded-xs overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col md:flex-row min-h-[380px]",
+            dark ? "border-[#383838] bg-[#111111] text-white" : "border-[#c9cec4] bg-white text-[#171a17]"
           )}>
-            {/* Left Column / Vertical Rail */}
+            {/* Left Rail: 5 Tabs */}
             <div className={cn(
-              "w-full md:w-52 border-b md:border-b-0 md:border-r border-dashed p-2 space-y-1 shrink-0 font-sans text-xs",
-              dark ? "border-[#282828] bg-[#151515]" : "border-[#edf0eb] bg-[#fafbfa]"
+              "w-full md:w-56 border-b md:border-b-0 md:border-r border-[#222222] p-2 space-y-1 shrink-0 font-sans text-xs",
+              dark ? "bg-[#141414]" : "bg-[#fafbfa]"
             )}>
               {[
                 { id: "models", label: "Models", icon: <HuggingFaceLogo size={14} /> },
                 { id: "engine", label: "Serving engine", icon: <VLLMLogo size={14} /> },
                 { id: "gpu", label: "GPU", icon: <NvidiaLogo size={14} /> },
-                { id: "runs_on", label: "Runs on", icon: <Cloud size={14} className="text-[#888]" /> },
-                { id: "output_format", label: "Output format", icon: <Layers size={14} className="text-[#888]" /> },
-              ].map((tab) => {
-                const isActive = activeFlyoutTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveFlyoutTab(tab.id as FlyoutTab)}
-                    className={cn(
-                      "flex items-center gap-2.5 w-full px-3 py-2.5 text-xs font-medium rounded-xs transition-colors text-left",
-                      isActive
-                        ? dark
-                          ? "bg-[#282828] text-white font-semibold shadow-xs"
-                          : "bg-[#e8ece5] text-black font-semibold shadow-xs"
-                        : dark
-                        ? "text-[#889084] hover:bg-[#202020] hover:text-white"
-                        : "text-[#656d60] hover:bg-[#f0f2ee] hover:text-black"
-                    )}
-                  >
-                    <span className="shrink-0 flex items-center justify-center">{tab.icon}</span>
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
+                { id: "runs_on", label: "Runs on", icon: <Cloud size={14} /> },
+                { id: "output_format", label: "Output format", icon: <Boxes size={14} /> },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveFlyoutTab(tab.id as FlyoutTab)}
+                  className={cn(
+                    "flex w-full items-center gap-2.5 px-3 py-2 rounded-xs text-left transition-colors font-medium text-xs",
+                    activeFlyoutTab === tab.id
+                      ? dark
+                        ? "bg-[#252525] text-white font-semibold shadow-xs"
+                        : "bg-[#e8eee4] text-[#171a17] font-semibold"
+                      : dark
+                      ? "text-[#888] hover:bg-[#1a1a1a] hover:text-white"
+                      : "text-[#666] hover:bg-[#f2f4f0] hover:text-[#171a17]"
+                  )}
+                >
+                  <span className="shrink-0">{tab.icon}</span>
+                  <span className="truncate">{tab.label}</span>
+                </button>
+              ))}
             </div>
 
-            {/* Right Column / Main Body */}
-            <div className="flex-1 p-4 space-y-3 overflow-hidden flex flex-col min-w-0">
-              {/* TAB 1: MODELS (Matching Screenshot 2) */}
+            {/* Right Pane */}
+            <div className="flex-1 p-4 overflow-y-auto max-h-[420px]">
+              {/* TAB 1: Models */}
               {activeFlyoutTab === "models" && (
-                <div className="flex-1 flex flex-col min-h-0 space-y-3">
-                  {/* Hugging Face Search Bar */}
-                  <div className={cn(
-                    "flex items-center gap-2 border border-dashed px-3 py-2 text-xs rounded-xs shrink-0",
-                    dark ? "border-[#333] bg-[#202020]" : "border-[#d8ddd3] bg-white"
-                  )}>
-                    <HuggingFaceLogo size={16} />
+                <div className="space-y-3">
+                  <div className="relative border border-[#2a2a2a] rounded-xs bg-[#161616] flex items-center px-2.5 py-1.5">
+                    <HuggingFaceLogo size={14} className="shrink-0 text-[#888] mr-2" />
                     <input
+                      type="text"
                       value={hfSearchQuery}
                       onChange={(e) => setHfSearchQuery(e.target.value)}
                       placeholder="Search Hugging Face models or paste a repo id..."
-                      className="w-full bg-transparent text-xs outline-none placeholder:text-[#666]"
+                      className="w-full bg-transparent text-xs text-white placeholder:text-[#666] outline-none font-sans"
                     />
                   </div>
 
-                  {/* Subtitle */}
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#788274] font-mono shrink-0">
+                  {hfSearchLoading && (
+                    <div className="flex items-center gap-2 px-2 py-2 text-[11px] text-[#788274]">
+                      <LoaderCircle size={12} className="animate-spin" /> Searching Hugging Face…
+                    </div>
+                  )}
+                  {hfSearchError && !hfSearchLoading && (
+                    <div className="px-2 py-2 text-[11px] text-[#a58b72]">{hfSearchError}</div>
+                  )}
+
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-[#888] px-1 pt-1">
                     <HuggingFaceLogo size={13} />
-                    <span>Popular on Hugging Face {filteredHfModels.length}</span>
+                    <span>Popular on Hugging Face 20</span>
                   </div>
 
-                  {/* High-density model items list */}
-                  <div className="flex-1 overflow-y-auto space-y-1 max-h-[300px] pr-1">
-                    {filteredHfModels.map((m) => (
+                  <div className="space-y-1">
+                    {(hfModels.length > 0 ? hfModels : POPULAR_HF_MODELS).map((m) => (
                       <div
                         key={m.id}
                         onClick={() => {
                           setSelectedModel(m);
-                          setPrompt(`Optimize @${m.id} on @${selectedEngine} for latency and VRAM checks`);
                           setFlyoutOpen(false);
                         }}
                         className={cn(
-                          "flex items-center justify-between p-2.5 cursor-pointer transition-colors text-xs rounded-xs group",
-                          selectedModel?.id === m.id
-                            ? dark ? "bg-[#252525]" : "bg-[#f3f6f0]"
-                            : dark ? "hover:bg-[#202020]" : "hover:bg-[#fafbfa]"
+                          "flex items-center justify-between p-2.5 rounded-xs cursor-pointer transition-colors text-xs",
+                          dark ? "hover:bg-[#1c1c1c] text-[#d1d5db]" : "hover:bg-[#f2f4f0] text-[#333]"
                         )}
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="shrink-0 flex items-center justify-center">
-                            {m.iconType === "meta" && <MetaLogo size={16} />}
-                            {m.iconType === "qwen" && <QwenLogo size={16} />}
-                            {m.iconType === "baai" && <BAAILogo size={16} />}
-                            {m.iconType === "flux" && <FluxLogo size={16} />}
-                            {m.iconType === "openai" && <OpenAILogo size={16} />}
-                            {m.iconType === "kimi" && <span className="inline-flex h-4 w-4 items-center justify-center font-sans text-[20px] font-light leading-none text-[#d9d9d9]">K</span>}
-                            {m.iconType === "nvidia" && <NvidiaLogo size={16} />}
-                            {m.iconType === "google" && <GoogleLogo size={16} />}
-                            {m.iconType === "simple" && m.brandIcon && <SimpleBrandLogo icon={m.brandIcon} size={16} />}
-                            {m.iconType === "hf" && m.brandIcon && <SimpleBrandLogo icon={m.brandIcon} size={16} />}
-                          </div>
-                          <div className="min-w-0 truncate">
-                            <div className={cn("font-bold text-xs truncate", dark ? "text-white" : "text-[#171a17]")}>
-                              {m.name}
-                            </div>
-                            <div className="text-[11px] text-[#788274] font-mono truncate">
-                              {m.org}, {m.task}
-                            </div>
+                        <div className="flex items-start gap-2.5">
+                          <span className="mt-0.5"><ModelBrandIcon model={m} size={15} /></span>
+                          <div>
+                            <div className="font-semibold text-white text-xs">{m.name}</div>
+                            <div className="text-[11px] text-[#788274] mt-0.5">{m.org}</div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-[11px] font-mono text-[#788274] shrink-0 ml-3">
-                          <span className={cn(
-                            "flex items-center gap-1 px-2 py-0.5 border border-dashed rounded-xs",
-                            dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#edf0eb] bg-white"
-                          )}>
-                            <Download size={10} /> {m.downloads}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 border border-[#2a2a2a] bg-[#1a1a1a] text-[10px] font-mono text-[#888] rounded-xs">
+                            <Download size={10} />
+                            <span>{m.downloads}</span>
                           </span>
-                          <span className={cn(
-                            "flex items-center gap-1 px-2 py-0.5 border border-dashed rounded-xs",
-                            dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#edf0eb] bg-white"
-                          )}>
-                            <Heart size={10} /> {m.likes}
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 border border-[#2a2a2a] bg-[#1a1a1a] text-[10px] font-mono text-[#888] rounded-xs">
+                            <Heart size={10} />
+                            <span>{m.likes}</span>
                           </span>
                         </div>
                       </div>
@@ -823,293 +790,257 @@ export function TokenPromptInput({
                 </div>
               )}
 
-              {/* TAB 2: SERVING ENGINE (Matching Screenshot 1 of serving engine) */}
+              {/* TAB 2: Serving engine */}
               {activeFlyoutTab === "engine" && (
-                <div className="flex-1 overflow-y-auto space-y-4 max-h-[340px] pr-1">
-                  {/* Top option: Auto (recommended) */}
+                <div className="space-y-3">
                   <div
                     onClick={() => {
                       setSelectedEngine("vLLM");
                       setFlyoutOpen(false);
                     }}
                     className={cn(
-                      "flex items-center justify-between p-3 border border-dashed rounded-xs cursor-pointer transition-colors",
-                      dark ? "border-[#2e2e2e] bg-[#1d2419]" : "border-[#b9de78] bg-[#f5faee]"
+                      "p-3 border rounded-xs cursor-pointer transition-colors text-xs",
+                      dark ? "border-[#2a2a2a] bg-[#1e221b] text-white" : "border-[#d8ddd3] bg-[#f0f9eb] text-[#111]"
                     )}
                   >
-                    <div className="flex items-start gap-3">
-                      <Zap size={16} className="text-[#75bf00] shrink-0 mt-0.5" />
-                      <div>
-                        <div className={cn("font-bold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                          Auto (recommended)
-                        </div>
-                        <div className="text-[11px] text-[#788274] mt-0.5">
-                          Agent picks from the supported runtime matrix
-                        </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles size={14} className="text-[#75bf00]" />
+                        <span className="font-semibold text-white text-xs">Auto (recommended)</span>
                       </div>
+                      <Check size={14} className="text-[#75bf00]" />
                     </div>
-                    <Check size={16} className="text-[#75bf00]" />
+                    <div className="text-[11px] text-[#788274] mt-1 pl-5">
+                      Agent picks from the supported runtime matrix
+                    </div>
                   </div>
 
-                  {/* Group 1: Core LLM */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-[#788274] px-1">
+                  <div className="space-y-1 pt-1">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-[#888] px-1">
                       <div className="flex items-center gap-1.5">
-                        <VLLMLogo size={12} />
+                        <VLLMLogo size={11} />
                         <span>Core LLM</span>
                       </div>
-                      <span className="text-[10px]">current</span>
+                      <span className="text-[10px] text-[#666]">current</span>
                     </div>
 
-                    {[
-                      { name: "vLLM", tags: "llm, embedding, vision-language, +1", icon: <VLLMLogo size={15} /> },
-                      { name: "SGLang", tags: "llm, vision-language", icon: <SGLangLogo size={15} /> },
-                      { name: "TensorRT-LLM", tags: "llm, vision-language", icon: <NvidiaLogo size={15} /> },
-                    ].map((eng) => (
+                    {SERVING_ENGINES.core.map((engine) => (
                       <div
-                        key={eng.name}
+                        key={engine.id}
                         onClick={() => {
-                          setSelectedEngine(eng.name);
+                          setSelectedEngine(engine.id);
                           setFlyoutOpen(false);
                         }}
                         className={cn(
-                          "flex items-center justify-between p-2.5 border border-dashed rounded-xs cursor-pointer transition-colors text-xs",
-                          selectedEngine === eng.name
-                            ? dark ? "border-[#383838] bg-[#252525]" : "border-[#d8ddd3] bg-[#f5f8f3]"
-                            : dark ? "border-transparent hover:bg-[#222]" : "border-transparent hover:bg-[#fafbfa]"
+                          "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-xs",
+                          selectedEngine === engine.id
+                            ? dark ? "bg-[#222222] border border-[#383838]" : "bg-[#f0f4ee]"
+                            : dark ? "hover:bg-[#1a1a1a]" : "hover:bg-[#fafbfa]"
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="shrink-0">{eng.icon}</div>
-                          <div>
-                            <div className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                              {eng.name}
-                            </div>
-                            <div className="text-[11px] text-[#788274] font-mono">{eng.tags}</div>
-                          </div>
+                        <span className="mt-0.5">{engine.icon}</span>
+                        <div>
+                          <div className="font-semibold text-white text-xs">{engine.name}</div>
+                          <div className="text-[11px] text-[#788274] mt-0.5">{engine.desc}</div>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  {/* Group 2: Experiments */}
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#788274] px-1">
-                      <Sparkles size={12} />
+                  <div className="space-y-1 pt-2">
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#888] px-1">
+                      <FlaskConical size={12} />
                       <span>Experiments</span>
                     </div>
 
-                    {[
-                      { name: "vLLM Omni", tags: "asr, tts, audio-language, +2", icon: <VLLMLogo size={15} />, badge: "Experiment" },
-                      { name: "Diffusers", tags: "image-gen, video-gen", icon: <DiffusersLogo size={15} />, badge: "Experiment" },
-                      { name: "TEI", tags: "embedding, rerank, classification", icon: <HuggingFaceLogo size={15} />, badge: "Experiment" },
-                    ].map((eng) => (
+                    {SERVING_ENGINES.experiments.map((engine) => (
                       <div
-                        key={eng.name}
+                        key={engine.id}
                         onClick={() => {
-                          setSelectedEngine(eng.name);
+                          setSelectedEngine(engine.id);
                           setFlyoutOpen(false);
                         }}
                         className={cn(
-                          "flex items-center justify-between p-2.5 border border-dashed rounded-xs cursor-pointer transition-colors text-xs",
-                          selectedEngine === eng.name
-                            ? dark ? "border-[#383838] bg-[#252525]" : "border-[#d8ddd3] bg-[#f5f8f3]"
-                            : dark ? "border-transparent hover:bg-[#222]" : "border-transparent hover:bg-[#fafbfa]"
+                          "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-xs",
+                          selectedEngine === engine.id
+                            ? dark ? "bg-[#222222] border border-[#383838]" : "bg-[#f0f4ee]"
+                            : dark ? "hover:bg-[#1a1a1a]" : "hover:bg-[#fafbfa]"
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="shrink-0">{eng.icon}</div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                                {eng.name}
-                              </span>
-                              <span className={cn(
-                                "text-[9px] uppercase font-mono px-1.5 py-0.2 rounded-xs border border-dashed",
-                                dark ? "bg-[#38260d] text-[#fbbf24] border-[#d97706]/40" : "bg-[#fef3c7] text-[#92400e] border-[#fde68a]"
-                              )}>
-                                {eng.badge}
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-[#788274] font-mono mt-0.5">{eng.tags}</div>
+                        <span className="mt-0.5">{engine.icon}</span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-white text-xs">{engine.name}</span>
+                            <span className="text-[9px] font-mono px-1.5 py-0.2 border border-[#8a6800] bg-[#3a2800] text-[#e6b800] rounded-xs">
+                              {engine.badge}
+                            </span>
                           </div>
+                          <div className="text-[11px] text-[#788274] mt-0.5">{engine.desc}</div>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  {/* Group 3: Expanding */}
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#788274] px-1">
+                  <div className="space-y-1 pt-2">
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#888] px-1">
                       <Lock size={12} />
                       <span>Expanding</span>
                     </div>
 
-                    <div className="p-2.5 border border-dashed border-[#282828] rounded-xs text-xs space-y-1 opacity-70">
-                      <div className="font-semibold text-xs text-[#a0a89d]">NVIDIA Dynamo</div>
-                      <p className="text-[11px] text-[#6b7367]">
-                        Dynamo has no live RunInfra Cloud image or Modal stress-test worker in this workspace yet.
-                      </p>
-                    </div>
+                    {SERVING_ENGINES.expanding.map((engine) => (
+                      <div
+                        key={engine.id}
+                        className="flex items-start gap-3 p-2.5 rounded-xs text-xs opacity-60 bg-[#161616]"
+                      >
+                        <span className="mt-0.5">{engine.icon}</span>
+                        <div>
+                          <div className="font-semibold text-white text-xs">{engine.name}</div>
+                          <div className="text-[11px] text-[#788274] mt-0.5">{engine.desc}</div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* TAB 3: GPU (Matching Screenshot 2 & 3 of GPU) */}
+              {/* TAB 3: GPU */}
               {activeFlyoutTab === "gpu" && (
-                <div className="flex-1 overflow-y-auto space-y-3 max-h-[340px] pr-1">
-                  {/* Auto GPU */}
+                <div className="space-y-3">
                   <div
                     onClick={() => {
                       setSelectedGpu("Auto (recommended)");
                       setFlyoutOpen(false);
                     }}
                     className={cn(
-                      "flex items-center justify-between p-3 border border-dashed rounded-xs cursor-pointer transition-colors",
-                      selectedGpu.startsWith("Auto")
-                        ? dark ? "border-[#2e2e2e] bg-[#1d2419]" : "border-[#b9de78] bg-[#f5faee]"
-                        : dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                      "p-3 border rounded-xs cursor-pointer transition-colors text-xs",
+                      dark ? "border-[#2a2a2a] bg-[#1e221b] text-white" : "border-[#d8ddd3] bg-[#f0f9eb] text-[#111]"
                     )}
                   >
-                    <div className="flex items-start gap-3">
-                      <Cpu size={16} className="text-[#75bf00] shrink-0 mt-0.5" />
-                      <div>
-                        <div className={cn("font-bold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                          Auto (recommended)
-                        </div>
-                        <div className="text-[11px] text-[#788274] mt-0.5">
-                          Will likely pick T4 (cheapest viable option).
-                        </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Cpu size={14} className="text-[#75bf00]" />
+                        <span className="font-semibold text-white text-xs">Auto (recommended)</span>
                       </div>
+                      <Check size={14} className="text-[#75bf00]" />
                     </div>
-                    {selectedGpu.startsWith("Auto") && <Check size={16} className="text-[#75bf00]" />}
+                    <div className="text-[11px] text-[#788274] mt-1 pl-5">
+                      Will likely pick T4 (cheapest viable option).
+                    </div>
                   </div>
 
-                  {/* GPU Options Header */}
-                  <div className="flex items-center justify-between text-[11px] font-mono px-1">
-                    <div className="flex items-center gap-1.5 text-[#788274]">
-                      <NvidiaLogo size={12} />
+                  <div className="flex items-center justify-between text-[11px] font-mono text-[#888] px-1 pt-1">
+                    <div className="flex items-center gap-1.5">
+                      <NvidiaLogo size={12} className="text-[#76b900]" />
                       <span>GPU options</span>
                     </div>
-                    <span className="text-[10px] text-[#75bf00] font-bold border border-dashed border-[#75bf00]/40 bg-[#162916] px-1.5 py-0.2 rounded-xs">
-                      Core
+                    <span className="text-[10px] font-mono px-1.5 py-0.2 border border-[#2e5e1a] bg-[#1e3e0e] text-[#75bf00] rounded-xs font-semibold">
+                      $50+
                     </span>
                   </div>
 
-                  {/* Locked GPU items list */}
                   <div className="space-y-1">
-                    {[
-                      { name: "T4", ram: "16 GB", desc: "Budget, tiny models" },
-                      { name: "L4", ram: "24 GB", desc: "Budget, quantized 7B-14B" },
-                      { name: "A10G", ram: "24 GB", desc: "Balanced, quantized 13B" },
-                      { name: "L40S", ram: "48 GB", desc: "Great cost/performance" },
-                      { name: "A100-40GB", ram: "40 GB", desc: "Mid-tier, 70B quantized" },
-                      { name: "A100-80GB", ram: "80 GB", desc: "Large models, 70B quantized" },
-                      { name: "H100", ram: "80 GB", desc: "Maximum throughput, FP8" },
-                      { name: "H200", ram: "141 GB", desc: "70B FP16, large MoE" },
-                      { name: "B200", ram: "192 GB", desc: "Flagship, 70B+ FP16" },
-                    ].map((gpu) => (
+                    {GPU_OPTIONS.map((gpu) => (
                       <div
-                        key={gpu.name}
-                        onClick={() => {
-                          setSelectedGpu(`${gpu.name} ${gpu.ram}`);
-                          setFlyoutOpen(false);
-                        }}
-                        className={cn(
-                          "flex items-center justify-between p-2.5 border border-dashed rounded-xs cursor-pointer transition-colors text-xs",
-                          selectedGpu.startsWith(gpu.name)
-                            ? dark ? "border-[#383838] bg-[#252525]" : "border-[#d8ddd3] bg-[#f5f8f3]"
-                            : dark ? "border-transparent hover:bg-[#202020]" : "border-transparent hover:bg-[#fafbfa]"
-                        )}
+                        key={gpu.id}
+                        className="flex items-center justify-between p-2.5 rounded-xs text-xs hover:bg-[#181818] transition-colors"
                       >
-                        <div className="flex items-center gap-3">
-                          <Lock size={13} className="text-[#666] shrink-0" />
+                        <div className="flex items-center gap-2.5">
+                          <Lock size={13} className="text-[#666]" />
                           <div>
-                            <div className="flex items-center gap-2">
-                              <span className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                                {gpu.name}
-                              </span>
-                              <span className="text-[11px] font-mono text-[#788274]">{gpu.ram}</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-semibold text-white text-xs">{gpu.name}</span>
+                              <span className="text-[10px] font-mono text-[#666]">{gpu.vram}</span>
                             </div>
-                            <div className="text-[11px] text-[#788274] font-mono mt-0.5">{gpu.desc}</div>
+                            <div className="text-[11px] text-[#788274] mt-0.5">{gpu.desc}</div>
                           </div>
                         </div>
-
-                        <Lock size={13} className="text-[#666] shrink-0" />
+                        <Lock size={13} className="text-[#666]" />
                       </div>
                     ))}
                   </div>
 
-                  {/* Footer explanation note */}
-                  <div className="text-[11px] text-[#788274] pt-2 border-t border-dashed border-[#282828] font-sans leading-relaxed">
-                    Manual GPU selection unlocks on Core. Auto GPU still chooses the lowest viable hardware for the current model.
+                  <div className="text-[11px] text-[#788274] leading-relaxed px-1 pt-2 border-t border-[#222]">
+                    Manual GPU selection unlocks at $50 lifetime credits. Auto GPU still chooses the lowest viable hardware for the current model.
                   </div>
                 </div>
               )}
 
-              {/* TAB 4: RUNS ON (Matching Screenshot 4) */}
+              {/* TAB 4: Runs on (Matching User Screenshot) */}
               {activeFlyoutTab === "runs_on" && (
-                <div className="flex-1 overflow-y-auto space-y-3 max-h-[340px] pr-1">
-                  {/* Top option: Auto (recommended) */}
+                <div className="space-y-3">
+                  {/* Top Auto (recommended) */}
                   <div
                     onClick={() => {
-                      setSelectedRunsOn("Auto");
+                      setSelectedRunsOn("Auto (recommended)");
                       setFlyoutOpen(false);
                     }}
                     className={cn(
-                      "flex items-center justify-between p-3 border border-dashed rounded-xs cursor-pointer transition-colors",
-                      selectedRunsOn === "Auto"
-                        ? dark ? "border-[#2e2e2e] bg-[#1d2419]" : "border-[#b9de78] bg-[#f5faee]"
-                        : dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                      "p-3 border rounded-xs cursor-pointer transition-colors text-xs",
+                      dark ? "border-[#2a2a2a] bg-[#1e221b] text-white" : "border-[#d8ddd3] bg-[#f0f9eb] text-[#111]"
                     )}
                   >
-                    <div className="flex items-start gap-3">
-                      <Zap size={16} className="text-[#75bf00] shrink-0 mt-0.5" />
-                      <div>
-                        <div className={cn("font-bold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                          Auto (recommended)
-                        </div>
-                        <div className="text-[11px] text-[#788274] mt-0.5">
-                          Agent infers placement from your use case.
-                        </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles size={14} className="text-[#75bf00]" />
+                        <span className="font-semibold text-white text-xs">Auto (recommended)</span>
                       </div>
+                      <Check size={14} className="text-[#75bf00]" />
                     </div>
-                    {selectedRunsOn === "Auto" && <Check size={16} className="text-[#75bf00]" />}
+                    <div className="text-[11px] text-[#788274] mt-1 pl-5">
+                      Agent infers placement from your use case.
+                    </div>
                   </div>
 
                   {/* Section Header */}
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#788274] px-1">
-                    <Cloud size={12} />
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#888] px-1 pt-1">
+                    <Cloud size={13} />
                     <span>Runs on</span>
                   </div>
 
-                  {/* Options List */}
+                  {/* 4 Runs On Options */}
                   <div className="space-y-1">
                     {[
-                      { name: "Local machine", desc: "Your own desktop or workstation GPU.", icon: <Laptop size={15} /> },
-                      { name: "Own server", desc: "A single server you operate.", icon: <Server size={15} /> },
-                      { name: "Managed cloud", desc: "Provisioned and metered in RunInfra's cloud.", icon: <Cloud size={15} /> },
-                      { name: "Personal", desc: "Side projects and light traffic, smallest viable footprint.", icon: <Home size={15} /> },
-                    ].map((opt) => (
+                      {
+                        name: "Local machine",
+                        desc: "Your own desktop or workstation GPU.",
+                        icon: <Laptop size={14} className="text-[#888]" />,
+                      },
+                      {
+                        name: "Own server",
+                        desc: "A single server you operate.",
+                        icon: <HardDrive size={14} className="text-[#888]" />,
+                      },
+                      {
+                        name: "Managed cloud",
+                        desc: "Provisioned and metered in RunInfra's cloud.",
+                        icon: <Cloud size={14} className="text-[#888]" />,
+                      },
+                      {
+                        name: "Personal",
+                        desc: "Side projects and light traffic, smallest viable footprint.",
+                        icon: <Box size={14} className="text-[#888]" />,
+                      },
+                    ].map((target) => (
                       <div
-                        key={opt.name}
+                        key={target.name}
                         onClick={() => {
-                          setSelectedRunsOn(opt.name);
+                          setSelectedRunsOn(target.name);
                           setFlyoutOpen(false);
                         }}
                         className={cn(
-                          "flex items-start gap-3 p-3 border border-dashed rounded-xs cursor-pointer transition-colors text-xs",
-                          selectedRunsOn === opt.name
-                            ? dark ? "border-[#383838] bg-[#252525]" : "border-[#d8ddd3] bg-[#f5f8f3]"
-                            : dark ? "border-transparent hover:bg-[#202020]" : "border-transparent hover:bg-[#fafbfa]"
+                          "flex items-start gap-3 p-2.5 rounded-xs cursor-pointer transition-colors text-xs border border-transparent",
+                          selectedRunsOn === target.name
+                            ? dark ? "bg-[#222222] border-[#383838] text-white" : "bg-[#f0f4ee] text-[#111]"
+                            : dark ? "hover:bg-[#1a1a1a] text-[#aaa]" : "hover:bg-[#fafbfa] text-[#555]"
                         )}
                       >
-                        <div className="mt-0.5 text-[#888] shrink-0">{opt.icon}</div>
-                        <div>
-                          <div className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                            {opt.name}
+                        <span className="mt-0.5 shrink-0">{target.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-white text-xs">{target.name}</span>
+                            {selectedRunsOn === target.name && <Check size={14} className="text-[#75bf00]" />}
                           </div>
-                          <div className="text-[11px] text-[#788274] mt-0.5">{opt.desc}</div>
+                          <div className="text-[11px] text-[#788274] mt-0.5">{target.desc}</div>
                         </div>
                       </div>
                     ))}
@@ -1117,41 +1048,32 @@ export function TokenPromptInput({
                 </div>
               )}
 
-              {/* TAB 5: OUTPUT FORMAT (Matching Screenshot 5) */}
+              {/* TAB 5: Output format */}
               {activeFlyoutTab === "output_format" && (
-                <div className="flex-1 overflow-y-auto space-y-3 max-h-[340px] pr-1">
-                  {/* Top option: Auto format (disabled notice matching screenshot 5) */}
-                  <div className={cn(
-                    "p-3 border border-dashed rounded-xs text-xs opacity-75",
-                    dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-[#fcfcfc]"
-                  )}>
-                    <div className="flex items-start gap-3">
-                      <CircleDashed size={16} className="text-[#666] shrink-0 mt-0.5" />
+                <div className="space-y-3">
+                  <div className="p-3 border border-[#2e2e2e] rounded-xs text-xs opacity-75 bg-[#181818]">
+                    <div className="flex items-start gap-2.5">
+                      <CircleDashed size={14} className="text-[#666] shrink-0 mt-0.5" />
                       <div>
-                        <div className={cn("font-bold text-xs", dark ? "text-[#a0a89d]" : "text-[#555]")}>
-                          Auto format
-                        </div>
-                        <div className="text-[11px] text-[#788274] mt-0.5 leading-relaxed">
+                        <div className="font-semibold text-xs text-[#aaa]">Auto format</div>
+                        <div className="text-[11px] text-[#788274] mt-0.5">
                           Not available for a new run: the plan optimizes toward a declared format from the first step, so pick one below.
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Section Header */}
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#788274] px-1">
-                    <Layers size={12} />
-                    <span>Output format</span>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-[#788274]">
+                    OUTPUT FORMAT
                   </div>
 
-                  {/* Options List */}
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     {[
-                      { name: "Managed endpoint", desc: "A live endpoint in RunInfra's cloud, provisioned and metered.", icon: <Cloud size={15} /> },
-                      { name: "Self-host kit", desc: "Docker image and Compose file with serve and verify scripts.", icon: <Box size={15} /> },
-                      { name: "Local (Ollama / GGUF)", desc: "GGUF weights for llama.cpp and Ollama on your own machine.", icon: <Laptop size={15} /> },
-                      { name: "Kubernetes", desc: "Deployment manifests for a cluster you operate.", icon: <Boxes size={15} /> },
-                      { name: "Direct weights", desc: "Direct weights export is coming soon.", icon: <HardDrive size={15} />, badge: "Coming soon" },
+                      { name: "Managed endpoint", desc: "A live endpoint in RunInfra's cloud, provisioned and metered.", icon: <Cloud size={14} /> },
+                      { name: "Self-host kit", desc: "Docker image and Compose file with serve and verify scripts.", icon: <Box size={14} /> },
+                      { name: "Local (Ollama / GGUF)", desc: "GGUF weights for llama.cpp and Ollama on your own machine.", icon: <Laptop size={14} /> },
+                      { name: "Kubernetes", desc: "Deployment manifests for a cluster you operate.", icon: <Boxes size={14} /> },
+                      { name: "Direct weights", desc: "Direct weights export is coming soon.", icon: <HardDrive size={14} />, badge: "Coming soon" },
                     ].map((fmt) => (
                       <div
                         key={fmt.name}
@@ -1160,29 +1082,25 @@ export function TokenPromptInput({
                           setFlyoutOpen(false);
                         }}
                         className={cn(
-                          "flex items-start gap-3 p-3 border border-dashed rounded-xs cursor-pointer transition-colors text-xs",
+                          "p-3 border rounded-xs cursor-pointer transition-colors text-xs",
                           selectedOutputFormat === fmt.name
-                            ? dark ? "border-[#383838] bg-[#252525]" : "border-[#d8ddd3] bg-[#f5f8f3]"
-                            : dark ? "border-transparent hover:bg-[#202020]" : "border-transparent hover:bg-[#fafbfa]"
+                            ? dark ? "border-[#4a4a4a] bg-[#222222] text-white" : "border-[#999] bg-[#f0f4ee] text-[#111]"
+                            : dark ? "border-[#262626] hover:bg-[#1a1a1a] text-[#aaa]" : "border-[#e0e4dd] hover:bg-[#fafbfa] text-[#555]"
                         )}
                       >
-                        <div className="mt-0.5 text-[#888] shrink-0">{fmt.icon}</div>
-                        <div>
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                              {fmt.name}
-                            </span>
+                            <span className="text-[#888]">{fmt.icon}</span>
+                            <span className="font-semibold text-white text-xs">{fmt.name}</span>
                             {fmt.badge && (
-                              <span className={cn(
-                                "text-[9px] font-mono px-1.5 py-0.2 rounded-xs border border-dashed",
-                                dark ? "border-[#383838] bg-[#222] text-[#888]" : "border-[#d8ddd3] bg-white text-[#777]"
-                              )}>
+                              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-xs border border-[#383838] bg-[#222] text-[#888]">
                                 {fmt.badge}
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-[#788274] mt-0.5">{fmt.desc}</div>
+                          {selectedOutputFormat === fmt.name && <Check size={14} className="text-[#75bf00]" />}
                         </div>
+                        <div className="text-[11px] text-[#788274] mt-1 pl-5">{fmt.desc}</div>
                       </div>
                     ))}
                   </div>
@@ -1193,7 +1111,7 @@ export function TokenPromptInput({
         )}
       </div>
 
-      {/* Suggestions Section Below Prompt Card (Matching Screenshot 1) */}
+      {/* Suggestions Section Matching Image 2 */}
       <div className="space-y-2 max-w-[840px] pt-1">
         <div className="text-[11px] font-mono text-[#788274]">
           Suggestions
@@ -1208,16 +1126,16 @@ export function TokenPromptInput({
               key={sug.id}
               onClick={() => handleSelectSuggestion(sug)}
               className={cn(
-                "flex items-center gap-2 p-3 text-xs cursor-pointer transition-colors font-sans",
+                "group flex flex-wrap items-center gap-2 p-3 text-xs cursor-pointer transition-colors font-sans",
                 dark ? "hover:bg-[#222222] text-[#d1d5db]" : "hover:bg-[#fafbfa] text-[#374151]"
               )}
             >
-              <ArrowRight size={13} className="text-[#788274] shrink-0" />
-              <span>{sug.action}</span>
+              <ArrowRight size={13} className="text-[#788274] group-hover:text-[#75bf00] group-hover:translate-x-0.5 transition-all shrink-0" />
+              <span className="text-[#aaa]">{sug.action}</span>
 
               {/* Model Pill */}
               <span className={cn(
-                "inline-flex items-center gap-1 px-1.5 py-0.5 border rounded-xs font-medium text-xs",
+                "inline-flex items-center gap-1.5 px-2 py-0.5 border rounded-xs font-medium text-xs",
                 dark ? "border-[#383838] bg-[#242424] text-white" : "border-[#d8ddd3] bg-[#fafbfa] text-[#111]"
               )}>
                 {sug.modelBadge.icon}
@@ -1226,9 +1144,9 @@ export function TokenPromptInput({
 
               {sug.secondaryModelBadge && (
                 <>
-                  <span>+</span>
+                  <span className="text-[#888] font-normal">+</span>
                   <span className={cn(
-                    "inline-flex items-center gap-1 px-1.5 py-0.5 border rounded-xs font-medium text-xs",
+                    "inline-flex items-center gap-1.5 px-2 py-0.5 border rounded-xs font-medium text-xs",
                     dark ? "border-[#383838] bg-[#242424] text-white" : "border-[#d8ddd3] bg-[#fafbfa] text-[#111]"
                   )}>
                     {sug.secondaryModelBadge.icon}
@@ -1237,18 +1155,18 @@ export function TokenPromptInput({
                 </>
               )}
 
-              <span>on</span>
+              <span className="text-[#888] font-normal">{sug.secondaryText || "on"}</span>
 
               {/* Engine Pill */}
               <span className={cn(
-                "inline-flex items-center gap-1 px-1.5 py-0.5 border rounded-xs font-medium text-xs",
+                "inline-flex items-center gap-1.5 px-2 py-0.5 border rounded-xs font-medium text-xs",
                 dark ? "border-[#383838] bg-[#242424] text-white" : "border-[#d8ddd3] bg-[#fafbfa] text-[#111]"
               )}>
                 {sug.engineBadge.icon}
                 <span>{sug.engineBadge.text}</span>
               </span>
 
-              <span className="truncate">{sug.rest}</span>
+              <span className="truncate text-[#889084] group-hover:text-white transition-colors">{sug.rest}</span>
             </div>
           ))}
         </div>
