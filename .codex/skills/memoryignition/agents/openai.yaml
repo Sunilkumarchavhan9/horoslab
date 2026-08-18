@@ -1,4 +1,0 @@
-interface:
-  display_name: "MemoryIgnition"
-  short_description: "Use MemoryOS inheritance before and after Codex work."
-  default_prompt: "Use MemoryIgnition to prepare this Codex task, respect risk rules, and save the outcome."
