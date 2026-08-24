@@ -1,6 +1,7 @@
 "use client";
 
 import { getMemoryOSOrgHeaders, readClerkOrganizationId, readDevConsoleOrganizationId } from "@/lib/org-scope-client";
+import { getOrCreateMemoryToken } from "@/lib/memory-token";
 import { createMasterplanWorkspace, listMasterplanWorkspaces } from "@/lib/masterplan-api";
 
 // Use the stable V12 route. The legacy /api/epoch prefix remains server-side
@@ -49,6 +50,7 @@ async function readJson<T = unknown>(response: Response): Promise<T> {
 async function epochFetchOnce(path: string, init?: RequestInit): Promise<Response> {
   const requestPath = `${EPOCH_BASE}${path}`;
   const url = EPOCH_API_ORIGIN ? `${EPOCH_API_ORIGIN}${requestPath}` : requestPath;
+  const token = await getOrCreateMemoryToken();
   return fetch(url, {
     ...init,
     cache: "no-store",
@@ -56,6 +58,7 @@ async function epochFetchOnce(path: string, init?: RequestInit): Promise<Respons
     headers: {
       accept: "application/json",
       ...(init?.body ? { "content-type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...getMemoryOSOrgHeaders(),
       ...(init?.headers ?? {}),
     },
