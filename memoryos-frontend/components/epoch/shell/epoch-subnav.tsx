@@ -12,7 +12,10 @@ import {
   ShieldCheck,
   Globe,
   Shield,
+  ShieldAlert,
   Settings,
+  FlaskConical,
+  Brain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +34,7 @@ export type EpochNavRoute =
   | "registry"
   | "evidence"
   | "governance"
+  | "learning"
   | "settings";
 
 interface EpochSubnavProps {
@@ -46,18 +50,10 @@ const PRIMARY_NAV_ITEMS: Array<{
   icon: React.ComponentType<{ size?: number; className?: string }>;
   badge?: string;
 }> = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "programs", label: "History", icon: History },
-  { id: "models", label: "Model APIs", icon: Cpu, badge: "NEW" },
-  { id: "analytics", label: "Usage Analytics", icon: BarChart3 },
-  { id: "deployments", label: "Deployments", icon: Gauge },
-  { id: "weights", label: "Weights", icon: Box },
-  { id: "registry", label: "Registry", icon: Database },
-  { id: "evidence", label: "Evidence", icon: ShieldCheck },
-  { id: "reality", label: "Reality", icon: Globe },
-  { id: "governance", label: "Governance", icon: Shield },
-  { id: "settings", label: "Settings", icon: Settings },
-];
+    { id: "home", label: "Home", icon: Home },
+    { id: "models", label: "Model APIs", icon: Cpu, badge: "NEW" },
+    { id: "analytics", label: "Usage Analytics", icon: BarChart3 },
+  ];
 
 export function EpochSubnav({
   activeRoute,
@@ -68,8 +64,8 @@ export function EpochSubnav({
   return (
     <nav
       className={cn(
-        "border-b border-dashed transition-colors overflow-x-auto select-none",
-        dark ? "border-[#282828] bg-transparent" : "border-[#e5e7eb] bg-transparent",
+        "relative z-10 border-b transition-colors overflow-x-auto select-none",
+        dark ? "border-[#242424] bg-[#141414]" : "border-[#e5e7eb] bg-white",
         className
       )}
     >
@@ -84,24 +80,21 @@ export function EpochSubnav({
               type="button"
               onClick={() => onNavigate(item.id)}
               className={cn(
-                "relative flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-xs font-mono transition-colors focus:outline-none",
+                "relative flex items-center gap-1.5 whitespace-nowrap px-3 py-2 text-xs font-mono transition-colors focus:outline-none cursor-pointer",
                 isActive
-                  ? "text-[#75bf00] font-bold"
-                  : dark
-                  ? "text-[#889084] hover:text-white"
-                  : "text-[#687063] hover:text-black"
+                  ? "text-white font-bold"
+                  : "text-[#889084] hover:text-white"
               )}
             >
-              <Icon size={13} className={isActive ? "text-[#75bf00]" : "text-[#888]"} />
+              <Icon size={13} className={isActive ? "text-[#75bf00]" : "text-[#788274]"} />
               <span>{item.label}</span>
 
               {item.badge && (
-                <span className="bg-[#75bf00] text-black text-[9px] font-mono font-extrabold px-1 py-0.2 rounded-xs leading-none">
+                <span className="bg-[#75bf00] text-black text-[9px] font-mono font-bold px-1 py-0.2 rounded-xs leading-none">
                   {item.badge}
                 </span>
               )}
 
-              {/* Shared active thin bottom green line matching RunInfra */}
               {isActive && (
                 <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#75bf00]" />
               )}

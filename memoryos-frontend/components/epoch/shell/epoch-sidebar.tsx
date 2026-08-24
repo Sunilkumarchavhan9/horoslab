@@ -28,6 +28,7 @@ import {
   Globe,
   ShieldAlert,
   Database,
+  Brain,
 } from "lucide-react";
 import { EpochNavRoute } from "./epoch-subnav";
 import { cn } from "@/lib/utils";
@@ -281,29 +282,26 @@ export function EpochSidebar({
         ) : (
           /* STANDARD BUILD, DISCOVER, OPERATE & GOVERN GROUPS */
           <>
-            {/* Group: Build */}
+            {/* Compact 3-Section Primary Navigation List */}
             <div className="space-y-1">
-              <span className="px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8e968b] block">
-                Build
-              </span>
-
+              {/* 1. Home */}
               <button
                 type="button"
                 onClick={() => onNavigate("home")}
                 className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  "flex w-full items-center gap-2.5 px-2.5 py-2 transition-colors text-left font-medium rounded-xs text-xs",
                   activeRoute === "home"
                     ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
+                      ? "text-white font-bold bg-[#1e2719]"
+                      : "text-[#171a17] font-bold bg-[#f0f4ee]"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
-                <Home size={14} className={activeRoute === "home" ? "text-[#75bf00]" : "text-[#889083]"} />
+                <Home size={15} className={activeRoute === "home" ? "text-[#75bf00]" : "text-[#889083]"} />
                 {activeRoute === "home" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-2 py-0.5 rounded-xs text-xs">
                     Home
                   </span>
                 ) : (
@@ -311,305 +309,58 @@ export function EpochSidebar({
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={() => onNavigate("programs")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "programs"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <GitBranch size={14} className={activeRoute === "programs" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "programs" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Programs
-                  </span>
-                ) : (
-                  <span>Programs</span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("systems")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "systems"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Sparkles size={14} className={activeRoute === "systems" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "systems" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Systems
-                  </span>
-                ) : (
-                  <span>Systems</span>
-                )}
-              </button>
-            </div>
-
-            {/* Group: Discover */}
-            <div className="space-y-1">
-              <span className="px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8e968b] block">
-                Discover
-              </span>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("reality")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "reality"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Globe size={14} className={activeRoute === "reality" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "reality" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Reality Graph
-                  </span>
-                ) : (
-                  <span>Reality Graph</span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("capabilities")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "capabilities"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Cpu size={14} className={activeRoute === "capabilities" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "capabilities" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Capabilities
-                  </span>
-                ) : (
-                  <span>Capabilities</span>
-                )}
-              </button>
-
+              {/* 2. Model APIs */}
               <button
                 type="button"
                 onClick={() => onNavigate("models")}
                 className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  "flex w-full items-center justify-between px-2.5 py-2 transition-colors text-left font-medium rounded-xs text-xs",
                   activeRoute === "models"
                     ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
+                      ? "text-white font-bold bg-[#1e2719]"
+                      : "text-[#171a17] font-bold bg-[#f0f4ee]"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
-                <Gauge size={14} className={activeRoute === "models" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "models" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Models
-                  </span>
-                ) : (
-                  <span>Models</span>
-                )}
+                <div className="flex items-center gap-2.5">
+                  <Gauge size={15} className={activeRoute === "models" ? "text-[#75bf00]" : "text-[#889083]"} />
+                  {activeRoute === "models" ? (
+                    <span className="bg-[#75bf00] text-[#111] font-bold px-2 py-0.5 rounded-xs text-xs">
+                      Model APIs
+                    </span>
+                  ) : (
+                    <span>Model APIs</span>
+                  )}
+                </div>
+                <span className="bg-[#75bf00] text-[#111] text-[9px] font-bold px-1.5 py-0.2 rounded-xs uppercase tracking-wider">
+                  NEW
+                </span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => onNavigate("experiments")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "experiments"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Zap size={14} className={activeRoute === "experiments" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "experiments" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Experiments
-                  </span>
-                ) : (
-                  <span>Experiments</span>
-                )}
-              </button>
-            </div>
-
-            {/* Group: Operate */}
-            <div className="space-y-1">
-              <span className="px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8e968b] block">
-                Operate
-              </span>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("deployments")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "deployments"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Rocket size={14} className={activeRoute === "deployments" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "deployments" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Deployments
-                  </span>
-                ) : (
-                  <span>Deployments</span>
-                )}
-              </button>
-
+              {/* 3. Usage Analytics */}
               <button
                 type="button"
                 onClick={() => onNavigate("analytics")}
                 className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
+                  "flex w-full items-center gap-2.5 px-2.5 py-2 transition-colors text-left font-medium rounded-xs text-xs",
                   activeRoute === "analytics"
                     ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
+                      ? "text-white font-bold bg-[#1e2719]"
+                      : "text-[#171a17] font-bold bg-[#f0f4ee]"
                     : dark
                     ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
-                <BarChart3 size={14} className={activeRoute === "analytics" ? "text-[#75bf00]" : "text-[#889083]"} />
+                <BarChart3 size={15} className={activeRoute === "analytics" ? "text-[#75bf00]" : "text-[#889083]"} />
                 {activeRoute === "analytics" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
+                  <span className="bg-[#75bf00] text-[#111] font-bold px-2 py-0.5 rounded-xs text-xs">
                     Usage Analytics
                   </span>
                 ) : (
                   <span>Usage Analytics</span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("weights")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "weights"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Box size={14} className={activeRoute === "weights" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "weights" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Weights
-                  </span>
-                ) : (
-                  <span>Weights</span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("registry")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "registry"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Database size={14} className={activeRoute === "registry" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "registry" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Registry
-                  </span>
-                ) : (
-                  <span>Registry</span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("evidence")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "evidence"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <Shield size={14} className={activeRoute === "evidence" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "evidence" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Evidence
-                  </span>
-                ) : (
-                  <span>Evidence</span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => onNavigate("governance")}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-2.5 py-1.5 transition-colors text-left font-medium",
-                  activeRoute === "governance"
-                    ? dark
-                      ? "text-white font-bold"
-                      : "text-[#171a17] font-bold"
-                    : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
-                    : "text-[#4b5247] hover:bg-[#f3f6f0]"
-                )}
-              >
-                <ShieldAlert size={14} className={activeRoute === "governance" ? "text-[#75bf00]" : "text-[#889083]"} />
-                {activeRoute === "governance" ? (
-                  <span className="bg-[#75bf00] text-[#111] font-bold px-1.5 py-0.5 rounded text-xs">
-                    Governance
-                  </span>
-                ) : (
-                  <span>Governance</span>
                 )}
               </button>
             </div>

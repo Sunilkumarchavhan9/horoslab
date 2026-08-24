@@ -1,3 +1,0 @@
-{
-  "/api/mistake-immunity/[...path]/route": "app/api/mistake-immunity/[...path]/route.js"
-}

@@ -21,16 +21,44 @@ import {
   FileCode,
   Terminal,
   ExternalLink,
+  HelpCircle,
+  Clock,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RealityEntity, RealityConflict, DriftEvent } from "@/lib/epoch-types";
-import { EpochLoopGraph } from "@/components/epoch/primitives/epoch-loop-graph";
+import {
+  MetaLogo,
+  NvidiaLogo,
+  QwenLogo,
+  DeepSeekLogo,
+  GoogleLogo,
+  HuggingFaceLogo,
+  MistralLogo,
+  GitHubLogo,
+  AWSLogo,
+  KubernetesLogo,
+  QdrantLogo,
+} from "../primitives/brand-icons";
 
 interface RealityViewProps {
   dark?: boolean;
   onSelectEntity?: (entityId: string) => void;
   onTriggerRediscovery?: () => void;
   onNavigateToPipelines?: () => void;
+}
+
+interface UnknownRecord {
+  id: string;
+  statement: string;
+  category: "hardware" | "workload" | "pricing" | "quality";
+  importance: "CRITICAL" | "HIGH" | "MEDIUM";
+  uncertaintyPct: number;
+  decisionImpact: string;
+  resolutionCost: string;
+  resolutionStrategy: "BENCHMARK" | "OBSERVE" | "SIMULATE" | "QUERY";
+  status: "investigating" | "resolved" | "queued";
 }
 
 const SAMPLE_ENTITIES: RealityEntity[] = [
@@ -82,6 +110,18 @@ const SAMPLE_ENTITIES: RealityEntity[] = [
     updatedAt: "5 mins ago",
   },
   {
+    id: "ent-model-qwen",
+    name: "Qwen/Qwen2.5-32B-Instruct",
+    type: "model",
+    status: "healthy",
+    environment: "production",
+    version: "commit:8ac32f",
+    source: "Alibaba Cloud / ModelScope",
+    trustLevel: "VERIFIED",
+    properties: { engine: "SGLang-0.4.1", format: "FP8", hardware: "H100-SXM5-80GB" },
+    updatedAt: "8 mins ago",
+  },
+  {
     id: "ent-db-vector-store",
     name: "qdrant-enterprise-cluster",
     type: "database",
@@ -103,6 +143,77 @@ const SAMPLE_ENTITIES: RealityEntity[] = [
     trustLevel: "EXTERNAL",
     properties: { spotInterruptionRisk: "Medium (18%)", instanceCount: 4 },
     updatedAt: "2 mins ago",
+  },
+  // Section 121: Data Center & Bare-Metal Hardware Telemetry
+  {
+    id: "ent-dc-node-01",
+    name: "gpu-node-h100-01.dc-east",
+    type: "datacenter" as any,
+    status: "healthy",
+    environment: "datacenter",
+    source: "Data Center IPMI + NVLink Telemetry",
+    trustLevel: "MEASURED",
+    properties: { hardware: "NVIDIA H100 80GB SXM5", vramAlloc: "48.5 / 80 GB", tempC: 64, powerW: 410, nvlinkContention: "4.2%" },
+    updatedAt: "12s ago",
+  },
+  {
+    id: "ent-dc-rack-04",
+    name: "baremetal-h100-rack-04",
+    type: "datacenter" as any,
+    status: "healthy",
+    environment: "datacenter",
+    source: "Facilities Modbus Telemetry",
+    trustLevel: "MEASURED",
+    properties: { pue: "1.12 PUE", powerDrawKw: 18.4, coolingTempC: 21.4, rackBalance: "Optimal" },
+    updatedAt: "45s ago",
+  },
+  // Section 120: Physical World Sensory Assets
+  {
+    id: "ent-sensory-cam-01",
+    name: "cam-factory-01.workcell3",
+    type: "sensory" as any,
+    status: "healthy",
+    environment: "production",
+    source: "RTSP 4K Video Stream",
+    trustLevel: "OBSERVED",
+    properties: { feed: "4K 60fps Stream", scope: "Workcell 03 Floor", clarity: "99.4%", modelRecog: "89% Accuracy" },
+    updatedAt: "5s ago",
+  },
+  {
+    id: "ent-sensory-temp-04",
+    name: "temp-motor-04.conveyor2",
+    type: "sensory" as any,
+    status: "degraded",
+    environment: "production",
+    source: "Industrial Modbus Sensor",
+    trustLevel: "MEASURED",
+    properties: { target: "Conveyor Motor 04", tempC: 72, limitC: 75, vibrationHz: 124 },
+    updatedAt: "2s ago",
+  },
+];
+
+const SAMPLE_UNKNOWNS: UnknownRecord[] = [
+  {
+    id: "unk-101",
+    statement: "Peak throughput for Qwen-2.5-32B under 128k context on 1x NVIDIA H100 SXM5",
+    category: "hardware",
+    importance: "CRITICAL",
+    uncertaintyPct: 42,
+    decisionImpact: "Determines whether 1x H100 replaces 2x A100 for batch agent workload",
+    resolutionCost: "$4.20 (Sandbox GPU run)",
+    resolutionStrategy: "BENCHMARK",
+    status: "investigating",
+  },
+  {
+    id: "unk-102",
+    statement: "Inter-datacenter network latency variance between us-east-1 and colocation during peak US trading hours",
+    category: "workload",
+    importance: "HIGH",
+    uncertaintyPct: 28,
+    decisionImpact: "Dictates pipeline partitioning between cloud gateway and on-prem inference nodes",
+    resolutionCost: "$0.00 (Telemetry ingest)",
+    resolutionStrategy: "OBSERVE",
+    status: "investigating",
   },
 ];
 
@@ -150,61 +261,84 @@ export function RealityView({
   onTriggerRediscovery,
   onNavigateToPipelines,
 }: RealityViewProps) {
-  const [activeTab, setActiveTab] = useState<"graph" | "loop" | "temporal" | "conflicts" | "drift">("graph");
+  const [activeTab, setActiveTab] = useState<"graph" | "unknowns" | "temporal" | "conflicts" | "drift">("graph");
   const [filterType, setFilterType] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedEntityId, setExpandedEntityId] = useState<string | null>("ent-svc-inference-api");
+  const [expandedEntityId, setExpandedEntityId] = useState<string | null>(null);
+  function getBrandLogo(ent: RealityEntity) {
+    const raw = `${ent.id} ${ent.name} ${ent.source}`.toLowerCase();
+    if (raw.includes("llama") || raw.includes("meta")) return <MetaLogo size={16} />;
+    if (raw.includes("qwen") || raw.includes("alibaba") || raw.includes("inforact")) return <QwenLogo size={16} />;
+    if (raw.includes("deepseek")) return <DeepSeekLogo size={16} />;
+    if (raw.includes("mistral") || raw.includes("mixtral")) return <MistralLogo size={16} />;
+    if (ent.type === "cluster" || raw.includes("h100") || raw.includes("a100") || raw.includes("nvidia")) return <NvidiaLogo size={16} />;
+    if (ent.type === "repository" || raw.includes("github")) return <GitHubLogo size={15} />;
+    if (ent.type === "cloud_resource" || raw.includes("aws") || raw.includes("amazon")) return <AWSLogo size={16} />;
+    if (ent.type === "service" || raw.includes("k8s") || raw.includes("kubernetes")) return <KubernetesLogo size={15} />;
+    if (ent.type === "database" || raw.includes("qdrant")) return <QdrantLogo size={15} />;
+    return <Globe size={15} className="text-[#788274]" />;
+  }
 
   const filteredEntities = SAMPLE_ENTITIES.filter((e) => {
-    if (filterType !== "all" && e.type !== filterType) return false;
+    if (filterType !== "all") {
+      if (filterType === "computational") {
+        if (e.type !== "repository" && e.type !== "service" && e.type !== "model" && e.type !== "database" && e.type !== "cluster") return false;
+      } else if (filterType === "sensory") {
+        if (e.type !== ("sensory" as any)) return false;
+      } else if (filterType === "datacenter") {
+        if (e.type !== ("datacenter" as any) && e.environment !== "datacenter") return false;
+      } else if (e.type !== filterType) {
+        return false;
+      }
+    }
     if (searchQuery && !e.name.toLowerCase().includes(searchQuery.toLowerCase()) && !e.type.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     return true;
   });
 
-  const primaryText = dark ? "text-white" : "text-[#171a17]";
-  const secondaryText = dark ? "text-[#889084]" : "text-[#656d60]";
-
   return (
-    <div className="space-y-6 max-w-[1240px] mx-auto animate-in fade-in duration-150">
-      {/* Top Header Matching Deployments & Registry Design */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="space-y-6 max-w-[1240px] mx-auto pb-16 font-sans text-xs animate-in fade-in duration-150">
+      {/* Top Header Matching Sleek Dark Style */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#282828] pb-4">
         <div>
-          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5">
-            <span className={primaryText}>Company</span>
-            <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans">
+          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-white">
+            <span>Company</span>
+            <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
               reality
             </span>
           </h1>
-          <p className={cn("mt-1 text-xs", secondaryText)}>
-            {SAMPLE_ENTITIES.length} reconstructed entities in workspace. Continuously synchronized across software, runtimes, hardware, clouds, and telemetry.
+          <p className="mt-1 text-xs text-[#90988c]">
+            Live operational state and infrastructure across your workspace.
           </p>
         </div>
 
-        {/* Rediscover Action Button */}
-        <button
-          type="button"
-          onClick={onTriggerRediscovery}
-          className={cn(
-            "flex items-center gap-2 border border-dashed px-3 py-1.5 text-xs font-mono rounded-xs transition-colors",
-            dark
-              ? "border-[#383838] bg-[#181818] text-[#a0a89d] hover:border-[#75bf00] hover:text-white"
-              : "border-[#d8ddd3] bg-white text-[#555] hover:border-black hover:text-black"
-          )}
-        >
-          <RefreshCw size={13} className="text-[#75bf00]" />
-          <span>Rediscover Reality →</span>
-        </button>
+        <div className="flex items-center gap-2.5 font-mono text-xs">
+          {/* WorldState Digest Badge */}
+          <div className="border border-[#333] bg-[#181818] text-[#a0a89d] px-2.5 py-1 rounded-xs flex items-center gap-1.5">
+            <Lock size={12} className="text-[#86dc00]" />
+            <span>v14.2 (sha256:7f8a...)</span>
+          </div>
+
+          {/* Rediscover Action Button */}
+          <button
+            type="button"
+            onClick={onTriggerRediscovery}
+            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] text-white hover:border-[#555] px-3 py-1 text-xs font-medium transition-colors rounded-xs cursor-pointer"
+          >
+            <RefreshCw size={12} className="text-[#86dc00]" />
+            <span>Rediscover Reality</span>
+          </button>
+        </div>
       </div>
 
       {/* Tabs & Search Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto text-xs font-mono">
+        <div className="flex items-center gap-4 border-b border-[#282828] pb-1 font-mono text-xs overflow-x-auto">
           {[
             { id: "graph", label: `Reality Graph (${SAMPLE_ENTITIES.length})` },
-            { id: "loop", label: "Closed Loop Architecture (16 Stages)" },
+            { id: "unknowns", label: `Unknowns (${SAMPLE_UNKNOWNS.length})` },
             { id: "temporal", label: "WorldState Inspector" },
             { id: "conflicts", label: `Conflicts (${SAMPLE_CONFLICTS.length})` },
             { id: "drift", label: `Drift Fabric (${SAMPLE_DRIFTS.length})` },
@@ -216,14 +350,10 @@ export function RealityView({
                 type="button"
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={cn(
-                  "relative flex items-center gap-1.5 px-3 py-1 border border-dashed transition-colors rounded-xs",
+                  "pb-2 transition-colors border-b-2 cursor-pointer font-medium whitespace-nowrap",
                   isActive
-                    ? dark
-                      ? "border-[#555] bg-[#282828] text-white font-bold"
-                      : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
-                    : dark
-                    ? "border-transparent text-[#788274] hover:text-white"
-                    : "border-transparent text-[#687063] hover:text-[#171a17]"
+                    ? "border-[#75bf00] text-white font-bold"
+                    : "border-transparent text-[#889284] hover:text-white"
                 )}
               >
                 <span>{tab.label}</span>
@@ -233,71 +363,68 @@ export function RealityView({
         </div>
 
         {/* Search Box */}
-        <div className="flex items-center gap-3">
-          <label className={cn(
-            "flex items-center gap-2 border border-dashed px-3 py-1.5 text-xs rounded-xs min-w-[240px]",
-            dark ? "border-[#2e2e2e] bg-[#202020] text-[#788274]" : "border-[#d8ddd3] bg-white text-[#687063]"
-          )}>
-            <Search size={13} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search reality entities..."
-              className="w-full bg-transparent focus:outline-none placeholder:text-[#666] font-mono text-xs"
-            />
-          </label>
-
-          <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-[#788274]">
-            <span>{filteredEntities.length} entities</span>
-            <span>•</span>
-            <span className="text-[#75bf00] flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
-              Synced &amp; Active
-            </span>
-          </div>
+        <div className="flex items-center gap-2 border border-dashed border-[#282828] bg-[#181818] px-3 py-1.5 text-xs rounded-xs w-full sm:w-72">
+          <Search size={13} className="text-[#788274]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search reality entities..."
+            className="w-full bg-transparent focus:outline-none placeholder:text-[#666] font-mono text-xs text-white"
+          />
         </div>
       </div>
 
-      {/* TAB 1: REALITY GRAPH FULL-WIDTH TABLE */}
+      {/* TAB 1: REALITY GRAPH TABLE */}
       {activeTab === "graph" && (
         <div className="space-y-3">
-          {/* Sub-Filter Pills */}
-          <div className="flex items-center gap-1 text-xs font-mono">
-            <span className="text-[#788274] mr-1">Filter:</span>
-            {["all", "repository", "service", "cluster", "model", "database", "cloud_resource"].map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setFilterType(f)}
-                className={cn(
-                  "px-2.5 py-0.5 rounded-xs capitalize text-[11px] border border-dashed transition-colors",
-                  filterType === f
-                    ? dark ? "bg-[#282828] text-[#75bf00] font-bold border-[#75bf00]" : "bg-[#eaeaea] text-[#111] font-bold border-[#75bf00]"
-                    : dark ? "border-transparent text-[#788274] hover:text-white" : "border-transparent text-[#687063] hover:text-black"
-                )}
-              >
-                {f.replace("_", " ")}
-              </button>
-            ))}
+          {/* Sub-Filter Strip & 24 hours Freshness Window matching User Image */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm gap-1 overflow-x-auto max-w-full">
+              <span className="text-[#788274] px-1.5 font-bold shrink-0">Domain:</span>
+              {[
+                { id: "all", label: "All" },
+                { id: "computational", label: "Computational" },
+                { id: "sensory", label: "Physical Edge" },
+                { id: "datacenter", label: "Industrial Data Center" },
+                { id: "repository", label: "Repository" },
+                { id: "service", label: "Service" },
+                { id: "model", label: "Model" },
+              ].map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFilterType(f.id)}
+                  className={cn(
+                    "px-2.5 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm whitespace-nowrap",
+                    filterType === f.id
+                      ? "bg-[#242424] text-white font-bold"
+                      : "text-[#889284] hover:text-white"
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {/* 24 hours Time Window Badge (1:1 Match with User Image) */}
+            <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm">
+              <span className="bg-[#242424] text-white font-bold px-2 py-0.5 rounded-sm">
+                24 hours
+              </span>
+            </div>
           </div>
 
-          {/* Full-Width Table Container */}
-          <div className={cn(
-            "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
-            dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
-          )}>
-            {/* Table Header Row */}
-            <div className={cn(
-              "grid grid-cols-12 gap-3 px-4 py-2.5 text-[11px] font-mono uppercase tracking-wider font-semibold border-b border-dashed",
-              dark ? "border-[#282828] bg-[#181818] text-[#889084]" : "border-[#edf0eb] bg-[#fafbfa] text-[#6b7367]"
-            )}>
-              <div className="col-span-4">Entity &amp; Reconstructed Identifier</div>
+          {/* Full-Width Table */}
+          <div className="border border-dashed border-[#282828] bg-[#181818] divide-y divide-[#242424] rounded-xs overflow-hidden">
+            {/* Header Row */}
+            <div className="grid grid-cols-12 gap-3 px-4 py-2.5 text-[10px] font-mono uppercase tracking-wider font-semibold border-b border-[#282828] bg-[#141414] text-[#889084]">
+              <div className="col-span-4">Entity &amp; Identifier</div>
               <div className="col-span-2">Type</div>
               <div className="col-span-2">Source / Integration</div>
               <div className="col-span-2">Provenance Trust</div>
               <div className="col-span-1 text-center">Status</div>
-              <div className="col-span-1 text-right">Actions</div>
+              <div className="col-span-1 text-right">Inspect</div>
             </div>
 
             {/* Table Rows */}
@@ -306,120 +433,90 @@ export function RealityView({
 
               return (
                 <div key={ent.id} className="transition-colors">
-                  {/* Summary Row */}
                   <div
                     onClick={() => {
                       setExpandedEntityId(isExpanded ? null : ent.id);
                       onSelectEntity?.(ent.id);
                     }}
                     className={cn(
-                      "grid grid-cols-12 gap-3 px-4 py-3.5 items-center cursor-pointer text-xs transition-colors",
-                      dark ? "hover:bg-[#232323]" : "hover:bg-[#fafbfa]",
-                      isExpanded ? dark ? "bg-[#252525]" : "bg-[#f5f7f3]" : ""
+                      "grid grid-cols-12 gap-3 px-4 py-3 items-center cursor-pointer text-xs transition-colors group",
+                      isExpanded ? "bg-[#202020]" : "hover:bg-[#1e1e1e]"
                     )}
                   >
-                    {/* 1. Entity Name */}
-                    <div className="col-span-4 flex items-center gap-2.5 truncate font-mono">
-                      <div className={cn(
-                        "flex h-7 w-7 items-center justify-center border border-dashed rounded-xs shrink-0",
-                        dark ? "border-[#383838] bg-[#181818] text-[#889284]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#687063]"
-                      )}>
-                        {ent.type === "repository" && <GitBranch size={14} className="text-[#60a5fa]" />}
-                        {ent.type === "service" && <Layers size={14} className="text-[#75bf00]" />}
-                        {ent.type === "cluster" && <Cpu size={14} className="text-[#a78bfa]" />}
-                        {ent.type === "model" && <Activity size={14} className="text-[#f59e0b]" />}
-                        {ent.type === "database" && <Database size={14} className="text-[#38bdf8]" />}
-                        {ent.type === "cloud_resource" && <Server size={14} className="text-[#ec4899]" />}
+                    {/* Entity Name with Authentic Brand Vector Logo */}
+                    <div className="col-span-4 flex items-center gap-3 truncate font-mono">
+                      <div className="flex h-6 w-6 items-center justify-center shrink-0">
+                        {getBrandLogo(ent)}
                       </div>
                       <div className="truncate">
                         <div className="flex items-center gap-2">
-                          <span className={cn("font-bold text-xs truncate", primaryText)}>{ent.name}</span>
+                          <span className="font-bold text-xs truncate text-white group-hover:text-[#75bf00]">{ent.name}</span>
                           <span className="text-[10px] text-[#788274] shrink-0">{ent.updatedAt}</span>
                         </div>
-                        <div className="text-[10px] text-[#788274] mt-0.5">
-                          ID: {ent.id}
-                        </div>
+                        <div className="text-[10px] text-[#788274]">ID: {ent.id}</div>
                       </div>
                     </div>
 
-                    {/* 2. Type */}
-                    <div className="col-span-2 font-mono text-xs">
-                      <span className={cn(
-                        "px-2 py-0.5 border border-dashed rounded-xs text-[10px] uppercase font-bold",
-                        ent.type === "service" || ent.type === "model"
-                          ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00]"
-                          : "border-[#383838] bg-[#181818] text-[#a0a89d]"
-                      )}>
-                        {ent.type.replace("_", " ")}
-                      </span>
+                    {/* Type (Clean text without loud button box) */}
+                    <div className="col-span-2 font-mono text-xs text-[#a0a89d]">
+                      <span className="capitalize">{ent.type.replace("_", " ")}</span>
+                      <span className="text-[10px] text-[#788274] block">({ent.environment})</span>
                     </div>
 
-                    {/* 3. Source */}
+                    {/* Source */}
                     <div className="col-span-2 font-mono text-xs text-[#788274] truncate">
                       {ent.source}
                     </div>
 
-                    {/* 4. Provenance Trust */}
+                    {/* Provenance Trust */}
                     <div className="col-span-2 font-mono text-xs">
                       <span className={cn(
-                        "px-2 py-0.5 border border-dashed rounded-xs text-[10px] uppercase font-bold",
+                        "px-2 py-0.5 border rounded-xs text-[10px] uppercase font-bold",
                         ent.trustLevel === "VERIFIED"
-                          ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00]"
+                          ? "border-[#384820] bg-[#1c2a12] text-[#86dc00]"
                           : ent.trustLevel === "MEASURED"
-                          ? "border-[#60a5fa]/40 bg-[#60a5fa]/10 text-[#60a5fa]"
-                          : ent.trustLevel === "OBSERVED"
-                          ? "border-[#a78bfa]/40 bg-[#a78bfa]/10 text-[#a78bfa]"
-                          : "border-[#f59e0b]/40 bg-[#f59e0b]/10 text-[#f59e0b]"
+                            ? "border-[#1e3a8a] bg-[#172554] text-[#60a5fa]"
+                            : "border-[#383838] bg-[#181818] text-[#a0a89d]"
                       )}>
                         {ent.trustLevel}
                       </span>
                     </div>
 
-                    {/* 5. Status */}
+                    {/* Status */}
                     <div className="col-span-1 text-center font-mono">
                       <span className={cn(
-                        "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-xs font-bold border border-dashed",
+                        "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-xs font-bold border",
                         ent.status === "healthy"
-                          ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00]"
-                          : "border-[#ef4444]/40 bg-[#ef4444]/10 text-[#ef4444]"
+                          ? "border-[#384820] bg-[#1c2a12] text-[#86dc00]"
+                          : "border-[#7f1d1d] bg-[#450a0a] text-[#f87171]"
                       )}>
-                        <span className={cn(
-                          "h-1.5 w-1.5 rounded-full",
-                          ent.status === "healthy" ? "bg-[#75bf00]" : "bg-[#ef4444]"
-                        )} />
                         <span>{ent.status.toUpperCase()}</span>
                       </span>
                     </div>
 
-                    {/* 6. Actions */}
+                    {/* Actions */}
                     <div className="col-span-1 flex items-center justify-end font-mono">
-                      <button
-                        type="button"
-                        className="text-[#788274] hover:text-white p-1"
-                      >
+                      <button type="button" className="text-[#788274] group-hover:text-white p-1 cursor-pointer">
                         {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </button>
                     </div>
                   </div>
 
-                  {/* In-Row Deep Entity Inspector Drawer */}
+                  {/* Deep Entity Inspector Drawer */}
                   {isExpanded && (
-                    <div className={cn(
-                      "p-4 border-t border-dashed space-y-4 text-xs font-mono",
-                      dark ? "bg-[#161616] border-[#2e2e2e]" : "bg-[#fafbfa] border-[#edf0eb]"
-                    )}>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div className={cn("p-2.5 border border-dashed rounded-xs space-y-1", dark ? "border-[#282828] bg-[#121212]" : "border-[#ddd] bg-white")}>
-                          <span className="text-[10px] text-[#788274] uppercase">Environment</span>
-                          <div className={cn("font-bold capitalize", primaryText)}>{ent.environment}</div>
+                    <div className="p-4 border-t border-dashed border-[#282828] bg-transparent space-y-4 font-mono text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="p-3 border border-dashed border-[#282828] rounded-xs space-y-1">
+                          <span className="text-[10px] text-[#788274] uppercase tracking-wider">Environment</span>
+                          <div className="font-bold text-white capitalize">{ent.environment}</div>
                         </div>
-                        <div className={cn("p-2.5 border border-dashed rounded-xs space-y-1", dark ? "border-[#282828] bg-[#121212]" : "border-[#ddd] bg-white")}>
-                          <span className="text-[10px] text-[#788274] uppercase">Provenance Trust</span>
+                        <div className="p-3 border border-dashed border-[#282828] rounded-xs space-y-1">
+                          <span className="text-[10px] text-[#788274] uppercase tracking-wider">Provenance Trust</span>
                           <div className="font-bold text-[#75bf00]">{ent.trustLevel}</div>
                         </div>
-                        <div className={cn("p-2.5 border border-dashed rounded-xs space-y-1", dark ? "border-[#282828] bg-[#121212]" : "border-[#ddd] bg-white")}>
-                          <span className="text-[10px] text-[#788274] uppercase">Version / Commit</span>
-                          <div className={cn("font-bold", primaryText)}>{ent.version ?? "1.0.0"}</div>
+                        <div className="p-3 border border-dashed border-[#282828] rounded-xs space-y-1">
+                          <span className="text-[10px] text-[#788274] uppercase tracking-wider">Version / Commit</span>
+                          <div className="font-bold text-white">{ent.version ?? "1.0.0"}</div>
                         </div>
                       </div>
 
@@ -428,77 +525,91 @@ export function RealityView({
                           <span>Observed Properties &amp; Telemetry Payload</span>
                           <span>Last Synced: {ent.updatedAt}</span>
                         </div>
-
-                        <div className={cn(
-                          "p-3 border border-dashed rounded-xs font-mono text-[11px] leading-relaxed overflow-x-auto",
-                          dark ? "border-[#333] bg-[#0c0c0c] text-[#a3e635]" : "border-[#ddd] bg-[#111] text-[#a3e635]"
-                        )}>
-                          <pre>{JSON.stringify(ent.properties, null, 2)}</pre>
-                        </div>
+                        <pre className="p-3 border border-dashed border-[#282828] bg-transparent text-[#75bf00] rounded-xs text-[11px] overflow-x-auto leading-relaxed">
+                          <code>{JSON.stringify(ent.properties, null, 2)}</code>
+                        </pre>
                       </div>
                     </div>
                   )}
                 </div>
               );
             })}
-
-            {/* Empty State matching Image 1 */}
-            {filteredEntities.length === 0 && (
-              <div className="py-20 flex flex-col items-center justify-center text-center p-6 space-y-3 font-mono">
-                <div className={cn(
-                  "flex h-10 w-10 items-center justify-center border border-dashed rounded-xs",
-                  dark ? "border-[#383838] bg-[#1a1a1a] text-[#888]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#555]"
-                )}>
-                  <Globe size={18} className="text-[#888]" />
-                </div>
-
-                <div className="space-y-1 max-w-sm">
-                  <h3 className={cn("font-bold text-xs", primaryText)}>
-                    No entities match your filter
-                  </h3>
-                  <p className={cn("text-[11px]", secondaryText)}>
-                    Run Rediscovery or select another category filter to view workspace reality.
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
 
-      {/* TAB 2: CLOSED LOOP ARCHITECTURE */}
-      {activeTab === "loop" && (
-        <div className="space-y-4">
-          <EpochLoopGraph dark={dark} />
+      {/* TAB 2: UNKNOWNS & HYPOTHESIS ENGINE (Master Blueprint Sec 23 & 24) */}
+      {activeTab === "unknowns" && (
+        <div className="border border-dashed border-[#282828] bg-[#181818] divide-y divide-[#242424] rounded-xs overflow-hidden font-mono text-xs">
+          <div className="p-4 bg-[#141414] border-b border-[#282828] flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-xs text-white uppercase tracking-wider font-sans">
+                Unknown Engine &amp; Active Hypotheses
+              </h3>
+              <p className="text-[11px] text-[#788274] mt-0.5">
+                First-class unknowns prioritized by: decision_impact × uncertainty × risk / resolution_cost
+              </p>
+            </div>
+            <span className="border border-[#384820] bg-[#1c2a12] text-[#86dc00] px-2 py-0.5 text-[10px] font-bold rounded-xs">
+              AUTONOMOUS INVESTIGATION ACTIVE
+            </span>
+          </div>
+
+          {SAMPLE_UNKNOWNS.map((unk) => (
+            <div key={unk.id} className="p-4 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <HelpCircle size={14} className="text-[#f59e0b] shrink-0" />
+                  <span className="font-bold text-white text-xs">{unk.statement}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="border border-[#333] bg-[#202020] text-[#a0a89d] px-2 py-0.5 rounded-xs text-[10px] font-bold">
+                    Uncertainty: {unk.uncertaintyPct}%
+                  </span>
+                  <span className="border border-[#384820] bg-[#1c2a12] text-[#86dc00] px-2 py-0.5 rounded-xs text-[10px] font-bold">
+                    {unk.resolutionStrategy}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-[#788274]">
+                <div className="border border-[#262626] bg-[#141414] p-2.5 rounded-xs">
+                  <span className="text-[10px] uppercase text-[#888] block mb-0.5">Decision Dependency</span>
+                  <span className="text-white">{unk.decisionImpact}</span>
+                </div>
+                <div className="border border-[#262626] bg-[#141414] p-2.5 rounded-xs">
+                  <span className="text-[10px] uppercase text-[#888] block mb-0.5">Estimated Resolution Cost</span>
+                  <span className="text-white">{unk.resolutionCost}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {/* TAB 3: TEMPORAL WORLDSTATE INSPECTOR */}
       {activeTab === "temporal" && (
-        <div className={cn(
-          "border border-dashed p-6 rounded-xs space-y-4 font-mono",
-          dark ? "border-[#2e2e2e] bg-[#181818]" : "border-[#d8ddd3] bg-white"
-        )}>
-          <div className="flex items-center justify-between border-b border-dashed border-[#282828] pb-3">
+        <div className="border border-dashed border-[#282828] bg-[#181818] p-6 rounded-xs space-y-4 font-mono text-xs">
+          <div className="flex items-center justify-between border-b border-[#282828] pb-3">
             <div>
-              <div className="text-xs font-bold text-[#75bf00] uppercase">WORLDSTATE SNAPSHOT: WS-2026-08-11-0941</div>
+              <div className="text-xs font-bold text-[#86dc00] uppercase">WORLDSTATE SNAPSHOT: WS-2026-08-19-0941</div>
               <div className="text-[11px] text-[#788274] mt-0.5">Merkle Root: 0x4e82b79a1f09c8d32e54a01c7793b821045f91a6</div>
             </div>
-            <span className="border border-dashed border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00] px-2 py-0.5 text-[10px] font-bold rounded-xs">
+            <span className="border border-[#384820] bg-[#1c2a12] text-[#86dc00] px-2 py-0.5 text-[10px] font-bold rounded-xs">
               IMMUTABLE
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div className={cn("p-3 border border-dashed rounded-xs space-y-1", dark ? "border-[#282828] bg-[#121212]" : "border-[#eee] bg-[#fafafa]")}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3 border border-[#282828] bg-[#141414] rounded-xs space-y-1">
               <span className="text-[10px] text-[#788274] uppercase">Reconstructed Facts</span>
-              <div className={cn("font-bold text-base", primaryText)}>6 Verified Facts</div>
+              <div className="font-bold text-base text-white">48 Verified Facts</div>
             </div>
-            <div className={cn("p-3 border border-dashed rounded-xs space-y-1", dark ? "border-[#282828] bg-[#121212]" : "border-[#eee] bg-[#fafafa]")}>
+            <div className="p-3 border border-[#282828] bg-[#141414] rounded-xs space-y-1">
               <span className="text-[10px] text-[#788274] uppercase">State Diff Status</span>
-              <div className="font-bold text-base text-[#75bf00]">Zero Drift (Fresh)</div>
+              <div className="font-bold text-base text-[#86dc00]">Zero Drift (Fresh)</div>
             </div>
-            <div className={cn("p-3 border border-dashed rounded-xs space-y-1", dark ? "border-[#282828] bg-[#121212]" : "border-[#eee] bg-[#fafafa]")}>
+            <div className="p-3 border border-[#282828] bg-[#141414] rounded-xs space-y-1">
               <span className="text-[10px] text-[#788274] uppercase">State Recheck Protocol</span>
               <div className="font-bold text-base text-[#60a5fa]">Passed Pre-Execution</div>
             </div>
@@ -506,20 +617,17 @@ export function RealityView({
         </div>
       )}
 
-      {/* TAB 4: CONFLICTS TAB FULL-WIDTH */}
+      {/* TAB 4: CONFLICTS TAB */}
       {activeTab === "conflicts" && (
-        <div className={cn(
-          "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
-          dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
-        )}>
+        <div className="border border-dashed border-[#282828] bg-[#181818] divide-y divide-[#242424] rounded-xs overflow-hidden font-mono text-xs">
           {SAMPLE_CONFLICTS.map((conf) => (
-            <div key={conf.id} className="p-5 space-y-3 font-mono text-xs">
+            <div key={conf.id} className="p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={15} className="text-[#f59e0b]" />
-                  <span className={cn("font-bold text-sm", primaryText)}>{conf.entityName}</span>
+                  <span className="font-bold text-sm text-white">{conf.entityName}</span>
                 </div>
-                <span className="border border-dashed border-[#f59e0b]/40 bg-[#f59e0b]/10 text-[#f59e0b] px-2 py-0.5 text-[10px] font-bold rounded-xs uppercase">
+                <span className="border border-[#78350f] bg-[#451a03]/40 text-[#f59e0b] px-2 py-0.5 text-[10px] font-bold rounded-xs uppercase">
                   {conf.status}
                 </span>
               </div>
@@ -529,20 +637,20 @@ export function RealityView({
                   <div
                     key={idx}
                     className={cn(
-                      "p-3 border border-dashed rounded-xs flex items-center justify-between text-xs",
+                      "p-3 border rounded-xs flex items-center justify-between text-xs",
                       sig.isHealthy
-                        ? dark ? "border-[#75bf00]/30 bg-[#121c12]" : "border-[#b9de78] bg-[#f5faee]"
-                        : dark ? "border-[#ef4444]/30 bg-[#1c1212]" : "border-[#fca5a5] bg-[#fff5f5]"
+                        ? "border-[#384820] bg-[#142012]"
+                        : "border-[#7f1d1d] bg-[#300a0a]"
                     )}
                   >
                     <div>
                       <div className="font-bold flex items-center gap-1.5">
-                        <span className={sig.isHealthy ? "text-[#75bf00]" : "text-[#ef4444]"}>{sig.source}</span>
+                        <span className={sig.isHealthy ? "text-[#86dc00]" : "text-[#f87171]"}>{sig.source}</span>
                         <span className="text-[10px] text-[#788274]">({sig.trustLevel})</span>
                       </div>
-                      <div className="text-[11px] text-[#888] mt-0.5">{sig.claim}</div>
+                      <div className="text-[11px] text-[#a0a89d] mt-0.5">{sig.claim}</div>
                     </div>
-                    <span className="text-[10px] text-[#666]">{sig.timestamp}</span>
+                    <span className="text-[10px] text-[#788274]">{sig.timestamp}</span>
                   </div>
                 ))}
               </div>
@@ -551,34 +659,32 @@ export function RealityView({
         </div>
       )}
 
-      {/* TAB 5: DRIFT FABRIC TAB FULL-WIDTH */}
+      {/* TAB 5: DRIFT FABRIC TAB */}
       {activeTab === "drift" && (
-        <div className={cn(
-          "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
-          dark ? "border-[#2e2e2e] bg-[#202020] divide-[#282828]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
-        )}>
+        <div className="border border-dashed border-[#282828] bg-[#181818] divide-y divide-[#242424] rounded-xs overflow-hidden font-mono text-xs">
           {SAMPLE_DRIFTS.map((drift) => (
-            <div key={drift.id} className="p-5 space-y-2 font-mono text-xs">
+            <div key={drift.id} className="p-5 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Activity size={14} className="text-[#75bf00]" />
-                  <span className={cn("font-bold text-sm", primaryText)}>{drift.target}</span>
+                  <Activity size={14} className="text-[#86dc00]" />
+                  <span className="font-bold text-sm text-white">{drift.target}</span>
                 </div>
                 <span className={cn(
-                  "border border-dashed px-2 py-0.5 text-[10px] font-bold rounded-xs uppercase",
+                  "border px-2 py-0.5 text-[10px] font-bold rounded-xs uppercase",
                   drift.status === "detected"
-                    ? "border-[#f59e0b]/40 bg-[#f59e0b]/10 text-[#f59e0b]"
-                    : "border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00]"
+                    ? "border-[#78350f] bg-[#451a03]/40 text-[#f59e0b]"
+                    : "border-[#384820] bg-[#1c2a12] text-[#86dc00]"
                 )}>
                   {drift.status}
                 </span>
               </div>
-              <p className="text-[11px] text-[#888] leading-relaxed">{drift.delta}</p>
-              <div className="text-[10px] text-[#75bf00] font-bold">Action: {drift.recommendedAction}</div>
+              <p className="text-[11px] text-[#a0a89d] leading-relaxed">{drift.delta}</p>
+              <div className="text-[10px] text-[#86dc00] font-bold">Action: {drift.recommendedAction}</div>
             </div>
           ))}
         </div>
       )}
+
     </div>
   );
 }

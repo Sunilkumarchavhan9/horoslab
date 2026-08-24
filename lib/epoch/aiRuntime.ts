@@ -1,4 +1,4 @@
-export type EpochAiProvider = "openai" | "openrouter" | "local" | "private" | "anthropic" | "gemini" | "deepseek" | "ollama" | "vllm" | "lm_studio" | "nvidia_nim";
+export type EpochAiProvider = "openai" | "openrouter" | "local" | "private" | "anthropic" | "gemini" | "deepseek" | "ollama" | "vllm" | "modal" | "lm_studio" | "nvidia_nim";
 export type EpochAiModel = { provider: EpochAiProvider; model: string; inputCostPer1k: number; outputCostPer1k: number; contextWindow: number; capabilities: string[] };
 export type EpochAiRequest = { provider: EpochAiProvider; model: string; prompt: string; maxOutputTokens: number; missionId?: string };
 export type EpochAiCostEvidence = { provider: EpochAiProvider; model: string; inputTokens: number; outputTokens: number; estimatedCostCents: number; pricingVersion: string; latencyMs?: number };
@@ -16,6 +16,7 @@ const CATALOG: EpochAiModel[] = [
   { provider: "ollama", model: "llama3.2", inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "tools", "structured_output"] },
   { provider: "ollama", model: "qwen2.5:3b", inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 32_768, capabilities: ["reasoning", "structured_output"] },
   { provider: "vllm", model: "local-model", inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "tools", "structured_output"] },
+  { provider: "modal", model: "MiniMaxAI/SynLogic-7B", inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "structured_output"] },
   { provider: "lm_studio", model: "local-model", inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "tools", "structured_output"] },
   { provider: "nvidia_nim", model: "meta/llama-3.1-8b-instruct", inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "tools", "structured_output"] },
 ];
@@ -24,7 +25,7 @@ export function listEpochAiModels(): EpochAiModel[] { return CATALOG.map((model)
 export function getEpochAiModel(provider: EpochAiProvider, model: string): EpochAiModel | null {
   const known = CATALOG.find((entry) => entry.provider === provider && entry.model === model);
   if (known) return known;
-  if (provider === "ollama" && model.trim()) return { provider, model, inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "structured_output"] };
+  if ((provider === "ollama" || provider === "modal") && model.trim()) return { provider, model, inputCostPer1k: 0, outputCostPer1k: 0, contextWindow: 128_000, capabilities: ["reasoning", "structured_output"] };
   return null;
 }
 export function getEpochAiDefaultModel(provider: EpochAiProvider): EpochAiModel | null { return CATALOG.find((entry) => entry.provider === provider) ?? null; }

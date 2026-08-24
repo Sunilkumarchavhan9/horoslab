@@ -157,15 +157,17 @@ export async function leaseEpochJobsForWorker(input: {
         if (latestActive >= latest.maxConcurrency) return null;
         const previous = await tx.epochWorkerLease.findFirst({ where: { workerId: worker.id }, orderBy: { fencingToken: "desc" } });
         const fencingToken = (previous?.fencingToken ?? 0) + 1;
-        const created = await tx.epochWorkerLease.create({
-          data: {
-            workspaceId: input.workspaceId,
-            workerId: worker.id,
-            jobId: job.id,
-            fencingToken,
-            expiresAt: new Date(Date.now() + Math.max(1_000, input.leaseMs ?? 60_000)),
-          },
-        });
+        const expiresAt = new Date(Date.now() + Math.max(1_000, input.leaseMs ?? 60_000));
+        const existing = await tx.epochWorkerLease.findUnique({ where: { jobId: job.id } });
+        if (existing?.status === "active" && existing.expiresAt > new Date()) return null;
+        const created = existing
+          ? await tx.epochWorkerLease.update({
+              where: { id: existing.id },
+              data: { workspaceId: input.workspaceId, workerId: worker.id, fencingToken, status: "active", leasedAt: new Date(), expiresAt, releasedAt: null },
+            })
+          : await tx.epochWorkerLease.create({
+              data: { workspaceId: input.workspaceId, workerId: worker.id, jobId: job.id, fencingToken, expiresAt },
+            });
         await tx.epochWorker.update({ where: { id: worker.id }, data: { activeLeases: latestActive + 1, status: "busy" } });
         return created;
       }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
@@ -270,15 +272,17 @@ export async function claimEpochWorkerLease(input: {
       if (active >= worker.maxConcurrency) return null;
       const previous = await tx.epochWorkerLease.findFirst({ where: { workerId: worker.id }, orderBy: { fencingToken: "desc" } });
       const fencingToken = (previous?.fencingToken ?? 0) + 1;
-      const lease = await tx.epochWorkerLease.create({
-        data: {
-          workspaceId: input.workspaceId,
-          workerId: input.workerId,
-          jobId: input.jobId,
-          fencingToken,
-          expiresAt: new Date(Date.now() + Math.max(1_000, input.leaseMs ?? 60_000)),
-        },
-      });
+      const expiresAt = new Date(Date.now() + Math.max(1_000, input.leaseMs ?? 60_000));
+      const existing = await tx.epochWorkerLease.findUnique({ where: { jobId: input.jobId } });
+      if (existing?.status === "active" && existing.expiresAt > new Date()) return null;
+      const lease = existing
+        ? await tx.epochWorkerLease.update({
+            where: { id: existing.id },
+            data: { workspaceId: input.workspaceId, workerId: input.workerId, fencingToken, status: "active", leasedAt: new Date(), expiresAt, releasedAt: null },
+          })
+        : await tx.epochWorkerLease.create({
+            data: { workspaceId: input.workspaceId, workerId: input.workerId, jobId: input.jobId, fencingToken, expiresAt },
+          });
       await tx.epochWorker.update({ where: { id: worker.id }, data: { activeLeases: active + 1, status: "busy", lastHeartbeat: new Date() } });
       return { id: lease.id, fencingToken: lease.fencingToken, expiresAt: lease.expiresAt };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });

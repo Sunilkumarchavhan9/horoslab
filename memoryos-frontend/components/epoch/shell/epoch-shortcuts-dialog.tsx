@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 interface EpochShortcutsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  dark?: boolean;
 }
 
 interface ShortcutRow {
@@ -22,6 +23,7 @@ interface ShortcutSection {
 export function EpochShortcutsDialog({
   open,
   onOpenChange,
+  dark = true,
 }: EpochShortcutsDialogProps) {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -65,15 +67,27 @@ export function EpochShortcutsDialog({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 pt-[14vh] backdrop-blur-[2px] p-4">
-      <div className="w-full max-w-[520px] border border-[#a8b0a2] bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden text-xs">
-        {/* Header matching Screenshot 2 */}
-        <div className="flex items-start justify-between border-b border-[#e1e4df] p-4 bg-white">
+    <div
+      onClick={() => onOpenChange(false)}
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-[14vh] backdrop-blur-[2px] p-4 cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={cn(
+          "w-full max-w-[520px] border shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden text-xs rounded-xs cursor-default",
+          dark ? "border-[#383838] bg-[#181818] text-white" : "border-[#a8b0a2] bg-white text-[#171a17]"
+        )}
+      >
+        {/* Header */}
+        <div className={cn(
+          "flex items-start justify-between border-b p-4",
+          dark ? "border-[#282828] bg-[#181818]" : "border-[#e1e4df] bg-white"
+        )}>
           <div>
-            <h2 className="text-sm font-semibold text-[#171a17]">
+            <h2 className={cn("text-sm font-semibold", dark ? "text-white" : "text-[#171a17]")}>
               Keyboard shortcuts
             </h2>
-            <p className="mt-0.5 text-xs text-[#687063]">
+            <p className={cn("mt-0.5 text-xs", dark ? "text-[#888]" : "text-[#687063]")}>
               A compact guide to the keyboard controls available here.
             </p>
           </div>
@@ -81,34 +95,50 @@ export function EpochShortcutsDialog({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="border border-[#d8ddd3] bg-[#f5f7f3] px-2.5 py-1 text-xs text-[#2a3028] hover:border-[#171a17] hover:text-[#171a17] transition-colors"
+            className={cn(
+              "border px-2.5 py-1 text-xs cursor-pointer transition-colors rounded-xs",
+              dark
+                ? "border-[#383838] bg-[#222] text-[#ccc] hover:border-white hover:text-white"
+                : "border-[#d8ddd3] bg-[#f5f7f3] text-[#2a3028] hover:border-[#171a17] hover:text-[#171a17]"
+            )}
           >
             Close
           </button>
         </div>
 
-        {/* Sections matching Screenshot 2 */}
-        <div className="divide-y divide-[#edf0eb]">
+        {/* Sections */}
+        <div className={cn("divide-y", dark ? "divide-[#282828]" : "divide-[#edf0eb]")}>
           {sections.map((section) => (
             <div key={section.title}>
               {/* Category banner */}
-              <div className="bg-[#f0f2ee] px-4 py-1.5 font-mono text-[11px] text-[#6b7367]">
+              <div className={cn(
+                "px-4 py-1.5 font-mono text-[11px]",
+                dark ? "bg-[#141414] text-[#889284]" : "bg-[#f0f2ee] text-[#6b7367]"
+              )}>
                 {section.title}
               </div>
 
               {/* Rows */}
-              <div className="divide-y divide-[#edf0eb] bg-white">
+              <div className={cn("divide-y", dark ? "divide-[#222] bg-[#181818]" : "divide-[#edf0eb] bg-white")}>
                 {section.rows.map((row) => (
                   <div
                     key={row.label}
-                    className="flex items-center justify-between px-4 py-2.5 hover:bg-[#fafbfa]"
+                    className={cn(
+                      "flex items-center justify-between px-4 py-2.5 transition-colors",
+                      dark ? "hover:bg-[#202020]" : "hover:bg-[#fafbfa]"
+                    )}
                   >
-                    <span className="text-[#171a17]">{row.label}</span>
+                    <span className={dark ? "text-[#ddd]" : "text-[#171a17]"}>{row.label}</span>
                     <div className="flex items-center gap-1 font-mono">
                       {row.keys.map((k, i) => (
                         <span
                           key={i}
-                          className="border border-[#d8ddd3] bg-[#fafbfa] px-2 py-0.5 text-[11px] text-[#4b5247] shadow-sm"
+                          className={cn(
+                            "border px-1.5 py-0.5 text-[10px] rounded-xs",
+                            dark
+                              ? "border-[#383838] bg-[#222] text-white"
+                              : "border-[#d8ddd3] bg-[#f5f7f3] text-[#2a3028]"
+                          )}
                         >
                           {k}
                         </span>

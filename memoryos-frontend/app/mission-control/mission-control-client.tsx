@@ -1,8 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { resolveActiveEpochWorkspaceId } from "@/lib/epoch-api";
-import { EpochInferenceControlPlane } from "@/components/inference-control/epoch-inference-control-plane";
+
+const EpochInferenceControlPlane = dynamic(
+  () =>
+    import("@/components/inference-control/epoch-inference-control-plane").then(
+      (mod) => mod.EpochInferenceControlPlane
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex min-h-screen items-center justify-center bg-[#151515] text-xs font-mono text-[#788274]">
+        Loading Epoch Control Plane...
+      </div>
+    ),
+  }
+);
 
 export function MissionControlClient() {
   const [workspaceReady, setWorkspaceReady] = useState(false);
@@ -39,7 +54,7 @@ export function MissionControlClient() {
 
   if (!workspaceReady) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white text-[14px] text-[#555]">
+      <div className="flex min-h-screen items-center justify-center bg-[#151515] text-xs font-mono text-[#788274]">
         Loading Mission Control...
       </div>
     );
@@ -47,7 +62,7 @@ export function MissionControlClient() {
 
   if (workspaceError || !workspaceId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-8 text-[14px] text-red-600">
+      <div className="flex min-h-screen items-center justify-center bg-[#151515] p-8 text-xs font-mono text-red-500">
         {workspaceError || "No active Epoch workspace is available."}
       </div>
     );

@@ -1,3 +1,0 @@
-{
-  "/api/preflight/[...path]/route": "app/api/preflight/[...path]/route.js"
-}

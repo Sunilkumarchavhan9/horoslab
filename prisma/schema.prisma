@@ -3601,3 +3601,33 @@ model AgentSkillRouterRule {
   @@index([skillId], map: "idx_agent_skill_router_skill")
   @@map("agent_skill_router_rules")
 }
+
+/// Versioned canonical-domain projection for the permanent Epoch primitives.
+/// Bounded-context tables remain authoritative for their own runtime; this
+/// ledger preserves the cross-runtime contract, lineage, replay identity, and
+/// provenance without coupling the domain to a provider-specific schema.
+model EpochCanonicalArtifact {
+  id              String   @id
+  workspaceId     String   @map("workspace_id")
+  objectType      String   @map("object_type")
+  objectId        String   @map("object_id")
+  missionId       String?  @map("mission_id")
+  parentId        String?  @map("parent_id")
+  version         Int      @default(1)
+  state           String   @default("active")
+  payload         Json
+  provenance      Json     @default("{}")
+  integritySha256 String   @map("integrity_sha256")
+  correlationId   String   @map("correlation_id")
+  traceId         String   @map("trace_id")
+  causationId     String?  @map("causation_id")
+  idempotencyKey  String?  @map("idempotency_key")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([workspaceId, objectType, objectId, version], map: "uq_epoch_canonical_artifact_version")
+  @@index([workspaceId, objectType, state, updatedAt], map: "idx_epoch_canonical_artifact_type_state_updated")
+  @@index([workspaceId, missionId, objectType], map: "idx_epoch_canonical_artifact_mission_type")
+  @@index([workspaceId, idempotencyKey], map: "idx_epoch_canonical_artifact_idempotency")
+  @@map("epoch_canonical_artifacts")
+}

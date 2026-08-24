@@ -16,22 +16,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const sora = Sora({
-  variable: "--font-sora",
   subsets: ["latin"],
+  variable: "--font-sora",
   display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
 const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 

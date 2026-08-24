@@ -2,10 +2,13 @@ FROM node:20-bookworm-slim AS base
 
 WORKDIR /app
 
-RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+# node-pty (and any future native dependency) may fall back to node-gyp when
+# a Linux prebuild is unavailable. Keep the production build reproducible.
+RUN apt-get update -y && apt-get install -y --no-install-recommends openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts \
+  && npm rebuild node-pty --foreground-scripts
 
 COPY prisma ./prisma
 ENV DATABASE_URL=postgresql://postgres:postgres@postgres:5432/memoryos?schema=public

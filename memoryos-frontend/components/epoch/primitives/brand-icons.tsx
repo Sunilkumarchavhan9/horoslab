@@ -1,6 +1,77 @@
 "use client";
 
 import React from "react";
+
+const MINIMAX_LOGO_URL = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://minimaxi.com/&size=256";
+const INCLUSION_AI_LOGO_URL = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.inclusion-ai.org/&size=256";
+const XIAOMI_LOGO_URL = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.mi.com&size=256";
+const POOLSIDE_LOGO_URL = "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg";
+const UPSTAGE_LOGO_URL = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.upstage.ai/&size=256";
+
+export function MiniMaxLogo({ size = 24 }: { size?: number }) {
+  return (
+    <img
+      src={MINIMAX_LOGO_URL}
+      alt="MiniMax"
+      width={size}
+      height={size}
+      className="rounded-[20%] object-contain"
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function InclusionAILogo({ size = 24 }: { size?: number }) {
+  return (
+    <img
+      src={INCLUSION_AI_LOGO_URL}
+      alt="InclusionAI"
+      width={size}
+      height={size}
+      className="rounded-[20%] object-contain"
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function XiaomiLogo({ size = 24 }: { size?: number }) {
+  return (
+    <img
+      src={XIAOMI_LOGO_URL}
+      alt="Xiaomi"
+      width={size}
+      height={size}
+      className="rounded-[20%] object-contain"
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function PoolsideLogo({ size = 24 }: { size?: number }) {
+  return (
+    <img
+      src={POOLSIDE_LOGO_URL}
+      alt="Poolside"
+      width={size}
+      height={size}
+      className="rounded-[20%] object-contain"
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function UpstageLogo({ size = 24 }: { size?: number }) {
+  return (
+    <img
+      src={UPSTAGE_LOGO_URL}
+      alt="Upstage"
+      width={size}
+      height={size}
+      className="rounded-[20%] object-contain"
+      referrerPolicy="no-referrer"
+    />
+  );
+}
 import { cn } from "@/lib/utils";
 
 interface BrandIconProps {
@@ -172,7 +243,7 @@ export function DiffusersLogo({ className, size = 13 }: BrandIconProps) {
   );
 }
 
-// 9. Official NVIDIA Logo (Official Simple Icons / NVIDIA Brand Vector)
+// 9. Official NVIDIA Logo
 export function NvidiaLogo({ className, size = 14 }: BrandIconProps) {
   return (
     <svg
@@ -185,6 +256,26 @@ export function NvidiaLogo({ className, size = 14 }: BrandIconProps) {
     >
       <path
         d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.398 0-.787-.062-1.158-.185v-4.346c1.528.185 1.837.857 2.747 2.385l2.04-1.714s-1.492-1.952-4-1.952a6.016 6.016 0 0 0-.796.035m0-4.735v2.138l.424-.027c5.45-.185 9.01 4.47 9.01 4.47s-4.08 4.964-8.33 4.964c-.37 0-.733-.035-1.095-.097v1.325c.3.035.61.062.91.062 3.957 0 6.82-2.023 9.593-4.408.459.371 2.34 1.263 2.73 1.652-2.633 2.208-8.772 3.984-12.253 3.984-.335 0-.653-.018-.971-.053v1.864H24V4.063zm0 10.326v1.131c-3.657-.654-4.673-4.46-4.673-4.46s1.758-1.944 4.673-2.262v1.237H8.94c-1.528-.186-2.73 1.245-2.73 1.245s.68 2.412 2.739 3.11M2.456 10.9s2.164-3.197 6.5-3.533V6.201C4.153 6.59 0 10.653 0 10.653s2.35 6.802 8.948 7.42v-1.237c-4.84-.6-6.492-5.936-6.492-5.936z"
+      />
+    </svg>
+  );
+}
+
+// 9b. Official GitHub Logo
+export function GithubLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle", className)}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
       />
     </svg>
   );
@@ -411,11 +502,109 @@ export function IntelLogo({ className, size = 14 }: BrandIconProps) {
   );
 }
 
-// 19. Moonshot AI / Kimi Logo
-export function KimiLogo({ className, size = 14 }: BrandIconProps) {
+// 19. Official Kimi / Moonshot AI Brand Logo
+const KIMI_ICON_URL = "https://imgs.search.brave.com/juHCv_BqGWFAUr-XDkiSQceOh9PYpEGaUR_hl3WVSNg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWYyNjdmY2Jk/NTEyMjlhNWQ4OTk5/ZTNiNjI4YzJjYTE0/Zjg2NzBmNTgxZWFi/YTU3MDlmZTI2NzYx/Zjk4MTE4ZC9wbGF0/Zm9ybS5raW1pLmFp/Lw";
+
+export function KimiLogo({ className, size = 13 }: BrandIconProps) {
   return (
-    <span className={cn("inline-flex items-center justify-center font-mono font-bold text-[#6366F1] bg-[#6366F122] border border-[#6366F144] rounded-[3px] text-[9px] leading-none shrink-0", className)} style={{ width: size, height: size }}>
-      K
-    </span>
+    <img
+      src={KIMI_ICON_URL}
+      alt="Kimi AI"
+      width={size}
+      height={size}
+      className={cn("shrink-0 inline-block align-middle rounded-xs object-contain", className)}
+      style={{ width: size, height: size }}
+    />
+  );
+}
+
+// 20. Official GitHub Octocat Logo
+export function GitHubLogo({ className, size = 15 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-white", className)}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+      />
+    </svg>
+  );
+}
+
+// 21. Official Amazon AWS Logo (Smile Arrow)
+export function AWSLogo({ className, size = 16 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-[#FF9900]", className)}
+    >
+      <path d="M16.942 16.488a8.88 8.88 0 0 1-5.184 1.596c-3.156 0-5.748-1.524-7.536-4.044-.228-.324-.012-.66.336-.456 2.496 1.464 5.376 2.34 8.352 2.34 1.86 0 3.912-.396 5.808-1.236.432-.192.744.204.224.6l-2 .2zm1.26-1.524c-.216-.276-.984-.132-1.896.252-.456.192-.48.42-.096.6 1.308.6 2.34-.144 2.34-.144s.096-1.008-.348-.708zm-7.668-5.388c-.648-.444-1.392-.66-2.22-.66-1.524 0-2.616.792-2.616 2.196 0 1.344.972 2.052 2.376 2.052.924 0 1.776-.408 2.46-1.128v.936c0 .408.276.684.696.684.42 0 .696-.276.696-.684V9.672c0-1.836-1.296-2.82-3.444-2.82-1.788 0-3.156.888-3.432 2.292-.048.24.132.408.372.408.192 0 .336-.12.384-.312.264-1.008 1.272-1.608 2.676-1.608 1.488 0 2.292.672 2.292 1.848v.492zm-2.064 3.012c-.936 0-1.608-.492-1.608-1.32 0-.804.648-1.32 1.608-1.32.78 0 1.44.3 1.956.864v.936c-.516.54-1.176.84-1.956.84z" />
+    </svg>
+  );
+}
+
+// 22. Official Kubernetes Helm Logo
+export function KubernetesLogo({ className, size = 15 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-[#326CE5]", className)}
+    >
+      <path d="M12.003 0a2.44 2.44 0 0 0-.649.092l-8.49 2.502a2.454 2.454 0 0 0-1.74 2.34v9.066c0 1.022.637 1.93 1.603 2.288l8.49 3.619a2.47 2.47 0 0 0 1.77 0l8.49-3.619a2.454 2.454 0 0 0 1.603-2.288V4.934a2.454 2.454 0 0 0-1.74-2.34L12.89.092A2.44 2.44 0 0 0 12.003 0zm.01 2.05l7.986 2.353a.4.4 0 0 1 .284.382v8.528a.4.4 0 0 1-.262.374l-7.986 3.404a.4.4 0 0 1-.288 0l-7.986-3.404a.4.4 0 0 1-.262-.374V4.785a.4.4 0 0 1 .284-.382L11.725 2.05a.4.4 0 0 1 .288 0z" />
+    </svg>
+  );
+}
+
+// 23. Official Qdrant Vector Database Logo
+export function QdrantLogo({ className, size = 15 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle text-[#DC2626]", className)}
+    >
+      <circle cx="12" cy="12" r="10" fill="#DC2626" />
+      <circle cx="12" cy="12" r="5" fill="#FFFFFF" />
+      <circle cx="12" cy="12" r="2" fill="#DC2626" />
+    </svg>
+  );
+}
+
+// 24. Official Microsoft Brand Logo (4-Square Grid)
+export const MICROSOFT_ICON_URL = "https://imgs.search.brave.com/gZrD5eqR2RtdATDgWM_L81IIsAOU6J7j4L8LlnZ91YI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTM5NmUzZTBm/Y2I4YTEzZDI1Mzll/NmM2MmU4NzlhMGVh/NjdjMmQwZjQ0OTMx/MGRhYTVkNjk1MDNi/M2VkYThkZC93d3cu/bWljcm9zb2Z0LmNv/bS8";
+
+export function MicrosoftLogo({ className, size = 13 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle rounded-xs", className)}
+    >
+      <rect x="1" y="1" width="10.5" height="10.5" fill="#F25022" />
+      <rect x="12.5" y="1" width="10.5" height="10.5" fill="#7FBA00" />
+      <rect x="1" y="12.5" width="10.5" height="10.5" fill="#00A4EF" />
+      <rect x="12.5" y="12.5" width="10.5" height="10.5" fill="#FFB900" />
+    </svg>
   );
 }

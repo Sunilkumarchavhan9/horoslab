@@ -1,3 +1,0 @@
-{
-  "/api/agent-runs/[...path]/route": "app/api/agent-runs/[...path]/route.js"
-}

@@ -227,30 +227,25 @@ export function DeploymentsView({
 
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <div className="flex items-center gap-1 text-xs font-mono">
+        {/* Filter Tabs matching Image 2 (Single Outer Dashed Container) */}
+        <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm gap-1">
           {[
-            { id: "all", label: `All ${list.length}` },
-            { id: "live", label: `Live ${list.filter((item) => item.status === "live").length}`, dot: true },
-            { id: "deploying", label: `Deploying ${list.filter((item) => item.status === "deploying").length}`, blueDot: true },
-            { id: "stopped", label: `Stopped ${list.filter((item) => item.status === "stopped" || item.status === "paused").length}` },
+            { id: "all", label: `All (${list.length})` },
+            { id: "live", label: `Live (${list.filter((item) => item.status === "live").length})` },
+            { id: "deploying", label: `Deploying (${list.filter((item) => item.status === "deploying").length})` },
+            { id: "stopped", label: `Stopped (${list.filter((item) => item.status === "stopped" || item.status === "paused").length})` },
           ].map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setFilterTab(tab.id)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1 border border-dashed transition-colors rounded-xs",
+                "px-2.5 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm flex items-center gap-1.5",
                 filterTab === tab.id
-                  ? dark
-                    ? "border-[#555] bg-[#282828] text-white font-bold"
-                    : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
-                  : dark
-                  ? "border-transparent text-[#788274] hover:text-white"
-                  : "border-transparent text-[#687063] hover:text-[#171a17]"
+                  ? "bg-[#242424] text-white font-bold"
+                  : "text-[#889284] hover:text-white"
               )}
             >
-              {tab.dot && <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />}
-              {tab.blueDot && <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8] animate-pulse" />}
               <span>{tab.label}</span>
             </button>
           ))}

@@ -28,6 +28,18 @@ data/*/*.json
 *.log
 *.err.log
 
+# Large local caches and archives that are not runtime inputs.
+.cache
+.venv
+__pycache__
+*.db
+*.sqlite
+*.sqlite3
+*.zip
+*.tar
+*.tar.gz
+memoryos-frontend/out
+
 # Local tooling and editor metadata.
 .vscode
 .codex

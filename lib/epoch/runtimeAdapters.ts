@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const EPOCH_RUNTIME_TARGETS = ["vllm", "sglang", "nvidia_nim", "kubernetes", "cloud", "data_center"] as const;
+export const EPOCH_RUNTIME_TARGETS = ["vllm", "sglang", "nvidia_nim", "modal", "kubernetes", "cloud", "data_center"] as const;
 export type EpochRuntimeTarget = (typeof EPOCH_RUNTIME_TARGETS)[number];
 
 export type EpochRuntimeProbe = {
@@ -48,7 +48,12 @@ function authHeader(tokenEnvVar?: string): Record<string, string> {
   return { authorization: `Bearer ${token}` };
 }
 
-function endpointForPath(base: URL, path: string) { return new URL(path, `${base.origin}${base.pathname.endsWith("/") ? base.pathname : `${base.pathname}/`}`); }
+function endpointForPath(base: URL, path: string) {
+  const basePath = base.pathname.replace(/\/+$/, "");
+  const requestedPath = path.replace(/^\/+/, "");
+  const relativePath = basePath.endsWith("/v1") && requestedPath.startsWith("v1/") ? requestedPath.slice(3) : requestedPath;
+  return new URL(`${basePath}/${relativePath}`, base.origin);
+}
 
 export async function probeEpochRuntimeAdapter(input: { target: EpochRuntimeTarget; endpointEnvVar: string; tokenEnvVar?: string; fetchImpl?: typeof fetch }): Promise<EpochRuntimeProbe> {
   const base = targetEndpoint(input.target, input.endpointEnvVar);
@@ -62,7 +67,7 @@ export async function probeEpochRuntimeAdapter(input: { target: EpochRuntimeTarg
     status = health.status;
     evidence.push({ path: "health", status: health.status });
     let models: string[] = [];
-    if (["vllm", "sglang", "nvidia_nim"].includes(input.target)) {
+    if (["vllm", "sglang", "nvidia_nim", "modal"].includes(input.target)) {
       const response = await http(endpointForPath(base, "v1/models"), { headers, signal: AbortSignal.timeout(10_000) });
       const body = await response.json().catch(() => null) as any;
       models = Array.isArray(body?.data) ? body.data.map((item: any) => item?.id).filter((item: unknown): item is string => typeof item === "string") : [];
@@ -75,7 +80,7 @@ export async function probeEpochRuntimeAdapter(input: { target: EpochRuntimeTarg
   }
 }
 
-export async function executeEpochRuntimeAdapter(input: { target: Extract<EpochRuntimeTarget, "vllm" | "sglang" | "nvidia_nim">; endpointEnvVar: string; tokenEnvVar?: string; model: string; prompt: string; maxOutputTokens: number; fetchImpl?: typeof fetch }): Promise<EpochRuntimeExecution> {
+export async function executeEpochRuntimeAdapter(input: { target: Extract<EpochRuntimeTarget, "vllm" | "sglang" | "nvidia_nim" | "modal">; endpointEnvVar: string; tokenEnvVar?: string; model: string; prompt: string; maxOutputTokens: number; fetchImpl?: typeof fetch }): Promise<EpochRuntimeExecution> {
   const base = targetEndpoint(input.target, input.endpointEnvVar);
   const http = input.fetchImpl ?? fetch;
   const startedAt = Date.now();

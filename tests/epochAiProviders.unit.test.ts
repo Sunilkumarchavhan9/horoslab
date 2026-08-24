@@ -58,6 +58,7 @@ describe("production AI provider transport", () => {
     expect(() => readEpochAiProviderConfig("openai", {})).toThrow("not_configured");
     expect(() => readEpochAiProviderConfig("private", { EPOCH_PRIVATE_AI_ENDPOINT: "http://private.example", EPOCH_PRIVATE_AI_API_KEY: "secret" })).toThrow("https");
     expect(readEpochAiProviderConfig("openrouter", { EPOCH_OPENROUTER_AI_API_KEY: "secret" })).toMatchObject({ provider: "openrouter", endpoint: "https://openrouter.ai/api/v1/chat/completions" });
+    expect(readEpochAiProviderConfig("modal", { EPOCH_RUNTIME_MODAL_ENDPOINT: "https://modal.example/v1/", EPOCH_RUNTIME_MODAL_TOKEN: "secret" })).toMatchObject({ provider: "modal", endpoint: "https://modal.example/v1/chat/completions", apiKey: "secret" });
   });
 
   it("streams SSE deltas and returns final evidence", async () => {

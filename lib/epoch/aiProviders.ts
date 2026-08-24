@@ -64,11 +64,14 @@ export function readEpochAiProviderConfig(provider: EpochAiProvider, env: NodeJS
     deepseek: "https://api.deepseek.com/chat/completions",
     ollama: "http://127.0.0.1:11434/api/chat",
     vllm: "http://127.0.0.1:8000/v1/chat/completions",
+    modal: undefined,
     lm_studio: "http://127.0.0.1:1234/v1/chat/completions",
     nvidia_nim: "https://integrate.api.nvidia.com/v1/chat/completions",
   };
-  const endpoint = env[`EPOCH_${prefix}_AI_ENDPOINT`] ?? env[`EPOCH_${prefix}_ENDPOINT`] ?? defaults[provider];
-  const apiKey = env[`EPOCH_${prefix}_AI_API_KEY`] ?? env[`EPOCH_${prefix}_API_KEY`] ?? env[`${prefix}_API_KEY`] ?? (["local", "ollama", "vllm", "lm_studio"].includes(provider) ? "local" : undefined);
+  const configuredEndpoint = env[`EPOCH_${prefix}_AI_ENDPOINT`] ?? env[`EPOCH_${prefix}_ENDPOINT`] ?? defaults[provider];
+  const modalEndpoint = provider === "modal" ? env.EPOCH_RUNTIME_MODAL_ENDPOINT : undefined;
+  const endpoint = configuredEndpoint ?? (modalEndpoint ? `${modalEndpoint.replace(/\/+$/, "")}/chat/completions` : undefined);
+  const apiKey = env[`EPOCH_${prefix}_AI_API_KEY`] ?? env[`EPOCH_${prefix}_API_KEY`] ?? env[`${prefix}_API_KEY`] ?? (provider === "modal" ? env.EPOCH_RUNTIME_MODAL_TOKEN : undefined) ?? (["local", "ollama", "vllm", "lm_studio"].includes(provider) ? "local" : undefined);
   if (!endpoint || !apiKey) throw new EpochAiProviderError("provider_unavailable", `epoch_ai_${provider}_provider_not_configured`);
   if (!["local", "ollama", "vllm", "lm_studio"].includes(provider) && !/^https:\/\//i.test(endpoint)) throw new EpochAiProviderError("provider_unavailable", "epoch_ai_remote_endpoint_must_use_https");
   return { provider, endpoint, apiKey };

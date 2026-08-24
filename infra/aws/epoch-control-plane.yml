@@ -1,0 +1,283 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Epoch control plane on ECS with SQS, S3, CloudWatch, and least-privilege task roles.
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  PrivateSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Private subnets with outbound access for ECS tasks.
+  ApiImage:
+    Type: String
+    Description: Full ECR image URI for the API.
+  WorkerImage:
+    Type: String
+    Description: Full ECR image URI for the worker.
+  DatabaseSecretArn:
+    Type: String
+    Description: Secrets Manager ARN containing a DATABASE_URL JSON key.
+  RedisSecretArn:
+    Type: String
+    Description: Secrets Manager ARN containing a REDIS_URL JSON key.
+  ModalSecretArn:
+    Type: String
+    Default: ''
+    Description: Optional secret ARN containing endpoint and token JSON keys.
+  EnvironmentName:
+    Type: String
+    Default: production
+    AllowedValues: [dev, staging, production]
+  WorkerDesiredCount:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 20
+
+Conditions:
+  HasModalSecret: !Not [!Equals [!Ref ModalSecretArn, '']]
+
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  MissionsDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub epoch-${EnvironmentName}-dead-letter
+      MessageRetentionPeriod: 1209600
+
+  MissionsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub epoch-${EnvironmentName}-missions
+      VisibilityTimeout: 900
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt MissionsDeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  RuntimeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub epoch-${EnvironmentName}-runtime
+      VisibilityTimeout: 900
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt MissionsDeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /epoch/${EnvironmentName}/api
+      RetentionInDays: 30
+
+  WorkerLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /epoch/${EnvironmentName}/worker
+      RetentionInDays: 30
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub epoch-${EnvironmentName}
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+  TaskSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Epoch ECS task egress and internal traffic
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  TaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: ReadEpochSecrets
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref DatabaseSecretArn
+                  - !Ref RedisSecretArn
+                  - !If [HasModalSecret, !Ref ModalSecretArn, !Ref AWS::NoValue]
+
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: EpochRuntimeAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [sqs:ReceiveMessage, sqs:DeleteMessage, sqs:ChangeMessageVisibility, sqs:GetQueueAttributes, sqs:SendMessage]
+                Resource:
+                  - !GetAtt MissionsQueue.Arn
+                  - !GetAtt RuntimeQueue.Arn
+                  - !GetAtt MissionsDeadLetterQueue.Arn
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject, s3:DeleteObject, s3:ListBucket]
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
+                  - !Sub '${ArtifactBucket.Arn}/*'
+
+  ApiTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub epoch-${EnvironmentName}-api
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: '1024'
+      Memory: '2048'
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt TaskRole.Arn
+      ContainerDefinitions:
+        - Name: api
+          Image: !Ref ApiImage
+          Essential: true
+          PortMappings: [{ ContainerPort: 3001, Protocol: tcp }]
+          Environment:
+            - { Name: NODE_ENV, Value: production }
+            - { Name: PORT, Value: '3001' }
+            - { Name: AWS_REGION, Value: !Ref AWS::Region }
+            - { Name: MEMORY_STORE_BACKEND, Value: postgres }
+            - { Name: EPOCH_SQS_MISSIONS_URL, Value: !Ref MissionsQueue }
+            - { Name: EPOCH_SQS_RUNTIME_URL, Value: !Ref RuntimeQueue }
+            - { Name: EPOCH_ARTIFACT_BUCKET, Value: !Ref ArtifactBucket }
+            - Name: EPOCH_CLOUDWATCH_API_LOG_GROUP
+              Value: !Sub '/epoch/${EnvironmentName}/api'
+          Secrets:
+            - Name: DATABASE_URL
+              ValueFrom: !Sub '${DatabaseSecretArn}:DATABASE_URL::'
+            - Name: REDIS_URL
+              ValueFrom: !Sub '${RedisSecretArn}:REDIS_URL::'
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref ApiLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: api
+
+  WorkerTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub epoch-${EnvironmentName}-worker
+      RequiresCompatibilities: [FARGATE]
+      NetworkMode: awsvpc
+      Cpu: '2048'
+      Memory: '4096'
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt TaskRole.Arn
+      ContainerDefinitions:
+        - Name: worker
+          Image: !Ref WorkerImage
+          Essential: true
+          Environment:
+            - { Name: NODE_ENV, Value: production }
+            - { Name: AWS_REGION, Value: !Ref AWS::Region }
+            - { Name: MEMORY_STORE_BACKEND, Value: postgres }
+            - { Name: EPOCH_WORKER_ENABLED, Value: 'true' }
+            - { Name: EPOCH_SQS_MISSIONS_URL, Value: !Ref MissionsQueue }
+            - { Name: EPOCH_SQS_RUNTIME_URL, Value: !Ref RuntimeQueue }
+            - { Name: EPOCH_ARTIFACT_BUCKET, Value: !Ref ArtifactBucket }
+            - Name: EPOCH_CLOUDWATCH_WORKER_LOG_GROUP
+              Value: !Sub '/epoch/${EnvironmentName}/worker'
+          Secrets:
+            - Name: DATABASE_URL
+              ValueFrom: !Sub '${DatabaseSecretArn}:DATABASE_URL::'
+            - Name: REDIS_URL
+              ValueFrom: !Sub '${RedisSecretArn}:REDIS_URL::'
+            - !If
+              - HasModalSecret
+              - Name: EPOCH_RUNTIME_MODAL_ENDPOINT
+                ValueFrom: !Sub '${ModalSecretArn}:EPOCH_RUNTIME_MODAL_ENDPOINT::'
+              - !Ref AWS::NoValue
+            - !If
+              - HasModalSecret
+              - Name: EPOCH_RUNTIME_MODAL_TOKEN
+                ValueFrom: !Sub '${ModalSecretArn}:EPOCH_RUNTIME_MODAL_TOKEN::'
+              - !Ref AWS::NoValue
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref WorkerLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: worker
+
+  ApiService:
+    Type: AWS::ECS::Service
+    DependsOn: [ApiTaskDefinition]
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub epoch-${EnvironmentName}-api
+      LaunchType: FARGATE
+      DesiredCount: 1
+      TaskDefinition: !Ref ApiTaskDefinition
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups: [!Ref TaskSecurityGroup]
+          Subnets: !Ref PrivateSubnetIds
+
+  WorkerService:
+    Type: AWS::ECS::Service
+    DependsOn: [WorkerTaskDefinition]
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub epoch-${EnvironmentName}-worker
+      LaunchType: FARGATE
+      DesiredCount: !Ref WorkerDesiredCount
+      TaskDefinition: !Ref WorkerTaskDefinition
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups: [!Ref TaskSecurityGroup]
+          Subnets: !Ref PrivateSubnetIds
+
+Outputs:
+  ClusterName: { Value: !Ref Cluster }
+  ApiServiceName: { Value: !GetAtt ApiService.Name }
+  WorkerServiceName: { Value: !GetAtt WorkerService.Name }
+  ArtifactBucketName: { Value: !Ref ArtifactBucket }
+  MissionsQueueUrl: { Value: !Ref MissionsQueue }
+  RuntimeQueueUrl: { Value: !Ref RuntimeQueue }
+  DeadLetterQueueUrl: { Value: !Ref MissionsDeadLetterQueue }

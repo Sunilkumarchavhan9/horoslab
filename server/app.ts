@@ -42,6 +42,7 @@ import { securityRouter } from "./routes/security.routes";
 import { realityRouter } from "./routes/reality.routes";
 import { epochSettlementRouter } from "./routes/epoch-settlement.routes";
 import { epochAiExecutionRouter } from "./routes/epoch-ai-execution.routes";
+import { epochCanonicalRouter } from "./routes/epoch-canonical.routes";
 import { realityCompilerRouter } from "./routes/realityCompiler.routes";
 import { sdkRouter } from "./routes/sdk.routes";
 import {
@@ -234,6 +235,13 @@ export function createMemoryOsApp(): Express {
     requireAuth,
     rateLimitModerateApi,
     realityRouter,
+  );
+  app.use(
+    "/api/v1/epoch",
+    setApiVersionHeaders,
+    requireAuth,
+    rateLimitModerateApi,
+    epochCanonicalRouter,
   );
   app.use(
     "/api/v1/epoch",

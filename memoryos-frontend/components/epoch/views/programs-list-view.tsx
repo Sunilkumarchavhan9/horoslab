@@ -104,8 +104,8 @@ export function ProgramsListView({
                     ? "border-[#555] bg-[#282828] text-white font-bold"
                     : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
                   : dark
-                  ? "border-transparent text-[#788274] hover:text-white"
-                  : "border-transparent text-[#687063] hover:text-[#171a17]"
+                    ? "border-transparent text-[#788274] hover:text-white"
+                    : "border-transparent text-[#687063] hover:text-[#171a17]"
               )}
             >
               <span>{tab.label}</span>

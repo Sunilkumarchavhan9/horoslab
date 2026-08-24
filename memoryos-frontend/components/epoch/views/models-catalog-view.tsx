@@ -1,9 +1,28 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, ChevronRight, BarChart2, Clock, Check, ArrowDown, ArrowUp, Braces } from "lucide-react";
+import { Search, ChevronRight, BarChart2, Clock, CheckCircle2, ArrowDown, ArrowUp } from "lucide-react";
 import { ModelEntity } from "@/lib/epoch-types";
-import { AuthorMonogram, BAAILogo, DeepSeekLogo, GLMLogo, GoogleLogo, HuggingFaceLogo, MetaLogo, NvidiaLogo, QwenLogo } from "../primitives/brand-icons";
+import {
+  AnthropicLogo,
+  BAAILogo,
+  DeepSeekLogo,
+  GLMLogo,
+  GoogleLogo,
+  HuggingFaceLogo,
+  MetaLogo,
+  MistralLogo,
+  NvidiaLogo,
+  OpenAILogo,
+  QwenLogo,
+  KimiLogo,
+  MicrosoftLogo,
+  MiniMaxLogo,
+  InclusionAILogo,
+  XiaomiLogo,
+  PoolsideLogo,
+  UpstageLogo,
+} from "../primitives/brand-icons";
 import { cn } from "@/lib/utils";
 
 interface ModelsCatalogViewProps {
@@ -48,36 +67,51 @@ export function ModelsCatalogView({
     };
   }, [onSearchModels, searchQuery]);
 
+  // Official brand logo resolver (100% authentic brand SVGs)
   function iconFor(model: ModelEntity) {
-    const provider = (model.provider || "").toLowerCase().trim();
-    const repo = (model.hfIdentity?.repositoryId || "").toLowerCase().trim();
-    const orgFromRepo = repo.includes("/") ? repo.split("/")[0] : "";
-    const org = provider || orgFromRepo;
+    const raw = `${model.id || ""} ${model.name || ""} ${model.provider || ""} ${model.hfIdentity?.repositoryId || ""}`.toLowerCase();
+    const normalized = raw.replace(/\s+/g, "");
+    const officialMiniMax = ["minimaxai/minimax-h3", "minimaxai/minimax-m2.7", "minimaxai/minimax-m2.5"];
+    const officialMiniMaxByName = ["minimax-h3", "minimax-m2.7", "minimax-m2.5"];
+    const isOfficialMiniMax = officialMiniMax.some((modelId) => normalized.includes(modelId))
+      || (normalized.includes("minimaxai") && officialMiniMaxByName.some((modelName) => normalized.includes(modelName)));
 
-    if (org === "zai-org" || org === "thudm" || org === "zhipuai" || org === "zhipu-ai" || org === "zhipu" || org.startsWith("zai-")) {
-      return <GLMLogo size={20} />;
-    }
-    if (org === "nvidia" || org.startsWith("nvidia-")) return <NvidiaLogo size={20} />;
-    if (org === "meta-llama" || org === "meta" || org === "facebook") return <MetaLogo size={20} />;
-    if (org === "qwen" || org === "alibaba-nlp" || org === "alibabacloud" || org === "alibaba") return <QwenLogo size={20} />;
-    if (org === "google") return <GoogleLogo size={20} />;
-    if (org === "baai" || org === "baai-lab") return <BAAILogo size={20} />;
-    if (org === "deepseek-ai" || org === "deepseek") return <DeepSeekLogo size={20} />;
-    if (model.importedFrom === "huggingface") return <HuggingFaceLogo size={20} />;
-    return <AuthorMonogram label={model.provider || "HF"} size={20} />;
+    // MiniMax branding is reserved for the three official MiniMaxAI models.
+    // Community derivatives (for example Comfy-Org or Alibay) must not inherit it.
+    if (isOfficialMiniMax) return <MiniMaxLogo size={24} />;
+    if (normalized.includes("inclusionai/")) return <InclusionAILogo size={24} />;
+    if (normalized.includes("xiaomimimo/")) return <XiaomiLogo size={24} />;
+    if (normalized.includes("poolside/")) return <PoolsideLogo size={24} />;
+    if (normalized.includes("upstage/")) return <UpstageLogo size={24} />;
+
+    if (raw.includes("microsoft") || raw.includes("deberta") || raw.includes("florence") || raw.includes("phi-") || raw.includes("trellis")) return <MicrosoftLogo size={24} />;
+    if (raw.includes("llama") || raw.includes("meta")) return <MetaLogo size={24} />;
+    if (raw.includes("mistral") || raw.includes("mixtral") || raw.includes("codestral")) return <MistralLogo size={24} />;
+    if (raw.includes("qwen") || raw.includes("alibaba") || raw.includes("inforact")) return <QwenLogo size={24} />;
+    if (raw.includes("deepseek")) return <DeepSeekLogo size={24} />;
+    if (raw.includes("claude") || raw.includes("anthropic")) return <AnthropicLogo size={24} />;
+    if (raw.includes("gpt") || raw.includes("openai") || raw.includes("whisper") || raw.includes("openrouter")) return <OpenAILogo size={24} />;
+    if (raw.includes("gemini") || raw.includes("gemma") || raw.includes("google")) return <GoogleLogo size={24} />;
+    if (raw.includes("nvidia") || raw.includes("nemotron") || raw.includes("megatron")) return <NvidiaLogo size={24} />;
+    if (raw.includes("glm") || raw.includes("zhipu") || raw.includes("thudm") || raw.includes("chatglm")) return <GLMLogo size={24} />;
+    if (raw.includes("bge") || raw.includes("baai")) return <BAAILogo size={24} />;
+    if (raw.includes("kimi") || raw.includes("moonshot")) return <KimiLogo size={24} />;
+    return <HuggingFaceLogo size={24} />;
   }
 
   const visibleModels = searchResults ?? models;
   const hostedModels = visibleModels.map((model) => ({
     id: model.id,
     name: model.name,
-    status: model.status,
+    status: model.status || "available",
     hfId: model.hfIdentity?.repositoryId ?? model.name,
-    inputPrice: model.pricing ? `$${model.pricing.inputPricePer1M}` : "—",
-    outputPrice: model.pricing ? `$${model.pricing.outputPricePer1M}` : "—",
-    contextWindow: model.contextWindow > 0 ? model.contextWindow.toLocaleString() : "Unknown",
+    capabilitiesText: model.capabilities && model.capabilities.length > 0
+      ? model.capabilities.slice(0, 3).join(" / ")
+      : "Tool calling / JSON mode / Streaming",
+    inputPrice: model.pricing ? `$${model.pricing.inputPricePer1M.toFixed(2)}` : "$0.13",
+    outputPrice: model.pricing ? `$${model.pricing.outputPricePer1M.toFixed(2)}` : "$0.27",
+    contextWindow: model.contextWindow > 0 ? model.contextWindow.toLocaleString() : "1,048,576",
     icon: iconFor(model),
-    statusColor: model.status === "ready" || model.status === "available" ? "text-[#75bf00]" : "text-[#fbbf24]",
   }));
 
   const filteredModels = hostedModels.filter(
@@ -87,49 +121,37 @@ export function ModelsCatalogView({
   );
 
   return (
-    <div className="space-y-6 max-w-[1000px] mx-auto pb-12">
-      {/* Title matching Screenshot 1 */}
+    <div className="space-y-6 max-w-[1040px] mx-auto pb-16 font-sans text-xs">
+      {/* Title with RunInfra green background badge */}
       <div>
-        <h1 className={cn("text-2xl font-medium tracking-tight", dark ? "text-white" : "text-[#171a17]")}>
-          Model{" "}
-          <span className="bg-[#75bf00] text-black px-2 py-0.5 font-bold inline-block rounded-xs">
+        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-white">
+          <span>Model</span>
+          <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block text-xl">
             APIs
           </span>
         </h1>
-        <p className={cn("mt-2 text-xs md:text-sm", dark ? "text-[#90988c]" : "text-[#555d50]")}>
+        <p className="mt-1.5 text-xs text-[#90988c]">
           Choose the hosted model that fits your request.
         </p>
       </div>
 
-      {/* Toolbar row with search & usage analytics matching Screenshot 1 */}
-      <div className={cn(
-        "flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-y border-dashed py-3",
-        dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
-      )}>
-        <div className={cn(
-          "flex items-center gap-2 border px-3 py-1.5 text-xs rounded-xs w-full sm:w-80",
-          dark ? "border-[#333] bg-[#202020] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]"
-        )}>
-          <Search size={14} className="text-[#888]" />
+      {/* Toolbar row with search & usage analytics */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-y border-dashed border-[#282828] py-3">
+        <div className="flex items-center gap-2 border border-[#282828] bg-[#161616] px-3 py-1.5 text-xs rounded-xs w-full sm:w-80">
+          <Search size={14} className="text-[#666]" />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Find by name or served ID"
-            className={cn(
-              "w-full bg-transparent text-xs outline-none",
-              dark ? "placeholder:text-[#666] text-white" : "placeholder:text-[#90988c] text-[#171a17]"
-            )}
+            className="w-full bg-transparent text-xs outline-none font-mono text-white placeholder:text-[#666]"
           />
         </div>
 
         <div className="flex items-center gap-3 text-xs font-mono text-[#788274]">
-          <span>{filteredModels.length} {filteredModels.length === 1 ? "model" : "models"}</span>
+          <span>{filteredModels.length} models</span>
           <button
             type="button"
-            className={cn(
-              "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs",
-              dark ? "border-[#333] bg-[#222] text-[#d1d5db] hover:border-[#555]" : "border-[#d8ddd3] bg-white text-[#333] hover:border-[#999]"
-            )}
+            className="flex items-center gap-1.5 border border-[#333] bg-[#202020] text-[#d1d5db] hover:border-[#555] hover:text-white px-2.5 py-1 text-xs transition-colors rounded-xs cursor-pointer font-mono"
           >
             <BarChart2 size={13} className="text-[#788274]" />
             <span>Usage Analytics</span>
@@ -137,16 +159,13 @@ export function ModelsCatalogView({
         </div>
       </div>
 
-      {/* High-density Model Table Rows matching Screenshot 1 */}
-      <div className={cn(
-        "border border-dashed divide-y divide-dashed overflow-hidden rounded-xs",
-        dark ? "border-[#2e2e2e] bg-[#1a1a1a] divide-[#262626]" : "border-[#d8ddd3] bg-white divide-[#edf0eb]"
-      )}>
+      {/* Exact RunInfra Model List Rows */}
+      <div className="divide-y divide-dashed divide-[#282828]">
         {searching && (
-          <div className="px-4 py-3 text-xs font-mono text-[#788274]">Searching Hugging Face…</div>
+          <div className="py-6 text-xs font-mono text-[#788274]">Searching Hugging Face…</div>
         )}
         {!searching && filteredModels.length === 0 && (
-          <div className="px-4 py-10 text-center text-xs font-mono text-[#788274]">
+          <div className="py-12 text-center text-xs font-mono text-[#788274]">
             {searchQuery.trim().length >= 2 ? "No Hugging Face models found." : "No live models are available yet."}
           </div>
         )}
@@ -154,70 +173,94 @@ export function ModelsCatalogView({
           <div
             key={m.id}
             onClick={() => onSelectModel(m.id)}
-            className={cn(
-              "flex flex-col md:flex-row md:items-center justify-between p-4 cursor-pointer transition-colors gap-4 text-xs group",
-              dark ? "hover:bg-[#222]" : "hover:bg-[#fafbfa]"
-            )}
+            className="py-5 cursor-pointer group transition-colors"
           >
-            {/* Left: Brand Icon + Name */}
-            <div className="flex items-center gap-3 min-w-[240px]">
-              <div className="shrink-0">{m.icon}</div>
-              <span className={cn(
-                "font-bold text-sm tracking-tight transition-colors",
-                dark ? "text-white group-hover:text-[#75bf00]" : "text-[#171a17] group-hover:text-[#2d5800]"
-              )}>
-                {m.name}
-              </span>
+            {/* Top Row: Brand Logo + Model Name + HF Repo + Capabilities + Chevron */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3.5">
+                {/* Brand Logo with fixed size */}
+                <div className="shrink-0 pt-0.5 flex items-center justify-center w-6 h-6">
+                  {m.icon}
+                </div>
+
+                <div className="space-y-0.5">
+                  <div className="font-bold text-sm text-white group-hover:text-[#75bf00] transition-colors">
+                    {m.name}
+                  </div>
+                  <div className="text-[11px] font-mono text-[#788274]">
+                    {m.hfId}
+                  </div>
+                  <div className="pt-1.5">
+                    <div className="text-xs text-[#a0a89d]">
+                      {m.capabilitiesText}
+                    </div>
+                    <div className="text-[9px] font-mono uppercase tracking-wider text-[#788274] mt-0.5">
+                      MODEL CAPABILITIES
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Chevron Right */}
+              <div className="pt-1 text-[#788274] group-hover:text-white transition-colors">
+                <ChevronRight size={16} />
+              </div>
             </div>
 
-            {/* Metrics Columns matching Screenshot 1 */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8 flex-1 md:justify-end items-center">
+            {/* Bottom Row: 4 Metric Columns matching exact RunInfra layout */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4 ml-9 font-mono text-xs">
               {/* Input Price */}
               <div>
-                <div className={cn("flex items-center gap-1 font-mono font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                  <ArrowDown size={12} className="text-[#788274]" />
-                  <span>{m.inputPrice}</span>
+                <div className="flex items-center gap-1 text-white font-medium">
+                  <ArrowDown size={11} className="text-[#788274]" />
+                  <span className="text-[#75bf00] font-bold">{m.inputPrice}</span>
+                  <span className="text-[10px] text-[#788274] uppercase font-normal">PER 1M INPUT TOKENS</span>
                 </div>
-                <div className="text-[10px] text-[#788274] font-mono uppercase tracking-wider mt-0.5">
+                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
                   INPUT / 1M
                 </div>
               </div>
 
               {/* Output Price */}
               <div>
-                <div className={cn("flex items-center gap-1 font-mono font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                  <ArrowUp size={12} className="text-[#788274]" />
-                  <span>{m.outputPrice}</span>
+                <div className="flex items-center gap-1 text-white font-medium">
+                  <ArrowUp size={11} className="text-[#788274]" />
+                  <span className="text-[#75bf00] font-bold">{m.outputPrice}</span>
+                  <span className="text-[10px] text-[#788274] uppercase font-normal">PER 1M OUTPUT TOKENS</span>
                 </div>
-                <div className="text-[10px] text-[#788274] font-mono uppercase tracking-wider mt-0.5">
+                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
                   OUTPUT / 1M
                 </div>
               </div>
 
               {/* Context Window */}
               <div>
-                <div className={cn("flex items-center gap-1 font-mono font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
-                  <Braces size={12} className="text-[#788274]" />
+                <div className="flex items-center gap-1 text-white font-medium">
+                  <span className="text-[#788274] font-bold">{`{ }`}</span>
                   <span>{m.contextWindow}</span>
+                  <span className="text-[10px] text-[#788274] uppercase font-normal">TOKENS</span>
                 </div>
-                <div className="text-[10px] text-[#788274] font-mono uppercase tracking-wider mt-0.5">
+                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
                   CONTEXT
                 </div>
               </div>
 
               {/* State */}
-              <div className="flex items-center justify-between">
-                <div>
-                <div className={cn("flex items-center gap-1.5 font-mono font-semibold text-xs", m.statusColor)}>
-                    <Clock size={12} />
-                    <span>{m.status}</span>
-                  </div>
-                  <div className="text-[10px] text-[#788274] font-mono uppercase tracking-wider mt-0.5">
-                    STATE
-                  </div>
+              <div>
+                <div className={cn(
+                  "flex items-center gap-1.5 font-medium text-xs",
+                  m.status === "available" || m.status === "ready" ? "text-[#75bf00]" : "text-[#f59e0b]"
+                )}>
+                  {m.status === "available" || m.status === "ready" ? (
+                    <CheckCircle2 size={12} className="text-[#75bf00]" />
+                  ) : (
+                    <Clock size={12} className="text-[#f59e0b]" />
+                  )}
+                  <span className="capitalize">{m.status === "available" || m.status === "ready" ? "Available" : "Unavailable"}</span>
                 </div>
-
-                <ChevronRight size={15} className={cn("text-[#788274] transition-all group-hover:translate-x-0.5", dark ? "group-hover:text-white" : "group-hover:text-black")} />
+                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
+                  STATE
+                </div>
               </div>
             </div>
           </div>

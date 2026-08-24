@@ -13,11 +13,13 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowUp,
+  Cloud,
   ExternalLink,
   ChevronRight,
   Terminal,
   Clock,
   ShieldAlert,
+  ShieldCheck,
   Lock,
   Sparkles,
   Check,
@@ -52,11 +54,34 @@ import {
   Code,
   Shuffle,
   Share2,
+  Activity,
+  TrendingDown,
+  Server,
+  Cpu,
+  CheckCircle2,
+  AlertTriangle,
+  FileCheck,
+  RefreshCw,
+  Box,
+  Package,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
-import { MetaLogo, VLLMLogo } from "../primitives/brand-icons";
+import {
+  MetaLogo,
+  QwenLogo,
+  OpenAILogo,
+  NvidiaLogo,
+  GithubLogo,
+  VLLMLogo,
+  SGLangLogo,
+  DeepSeekLogo,
+} from "@/components/epoch/primitives/brand-icons";
 import { EpochBadge } from "../ui/epoch-badge";
 import { EpochButton } from "../ui/epoch-button";
 import { cn } from "@/lib/utils";
+import { ExportKitModal } from "./export-kit-modal";
+import { ReplayModal } from "./replay-modal";
 import { EpochIcon } from "@/components/epoch/primitives/epoch-logo";
 
 interface PipelineWorkspaceViewProps {
@@ -76,10 +101,11 @@ interface PipelineWorkspaceViewProps {
 export type ActiveWorkspaceTab =
   | "optimization"
   | "benchmarks"
-  | "pipeline"
-  | "test"
+  | "evidence"
   | "deploy"
   | "plan"
+  | "pipeline"
+  | "test"
   | "experiment"
   | "workspace"
   | "code"
@@ -103,7 +129,8 @@ export function PipelineWorkspaceView({
   const [openTabs, setOpenTabs] = useState<ActiveWorkspaceTab[]>([
     "optimization",
     "benchmarks",
-    "test",
+    "plan",
+    "deploy",
   ]);
   const [activeTab, setActiveTab] = useState<ActiveWorkspaceTab>("optimization");
   const [searchViewsModalOpen, setSearchViewsModalOpen] = useState(false);
@@ -113,6 +140,13 @@ export function PipelineWorkspaceView({
   const [currentTitle, setCurrentTitle] = useState(pipelineTitle);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [agentViewMode, setAgentViewMode] = useState<AgentViewMode>("split");
+
+  // Human Gate & Canary States (Blueprint Sec 48, 53, 91)
+  const [humanGateStatus, setHumanGateStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [canaryStage, setCanaryStage] = useState<number>(100);
+  const [rollbackSuccess, setRollbackSuccess] = useState<boolean>(false);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [replayModalOpen, setReplayModalOpen] = useState(false);
 
   // Dropdown states
   const [viewModeMenuOpen, setViewModeMenuOpen] = useState(false);
@@ -126,6 +160,35 @@ export function PipelineWorkspaceView({
   const [logFilter, setLogFilter] = useState("All");
   const [activeThoughtsVerbose, setActiveThoughtsVerbose] = useState(false);
   const [runSubmitting, setRunSubmitting] = useState(false);
+  const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
+  const [expandedThoughts, setExpandedThoughts] = useState<Record<string, boolean>>({});
+
+  // Token Chip Composer States (Blueprint Sec 07-09)
+  const [chipModel, setChipModel] = useState("Llama-3.1-8B");
+  const [chipRuntime, setChipRuntime] = useState("vLLM");
+  const [chipGoal, setChipGoal] = useState("Cost -30%");
+  const [chipCompute, setChipCompute] = useState("A100-40GB");
+  const [chipTarget, setChipTarget] = useState("Cloud (Managed)");
+  const [chipDropdownOpen, setChipDropdownOpen] = useState<"model" | "runtime" | "goal" | "compute" | "target" | null>(null);
+  const [recommendationDismissed, setRecommendationDismissed] = useState(false);
+
+  // Deliverable Package Tab State (Blueprint Sec 49-50)
+  const [deliverableActiveTab, setDeliverableActiveTab] = useState<"config" | "docker" | "helm" | "rollback">("config");
+  const [feedbackRating, setFeedbackRating] = useState<"liked" | "disliked" | null>("liked");
+
+  // Top Header Popovers (Images 1, 2, 3, 4)
+  const [headerPopover, setHeaderPopover] = useState<"gpu" | "github" | "feedback" | "cost" | null>(null);
+  const [feedbackCategory, setFeedbackCategory] = useState<"bug" | "feature" | "feedback" | "support">("bug");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [includeSessionData, setIncludeSessionData] = useState(true);
+
+  const toggleStep = (stepKey: string) => {
+    setExpandedSteps((prev) => ({ ...prev, [stepKey]: !prev[stepKey] }));
+  };
+
+  const toggleThought = (thoughtKey: string) => {
+    setExpandedThoughts((prev) => ({ ...prev, [thoughtKey]: !prev[thoughtKey] }));
+  };
 
   const viewMenuRef = useRef<HTMLDivElement>(null);
   const pipelineMenuRef = useRef<HTMLDivElement>(null);
@@ -245,8 +308,8 @@ export function PipelineWorkspaceView({
                 viewModeMenuOpen
                   ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
                   : dark
-                  ? "border-[#383838] bg-[#202020] text-[#aaa] hover:border-[#75bf00]"
-                  : "border-[#d8ddd3] bg-[#fafbfa] text-[#687063] hover:border-[#171a17]"
+                    ? "border-[#383838] bg-[#202020] text-[#aaa] hover:border-[#75bf00]"
+                    : "border-[#d8ddd3] bg-[#fafbfa] text-[#687063] hover:border-[#171a17]"
               )}
               title="Agent Layout View Options"
             >
@@ -462,121 +525,379 @@ export function PipelineWorkspaceView({
         {/* Center: Dynamic Stage Tabs matching Screenshots */}
         {agentViewMode !== "focus_agent" && (
           <div className={cn(
-            "flex items-center gap-1 border p-0.5 font-medium text-xs overflow-x-auto max-w-[50vw]",
+            "flex items-center gap-1 border p-0.5 font-medium text-xs max-w-[50vw] overflow-visible relative",
             dark ? "border-[#333] bg-[#1a1f1a]" : "border-[#d8ddd3] bg-[#f5f7f3]"
           )}>
-            {openTabs.map((tab) => {
-              const isActive = activeTab === tab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-1 transition-all group shrink-0",
-                    isActive
-                      ? dark
-                        ? "bg-[#111] text-white shadow-sm font-semibold border border-[#333]"
-                        : "bg-white text-[#171a17] shadow-sm font-semibold border border-[#d8ddd3]"
-                      : "text-[#687063] hover:text-[#171a17] dark:hover:text-white"
-                  )}
-                >
-                  {tab === "optimization" && <Zap size={11} className="text-[#75bf00]" />}
-                  {tab === "benchmarks" && <FlaskConical size={11} className="text-[#75bf00]" />}
-                  {tab === "pipeline" && <GitBranch size={11} />}
-                  {tab === "test" && <Play size={11} />}
-                  {tab === "deploy" && <Rocket size={11} />}
-                  {tab === "plan" && <FileText size={11} />}
-                  {tab === "experiment" && <Shuffle size={11} />}
-                  {tab === "workspace" && <Columns size={11} />}
-                  {tab === "code" && <Code size={11} />}
-                  {tab === "config" && <Sliders size={11} />}
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[40vw] scrollbar-none">
+              {openTabs.map((tab) => {
+                const isActive = activeTab === tab;
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveTab(tab)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1 text-xs font-mono transition-colors cursor-pointer rounded-sm shrink-0 whitespace-nowrap",
+                      isActive
+                        ? "bg-[#242424] text-white font-bold"
+                        : "text-[#889284] hover:text-white"
+                    )}
+                  >
+                    {tab === "optimization" && <Zap size={11} className="text-[#75bf00]" />}
+                    {tab === "benchmarks" && <FlaskConical size={11} className="text-[#75bf00]" />}
+                    {tab === "pipeline" && <GitBranch size={11} />}
+                    {tab === "test" && <Play size={11} />}
+                    {tab === "deploy" && <Rocket size={11} />}
+                    {tab === "plan" && <FileText size={11} />}
+                    {tab === "experiment" && <Shuffle size={11} />}
+                    {tab === "workspace" && <Columns size={11} />}
+                    {tab === "code" && <Code size={11} />}
+                    {tab === "config" && <Sliders size={11} />}
 
-                  <span className="capitalize">{tab}</span>
-                  
-                  {openTabs.length > 1 && (
-                    <span
-                      onClick={(e) => handleCloseTab(e, tab)}
-                      className="text-[#888] text-[10px] hover:text-white ml-0.5 opacity-60 group-hover:opacity-100"
-                    >
-                      ×
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                    <span className="capitalize">{tab}</span>
 
-            {/* New Tab indicator if search modal open */}
-            {searchViewsModalOpen && (
-              <div className={cn(
-                "flex items-center gap-1 px-2.5 py-1 font-semibold text-xs border shrink-0",
-                dark ? "border-[#75bf00] bg-[#141d14] text-white" : "border-[#75bf00] bg-[#f0fbe6] text-[#171a17]"
-              )}>
-                <span>New tab</span>
-                <span
-                  onClick={() => setSearchViewsModalOpen(false)}
-                  className="text-[#888] text-[10px] hover:text-white cursor-pointer ml-1"
-                >
-                  ×
-                </span>
-              </div>
-            )}
+                    {openTabs.length > 1 && (
+                      <span
+                        onClick={(e) => handleCloseTab(e, tab)}
+                        className="text-[#888] text-[10px] hover:text-white ml-0.5 opacity-60 group-hover:opacity-100"
+                      >
+                        ×
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
 
-            {/* Open Command Modal Button [+] */}
-            <button
-              type="button"
-              onClick={() => setSearchViewsModalOpen(true)}
-              className={cn(
-                "px-2 py-1 transition-colors shrink-0",
-                searchViewsModalOpen
-                  ? "text-[#75bf00]"
-                  : "text-[#687063] hover:text-[#171a17] dark:hover:text-white"
+              {/* New Tab indicator if search modal open */}
+              {searchViewsModalOpen && (
+                <div className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 font-semibold text-xs border shrink-0",
+                  dark ? "border-[#75bf00] bg-[#141d14] text-white" : "border-[#75bf00] bg-[#f0fbe6] text-[#171a17]"
+                )}>
+                  <span>New tab</span>
+                  <span
+                    onClick={() => setSearchViewsModalOpen(false)}
+                    className="text-[#888] text-[10px] hover:text-white cursor-pointer ml-1"
+                  >
+                    ×
+                  </span>
+                </div>
               )}
-              title="Add view or jump to tab"
-            >
-              <Plus size={12} />
-            </button>
+            </div>
+
+            {/* Open Command / Add Tab Dropdown Button [+] */}
+            <div className="relative shrink-0 border-l border-[#333] pl-1">
+              <button
+                type="button"
+                onClick={() => setSearchViewsModalOpen(!searchViewsModalOpen)}
+                className={cn(
+                  "px-2 py-1 transition-colors rounded-xs border border-transparent cursor-pointer flex items-center justify-center",
+                  searchViewsModalOpen
+                    ? "text-[#75bf00] bg-[#1c2a12] border-[#75bf00]"
+                    : "text-[#687063] hover:text-[#171a17] dark:hover:text-white"
+                )}
+                title="Add view or jump to tab"
+              >
+                <Plus size={12} />
+              </button>
+
+              {searchViewsModalOpen && (
+                <div className={cn(
+                  "absolute left-0 top-full mt-2 w-64 border shadow-2xl p-1.5 space-y-1 font-mono text-xs z-[999] rounded-xs animate-in fade-in zoom-in-95 duration-100",
+                  dark ? "border-[#333] bg-[#141414] text-white" : "border-[#c9cec4] bg-white text-[#171a17]"
+                )}>
+                  <div className="text-[10px] text-[#889284] px-2.5 py-1 uppercase tracking-wider font-semibold border-b border-[#242424] flex items-center justify-between">
+                    <span>Add Workspace Tab</span>
+                    <button type="button" onClick={() => setSearchViewsModalOpen(false)} className="hover:text-white cursor-pointer">
+                      <X size={12} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-0.5 pt-1">
+                    {[
+                      { id: "optimization" as ActiveWorkspaceTab, label: "Optimization", icon: Zap, color: "text-[#75bf00]" },
+                      { id: "benchmarks" as ActiveWorkspaceTab, label: "Benchmarks", icon: FlaskConical, color: "text-[#75bf00]" },
+                      { id: "plan" as ActiveWorkspaceTab, label: "Execution Plan", icon: FileText, color: "text-white" },
+                      { id: "deploy" as ActiveWorkspaceTab, label: "Deploy Options", icon: Rocket, color: "text-white" },
+                      { id: "experiment" as ActiveWorkspaceTab, label: "Experiment", icon: Shuffle, color: "text-[#e6b800]" },
+                      { id: "code" as ActiveWorkspaceTab, label: "Generated Code", icon: Code, color: "text-white" },
+                      { id: "config" as ActiveWorkspaceTab, label: "Serving Config", icon: Sliders, color: "text-white" },
+                    ].map((item) => {
+                      const ItemIcon = item.icon;
+                      const isAlreadyOpen = openTabs.includes(item.id);
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => handleOpenTab(item.id)}
+                          className={cn(
+                            "flex items-center justify-between px-2.5 py-1.5 rounded-xs cursor-pointer transition-colors text-xs",
+                            activeTab === item.id
+                              ? dark ? "bg-[#282828] text-white font-bold" : "bg-[#f0f4ee] font-bold"
+                              : dark ? "hover:bg-[#202020] text-[#a0a89d] hover:text-white" : "hover:bg-[#f8faf7] text-[#555]"
+                          )}
+                        >
+                          <div className="flex items-center gap-2">
+                            <ItemIcon size={12} className={item.color} />
+                            <span>{item.label}</span>
+                          </div>
+                          {isAlreadyOpen && (
+                            <span className="text-[9px] text-[#75bf00] font-bold uppercase">Active</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Right: Telemetry & Actions matching Screenshots 1, 2, 3, 4, 5 */}
+        {/* Right: Telemetry & Actions matching Screenshots 1, 2, 3, 4 */}
         <div className="flex items-center gap-2 font-mono text-xs">
-          <div className={cn(
-            "flex items-center gap-1.5 border px-2 py-1",
-            dark ? "border-[#333] bg-[#1a1f1a]" : "border-[#d8ddd3] bg-[#fafbfa]"
-          )}>
-            <span className="h-2 w-2 rounded-full bg-[#75bf00]" />
-            <span className="font-bold text-[11px]">1</span>
+          {/* 1. GPU Allocation Widget & Popover Dropdown (Image 2) */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setHeaderPopover(headerPopover === "gpu" ? null : "gpu")}
+              className={cn(
+                "flex items-center gap-1.5 border px-2 py-1 transition-colors cursor-pointer rounded-xs",
+                headerPopover === "gpu"
+                  ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
+                  : dark ? "border-[#383838] bg-[#1a1f1a] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
+              )}
+            >
+              <NvidiaLogo size={13} />
+              <span className="font-bold text-[11px]">1</span>
+            </button>
+
+            {headerPopover === "gpu" && (
+              <div className="absolute right-0 top-full mt-2 w-72 border border-dashed border-[#383838] bg-[#141414] p-3 rounded-sm font-mono text-xs z-50 shadow-2xl space-y-2.5">
+                <div className="flex items-center justify-between text-[#889284] text-[11px]">
+                  <span>Session GPUs</span>
+                  <span>Planned (estimate)</span>
+                </div>
+                <div className="flex items-center justify-between border border-[#282828] bg-[#1a1a1a] p-2 rounded-sm">
+                  <div className="flex items-center gap-2">
+                    <NvidiaLogo size={14} />
+                    <span className="font-bold text-white">A100</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px]">
+                    <span className="text-white font-bold">40 GB</span>
+                    <span className="text-[#889284]">High-end</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <button
-            type="button"
-            className={cn(
-              "flex items-center gap-1 border px-2 py-1 transition-colors",
-              dark ? "border-[#333] bg-[#1a1f1a] hover:border-white" : "border-[#d8ddd3] bg-[#fafbfa] hover:border-[#171a17]"
-            )}
-          >
-            <GitBranch size={11} />
-            <span className="font-sans text-[11px]">GitHub</span>
-          </button>
+          {/* 2. GitHub Push Code Popover Dropdown (Image 1) */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setHeaderPopover(headerPopover === "github" ? null : "github")}
+              className={cn(
+                "flex items-center gap-1.5 border px-2 py-1 transition-colors cursor-pointer rounded-xs",
+                headerPopover === "github"
+                  ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
+                  : dark ? "border-[#383838] bg-[#1a1f1a] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
+              )}
+            >
+              <GithubLogo size={13} />
+              <span className="font-sans text-[11px]">GitHub</span>
+            </button>
 
-          <button
-            type="button"
-            className={cn(
-              "flex items-center gap-1 border px-2 py-1 transition-colors",
-              dark ? "border-[#333] bg-[#1a1f1a] hover:border-white" : "border-[#d8ddd3] bg-[#fafbfa] hover:border-[#171a17]"
+            {headerPopover === "github" && (
+              <div className="absolute right-0 top-full mt-2 w-80 border border-dashed border-[#383838] bg-[#141414] p-4 rounded-sm font-mono text-xs z-50 shadow-2xl space-y-3">
+                <h4 className="font-bold text-white text-sm">Push your code to GitHub</h4>
+                <p className="text-[#889284] text-[11px] leading-relaxed">
+                  Send this session&apos;s generated pipeline files to a repository you own, with the optimization details in the commit message when available.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => alert("Connecting GitHub OAuth...")}
+                  className="w-full border border-[#383838] bg-[#222] hover:bg-[#282828] text-white font-bold py-1.5 rounded-sm flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <GithubLogo size={14} />
+                  <span>Connect GitHub</span>
+                </button>
+              </div>
             )}
-          >
-            <MessageSquare size={11} />
-            <span className="font-sans text-[11px]">Feedback</span>
-          </button>
+          </div>
 
-          <div className={cn(
-            "border px-2 py-1 font-mono text-[11px]",
-            dark ? "border-[#333] bg-[#141814] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-          )}>
-            <span>Session • </span>
-            <span className="text-[#75bf00] font-bold">$0.49</span>
+          {/* 3. Send Feedback Popover Dropdown (Image 3) */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setHeaderPopover(headerPopover === "feedback" ? null : "feedback")}
+              className={cn(
+                "flex items-center gap-1 border px-2 py-1 transition-colors cursor-pointer rounded-xs",
+                headerPopover === "feedback"
+                  ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
+                  : dark ? "border-[#383838] bg-[#1a1f1a] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
+              )}
+            >
+              <MessageSquare size={11} />
+              <span className="font-sans text-[11px]">Feedback</span>
+            </button>
+
+            {headerPopover === "feedback" && (
+              <div className="absolute right-0 top-full mt-2 w-88 border border-dashed border-[#383838] bg-[#141414] p-4 rounded-sm font-mono text-xs z-50 shadow-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-white">Send Feedback</h4>
+                  <button type="button" onClick={() => setHeaderPopover(null)} className="text-[#889284] hover:text-white cursor-pointer">
+                    <X size={13} />
+                  </button>
+                </div>
+
+                {/* Category Tabs */}
+                <div className="flex items-center gap-1 overflow-x-auto">
+                  {[
+                    { id: "bug", label: "🪲 Bug" },
+                    { id: "feature", label: "💡 Feature" },
+                    { id: "feedback", label: "Feedback" },
+                    { id: "support", label: "🎧 Support" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setFeedbackCategory(tab.id as typeof feedbackCategory)}
+                      className={cn(
+                        "px-2.5 py-1 text-[11px] font-mono rounded-sm border cursor-pointer transition-colors whitespace-nowrap",
+                        feedbackCategory === tab.id
+                          ? "border-[#3a3a3a] bg-[#242424] text-white font-bold"
+                          : "border-transparent text-[#889284] hover:text-white"
+                      )}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Textarea */}
+                <textarea
+                  value={feedbackMessage}
+                  onChange={(e) => setFeedbackMessage(e.target.value)}
+                  placeholder="Describe the issue, suggestion, or question..."
+                  rows={3}
+                  className="w-full border border-[#282828] bg-[#1a1a1a] p-2.5 text-xs text-white placeholder-[#666] outline-none rounded-sm font-mono"
+                />
+
+                {/* Include session info toggle */}
+                <div className="flex items-center justify-between pt-1">
+                  <div>
+                    <span className="text-white text-xs block font-bold">Include session info</span>
+                    <span className="text-[10px] text-[#788274] block">URL, browser, and screen size to help us debug.</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIncludeSessionData(!includeSessionData)}
+                    className={cn(
+                      "w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center",
+                      includeSessionData ? "bg-[#75bf00] justify-end" : "bg-[#333] justify-start"
+                    )}
+                  >
+                    <span className="w-4 h-4 rounded-full bg-black block" />
+                  </button>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="button"
+                  disabled={!feedbackMessage.trim()}
+                  onClick={() => {
+                    alert("Feedback submitted successfully!");
+                    setFeedbackMessage("");
+                    setHeaderPopover(null);
+                  }}
+                  className={cn(
+                    "w-full border py-1.5 rounded-sm font-bold text-xs cursor-pointer transition-colors",
+                    feedbackMessage.trim()
+                      ? "border-[#75bf00] bg-[#75bf00] text-black"
+                      : "border-[#333] bg-[#222] text-[#666] cursor-not-allowed"
+                  )}
+                >
+                  Submit
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 4. Session Cost & Billing Popover Dropdown (Image 4) */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setHeaderPopover(headerPopover === "cost" ? null : "cost")}
+              className={cn(
+                "flex items-center gap-1 border px-2 py-1 font-mono text-[11px] transition-colors cursor-pointer rounded-xs",
+                headerPopover === "cost"
+                  ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
+                  : dark ? "border-[#383838] bg-[#141814] text-[#889284] hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
+              )}
+            >
+              <span>Session • </span>
+              <span className="text-[#75bf00] font-bold">$0.49</span>
+            </button>
+
+            {headerPopover === "cost" && (
+              <div className="absolute right-0 top-full mt-2 w-80 border border-dashed border-[#383838] bg-[#141414] p-4 rounded-sm font-mono text-xs z-50 shadow-2xl space-y-4">
+                <div>
+                  <span className="text-[#889284] text-[11px] block">Session cost</span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xl font-bold text-white">$0.49</span>
+                    <span className="flex items-center gap-1 text-[11px] text-[#889284]">
+                      <span className="h-2 w-2 rounded-full bg-[#889284]" />
+                      Idle
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border-t border-[#242424] pt-3">
+                  <span className="text-[#889284] text-[11px] block">Balance</span>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-white">Balance remaining</span>
+                    <span className="font-bold text-white">$9.51</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-[#242424] pt-3 space-y-1">
+                  <span className="text-[#889284] text-[11px] block">Compute used</span>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-white flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#889284]" />
+                      Agent tokens
+                    </span>
+                    <span className="font-bold text-white">$0.49</span>
+                  </div>
+                  <p className="text-[10px] text-[#666] leading-tight pt-0.5">
+                    Each message holds $1.00 and settles to actual token cost (typically under $0.20).
+                  </p>
+                </div>
+
+                <div className="border-t border-[#242424] pt-3 space-y-1.5 text-[11px]">
+                  <span className="text-[#889284] block">Phases</span>
+                  {[
+                    "Hardware selection",
+                    "Baseline profile",
+                    "Apply Serving config tuning",
+                    "Benchmark Serving config tuning",
+                    "Compare baseline vs optimized",
+                  ].map((phase) => (
+                    <div key={phase} className="flex items-center justify-between text-[#889284]">
+                      <span>• {phase}</span>
+                      <span>-</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-[#242424] pt-2">
+                  <a href="#billing" className="text-[#75bf00] hover:underline text-xs flex items-center gap-1 font-bold">
+                    <span>View full billing</span>
+                    <ExternalLink size={11} />
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -587,13 +908,13 @@ export function PipelineWorkspaceView({
         {agentViewMode !== "hide_agent" && (
           <div className={cn(
             "border-r flex flex-col justify-between shrink-0 transition-all",
-            agentViewMode === "focus_agent" ? "w-full" : "w-full md:w-[480px] lg:w-[540px]",
+            agentViewMode === "focus_agent" ? "w-full" : "w-full md:w-[620px] lg:w-[680px] xl:w-[700px]",
             dark ? "border-[#282828] bg-[#151515]" : "border-[#d8ddd3] bg-white"
           )}>
             {/* Stream Log Scroll Area matching uploaded image */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 font-sans text-xs">
               <div className={cn(agentViewMode === "focus_agent" ? "max-w-[760px] mx-auto space-y-4" : "space-y-4")}>
-                
+
                 {/* User Prompt Message Card (Right Aligned matching Reference Screenshot) */}
                 <div className="flex justify-end pt-1">
                   <div className={cn(
@@ -622,217 +943,844 @@ export function PipelineWorkspaceView({
                   </div>
                 </div>
 
-                {/* Thought 1 */}
-                <div className="space-y-1.5 pt-2">
-                  <div className="flex items-center justify-between text-[11px] text-[#788274] font-mono">
-                    <span className="truncate">&gt; Thoughts The request is execution-grade. Llama 3.1 8B, vLLM, cost-first GPU selection,...</span>
+                {/* Thought 1: Exact Match to Reference Screenshot media_1787256346747.png */}
+                <div
+                  onClick={() => toggleThought("t1")}
+                  className="space-y-2 py-1.5 cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <div className="flex items-center gap-1.5 truncate">
+                      {expandedThoughts["t1"] !== false ? (
+                        <ChevronDown size={14} className="text-[#888888] shrink-0" />
+                      ) : (
+                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                      )}
+                      <span className="font-bold text-white">Thoughts</span>
+                      <span className="text-[#888888] truncate pl-1 font-mono">
+                        The request is execution-grade: Llama 3.1 8B, vLLM, cost-first GPU selection,...
+                      </span>
+                    </div>
                     <button
                       type="button"
-                      onClick={() => setActiveThoughtsVerbose(!activeThoughtsVerbose)}
-                      className="text-[#889284] hover:text-white shrink-0 ml-2 font-sans text-[11px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleThought("t1");
+                      }}
+                      className="text-[#888888] hover:text-white shrink-0 ml-2 font-mono text-xs cursor-pointer"
                     >
                       Verbose
                     </button>
                   </div>
-                  <p className={cn("text-xs font-semibold leading-relaxed", dark ? "text-white" : "text-[#171a17]")}>
-                    I&apos;m recording the cost-first objective and exact model scope before sizing feasible GPUs.
-                  </p>
+
+                  {expandedThoughts["t1"] !== false && (
+                    <p className="text-xs text-[#a0a89d] leading-relaxed font-sans pl-5 animate-in fade-in duration-150">
+                      The request is execution-grade: Llama 3.1 8B, vLLM, cost-first GPU selection, managed cloud deployment, prototype scale, 2,048 max context, 1 concurrency. I&apos;m recording the cost-first objective and exact model scope before sizing feasible GPUs.
+                    </p>
+                  )}
                 </div>
 
-                {/* Step 1: Requirements collected */}
-                <div className={cn(
-                  "border rounded-lg p-3 flex items-start justify-between cursor-pointer transition-colors hover:border-[#444]",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
-                )}>
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded border text-xs",
-                      dark ? "border-[#383838] bg-[#151515] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-                    )}>
-                      <FileText size={12} />
+                {/* Step 1: Requirements collected (Exact Screenshot Match - 0 Border - Sharp Corners) */}
+                <div
+                  onClick={() => toggleStep("requirements")}
+                  className={cn(
+                    "rounded-none p-4 cursor-pointer transition-all",
+                    dark ? "bg-[#141414] hover:bg-[#181818]" : "bg-[#fafbfa]"
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3.5">
+                      <div className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-none text-xs mt-0.5",
+                        dark ? "bg-[#222222] text-[#999999]" : "bg-[#f5f7f3] text-[#687063]"
+                      )}>
+                        <FileText size={15} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs text-white">Requirements collected</div>
+                        <div className="text-[11px] text-[#788274] leading-relaxed pt-0.5">
+                          Collected: use case, sector, scale, deployment, goal, format, preferred models, runs on, concurrency, context window, mode
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-0.5">
-                      <div className="font-semibold text-xs text-white">Requirements collected</div>
-                      <div className="text-[11px] text-[#788274] leading-relaxed">
+                    {expandedSteps["requirements"] ? (
+                      <ChevronDown size={15} className="text-[#75bf00] shrink-0 mt-1" />
+                    ) : (
+                      <ChevronRight size={15} className="text-[#888888] shrink-0 mt-1" />
+                    )}
+                  </div>
+
+                  {expandedSteps["requirements"] && (
+                    <div className="mt-3.5 pt-3.5 border-t border-[#222222] space-y-3 font-mono text-[11px] animate-in fade-in duration-150">
+                      <div className="text-[11px] text-[#889284] font-sans">
                         Collected: use case, sector, scale, deployment, goal, format, preferred models, runs on, concurrency, context window, mode
                       </div>
-                    </div>
-                  </div>
-                  <ChevronRight size={14} className="text-[#788274] shrink-0 mt-0.5" />
-                </div>
 
-                {/* Step 2: Intake updated */}
-                <div className={cn(
-                  "border rounded-lg p-3 flex items-center justify-between cursor-pointer transition-colors hover:border-[#444]",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
-                )}>
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded border text-xs",
-                      dark ? "border-[#383838] bg-[#151515] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-                    )}>
-                      <FileText size={12} />
-                    </div>
-                    <span className="font-semibold text-xs text-white">Intake updated</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-[11px] font-mono text-[#788274]">
-                    <span>Other, Prototype, Cloud (Managed), Low Cost</span>
-                    <ChevronRight size={13} className="text-[#788274]" />
-                  </div>
-                </div>
-
-                {/* Thought 2 */}
-                <div className="space-y-1.5 pt-1">
-                  <div className="flex items-center justify-between text-[11px] text-[#788274] font-mono">
-                    <span className="truncate">&gt; Thoughts The model resolved successfully and the requested numerical fields were...</span>
-                    <button
-                      type="button"
-                      onClick={() => setActiveThoughtsVerbose(!activeThoughtsVerbose)}
-                      className="text-[#889284] hover:text-white shrink-0 ml-2 font-sans text-[11px]"
-                    >
-                      Verbose
-                    </button>
-                  </div>
-                  <p className={cn("text-xs font-semibold leading-relaxed", dark ? "text-white" : "text-[#171a17]")}>
-                    I&apos;m sizing the 8B model across compatible GPU tiers to identify the lowest-cost fit.
-                  </p>
-                </div>
-
-                {/* Step 3: GPU feasibility */}
-                <div className={cn(
-                  "border rounded-lg p-3 flex items-center justify-between cursor-pointer transition-colors hover:border-[#444]",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
-                )}>
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded border text-xs",
-                      dark ? "border-[#383838] bg-[#151515] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-                    )}>
-                      <Search size={12} />
-                    </div>
-                    <span className="font-semibold text-xs text-white">GPU feasibility</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs font-mono text-[#e0e4dd]">
-                    <span>A100-40GB</span>
-                    <ChevronRight size={13} className="text-[#788274]" />
-                  </div>
-                </div>
-
-                {/* Thought 3 */}
-                <div className="space-y-1 pt-1">
-                  <div className="flex items-center justify-between text-[11px] text-[#788274] font-mono">
-                    <span className="truncate">&gt; Thoughts The feasibility result confirms that the model&apos;s catalog weight size is 16GB...</span>
-                    <button
-                      type="button"
-                      onClick={() => setActiveThoughtsVerbose(!activeThoughtsVerbose)}
-                      className="text-[#889284] hover:text-white shrink-0 ml-2 font-sans text-[11px]"
-                    >
-                      Verbose
-                    </button>
-                  </div>
-                </div>
-
-                {/* Step 4: Plan drafted */}
-                <div className={cn(
-                  "border rounded-lg p-3 flex items-center justify-between cursor-pointer transition-colors hover:border-[#444]",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
-                )}>
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded border text-xs",
-                      dark ? "border-[#383838] bg-[#151515] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-                    )}>
-                      <Layers size={12} />
-                    </div>
-                    <span className="font-semibold text-xs text-white">Plan drafted</span>
-                  </div>
-                  <ChevronRight size={13} className="text-[#788274]" />
-                </div>
-
-                {/* Step 5: Plan ready matching exact reference screenshot */}
-                <div className={cn(
-                  "border rounded-lg p-4 space-y-3.5 shadow-sm",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#c9cec4] bg-white"
-                )}>
-                  <div className="flex items-center justify-between border-b border-[#edf0eb] dark:border-[#282828] pb-2.5">
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded border text-xs",
-                        dark ? "border-[#383838] bg-[#151515] text-[#889284]" : "border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
-                      )}>
-                        <Layers size={12} />
+                      {/* CLI Command Block */}
+                      <div className="p-3.5 border border-[#222222] bg-[#050505] rounded-none space-y-1.5 text-[#75bf00] overflow-x-auto text-[10.5px] leading-relaxed">
+                        <div>$ set-intake \</div>
+                        <div className="pl-4 text-[#a0a89d]">--mode optimize \</div>
+                        <div className="pl-4 text-[#a0a89d]">--sector other \</div>
+                        <div className="pl-4 text-[#a0a89d]">--use-case &apos;general inference&apos; \</div>
+                        <div className="pl-4 text-[#a0a89d]">--output-target managed_endpoint \</div>
+                        <div className="pl-4 text-[#a0a89d]">--preferred-gpu auto \</div>
+                        <div className="pl-4 text-[#a0a89d]">--target-vram-gb 16 \</div>
+                        <div className="pl-4 text-[#a0a89d]">--expected-scale prototype \</div>
+                        <div className="pl-4 text-[#a0a89d]">--max-context-len 2048 \</div>
+                        <div className="pl-4 text-[#a0a89d]">--target-latency-ms 500 \</div>
+                        <div className="pl-4 text-[#a0a89d]">--deployment-target cloud_managed \</div>
+                        <div className="pl-4 text-[#a0a89d]">--optimization-goal cost \</div>
+                        <div className="pl-4 text-[#a0a89d]">--deployment-profile production \</div>
+                        <div className="pl-4 text-[#a0a89d]">--expected-concurrency 1</div>
                       </div>
-                      <span className="font-semibold text-xs text-white">Plan ready</span>
+
+                      {/* JSON Intake Payload Block matching RunInfra scroll UI */}
+                      <div className="border border-[#222222] bg-[#050505] rounded-none text-[#a0a89d] space-y-1 text-[10.5px] max-h-52 overflow-auto p-3.5 [scrollbar-width:thin] [scrollbar-color:#2a2a2a_#050505] leading-relaxed">
+                        <div>{"{"}</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;intake&quot;:</span> {"{"}</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;mode&quot;:</span> <span className="text-[#75bf00]">&quot;optimize&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;sector&quot;:</span> <span className="text-[#75bf00]">&quot;other&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;useCase&quot;:</span> <span className="text-[#75bf00]">&quot;general inference&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;outputTarget&quot;:</span> <span className="text-[#75bf00]">&quot;managed_endpoint&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;expectedScale&quot;:</span> <span className="text-[#75bf00]">&quot;prototype&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;maxContextLen&quot;:</span> <span className="text-white">2048</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;deploymentTarget&quot;:</span> <span className="text-[#75bf00]">&quot;cloud_managed&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;optimizationGoal&quot;:</span> <span className="text-[#75bf00]">&quot;cost&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;pipelineIntentV1&quot;:</span> {"{"}</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;source&quot;:</span> <span className="text-[#75bf00]">&quot;deterministic-intake&quot;</span>,</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;version&quot;:</span> <span className="text-white">1</span>,</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;topology&quot;:</span> <span className="text-[#75bf00]">&quot;single-model&quot;</span>,</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;modalities&quot;:</span> [<span className="text-[#75bf00]">&quot;llm&quot;</span>],</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;fingerprint&quot;:</span> <span className="text-[#75bf00]">&quot;v1:single-model:llm&quot;</span></div>
+                        <div className="pl-6">{"}"},</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;deploymentProfile&quot;:</span> <span className="text-[#75bf00]">&quot;production&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;expectedConcurrency&quot;:</span> <span className="text-white">1</span></div>
+                        <div className="pl-3">{"}"},</div>
+                        <div className="pl-3"><span className="text-[#75bf00]">&quot;success&quot;:</span> <span className="text-white">true</span>,</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;intakeWarnings&quot;:</span> [</div>
+                        <div className="pl-6 text-amber-400/90">&quot;targetLatencyMs=500 was NOT saved: no user message states this latency target. Ask the user for their actual target.&quot;,</div>
+                        <div className="pl-6 text-amber-400/90">&quot;targetVramGb=16 was NOT saved: no user message states this VRAM budget. Ask the user for their actual VRAM budget.&quot;,</div>
+                        <div className="pl-6 text-amber-400/90">&quot;preferredGpu=auto was NOT saved: no user message names this GPU. GPU selection stays auto; ask the user.&quot;</div>
+                        <div className="pl-3">],</div>
+                        <div className="pl-3"><span className="text-[#75bf00]">&quot;readyToConfirm&quot;:</span> <span className="text-white">true</span></div>
+                        <div>{"}"}</div>
+                      </div>
+
+                      {/* Exit status tag outside scrollbox */}
+                      <div className="text-[10.5px] font-mono text-[#75bf00] pt-0.5">exit 0</div>
                     </div>
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 font-mono text-[11px] text-[#788274] hover:text-white"
-                    >
-                      <span>1 trial run / review / 5 phases / ~6m</span>
-                      <ChevronDown size={12} />
-                    </button>
-                  </div>
-
-                  <div className="space-y-2.5 text-xs">
-                    <p className="leading-relaxed font-normal text-[#e0e4dd]">
-                      Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default; vLLM is locked by user. GPU chosen by feasibility: 1x A100-40GB for the lowest modeled per-request cost and 19.5GB peak-VRAM fit.
-                    </p>
-
-                    <p className="text-[#788274] leading-relaxed">
-                      Recommended path: vLLM on A100-40GB. Review the plan before execution.
-                    </p>
-
-                    <div className="border-t border-dashed border-[#d8ddd3] dark:border-[#282828] pt-3 text-[11px] font-sans text-[#e0e4dd]">
-                      This uses 1 of your 3 remaining trial runs. No charge.
-                    </div>
-                  </div>
-
-                  {/* Plan Action Buttons matching screenshot */}
-                  <div className="border-t border-dashed border-[#d8ddd3] dark:border-[#282828] pt-3 flex items-center justify-end gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (agentViewMode === "focus_agent") setAgentViewMode("split");
-                        setActiveTab("plan");
-                      }}
-                      className={cn(
-                        "flex items-center gap-1.5 border px-3 py-1.5 text-xs rounded transition-colors",
-                        dark ? "border-[#383838] bg-[#151515] text-[#d0d4cd] hover:border-white hover:text-white" : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-black"
-                      )}
-                    >
-                      <ExternalLink size={12} />
-                      <span>Open Plan</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => void acceptAndRun()}
-                      disabled={runSubmitting}
-                      className={cn(
-                        "flex items-center gap-1.5 border px-3.5 py-1.5 text-xs rounded transition-colors",
-                        dark ? "border-[#383838] bg-[#151515] text-white hover:border-white hover:bg-[#282828]" : "border-[#171a17] bg-[#171a17] text-white"
-                      )}
-                    >
-                      <Play size={11} className="fill-current text-[#75bf00]" />
-                      <span>{runSubmitting ? "Submitting..." : "Accept and run"}</span>
-                    </button>
-                  </div>
+                  )}
                 </div>
 
-                {/* Bottom Feedback Actions Icon Row matching Screenshot */}
-                <div className="flex items-center gap-3 pt-1 text-[#788274]">
-                  <button type="button" className="hover:text-white transition-colors" title="Copy">
-                    <Copy size={13} />
-                  </button>
-                  <button type="button" className="hover:text-white transition-colors" title="Good response">
-                    <span className="text-xs">👍</span>
-                  </button>
-                  <button type="button" className="hover:text-white transition-colors" title="Bad response">
-                    <span className="text-xs">👎</span>
-                  </button>
-                  <button type="button" className="hover:text-white transition-colors" title="Regenerate">
-                    <RotateCcw size={13} />
-                  </button>
+                {/* Step 2: Intake updated (Exact Screenshot Match - 0 Border - Sharp Corners) */}
+                <div
+                  onClick={() => toggleStep("intake")}
+                  className={cn(
+                    "rounded-none p-4 cursor-pointer transition-all",
+                    dark ? "bg-[#141414] hover:bg-[#181818]" : "bg-[#fafbfa]"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3.5">
+                      <div className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-none text-xs",
+                        dark ? "bg-[#222222] text-[#999999]" : "bg-[#f5f7f3] text-[#687063]"
+                      )}>
+                        <FileText size={15} />
+                      </div>
+                      <span className="font-bold text-xs text-white">Intake updated</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] font-mono text-[#788274]">
+                      <span>Other, Prototype, Cloud (Managed), Low Cost</span>
+                      {expandedSteps["intake"] ? (
+                        <ChevronDown size={15} className="text-[#75bf00]" />
+                      ) : (
+                        <ChevronRight size={15} className="text-[#888888]" />
+                      )}
+                    </div>
+                  </div>
+
+                  {expandedSteps["intake"] && (
+                    <div className="mt-3.5 pt-3.5 border-t border-[#222222] space-y-2 font-sans text-[11px] text-[#a0a89d] animate-in fade-in duration-150">
+                      <div className="flex justify-between py-1 border-b border-[#222]">
+                        <span className="text-[#788274]">Use Case</span>
+                        <span className="text-white font-mono">general inference</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-[#222]">
+                        <span className="text-[#788274]">Sector</span>
+                        <span className="text-white font-mono">Other</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-[#222]">
+                        <span className="text-[#788274]">Scale</span>
+                        <span className="text-white font-mono">Prototype</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-[#222]">
+                        <span className="text-[#788274]">Deployment</span>
+                        <span className="text-white font-mono">Cloud (Managed)</span>
+                      </div>
+                      <div className="flex justify-between py-1">
+                        <span className="text-[#788274]">Goal</span>
+                        <span className="text-white font-mono">Low Cost</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Thought 2: Exact Match to Reference Screenshot media_1787256346747.png */}
+                <div
+                  onClick={() => toggleThought("t2")}
+                  className="space-y-2 py-1.5 cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <div className="flex items-center gap-1.5 truncate">
+                      {expandedThoughts["t2"] !== false ? (
+                        <ChevronDown size={14} className="text-[#888888] shrink-0" />
+                      ) : (
+                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                      )}
+                      <span className="font-bold text-white">Thoughts</span>
+                      <span className="text-[#888888] truncate pl-1 font-mono">
+                        The model resolved successfully and the requested numerical fields were...
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleThought("t2");
+                      }}
+                      className="text-[#888888] hover:text-white shrink-0 ml-2 font-mono text-xs cursor-pointer"
+                    >
+                      Verbose
+                    </button>
+                  </div>
+
+                  {expandedThoughts["t2"] !== false && (
+                    <p className="text-xs text-[#a0a89d] leading-relaxed font-sans pl-5 animate-in fade-in duration-150">
+                      The model resolved successfully and the requested numerical fields were parsed. I&apos;m sizing the 8B model across compatible GPU tiers to identify the lowest-cost fit.
+                    </p>
+                  )}
+                </div>
+
+                {/* Step 3: GPU feasibility (Exact Screenshot Match - 0 Border - Sharp Corners) */}
+                <div
+                  onClick={() => toggleStep("gpu")}
+                  className={cn(
+                    "rounded-none p-4 cursor-pointer transition-all",
+                    dark ? "bg-[#141414] hover:bg-[#181818]" : "bg-[#fafbfa]"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3.5">
+                      <div className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-none text-xs",
+                        dark ? "bg-[#222222] text-[#999999]" : "bg-[#f5f7f3] text-[#687063]"
+                      )}>
+                        <Search size={15} />
+                      </div>
+                      <span className="font-bold text-xs text-white">GPU feasibility</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs font-mono text-[#e0e4dd]">
+                      <span>A100-40GB</span>
+                      {expandedSteps["gpu"] ? (
+                        <ChevronDown size={15} className="text-[#75bf00]" />
+                      ) : (
+                        <ChevronRight size={15} className="text-[#888888]" />
+                      )}
+                    </div>
+                  </div>
+
+                  {expandedSteps["gpu"] && (
+                    <div className="mt-3 pt-3 border-t border-[#2a2a2a] space-y-3 font-sans text-[11px] animate-in fade-in duration-150">
+                      <p className="text-[#a0a89d] italic leading-relaxed">
+                        8B model (16GB weights from catalog weight size) fits on A100-40GB. Real latency and cost will be measured during the runbook.
+                      </p>
+
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 border border-[#383838] bg-[#181818] text-white font-mono text-[10.5px] rounded-xs">
+                          Recommended: 1x A100-40GB
+                        </span>
+                      </div>
+
+                      <p className="text-[10px] text-[#666] italic">
+                        Estimated from model shape and hardware specs, not measured. Real numbers arrive once the runbook profiles this on a GPU.
+                      </p>
+
+                      {/* Feasibility Candidate Table */}
+                      <div className="border border-[#262626] rounded-xs overflow-hidden font-mono text-[10.5px]">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-[#262626] bg-[#181818] text-[#788274]">
+                              <th className="p-2 font-normal">GPU</th>
+                              <th className="p-2 font-normal">Latency</th>
+                              <th className="p-2 font-normal">VRAM</th>
+                              <th className="p-2 font-normal">$/req</th>
+                              <th className="p-2 font-normal text-right">Verdict</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-[#222] text-[#d0d4cd]">
+                            <tr className="hover:bg-[#1c1c1c]">
+                              <td className="p-2 font-semibold">2× T4</td>
+                              <td className="p-2">9.6-14.4s</td>
+                              <td className="p-2">19.5GB</td>
+                              <td className="p-2">$0.0039</td>
+                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#888]">Comfortable</span></td>
+                            </tr>
+                            <tr className="hover:bg-[#1c1c1c]">
+                              <td className="p-2 font-semibold">L4</td>
+                              <td className="p-2">20.3-30.5s</td>
+                              <td className="p-2">19.5GB</td>
+                              <td className="p-2">$0.0056</td>
+                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#888]">Comfortable</span></td>
+                            </tr>
+                            <tr className="hover:bg-[#1c1c1c]">
+                              <td className="p-2 font-semibold">A10G</td>
+                              <td className="p-2">10.2-15.2s</td>
+                              <td className="p-2">19.5GB</td>
+                              <td className="p-2">$0.0039</td>
+                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#888]">Comfortable</span></td>
+                            </tr>
+                            <tr className="bg-[#1b2416] border-l-2 border-l-[#75bf00]">
+                              <td className="p-2 font-bold text-white flex items-center gap-1.5">
+                                <span>A100-40GB</span>
+                                <span className="border border-[#384820] bg-[#182613] text-[#75bf00] px-1 text-[9px] rounded-xs font-normal">Recommended</span>
+                              </td>
+                              <td className="p-2 text-[#75bf00] font-semibold">3.9-5.9s</td>
+                              <td className="p-2">19.5GB</td>
+                              <td className="p-2 font-bold text-[#75bf00]">$0.0029</td>
+                              <td className="p-2 text-right"><span className="border border-[#384820] bg-[#182613] text-[#75bf00] px-1.5 py-0.5 rounded-xs">Comfortable</span></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <p className="text-[10px] text-[#666] italic">
+                        Run a measured benchmark before treating this as production evidence.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Thought 3: 100% Exact Match to Reference Screenshot media_1787256346747.png */}
+                <div
+                  onClick={() => toggleThought("t3")}
+                  className="space-y-2 py-1.5 cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <div className="flex items-center gap-1.5 truncate">
+                      {expandedThoughts["t3"] !== false ? (
+                        <ChevronDown size={14} className="text-[#888888] shrink-0" />
+                      ) : (
+                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                      )}
+                      <span className="font-bold text-white">Thoughts</span>
+                      <span className="text-[#888888] truncate pl-1 font-mono">
+                        The feasibility result confirms that the model&apos;s catalog weight size is 16GB...
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleThought("t3");
+                      }}
+                      className="text-[#888888] hover:text-white shrink-0 ml-2 font-mono text-xs cursor-pointer"
+                    >
+                      Verbose
+                    </button>
+                  </div>
+
+                  {expandedThoughts["t3"] !== false && (
+                    <p className="text-xs text-[#a0a89d] leading-relaxed font-sans pl-5 animate-in fade-in duration-150">
+                      The feasibility result confirms that the model&apos;s catalog weight size is 16GB and its 2,048-token, 256-output-token workload needs 19.5GB peak VRAM. A100-40GB is the lowest modeled cost per request at $0.002866, ahead of A10G at $0.003884 and the two-T4 configuration at $0.00393. The backend is locked to vLLM, which is compatible. There is no user-stated latency target, so the plan must explicitly say no target is set and use baseline measurement plus serving tuning only. Quantization, speculation, KV compression, and kernel work must be excluded because they were neither requested nor available in the current trial execution budget.
+                    </p>
+                  )}
+                </div>
+
+                {/* Step 4: Plan drafted (Exact Screenshot Match - 0 Border - Sharp Corners) */}
+                <div
+                  onClick={() => toggleStep("plan")}
+                  className={cn(
+                    "rounded-none p-4 cursor-pointer transition-all",
+                    dark ? "bg-[#141414] hover:bg-[#181818]" : "bg-[#fafbfa]"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3.5">
+                      <div className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs",
+                        dark ? "bg-[#222222] text-[#999999]" : "bg-[#f5f7f3] text-[#687063]"
+                      )}>
+                        <Layers size={15} />
+                      </div>
+                      <span className="font-bold text-xs text-white">Plan drafted</span>
+                    </div>
+                    {expandedSteps["plan"] ? (
+                      <ChevronDown size={15} className="text-[#75bf00]" />
+                    ) : (
+                      <ChevronRight size={15} className="text-[#888888]" />
+                    )}
+                  </div>
+
+                  {expandedSteps["plan"] && (
+                    <div className="mt-3 pt-3 border-t border-[#2a2a2a] space-y-3 font-mono text-[10.5px] animate-in fade-in duration-150">
+                      {/* CLI Command Block */}
+                      <div className="p-3.5 border border-[#1a1a1a] bg-[#050505] rounded-xl space-y-1.5 text-[#75bf00] overflow-x-auto">
+                        <div>$ create-plan \</div>
+                        <div className="pl-4 text-[#a0a89d]">&quot;goals&quot;: &quot;Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default; vLLM is locked by user.&quot; \</div>
+                        <div className="pl-4 text-[#a0a89d]">&quot;budget&quot;: {"{\"maxCells\":2,\"quotedHoldCents\":0}"} \</div>
+                        <div className="pl-4 text-[#a0a89d]">&quot;insight&quot;: &quot;The catalog reports 16GB FP16 weights, and feasibility models 19.5GB peak VRAM fit.&quot; \</div>
+                        <div className="pl-4 text-[#a0a89d]">&quot;priority&quot;: &quot;cost&quot; \</div>
+                        <div className="pl-4 text-[#a0a89d]">&quot;recommended-gpu&quot;: &quot;A100-40GB&quot; \</div>
+                        <div className="pl-4 text-[#a0a89d]">&quot;serving-backend&quot;: &quot;vLLM&quot;</div>
+                      </div>
+
+                      {/* JSON ToolInputs Spec matching RunInfra scroll UI */}
+                      <div className="border border-[#1a1a1a] bg-[#050505] rounded-xl text-[#a0a89d] space-y-1 text-[10.5px] max-h-52 overflow-auto p-3.5 [scrollbar-width:thin] [scrollbar-color:#2a2a2a_#050505]">
+                        <div>{"{"}</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;engine&quot;:</span> <span className="text-[#75bf00]">&quot;serving&quot;</span>,</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;status&quot;:</span> <span className="text-[#75bf00]">&quot;pending&quot;</span>,</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;modality&quot;:</span> <span className="text-[#75bf00]">&quot;llm&quot;</span>,</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;dependsOn&quot;:</span> [<span className="text-[#75bf00]">&quot;phase-baseline&quot;</span>],</div>
+                        <div className="pl-3"><span className="text-[#888]">&quot;toolInputs&quot;:</span> {"{"}</div>
+                        <div className="pl-6"><span className="text-[#888]">&quot;apply_serving_config&quot;:</span> {"{"}</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;techniques&quot;:</span> [<span className="text-[#75bf00]">&quot;vllm-continuous-batching&quot;</span>],</div>
+                        <div className="pl-9"><span className="text-[#888]">&quot;techniqueKnobs&quot;:</span> [</div>
+                        <div className="pl-12 text-[#75bf00]">&quot;maxNumSeqs&quot;,</div>
+                        <div className="pl-12 text-[#75bf00]">&quot;maxNumBatchedTokens&quot;,</div>
+                        <div className="pl-12 text-[#75bf00]">&quot;enablePrefixCaching&quot;,</div>
+                        <div className="pl-12 text-[#75bf00]">&quot;enableChunkedPrefill&quot;</div>
+                        <div className="pl-9">]</div>
+                        <div className="pl-6">{"}"}</div>
+                        <div className="pl-3">{"}"}</div>
+                        <div>{"}"}</div>
+                      </div>
+
+                      {/* Exit status tag outside scrollbox */}
+                      <div className="text-[10.5px] font-mono text-[#666] pt-0.5">exit 0</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Step 5: Plan ready & Financial Balance Hold Card (Exact Screenshot 1 & 5) */}
+                {/* Step 5: Plan ready (100% Exact Match to Reference Screenshot media_1787255584421.png) */}
+                <div
+                  onClick={() => toggleStep("plan_ready")}
+                  className={cn(
+                    "rounded-none p-4 transition-all cursor-pointer",
+                    dark ? "bg-[#141414] hover:bg-[#181818]" : "bg-[#fafbfa] border border-[#d8ddd3]"
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className={cn(
+                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-none text-xs",
+                        dark ? "bg-[#222222] border border-[#383838] text-[#999999]" : "bg-[#f5f7f3] text-[#687063]"
+                      )}>
+                        <Layers size={14} />
+                      </div>
+                      <span className="font-bold text-xs text-white">Plan ready</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 font-mono text-[11px] text-[#788274]">
+                      <span>Est. charge $18.50 / review / 5 phases / ~6m</span>
+                      {expandedSteps["plan_ready"] !== false ? (
+                        <ChevronDown size={14} className="text-[#75bf00] shrink-0" />
+                      ) : (
+                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                      )}
+                    </div>
+                  </div>
+
+                  {expandedSteps["plan_ready"] !== false && (
+                    <div className="mt-3.5 pt-3.5 border-t border-[#222222] space-y-3.5 text-xs font-sans animate-in fade-in duration-150" onClick={(e) => e.stopPropagation()}>
+                      <p className="text-xs text-[#d0d4cd] leading-relaxed">
+                        Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default; vLLM is locked by user. GPU chosen by feasibility: 1x A100-40GB for the lowest modeled per-request cost and 19.5GB peak-VRAM fit.
+                      </p>
+
+                      <p className="text-[11px] text-[#888888]">
+                        Recommended path: vLLM on A100-40GB. Review the plan before execution.
+                      </p>
+
+                      {/* Supported Green Badge Box */}
+                      <div className="p-3 border border-[#283818] bg-[#121c0e] rounded-none space-y-1 font-mono text-[11px]">
+                        <div className="flex items-center gap-2 text-[#75bf00] font-bold">
+                          <span className="h-2 w-2 rounded-full bg-[#75bf00]" />
+                          <span>SUPPORTED</span>
+                        </div>
+                        <div className="text-[11px] text-[#a0e060]">
+                          Measured optimization is supported for this model.
+                        </div>
+                      </div>
+
+                      {/* Financial Breakdown Table */}
+                      <div className="pt-2 font-mono text-xs space-y-2">
+                        <div className="flex items-center justify-between py-1.5 border-t border-dashed border-[#282828]">
+                          <span className="text-[#888888]">Estimated run charge</span>
+                          <span className="font-bold text-white">$18.50</span>
+                        </div>
+                        <div className="flex items-center justify-between py-1.5 border-t border-dashed border-[#282828]">
+                          <span className="text-[#888888]">Temporary hold</span>
+                          <span className="font-bold text-white">$37.00</span>
+                        </div>
+                        <div className="flex items-center justify-between py-1.5 border-t border-b border-dashed border-[#282828]">
+                          <span className="text-[#888888]">Available balance</span>
+                          <span className="font-bold text-[#75bf00]">$9.51</span>
+                        </div>
+
+                        <p className="text-[10.5px] text-[#666666] pt-1 leading-relaxed font-sans">
+                          You will not be charged more than the estimate. The $37.00 displayed hold is the balance required to start, and only the final charge is deducted.
+                        </p>
+
+                        <div className="p-2.5 border border-amber-500/40 bg-amber-950/20 rounded-none text-amber-500 text-xs font-sans font-bold leading-relaxed">
+                          Not enough available balance for the $37.00 temporary hold. No charge has been made.
+                        </div>
+                      </div>
+
+                      {/* Action Triggers matching Reference Screenshot media_1787255584421.png */}
+                      <div className="flex flex-wrap items-center justify-end gap-2 pt-1 font-mono text-xs">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenTab("plan")}
+                          className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+                        >
+                          <ExternalLink size={12} />
+                          <span>Open Plan</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => alert("Reducing plan cost knobs...")}
+                          className="border border-[#383838] bg-[#181818] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+                        >
+                          Reduce plan cost
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => alert("Refreshing balance...")}
+                          className="border border-[#383838] bg-[#181818] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+                        >
+                          Refresh balance
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => alert("Adding funds to workspace balance...")}
+                          className="border border-[#75bf00] bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold px-3.5 py-1.5 rounded-none transition-colors cursor-pointer"
+                        >
+                          Add funds
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Step 6: Human Gate & Execution Decision matching Image 1 & 4 collapsible dropdown accordion */}
+                <div
+                  onClick={() => toggleStep("human_gate")}
+                  className={cn(
+                    "rounded-none p-4 space-y-3.5 group relative transition-colors cursor-pointer",
+                    dark ? "bg-[#141414] hover:bg-[#181818]" : "bg-white border border-[#d8ddd3]"
+                  )}
+                >
+                  <div className="flex items-center justify-between border-b border-[#282828] pb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className={cn(
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-none text-xs",
+                        dark ? "border border-[#383838] bg-[#151515] text-[#889284]" : "border border-[#d8ddd3] bg-[#f5f7f3] text-[#687063]"
+                      )}>
+                        <ShieldAlert size={12} />
+                      </div>
+                      <div className="flex items-center gap-2 font-mono">
+                        <span className="font-semibold text-xs text-white">Human Gate: Production Approval</span>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-none border border-[#383838] bg-[#151515] text-[#888]">
+                          Gate C • Review
+                        </span>
+                      </div>
+                    </div>
+
+                    {expandedSteps["human_gate"] !== false ? (
+                      <ChevronDown size={15} className="text-[#75bf00] shrink-0" />
+                    ) : (
+                      <ChevronRight size={15} className="text-[#888888] shrink-0" />
+                    )}
+                  </div>
+
+                  {expandedSteps["human_gate"] !== false && (
+                    <div className="space-y-2.5 text-xs font-sans animate-in fade-in duration-150" onClick={(e) => e.stopPropagation()}>
+                      <p className="text-xs text-[#a0a89d] leading-relaxed">
+                        Candidate B passed all verification benchmarks. Operational policy requires engineer approval for 100% production traffic cutover on @checkout-service.
+                      </p>
+
+                      {/* Section 43-50: Customer-Facing Mission Result Taxonomy & Deliverable Package */}
+                      <div className="p-3.5 border border-dashed border-[#383838] bg-[#141414] rounded-sm space-y-3 font-mono text-[11px]">
+
+                        {/* Header Badge */}
+                        <div className="flex items-center justify-between border-b border-[#282828] pb-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles size={14} className="text-[#a3e635]" />
+                            <span className="font-bold text-white uppercase tracking-wider text-xs">
+                              {selectedMode === "Experiment" ? "VERIFIED EXPERIMENT RESULT" : "VERIFIED OPTIMIZATION RESULT"}
+                            </span>
+                          </div>
+                          <span className="text-[10px] px-2 py-0.5 border border-[#283818] bg-[#162414] text-[#a3e635] font-bold rounded-sm">
+                            ● VERDICT: VERIFIED
+                          </span>
+                        </div>
+
+                        {/* Result Matrix Metrics Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+                          <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
+                            <div className="text-[#889284] text-[10px]">P99 Latency:</div>
+                            <div className="font-bold text-white text-xs">184ms → 139ms <span className="text-[#a3e635] font-normal text-[11px]">(-24%)</span></div>
+                          </div>
+                          <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
+                            <div className="text-[#889284] text-[10px]">Throughput:</div>
+                            <div className="font-bold text-white text-xs">401 → 518 tok/s <span className="text-[#a3e635] font-normal text-[11px]">(+29%)</span></div>
+                          </div>
+                          <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
+                            <div className="text-[#889284] text-[10px]">Cost Impact:</div>
+                            <div className="font-bold text-white text-xs">-$54.60/mo <span className="text-[#a3e635] font-normal text-[11px]">(-31%)</span></div>
+                          </div>
+                          <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
+                            <div className="text-[#889284] text-[10px]">Quality Score:</div>
+                            <div className="font-bold text-white text-xs">98.7% <span className="text-[#889284] font-normal text-[11px]">(Maintained)</span></div>
+                          </div>
+                        </div>
+
+                        {/* Section 49-50: Deliverable Package Tabs */}
+                        <div className="space-y-1.5 pt-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] text-[#889284] uppercase tracking-wider font-semibold">Primary Deliverable Package:</span>
+                            <div className="flex items-center gap-1 bg-[#181818] p-0.5 border border-[#282828] rounded-sm">
+                              <button
+                                type="button"
+                                onClick={() => setDeliverableActiveTab("config")}
+                                className={cn(
+                                  "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
+                                  deliverableActiveTab === "config"
+                                    ? "bg-[#242424] text-white font-bold"
+                                    : "text-[#889284] hover:text-white"
+                                )}
+                              >
+                                Serving Config
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeliverableActiveTab("docker")}
+                                className={cn(
+                                  "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
+                                  deliverableActiveTab === "docker"
+                                    ? "bg-[#242424] text-white font-bold"
+                                    : "text-[#889284] hover:text-white"
+                                )}
+                              >
+                                Dockerfile
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeliverableActiveTab("helm")}
+                                className={cn(
+                                  "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
+                                  deliverableActiveTab === "helm"
+                                    ? "bg-[#242424] text-white font-bold"
+                                    : "text-[#889284] hover:text-white"
+                                )}
+                              >
+                                Kubernetes Helm
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeliverableActiveTab("rollback")}
+                                className={cn(
+                                  "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
+                                  deliverableActiveTab === "rollback"
+                                    ? "bg-[#242424] text-white font-bold"
+                                    : "text-[#889284] hover:text-white"
+                                )}
+                              >
+                                Rollback Script
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Code Container View */}
+                          <div className="p-3 border border-[#282828] bg-[#181818] rounded-sm text-[10.5px] font-mono overflow-x-auto text-[#d0d4cd] leading-relaxed max-h-44 overflow-y-auto">
+                            {deliverableActiveTab === "config" && (
+                              <pre className="text-[#a3e635]">{`{
+  "engine": "vllm",
+  "model": "${chipModel}",
+  "tensor_parallel_size": 1,
+  "max_num_seqs": 256,
+  "max_num_batched_tokens": 8192,
+  "enable_prefix_caching": true,
+  "enable_chunked_prefill": true,
+  "gpu_memory_utilization": 0.90,
+  "dtype": "bfloat16"
+}`}</pre>
+                            )}
+
+                            {deliverableActiveTab === "docker" && (
+                              <pre className="text-[#e0e4dd]">{`FROM nvcr.io/nvidia/vllm:v0.6.2
+ENV MODEL_ID="${chipModel}"
+ENV TENSOR_PARALLEL_SIZE=1
+COPY config.json /etc/vllm/config.json
+EXPOSE 8000
+CMD ["python3", "-m", "vllm.entrypoints.openai.api_server", "--config", "/etc/vllm/config.json"]`}</pre>
+                            )}
+
+                            {deliverableActiveTab === "helm" && (
+                              <pre className="text-[#e0e4dd]">{`apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epoch-${chipModel.toLowerCase().replace(/[^a-z0-9]/g, "-")}
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: vllm-server
+        image: vllm/vllm-openai:latest
+        resources:
+          limits:
+            nvidia.com/gpu: "1"`}</pre>
+                            )}
+
+                            {deliverableActiveTab === "rollback" && (
+                              <pre className="text-[#e0e4dd]">{`#!/bin/bash
+# Epoch Automatic Rollback Script
+set -e
+echo "Rolling back deployment to baseline revision..."
+kubectl rollout undo deployment/epoch-${chipModel.toLowerCase().replace(/[^a-z0-9]/g, "-")}
+echo "Rollback completed cleanly."`}</pre>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Proof & Verifier Receipt */}
+                        <div className="flex flex-wrap items-center justify-between pt-1 border-t border-[#282828] text-[10px] text-[#889284]">
+                          <div className="flex items-center gap-1.5">
+                            <ShieldCheck size={12} className="text-[#a3e635]" />
+                            <span>SHA-256 Provenance Hash:</span>
+                            <span className="font-mono text-white text-[9.5px]">8f9b2c3a4e7f1d...d9e1</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenTab("evidence")}
+                            className="text-[#a3e635] hover:underline font-semibold cursor-pointer"
+                          >
+                            View Verifier Receipt →
+                          </button>
+                        </div>
+
+                      </div>
+
+                      {/* Autonomous Policy Engine Clearance Banner */}
+                      <div className="flex items-center gap-2 text-xs font-mono text-[#889284] bg-[#181818] p-2.5 border border-[#282828] rounded-sm">
+                        <CheckCircle2 size={13} className="text-[#a3e635] shrink-0" />
+                        <span>✓ AUTONOMOUS POLICY ENGINE: Risk Check ✓ | Cost Check ✓ | Safety Check ✓ — Autonomous Authorization Granted.</span>
+                      </div>
+
+                      {/* Section 39 & 49-51: Action Control Bar (Deploy, Apply, Export Stack, Download Kit, Run Again) */}
+                      <div className="border-t border-dashed border-[#282828] pt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-xs">
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => setExportModalOpen(true)}
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
+                            title="Export reproducible system stack"
+                          >
+                            <Box size={12} />
+                            <span>Export Stack</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setExportModalOpen(true)}
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
+                            title="Download complete runnable delivery bundle"
+                          >
+                            <Download size={12} />
+                            <span>Download Kit</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => alert("Applying configuration changes to target runtime...")}
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-[#a3e635] text-[#a3e635] px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
+                            title="Apply configuration changes directly"
+                          >
+                            <Zap size={12} />
+                            <span>Apply Config</span>
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => setActiveTab("deploy")}
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] hover:bg-[#282828] text-white px-3.5 py-1.5 text-xs rounded-sm transition-colors cursor-pointer font-bold"
+                          >
+                            <Rocket size={12} className="text-[#a3e635]" />
+                            <span>Deploy to Cluster</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setReplayModalOpen(true)}
+                            className="flex items-center gap-1 border border-[#383838] bg-[#181818] text-white text-xs px-2.5 py-1.5 rounded-sm hover:bg-[#222] hover:border-white transition-colors cursor-pointer"
+                          >
+                            <RefreshCw size={11} />
+                            <span>Run Again</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Bottom Feedback Actions Icon Row matching Image 4 */}
+                      <div className="flex items-center gap-2 pt-2 text-[#788274] font-mono text-xs border-t border-dashed border-[#222]">
+                        <button
+                          type="button"
+                          onClick={() => alert("Copied message content to clipboard.")}
+                          className="p-1 hover:text-white transition-colors cursor-pointer rounded-xs"
+                          title="Copy"
+                        >
+                          <Copy size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFeedbackRating(feedbackRating === "liked" ? null : "liked")}
+                          className={cn(
+                            "p-1 transition-colors cursor-pointer rounded-xs",
+                            feedbackRating === "liked"
+                              ? "border border-[#75bf00]/40 bg-[#75bf00]/15 text-[#75bf00]"
+                              : "hover:text-white"
+                          )}
+                          title="Good response"
+                        >
+                          <ThumbsUp size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFeedbackRating(feedbackRating === "disliked" ? null : "disliked")}
+                          className={cn(
+                            "p-1 transition-colors cursor-pointer rounded-xs",
+                            feedbackRating === "disliked"
+                              ? "border border-red-500/40 bg-red-500/15 text-red-400"
+                              : "hover:text-white"
+                          )}
+                          title="Bad response"
+                        >
+                          <ThumbsDown size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => alert("Regenerating decision analysis...")}
+                          className="p-1 hover:text-white transition-colors cursor-pointer rounded-xs"
+                          title="Regenerate"
+                        >
+                          <RotateCcw size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -867,22 +1815,57 @@ export function PipelineWorkspaceView({
                         <ChevronDown size={11} />
                       </button>
 
-                      {/* Run Context Flyout Modal */}
+                      {/* Run Context Flyout Modal matching Reference Image 1 */}
                       {runContextOpen && (
                         <div className={cn(
-                          "absolute bottom-full left-0 mb-2 w-64 border p-3 shadow-xl space-y-2.5 text-xs font-mono z-50 rounded-xs",
-                          dark ? "border-[#383838] bg-[#202020] text-[#e0e4dd]" : "border-[#d8ddd3] bg-white text-[#171a17]"
+                          "absolute bottom-full left-0 mb-2 w-72 border p-3.5 shadow-2xl space-y-3 font-mono text-xs z-50 rounded-xs animate-in fade-in zoom-in-95 duration-100",
+                          dark ? "border-[#282828] bg-[#141414] text-[#e0e4dd]" : "border-[#c9cec4] bg-white text-[#171a17]"
                         )}>
-                          <div className="flex items-center justify-between border-b border-[#282828] pb-1.5 font-bold text-white">
-                            <span>RUN CONTEXT</span>
-                            <span className="text-[10px] text-[#788274]">{contextEngine}</span>
+                          <div className="font-bold text-white text-xs">
+                            Run context
                           </div>
-                          <div className="space-y-1 text-[11px] text-[#889284]">
-                            <div className="flex justify-between gap-3"><span>Model:</span><span className="text-white text-right">{contextModel}</span></div>
-                            <div className="flex justify-between gap-3"><span>Target GPU:</span><span className="text-white text-right">{contextGpu}</span></div>
-                            <div className="flex justify-between gap-3"><span>Workload:</span><span className="text-white text-right">{contextWorkload}</span></div>
-                            <div className="flex justify-between gap-3"><span>Output:</span><span className="text-white text-right">{contextOutput}</span></div>
+
+                          <div className="space-y-2 text-xs">
+                            {/* Item 1: Engine */}
+                            <div className="border-b border-dashed border-[#242424] pb-2 space-y-0.5">
+                              <span className="text-[#889284] text-[10px] block">Engine</span>
+                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                                <VLLMLogo size={13} />
+                                <span>{chipRuntime}</span>
+                              </div>
+                            </div>
+
+                            {/* Item 2: GPU */}
+                            <div className="border-b border-dashed border-[#242424] pb-2 space-y-0.5">
+                              <span className="text-[#889284] text-[10px] block">GPU</span>
+                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                                <NvidiaLogo size={13} />
+                                <span>{chipCompute.split("-")[0] || "A100"}</span>
+                              </div>
+                            </div>
+
+                            {/* Item 3: Runs on */}
+                            <div className="border-b border-dashed border-[#242424] pb-2 space-y-0.5">
+                              <span className="text-[#889284] text-[10px] block">Runs on</span>
+                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                                <Cloud size={13} className="text-[#889284]" />
+                                <span>Managed cloud</span>
+                              </div>
+                            </div>
+
+                            {/* Item 4: Format */}
+                            <div className="space-y-0.5">
+                              <span className="text-[#889284] text-[10px] block">Format</span>
+                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                                <Cloud size={13} className="text-[#889284]" />
+                                <span>Managed endpoint</span>
+                              </div>
+                            </div>
                           </div>
+
+                          <p className="text-[10px] text-[#788274] pt-2 border-t border-dashed border-[#242424] leading-relaxed">
+                            Locked for this run. Start a new plan to change these choices.
+                          </p>
                         </div>
                       )}
                     </div>
@@ -1043,123 +2026,693 @@ export function PipelineWorkspaceView({
                 <span className="font-mono text-[#788274] font-bold truncate max-w-[180px]">{contextModel}</span>
               </div>
             </div>
-
-            {runError ? (
-              <div className="mx-6 mt-4 border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300 rounded-xs">
-                {runError}
-              </div>
-            ) : null}
-
-            {/* TAB CONTENT 1: OPTIMIZATION */}
+            {/* TAB CONTENT 1: OPTIMIZATION (Exact RunInfra 6-Metric Grid & Waterfall) */}
             {activeTab === "optimization" && (
-              <div className="p-6 space-y-6 flex-1">
+              <div className="p-6 space-y-5 flex-1">
+                {/* Subheader status */}
+                <div className="flex items-center justify-between border-b border-[#242424] pb-3 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#788274]" />
+                    <span className="text-[#888]">Baseline</span>
+                  </div>
+                  <span className="text-[#888]">vLLM</span>
+                </div>
+
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.14em]">
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-white">
                     Optimization results
                   </h3>
                 </div>
 
+                {/* Technique progression box */}
                 <div className={cn(
                   "border rounded-xs",
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
                 )}>
                   <div className={cn(
-                    "border-b px-3 py-2 font-semibold text-xs",
+                    "border-b px-3.5 py-2 font-semibold text-xs flex items-center justify-between",
                     dark ? "border-[#282828] bg-[#282828]" : "border-[#edf0eb] bg-[#fafbfa]"
                   )}>
-                    Technique progression ⓘ
+                    <span>Technique progression ⓘ</span>
+                    <span className="text-[11px] font-mono text-[#788274]">pending</span>
                   </div>
-                  <div className="p-12 text-center text-xs text-[#889083] font-mono min-h-[140px] flex items-center justify-center">
+                  <div className="p-10 text-center text-xs text-[#889083] font-mono min-h-[120px] flex items-center justify-center">
                     pending (fills in as the run benchmarks each phase)
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* 6 Metric Grid matching exact RunInfra Screenshot with Dashed Axis Lines */}
                   <div className={cn(
-                    "border rounded-xs",
-                    dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                    "border rounded-xs overflow-hidden grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 divide-[#242424]",
+                    dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
                   )}>
-                    <div className={cn(
-                      "border-b px-3 py-2 font-semibold text-xs",
-                      dark ? "border-[#282828] bg-[#282828]" : "border-[#edf0eb] bg-[#fafbfa]"
-                    )}>
-                      Latency ⓘ
-                    </div>
-                    <div className="p-10 text-center text-xs text-[#889083] font-mono min-h-[120px] flex items-center justify-center">
-                      pending (fills in when a run measures it)
-                    </div>
-                  </div>
+                    {[
+                      { title: "Latency ⓘ", hint: "fills in when a run measures it" },
+                      { title: "TTFT p50 ⓘ", hint: "fills in when a run measures it" },
+                      { title: "TPOT p50 ⓘ", hint: "fills in when a run measures it" },
+                      { title: "Throughput ⓘ", hint: "fills in when a run measures it" },
+                      { title: "Cost per 1M tokens ⓘ", hint: "fills in when a run measures cost per 1M tokens" },
+                      { title: "VRAM ⓘ", hint: "fills in when a run measures it" },
+                    ].map((metric, idx) => (
+                      <div
+                        key={metric.title}
+                        className={cn(
+                          "flex flex-col justify-between p-0",
+                          idx % 2 === 0 ? "md:border-r border-[#242424]" : "",
+                          idx < 4 ? "md:border-b border-[#242424]" : ""
+                        )}
+                      >
+                        {/* Metric Header Bar */}
+                        <div className="px-4 py-2.5 border-b border-[#202020] bg-[#1a1a1a]/70">
+                          <div className="text-xs font-semibold text-[#d0d4cd] flex items-center justify-between">
+                            <span>{metric.title}</span>
+                          </div>
+                          <div className="text-[11px] font-mono text-[#687063] mt-0.5">
+                            pending
+                          </div>
+                        </div>
 
-                  <div className={cn(
-                    "border rounded-xs",
-                    dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
-                  )}>
-                    <div className={cn(
-                      "border-b px-3 py-2 font-semibold text-xs",
-                      dark ? "border-[#282828] bg-[#282828]" : "border-[#edf0eb] bg-[#fafbfa]"
-                    )}>
-                      TTFT p50 ⓘ
-                    </div>
-                    <div className="p-10 text-center text-xs text-[#889083] font-mono min-h-[120px] flex items-center justify-center">
-                      pending (fills in when a run measures it)
-                    </div>
+                        {/* Metric Chart Body with Dashed Lines */}
+                        <div className="p-8 min-h-[140px] flex flex-col items-center justify-center relative">
+                          {/* Top Dashed Line */}
+                          <div className="w-[85%] border-t border-[#262626] border-dashed mb-auto" />
+
+                          {/* Center Pending Message */}
+                          <div className="text-center py-4 space-y-1">
+                            <div className="text-xs font-mono text-[#687063]">pending</div>
+                            <div className="text-[11px] text-[#525a4d] font-sans">
+                              {metric.hint}
+                            </div>
+                          </div>
+
+                          {/* Bottom Dashed Line */}
+                          <div className="w-[85%] border-t border-[#262626] border-dashed mt-auto" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB CONTENT 2: BENCHMARKS matching Image 3 */}
-            {activeTab === "benchmarks" && (
-              <div className="p-6 space-y-6 flex-1 max-w-[900px]">
-                <div className={cn(
-                  "border p-4 rounded-xs",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
-                )}>
-                  <div className="text-[11px] font-mono text-[#788274] uppercase tracking-wider">Benchmarks</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <h2 className="text-base font-bold text-white">Model not recorded</h2>
-                    <span className="text-xs text-[#788274] font-mono">no winner</span>
+            {/* TAB CONTENT 2: PLAN (Exact RunInfra Suite from Screenshots 1-5) */}
+            {activeTab === "plan" && (
+              <div className="p-6 space-y-6 flex-1 max-w-[840px] text-xs font-sans">
+                <div className="text-[11px] font-mono text-[#788274]">
+                  Experiment type: Optimize
+                </div>
+
+                {/* Plan Header & Goal */}
+                <div className="space-y-3">
+                  <h2 className="text-base font-bold text-white leading-snug">
+                    Plan: Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cl...
+                  </h2>
+                  <div className="text-[#a0a89d] text-xs leading-relaxed">
+                    <strong className="text-white">Goal.</strong> Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default;{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 font-mono text-[11px] text-white">
+                      <VLLMLogo size={10} />
+                      <span>vLLM</span>
+                      <ChevronDown size={10} className="text-[#888]" />
+                    </span>{" "}
+                    is locked by user. GPU chosen by feasibility: 1x{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 font-mono text-[11px] text-white">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                      <span>A100 40GB</span>
+                      <ChevronDown size={10} className="text-[#888]" />
+                    </span>{" "}
+                    for the lowest modeled per-request cost and 19.5GB peak-VRAM fit.
+                  </div>
+                  <div className="text-xs text-[#a0a89d]">
+                    <strong className="text-white">Expected runtime.</strong> ≈ 6 min (330s total).
                   </div>
                 </div>
 
-                <div className={cn(
-                  "border p-6 rounded-xs space-y-4",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
-                )}>
-                  <div className="flex items-center justify-between text-xs border-b border-[#282828] pb-3">
-                    <span className="text-[#a0a89d]">Optimize a winner before measuring standard benchmark quality.</span>
-                    <button
-                      type="button"
-                      onClick={() => handleOpenTab("optimization")}
-                      className="text-[#788274] hover:text-[#75bf00] font-mono transition-colors"
-                    >
-                      Optimization
-                    </button>
+                {/* Section 1: Context */}
+                <div className="space-y-2.5 pt-2">
+                  <h3 className="font-bold text-xs text-white">Context</h3>
+                  <div className="space-y-2.5 font-mono text-xs text-[#d0d4cd] pl-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-32 text-[#788274] font-sans">Models:</span>
+                      <span className="font-semibold text-white">meta-llama/Llama-3.1-8B-Instruct</span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="w-32 text-[#788274] font-sans">Backend:</span>
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 text-white">
+                        <VLLMLogo size={10} />
+                        <span>vLLM</span>
+                        <ChevronDown size={10} className="text-[#888]" />
+                      </span>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <span className="w-32 text-[#788274] font-sans shrink-0">Deployment:</span>
+                      <div>
+                        <span className="text-white font-sans">RunInfra cloud (gated)</span>
+                        <p className="text-[11px] text-[#788274] font-sans mt-0.5">
+                          Deployment is not part of this runbook; execution will stop at verified optimization artifacts.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <span className="w-32 text-[#788274] font-sans shrink-0">GPU:</span>
+                      <div>
+                        <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 text-white">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                          <span>A100 40GB</span>
+                          <ChevronDown size={10} className="text-[#888]" />
+                        </span>
+                        <span className="text-[#788274] font-sans ml-2 text-[11px]">(unverified plan choice)</span>
+                        <div className="text-[11px] text-[#788274] font-sans mt-1.5 flex items-start gap-1">
+                          <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs text-white text-[10px] font-mono shrink-0">
+                            A100 40GB ▾
+                          </span>
+                          <span>is a provisional plan choice. No matching session-scoped measured per-GPU rows or catalog estimator recommendation is available.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="w-32 text-[#788274] font-sans">Target:</span>
+                      <span className="font-sans">Achievable at <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs font-mono text-white text-[10px]">FP16</span></span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="w-32 text-[#788274] font-sans">Cost (estimate):</span>
+                      <span className="text-white font-sans">~$0.0029 / request <span className="text-[#788274] text-[11px]">(agent estimate, not validated)</span></span>
+                    </div>
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                    <div className={cn(
-                      "border border-dashed p-8 rounded-xs text-center space-y-1 min-h-[140px] flex flex-col justify-center",
-                      dark ? "border-[#2e2e2e] bg-[#151515]" : "border-[#d8ddd3] bg-[#fafbfa]"
-                    )}>
-                      <div className="text-xs font-semibold text-[#889284]">quality scores</div>
-                      <div className="text-[11px] text-[#687063]">Fills in after an optimized winner is promoted.</div>
+                {/* Section 2: Reasoning */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Reasoning</h3>
+                  <p className="leading-relaxed text-[#a0a89d] text-xs">
+                    The catalog reports 16GB <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-white">FP16</span> weights, and the feasibility workload models 19.5GB peak VRAM. For 2,048 input and 256 output tokens, 1x{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                      <span>A100 40GB</span>
+                      <ChevronDown size={9} />
+                    </span>{" "}
+                    has the lowest modeled request cost at $0.002866, versus $0.003884 on{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                      <span>A10G</span>
+                      <ChevronDown size={9} />
+                    </span>{" "}
+                    and $0.003930 on 2x{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                      <span>T4</span>
+                      <ChevronDown size={9} />
+                    </span>
+                    ; Phase 1 will measure real latency because no latency target was specified.
+                  </p>
+                </div>
+
+                {/* Section 3: Tradeoffs */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Tradeoffs</h3>
+                  <div className="space-y-2 text-[#a0a89d] text-xs">
+                    <div className="flex items-start gap-2">
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white shrink-0 inline-flex items-center gap-0.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                        <span>A100 40GB</span>
+                        <ChevronDown size={9} />
+                      </span>
+                      <span>is the lowest modeled per-request cost for this workload, not necessarily the lowest hourly GPU price.</span>
+                    </div>
+                    <p>The 3,935 to 5,891ms modeled end-to-end range is advisory only and will be replaced by a measured baseline.</p>
+                    <p>
+                      Quantization, <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">Speculative Decoding</span>, KV compression, and kernel work are not included.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Section 4: Rejected Alternatives */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Rejected Alternatives</h3>
+                  <div className="space-y-2 text-[#a0a89d] text-xs">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                        <span>SGLang</span>
+                        <ChevronDown size={9} />
+                      </span>
+                      <span>and</span>
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
+                        <span>TensorRT-LLM</span>
+                        <ChevronDown size={9} />
+                      </span>
+                      <span>are not compared because the user selected vLLM.</span>
+                    </div>
+                    <p>
+                      Quantization, <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">Speculative Decoding</span>, KV compression, and custom kernels are excluded because they were not explicitly requested; the latter optimizer phases are also unavailable in the current trial budget.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Section 5: Optimization Techniques */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Optimization Techniques</h3>
+                  <div className="flex items-center gap-1.5 flex-wrap text-xs text-[#a0a89d]">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <VLLMLogo size={9} />
+                      <span>vLLM</span>
+                      <ChevronDown size={9} />
+                    </span>
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">
+                      Continuous Batching
+                    </span>
+                    <span>: Lossless</span>
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <VLLMLogo size={9} />
+                      <span>vLLM</span>
+                      <ChevronDown size={9} />
+                    </span>
+                    <span>serving tuning is the requested-compatible optimization path after baseline measurement.</span>
+                  </div>
+                </div>
+
+                {/* Section 6: Model Facts */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Model Facts</h3>
+                  <div className="space-y-1.5 text-xs text-[#a0a89d] pl-3">
+                    <div>
+                      <strong className="text-white">meta-llama/Llama-3.1-8B-Instruct:</strong> meta-llama/Llama-3.1-8B-Instruct
+                    </div>
+                    <div className="pl-4 space-y-1">
+                      <div>Modality: llm</div>
+                      <div>Detected as llm from the model architecture, not an explicit modality. Correct it if wrong.</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span>Notes: 16GB est; 8B;</span>
+                        <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-1">
+                          <span className="text-[#3b82f6]">♾️</span>
+                          <span>Llama 3.1 8B</span>
+                          <ChevronDown size={9} />
+                        </span>
+                        <span>;</span>
+                        <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-white">FP16</span>
+                        <span>; access: unknown</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 7: Execution Plan */}
+                <div className="space-y-3 pt-2">
+                  <h3 className="font-bold text-xs text-white">Execution Plan</h3>
+                  <p className="text-xs text-[#a0a89d]">
+                    Diagnosis is complete. The phases below will run in this order once you accept the plan.
+                  </p>
+
+                  <div className="space-y-4 pl-3">
+                    {/* Phase 1 */}
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-xs text-white">1. Hardware selection</h4>
+                      <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
+                        <div><strong className="text-white">Engine:</strong> Hardware Engine</div>
+                        <div><strong className="text-white">Strategy:</strong> GPU compatibility sweep</div>
+                        <div><strong className="text-white">Why:</strong> Estimate VRAM, latency, and request cost across compatible GPUs before any paid run.</div>
+                      </div>
                     </div>
 
-                    <div className={cn(
-                      "border border-dashed p-8 rounded-xs text-center space-y-1 min-h-[140px] flex flex-col justify-center",
-                      dark ? "border-[#2e2e2e] bg-[#151515]" : "border-[#d8ddd3] bg-[#fafbfa]"
-                    )}>
-                      <div className="text-xs font-semibold text-[#889284]">suite breakdown</div>
-                      <div className="text-[11px] text-[#687063]">Fills in as the suite measures each benchmark.</div>
+                    {/* Phase 2 */}
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-xs text-white">2. Baseline profile</h4>
+                      <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
+                        <div><strong className="text-white">Engine:</strong> Profiler</div>
+                        <div><strong className="text-white">Strategy:</strong> Measured baseline profile</div>
+                        <div className="flex items-center gap-1">
+                          <strong className="text-white">Why:</strong> Run the <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-white">FP16</span> baseline on the selected GPU and record latency, throughput, and VRAM.
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Phase 3 */}
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-xs text-white">3. Apply Serving config tuning</h4>
+                      <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
+                        <div><strong className="text-white">Engine:</strong> Serving Engine</div>
+                        <div className="flex items-center gap-1">
+                          <strong className="text-white">Strategy:</strong>
+                          <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                            <VLLMLogo size={9} />
+                            <span>vLLM</span>
+                            <ChevronDown size={9} />
+                          </span>
+                          <span>serving candidate sweep</span>
+                        </div>
+                        <div><strong className="text-white">Why:</strong> Benchmark a small set of serving configs and keep the one that improves tail latency or throughput.</div>
+                      </div>
+                    </div>
+
+                    {/* Phase 4 */}
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-xs text-white">4. Benchmark Serving config tuning</h4>
+                      <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
+                        <div><strong className="text-white">Engine:</strong> Serving Engine</div>
+                        <div className="flex items-center gap-1">
+                          <strong className="text-white">Strategy:</strong>
+                          <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                            <VLLMLogo size={9} />
+                            <span>vLLM</span>
+                            <ChevronDown size={9} />
+                          </span>
+                          <span>serving candidate sweep</span>
+                        </div>
+                        <div><strong className="text-white">Why:</strong> Benchmark a small set of serving configs and keep the one that improves tail latency or throughput.</div>
+                      </div>
+                    </div>
+
+                    {/* Phase 5 */}
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-xs text-white">5. Compare baseline vs optimized</h4>
+                      <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
+                        <div><strong className="text-white">Engine:</strong> Comparison</div>
+                        <div><strong className="text-white">Strategy:</strong> Baseline-vs-optimized verdict (recorded, 0 GPU)</div>
+                        <div><strong className="text-white">Why:</strong> Rank the measured pre-optimization baseline against the optimized version this run produced, side by side (0 GPU; reads results the optimization phases already recorded).</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 8: Files / Artifacts */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Files / Artifacts</h3>
+                  <div className="space-y-1.5 text-xs text-[#a0a89d] pl-3">
+                    <div><strong className="text-white">Pipeline tab graph:</strong> Update nodes, backend, GPU, and optimization metadata.</div>
+                    <div><strong className="text-white">Optimization ledger:</strong> Record baseline, skipped, failed, and winning experiments.</div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <strong className="text-white">Code tab files:</strong> Regenerate
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">serve.sh</span>,
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">Dockerfile</span>, and
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">compose</span> from accepted results.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 9: Caveats */}
+                <div className="space-y-2 pt-2">
+                  <h3 className="font-bold text-xs text-white">Caveats</h3>
+                  <div className="space-y-1 text-xs text-[#a0a89d] pl-3">
+                    <p>This is the execution plan, not completed benchmark evidence yet.</p>
+                    <p>The GPU choice is unverified and the cost figure is an agent estimate.</p>
+                    <p>Model access may require credentials or license approval: meta-llama/Llama-3.1-8B-Instruct.</p>
+                    <p>Kernel Agent was not added: kernel generation is in re-validation and is temporarily excluded from optimization runs. Serving phase covers this plan's optimization goals.</p>
+                    <p className="pt-2 text-[#788274]">Start writing your plan, or ask the agent in chat to draft one for you.</p>
+                  </div>
+                </div>
+
+                {/* Bottom Action Bar matching exact Screenshots */}
+                <div className="flex items-center justify-between border-t border-[#282828] pt-4 text-xs font-mono sticky bottom-0 bg-[#151515] py-2">
+                  <span className="text-[#a0a89d]">Est. $18.50, hold $37.00</span>
+                  <div className="flex items-center gap-2">
+                    <EpochButton variant="outline" size="sm" onClick={() => setActiveTab("optimization")}>
+                      Cancel
+                    </EpochButton>
+                    <EpochButton variant="outline" size="sm">
+                      Reduce plan cost
+                    </EpochButton>
+                    <EpochButton variant="outline" size="sm">
+                      Refresh balance
+                    </EpochButton>
+                    <EpochButton variant="action" size="sm" onClick={() => void acceptAndRun()} disabled={runSubmitting}>
+                      {runSubmitting ? "Submitting..." : "Add funds"}
+                    </EpochButton>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB CONTENT 3: PIPELINE CANVAS matching Image 4 */}
-            {activeTab === "pipeline" && (
+            {/* TAB CONTENT 3: EXPERIMENT / COMPARISON LAB (Populated Section 35-38 Matrix) */}
+            {activeTab === "experiment" && (
+              <div className="p-6 space-y-5 flex-1 max-w-[1100px] font-mono text-xs">
+                <div className="flex flex-wrap items-center justify-between border-b border-[#282828] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#75bf00]" />
+                    <span className="text-white font-bold font-sans text-sm">Comparison Lab</span>
+                    <span className="border border-dashed border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00] px-2 py-0.5 text-[10px] rounded-xs font-bold">
+                      ● 4 Candidates Evaluated
+                    </span>
+                  </div>
+                  <span className="text-[#888] text-[11px]">
+                    Measured in Ephemeral MicroVM Sandboxes (EIG Score: 9.2/10)
+                  </span>
+                </div>
+
+                {/* Candidate Comparison Matrix Table (Section 38) */}
+                <div className="space-y-2">
+                  <div className="text-[10px] text-[#777] uppercase tracking-wider font-mono">
+                    VALIDATED CANDIDATE COMPARISON MATRIX (SECTION 38)
+                  </div>
+                  <div className="border border-dashed border-[#262626] bg-[#141414] rounded-xs overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse font-mono">
+                      <thead>
+                        <tr className="border-b border-dashed border-[#282828] text-[10px] text-[#666] bg-[#181818]">
+                          <th className="p-2.5">CANDIDATE & RUNTIME</th>
+                          <th className="p-2.5">HARDWARE</th>
+                          <th className="p-2.5">TTFT (MS)</th>
+                          <th className="p-2.5">P95 (MS)</th>
+                          <th className="p-2.5">THROUGHPUT</th>
+                          <th className="p-2.5">VRAM</th>
+                          <th className="p-2.5">COST / 1M</th>
+                          <th className="p-2.5">QUALITY</th>
+                          <th className="p-2.5 text-right">STATUS</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-dashed divide-[#222]">
+                        <tr className="bg-[#75bf00]/5 hover:bg-[#75bf00]/10 transition-colors border-l-2 border-l-[#75bf00]">
+                          <td className="p-2.5">
+                            <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                              <QwenLogo size={14} />
+                              <span>Qwen 2.5 32B</span>
+                              <span className="text-[10px] font-mono text-[#777] flex items-center gap-1">
+                                (<SGLangLogo size={12} /> SGLang FP8)
+                              </span>
+                            </div>
+                            <div className="text-[9px] text-[#75bf00] font-mono mt-0.5">● OPTIMAL CHOICE (WINNER)</div>
+                          </td>
+                          <td className="p-2.5 text-[#ccc]">
+                            <div className="flex items-center gap-1.5">
+                              <NvidiaLogo size={12} />
+                              <span>1x A100-40GB</span>
+                            </div>
+                          </td>
+                          <td className="p-2.5 font-bold text-[#75bf00]">28.4ms</td>
+                          <td className="p-2.5 font-bold text-[#75bf00]">34.1ms</td>
+                          <td className="p-2.5 text-white">310 t/s</td>
+                          <td className="p-2.5 text-[#777]">13.2 GB</td>
+                          <td className="p-2.5 font-bold text-white">$0.10</td>
+                          <td className="p-2.5 font-bold text-[#75bf00]">99.1%</td>
+                          <td className="p-2.5 text-right">
+                            <span className="text-[#75bf00] font-bold text-[10px]">SELECTED</span>
+                          </td>
+                        </tr>
+                        <tr className="hover:bg-[#181818] transition-colors">
+                          <td className="p-2.5">
+                            <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                              <MetaLogo size={14} />
+                              <span>Llama 3.1 8B</span>
+                              <span className="text-[10px] font-mono text-[#777] flex items-center gap-1">
+                                (<VLLMLogo size={12} /> vLLM AWQ)
+                              </span>
+                            </div>
+                            <div className="text-[9px] text-[#777] font-mono">Candidate #2</div>
+                          </td>
+                          <td className="p-2.5 text-[#777]">
+                            <div className="flex items-center gap-1.5">
+                              <NvidiaLogo size={12} />
+                              <span>1x A100-40GB</span>
+                            </div>
+                          </td>
+                          <td className="p-2.5 font-bold text-[#75bf00]">38.2ms</td>
+                          <td className="p-2.5 font-bold text-[#75bf00]">38.2ms</td>
+                          <td className="p-2.5 text-[#ccc]">245 t/s</td>
+                          <td className="p-2.5 text-[#777]">14.8 GB</td>
+                          <td className="p-2.5 text-white">$0.12</td>
+                          <td className="p-2.5 text-[#75bf00]">99.4%</td>
+                          <td className="p-2.5 text-right">
+                            <span className="text-[#777] text-[10px]">VERIFIED</span>
+                          </td>
+                        </tr>
+                        <tr className="hover:bg-[#181818] transition-colors">
+                          <td className="p-2.5">
+                            <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                              <MetaLogo size={14} />
+                              <span>Llama 3.1 70B</span>
+                              <span className="text-[10px] font-mono text-[#777] flex items-center gap-1">
+                                (<NvidiaLogo size={12} /> TRT-LLM INT4)
+                              </span>
+                            </div>
+                            <div className="text-[9px] text-[#777] font-mono">Candidate #3</div>
+                          </td>
+                          <td className="p-2.5 text-[#777]">
+                            <div className="flex items-center gap-1.5">
+                              <NvidiaLogo size={12} />
+                              <span>2x H100-80GB</span>
+                            </div>
+                          </td>
+                          <td className="p-2.5 font-bold text-white">62.4ms</td>
+                          <td className="p-2.5 font-bold text-white">78.5ms</td>
+                          <td className="p-2.5 text-[#ccc]">142 t/s</td>
+                          <td className="p-2.5 text-[#777]">48.5 GB</td>
+                          <td className="p-2.5 text-white">$0.85</td>
+                          <td className="p-2.5 text-[#75bf00]">99.8%</td>
+                          <td className="p-2.5 text-right">
+                            <span className="text-[#777] text-[10px]">VERIFIED</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Measured Results & Sandbox Execution Panel (Section 37) */}
+                <div className="p-4 border border-dashed border-[#262626] bg-[#141414] rounded-xs space-y-3">
+                  <div className="flex items-center justify-between text-xs border-b border-dashed border-[#222] pb-2">
+                    <span className="font-bold text-white">Sandbox MicroVM Container (#sbx-env-isolated-vllm-01)</span>
+                    <span className="text-[10px] text-[#75bf00]">● Isolated Execution Verified</span>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-2 text-[11px] text-[#777]">
+                    <div>CPU: <span className="text-white">8 cores</span></div>
+                    <div>Memory: <span className="text-white">32 GB</span></div>
+                    <div>GPU: <span className="text-[#75bf00]">1x A100 VFIO</span></div>
+                    <div>Timeout: <span className="text-white">300s</span></div>
+                  </div>
+
+                  <pre className="p-2.5 bg-[#0d0d0d] border border-dashed border-[#282828] text-[10px] text-[#75bf00] rounded-xs leading-relaxed overflow-x-auto">
+                    [Epoch Sandbox] Attached 1x A100 device via secure VFIO passthrough.
+                    [vLLM Engine] Initializing engine with model Qwen2.5-32B (commit 8f4ca7b)...
+                    [Epoch Benchmark] Synthetic load sweep: 100 req/s, 250 req/s, 500 req/s completed with 0 errors.
+                    [Epoch Sandbox] Destroying ephemeral sandbox instance. SHA-256: sha256:8f4ca7b9e112d308fbc8a23d84f18e9
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 4: TEST (Exact Screenshot 1 in Batch 2) */}
+            {activeTab === "test" && (
+              <div className="p-12 flex-1 flex flex-col items-center justify-center text-center space-y-4">
+                <div className={cn(
+                  "flex h-12 w-12 items-center justify-center rounded-xs border",
+                  dark ? "border-[#2e2e2e] bg-[#202020] text-[#889284]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#687063]"
+                )}>
+                  <FlaskConical size={20} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    This model is not ready for Current preview.
+                  </h3>
+                  <p className="text-xs text-[#788274] mt-1.5 max-w-sm leading-relaxed">
+                    Optimized preview is waiting for the plan execution trace. Refresh after optimization completes, then retry.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    className="border border-[#383838] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-white transition-colors"
+                  >
+                    Test Baseline instead
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenTab("plan")}
+                    className="border border-[#383838] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-white transition-colors"
+                  >
+                    Open the plan
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 5: CODE (Exact Screenshot 2 in Batch 2) */}
+            {activeTab === "code" && (
+              <div className="p-6 space-y-5 flex-1">
+                <div className="flex items-center justify-between border-b border-[#242424] pb-3 text-xs font-mono">
+                  <div className="flex items-center gap-2 text-[#888]">
+                    <Layers size={13} />
+                    <span>Models</span>
+                    <span className="text-white font-semibold">Llama 3.1 8B Instruct</span>
+                  </div>
+                  <span className="text-[#888]">vLLM</span>
+                </div>
+
+                <div className="py-20 flex flex-col items-center justify-center text-center space-y-3">
+                  <div className={cn(
+                    "flex h-12 w-12 items-center justify-center rounded-xs border text-[#889284]",
+                    dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-[#fafbfa]"
+                  )}>
+                    <Code size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-white">No code yet</h3>
+                    <p className="text-xs text-[#788274] mt-1 max-w-sm leading-relaxed">
+                      Generated serve scripts, deployment configs, and pipeline definitions appear here as the agent builds your pipeline.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 6: CONFIG / SESSION INTAKE (Exact Screenshot 3 in Batch 2) */}
+            {activeTab === "config" && (
+              <div className="p-6 space-y-5 flex-1 max-w-[800px] text-xs">
+                <div className="flex items-center justify-between border-b border-[#242424] pb-3 text-xs font-mono">
+                  <div className="flex items-center gap-2 text-[#888]">
+                    <Layers size={13} />
+                    <span>Models</span>
+                    <span className="text-white font-semibold">Llama 3.1 8B Instruct</span>
+                  </div>
+                  <span className="text-[#888]">vLLM</span>
+                </div>
+
+                {/* Top Card: Model Configuration */}
+                <div className={cn(
+                  "border rounded-xs p-4 space-y-1.5",
+                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                )}>
+                  <div className="text-[10px] uppercase font-mono text-[#788274]">Config</div>
+                  <h4 className="font-semibold text-xs text-white">Model configuration</h4>
+                  <p className="text-[11px] text-[#788274]">Configuration unlocks when a plan is accepted.</p>
+                </div>
+
+                {/* Bottom Card: Session Intake */}
+                <div className={cn(
+                  "border rounded-xs divide-y divide-[#282828]",
+                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                )}>
+                  <div className="px-4 py-2.5 flex items-center justify-between">
+                    <span className="font-semibold text-xs text-white">Session intake</span>
+                    <span className="border border-[#383838] bg-[#181818] px-1.5 py-0.2 text-[10px] text-[#888] font-mono rounded-xs">
+                      Read-only
+                    </span>
+                  </div>
+
+                  <div className="p-4 space-y-2 font-mono text-xs">
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-[#888]">Model</span>
+                      <span className="text-white font-semibold">meta-llama/Llama-3.1-8B-Instruct</span>
+                    </div>
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-[#888]">Engine</span>
+                      <span className="text-white">vLLM</span>
+                    </div>
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-[#888]">Planned GPU</span>
+                      <span className="text-white">A100-40GB</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 text-[11px] text-[#788274] font-sans">
+                    Inference settings (system prompt, temperature, output format) unlock here when a plan is accepted.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 7: PIPELINE / WORKSPACE (Exact Screenshot 3 in Batch 1) */}
+            {(activeTab === "pipeline" || activeTab === "workspace") && (
               <div className="flex-1 flex flex-col justify-between p-4 relative min-h-[460px]">
                 {/* Top Toolbar */}
                 <div className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#202020] p-1 rounded-xs w-fit text-xs font-mono text-[#788274]">
@@ -1197,192 +2750,155 @@ export function PipelineWorkspaceView({
               </div>
             )}
 
-            {/* TAB CONTENT 4: TEST matching Image 5 */}
-            {activeTab === "test" && (
-              <div className="p-12 flex-1 flex flex-col items-center justify-center text-center space-y-4">
+            {/* TAB CONTENT 8: BENCHMARKS (Clean Subtle Minimalist Dark Layout matching Screenshot) */}
+            {activeTab === "benchmarks" && (
+              <div className="p-6 space-y-5 flex-1 max-w-[900px] text-xs">
+                {/* Top Card: Model not recorded */}
                 <div className={cn(
-                  "flex h-12 w-12 items-center justify-center rounded-xs border",
-                  dark ? "border-[#2e2e2e] bg-[#202020] text-[#889284]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#687063]"
+                  "border p-4 rounded-xs",
+                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
                 )}>
-                  <FlaskConical size={20} />
+                  <div className="text-[10px] font-mono text-[#788274] uppercase tracking-wider">Benchmarks</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <h2 className="text-sm font-bold text-white">Model not recorded</h2>
+                    <span className="text-xs text-[#6e756a] font-mono">no winner</span>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">
-                    This model is not ready for Current preview.
-                  </h3>
-                  <p className="text-xs text-[#788274] mt-1.5 max-w-sm leading-relaxed">
-                    Optimized preview is waiting for the plan execution trace. Refresh after optimization completes, then retry.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2.5 pt-2">
-                  <button
-                    type="button"
-                    className="border border-[#333e31] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-white transition-colors"
-                  >
-                    Test Baseline instead
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenTab("plan")}
-                    className="border border-[#333e31] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-white transition-colors"
-                  >
-                    Open the plan
-                  </button>
+
+                {/* Main Card */}
+                <div className={cn(
+                  "border p-6 rounded-xs space-y-4",
+                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                )}>
+                  <div className="flex items-center justify-between text-xs border-b border-[#282828] pb-3">
+                    <span className="text-[#a0a89d]">Optimize a winner before measuring standard benchmark quality.</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenTab("optimization")}
+                      className="text-[#788274] hover:text-white font-mono transition-colors cursor-pointer"
+                    >
+                      Optimization
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {/* Quality Scores Box with Dashed Axis Lines */}
+                    <div className={cn(
+                      "border p-8 rounded-xs text-center space-y-1 min-h-[160px] flex flex-col justify-between relative",
+                      dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-[#fafbfa]"
+                    )}>
+                      <div className="w-[85%] border-t border-[#262626] border-dashed mx-auto" />
+                      <div className="space-y-1 py-4">
+                        <div className="text-xs font-semibold text-[#889284]">quality scores</div>
+                        <div className="text-[11px] text-[#555d51]">Fills in after an optimized winner is promoted.</div>
+                      </div>
+                      <div className="w-[85%] border-t border-[#262626] border-dashed mx-auto" />
+                    </div>
+
+                    {/* Suite Breakdown Box with Dashed Axis Lines */}
+                    <div className={cn(
+                      "border p-8 rounded-xs text-center space-y-1 min-h-[160px] flex flex-col justify-between relative",
+                      dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-[#fafbfa]"
+                    )}>
+                      <div className="w-[85%] border-t border-[#262626] border-dashed mx-auto" />
+                      <div className="space-y-1 py-4">
+                        <div className="text-xs font-semibold text-[#889284]">suite breakdown</div>
+                        <div className="text-[11px] text-[#555d51]">Fills in as the suite measures each benchmark.</div>
+                      </div>
+                      <div className="w-[85%] border-t border-[#262626] border-dashed mx-auto" />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* TAB CONTENT 5: PLAN */}
-            {activeTab === "plan" && (
-              <div className="p-6 space-y-6 flex-1 max-w-[840px]">
-                <div>
-                  <span className="text-[10px] uppercase tracking-[0.14em] text-[#788274] font-mono">
-                    Experiment type: Optimize
-                  </span>
-                  <h1 className="text-xl font-bold mt-1 leading-snug">
-                    Plan: {objective}
-                  </h1>
-                </div>
-
-                <div className="space-y-4 text-xs">
+            {/* TAB CONTENT 9: EVIDENCE & PROOF (Clean Minimalist Dark Theme) */}
+            {activeTab === "evidence" && (
+              <div className="p-6 space-y-5 flex-1 max-w-[800px] text-xs font-sans">
+                <div className="flex items-center justify-between border-b border-[#282828] pb-3">
                   <div>
-                    <h4 className="font-semibold text-xs">Goal</h4>
-                    <p className="mt-1 leading-relaxed text-[#525a4d] dark:text-[#a0a89d]">
-                      {objective}
-                    </p>
-                    <p className="mt-1 text-[11px] text-[#788274] font-mono">
-                      Run status: {displayedRunStatus}. Measurements will appear after execution records them.
+                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                      Cryptographic Proof Package
+                    </h2>
+                    <p className="text-[11px] text-[#788274] font-mono mt-0.5">
+                      Immutable evidence ledger compiled for independent verification
                     </p>
                   </div>
 
-                  <div className="space-y-2 border-t border-dashed border-[#d8ddd3] dark:border-[#333] pt-4">
-                    <h4 className="font-semibold text-xs">Context</h4>
-                    <div className="space-y-2 font-mono text-xs">
-                      <div className="flex items-center gap-3">
-                        <span className="w-28 text-[#788274] font-sans">Models:</span>
-                        <span className="font-semibold text-[#788274]">Not selected</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="w-28 text-[#788274] font-sans">Backend:</span>
-                        <span className="text-[#788274]">Not selected</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="w-28 text-[#788274] font-sans">Deployment:</span>
-                        <span className="text-[#788274]">Not recorded</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <span className="w-28 text-[#788274] font-sans shrink-0">GPU:</span>
-                        <div className="space-y-1">
-                          <span className="text-[#788274]">Not measured</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="w-28 text-[#788274] font-sans">Cost (estimate):</span>
-                        <span className="text-[#788274]">Not measured</span>
-                      </div>
-                    </div>
-                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 border border-[#383838] bg-[#1a1a1a] text-[#a0a89d] rounded-xs font-semibold">
+                    VERDICT: VERIFIED
+                  </span>
                 </div>
 
-                {/* Bottom Action Bar */}
-                <div className="flex items-center justify-between border-t border-[#d8ddd3] dark:border-[#333] pt-4">
-                  <span className="font-mono text-xs text-[#788274]">Persisted run: {displayedRunStatus}</span>
-                  <div className="flex items-center gap-2">
-                    <EpochButton variant="outline" size="sm" onClick={() => setActiveTab("optimization")}>
-                      Cancel
-                    </EpochButton>
-                    <EpochButton variant="action" size="sm" onClick={() => void acceptAndRun()} disabled={runSubmitting}>
-                      {runSubmitting ? "Submitting..." : "Accept and run"}
-                    </EpochButton>
+                <div className={cn(
+                  "border p-4 rounded-xs space-y-3 font-mono text-xs",
+                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
+                )}>
+                  <div className="space-y-1.5 border-b border-[#282828] pb-3 text-[11px]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#888]">Proof SHA-256:</span>
+                      <span className="text-white font-semibold truncate max-w-xs">sha256:7f8a9e14c09d51b3a88f7236e788c3a1e4b9d029f</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#888]">Independent Verifier:</span>
+                      <span className="text-white">Epoch Verifier v2.4</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div className="p-3 border border-[#282828] bg-[#181818] rounded-xs space-y-1">
+                      <div className="font-semibold text-white text-[11px]">SLO #1: Cost Reduction</div>
+                      <div className="text-[11px] text-white font-bold">Passed (-34.2%)</div>
+                      <div className="text-[10px] text-[#788274]">Baseline: $182K → Verified: $120.4K</div>
+                    </div>
+
+                    <div className="p-3 border border-[#282828] bg-[#181818] rounded-xs space-y-1">
+                      <div className="font-semibold text-white text-[11px]">SLO #2: P99 Latency</div>
+                      <div className="text-[11px] text-white font-bold">Passed (184ms)</div>
+                      <div className="text-[10px] text-[#788274]">Peak concurrency: 128 streams</div>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB CONTENT 6: DEPLOY */}
+            {/* TAB CONTENT 10: DEPLOY (Exact RunInfra Screenshot 1) */}
             {activeTab === "deploy" && (
-              <div className="p-6 space-y-6 flex-1">
-                <div className="border border-[#b9de78] bg-[#fbfdf9] dark:bg-[#172412] p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex h-6 w-6 items-center justify-center bg-[#75bf00] text-[#111]">
-                      <Zap size={13} />
-                    </span>
+              <div className="p-6 space-y-4 flex-1 max-w-[800px] text-xs">
+                {/* Top Dashed Box: Deployment unlocks at $50 in lifetime credits */}
+                <div className={cn(
+                  "border border-dashed rounded-xs p-4 flex items-center justify-between gap-4",
+                  dark ? "border-[#333] bg-[#181818]" : "border-[#ccc] bg-[#fafbfa]"
+                )}>
+                  <div className="flex items-center gap-3.5">
+                    <div className="border border-[#2f3d20] bg-[#182613] text-[#86dc00] p-2 rounded-xs shrink-0 flex items-center justify-center">
+                      <Sparkles size={16} />
+                    </div>
                     <div>
-                      <span className="font-semibold text-xs">Deployment requires Core</span>
-                      <p className="text-[11px] text-[#525a4d] dark:text-[#a0a89d]">Upgrade your plan to unlock this feature.</p>
+                      <h4 className="font-semibold text-xs text-white">Deployment unlocks at $50 in lifetime credits</h4>
+                      <p className="text-[11px] text-[#788274] mt-0.5">
+                        Add funds to unlock it. Your balance then pays for the traffic you serve.
+                      </p>
                     </div>
                   </div>
-                  <EpochButton variant="action" size="sm">
-                    Upgrade
-                  </EpochButton>
+
+                  <button
+                    type="button"
+                    className="border border-[#384820] bg-[#1c2a12] hover:bg-[#253818] text-[#86dc00] px-3.5 py-1.5 text-xs font-mono rounded-xs font-semibold cursor-pointer transition-colors shrink-0"
+                  >
+                    Add funds
+                  </button>
                 </div>
 
+                {/* Bottom Box: No model to deploy yet */}
                 <div className={cn(
-                  "border border-dashed p-12 text-center space-y-1",
-                  dark ? "border-[#333] bg-[#141814]" : "border-[#c9cec4] bg-[#fafbfa]"
+                  "border rounded-xs p-4 space-y-1.5",
+                  dark ? "border-[#282828] bg-[#202020]" : "border-[#d8ddd3] bg-white"
                 )}>
-                  <div className="font-semibold text-xs">No model to deploy yet</div>
-                  <p className="text-xs text-[#687063] dark:text-[#a0a89d]">
+                  <h4 className="font-semibold text-xs text-white">No model to deploy yet</h4>
+                  <p className="text-[11px] text-[#788274]">
                     Add a model in the Pipeline tab. After an optimization run, deploy options appear here.
                   </p>
-                </div>
-              </div>
-            )}
-
-            {/* TAB CONTENT 7: EXPERIMENT */}
-            {activeTab === "experiment" && (
-              <div className="p-6 space-y-4 flex-1">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.14em]">Experiment Matrix</h3>
-                <div className={cn(
-                  "border border-dashed p-12 text-center rounded-xs space-y-1",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
-                )}>
-                  <div className="font-semibold text-xs text-white">No valid comparison matrix loaded</div>
-                  <p className="text-xs text-[#788274]">
-                    Add models to run cross-runtime sweeps across vLLM, SGLang, and TensorRT-LLM.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* TAB CONTENT 8: CODE */}
-            {activeTab === "code" && (
-              <div className="p-6 space-y-4 flex-1 font-mono text-xs">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.14em] font-sans">Runtime Code</h3>
-                <div className={cn(
-                  "border p-4 rounded-xs bg-[#151515] text-[#93c5fd] overflow-x-auto space-y-2",
-                  dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
-                )}>
-                  <div className="text-[#788274]">// Python Client with OpenAI SDK</div>
-                  <div><span className="text-[#f43f5e]">import</span> openai</div>
-                  <div>client = openai.OpenAI(base_url=<span className="text-[#a3e635]">&quot;http://localhost:8000/v1&quot;</span>, api_key=<span className="text-[#a3e635]">&quot;epoch-local&quot;</span>)</div>
-                  <div>response = client.chat.completions.create(model=<span className="text-[#a3e635]">&quot;meta-llama/Llama-3.1-8B-Instruct&quot;</span>, messages=[...])</div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB CONTENT 9: CONFIG */}
-            {activeTab === "config" && (
-              <div className="p-6 space-y-4 flex-1 max-w-[720px] text-xs">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.14em]">Pipeline Configuration</h3>
-                <div className={cn(
-                  "border p-4 rounded-xs space-y-3",
-                  dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
-                )}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-white">Max Concurrency</div>
-                      <div className="text-[#788274] text-[11px]">Maximum concurrent requests before queueing</div>
-                    </div>
-                    <span className="font-mono border border-[#383838] bg-[#151515] px-2 py-0.5 rounded-xs">64</span>
-                  </div>
-                  <div className="border-t border-[#282828] pt-3 flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-white">Prefill Chunking</div>
-                      <div className="text-[#788274] text-[11px]">Chunked prefill for improved TTFT under load</div>
-                    </div>
-                    <span className="font-mono text-[#75bf00]">Enabled</span>
-                  </div>
                 </div>
               </div>
             )}
@@ -1510,8 +3026,8 @@ export function PipelineWorkspaceView({
                               ? "border-[#75bf00] bg-[#1a2216]"
                               : "border-[#75bf00] bg-[#f0fbe6]"
                             : dark
-                            ? "border-transparent hover:bg-[#282828]"
-                            : "border-transparent hover:bg-[#f8faf6]"
+                              ? "border-transparent hover:bg-[#282828]"
+                              : "border-transparent hover:bg-[#f8faf6]"
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -1656,6 +3172,19 @@ export function PipelineWorkspaceView({
           </div>
         </div>
       )}
+
+      {/* Modals for Export Stack / Download Kit & Replay Runner */}
+      <ExportKitModal
+        open={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        dark={dark}
+      />
+
+      <ReplayModal
+        open={replayModalOpen}
+        onClose={() => setReplayModalOpen(false)}
+        dark={dark}
+      />
     </div>
   );
 }

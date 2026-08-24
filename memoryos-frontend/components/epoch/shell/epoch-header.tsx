@@ -17,6 +17,7 @@ interface EpochHeaderProps {
   dark?: boolean;
   onToggleTheme?: () => void;
   onOpenSettings?: () => void;
+  onOpenBilling?: () => void;
   balanceUsd?: number;
   className?: string;
 }
@@ -26,6 +27,7 @@ export function EpochHeader({
   dark = true,
   onToggleTheme,
   onOpenSettings,
+  onOpenBilling,
   balanceUsd = 9.51,
   className,
 }: EpochHeaderProps) {
@@ -76,10 +78,17 @@ export function EpochHeader({
         {/* Right: Balance + Theme Toggle + Settings + User Avatar */}
         <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono">
           {/* Balance Pill matching RunInfra */}
-          <div className={cn(
-            "flex items-center gap-1.5 border border-dashed px-2.5 py-1 text-xs rounded-xs",
-            dark ? "border-[#2e2e2e] bg-[#181818]" : "border-[#d8ddd3] bg-white"
-          )}>
+          <button
+            type="button"
+            onClick={onOpenBilling || onOpenSettings}
+            className={cn(
+              "flex items-center gap-1.5 border border-dashed px-2.5 py-1 text-xs rounded-xs cursor-pointer transition-colors",
+              dark
+                ? "border-[#2e2e2e] bg-[#181818] hover:border-[#75bf00]"
+                : "border-[#d8ddd3] bg-white hover:border-[#75bf00]"
+            )}
+            title="View Billing & Credits"
+          >
             <Wallet size={12} className="text-[#888]" />
             <span className="text-[#888]">Balance</span>
             <span className="border border-dashed border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00] px-1 text-[10px] font-sans font-bold rounded-xs">
@@ -88,7 +97,7 @@ export function EpochHeader({
             <span className={cn("font-bold", dark ? "text-white" : "text-[#111]")}>
               ${balanceUsd.toFixed(2)}
             </span>
-          </div>
+          </button>
 
           {/* Theme Toggle Sun/Moon */}
           {onToggleTheme && (

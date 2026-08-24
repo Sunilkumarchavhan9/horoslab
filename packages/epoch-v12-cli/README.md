@@ -17,7 +17,7 @@ bun add -g @epochtm/v12-cli
 ```bash
 # PowerShell
 $env:EPOCH_V12_API_URL = "http://localhost:3011"
-$env:EPOCH_V12_API_KEY = "your-workspace-scoped-key"
+$env:EPOCH_V12_API_KEY = "replace_with_workspace_key"
 $env:EPOCH_V12_WORKSPACE_ID = "workspace-id"
 ```
 

@@ -607,3 +607,13 @@ export interface LearningRecord {
   reproducibilityScorePct: number;
 }
 
+export type {
+  EpochIntent,
+  RealityDomain,
+  EntityReferenceType,
+  EntityReference,
+  CompiledOutcomeContract,
+  CompiledMissionIntent,
+  ComposerSuggestion,
+} from "./composer/intent-compiler";
+

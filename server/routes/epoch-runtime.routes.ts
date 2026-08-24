@@ -201,7 +201,7 @@ const EpochRuntimeProbeInputSchema = z.object({
 const EpochRuntimeProbeCompatibilityInputSchema = z.object({ profile: epochJsonRecordSchema, runtime: epochJsonRecordSchema, hardware: epochJsonRecordSchema, executionProvider: z.string().max(100).optional(), precision: z.string().max(50).optional(), requestedModel: z.string().max(300).optional(), probe: EpochRuntimeProbeInputSchema });
 
 const EpochRuntimeExecutionInputSchema = EpochRuntimeProbeInputSchema.extend({
-  target: z.enum(["vllm", "sglang", "nvidia_nim"]),
+  target: z.enum(["vllm", "sglang", "nvidia_nim", "modal"]),
   model: z.string().min(1).max(300),
   prompt: z.string().min(1).max(100_000),
   maxOutputTokens: z.number().int().min(1).max(16_384).default(512),

@@ -82,9 +82,9 @@ function workerAiEnabled(): boolean {
   return raw === "true" || raw === "1";
 }
 
-function workerAiProvider(): "openai" | "openrouter" | "local" | "private" {
+function workerAiProvider(): "openai" | "openrouter" | "local" | "private" | "modal" {
   const raw = process.env.EPOCH_WORKER_AI_PROVIDER?.trim().toLowerCase();
-  return raw === "openrouter" || raw === "local" || raw === "private" ? raw : "openai";
+  return raw === "openrouter" || raw === "local" || raw === "private" || raw === "modal" ? raw : "openai";
 }
 
 function workspaceUserId(workspace: { userId: string; orgId: string | null }): string {
@@ -342,7 +342,7 @@ async function processExecuteJob(workspaceId: string, job: EpochQueueJob): Promi
           correlationId: `corr_${mission.id}`,
           traceId: `trace_${executionRun.id}`,
           request: {
-            model: aiProvider === "openrouter" ? (process.env.EPOCH_WORKER_AI_MODEL?.trim() || "openrouter/free") : (process.env.EPOCH_WORKER_AI_MODEL?.trim() || "gpt-4.1"),
+            model: aiProvider === "openrouter" ? (process.env.EPOCH_WORKER_AI_MODEL?.trim() || "openrouter/free") : aiProvider === "modal" ? (process.env.EPOCH_WORKER_AI_MODEL?.trim() || "MiniMaxAI/SynLogic-7B") : (process.env.EPOCH_WORKER_AI_MODEL?.trim() || "gpt-4.1"),
             prompt: `${mission.objective}\nAcceptance criteria:\n${Array.isArray(payload.checklist) ? (payload.checklist as string[]).join("\n") : "Satisfy the mission objective and provide verifiable output."}`,
             maxOutputTokens: Number(process.env.EPOCH_WORKER_AI_MAX_OUTPUT_TOKENS ?? 512),
             requireJson: false,

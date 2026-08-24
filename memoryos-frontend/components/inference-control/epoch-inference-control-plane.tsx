@@ -38,6 +38,8 @@ import { CapabilitiesView } from "../epoch/views/capabilities-view";
 import { SystemsView } from "../epoch/views/systems-view";
 import { ExperimentsView } from "../epoch/views/experiments-view";
 import { GovernanceView } from "../epoch/views/governance-view";
+import { LearningView } from "../epoch/views/learning-view";
+import { cn } from "@/lib/utils";
 
 interface EpochInferenceControlPlaneProps {
   workspaceId: string;
@@ -113,7 +115,7 @@ export function EpochInferenceControlPlane({
   const [deployments, setDeployments] = useState<DeploymentEntity[]>([]);
   const [registry, setRegistry] = useState<RegistryArtifact[]>([]);
   const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [dataError, setDataError] = useState<string | null>(null);
 
   // Keep the control plane synchronized with live backend state while it is open.
@@ -179,12 +181,22 @@ export function EpochInferenceControlPlane({
       return;
     }
 
-    const castedRoute = route as EpochNavRoute;
-    setActiveRoute(castedRoute);
+    let targetRoute = route as EpochNavRoute;
+    if (route === "deployments") {
+      targetRoute = "analytics";
+    }
+    if (route === "weights") {
+      targetRoute = "models";
+    }
+    if (route === "registry") {
+      targetRoute = "evidence";
+    }
+
+    setActiveRoute(targetRoute);
     setSelectedProgramId(null);
     setSelectedModelId(null);
     setSelectedRunId(null);
-    router.push(`/mission-control?view=${castedRoute}`);
+    router.push(`/mission-control?view=${targetRoute}`);
   }
 
   function handleSelectProgram(id: string) {
@@ -389,9 +401,12 @@ export function EpochInferenceControlPlane({
 
       {/* Main Column */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
+        {/* Top Header & Subnav Sticky Container */}
         {displayLayout === "top_bar" && (
-          <>
+          <header className={cn(
+            "sticky top-0 z-50 transition-colors border-b backdrop-blur-md",
+            dark ? "bg-[#141414]/95 border-[#242424]" : "bg-white/95 border-[#e5e7eb]"
+          )}>
             <EpochHeader
               onOpenCommand={() => setCommandOpen(true)}
               dark={dark}
@@ -408,8 +423,9 @@ export function EpochInferenceControlPlane({
               activeRoute={activeRoute}
               onNavigate={(r) => handleNavigate(r)}
               dark={dark}
+              className="border-b-0 bg-transparent"
             />
-          </>
+          </header>
         )}
 
         {/* Main Content Workspace Container */}
@@ -421,9 +437,12 @@ export function EpochInferenceControlPlane({
             </div>
           )}
           {loading && !overview ? (
-            <div className="flex min-h-[400px] flex-col items-center justify-center border border-dashed border-[#c9cec4] bg-white p-12 text-center">
+            <div className={cn(
+              "flex min-h-[300px] flex-col items-center justify-center border border-dashed p-12 text-center rounded-xs",
+              dark ? "border-[#282828] bg-[#141414] text-[#888]" : "border-[#c9cec4] bg-white text-[#6b7367]"
+            )}>
               <span className="h-6 w-6 animate-spin rounded-full border-2 border-[#75bf00] border-t-transparent mb-3" />
-              <p className="text-xs font-mono uppercase tracking-[0.14em] text-[#6b7367]">
+              <p className="text-xs font-mono uppercase tracking-[0.14em]">
                 Initializing Epoch AI Control Plane Runtime...
               </p>
             </div>
@@ -603,12 +622,8 @@ export function EpochInferenceControlPlane({
               {activeRoute === "governance" && (
                 <GovernanceView
                   dark={dark}
-                  onApproveGate={(gateId) => {
-                    console.log("Approved human gate:", gateId);
-                  }}
-                  onRejectGate={(gateId) => {
-                    console.log("Rejected human gate:", gateId);
-                  }}
+                  onNavigateToEvidence={() => handleNavigate("evidence")}
+                  onNavigateToMissions={() => handleNavigate("programs")}
                 />
               )}
 
@@ -616,6 +631,7 @@ export function EpochInferenceControlPlane({
                 <UsageAnalyticsView
                   dark={dark}
                   onNavigateToModelApis={() => handleNavigate("models")}
+                  onNavigateToPipelines={() => handleNavigate("programs")}
                   onNavigateToSettingsCost={() => {
                     setSettingsTab("cost");
                     handleNavigate("settings");
@@ -644,10 +660,16 @@ export function EpochInferenceControlPlane({
 
               {activeRoute === "evidence" && (
                 <EvidenceView
-                  evidenceList={evidence}
-                  onSelectProgram={handleSelectProgram}
-                  onNavigateToPipelines={() => handleNavigate("programs")}
                   dark={dark}
+                  onNavigateToPipelines={() => handleNavigate("programs")}
+                  onNavigateToAnalytics={() => handleNavigate("analytics")}
+                />
+              )}
+
+              {activeRoute === "learning" && (
+                <LearningView
+                  dark={dark}
+                  onNavigateToMission={(mId) => handleNavigate("programs")}
                 />
               )}
 
@@ -672,12 +694,14 @@ export function EpochInferenceControlPlane({
         onOpenChange={setCommandOpen}
         onNavigate={handleNavigate}
         onOpenShortcuts={() => setShortcutsOpen(true)}
+        dark={dark}
       />
 
       {/* Keyboard Shortcuts Dialog matching Screenshot 2 */}
       <EpochShortcutsDialog
         open={shortcutsOpen}
         onOpenChange={setShortcutsOpen}
+        dark={dark}
       />
 
       {/* New Program Command Creation Modal */}

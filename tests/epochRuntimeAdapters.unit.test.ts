@@ -22,4 +22,24 @@ describe("Epoch runtime adapters", () => {
     expect(result.output).toBe("hello");
     expect(result.responseSha256).toHaveLength(64);
   });
+
+  it("executes a Modal OpenAI-compatible runtime", async () => {
+    process.env.EPOCH_RUNTIME_TEST_TOKEN = "modal-test-token";
+    const fetchImpl: typeof fetch = async (_input, init) => {
+      expect((init?.headers as Record<string, string>).authorization).toBe("Bearer modal-test-token");
+      return new Response(JSON.stringify({ choices: [{ message: { content: "hello from modal" } }] }), { status: 200 });
+    };
+    const result = await executeEpochRuntimeAdapter({ target: "modal", endpointEnvVar: "EPOCH_RUNTIME_TEST_ENDPOINT", tokenEnvVar: "EPOCH_RUNTIME_TEST_TOKEN", model: "MiniMaxAI/MiniMax-H3", prompt: "say hello", maxOutputTokens: 32, fetchImpl });
+    expect(result).toMatchObject({ target: "modal", model: "MiniMaxAI/MiniMax-H3", output: "hello from modal" });
+    delete process.env.EPOCH_RUNTIME_TEST_TOKEN;
+  });
+
+  it("does not duplicate /v1 when the endpoint uses a /v1 base", async () => {
+    const fetchImpl: typeof fetch = async (input) => {
+      expect(String(input)).toBe("http://127.0.0.1:8000/v1/chat/completions");
+      return new Response(JSON.stringify({ choices: [{ message: { content: "ok" } }] }), { status: 200 });
+    };
+    const result = await executeEpochRuntimeAdapter({ target: "modal", endpointEnvVar: "EPOCH_RUNTIME_TEST_ENDPOINT", model: "MiniMaxAI/MiniMax-H3", prompt: "hello", maxOutputTokens: 8, fetchImpl });
+    expect(result.output).toBe("ok");
+  });
 });
