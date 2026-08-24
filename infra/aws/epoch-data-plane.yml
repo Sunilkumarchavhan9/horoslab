@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Private PostgreSQL and Redis data plane for Epoch.
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  PrivateSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+  EnvironmentName:
+    Type: String
+    Default: production
+    AllowedValues: [dev, staging, production]
+  DatabaseInstanceClass:
+    Type: String
+    Default: db.t4g.small
+  RedisNodeType:
+    Type: String
+    Default: cache.t4g.small
+
+Resources:
+  DataSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Epoch private database and Redis access
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  DatabaseSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub epoch/${EnvironmentName}/database
+      Description: Epoch PostgreSQL credentials and connection URL.
+      GenerateSecretString:
+        SecretStringTemplate: '{"username":"epochadmin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  RedisSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub epoch/${EnvironmentName}/redis
+      Description: Epoch Redis credentials and connection URL.
+      GenerateSecretString:
+        SecretStringTemplate: '{"username":"epoch"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Epoch private PostgreSQL subnets
+      SubnetIds: !Ref PrivateSubnetIds
+      Tags:
+        - Key: Name
+          Value: !Sub epoch-${EnvironmentName}-database
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub epoch-${EnvironmentName}-postgres
+      Engine: postgres
+      DBInstanceClass: !Ref DatabaseInstanceClass
+      AllocatedStorage: 50
+      MaxAllocatedStorage: 200
+      StorageEncrypted: true
+      BackupRetentionPeriod: 7
+      MultiAZ: true
+      PubliclyAccessible: false
+      AutoMinorVersionUpgrade: true
+      DeletionProtection: true
+      DBName: epoch
+      MasterUsername: epochadmin
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DatabaseSecret}:SecretString:password}}'
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      VPCSecurityGroups: [!Ref DataSecurityGroup]
+
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Epoch private Redis subnets
+      SubnetIds: !Ref PrivateSubnetIds
+
+  Redis:
+    Type: AWS::ElastiCache::ReplicationGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      ReplicationGroupId: !Sub epoch-${EnvironmentName}-redis
+      ReplicationGroupDescription: Epoch durable Redis runtime cache
+      Engine: redis
+      CacheNodeType: !Ref RedisNodeType
+      NumCacheClusters: 2
+      AutomaticFailoverEnabled: true
+      MultiAZEnabled: true
+      TransitEncryptionEnabled: true
+      AtRestEncryptionEnabled: true
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      SecurityGroupIds: [!Ref DataSecurityGroup]
+
+Outputs:
+  DatabaseSecretArn:
+    Value: !Ref DatabaseSecret
+  RedisSecretArn:
+    Value: !Ref RedisSecret
+  DatabaseEndpoint:
+    Value: !GetAtt Database.Endpoint.Address
+  DatabasePort:
+    Value: !GetAtt Database.Endpoint.Port
+  RedisPrimaryEndpoint:
+    Value: !GetAtt Redis.PrimaryEndPoint.Address
+  RedisPort:
+    Value: !GetAtt Redis.PrimaryEndPoint.Port
+  DataSecurityGroupId:
+    Value: !Ref DataSecurityGroup
