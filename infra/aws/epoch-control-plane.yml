@@ -7,6 +7,9 @@ Parameters:
   PrivateSubnetIds:
     Type: List<AWS::EC2::Subnet::Id>
     Description: Private subnets with outbound access for ECS tasks.
+  PublicSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Public subnets in at least two availability zones for the internet-facing API load balancer.
   ApiImage:
     Type: String
     Description: Full ECR image URI for the API.
@@ -110,6 +113,65 @@ Resources:
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3001
+          ToPort: 3001
+          SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
+
+  LoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public HTTP ingress for the Epoch API load balancer
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub epoch-${EnvironmentName}-api
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups: [!Ref LoadBalancerSecurityGroup]
+      Subnets: !Ref PublicSubnetIds
+      LoadBalancerAttributes:
+        - Key: routing.http.drop_invalid_header_fields.enabled
+          Value: 'true'
+
+  ApiTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VpcId
+      TargetType: ip
+      Protocol: HTTP
+      Port: 3001
+      HealthCheckEnabled: true
+      HealthCheckPath: /api/v1/health/
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: traffic-port
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      Matcher:
+        HttpCode: '200'
+
+  ApiListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ApiTargetGroup
 
   TaskExecutionRole:
     Type: AWS::IAM::Role
@@ -245,13 +307,17 @@ Resources:
 
   ApiService:
     Type: AWS::ECS::Service
-    DependsOn: [ApiTaskDefinition]
+    DependsOn: [ApiTaskDefinition, ApiListener]
     Properties:
       Cluster: !Ref Cluster
       ServiceName: !Sub epoch-${EnvironmentName}-api
       LaunchType: FARGATE
       DesiredCount: 1
       TaskDefinition: !Ref ApiTaskDefinition
+      LoadBalancers:
+        - ContainerName: api
+          ContainerPort: 3001
+          TargetGroupArn: !Ref ApiTargetGroup
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
@@ -281,3 +347,5 @@ Outputs:
   MissionsQueueUrl: { Value: !Ref MissionsQueue }
   RuntimeQueueUrl: { Value: !Ref RuntimeQueue }
   DeadLetterQueueUrl: { Value: !Ref MissionsDeadLetterQueue }
+  ApiUrl:
+    Value: !Sub http://${ApplicationLoadBalancer.DNSName}
