@@ -6,6 +6,7 @@ import { createMasterplanWorkspace, listMasterplanWorkspaces } from "@/lib/maste
 // Use the stable V12 route. The legacy /api/epoch prefix remains server-side
 // only for compatibility with older clients.
 const EPOCH_BASE = "/api/v1/epoch";
+const EPOCH_API_ORIGIN = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim().replace(/\/$/, "") ?? "";
 const ACTIVE_EPOCH_WORKSPACE_STORAGE_KEY_PREFIX = "memoryos.epoch.activeWorkspaceId";
 
 type ApiEnvelope<T> =
@@ -43,10 +44,12 @@ async function readJson<T = unknown>(response: Response): Promise<T> {
 }
 
 async function epochFetchOnce(path: string, init?: RequestInit): Promise<Response> {
-  return fetch(`${EPOCH_BASE}${path}`, {
+  const requestPath = `${EPOCH_BASE}${path}`;
+  const url = EPOCH_API_ORIGIN ? `${EPOCH_API_ORIGIN}${requestPath}` : requestPath;
+  return fetch(url, {
     ...init,
     cache: "no-store",
-    credentials: "same-origin",
+    credentials: EPOCH_API_ORIGIN ? "include" : "same-origin",
     headers: {
       accept: "application/json",
       ...(init?.body ? { "content-type": "application/json" } : {}),

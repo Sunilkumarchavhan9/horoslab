@@ -26,7 +26,6 @@ import {
   RunEntity,
   DeploymentEntity,
 } from "../epoch-types";
-import { MOCK_MODELS, MOCK_RUNS, MOCK_OVERVIEW } from "../mock/epoch-data";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -303,14 +302,14 @@ export const epochAdapter = {
     const executions = live.executions.map(mapRun);
     const costs = asRecord(live.costs);
     return {
-      activeProgramsCount: programs.length || MOCK_OVERVIEW.activeProgramsCount,
-      runningProgramsCount: programs.filter((program) => ["running", "execution", "benchmarking", "optimizing"].includes(text(program.status))).length || MOCK_OVERVIEW.runningProgramsCount,
-      optimizingCount: MOCK_OVERVIEW.optimizingCount,
-      verifiedCount: executions.filter((run) => run.status === "completed").length || MOCK_OVERVIEW.verifiedCount,
-      liveDeploymentsCount: deployments.filter((deployment) => deployment.status === "live").length || MOCK_OVERVIEW.liveDeploymentsCount,
-      totalModelsAvailable: MOCK_MODELS.length,
-      totalGpuHoursSavedPct: MOCK_OVERVIEW.totalGpuHoursSavedPct,
-      balanceUsd: number(costs.estimatedCost, MOCK_OVERVIEW.balanceUsd),
+      activeProgramsCount: programs.length,
+      runningProgramsCount: programs.filter((program) => ["running", "execution", "benchmarking", "optimizing"].includes(text(program.status))).length,
+      optimizingCount: 0,
+      verifiedCount: executions.filter((run) => run.status === "completed").length,
+      liveDeploymentsCount: deployments.filter((deployment) => deployment.status === "live").length,
+      totalModelsAvailable: live.catalog.length,
+      totalGpuHoursSavedPct: number(costs.totalGpuHoursSavedPct),
+      balanceUsd: number(costs.estimatedCost),
     };
   },
 
@@ -355,7 +354,7 @@ export const epochAdapter = {
     const syncedMapped = synced.map(mapHuggingFaceModel);
 
     // Combine Master Blueprint catalog with live & synced models
-    const all = [...MOCK_MODELS, ...syncedMapped, ...liveMapped];
+    const all = [...syncedMapped, ...liveMapped];
     const unique = all.filter((model, idx, arr) => arr.findIndex((m) => m.name === model.name || m.id === model.id) === idx);
 
     if (!search) return unique;
@@ -404,7 +403,7 @@ export const epochAdapter = {
 
   async getRuns(workspaceId: string, filter?: { type?: string }): Promise<RunEntity[]> {
     const live = await getEpochAiExecutionOverview(workspaceId).catch(() => ({ executions: [] }));
-    const runs = live.executions.length ? live.executions.map(mapRun) : MOCK_RUNS;
+    const runs = live.executions.map(mapRun);
     return filter?.type && filter.type !== "all" ? runs.filter((run) => run.type === filter.type) : runs;
   },
 
