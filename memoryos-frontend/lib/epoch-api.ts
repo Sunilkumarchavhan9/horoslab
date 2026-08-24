@@ -6,7 +6,10 @@ import { createMasterplanWorkspace, listMasterplanWorkspaces } from "@/lib/maste
 // Use the stable V12 route. The legacy /api/epoch prefix remains server-side
 // only for compatibility with older clients.
 const EPOCH_BASE = "/api/v1/epoch";
-const EPOCH_API_ORIGIN = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim().replace(/\/$/, "") ?? "";
+const configuredEpochApiOrigin = process.env.NEXT_PUBLIC_MEMORYOS_API_ORIGIN?.trim() ?? "";
+const EPOCH_API_ORIGIN = configuredEpochApiOrigin && configuredEpochApiOrigin.toLowerCase() !== "same-origin"
+  ? configuredEpochApiOrigin.replace(/\/$/, "")
+  : "";
 const ACTIVE_EPOCH_WORKSPACE_STORAGE_KEY_PREFIX = "memoryos.epoch.activeWorkspaceId";
 
 type ApiEnvelope<T> =
