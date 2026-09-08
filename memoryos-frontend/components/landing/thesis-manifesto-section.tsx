@@ -188,8 +188,8 @@ const Fig04SVG = ({ isHovered }: { isHovered: boolean }) => {
 };
 
 const Col1Content = ({ isOverlay = false }: { isOverlay?: boolean }) => (
-  <div className={`pt-8 md:pt-12 pb-12 px-6 lg:pl-12 lg:pr-12 flex flex-col h-full min-h-[450px] ${isOverlay ? 'text-white' : 'text-black'}`}>
-    <div className={`font-mono text-[10px] tracking-widest mb-auto ${isOverlay ? 'text-white/70' : 'text-[#999]'}`}>FIG 0.2</div>
+  <div className={`pt-8 md:pt-12 pb-12 px-6 lg:pl-12 lg:pr-12 flex flex-col h-full min-h-[450px] ${isOverlay ? 'text-[#F0EFE2]' : 'text-black'}`}>
+    <div className={`font-mono text-[10px] tracking-widest mb-auto ${isOverlay ? 'text-[#F0EFE2]/70' : 'text-[#C8C7BA]'}`}>FIG 0.2</div>
     
     <div className="flex-grow flex items-center justify-center my-12">
       <motion.div
@@ -203,8 +203,8 @@ const Col1Content = ({ isOverlay = false }: { isOverlay?: boolean }) => (
     </div>
 
     <div className="mt-auto">
-      <h3 className={`text-[15px] font-medium mb-2 ${isOverlay ? 'text-white' : 'text-black'}`}>Institution Primitive</h3>
-      <p className={`text-[14px] leading-[1.6] ${isOverlay ? 'text-white/80' : 'text-[#555]'}`}>
+      <h3 className={`text-[15px] font-medium mb-2 ${isOverlay ? 'text-[#F0EFE2]' : 'text-black'}`}>Institution Primitive</h3>
+      <p className={`text-[14px] leading-[1.6] ${isOverlay ? 'text-[#F0EFE2]/80' : 'text-[#555]'}`}>
         A versioned operating unit for mission, authority, roles, budget, policy, evidence, and termination.
       </p>
     </div>
@@ -212,8 +212,8 @@ const Col1Content = ({ isOverlay = false }: { isOverlay?: boolean }) => (
 );
 
 const Col2Content = ({ isOverlay = false }: { isOverlay?: boolean }) => (
-  <div className={`pt-8 md:pt-12 pb-12 px-6 lg:px-12 flex flex-col h-full min-h-[450px] ${isOverlay ? 'text-white' : 'text-black'}`}>
-    <div className={`font-mono text-[10px] tracking-widest mb-auto ${isOverlay ? 'text-white/70' : 'text-[#999]'}`}>FIG 0.3</div>
+  <div className={`pt-8 md:pt-12 pb-12 px-6 lg:px-12 flex flex-col h-full min-h-[450px] ${isOverlay ? 'text-[#F0EFE2]' : 'text-black'}`}>
+    <div className={`font-mono text-[10px] tracking-widest mb-auto ${isOverlay ? 'text-[#F0EFE2]/70' : 'text-[#C8C7BA]'}`}>FIG 0.3</div>
     
     <div className="flex-grow flex items-center justify-center my-12">
       <motion.div
@@ -227,8 +227,8 @@ const Col2Content = ({ isOverlay = false }: { isOverlay?: boolean }) => (
     </div>
 
     <div className="mt-auto">
-      <h3 className={`text-[15px] font-medium mb-2 ${isOverlay ? 'text-white' : 'text-black'}`}>Organization Runtime</h3>
-      <p className={`text-[14px] leading-[1.6] ${isOverlay ? 'text-white/80' : 'text-[#555]'}`}>
+      <h3 className={`text-[15px] font-medium mb-2 ${isOverlay ? 'text-[#F0EFE2]' : 'text-black'}`}>Organization Runtime</h3>
+      <p className={`text-[14px] leading-[1.6] ${isOverlay ? 'text-[#F0EFE2]/80' : 'text-[#555]'}`}>
         Not an agent framework. The runtime that turns many agents, humans, and tools into one accountable institution.
       </p>
     </div>
@@ -236,8 +236,8 @@ const Col2Content = ({ isOverlay = false }: { isOverlay?: boolean }) => (
 );
 
 const Col3Content = ({ isOverlay = false, isHovered = false }: { isOverlay?: boolean, isHovered?: boolean }) => (
-  <div className={`pt-8 md:pt-12 pb-12 px-6 lg:pl-12 lg:pr-12 flex flex-col h-full min-h-[450px] ${isOverlay ? 'text-white' : 'text-black'}`}>
-    <div className={`font-mono text-[10px] tracking-widest mb-auto ${isOverlay ? 'text-white/70' : 'text-[#999]'}`}>FIG 0.4</div>
+  <div className={`pt-8 md:pt-12 pb-12 px-6 lg:pl-12 lg:pr-12 flex flex-col h-full min-h-[450px] ${isOverlay ? 'text-[#F0EFE2]' : 'text-black'}`}>
+    <div className={`font-mono text-[10px] tracking-widest mb-auto ${isOverlay ? 'text-[#F0EFE2]/70' : 'text-[#C8C7BA]'}`}>FIG 0.4</div>
     
     <div className="flex-grow flex items-center justify-center my-12">
       <motion.div
@@ -251,8 +251,8 @@ const Col3Content = ({ isOverlay = false, isHovered = false }: { isOverlay?: boo
     </div>
 
     <div className="mt-auto">
-      <h3 className={`text-[15px] font-medium mb-2 ${isOverlay ? 'text-white' : 'text-black'}`}>Verifiable Runtime</h3>
-      <p className={`text-[14px] leading-[1.6] ${isOverlay ? 'text-white/80' : 'text-[#555]'}`}>
+      <h3 className={`text-[15px] font-medium mb-2 ${isOverlay ? 'text-[#F0EFE2]' : 'text-black'}`}>Verifiable Runtime</h3>
+      <p className={`text-[14px] leading-[1.6] ${isOverlay ? 'text-[#F0EFE2]/80' : 'text-[#555]'}`}>
         Every mission is evidenced, independently checked, settled against reality, and prepared for inheritance.
       </p>
     </div>

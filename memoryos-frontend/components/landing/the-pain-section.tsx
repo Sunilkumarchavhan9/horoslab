@@ -83,7 +83,7 @@ const LinearMCPView = () => {
   return (
     <div ref={containerRef} className="flex flex-col md:flex-row w-full min-h-[420px]">
       {/* Terminal Text (Left) */}
-      <div className="flex-1 text-[#888] space-y-5 font-mono text-[13px] md:text-[14px] p-6 md:p-8 flex flex-col justify-between">
+      <div className="flex-1 text-[#C8C7BA] space-y-5 font-mono text-[13px] md:text-[14px] p-6 md:p-8 flex flex-col justify-between">
         <div className="space-y-3 md:space-y-3.5 overflow-y-auto pr-2 pb-2 max-h-[350px] scrollbar-thin scrollbar-thumb-[#27272a] scrollbar-track-transparent">
           <div className="type-line-1 min-h-[20px] text-[#e4e4e7]"></div>
 
@@ -91,28 +91,28 @@ const LinearMCPView = () => {
             Kicked off a task in <span className="text-[#3b82f6] font-medium">memoryos/ignition-core</span> environment.
           </div>
 
-          <div className="type-line-3 min-h-[20px] text-[#a1a1aa]"></div>
+          <div className="type-line-3 min-h-[20px] text-[#C8C7BA]"></div>
 
           <div className="type-line-4 opacity-0 text-[#71717a] bg-[#111113] p-2.5 rounded border border-[#222225] min-h-[44px] text-[12px] md:text-[13px] leading-relaxed">
             <span className="text-[#38bdf8]">ignition-core$</span> git branch --show-current<br />
             <span className="text-[#e4e4e7]">feat/agent-workforce</span>
           </div>
 
-          <div className="type-line-5 min-h-[20px] text-[#a1a1aa]"></div>
+          <div className="type-line-5 min-h-[20px] text-[#C8C7BA]"></div>
 
           <div className="type-line-6 opacity-0 text-[#71717a] bg-[#111113] p-2.5 rounded border border-[#222225] min-h-[44px] text-[12px] md:text-[13px] leading-relaxed">
             <span className="text-[#38bdf8]">ignition-core$</span> rg --files -g 'AGENTS.md'<br />
             <span className="text-[#e4e4e7]">.github/AGENTS.md</span>
           </div>
 
-          <div className="type-line-7 min-h-[20px] text-[#a1a1aa]"></div>
+          <div className="type-line-7 min-h-[20px] text-[#C8C7BA]"></div>
 
           <div className="type-line-8 opacity-0 text-[#71717a] bg-[#111113] p-2.5 rounded border border-[#222225] min-h-[44px] text-[12px] md:text-[13px] leading-relaxed">
             <span className="text-[#38bdf8]">ignition-core$</span> rg -n 'fn init_agent_state' src/<br />
             <span className="text-[#e4e4e7]">src/core/state.rs:142: pub fn init_agent_state(config: &Config) -&gt; Result&lt;AgentState&gt; {'{'}</span>
           </div>
 
-          <div className="type-line-9 opacity-0 flex items-center gap-2.5 text-[#a1a1aa] min-h-[24px]">
+          <div className="type-line-9 opacity-0 flex items-center gap-2.5 text-[#C8C7BA] min-h-[24px]">
             <div className="w-3.5 h-3.5 grid grid-cols-3 gap-[1.5px] items-center">
               <div className="bg-[#3b82f6] h-full w-full animate-pulse" />
               <div className="bg-[#3b82f6] h-full w-full animate-pulse delay-75" />
@@ -135,7 +135,7 @@ const LinearMCPView = () => {
             <span>Epoch Audit: <span className="text-[#22c55e] font-semibold">Active</span></span>
           </div>
           <div className="font-mono text-[#52525b]">
-            Assignee: <span className="text-white font-medium">{activeAgentObj.name}</span>
+            Assignee: <span className="text-[#F0EFE2] font-medium">{activeAgentObj.name}</span>
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@ const LinearMCPView = () => {
                       </svg>
                     </div>
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-[#27272a] border border-[#3f3f46] flex items-center justify-center text-[10px] text-white font-bold shrink-0 overflow-hidden">
+                    <div className="w-6 h-6 rounded-full bg-[#27272a] border border-[#3f3f46] flex items-center justify-center text-[10px] text-[#F0EFE2] font-bold shrink-0 overflow-hidden">
                       <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${item.avatarSeed}&backgroundColor=transparent`} alt={item.name} className="w-full h-full rounded-full" />
                     </div>
                   )}
@@ -185,7 +185,7 @@ const LinearMCPView = () => {
 
                 <div className="flex items-center gap-2">
                   {item.isAgent && (
-                    <span className="text-[10px] bg-[#18181b] border border-[#27272a] text-[#a1a1aa] px-1.5 py-0.5 rounded font-mono group-hover:border-[#3f3f46]">
+                    <span className="text-[10px] bg-[#18181b] border border-[#27272a] text-[#C8C7BA] px-1.5 py-0.5 rounded font-mono group-hover:border-[#3f3f46]">
                       Agent
                     </span>
                   )}
@@ -237,7 +237,7 @@ const IssuesView = () => {
   ];
 
   return (
-    <div className="p-6 md:p-8 space-y-4 font-sans text-white w-full">
+    <div className="p-6 md:p-8 space-y-4 font-sans text-[#F0EFE2] w-full">
       <div className="flex items-center justify-between pb-3 border-b border-[#1f1f23]">
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-5 h-5 text-[#3b82f6]" />
@@ -284,7 +284,7 @@ const AgentsView = () => {
   ];
 
   return (
-    <div className="p-6 md:p-8 space-y-6 font-sans text-white w-full">
+    <div className="p-6 md:p-8 space-y-6 font-sans text-[#F0EFE2] w-full">
       <div className="flex items-center justify-between pb-3 border-b border-[#1f1f23]">
         <div className="flex items-center gap-2">
           <Cpu className="w-5 h-5 text-[#3b82f6]" />
@@ -309,11 +309,11 @@ const AgentsView = () => {
             <div className="space-y-1 font-mono text-[12px] text-[#90909c]">
               <div className="flex justify-between">
                 <span>Authority Scope:</span>
-                <span className="text-white font-medium">{ag.scope}</span>
+                <span className="text-[#F0EFE2] font-medium">{ag.scope}</span>
               </div>
               <div className="flex justify-between">
                 <span>Token Velocity:</span>
-                <span className="text-white font-medium">{ag.throughput}</span>
+                <span className="text-[#F0EFE2] font-medium">{ag.throughput}</span>
               </div>
               <div className="flex justify-between">
                 <span>Policy Compliance:</span>
@@ -329,13 +329,13 @@ const AgentsView = () => {
 
 const GitAutomationsView = () => {
   return (
-    <div className="p-6 md:p-8 space-y-5 font-sans text-white w-full">
+    <div className="p-6 md:p-8 space-y-5 font-sans text-[#F0EFE2] w-full">
       <div className="flex items-center justify-between pb-3 border-b border-[#1f1f23]">
         <div className="flex items-center gap-2">
           <GitPullRequest className="w-5 h-5 text-[#3b82f6]" />
           <span className="font-mono text-[14px] text-[#e4e4e7] font-medium">3.4 Git PR & Commit Authority Inspector</span>
         </div>
-        <span className="text-[12px] font-mono text-[#a1a1aa] bg-[#141417] px-2.5 py-1 rounded border border-[#27272a]">
+        <span className="text-[12px] font-mono text-[#C8C7BA] bg-[#141417] px-2.5 py-1 rounded border border-[#27272a]">
           PR #1084 • Verified State
         </span>
       </div>
@@ -352,19 +352,19 @@ const GitAutomationsView = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px] font-mono pt-2 border-t border-[#1a1a1e]">
-          <div className="flex items-center gap-2 text-[#a1a1aa]">
+          <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
-            <span>Cryptographic Commit Signature: <span className="text-white">VALID (0x8F...4B)</span></span>
+            <span>Cryptographic Commit Signature: <span className="text-[#F0EFE2]">VALID (0x8F...4B)</span></span>
           </div>
-          <div className="flex items-center gap-2 text-[#a1a1aa]">
+          <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
-                <span>Epoch Policy Check: <span className="text-white">APPROVED (Rule #7)</span></span>
+                <span>Epoch Policy Check: <span className="text-[#F0EFE2]">APPROVED (Rule #7)</span></span>
           </div>
-          <div className="flex items-center gap-2 text-[#a1a1aa]">
+          <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
-            <span>Authority Delegation: <span className="text-white">Steven (CTO)</span></span>
+            <span>Authority Delegation: <span className="text-[#F0EFE2]">Steven (CTO)</span></span>
           </div>
-          <div className="flex items-center gap-2 text-[#a1a1aa]">
+          <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
             <span>Immutable Audit Log: <span className="text-[#38bdf8]">RECORDED</span></span>
           </div>
@@ -384,7 +384,7 @@ const CyclesView = () => {
   ];
 
   return (
-    <div className="p-6 md:p-8 space-y-5 font-sans text-white w-full">
+    <div className="p-6 md:p-8 space-y-5 font-sans text-[#F0EFE2] w-full">
       <div className="flex items-center justify-between pb-3 border-b border-[#1f1f23]">
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-[#3b82f6]" />
@@ -426,7 +426,7 @@ const AgentAssignUI = () => {
           <div className="w-5 h-5 flex items-center justify-center overflow-hidden rounded-full bg-[#18181b] border border-[#27272a]">
             <img src="/connector-icons/codex.svg" alt="Codex" className="w-full h-full object-contain" />
           </div>
-          <span className="text-white font-medium font-sans text-[14px]">Codex</span>
+          <span className="text-[#F0EFE2] font-medium font-sans text-[14px]">Codex</span>
           <span className="text-[11px] font-mono text-[#38bdf8] bg-[#0c2a38] px-2 py-0.5 rounded border border-[#0284c7]/40 ml-2 hidden sm:inline-block">
             {activeTab === "3.3" && "Linear MCP Connected"}
             {activeTab === "3.1" && "Safety Log Ingesting"}
@@ -440,7 +440,7 @@ const AgentAssignUI = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span className="text-[#e4e4e7] hidden sm:inline">VERIFIED STATE</span>
             </div>
-            <div className="text-[#555] tracking-widest text-[16px] cursor-default hover:text-white transition-colors">
+            <div className="text-[#555] tracking-widest text-[16px] cursor-default hover:text-[#F0EFE2] transition-colors">
               ...
             </div>
           </div>
@@ -479,7 +479,7 @@ const AgentAssignUI = () => {
               <button
                 onClick={() => setActiveTab("3.1")}
                 className={`flex items-center gap-3 text-left transition-colors group ${
-                  activeTab === "3.1" ? "text-white font-semibold" : "text-[#71717a] hover:text-[#a1a1aa]"
+                  activeTab === "3.1" ? "text-[#F0EFE2] font-semibold" : "text-[#71717a] hover:text-[#C8C7BA]"
                 }`}
               >
                 <span className={`font-mono w-6 text-[12px] ${activeTab === "3.1" ? "text-[#3b82f6]" : "text-[#52525b]"}`}>3.1</span>
@@ -489,7 +489,7 @@ const AgentAssignUI = () => {
               <button
                 onClick={() => setActiveTab("3.3")}
                 className={`flex items-center gap-3 text-left transition-colors group ${
-                  activeTab === "3.3" ? "text-white font-semibold" : "text-[#71717a] hover:text-[#a1a1aa]"
+                  activeTab === "3.3" ? "text-[#F0EFE2] font-semibold" : "text-[#71717a] hover:text-[#C8C7BA]"
                 }`}
               >
                 <span className={`font-mono w-6 text-[12px] ${activeTab === "3.3" ? "text-[#3b82f6]" : "text-[#52525b]"}`}>3.3</span>
@@ -499,7 +499,7 @@ const AgentAssignUI = () => {
               <button
                 onClick={() => setActiveTab("3.5")}
                 className={`flex items-center gap-3 text-left transition-colors group ${
-                  activeTab === "3.5" ? "text-white font-semibold" : "text-[#71717a] hover:text-[#a1a1aa]"
+                  activeTab === "3.5" ? "text-[#F0EFE2] font-semibold" : "text-[#71717a] hover:text-[#C8C7BA]"
                 }`}
               >
                 <span className={`font-mono w-6 text-[12px] ${activeTab === "3.5" ? "text-[#3b82f6]" : "text-[#52525b]"}`}>3.5</span>
@@ -511,7 +511,7 @@ const AgentAssignUI = () => {
               <button
                 onClick={() => setActiveTab("3.2")}
                 className={`flex items-center gap-3 text-left transition-colors group ${
-                  activeTab === "3.2" ? "text-white font-semibold" : "text-[#71717a] hover:text-[#a1a1aa]"
+                  activeTab === "3.2" ? "text-[#F0EFE2] font-semibold" : "text-[#71717a] hover:text-[#C8C7BA]"
                 }`}
               >
                 <span className={`font-mono w-6 text-[12px] ${activeTab === "3.2" ? "text-[#3b82f6]" : "text-[#52525b]"}`}>3.2</span>
@@ -521,7 +521,7 @@ const AgentAssignUI = () => {
               <button
                 onClick={() => setActiveTab("3.4")}
                 className={`flex items-center gap-3 text-left transition-colors group ${
-                  activeTab === "3.4" ? "text-white font-semibold" : "text-[#71717a] hover:text-[#a1a1aa]"
+                  activeTab === "3.4" ? "text-[#F0EFE2] font-semibold" : "text-[#71717a] hover:text-[#C8C7BA]"
                 }`}
               >
                 <span className={`font-mono w-6 text-[12px] ${activeTab === "3.4" ? "text-[#3b82f6]" : "text-[#52525b]"}`}>3.4</span>

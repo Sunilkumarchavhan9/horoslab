@@ -439,7 +439,7 @@ export function MistakeImmunityGrid() {
             </div>
 
             {/* AI Reasoning Stream Ticker */}
-            <div className="mb-4 p-2.5 bg-slate-900 text-white font-mono text-[11px] flex items-center justify-between shadow-sm">
+            <div className="mb-4 p-2.5 bg-slate-900 text-[#F0EFE2] font-mono text-[11px] flex items-center justify-between shadow-sm">
               <span className="text-[#38bdf8] font-semibold">{reasoningSequence[reasoningStep]}</span>
               <span className="w-2 h-2 bg-emerald-400 animate-pulse" />
             </div>

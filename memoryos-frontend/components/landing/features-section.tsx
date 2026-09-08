@@ -206,7 +206,7 @@ function TabCommand() {
           <div className="flex items-center gap-6 font-medium text-sm text-slate-600">
              <div className="flex items-center gap-2 text-slate-900 font-semibold">
                <div className="w-6 h-6 bg-slate-900 rounded-md flex items-center justify-center">
-                 <Command className="w-3.5 h-3.5 text-white" />
+                 <Command className="w-3.5 h-3.5 text-[#F0EFE2]" />
                </div>
                MemoryOS
              </div>
@@ -407,7 +407,7 @@ function TabTooling() {
           <div className="p-6 font-mono text-[13px] leading-loose text-slate-300 flex-1 overflow-y-auto">
              <div className="flex gap-2">
                <span className="text-green-400">❯</span>
-               <span className="text-white">How do I deploy this to Vercel?</span>
+               <span className="text-[#F0EFE2]">How do I deploy this to Vercel?</span>
              </div>
              
              <div className="mt-4 mb-4 text-slate-400">
@@ -424,13 +424,13 @@ function TabTooling() {
              </div>
 
              <div className="text-slate-400">
-               The Vercel deployment requires a <span className="text-white bg-slate-800 px-1 rounded">vercel.json</span> config. 
+               The Vercel deployment requires a <span className="text-[#F0EFE2] bg-slate-800 px-1 rounded">vercel.json</span> config. 
                <br/>I will use the <span className="text-blue-400">write_file</span> tool to create it for you now.
              </div>
 
              <div className="mt-4 flex gap-2">
                <span className="text-green-400">❯</span>
-               <span className="text-white border-r-4 border-white animate-pulse pr-1">write_f</span>
+               <span className="text-[#F0EFE2] border-r-4 border-white animate-pulse pr-1">write_f</span>
              </div>
           </div>
        </div>

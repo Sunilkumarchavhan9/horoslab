@@ -86,7 +86,7 @@ export function SimulationMaster() {
           <button
             key={mode}
             onClick={() => setViewMode(mode)}
-            className={`px-3 py-1.5 rounded-full capitalize transition-colors ${viewMode === mode ? 'bg-slate-900 text-white font-medium' : 'text-slate-600 hover:bg-slate-100'}`}
+            className={`px-3 py-1.5 rounded-full capitalize transition-colors ${viewMode === mode ? 'bg-slate-900 text-[#F0EFE2] font-medium' : 'text-slate-600 hover:bg-slate-100'}`}
           >
             {mode}
           </button>
@@ -110,7 +110,7 @@ export function SimulationMaster() {
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl bg-white/90 backdrop-blur-md p-3 rounded-md border border-slate-200 shadow-sm flex items-center gap-4">
         <button 
           onClick={togglePlay}
-          className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-900 text-[#F0EFE2] hover:bg-slate-800 transition-colors"
         >
           {isPlaying ? (
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>

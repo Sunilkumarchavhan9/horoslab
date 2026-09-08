@@ -36,8 +36,8 @@ const FOOTER_COLUMNS = [
 function ConnectIcons() {
   return (
     <div>
-      <p className="font-mono text-[10px] tracking-widest text-white/70 uppercase">CONNECT</p>
-      <div className="mt-6 flex items-center gap-3 text-white">
+      <p className="font-mono text-[10px] tracking-widest text-[#F0EFE2]/70 uppercase">CONNECT</p>
+      <div className="mt-6 flex items-center gap-3 text-[#F0EFE2]">
         {/* X (Twitter) */}
         <a href="#" className="hover:opacity-80 transition-opacity">
           <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z" /></svg>
@@ -65,7 +65,7 @@ function ConnectIcons() {
 
 export function LandingFooter() {
   return (
-    <footer id="contact" className="relative overflow-hidden bg-[#0A62F8] text-white pt-5 font-sans">
+    <footer id="contact" className="relative overflow-hidden bg-[#0A62F8] text-[#F0EFE2] pt-5 font-sans">
 
       {/* Top Links Section */}
       <div className="mx-auto max-w-[1240px] px-8 lg:px-12 relative z-20">
@@ -73,10 +73,10 @@ export function LandingFooter() {
 
           {/* Left Text */}
           <div className="lg:col-span-5">
-            <h2 className="text-[26px] font-semibold leading-[1.2] text-white">
+            <h2 className="text-[26px] font-semibold leading-[1.2] text-[#F0EFE2]">
               Autonomous organization<br />infrastructure.
             </h2>
-            <p className="mt-4 text-[12px] text-white/80 leading-relaxed max-w-xs">
+            <p className="mt-4 text-[12px] text-[#F0EFE2]/80 leading-relaxed max-w-xs">
               Epoch runs the institutions that agents become: mission, authority, execution, proof, settlement, and evolution.
             </p>
           </div>
@@ -85,7 +85,7 @@ export function LandingFooter() {
           <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-6">
             {FOOTER_COLUMNS.map((column) => (
               <div key={column.title}>
-                <p className="font-mono text-[10px] tracking-widest text-white/70 uppercase">
+                <p className="font-mono text-[10px] tracking-widest text-[#F0EFE2]/70 uppercase">
                   {column.title}
                 </p>
                 <div className="mt-6 flex flex-col gap-4">
@@ -93,7 +93,7 @@ export function LandingFooter() {
                     <a
                       key={link.label}
                       href={link.href}
-                      className="text-[12px] text-white font-medium hover:text-white/80 transition-colors"
+                      className="text-[12px] text-[#F0EFE2] font-medium hover:text-[#F0EFE2]/80 transition-colors"
                     >
                       {link.label}
                     </a>
@@ -110,7 +110,7 @@ export function LandingFooter() {
 
       {/* Copyright text placed in the solid blue area just above the image */}
       <div className="w-full flex justify-end px-8 md:px-12 pb-4 pt-4 relative z-20">
-        <div className="text-[10px] font-mono tracking-widest text-white/70">
+        <div className="text-[10px] font-mono tracking-widest text-[#F0EFE2]/70">
           © 2026 · EPOCH INC. · ALL RIGHTS RESERVED
         </div>
       </div>
@@ -124,7 +124,7 @@ export function LandingFooter() {
         {/* Huge "Epoch." text container with relative positioning for the icon */}
         <div className="relative inline-flex items-center justify-center pb-4">
           <h1 className="text-[35vw] md:text-[35vw] lg:text-[400px] font-bold tracking-tighter leading-[0.8] text-[#D4AF37]/40 select-none whitespace-nowrap">
-            ep<span className="relative">o<div className="absolute top-[56%] left-[53%] -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"><MemoryStarIcon className="h-[8vw] w-[8vw] md:h-[100px] md:w-[100px] text-white" /></div></span>ch.
+            ep<span className="relative">o<div className="absolute top-[56%] left-[53%] -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"><MemoryStarIcon className="h-[8vw] w-[8vw] md:h-[100px] md:w-[100px] text-[#F0EFE2]" /></div></span>ch.
           </h1>
         </div>
       </div>

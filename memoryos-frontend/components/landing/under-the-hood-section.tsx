@@ -51,7 +51,7 @@ export function UnderTheHoodSection() {
                     </div>
                     <div className="flex gap-2">
                        <div className="bg-white border border-slate-200 rounded-full px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Add Prompts</div>
-                       <div className="bg-slate-900 rounded-full px-4 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider flex items-center gap-1"><Settings className="w-3 h-3" /> Action</div>
+                       <div className="bg-slate-900 rounded-full px-4 py-1.5 text-[10px] font-bold text-[#F0EFE2] uppercase tracking-wider flex items-center gap-1"><Settings className="w-3 h-3" /> Action</div>
                     </div>
                  </div>
 
@@ -189,18 +189,18 @@ export function UnderTheHoodSection() {
                        {/* Brand 1 */}
                        <div className="bg-white rounded-md border border-slate-100 shadow-sm p-3 flex justify-between items-center">
                           <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-md bg-[#FF3D57] flex items-center justify-center shrink-0"><Activity className="w-4 h-4 text-white" /></div>
+                             <div className="w-8 h-8 rounded-md bg-[#FF3D57] flex items-center justify-center shrink-0"><Activity className="w-4 h-4 text-[#F0EFE2]" /></div>
                              <div className="flex flex-col">
                                <span className="text-[12px] font-bold text-slate-800">Monday <span className="text-emerald-500 text-[10px]">+3</span></span>
                                <span className="text-[10px] font-semibold text-slate-400">monday.com</span>
                              </div>
                           </div>
-                          <div className="bg-slate-900 hover:bg-slate-800 cursor-pointer text-white rounded-full px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"><Plus className="w-3 h-3" /> Start</div>
+                          <div className="bg-slate-900 hover:bg-slate-800 cursor-pointer text-[#F0EFE2] rounded-full px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"><Plus className="w-3 h-3" /> Start</div>
                        </div>
                        {/* Brand 2 */}
                        <div className="bg-[#F8F9FA] rounded-md border border-slate-200 p-3 flex justify-between items-center relative -ml-4 w-[calc(100%+16px)] shadow-md z-20">
                           <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-md bg-[#00AA55] flex items-center justify-center shrink-0"><LayoutTemplate className="w-4 h-4 text-white" /></div>
+                             <div className="w-8 h-8 rounded-md bg-[#00AA55] flex items-center justify-center shrink-0"><LayoutTemplate className="w-4 h-4 text-[#F0EFE2]" /></div>
                              <div className="flex flex-col">
                                <span className="text-[12px] font-bold text-slate-800">Pipedrive <span className="text-emerald-500 text-[10px]">+2</span></span>
                                <span className="text-[10px] font-semibold text-slate-400">pipedrive.com</span>
@@ -235,21 +235,21 @@ export function UnderTheHoodSection() {
                     <div className="flex flex-col gap-1.5">
                        <label className="flex items-center justify-between hover:bg-slate-50 p-1.5 rounded-md cursor-pointer">
                           <div className="flex items-center gap-3">
-                             <div className="w-4 h-4 rounded bg-[#0015FF] text-white flex items-center justify-center"><Check className="w-3 h-3" /></div>
+                             <div className="w-4 h-4 rounded bg-[#0015FF] text-[#F0EFE2] flex items-center justify-center"><Check className="w-3 h-3" /></div>
                              <span className="text-[12.5px] font-medium text-slate-700">ChatGPT</span>
                           </div>
                           <Bot className="w-4 h-4 text-slate-400" />
                        </label>
                        <label className="flex items-center justify-between hover:bg-slate-50 p-1.5 rounded-md cursor-pointer">
                           <div className="flex items-center gap-3">
-                             <div className="w-4 h-4 rounded bg-[#0015FF] text-white flex items-center justify-center"><Check className="w-3 h-3" /></div>
+                             <div className="w-4 h-4 rounded bg-[#0015FF] text-[#F0EFE2] flex items-center justify-center"><Check className="w-3 h-3" /></div>
                              <span className="text-[12.5px] font-medium text-slate-700">AI Overviews</span>
                           </div>
                           <Search className="w-4 h-4 text-slate-400" />
                        </label>
                        <label className="flex items-center justify-between hover:bg-slate-50 p-1.5 rounded-md cursor-pointer">
                           <div className="flex items-center gap-3">
-                             <div className="w-4 h-4 rounded bg-[#0015FF] text-white flex items-center justify-center"><Check className="w-3 h-3" /></div>
+                             <div className="w-4 h-4 rounded bg-[#0015FF] text-[#F0EFE2] flex items-center justify-center"><Check className="w-3 h-3" /></div>
                              <span className="text-[12.5px] font-medium text-slate-700">Claude</span>
                           </div>
                           <Sparkles className="w-4 h-4 text-amber-500" />
@@ -353,13 +353,13 @@ export function UnderTheHoodSection() {
                     
                     <div className="flex flex-col gap-3">
                        <div className="grid grid-cols-12 gap-2 items-center">
-                          <div className="col-span-4 flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-orange-500 flex items-center justify-center text-white text-[8px] font-bold">R</div> <span className="text-[12px] font-semibold text-slate-700">reddit.com</span></div>
+                          <div className="col-span-4 flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-orange-500 flex items-center justify-center text-[#F0EFE2] text-[8px] font-bold">R</div> <span className="text-[12px] font-semibold text-slate-700">reddit.com</span></div>
                           <div className="col-span-3"><span className="bg-blue-50 text-[#0015FF] font-bold text-[9px] px-1.5 py-0.5 rounded">UGC</span></div>
                           <div className="col-span-2 text-[12px] font-semibold text-slate-500 text-center">32%</div>
                           <div className="col-span-3 text-[12px] font-semibold text-slate-700 text-center">3.2</div>
                        </div>
                        <div className="grid grid-cols-12 gap-2 items-center">
-                          <div className="col-span-4 flex items-center gap-2"><div className="w-4 h-4 rounded bg-slate-900 flex items-center justify-center text-white text-[8px] font-bold">A</div> <span className="text-[12px] font-semibold text-slate-700">attio.com</span></div>
+                          <div className="col-span-4 flex items-center gap-2"><div className="w-4 h-4 rounded bg-slate-900 flex items-center justify-center text-[#F0EFE2] text-[8px] font-bold">A</div> <span className="text-[12px] font-semibold text-slate-700">attio.com</span></div>
                           <div className="col-span-3"><span className="bg-emerald-50 text-emerald-600 font-bold text-[9px] px-1.5 py-0.5 rounded">You</span></div>
                           <div className="col-span-2 text-[12px] font-semibold text-slate-500 text-center">43%</div>
                           <div className="col-span-3 text-[12px] font-semibold text-slate-700 text-center">5.2</div>
@@ -380,7 +380,7 @@ export function UnderTheHoodSection() {
                  </div>
 
                  {/* Floating Recommendation Pill */}
-                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white rounded-full px-4 py-2 text-[11px] font-bold tracking-wider flex items-center gap-2 shadow-xl shadow-slate-900/20 group-hover:-translate-y-2 transition-transform cursor-pointer whitespace-nowrap z-20">
+                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-[#F0EFE2] rounded-full px-4 py-2 text-[11px] font-bold tracking-wider flex items-center gap-2 shadow-xl shadow-slate-900/20 group-hover:-translate-y-2 transition-transform cursor-pointer whitespace-nowrap z-20">
                     <CheckCircle2 className="w-3.5 h-3.5" /> You have 5 strategy recommendations
                  </div>
               </div>
@@ -418,10 +418,10 @@ export function UnderTheHoodSection() {
                  {/* Active Dark Item */}
                  <div className="bg-slate-900 rounded-md p-4 border border-slate-800 shadow-lg shadow-slate-900/20 flex justify-between items-center hover:scale-[1.02] transition-transform cursor-pointer z-10 -mx-2">
                     <div className="flex flex-col gap-1">
-                       <span className="text-[13px] font-bold text-white">Join r/CRM subreddit discussions</span>
+                       <span className="text-[13px] font-bold text-[#F0EFE2]">Join r/CRM subreddit discussions</span>
                        <span className="text-[11px] text-slate-400">Discussions show frequently in sources.</span>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0"><ArrowRight className="w-3.5 h-3.5 text-white" /></div>
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0"><ArrowRight className="w-3.5 h-3.5 text-[#F0EFE2]" /></div>
                  </div>
 
                  {/* Item 4 */}

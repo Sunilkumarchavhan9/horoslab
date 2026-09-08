@@ -351,7 +351,7 @@ export function WatchtowerModal({ mcpSource }: { mcpSource: McpSourceCard }) {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <button type="button" onClick={() => setSnoozed((value) => !value)} className={`border px-4 py-2 text-[9px] font-medium transition ${snoozed ? "border-[#d3a95e] bg-[#fff8e8] text-[#8c641c]" : "border-[#c7d3df] text-[#53657a] hover:bg-[#f5f8fb]"}`} style={{ borderRadius: 999 }}>{snoozed ? "Snoozed 1h" : "Snooze"}</button>
-            <button type="button" onClick={() => setReviewed((value) => !value)} className={`px-4 py-2 text-[9px] font-semibold text-white transition ${reviewed ? "bg-[#39724e]" : "bg-[#0015FF] hover:bg-[#0015FF]/90"}`} style={{ borderRadius: 999 }}>{reviewed ? "Reviewed" : "Review reminder"}</button>
+            <button type="button" onClick={() => setReviewed((value) => !value)} className={`px-4 py-2 text-[9px] font-semibold text-[#F0EFE2] transition ${reviewed ? "bg-[#39724e]" : "bg-[#0015FF] hover:bg-[#0015FF]/90"}`} style={{ borderRadius: 999 }}>{reviewed ? "Reviewed" : "Review reminder"}</button>
           </div>
         </header>
 

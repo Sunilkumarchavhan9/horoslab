@@ -553,7 +553,7 @@ export function LandingNav() {
         <div className="flex items-center justify-end gap-2 md:gap-4 text-[14px] shrink-0">
           <a
             href="/auth/sign-up"
-            className="inline-flex items-center bg-[#0015FF] font-medium text-white transition hover:bg-[#0015FF]/90 rounded-md"
+            className="inline-flex items-center bg-[#0015FF] font-medium text-[#F0EFE2] transition hover:bg-[#0015FF]/90 rounded-md"
           >
             <span className="hidden sm:inline px-5 py-2">Open Institution Runtime</span>
             <span className="sm:hidden px-3 py-2">Open</span>

@@ -21,15 +21,15 @@ export function ControlCharts() {
           {/* The Stacked Bar */}
           <div className="flex flex-col w-12 h-full justify-end group">
             {/* Experiment Budget (100) */}
-            <div className="w-full bg-blue-300 h-[12%] flex items-center justify-center text-white text-[10px] font-bold opacity-90 group-hover:opacity-100 transition-opacity">
+            <div className="w-full bg-blue-300 h-[12%] flex items-center justify-center text-[#F0EFE2] text-[10px] font-bold opacity-90 group-hover:opacity-100 transition-opacity">
               100
             </div>
             {/* Subject Scope (250) */}
-            <div className="w-full bg-blue-500 h-[29%] flex items-center justify-center text-white text-[10px] font-bold opacity-90 group-hover:opacity-100 transition-opacity">
+            <div className="w-full bg-blue-500 h-[29%] flex items-center justify-center text-[#F0EFE2] text-[10px] font-bold opacity-90 group-hover:opacity-100 transition-opacity">
               250
             </div>
             {/* Parameter Authority (500) */}
-            <div className="w-full bg-blue-700 h-[59%] flex items-center justify-center text-white text-[11px] font-bold shadow-inner">
+            <div className="w-full bg-blue-700 h-[59%] flex items-center justify-center text-[#F0EFE2] text-[11px] font-bold shadow-inner">
               500
             </div>
             {/* X Axis Label */}

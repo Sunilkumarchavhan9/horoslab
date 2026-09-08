@@ -385,19 +385,19 @@ export function CounterfactualReplayChamber() {
         {/* Final Status Text Below Orbit */}
         <div className="absolute bottom-4 w-full text-center crc-final-status opacity-0 translate-y-4">
           <h4 className="text-[11px] font-bold text-gray-900 tracking-widest uppercase mb-1">NEXT MISSION INHERITED THE FIX</h4>
-          <div className="text-[9px] font-mono text-gray-500">eval case 247 · mission patch v2 · <span className="text-emerald-600 font-bold">verified</span></div>
+          <div className="text-[9px] font-mono text-[#C8C7BA]">eval case 247 · mission patch v2 · <span className="text-emerald-600 font-bold">verified</span></div>
         </div>
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end border-t border-gray-100 pt-3 z-10">
         <div>
           <h3 className="text-[11px] font-bold text-gray-900 tracking-widest uppercase mb-1">Counterfactual Replay Chamber</h3>
-          <div className="text-[9px] font-mono text-gray-500">
+          <div className="text-[9px] font-mono text-[#C8C7BA]">
             Temporal trace reconstruction & verification
           </div>
         </div>
         {isInteractive && (
-          <button onClick={replay} className="text-[9px] font-bold tracking-widest uppercase text-gray-400 hover:text-blue-600 transition-colors flex items-center gap-1.5 rounded-sm bg-white/50 px-2 py-1">
+          <button onClick={replay} className="text-[9px] font-bold tracking-widest uppercase text-[#C8C7BA] hover:text-blue-600 transition-colors flex items-center gap-1.5 rounded-sm bg-white/50 px-2 py-1">
             <RotateCcw size={10} /> REPLAY TRACE
           </button>
         )}

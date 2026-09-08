@@ -55,7 +55,7 @@ export function DefineProductWidget() {
       {/* Inner Card */}
       <div className="w-full bg-white rounded-md shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-slate-200/60 overflow-hidden mb-5">
         <div className="bg-[#f8f9fb] px-3 py-2 flex items-center gap-2 border-b border-slate-100/80">
-          <div className="w-4 h-4 bg-blue-500 rounded-[4px] text-white flex items-center justify-center">
+          <div className="w-4 h-4 bg-blue-500 rounded-[4px] text-[#F0EFE2] flex items-center justify-center">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2.5 h-2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -72,7 +72,7 @@ export function DefineProductWidget() {
       </div>
 
       {/* Button */}
-      <button className="relative overflow-hidden bg-gradient-to-b from-[#60a5fa] to-[#4f46e5] hover:from-[#3b82f6] hover:to-[#4338ca] text-white text-[12px] font-semibold py-2 px-4 rounded-[8px] shadow-[0_2px_8px_rgba(79,70,229,0.25)] transition-all">
+      <button className="relative overflow-hidden bg-gradient-to-b from-[#60a5fa] to-[#4f46e5] hover:from-[#3b82f6] hover:to-[#4338ca] text-[#F0EFE2] text-[12px] font-semibold py-2 px-4 rounded-[8px] shadow-[0_2px_8px_rgba(79,70,229,0.25)] transition-all">
         <div className="absolute inset-0 bg-white/20 w-1/3 h-full -skew-x-12 -translate-x-[250%] button-sweep"></div>
         <span className="relative z-10">Pin Configuration</span>
       </button>

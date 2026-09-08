@@ -25,7 +25,7 @@ export function OrganizationPhase({ state }: { state: any }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: progress > 0.25 ? 1 : 0 }}
       >
-        <div className="bg-slate-800 text-white px-5 py-2 rounded-full font-bold text-xs tracking-widest flex items-center gap-2 mb-8 shadow-md border border-slate-700 z-10">
+        <div className="bg-slate-800 text-[#F0EFE2] px-5 py-2 rounded-full font-bold text-xs tracking-widest flex items-center gap-2 mb-8 shadow-md border border-slate-700 z-10">
           <Users size={14} className="text-blue-400" />
           organization-v1.0
         </div>
@@ -94,7 +94,7 @@ export function OrganizationPhase({ state }: { state: any }) {
           </motion.div>
 
           {/* Central Core */}
-          <div className="absolute bg-slate-900 text-white w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.1)] z-10 border border-slate-700">
+          <div className="absolute bg-slate-900 text-[#F0EFE2] w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.1)] z-10 border border-slate-700">
             <Activity size={20} className="text-emerald-400 mb-1" />
             <span className="text-[10px] font-bold tracking-widest text-center leading-tight">
               institution<br/>run-042

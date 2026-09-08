@@ -35,23 +35,23 @@ export function HeroSection() {
         <div className="flex w-full max-w-[1200px] flex-col items-center text-center">
 
           {/* Eyebrow */}
-          <div className="mb-4 text-[13px] font-bold tracking-widest text-white/80 uppercase">
+          <div className="mb-4 text-[13px] font-bold tracking-widest text-[#F0EFE2]/80 uppercase">
             AUTONOMOUS ORGANIZATION INFRASTRUCTURE
           </div>
 
-          <h1 className="glitch-text mt-2 w-full max-w-[1100px] text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-5xl lg:text-[56px] xl:text-[64px]">
+          <h1 className="glitch-text mt-2 w-full max-w-[1100px] text-4xl font-semibold leading-[1.02] tracking-tight text-[#F0EFE2] md:text-5xl lg:text-[56px] xl:text-[64px]">
             Agents are becoming<br />
             organizations.
           </h1>
 
-          <div className="mx-auto mt-6 max-w-[800px] text-[16px] leading-relaxed text-white sm:text-[18px] space-y-4">
+          <div className="mx-auto mt-6 max-w-[800px] text-[16px] leading-relaxed text-[#F0EFE2] sm:text-[18px] space-y-4">
             <p>
               Epoch is the institution runtime for the autonomous enterprise: mission-scoped authority, governed execution, independent proof, settlement, and institutional evolution for AI workforces.
             </p>
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-2">
-            <div className="inline-flex flex-wrap justify-center items-center gap-2 text-[13px] font-medium text-white/70 text-center">
+            <div className="inline-flex flex-wrap justify-center items-center gap-2 text-[13px] font-medium text-[#F0EFE2]/70 text-center">
               <span className="border-b border-dashed border-white/40 pb-[1px]">
                 Sign up, connect GitHub and Slack, ask Reality, and run the first mission.
               </span>
@@ -60,7 +60,7 @@ export function HeroSection() {
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <a
                 href="/auth/sign-up"
-                className="flex items-center bg-[#0015FF] text-[14px] font-medium text-white transition hover:bg-[#0015FF]/90"
+                className="flex items-center bg-[#0015FF] text-[14px] font-medium text-[#F0EFE2] transition hover:bg-[#0015FF]/90"
               >
                 <span className="px-6 py-2.5">Open Institution Runtime</span>
                 <span className="border-l border-[#0015FF] px-4 py-2.5">

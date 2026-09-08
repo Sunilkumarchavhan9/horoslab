@@ -19,7 +19,7 @@ export function MissionPhase({ state }: { state: any }) {
         animate={{ opacity: progress > 0.02 ? 1 : 0, y: progress > 0.02 ? 0 : 20, scale: progress > 0.02 ? 1 : 0.95 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-        <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+        <div className="bg-slate-900 text-[#F0EFE2] px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target size={16} className="text-emerald-400" />
             <span className="font-bold text-sm tracking-widest">MISSION_001</span>
@@ -101,7 +101,7 @@ export function MissionPhase({ state }: { state: any }) {
 
         {/* Center: Constitution Core */}
         <div className="flex flex-col items-center">
-          <div className="bg-slate-800 text-white px-5 py-2 rounded-full font-bold text-xs tracking-widest flex items-center gap-2 mb-6 shadow-md border border-slate-700 z-10 relative">
+          <div className="bg-slate-800 text-[#F0EFE2] px-5 py-2 rounded-full font-bold text-xs tracking-widest flex items-center gap-2 mb-6 shadow-md border border-slate-700 z-10 relative">
             <Shield size={14} className="text-emerald-400" />
             constitution-v1.0
           </div>
