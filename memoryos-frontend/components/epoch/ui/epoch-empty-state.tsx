@@ -28,7 +28,7 @@ export function EpochEmptyState({
       className={cn(
         "flex flex-col items-center justify-center border border-dashed px-8 py-20 text-center rounded-xs transition-colors",
         dark
-          ? "border-[#2e2e2e] bg-[#202020] text-white"
+          ? "border-[#2e2e2e] bg-[#202020] text-[#F0EFE2]"
           : "border-[#c9cec4] bg-white text-[#171a17]",
         className
       )}
@@ -41,7 +41,7 @@ export function EpochEmptyState({
           {icon}
         </div>
       ) : null}
-      <h3 className={cn("text-sm font-semibold tracking-[-0.01em]", dark ? "text-white" : "text-[#171a17]")}>
+      <h3 className={cn("text-sm font-semibold tracking-[-0.01em]", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
         {title}
       </h3>
       {description ? (

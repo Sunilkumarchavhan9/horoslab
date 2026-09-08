@@ -198,7 +198,7 @@ export function AnimatedButton({
       whileTap={{ y: 0 }}
       transition={COCKPIT_TRANSITION}
       className={cx(
-        "rounded-[8px] border border-[#2e2e2e] bg-[#121212] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#d4d4d8] transition-colors hover:border-[#4a4a4a] hover:text-white disabled:cursor-not-allowed disabled:opacity-45",
+        "rounded-[8px] border border-[#2e2e2e] bg-[#121212] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#d4d4d8] transition-colors hover:border-[#4a4a4a] hover:text-[#F0EFE2] disabled:cursor-not-allowed disabled:opacity-45",
         className,
       )}
       {...props}

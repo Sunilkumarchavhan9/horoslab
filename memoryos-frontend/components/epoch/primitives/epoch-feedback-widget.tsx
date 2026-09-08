@@ -82,13 +82,13 @@ export function EpochFeedbackWidget({ dark = true }: EpochFeedbackWidgetProps) {
           className={cn(
             "absolute bottom-full right-0 mb-3 w-[360px] sm:w-[380px] border border-dashed shadow-2xl p-4 space-y-3.5 rounded-xs animate-in fade-in zoom-in-95 duration-100",
             dark
-              ? "border-[#333333] bg-[#121212] text-white"
+              ? "border-[#333333] bg-[#121212] text-[#F0EFE2]"
               : "border-[#c9cec4] bg-white text-[#171a17]"
           )}
         >
           {/* Header with Title and Boxed Dashed Close Button */}
           <div className="flex items-center justify-between border-b border-dashed border-[#282828] pb-3">
-            <h3 className={cn("font-medium text-sm tracking-tight", dark ? "text-white" : "text-[#171a17]")}>
+            <h3 className={cn("font-medium text-sm tracking-tight", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               Send Feedback
             </h3>
             <button
@@ -97,7 +97,7 @@ export function EpochFeedbackWidget({ dark = true }: EpochFeedbackWidgetProps) {
               className={cn(
                 "p-1 border border-dashed rounded-xs transition-colors flex items-center justify-center",
                 dark
-                  ? "border-[#2e2e2e] bg-[#181818] text-[#888] hover:text-white hover:border-[#444]"
+                  ? "border-[#2e2e2e] bg-[#181818] text-[#C8C7BA] hover:text-[#F0EFE2] hover:border-[#444]"
                   : "border-[#d8ddd3] bg-[#f5f7f3] text-[#666] hover:text-[#111]"
               )}
               title="Close"
@@ -124,10 +124,10 @@ export function EpochFeedbackWidget({ dark = true }: EpochFeedbackWidgetProps) {
                     "flex items-center justify-center gap-1.5 py-1.5 px-2 border border-dashed rounded-xs text-xs transition-all whitespace-nowrap",
                     isSelected
                       ? dark
-                        ? "border-[#4a4a4a] bg-[#292929] text-white font-medium shadow-xs"
+                        ? "border-[#4a4a4a] bg-[#292929] text-[#F0EFE2] font-medium shadow-xs"
                         : "border-[#b8bfb2] bg-[#f0f4ee] text-[#171a17] font-medium"
                       : dark
-                        ? "border-[#282828] bg-[#1a1a1a] text-[#889284] hover:text-white hover:border-[#383838]"
+                        ? "border-[#282828] bg-[#1a1a1a] text-[#889284] hover:text-[#F0EFE2] hover:border-[#383838]"
                         : "border-[#e0e4dd] bg-[#fafbfa] text-[#6b7367] hover:text-[#171a17] hover:border-[#ccd2c6]"
                   )}
                 >
@@ -148,8 +148,8 @@ export function EpochFeedbackWidget({ dark = true }: EpochFeedbackWidgetProps) {
               className={cn(
                 "w-full bg-transparent border-0 text-xs leading-relaxed resize-none outline-none transition-colors",
                 dark
-                  ? "text-white placeholder:text-[#666]"
-                  : "text-[#171a17] placeholder:text-[#888]"
+                  ? "text-[#F0EFE2] placeholder:text-[#666]"
+                  : "text-[#171a17] placeholder:text-[#C8C7BA]"
               )}
             />
           </div>
@@ -203,7 +203,7 @@ export function EpochFeedbackWidget({ dark = true }: EpochFeedbackWidgetProps) {
                     ? "bg-[#75bf00] text-black font-semibold hover:bg-[#86d900] active:scale-[0.99] cursor-pointer shadow-md"
                     : dark
                       ? "bg-[#1c1c1c] text-[#555] cursor-not-allowed"
-                      : "bg-[#f0f3ed] text-[#999] cursor-not-allowed"
+                      : "bg-[#f0f3ed] text-[#C8C7BA] cursor-not-allowed"
               )}
             >
               {isSubmitted ? (
@@ -228,11 +228,11 @@ export function EpochFeedbackWidget({ dark = true }: EpochFeedbackWidgetProps) {
         className={cn(
           "flex items-center gap-2.5 border px-3.5 py-2 text-xs font-sans font-medium transition-all rounded-xs shadow-xl",
           dark
-            ? "border-[#383838] bg-[#222222] text-white hover:border-[#4c4c4c] hover:bg-[#282828]"
+            ? "border-[#383838] bg-[#222222] text-[#F0EFE2] hover:border-[#4c4c4c] hover:bg-[#282828]"
             : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#a0a89d] hover:bg-[#fafbfa]"
         )}
       >
-        <BrandFeedbackLogo className={cn("shrink-0", dark ? "text-white" : "text-[#171a17]")} />
+        <BrandFeedbackLogo className={cn("shrink-0", dark ? "text-[#F0EFE2]" : "text-[#171a17]")} />
         <span>Feedback</span>
       </button>
     </div>

@@ -34,8 +34,8 @@ export function EpochMetricCard({
         "border p-4 transition-colors",
         dark
           ? accent
-            ? "border-[#75bf00]/70 bg-[#162013] text-white"
-            : "border-[#2a3229] bg-[#141814] text-white hover:border-[#75bf00]"
+            ? "border-[#75bf00]/70 bg-[#162013] text-[#F0EFE2]"
+            : "border-[#2a3229] bg-[#141814] text-[#F0EFE2] hover:border-[#75bf00]"
           : accent
           ? "border-[#75bf00]/70 bg-[#fbfdf9] text-[#151515]"
           : "border-[#d8ddd3] bg-white text-[#151515] hover:border-[#b4bcb0]",
@@ -64,7 +64,7 @@ export function EpochMetricCard({
       <div className="mt-2.5 flex items-baseline gap-1.5">
         <span className={cn(
           "font-mono text-2xl font-semibold tracking-[-0.03em] md:text-3xl",
-          dark ? "text-white" : "text-[#151515]"
+          dark ? "text-[#F0EFE2]" : "text-[#151515]"
         )}>
           {value}
         </span>

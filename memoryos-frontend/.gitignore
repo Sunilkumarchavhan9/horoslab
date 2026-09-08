@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Scratch and test files
+*.txt
+*.py
+*.raw
+error.html
+kimi_test.json
+full_logo_msg.json
+diff.txt
+search_results*.txt

@@ -19,7 +19,7 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
   return (
     <div className={cn(
       "border rounded-xs transition-colors",
-      dark ? "border-[#2e2e2e] bg-[#202020] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]",
+      dark ? "border-[#2e2e2e] bg-[#202020] text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#171a17]",
       className
     )}>
       {/* Header */}
@@ -31,7 +31,7 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
           <ShieldCheck size={16} className="text-[#75bf00]" />
           <span className={cn(
             "text-xs font-semibold uppercase tracking-[0.14em]",
-            dark ? "text-white" : "text-[#171a17]"
+            dark ? "text-[#F0EFE2]" : "text-[#171a17]"
           )}>
             Epoch Evidence & Assurance Graph
           </span>
@@ -68,7 +68,7 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
                   selectedNode === node.id
                     ? "border-[#75bf00] bg-[#75bf00] text-black font-bold"
                     : dark
-                    ? "border-[#383838] bg-[#222] text-[#889084] hover:border-[#555] hover:text-white"
+                    ? "border-[#383838] bg-[#222] text-[#889084] hover:border-[#555] hover:text-[#F0EFE2]"
                     : "border-[#d8ddd3] bg-white text-[#5c6457] hover:border-[#a8b0a2]"
                 )}
               >
@@ -91,18 +91,18 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
             </span>
             <p className={cn(
               "mt-2 text-xs font-medium leading-relaxed border-l-2 border-[#75bf00] pl-3",
-              dark ? "text-white" : "text-[#151515]"
+              dark ? "text-[#F0EFE2]" : "text-[#151515]"
             )}>
               &ldquo;{claimChain.claim}&rdquo;
             </p>
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3 font-mono text-xs">
               <div className={cn("border p-2.5 rounded-xs", dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-[#fafbfa]")}>
                 <span className="text-[10px] text-[#788274] uppercase block">Target Candidate</span>
-                <span className={cn("mt-1 font-semibold block truncate", dark ? "text-white" : "text-[#171a17]")}>{evidence.candidateName}</span>
+                <span className={cn("mt-1 font-semibold block truncate", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{evidence.candidateName}</span>
               </div>
               <div className={cn("border p-2.5 rounded-xs", dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-[#fafbfa]")}>
                 <span className="text-[10px] text-[#788274] uppercase block">Hardware Evaluated</span>
-                <span className={cn("mt-1 font-semibold block", dark ? "text-white" : "text-[#171a17]")}>{evidence.hardwareProfilesEvaluated} Profiles</span>
+                <span className={cn("mt-1 font-semibold block", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{evidence.hardwareProfilesEvaluated} Profiles</span>
               </div>
               <div className={cn("border p-2.5 rounded-xs", dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-[#fafbfa]")}>
                 <span className="text-[10px] text-[#788274] uppercase block">Assurance SLA</span>
@@ -132,8 +132,8 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
                 <tbody className={cn("divide-y", dark ? "divide-[#2e2e2e]" : "divide-[#edf0eb]")}>
                   {claimChain.measurements.map((m, idx) => (
                     <tr key={idx} className={dark ? "hover:bg-[#252525]" : "hover:bg-[#f8faf6]"}>
-                      <td className={cn("px-3 py-2.5 font-sans font-medium", dark ? "text-white" : "text-[#171a17]")}>{m.name}</td>
-                      <td className={cn("px-3 py-2.5 font-bold", dark ? "text-white" : "text-[#171a17]")}>{m.value}</td>
+                      <td className={cn("px-3 py-2.5 font-sans font-medium", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{m.name}</td>
+                      <td className={cn("px-3 py-2.5 font-bold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{m.value}</td>
                       <td className="px-3 py-2.5 text-[#788274]">{m.baseline}</td>
                       <td className={cn("px-3 py-2.5 text-right font-semibold", dark ? "text-[#a3e635]" : "text-[#3c7000]")}>{m.delta}</td>
                     </tr>
@@ -154,7 +154,7 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
                 <div key={r.id} className={cn("flex items-center justify-between border p-3 text-xs font-mono rounded-xs", dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-white")}>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-[#60a5fa]">{r.id}</span>
-                    <span className={cn("font-sans", dark ? "text-white" : "text-[#2a3028]")}>{r.name}</span>
+                    <span className={cn("font-sans", dark ? "text-[#F0EFE2]" : "text-[#2a3028]")}>{r.name}</span>
                   </div>
                   <span className={cn(
                     "px-2 py-0.5 text-[10px] uppercase font-bold rounded-xs",
@@ -196,7 +196,7 @@ export function EvidenceChainGraph({ evidence, dark = true, className }: Evidenc
                 <div key={idx} className={cn("flex items-center justify-between border p-3 text-xs font-mono rounded-xs", dark ? "border-[#2e2e2e] bg-[#1a1a1a]" : "border-[#d8ddd3] bg-white")}>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-[#75bf00]" />
-                    <span className={cn("font-sans", dark ? "text-white" : "text-[#2a3028]")}>{v.rule}</span>
+                    <span className={cn("font-sans", dark ? "text-[#F0EFE2]" : "text-[#2a3028]")}>{v.rule}</span>
                   </div>
                   <span className={cn("font-bold text-[10px] uppercase", dark ? "text-[#a3e635]" : "text-[#3c7000]")}>
                     Passed
