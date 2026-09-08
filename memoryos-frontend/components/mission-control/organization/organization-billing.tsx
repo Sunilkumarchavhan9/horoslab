@@ -22,7 +22,7 @@ export function OrganizationBilling() {
  title="Billing & Usage" 
  description="Manage your Epoch subscription, view usage limits, and download invoices."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <CreditCard className="size-4" />
  Update Payment Method
  </button>
@@ -34,7 +34,7 @@ export function OrganizationBilling() {
  <div className="flex flex-col">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Current Plan</span>
  <div className="flex items-center gap-3">
- <h2 className="text-[24px] font-semibold text-foreground dark:text-white tracking-tight">Enterprise</h2>
+ <h2 className="text-[24px] font-semibold text-foreground dark:text-[#F0EFE2] tracking-tight">Enterprise</h2>
  <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200 text-[11px] font-medium uppercase tracking-wider">
  Active
  </span>
@@ -43,14 +43,14 @@ export function OrganizationBilling() {
  </div>
  <div className="text-right">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">Monthly Estimate</span>
- <span className="text-[24px] font-semibold text-foreground dark:text-white">$8,420.00</span>
+ <span className="text-[24px] font-semibold text-foreground dark:text-[#F0EFE2]">$8,420.00</span>
  </div>
  </div>
 
  <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border dark:border-white/5">
  <div className="flex flex-col gap-2">
  <div className="flex justify-between items-end">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Seats</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Seats</span>
  <span className="text-[12px] font-mono text-muted-foreground">42 / 50</span>
  </div>
  <div className="h-1.5 w-full bg-muted dark:bg-white/10 rounded-full overflow-hidden">
@@ -59,7 +59,7 @@ export function OrganizationBilling() {
  </div>
  <div className="flex flex-col gap-2">
  <div className="flex justify-between items-end">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Tokens</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Tokens</span>
  <span className="text-[12px] font-mono text-muted-foreground">18M / 50M</span>
  </div>
  <div className="h-1.5 w-full bg-muted dark:bg-white/10 rounded-full overflow-hidden">
@@ -68,7 +68,7 @@ export function OrganizationBilling() {
  </div>
  <div className="flex flex-col gap-2">
  <div className="flex justify-between items-end">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Storage</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Storage</span>
  <span className="text-[12px] font-mono text-muted-foreground">4TB / Unlimited</span>
  </div>
  <div className="h-1.5 w-full bg-muted dark:bg-white/10 rounded-full overflow-hidden">
@@ -83,11 +83,11 @@ export function OrganizationBilling() {
  <SectionTitle title="Payment Method" description="Your primary payment method for monthly billing." />
  <div className="p-6 rounded-md border border-border dark:border-white/10 flex items-center justify-between bg-card dark:bg-[#111]">
  <div className="flex items-center gap-6">
- <div className="px-3 py-1.5 bg-card dark:bg-[#222] rounded border border-border dark:border-white/5 text-[12px] font-bold text-foreground/90 dark:text-[#ccc]">
+ <div className="px-3 py-1.5 bg-card dark:bg-[#222] rounded border border-border dark:border-white/5 text-[12px] font-bold text-foreground/90 dark:text-[#C8C7BA]">
  VISA
  </div>
  <div className="flex flex-col">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Visa ending in 4242</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Visa ending in 4242</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Expires 12/2028</span>
  </div>
  </div>
@@ -111,7 +111,7 @@ export function OrganizationBilling() {
  >
  <div className="flex items-center gap-6 w-1/3">
  <Receipt className="size-4 text-muted-foreground" />
- <span className="text-[13px] font-medium text-foreground dark:text-white">{inv.date}</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">{inv.date}</span>
  </div>
  <div className="w-1/3">
  <span className="text-[13px] font-mono text-muted-foreground">{inv.amount}</span>
@@ -144,7 +144,7 @@ export function OrganizationBilling() {
  <div className="flex flex-col gap-2 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] p-6 text-[13px]">
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2">
  <span className="text-muted-foreground">Date</span>
- <span className="font-medium text-foreground dark:text-white">{selectedInvoice.date}</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2]">{selectedInvoice.date}</span>
  </div>
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2 pt-2">
  <span className="text-muted-foreground">Status</span>
@@ -154,7 +154,7 @@ export function OrganizationBilling() {
  </div>
  <div className="flex justify-between pt-2">
  <span className="text-muted-foreground">Total</span>
- <span className="font-mono text-foreground dark:text-white font-semibold">{selectedInvoice.amount}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2] font-semibold">{selectedInvoice.amount}</span>
  </div>
  </div>
  </div>
@@ -162,11 +162,11 @@ export function OrganizationBilling() {
  <div className="flex flex-col gap-3">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Actions</span>
  <div className="flex flex-col gap-2">
- <button className="flex items-center justify-between p-3 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] hover:bg-muted/50 dark:hover:bg-[#1a1a1a] transition-colors text-[13px] font-medium text-foreground dark:text-white">
+ <button className="flex items-center justify-between p-3 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] hover:bg-muted/50 dark:hover:bg-[#1a1a1a] transition-colors text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">
  <span className="flex items-center gap-2"><Download className="size-4" /> Download PDF</span>
  <ArrowUpRight className="size-3.5 text-muted-foreground" />
  </button>
- <button className="flex items-center justify-between p-3 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] hover:bg-muted/50 dark:hover:bg-[#1a1a1a] transition-colors text-[13px] font-medium text-foreground dark:text-white">
+ <button className="flex items-center justify-between p-3 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] hover:bg-muted/50 dark:hover:bg-[#1a1a1a] transition-colors text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">
  <span className="flex items-center gap-2"><ExternalLink className="size-4" /> View in Stripe</span>
  <ArrowUpRight className="size-3.5 text-muted-foreground" />
  </button>
