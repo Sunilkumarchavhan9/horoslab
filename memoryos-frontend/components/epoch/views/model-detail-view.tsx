@@ -163,7 +163,7 @@ console.log(text);`;
           <div className="shrink-0 flex items-center justify-center w-7 h-7">
             {getBrandLogo(modelName)}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white font-sans">
+          <h1 className="text-2xl font-bold tracking-tight text-[#F0EFE2] font-sans">
             {modelName}
           </h1>
         </div>
@@ -179,7 +179,7 @@ console.log(text);`;
           <button
             type="button"
             onClick={onBack}
-            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] text-white hover:border-[#555] px-3 py-1 text-xs font-medium transition-colors rounded-xs cursor-pointer font-mono"
+            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] text-[#F0EFE2] hover:border-[#555] px-3 py-1 text-xs font-medium transition-colors rounded-xs cursor-pointer font-mono"
           >
             <ArrowLeft size={13} />
             <span>All models</span>
@@ -194,7 +194,7 @@ console.log(text);`;
             <ArrowDown size={12} />
             <span>INPUT / 1M</span>
           </div>
-          <div className="font-bold font-mono text-base mt-1 text-white">
+          <div className="font-bold font-mono text-base mt-1 text-[#F0EFE2]">
             {inputPrice}
           </div>
         </div>
@@ -204,7 +204,7 @@ console.log(text);`;
             <ArrowUp size={12} />
             <span>OUTPUT / 1M</span>
           </div>
-          <div className="font-bold font-mono text-base mt-1 text-white">
+          <div className="font-bold font-mono text-base mt-1 text-[#F0EFE2]">
             {outputPrice}
           </div>
         </div>
@@ -214,7 +214,7 @@ console.log(text);`;
             <Braces size={12} />
             <span>CONTEXT WINDOW</span>
           </div>
-          <div className="font-bold font-mono text-base mt-1 text-white">
+          <div className="font-bold font-mono text-base mt-1 text-[#F0EFE2]">
             {contextWindow}
           </div>
         </div>
@@ -224,7 +224,7 @@ console.log(text);`;
             <Gauge size={12} />
             <span>WORKSPACE TOKEN RATE</span>
           </div>
-          <div className="font-bold font-mono text-base mt-1 text-white">
+          <div className="font-bold font-mono text-base mt-1 text-[#F0EFE2]">
             400,000 <span className="text-xs font-normal text-[#788274]">tok/min</span>
           </div>
         </div>
@@ -232,7 +232,7 @@ console.log(text);`;
 
       {/* Section 1: API Key matching exact Screenshot 1 */}
       <div className="border border-dashed border-[#282828] bg-[#181818] p-4 rounded-xs space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-white">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#F0EFE2]">
           <Key size={14} className="text-[#788274]" />
           <span>API key</span>
         </div>
@@ -265,7 +265,7 @@ console.log(text);`;
       <div className="border border-dashed border-[#282828] bg-[#181818] p-4 rounded-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-white">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0EFE2]">
               <Code2 size={14} className="text-[#788274]" />
               <span>API request</span>
             </div>
@@ -285,8 +285,8 @@ console.log(text);`;
                   className={cn(
                     "px-2 py-0.5 text-xs transition-colors rounded-xs cursor-pointer",
                     activeLang === lang
-                      ? "bg-[#282828] text-white font-bold"
-                      : "text-[#888] hover:text-white"
+                      ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                      : "text-[#C8C7BA] hover:text-[#F0EFE2]"
                   )}
                 >
                   {lang === "ai_sdk" ? "AI SDK" : lang === "node" ? "Node" : lang === "python" ? "Python" : "curl"}
@@ -320,7 +320,7 @@ console.log(text);`;
       <div className="border border-dashed border-[#282828] bg-[#181818] p-4 rounded-xs space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-white">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0EFE2]">
               <BarChart2 size={14} className="text-[#788274]" />
               <span>Usage snapshot</span>
             </div>
@@ -344,7 +344,7 @@ console.log(text);`;
               <Users size={11} />
               <span>REQUESTS</span>
             </div>
-            <div className="text-base font-bold text-white mt-1">0</div>
+            <div className="text-base font-bold text-[#F0EFE2] mt-1">0</div>
           </div>
 
           <div>
@@ -352,7 +352,7 @@ console.log(text);`;
               <ArrowDown size={11} />
               <span>INPUT TOKENS</span>
             </div>
-            <div className="text-base font-bold text-white mt-1">0</div>
+            <div className="text-base font-bold text-[#F0EFE2] mt-1">0</div>
           </div>
 
           <div>
@@ -360,7 +360,7 @@ console.log(text);`;
               <ArrowUp size={11} />
               <span>OUTPUT TOKENS</span>
             </div>
-            <div className="text-base font-bold text-white mt-1">0</div>
+            <div className="text-base font-bold text-[#F0EFE2] mt-1">0</div>
           </div>
         </div>
       </div>
@@ -371,7 +371,7 @@ console.log(text);`;
           onClick={() => setSpecExpanded(!specExpanded)}
           className="flex items-center justify-between p-3.5 bg-[#1e1e1e] cursor-pointer hover:bg-[#252525] transition-colors"
         >
-          <span className="font-bold text-white uppercase tracking-wider text-xs font-sans">
+          <span className="font-bold text-[#F0EFE2] uppercase tracking-wider text-xs font-sans">
             {specExpanded ? "Collapse Full Spec" : "Expand Full Spec"}
           </span>
           {specExpanded ? <ChevronUp size={14} className="text-[#788274]" /> : <ChevronDown size={14} className="text-[#788274]" />}
@@ -381,7 +381,7 @@ console.log(text);`;
           <div className="divide-y divide-[#262626] text-xs">
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">PROVIDER</span>
-              <div className="col-span-2 text-white font-semibold flex items-center gap-2">
+              <div className="col-span-2 text-[#F0EFE2] font-semibold flex items-center gap-2">
                 <div className="shrink-0">{getBrandLogo(modelName)}</div>
                 <span>{model?.provider || "open-weights"}</span>
               </div>
@@ -389,12 +389,12 @@ console.log(text);`;
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">SERVED ID</span>
-              <div className="col-span-2 text-white font-mono flex items-center gap-2">
+              <div className="col-span-2 text-[#F0EFE2] font-mono flex items-center gap-2">
                 <span>{servedModelId}</span>
                 <button
                   type="button"
                   onClick={handleCopyId}
-                  className="text-[#788274] hover:text-white cursor-pointer"
+                  className="text-[#788274] hover:text-[#F0EFE2] cursor-pointer"
                   title="Copy Served ID"
                 >
                   {copiedId ? <Check size={12} className="text-[#86dc00]" /> : <Copy size={12} />}
@@ -412,33 +412,33 @@ console.log(text);`;
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">CONTEXT WINDOW</span>
-              <span className="col-span-2 text-white">{contextWindow} tokens</span>
+              <span className="col-span-2 text-[#F0EFE2]">{contextWindow} tokens</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">MAXIMUM GENERATED OUTPUT</span>
-              <span className="col-span-2 text-white">{maxGeneratedOutput}</span>
+              <span className="col-span-2 text-[#F0EFE2]">{maxGeneratedOutput}</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">INPUT PRICE</span>
-              <span className="col-span-2 text-white">{inputPrice} per 1M input tokens</span>
+              <span className="col-span-2 text-[#F0EFE2]">{inputPrice} per 1M input tokens</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">CACHED INPUT PRICE</span>
-              <span className="col-span-2 text-white">{cachedInputPrice} per 1M cached input tokens</span>
+              <span className="col-span-2 text-[#F0EFE2]">{cachedInputPrice} per 1M cached input tokens</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">OUTPUT PRICE</span>
-              <span className="col-span-2 text-white">{outputPrice} per 1M output tokens</span>
+              <span className="col-span-2 text-[#F0EFE2]">{outputPrice} per 1M output tokens</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">DELIVERY</span>
               <div className="col-span-2">
-                <span className="border border-[#383838] bg-[#222] text-white px-2 py-0.5 rounded-xs text-[10px]">
+                <span className="border border-[#383838] bg-[#222] text-[#F0EFE2] px-2 py-0.5 rounded-xs text-[10px]">
                   SERVERLESS
                 </span>
               </div>
@@ -447,7 +447,7 @@ console.log(text);`;
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">INPUT MODALITIES</span>
               <div className="col-span-2">
-                <span className="border border-[#383838] bg-[#222] text-white px-2 py-0.5 rounded-xs text-[10px]">
+                <span className="border border-[#383838] bg-[#222] text-[#F0EFE2] px-2 py-0.5 rounded-xs text-[10px]">
                   TEXT
                 </span>
               </div>
@@ -456,7 +456,7 @@ console.log(text);`;
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">OUTPUT MODALITIES</span>
               <div className="col-span-2">
-                <span className="border border-[#383838] bg-[#222] text-white px-2 py-0.5 rounded-xs text-[10px]">
+                <span className="border border-[#383838] bg-[#222] text-[#F0EFE2] px-2 py-0.5 rounded-xs text-[10px]">
                   TEXT
                 </span>
               </div>
@@ -489,27 +489,27 @@ console.log(text);`;
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">PER-KEY CONCURRENCY</span>
-              <span className="col-span-2 text-white">16 requests</span>
+              <span className="col-span-2 text-[#F0EFE2]">16 requests</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">WORKSPACE CONCURRENCY</span>
-              <span className="col-span-2 text-white">16 requests</span>
+              <span className="col-span-2 text-[#F0EFE2]">16 requests</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">SHARED MODEL CONCURRENCY</span>
-              <span className="col-span-2 text-white">64 requests</span>
+              <span className="col-span-2 text-[#F0EFE2]">64 requests</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">WORKSPACE TOKEN RATE</span>
-              <span className="col-span-2 text-white">400,000 tokens/min</span>
+              <span className="col-span-2 text-[#F0EFE2]">400,000 tokens/min</span>
             </div>
 
             <div className="grid grid-cols-3 p-3 text-[#788274]">
               <span className="uppercase text-[11px]">STREAMING TIME TO FIRST TOKEN LIMIT</span>
-              <span className="col-span-2 text-white">60 seconds</span>
+              <span className="col-span-2 text-[#F0EFE2]">60 seconds</span>
             </div>
           </div>
         )}

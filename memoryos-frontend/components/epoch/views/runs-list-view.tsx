@@ -153,7 +153,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
         dark ? "border-[#282828]" : "border-[#e1e4df]"
       )}>
         <div>
-          <h1 className="text-base font-bold font-mono tracking-tight text-white flex items-center gap-2">
+          <h1 className="text-base font-bold font-mono tracking-tight text-[#F0EFE2] flex items-center gap-2">
             <span>Runs &amp; Execution Fabric</span>
             <span className="text-xs font-normal text-[#788274] font-mono">({allRuns.length} total)</span>
           </h1>
@@ -169,7 +169,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
               onClick={onRefresh}
               className={cn(
                 "flex items-center gap-1.5 border px-3 py-1.5 text-xs font-mono rounded-xs transition-colors cursor-pointer",
-                dark ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white hover:border-[#555]" : "border-[#d8ddd3] bg-white text-[#525a4d] hover:border-[#171a17]"
+                dark ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2] hover:border-[#555]" : "border-[#d8ddd3] bg-white text-[#525a4d] hover:border-[#171a17]"
               )}
             >
               <RefreshCw size={12} />
@@ -186,7 +186,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Total Runs</span>
-          <span className="text-sm font-bold text-white">{allRuns.length}</span>
+          <span className="text-sm font-bold text-[#F0EFE2]">{allRuns.length}</span>
         </div>
         <div className={cn(
           "border p-3 rounded-xs space-y-1",
@@ -202,7 +202,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Verified Winners</span>
-          <span className="text-sm font-bold text-white">
+          <span className="text-sm font-bold text-[#F0EFE2]">
             {allRuns.filter((r) => r.status === "completed").length}
           </span>
         </div>
@@ -211,7 +211,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Compute Spend</span>
-          <span className="text-sm font-bold text-white">${totalCost.toFixed(2)}</span>
+          <span className="text-sm font-bold text-[#F0EFE2]">${totalCost.toFixed(2)}</span>
         </div>
       </div>
 
@@ -229,10 +229,10 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
                   "px-3 py-1 border border-dashed transition-colors rounded-xs cursor-pointer",
                   isActive
                     ? dark
-                      ? "border-[#555] bg-[#282828] text-white font-bold"
+                      ? "border-[#555] bg-[#282828] text-[#F0EFE2] font-bold"
                       : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
                     : dark
-                    ? "border-transparent text-[#788274] hover:text-white"
+                    ? "border-transparent text-[#788274] hover:text-[#F0EFE2]"
                     : "border-transparent text-[#687063] hover:text-[#171a17]"
                 )}
               >
@@ -253,7 +253,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search run ID, model, hardware..."
-              className="bg-transparent outline-none placeholder:text-[#666] font-mono text-xs w-full text-white"
+              className="bg-transparent outline-none placeholder:text-[#666] font-mono text-xs w-full text-[#F0EFE2]"
             />
           </label>
 
@@ -263,7 +263,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
             <button
               type="button"
               onClick={() => setSortBy(sortBy === "newest" ? "oldest" : "newest")}
-              className="hover:text-white transition-colors cursor-pointer"
+              className="hover:text-[#F0EFE2] transition-colors cursor-pointer"
             >
               {sortBy === "newest" ? "Newest first" : "Oldest first"}
             </button>
@@ -303,7 +303,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
               {/* Col 1: Run ID & Program */}
               <div className="col-span-4 space-y-0.5">
                 <div className="flex items-center gap-2 font-mono">
-                  <span className="font-bold text-white">{r.id}</span>
+                  <span className="font-bold text-[#F0EFE2]">{r.id}</span>
                   <span className="text-[10px] text-[#788274] border border-[#383838] bg-[#181818] px-1 py-0.2 rounded-xs uppercase">
                     {r.type}
                   </span>
@@ -315,7 +315,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
 
               {/* Col 2: Candidate / Strategy */}
               <div className="col-span-3 space-y-0.5 font-mono text-[11px]">
-                <div className="text-white truncate">{r.candidateName}</div>
+                <div className="text-[#F0EFE2] truncate">{r.candidateName}</div>
                 <div className="text-[10px] text-[#788274]">{r.durationSeconds}s • ${r.metrics?.costUsd?.toFixed(2)}</div>
               </div>
 
@@ -325,7 +325,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
               </div>
 
               {/* Col 4: Latency */}
-              <div className="col-span-1 text-right font-mono text-white">
+              <div className="col-span-1 text-right font-mono text-[#F0EFE2]">
                 {r.metrics?.latencyP95 ? `${r.metrics.latencyP95}ms` : "—"}
               </div>
 
@@ -344,7 +344,7 @@ export function RunsListView({ runs, onSelectRun, onRefresh, dark = true }: Runs
               </div>
 
               {/* Col 6: Action */}
-              <div className="col-span-1 text-right font-mono text-[#788274] hover:text-white flex items-center justify-end gap-1">
+              <div className="col-span-1 text-right font-mono text-[#788274] hover:text-[#F0EFE2] flex items-center justify-end gap-1">
                 <span>View</span>
                 <ChevronRight size={13} />
               </div>

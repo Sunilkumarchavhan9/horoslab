@@ -204,7 +204,7 @@ export function HomeView({
         );
       default:
         return (
-          <span className="border border-dashed border-[#555] bg-[#1a1a1a] text-[#888] px-2 py-0.5 text-[10px] tracking-wider rounded-xs flex items-center gap-1.5 font-bold font-mono">
+          <span className="border border-dashed border-[#555] bg-[#1a1a1a] text-[#C8C7BA] px-2 py-0.5 text-[10px] tracking-wider rounded-xs flex items-center gap-1.5 font-bold font-mono">
             <span>{status}</span>
           </span>
         );
@@ -229,7 +229,7 @@ export function HomeView({
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-dashed border-[#2e2e2e] pb-3">
           <div className="flex items-center gap-3">
-            <h2 className={cn("text-xs font-semibold tracking-tight", dark ? "text-white" : "text-[#171a17]")}>
+            <h2 className={cn("text-xs font-semibold tracking-tight", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               Recent missions
             </h2>
 
@@ -242,10 +242,10 @@ export function HomeView({
                   "px-2.5 py-0.5 text-xs font-mono border transition-colors rounded-xs",
                   filter === "all"
                     ? dark
-                      ? "border-[#444] bg-[#282828] text-white font-medium"
+                      ? "border-[#444] bg-[#282828] text-[#F0EFE2] font-medium"
                       : "border-[#999] bg-[#eaeaea] text-[#111] font-medium"
                     : dark
-                    ? "border-transparent text-[#788274] hover:text-white"
+                    ? "border-transparent text-[#788274] hover:text-[#F0EFE2]"
                     : "border-transparent text-[#687063] hover:text-[#171a17]"
                 )}
               >
@@ -258,10 +258,10 @@ export function HomeView({
                   "flex items-center gap-1 px-2 py-0.5 text-xs font-mono transition-colors rounded-xs",
                   filter === "active"
                     ? dark
-                      ? "bg-[#282828] text-white font-medium"
+                      ? "bg-[#282828] text-[#F0EFE2] font-medium"
                       : "bg-[#eaeaea] text-[#111] font-medium"
                     : dark
-                    ? "text-[#788274] hover:text-white"
+                    ? "text-[#788274] hover:text-[#F0EFE2]"
                     : "text-[#687063] hover:text-[#171a17]"
                 )}
               >
@@ -275,10 +275,10 @@ export function HomeView({
                   "px-2 py-0.5 text-xs font-mono transition-colors rounded-xs",
                   filter === "completed"
                     ? dark
-                      ? "bg-[#282828] text-white font-medium"
+                      ? "bg-[#282828] text-[#F0EFE2] font-medium"
                       : "bg-[#eaeaea] text-[#111] font-medium"
                     : dark
-                    ? "text-[#788274] hover:text-white"
+                    ? "text-[#788274] hover:text-[#F0EFE2]"
                     : "text-[#687063] hover:text-[#171a17]"
                 )}
               >
@@ -336,7 +336,7 @@ export function HomeView({
                   <div
                     className={cn(
                       "font-semibold text-xs transition-colors",
-                      dark ? "text-white group-hover:text-[#75bf00]" : "text-[#171a17] group-hover:text-[#2d5800]"
+                      dark ? "text-[#F0EFE2] group-hover:text-[#75bf00]" : "text-[#171a17] group-hover:text-[#2d5800]"
                     )}
                   >
                     {mission.title}

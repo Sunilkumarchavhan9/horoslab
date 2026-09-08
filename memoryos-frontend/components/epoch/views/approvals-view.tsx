@@ -157,7 +157,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-white tracking-wide">Autonomy &amp; Policy Verification Engine</h1>
+            <h1 className="text-xl font-bold text-[#F0EFE2] tracking-wide">Autonomy &amp; Policy Verification Engine</h1>
             <span className="bg-[#75bf00] text-[#111] font-bold font-mono px-1.5 py-0.5 rounded text-[10px]">
               100% AUTONOMOUS EXECUTION
             </span>
@@ -170,7 +170,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
         <button
           type="button"
           onClick={() => alert("Re-evaluating active policy gates against live WorldState...")}
-          className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#202020] hover:border-white text-white px-3 py-1.5 rounded-none font-mono text-xs transition-colors cursor-pointer self-start md:self-auto"
+          className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#202020] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none font-mono text-xs transition-colors cursor-pointer self-start md:self-auto"
         >
           <RefreshCw size={12} />
           <span>Re-verify Policies</span>
@@ -193,13 +193,13 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
 
         <div className="space-y-0.5">
           <div className="text-[#889284] text-[10px] uppercase tracking-wider">SPEND GOVERNANCE</div>
-          <div className="text-2xl font-bold text-white">$500.00 Cap</div>
+          <div className="text-2xl font-bold text-[#F0EFE2]">$500.00 Cap</div>
           <div className="text-[10px] text-[#75bf00]">Auto-offset by cooling savings</div>
         </div>
 
         <div className="space-y-0.5">
           <div className="text-[#889284] text-[10px] uppercase tracking-wider">ACTIVE POLICY RULES</div>
-          <div className="text-2xl font-bold text-white">14 Policies</div>
+          <div className="text-2xl font-bold text-[#F0EFE2]">14 Policies</div>
           <div className="text-[10px] text-[#75bf00]">100% Policy Compliant</div>
         </div>
       </div>
@@ -209,7 +209,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-dashed border-[#282828] pb-3">
           <div className="flex items-center gap-2">
             <Shield className="text-[#75bf00]" size={16} />
-            <span className="font-bold text-white text-sm">Autonomous Policy Boundaries &amp; Action Matrix</span>
+            <span className="font-bold text-[#F0EFE2] text-sm">Autonomous Policy Boundaries &amp; Action Matrix</span>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
@@ -237,7 +237,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
             <tbody className="divide-y divide-[#1c1c1c] text-xs font-mono">
               {actionPermissions.map((row, idx) => (
                 <tr key={idx} className="hover:bg-[#111111] transition-colors">
-                  <td className="py-2.5 px-3 font-bold text-white">{row.action}</td>
+                  <td className="py-2.5 px-3 font-bold text-[#F0EFE2]">{row.action}</td>
                   <td className="py-2.5 px-3">
                     <span className={cn("px-2 py-0.5 text-[10px] font-bold border", row.modeColor)}>
                       {row.mode}
@@ -258,7 +258,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
         <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
           <div className="flex items-center gap-2">
             <ShieldCheck size={14} className="text-[#75bf00]" />
-            <span className="font-bold text-white uppercase tracking-wider text-xs">AUTONOMOUS POLICY EVALUATIONS</span>
+            <span className="font-bold text-[#F0EFE2] uppercase tracking-wider text-xs">AUTONOMOUS POLICY EVALUATIONS</span>
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -271,8 +271,8 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
                 className={cn(
                   "px-2.5 py-1 text-[11px] font-mono transition-colors rounded-none cursor-pointer border",
                   selectedGateFilter === gate
-                    ? "border-[#555555] bg-[#222222] text-white font-bold"
-                    : "border-[#282828] bg-[#1a1a1a] text-[#889284] hover:text-white"
+                    ? "border-[#555555] bg-[#222222] text-[#F0EFE2] font-bold"
+                    : "border-[#282828] bg-[#1a1a1a] text-[#889284] hover:text-[#F0EFE2]"
                 )}
               >
                 {gate}
@@ -298,7 +298,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-bold text-white tracking-wide">{gate.gateTitle}</h2>
+                      <h2 className="text-base font-bold text-[#F0EFE2] tracking-wide">{gate.gateTitle}</h2>
                       <span className="text-[10px] text-[#75bf00] font-mono font-bold flex items-center gap-1 px-2 py-0.5 border border-[#283818] bg-[#121c0e]">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                         {gate.gateBadge}
@@ -309,9 +309,9 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-[#889284] pt-1">
-                      <span>Mission: <span className="text-white font-bold">{gate.missionId}</span></span>
+                      <span>Mission: <span className="text-[#F0EFE2] font-bold">{gate.missionId}</span></span>
                       <span>·</span>
-                      <span>WorldState: <span className="text-white">{gate.worldStateRef}</span></span>
+                      <span>WorldState: <span className="text-[#F0EFE2]">{gate.worldStateRef}</span></span>
                     </div>
                   </div>
                 </div>
@@ -327,7 +327,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
               {/* Objective & Mission Context */}
               <div className="space-y-1 bg-[#0f0f0f] p-3 border border-[#222222]">
                 <span className="text-[10px] text-[#889284] uppercase font-bold">TARGET OUTCOME</span>
-                <p className="text-xs text-white font-bold">{gate.objective}</p>
+                <p className="text-xs text-[#F0EFE2] font-bold">{gate.objective}</p>
               </div>
 
               {/* Conflict Auto-Resolution Details if present */}
@@ -368,7 +368,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
                   <span className="text-[10px] text-[#889284] uppercase font-bold">OBSERVED CONSEQUENCE</span>
                   <p className="text-xs text-[#75bf00] font-bold">{gate.consequence.expected}</p>
                   <div className="text-[10.5px] text-[#889284] pt-0.5">
-                    Risk: <span className="text-white">{gate.consequence.risk}</span>
+                    Risk: <span className="text-[#F0EFE2]">{gate.consequence.risk}</span>
                   </div>
                 </div>
 
@@ -381,7 +381,7 @@ export function ApprovalsView({ dark = true, onNavigateToMission }: ApprovalsVie
                 {/* Grid 4: Policy Evaluated */}
                 <div className="p-3 bg-[#0f0f0f] border border-[#222222] space-y-1">
                   <span className="text-[10px] text-[#889284] uppercase font-bold">POLICY EVALUATION</span>
-                  <div className="text-xs text-white font-bold">Policy: {gate.policy.name}</div>
+                  <div className="text-xs text-[#F0EFE2] font-bold">Policy: {gate.policy.name}</div>
                   <p className="text-[10.5px] text-[#889284] font-sans">{gate.policy.reason}</p>
                 </div>
 

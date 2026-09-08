@@ -171,11 +171,11 @@ export function GovernanceView({
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold text-xs uppercase tracking-wider">
               Policy & Authority Control
             </span>
-            <h1 className="text-lg font-bold tracking-tight text-white font-sans">
+            <h1 className="text-lg font-bold tracking-tight text-[#F0EFE2] font-sans">
               Governance Matrix
             </h1>
           </div>
-          <p className="mt-1 text-xs text-[#888]">
+          <p className="mt-1 text-xs text-[#C8C7BA]">
             Defining boundaries of organizational authority, spend caps, autonomy levels, and human gates (Sections 45–50).
           </p>
         </div>
@@ -211,8 +211,8 @@ export function GovernanceView({
                 className={cn(
                   "px-2.5 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm",
                   isActive
-                    ? "bg-[#242424] text-white font-bold"
-                    : "text-[#889284] hover:text-white"
+                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                    : "text-[#889284] hover:text-[#F0EFE2]"
                 )}
               >
                 <span>{tab.label}</span>
@@ -223,7 +223,7 @@ export function GovernanceView({
 
         {/* 24 hours Time Window Badge (1:1 Match with User Image) */}
         <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm">
-          <span className="bg-[#242424] text-white font-bold px-2 py-0.5 rounded-sm">
+          <span className="bg-[#242424] text-[#F0EFE2] font-bold px-2 py-0.5 rounded-sm">
             24 hours
           </span>
         </div>
@@ -248,11 +248,11 @@ export function GovernanceView({
                 {policies.map((pol) => (
                   <tr key={pol.id} className="hover:bg-[#181818] transition-colors">
                     <td className="p-3">
-                      <div className="font-bold text-white font-sans">{pol.name}</div>
+                      <div className="font-bold text-[#F0EFE2] font-sans">{pol.name}</div>
                       <div className="text-[10px] text-[#777] font-mono mt-0.5">{pol.id}</div>
                     </td>
-                    <td className="p-3 text-[#ccc] text-[11px]">{pol.scope}</td>
-                    <td className="p-3 text-white font-bold">{pol.constraint}</td>
+                    <td className="p-3 text-[#C8C7BA] text-[11px]">{pol.scope}</td>
+                    <td className="p-3 text-[#F0EFE2] font-bold">{pol.constraint}</td>
                     <td className="p-3 text-[#75bf00]">{pol.authorityGate}</td>
                     <td className="p-3">
                       <span className="bg-[#75bf00]/10 text-[#75bf00] border border-dashed border-[#75bf00]/40 px-2 py-0.5 text-[10px] rounded-xs font-bold">
@@ -271,7 +271,7 @@ export function GovernanceView({
       {/* TAB 2: ACTIVE HUMAN GATES (Sections 48 & 91) */}
       {activeTab === "gates" && (
         <div className="space-y-4 font-mono">
-          <div className="text-xs text-[#888]">
+          <div className="text-xs text-[#C8C7BA]">
             Pending actions requiring explicit human organizational authority before execution (Section 48):
           </div>
 
@@ -300,7 +300,7 @@ export function GovernanceView({
                             : "text-[#ef4444]"
                       }
                     />
-                    <span className="font-bold text-white font-sans">{gate.gateType}</span>
+                    <span className="font-bold text-[#F0EFE2] font-sans">{gate.gateType}</span>
                     <span className="text-[10px] text-[#777]">• {gate.timestamp}</span>
                   </div>
                   <span
@@ -318,8 +318,8 @@ export function GovernanceView({
                 </div>
 
                 <div className="space-y-1">
-                  <div className="font-bold text-white text-sm font-sans">{gate.missionTitle}</div>
-                  <p className="text-xs text-[#ccc] leading-relaxed">{gate.description}</p>
+                  <div className="font-bold text-[#F0EFE2] text-sm font-sans">{gate.missionTitle}</div>
+                  <p className="text-xs text-[#C8C7BA] leading-relaxed">{gate.description}</p>
                   <div className="text-[10px] text-[#777] pt-1">Requested by: {gate.requestedBy}</div>
                 </div>
 
@@ -361,7 +361,7 @@ export function GovernanceView({
       {/* TAB 3: AUTHORITY PERMISSIONS MATRIX (Section 46) */}
       {activeTab === "autonomy" && (
         <div className="space-y-3 font-mono">
-          <div className="text-xs text-[#888]">
+          <div className="text-xs text-[#C8C7BA]">
             Organizational role mapping to permitted intervention capabilities (Section 46):
           </div>
 
@@ -389,7 +389,7 @@ export function GovernanceView({
                 </tr>
                 <tr className="hover:bg-[#181818] transition-colors">
                   <td className="p-3">
-                    <div className="font-bold text-white font-sans">SRE Lead / Administrator</div>
+                    <div className="font-bold text-[#F0EFE2] font-sans">SRE Lead / Administrator</div>
                     <div className="text-[10px] text-[#777] font-mono">Human Operator</div>
                   </td>
                   <td className="p-3 text-[#75bf00] font-bold">ALLOWED</td>
@@ -408,11 +408,11 @@ export function GovernanceView({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs p-4 animate-in fade-in duration-150">
           <div className="w-full max-w-md border border-dashed border-[#262626] bg-[#141414] rounded-xs p-6 font-mono text-xs space-y-4">
             <div className="flex items-center justify-between border-b border-dashed border-[#282828] pb-3">
-              <span className="font-bold text-white text-sm font-sans">Add Policy Rule</span>
+              <span className="font-bold text-[#F0EFE2] text-sm font-sans">Add Policy Rule</span>
               <button
                 type="button"
                 onClick={() => setAddRuleModalOpen(false)}
-                className="text-[#777] hover:text-white cursor-pointer"
+                className="text-[#777] hover:text-[#F0EFE2] cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -426,7 +426,7 @@ export function GovernanceView({
                   value={newRuleName}
                   onChange={(e) => setNewRuleName(e.target.value)}
                   placeholder="e.g. Max GPU VRAM Limit"
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-white outline-none"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-[#F0EFE2] outline-none"
                 />
               </div>
 
@@ -436,7 +436,7 @@ export function GovernanceView({
                   type="text"
                   value={newRuleScope}
                   onChange={(e) => setNewRuleScope(e.target.value)}
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-white outline-none"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-[#F0EFE2] outline-none"
                 />
               </div>
 
@@ -446,7 +446,7 @@ export function GovernanceView({
                   type="text"
                   value={newRuleConstraint}
                   onChange={(e) => setNewRuleConstraint(e.target.value)}
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-white outline-none"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-[#F0EFE2] outline-none"
                 />
               </div>
 
@@ -454,7 +454,7 @@ export function GovernanceView({
                 <button
                   type="button"
                   onClick={() => setAddRuleModalOpen(false)}
-                  className="px-3 py-1 border border-dashed border-[#383838] hover:border-white text-white rounded-xs"
+                  className="px-3 py-1 border border-dashed border-[#383838] hover:border-white text-[#F0EFE2] rounded-xs"
                 >
                   Cancel
                 </button>

@@ -109,7 +109,7 @@ export function ApiKeysView({
     <div className="max-w-[1000px] mx-auto pb-20 font-sans text-xs text-left">
       {/* 1:1 RunInfra Top Header */}
       <div className="mb-8">
-        <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-white">
+        <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
           <span>API</span>
           <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
             Keys
@@ -131,13 +131,13 @@ export function ApiKeysView({
             <button
               type="button"
               onClick={() => setNewlyCreatedKey(null)}
-              className="text-[#788274] hover:text-white cursor-pointer"
+              className="text-[#788274] hover:text-[#F0EFE2] cursor-pointer"
             >
               <X size={13} />
             </button>
           </div>
           <p className="text-[11px] text-[#a0a89d]">
-            Please copy this key now. <strong className="text-white">It will not be displayed again.</strong>
+            Please copy this key now. <strong className="text-[#F0EFE2]">It will not be displayed again.</strong>
           </p>
           <div className="flex items-center gap-2 bg-[#0e0e0e] border border-dashed border-[#333] px-3 py-2 rounded-xs">
             <code className="text-[#86dc00] font-bold text-xs select-all flex-1 truncate">
@@ -169,11 +169,11 @@ export function ApiKeysView({
         {/* Header Row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-xs border border-[#333] bg-[#141414] flex items-center justify-center text-[#888] shrink-0">
+            <div className="w-6 h-6 rounded-xs border border-[#333] bg-[#141414] flex items-center justify-center text-[#C8C7BA] shrink-0">
               <Key size={11} />
             </div>
             <div>
-              <div className="font-bold text-white text-xs tracking-tight">Inference keys</div>
+              <div className="font-bold text-[#F0EFE2] text-xs tracking-tight">Inference keys</div>
               <div className="text-[11px] text-[#788274]">
                 {keys.length} {keys.length === 1 ? "key issued." : "keys issued."}
               </div>
@@ -183,7 +183,7 @@ export function ApiKeysView({
           <button
             type="button"
             onClick={() => setCreateModalOpen(true)}
-            className="flex items-center gap-1.5 border border-[#383838] bg-[#141414] hover:bg-[#1f1f1f] text-white px-3 py-1.5 text-xs font-mono rounded-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 border border-[#383838] bg-[#141414] hover:bg-[#1f1f1f] text-[#F0EFE2] px-3 py-1.5 text-xs font-mono rounded-xs transition-colors cursor-pointer"
           >
             <Plus size={11} />
             <span>Create key</span>
@@ -198,7 +198,7 @@ export function ApiKeysView({
               <Key size={12} />
             </div>
             <div className="space-y-1">
-              <div className="font-bold text-white text-xs">No API keys yet</div>
+              <div className="font-bold text-[#F0EFE2] text-xs">No API keys yet</div>
               <p className="text-xs text-[#788274] leading-relaxed max-w-sm mx-auto">
                 Issue a key for RunInfra native and compatible inference requests.
               </p>
@@ -206,7 +206,7 @@ export function ApiKeysView({
             <button
               type="button"
               onClick={() => setCreateModalOpen(true)}
-              className="flex items-center gap-1.5 border border-[#383838] bg-[#141414] hover:bg-[#1f1f1f] text-white px-3.5 py-1.5 text-xs font-mono rounded-xs transition-colors cursor-pointer mt-2"
+              className="flex items-center gap-1.5 border border-[#383838] bg-[#141414] hover:bg-[#1f1f1f] text-[#F0EFE2] px-3.5 py-1.5 text-xs font-mono rounded-xs transition-colors cursor-pointer mt-2"
             >
               <Plus size={11} />
               <span>Create your first key</span>
@@ -226,7 +226,7 @@ export function ApiKeysView({
                       <div className="w-5 h-5 rounded-xs border border-[#3a4a25] bg-[#162010] flex items-center justify-center text-[#86dc00]">
                         <Key size={11} />
                       </div>
-                      <span className="font-bold text-white text-xs">{k.name}</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">{k.name}</span>
                       <span className="text-[10px] text-[#788274] bg-[#202020] px-1.5 py-0.2 rounded-xs">
                         {k.scope === "workspace" ? "Workspace Key" : "Deployment Scoped"}
                       </span>
@@ -244,7 +244,7 @@ export function ApiKeysView({
                       <button
                         type="button"
                         onClick={() => toggleReveal(k.id)}
-                        className="text-[#788274] hover:text-white p-0.5 transition-colors cursor-pointer"
+                        className="text-[#788274] hover:text-[#F0EFE2] p-0.5 transition-colors cursor-pointer"
                         title={isRevealed ? "Hide Secret" : "Reveal Secret"}
                       >
                         {isRevealed ? <EyeOff size={11} /> : <Eye size={11} />}
@@ -252,7 +252,7 @@ export function ApiKeysView({
                       <button
                         type="button"
                         onClick={() => copyToClipboard(k.fullSecretKey || k.prefix, k.id)}
-                        className="text-[#788274] hover:text-white p-0.5 transition-colors cursor-pointer"
+                        className="text-[#788274] hover:text-[#F0EFE2] p-0.5 transition-colors cursor-pointer"
                         title="Copy Key"
                       >
                         {copiedKeyId === k.id ? (
@@ -266,7 +266,7 @@ export function ApiKeysView({
 
                   <div className="flex items-center gap-4 text-[11px] text-[#788274]">
                     <div className="text-right">
-                      <div className="text-white">Created {k.createdAt}</div>
+                      <div className="text-[#F0EFE2]">Created {k.createdAt}</div>
                       <div className="text-[10px] text-[#555]">Last used {k.lastUsedAt}</div>
                     </div>
 
@@ -290,11 +290,11 @@ export function ApiKeysView({
       <div className="border-t border-dashed border-[#282828] pt-6 space-y-5">
         {/* Header Row */}
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 rounded-xs border border-[#333] bg-[#141414] flex items-center justify-center font-mono text-[10px] text-[#888] shrink-0">
+          <div className="w-6 h-6 rounded-xs border border-[#333] bg-[#141414] flex items-center justify-center font-mono text-[10px] text-[#C8C7BA] shrink-0">
             &gt;_
           </div>
           <div>
-            <div className="font-bold text-white text-xs tracking-tight">Terminal sessions</div>
+            <div className="font-bold text-[#F0EFE2] text-xs tracking-tight">Terminal sessions</div>
             <div className="text-[11px] text-[#788274]">
               Machines signed in with the RunInfra CLI appear here.
             </div>
@@ -307,9 +307,9 @@ export function ApiKeysView({
             &gt;_
           </div>
           <div className="space-y-1">
-            <div className="font-bold text-white text-xs">No terminals connected</div>
+            <div className="font-bold text-[#F0EFE2] text-xs">No terminals connected</div>
             <p className="text-xs text-[#788274] leading-relaxed max-w-md mx-auto">
-              Run <code className="font-mono px-1.5 py-0.5 bg-[#141414] border border-[#333] text-white rounded-xs text-[11px]">runinfra login</code> on a machine and approve the browser prompt. The session it creates is listed here and can be revoked at any time.
+              Run <code className="font-mono px-1.5 py-0.5 bg-[#141414] border border-[#333] text-[#F0EFE2] rounded-xs text-[11px]">runinfra login</code> on a machine and approve the browser prompt. The session it creates is listed here and can be revoked at any time.
             </p>
           </div>
         </div>
@@ -324,7 +324,7 @@ export function ApiKeysView({
           >
             {/* Modal Header */}
             <div className="space-y-1">
-              <h2 className="text-sm font-bold text-white tracking-tight">Create API key</h2>
+              <h2 className="text-sm font-bold text-[#F0EFE2] tracking-tight">Create API key</h2>
               <p className="text-xs text-[#90988c] leading-relaxed">
                 One workspace key for every eligible hosted model. Create it now, and name it only if you want to.
               </p>
@@ -337,7 +337,7 @@ export function ApiKeysView({
               </div>
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white text-xs">Workspace key</span>
+                  <span className="font-bold text-[#F0EFE2] text-xs">Workspace key</span>
                   <span className="text-[11px] text-[#788274]">No deployment required</span>
                 </div>
                 <p className="text-[11px] text-[#90988c]">
@@ -357,7 +357,7 @@ export function ApiKeysView({
                 value={keyName}
                 onChange={(e) => setKeyName(e.target.value)}
                 placeholder="Key 1"
-                className="w-full bg-[#181818] border border-[#333] focus:border-[#75bf00] rounded-xs px-3 py-2 text-white outline-none text-xs font-mono transition-colors"
+                className="w-full bg-[#181818] border border-[#333] focus:border-[#75bf00] rounded-xs px-3 py-2 text-[#F0EFE2] outline-none text-xs font-mono transition-colors"
               />
             </div>
 
@@ -366,7 +366,7 @@ export function ApiKeysView({
               <button
                 type="button"
                 onClick={() => setScopeDeploymentOpen(!scopeDeploymentOpen)}
-                className="flex items-center gap-1 text-[11px] text-[#889084] hover:text-white transition-colors cursor-pointer"
+                className="flex items-center gap-1 text-[11px] text-[#889084] hover:text-[#F0EFE2] transition-colors cursor-pointer"
               >
                 {scopeDeploymentOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
                 <span>Scope to a deployment instead</span>
@@ -422,7 +422,7 @@ export function ApiKeysView({
                     <button
                       type="button"
                       onClick={() => setExpiresDropdownOpen(!expiresDropdownOpen)}
-                      className="w-full bg-[#181818] border border-[#333] hover:border-[#555] rounded-xs px-3 py-2 text-white text-xs font-mono flex items-center justify-between cursor-pointer"
+                      className="w-full bg-[#181818] border border-[#333] hover:border-[#555] rounded-xs px-3 py-2 text-[#F0EFE2] text-xs font-mono flex items-center justify-between cursor-pointer"
                     >
                       <span className="font-bold">{expiresOption}</span>
                       {expiresDropdownOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
@@ -441,8 +441,8 @@ export function ApiKeysView({
                             className={cn(
                               "w-full px-3 py-2 text-left flex items-center justify-between transition-colors cursor-pointer",
                               expiresOption === opt
-                                ? "bg-[#252525] text-white font-bold"
-                                : "text-[#a0a89d] hover:bg-[#202020] hover:text-white"
+                                ? "bg-[#252525] text-[#F0EFE2] font-bold"
+                                : "text-[#a0a89d] hover:bg-[#202020] hover:text-[#F0EFE2]"
                             )}
                           >
                             <span>{opt}</span>
@@ -461,13 +461,13 @@ export function ApiKeysView({
               <button
                 type="button"
                 onClick={() => setCreateModalOpen(false)}
-                className="px-4 py-2 border border-[#383838] bg-[#1e1e1e] hover:bg-[#282828] text-white font-medium rounded-xs cursor-pointer text-xs transition-colors"
+                className="px-4 py-2 border border-[#383838] bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] font-medium rounded-xs cursor-pointer text-xs transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="flex items-center gap-1.5 bg-[#252525] hover:bg-[#303030] border border-[#3a3a3a] hover:border-[#75bf00] text-white font-medium px-4 py-2 rounded-xs cursor-pointer text-xs transition-colors"
+                className="flex items-center gap-1.5 bg-[#252525] hover:bg-[#303030] border border-[#3a3a3a] hover:border-[#75bf00] text-[#F0EFE2] font-medium px-4 py-2 rounded-xs cursor-pointer text-xs transition-colors"
               >
                 <Key size={12} />
                 <span>Create key</span>

@@ -108,7 +108,7 @@ export function SettingsView({
               onClick={onBack}
               className={cn(
                 "flex items-center gap-1.5 text-xs transition-colors",
-                dark ? "text-[#889084] hover:text-white" : "text-[#525a4d] hover:text-[#171a17]"
+                dark ? "text-[#889084] hover:text-[#F0EFE2]" : "text-[#525a4d] hover:text-[#171a17]"
               )}
             >
               <ArrowLeft size={13} />
@@ -125,8 +125,8 @@ export function SettingsView({
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 transition-colors relative",
                   activeTab === tab.id
-                    ? dark ? "text-white font-semibold" : "text-[#171a17] font-semibold"
-                    : dark ? "text-[#889084] hover:text-white" : "text-[#6b7367] hover:text-[#171a17]"
+                    ? dark ? "text-[#F0EFE2] font-semibold" : "text-[#171a17] font-semibold"
+                    : dark ? "text-[#889084] hover:text-[#F0EFE2]" : "text-[#6b7367] hover:text-[#171a17]"
                 )}
               >
                 <span className={activeTab === tab.id ? "text-[#75bf00]" : "text-current"}>
@@ -146,7 +146,7 @@ export function SettingsView({
       {activeTab === "workspace" && (
         <div className="space-y-6 max-w-[840px]">
           <div>
-            <h1 className={cn("text-2xl font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+            <h1 className={cn("text-2xl font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               <span className="bg-[#75bf00] px-2 py-0.5 text-black inline-block font-medium rounded-xs">
                 Workspace
               </span>
@@ -159,7 +159,7 @@ export function SettingsView({
           )}>
             {/* Workspace Name */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-5">
-              <div className={cn("md:col-span-4 flex items-center gap-2 text-xs font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+              <div className={cn("md:col-span-4 flex items-center gap-2 text-xs font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                 <span className="font-mono text-sm">T</span>
                 <span>Workspace Name</span>
               </div>
@@ -169,14 +169,14 @@ export function SettingsView({
                   onChange={(e) => setWorkspaceName(e.target.value)}
                   className={cn(
                     "w-full max-w-sm border px-3 py-1.5 text-xs font-mono outline-none rounded-xs",
-                    dark ? "border-[#383838] bg-[#202020] text-white focus:border-[#75bf00]" : "border-[#c9cec4] bg-white text-[#171a17] focus:border-[#75bf00]"
+                    dark ? "border-[#383838] bg-[#202020] text-[#F0EFE2] focus:border-[#75bf00]" : "border-[#c9cec4] bg-white text-[#171a17] focus:border-[#75bf00]"
                   )}
                 />
                 <button
                   type="button"
                   className={cn(
                     "border px-3 py-1.5 text-xs font-medium rounded-xs transition-colors",
-                    dark ? "border-[#383838] bg-[#252525] text-white hover:bg-[#303030]" : "border-[#c9cec4] bg-[#f5f7f3] text-[#2a3028] hover:border-[#171a17]"
+                    dark ? "border-[#383838] bg-[#252525] text-[#F0EFE2] hover:bg-[#303030]" : "border-[#c9cec4] bg-[#f5f7f3] text-[#2a3028] hover:border-[#171a17]"
                   )}
                 >
                   Save
@@ -187,7 +187,7 @@ export function SettingsView({
             {/* Details */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-5">
               <div className={cn("md:col-span-4 text-xs space-y-1", dark ? "text-[#889084]" : "text-[#687063]")}>
-                <div className={cn("font-semibold flex items-center gap-1.5", dark ? "text-white" : "text-[#171a17]")}>
+                <div className={cn("font-semibold flex items-center gap-1.5", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                   <span>ⓘ</span>
                   <span>Details</span>
                 </div>
@@ -199,14 +199,14 @@ export function SettingsView({
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
                 )}>
                   <span className={cn("font-sans", dark ? "text-[#889084]" : "text-[#788274]")}>Slug</span>
-                  <span className={dark ? "text-white" : "text-[#171a17]"}>personal-68198f3db28e4ed5a2b179c96c8c505e</span>
+                  <span className={dark ? "text-[#F0EFE2]" : "text-[#171a17]"}>personal-68198f3db28e4ed5a2b179c96c8c505e</span>
                 </div>
                 <div className={cn(
                   "flex items-center justify-between border p-2.5 rounded-xs",
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
                 )}>
                   <span className={cn("font-sans", dark ? "text-[#889084]" : "text-[#788274]")}>Type</span>
-                  <span className={cn("flex items-center gap-1", dark ? "text-white" : "text-[#171a17]")}>
+                  <span className={cn("flex items-center gap-1", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                     <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                     <span>Personal</span>
                   </span>
@@ -216,7 +216,7 @@ export function SettingsView({
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-[#fafbfa]"
                 )}>
                   <span className={cn("font-sans", dark ? "text-[#889084]" : "text-[#788274]")}>Role</span>
-                  <span className={dark ? "text-white" : "text-[#171a17]"}>Owner</span>
+                  <span className={dark ? "text-[#F0EFE2]" : "text-[#171a17]"}>Owner</span>
                 </div>
               </div>
             </div>
@@ -224,7 +224,7 @@ export function SettingsView({
             {/* Display Navigation Layout */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-5">
               <div className={cn("md:col-span-4 text-xs space-y-1", dark ? "text-[#889084]" : "text-[#687063]")}>
-                <div className={cn("font-semibold flex items-center gap-1.5", dark ? "text-white" : "text-[#171a17]")}>
+                <div className={cn("font-semibold flex items-center gap-1.5", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                   <Layout size={14} />
                   <span>Display</span>
                 </div>
@@ -253,13 +253,13 @@ export function SettingsView({
                     displayNav === "top_bar"
                       ? "border-[#75bf00] bg-transparent text-[#75bf00]"
                       : dark
-                        ? "border-[#383838] bg-[#1a1a1a] text-[#888]"
+                        ? "border-[#383838] bg-[#1a1a1a] text-[#C8C7BA]"
                         : "border-[#d8ddd3] bg-white text-[#687063]"
                   )}>
                     <span className={cn("h-2 w-2 rounded-full", displayNav === "top_bar" ? "bg-[#75bf00]" : "bg-transparent")} />
                   </div>
                   <div>
-                    <div className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>Top bar</div>
+                    <div className={cn("font-semibold text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Top bar</div>
                     <div className={cn("text-[11px] mt-0.5", dark ? "text-[#889084]" : "text-[#687063]")}>
                       Horizontal navbar with tab strip below.
                     </div>
@@ -288,13 +288,13 @@ export function SettingsView({
                     displayNav === "sidebar"
                       ? "border-[#75bf00] bg-transparent text-[#75bf00]"
                       : dark
-                        ? "border-[#383838] bg-[#1a1a1a] text-[#888]"
+                        ? "border-[#383838] bg-[#1a1a1a] text-[#C8C7BA]"
                         : "border-[#d8ddd3] bg-white text-[#687063]"
                   )}>
                     <PanelLeft size={13} />
                   </div>
                   <div>
-                    <div className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>Sidebar</div>
+                    <div className={cn("font-semibold text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Sidebar</div>
                     <div className={cn("text-[11px] mt-0.5", dark ? "text-[#889084]" : "text-[#687063]")}>
                       Vertical rail on the left with recent pipelines.
                     </div>
@@ -370,7 +370,7 @@ export function SettingsView({
         <div className="space-y-6 max-w-[900px]">
           {/* Header Title & Subtitle */}
           <div>
-            <h1 className="text-xl md:text-2xl font-mono font-bold text-white flex items-center gap-2">
+            <h1 className="text-xl md:text-2xl font-mono font-bold text-[#F0EFE2] flex items-center gap-2">
               Connected{" "}
               <span className="bg-[#75bf00] px-2 py-0.5 text-black font-bold rounded-xs">
                 clouds
@@ -411,7 +411,7 @@ export function SettingsView({
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white">RunPod</span>
+                      <span className="font-bold text-sm text-[#F0EFE2]">RunPod</span>
                       <span className="border border-[#383838] bg-[#181818] text-[#889284] px-1.5 py-0.2 text-[9px] font-mono uppercase rounded-xs">
                         THIRD-PARTY CLOUD
                       </span>
@@ -434,7 +434,7 @@ export function SettingsView({
                 <label className="text-[11px] text-[#788274] block">
                   Paste a RunPod API key to deploy on your own account.
                 </label>
-                <a href="#create-key" className="text-[11px] text-[#889284] hover:text-white flex items-center gap-1 font-bold">
+                <a href="#create-key" className="text-[11px] text-[#889284] hover:text-[#F0EFE2] flex items-center gap-1 font-bold">
                   &gt; CREATE A KEY
                 </a>
 
@@ -445,13 +445,13 @@ export function SettingsView({
                       value={runpodKey}
                       onChange={(e) => setRunpodKey(e.target.value)}
                       placeholder="rpa_..."
-                      className="w-full border border-dashed border-[#383838] bg-[#121212] pl-8 pr-3 py-1.5 font-mono text-xs text-white outline-none rounded-xs focus:border-[#75bf00]"
+                      className="w-full border border-dashed border-[#383838] bg-[#121212] pl-8 pr-3 py-1.5 font-mono text-xs text-[#F0EFE2] outline-none rounded-xs focus:border-[#75bf00]"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={() => { if (runpodKey) setRunpodConnected(true); }}
-                    className="shrink-0 border border-dashed border-[#383838] bg-[#222222] hover:bg-[#282828] text-[#889284] hover:text-white text-xs px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer"
+                    className="shrink-0 border border-dashed border-[#383838] bg-[#222222] hover:bg-[#282828] text-[#889284] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer"
                   >
                     Connect RunPod
                   </button>
@@ -467,7 +467,7 @@ export function SettingsView({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-white">Modal</span>
+                    <span className="font-bold text-sm text-[#F0EFE2]">Modal</span>
                     <span className="border border-[#383838] bg-[#181818] text-[#889284] px-1.5 py-0.2 text-[9px] font-mono uppercase rounded-xs">
                       THIRD-PARTY CLOUD
                     </span>
@@ -497,7 +497,7 @@ export function SettingsView({
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white">Hugging Face</span>
+                      <span className="font-bold text-sm text-[#F0EFE2]">Hugging Face</span>
                       <span className="border border-[#383838] bg-[#181818] text-[#889284] px-1.5 py-0.2 text-[9px] font-mono uppercase rounded-xs">
                         ACCOUNT LINK
                       </span>
@@ -519,7 +519,7 @@ export function SettingsView({
                 <label className="text-[11px] text-[#788274] block">
                   Paste a Hugging Face access token so Epoch can pull gated models your account already has access to.
                 </label>
-                <a href="#create-token" className="text-[11px] text-[#889284] hover:text-white flex items-center gap-1 font-bold">
+                <a href="#create-token" className="text-[11px] text-[#889284] hover:text-[#F0EFE2] flex items-center gap-1 font-bold">
                   &gt; CREATE A TOKEN
                 </a>
 
@@ -530,13 +530,13 @@ export function SettingsView({
                       value={hfToken}
                       onChange={(e) => setHfToken(e.target.value)}
                       placeholder="hf_..."
-                      className="w-full border border-dashed border-[#383838] bg-[#121212] pl-8 pr-3 py-1.5 font-mono text-xs text-white outline-none rounded-xs focus:border-[#75bf00]"
+                      className="w-full border border-dashed border-[#383838] bg-[#121212] pl-8 pr-3 py-1.5 font-mono text-xs text-[#F0EFE2] outline-none rounded-xs focus:border-[#75bf00]"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={() => { if (hfToken) setHfConnected(true); }}
-                    className="shrink-0 border border-dashed border-[#383838] bg-[#222222] hover:bg-[#282828] text-[#889284] hover:text-white text-xs px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer"
+                    className="shrink-0 border border-dashed border-[#383838] bg-[#222222] hover:bg-[#282828] text-[#889284] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer"
                   >
                     Connect Hugging Face
                   </button>
@@ -551,7 +551,7 @@ export function SettingsView({
       {activeTab === "security" && (
         <div className="space-y-6 max-w-[840px]">
           <div>
-            <h1 className={cn("text-2xl font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+            <h1 className={cn("text-2xl font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               <span className="bg-[#75bf00] px-2 py-0.5 text-black inline-block font-medium rounded-xs">
                 Security
               </span>
@@ -566,7 +566,7 @@ export function SettingsView({
             dark ? "divide-[#282828] border-[#282828]" : "divide-[#d8ddd3] border-[#d8ddd3]"
           )}>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-5">
-              <div className={cn("md:col-span-4 flex items-center gap-2 text-xs font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+              <div className={cn("md:col-span-4 flex items-center gap-2 text-xs font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                 <Lock size={13} />
                 <span>Authentication</span>
               </div>
@@ -575,7 +575,7 @@ export function SettingsView({
                 dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#edf0eb] bg-white"
               )}>
                 <div>
-                  <div className={cn("font-semibold", dark ? "text-white" : "text-[#171a17]")}>Authentication</div>
+                  <div className={cn("font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Authentication</div>
                   <div className={cn("text-[11px]", dark ? "text-[#889084]" : "text-[#687063]")}>
                     Email and password or OAuth (Google, GitHub)
                   </div>
@@ -596,7 +596,7 @@ export function SettingsView({
       {activeTab === "notifications" && (
         <div className="space-y-6 max-w-[840px]">
           <div>
-            <h1 className={cn("text-2xl font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+            <h1 className={cn("text-2xl font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               <span className="bg-[#75bf00] px-2 py-0.5 text-black inline-block font-medium rounded-xs">
                 Notifications
               </span>
@@ -609,7 +609,7 @@ export function SettingsView({
           <div className={cn("border p-4 rounded-xs text-xs space-y-3", dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white")}>
             <div className="flex items-center justify-between">
               <div>
-                <div className={cn("font-semibold", dark ? "text-white" : "text-[#171a17]")}>Optimization Completion Emails</div>
+                <div className={cn("font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Optimization Completion Emails</div>
                 <div className="text-[11px] text-[#788274]">Receive an email when a pipeline finishes benchmarking.</div>
               </div>
               <span className={cn("px-2 py-0.5 text-[10px] font-mono font-bold rounded-xs", dark ? "border border-[#75bf00]/40 bg-[#162916] text-[#a3e635]" : "border border-[#b9de78] bg-[#f2fbe6] text-[#2d5800]")}>
@@ -624,7 +624,7 @@ export function SettingsView({
       {activeTab === "billing" && (
         <div className="space-y-6 max-w-[840px]">
           <div>
-            <h1 className={cn("text-2xl font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+            <h1 className={cn("text-2xl font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               <span className="bg-[#75bf00] px-2 py-0.5 text-black inline-block font-medium rounded-xs">
                 Billing
               </span>
@@ -637,7 +637,7 @@ export function SettingsView({
           <div className={cn("border p-4 rounded-xs text-xs space-y-3", dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white")}>
             <div className="flex items-center justify-between">
               <div>
-                <div className={cn("font-semibold", dark ? "text-white" : "text-[#171a17]")}>Current Plan: Free Tier</div>
+                <div className={cn("font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Current Plan: Free Tier</div>
                 <div className="text-[11px] text-[#788274]">$10.00 free credits included.</div>
               </div>
               <button
@@ -656,10 +656,10 @@ export function SettingsView({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px] p-4">
           <div className={cn(
             "w-full max-w-md border p-5 shadow-2xl space-y-4 text-xs rounded-xs",
-            dark ? "border-[#383838] bg-[#181818] text-white" : "border-[#a8b0a2] bg-white text-[#171a17]"
+            dark ? "border-[#383838] bg-[#181818] text-[#F0EFE2]" : "border-[#a8b0a2] bg-white text-[#171a17]"
           )}>
             <div>
-              <h3 className={cn("text-sm font-semibold", dark ? "text-white" : "text-[#171a17]")}>Create API Key</h3>
+              <h3 className={cn("text-sm font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Create API Key</h3>
               <p className="text-xs text-[#788274] mt-0.5">
                 Issue a secret token for automated inference pipelines and CLI workers.
               </p>
@@ -674,7 +674,7 @@ export function SettingsView({
                 placeholder="e.g. production-inference-client"
                 className={cn(
                   "w-full border px-3 py-2 outline-none rounded-xs",
-                  dark ? "border-[#383838] bg-[#202020] text-white focus:border-[#75bf00]" : "border-[#c9cec4] bg-[#fafbfa] text-[#171a17] focus:border-[#75bf00]"
+                  dark ? "border-[#383838] bg-[#202020] text-[#F0EFE2] focus:border-[#75bf00]" : "border-[#c9cec4] bg-[#fafbfa] text-[#171a17] focus:border-[#75bf00]"
                 )}
               />
             </div>
@@ -685,7 +685,7 @@ export function SettingsView({
                 onClick={() => setNewKeyModalOpen(false)}
                 className={cn(
                   "border px-3 py-1.5 text-xs rounded-xs transition-colors",
-                  dark ? "border-[#383838] bg-[#252525] text-white" : "border-[#d8ddd3] bg-white text-[#555]"
+                  dark ? "border-[#383838] bg-[#252525] text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#555]"
                 )}
               >
                 Cancel

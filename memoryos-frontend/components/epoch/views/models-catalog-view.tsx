@@ -124,7 +124,7 @@ export function ModelsCatalogView({
     <div className="space-y-6 max-w-[1040px] mx-auto pb-16 font-sans text-xs">
       {/* Title with RunInfra green background badge */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-white">
+        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-[#F0EFE2]">
           <span>Model</span>
           <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block text-xl">
             APIs
@@ -143,7 +143,7 @@ export function ModelsCatalogView({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Find by name or served ID"
-            className="w-full bg-transparent text-xs outline-none font-mono text-white placeholder:text-[#666]"
+            className="w-full bg-transparent text-xs outline-none font-mono text-[#F0EFE2] placeholder:text-[#666]"
           />
         </div>
 
@@ -151,7 +151,7 @@ export function ModelsCatalogView({
           <span>{filteredModels.length} models</span>
           <button
             type="button"
-            className="flex items-center gap-1.5 border border-[#333] bg-[#202020] text-[#d1d5db] hover:border-[#555] hover:text-white px-2.5 py-1 text-xs transition-colors rounded-xs cursor-pointer font-mono"
+            className="flex items-center gap-1.5 border border-[#333] bg-[#202020] text-[#d1d5db] hover:border-[#555] hover:text-[#F0EFE2] px-2.5 py-1 text-xs transition-colors rounded-xs cursor-pointer font-mono"
           >
             <BarChart2 size={13} className="text-[#788274]" />
             <span>Usage Analytics</span>
@@ -184,7 +184,7 @@ export function ModelsCatalogView({
                 </div>
 
                 <div className="space-y-0.5">
-                  <div className="font-bold text-sm text-white group-hover:text-[#75bf00] transition-colors">
+                  <div className="font-bold text-sm text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors">
                     {m.name}
                   </div>
                   <div className="text-[11px] font-mono text-[#788274]">
@@ -202,7 +202,7 @@ export function ModelsCatalogView({
               </div>
 
               {/* Chevron Right */}
-              <div className="pt-1 text-[#788274] group-hover:text-white transition-colors">
+              <div className="pt-1 text-[#788274] group-hover:text-[#F0EFE2] transition-colors">
                 <ChevronRight size={16} />
               </div>
             </div>
@@ -211,7 +211,7 @@ export function ModelsCatalogView({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4 ml-9 font-mono text-xs">
               {/* Input Price */}
               <div>
-                <div className="flex items-center gap-1 text-white font-medium">
+                <div className="flex items-center gap-1 text-[#F0EFE2] font-medium">
                   <ArrowDown size={11} className="text-[#788274]" />
                   <span className="text-[#75bf00] font-bold">{m.inputPrice}</span>
                   <span className="text-[10px] text-[#788274] uppercase font-normal">PER 1M INPUT TOKENS</span>
@@ -223,7 +223,7 @@ export function ModelsCatalogView({
 
               {/* Output Price */}
               <div>
-                <div className="flex items-center gap-1 text-white font-medium">
+                <div className="flex items-center gap-1 text-[#F0EFE2] font-medium">
                   <ArrowUp size={11} className="text-[#788274]" />
                   <span className="text-[#75bf00] font-bold">{m.outputPrice}</span>
                   <span className="text-[10px] text-[#788274] uppercase font-normal">PER 1M OUTPUT TOKENS</span>
@@ -235,7 +235,7 @@ export function ModelsCatalogView({
 
               {/* Context Window */}
               <div>
-                <div className="flex items-center gap-1 text-white font-medium">
+                <div className="flex items-center gap-1 text-[#F0EFE2] font-medium">
                   <span className="text-[#788274] font-bold">{`{ }`}</span>
                   <span>{m.contextWindow}</span>
                   <span className="text-[10px] text-[#788274] uppercase font-normal">TOKENS</span>

@@ -54,7 +54,7 @@ export function ReplayModal({
         <div className="flex items-center justify-between p-4 border-b border-dashed border-[#282828] bg-[#171717]">
           <div className="flex items-center gap-2.5">
             <RotateCcw className="text-[#75bf00]" size={18} />
-            <h2 className="text-base font-bold text-white tracking-wide">
+            <h2 className="text-base font-bold text-[#F0EFE2] tracking-wide">
               Run Again &amp; Replay Runner
             </h2>
             <span className="text-[10px] text-[#889284] border border-[#2e2e2e] bg-[#202020] px-2 py-0.5 font-bold">
@@ -65,7 +65,7 @@ export function ReplayModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-[#889284] hover:text-white transition-colors cursor-pointer p-1"
+            className="text-[#889284] hover:text-[#F0EFE2] transition-colors cursor-pointer p-1"
           >
             <X size={18} />
           </button>
@@ -81,8 +81,8 @@ export function ReplayModal({
               className={cn(
                 "py-2.5 px-3 font-mono text-xs transition-colors cursor-pointer flex flex-col items-center gap-1 border",
                 replayMode === "exact"
-                  ? "border-[#75bf00] bg-[#121c0e] text-white font-bold"
-                  : "border-transparent text-[#889284] hover:text-white"
+                  ? "border-[#75bf00] bg-[#121c0e] text-[#F0EFE2] font-bold"
+                  : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
               )}
             >
               <div className="flex items-center gap-1.5">
@@ -98,8 +98,8 @@ export function ReplayModal({
               className={cn(
                 "py-2.5 px-3 font-mono text-xs transition-colors cursor-pointer flex flex-col items-center gap-1 border",
                 replayMode === "controlled"
-                  ? "border-[#75bf00] bg-[#121c0e] text-white font-bold"
-                  : "border-transparent text-[#889284] hover:text-white"
+                  ? "border-[#75bf00] bg-[#121c0e] text-[#F0EFE2] font-bold"
+                  : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
               )}
             >
               <div className="flex items-center gap-1.5">
@@ -140,15 +140,15 @@ export function ReplayModal({
               </div>
               <div className="flex justify-between py-1 border-b border-[#1c1c1c]">
                 <span className="text-[#889284]">Model:</span>
-                <span className="text-white font-bold">meta-llama/Llama-3.1-8B-Instruct</span>
+                <span className="text-[#F0EFE2] font-bold">meta-llama/Llama-3.1-8B-Instruct</span>
               </div>
               <div className="flex justify-between py-1 border-b border-[#1c1c1c]">
                 <span className="text-[#889284]">Runtime:</span>
-                <span className="text-white font-bold">vLLM (v0.6.2)</span>
+                <span className="text-[#F0EFE2] font-bold">vLLM (v0.6.2)</span>
               </div>
               <div className="flex justify-between py-1 border-b border-[#1c1c1c]">
                 <span className="text-[#889284]">Hardware Target:</span>
-                <span className="text-white font-bold">1x NVIDIA A100-40GB GPU</span>
+                <span className="text-[#F0EFE2] font-bold">1x NVIDIA A100-40GB GPU</span>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-[#889284]">WorldState Snapshot:</span>
@@ -170,7 +170,7 @@ export function ReplayModal({
                   <select
                     value={gpuOverride}
                     onChange={(e) => setGpuOverride(e.target.value)}
-                    className="w-full bg-[#1a1a1a] border border-[#333333] text-white text-xs px-2.5 py-1.5 outline-none font-mono"
+                    className="w-full bg-[#1a1a1a] border border-[#333333] text-[#F0EFE2] text-xs px-2.5 py-1.5 outline-none font-mono"
                   >
                     <option value="1x A100-40GB">1x NVIDIA A100-40GB</option>
                     <option value="1x H100-80GB">1x NVIDIA H100-80GB</option>
@@ -183,7 +183,7 @@ export function ReplayModal({
                   <select
                     value={batchOverride}
                     onChange={(e) => setBatchOverride(e.target.value)}
-                    className="w-full bg-[#1a1a1a] border border-[#333333] text-white text-xs px-2.5 py-1.5 outline-none font-mono"
+                    className="w-full bg-[#1a1a1a] border border-[#333333] text-[#F0EFE2] text-xs px-2.5 py-1.5 outline-none font-mono"
                   >
                     <option value="128">128</option>
                     <option value="256">256 (Default)</option>
@@ -196,7 +196,7 @@ export function ReplayModal({
                   <select
                     value={runtimeOverride}
                     onChange={(e) => setRuntimeOverride(e.target.value)}
-                    className="w-full bg-[#1a1a1a] border border-[#333333] text-white text-xs px-2.5 py-1.5 outline-none font-mono"
+                    className="w-full bg-[#1a1a1a] border border-[#333333] text-[#F0EFE2] text-xs px-2.5 py-1.5 outline-none font-mono"
                   >
                     <option value="vLLM (v0.6.2)">vLLM (v0.6.2)</option>
                     <option value="SGLang (v0.3.0)">SGLang (v0.3.0)</option>
@@ -209,7 +209,7 @@ export function ReplayModal({
                   <select
                     value={modelOverride}
                     onChange={(e) => setModelOverride(e.target.value)}
-                    className="w-full bg-[#1a1a1a] border border-[#333333] text-white text-xs px-2.5 py-1.5 outline-none font-mono"
+                    className="w-full bg-[#1a1a1a] border border-[#333333] text-[#F0EFE2] text-xs px-2.5 py-1.5 outline-none font-mono"
                   >
                     <option value="meta-llama/Llama-3.1-8B-Instruct">meta-llama/Llama-3.1-8B-Instruct</option>
                     <option value="Qwen/Qwen3-32B">Qwen/Qwen3-32B</option>
@@ -225,7 +225,7 @@ export function ReplayModal({
             <button
               type="button"
               onClick={onClose}
-              className="border border-[#383838] bg-[#202020] hover:border-white text-white px-4 py-2 rounded-none transition-colors cursor-pointer"
+              className="border border-[#383838] bg-[#202020] hover:border-white text-[#F0EFE2] px-4 py-2 rounded-none transition-colors cursor-pointer"
             >
               Cancel
             </button>

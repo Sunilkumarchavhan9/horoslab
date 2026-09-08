@@ -253,7 +253,7 @@ export function PipelinesView({
       {/* Top Header Matching RunInfra Style */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#282828] pb-4">
         <div>
-          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-white">
+          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
             <span>Pipelines</span>
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
               Deployments
@@ -268,7 +268,7 @@ export function PipelinesView({
           <button
             type="button"
             onClick={onNavigateToModelApis}
-            className="border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white hover:border-[#75bf00] px-3 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono cursor-pointer"
+            className="border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2] hover:border-[#75bf00] px-3 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono cursor-pointer"
           >
             Model APIs
           </button>
@@ -294,7 +294,7 @@ export function PipelinesView({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search pipelines by name, model, or strategy..."
-            className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs pl-8 pr-3 py-1.5 text-xs text-white placeholder-[#666] outline-none font-mono transition-colors"
+            className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs pl-8 pr-3 py-1.5 text-xs text-[#F0EFE2] placeholder-[#666] outline-none font-mono transition-colors"
           />
         </div>
 
@@ -312,8 +312,8 @@ export function PipelinesView({
                 className={cn(
                   "px-2.5 py-0.5 rounded-xs transition-colors text-[11px] cursor-pointer",
                   statusFilter === f.id
-                    ? "bg-[#282828] text-white font-bold"
-                    : "text-[#788274] hover:text-white"
+                    ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                    : "text-[#788274] hover:text-[#F0EFE2]"
                 )}
               >
                 {f.label}
@@ -327,7 +327,7 @@ export function PipelinesView({
               setSearchQuery("");
               setStatusFilter("all");
             }}
-            className="flex items-center gap-1 text-[11px] text-[#788274] hover:text-white transition-colors px-1 cursor-pointer"
+            className="flex items-center gap-1 text-[11px] text-[#788274] hover:text-[#F0EFE2] transition-colors px-1 cursor-pointer"
           >
             <RotateCcw size={10} />
             <span>Reset</span>
@@ -345,7 +345,7 @@ export function PipelinesView({
             {/* Row Header */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-[#222] pb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-white font-bold text-sm tracking-tight">{pipe.name}</span>
+                <span className="text-[#F0EFE2] font-bold text-sm tracking-tight">{pipe.name}</span>
                 <span
                   className={cn(
                     "px-1.5 py-0.5 rounded-xs text-[10px] font-bold uppercase",
@@ -367,7 +367,7 @@ export function PipelinesView({
                 <button
                   type="button"
                   onClick={() => copySlug(pipe.slug)}
-                  className="border border-[#2e2e2e] bg-[#1a1a1a] text-[#a0a89d] hover:text-white px-2 py-0.5 rounded-xs text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
+                  className="border border-[#2e2e2e] bg-[#1a1a1a] text-[#a0a89d] hover:text-[#F0EFE2] px-2 py-0.5 rounded-xs text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   {copiedSlug === pipe.slug ? (
                     <>
@@ -399,7 +399,7 @@ export function PipelinesView({
                   <tr className="hover:bg-[#161616] transition-colors">
                     <td className="py-2 px-3 text-[#75bf00] font-bold text-[10px]">01 (PRIMARY)</td>
                     <td className="py-2 px-3">
-                      <div className="flex items-center gap-1.5 text-white font-sans font-bold">
+                      <div className="flex items-center gap-1.5 text-[#F0EFE2] font-sans font-bold">
                         {pipe.primaryModel.icon}
                         <span>{pipe.primaryModel.name}</span>
                       </div>
@@ -412,7 +412,7 @@ export function PipelinesView({
                     <tr className="hover:bg-[#161616] transition-colors">
                       <td className="py-2 px-3 text-[#f59e0b] font-bold text-[10px]">02 (FALLBACK)</td>
                       <td className="py-2 px-3">
-                        <div className="flex items-center gap-1.5 text-white font-sans font-bold">
+                        <div className="flex items-center gap-1.5 text-[#F0EFE2] font-sans font-bold">
                           {pipe.fallbackModel.icon}
                           <span>{pipe.fallbackModel.name}</span>
                         </div>
@@ -426,7 +426,7 @@ export function PipelinesView({
                     <tr className="hover:bg-[#161616] transition-colors">
                       <td className="py-2 px-3 text-[#38bdf8] font-bold text-[10px]">02 (CANARY)</td>
                       <td className="py-2 px-3">
-                        <div className="flex items-center gap-1.5 text-white font-sans font-bold">
+                        <div className="flex items-center gap-1.5 text-[#F0EFE2] font-sans font-bold">
                           {pipe.canaryModel.icon}
                           <span>{pipe.canaryModel.name}</span>
                         </div>
@@ -438,9 +438,9 @@ export function PipelinesView({
                   {/* Cache Stage if enabled */}
                   {pipe.cacheEnabled && (
                     <tr className="hover:bg-[#161616] transition-colors">
-                      <td className="py-2 px-3 text-[#888] font-bold text-[10px]">03 (CACHE)</td>
+                      <td className="py-2 px-3 text-[#C8C7BA] font-bold text-[10px]">03 (CACHE)</td>
                       <td className="py-2 px-3">
-                        <div className="flex items-center gap-1.5 text-white font-sans font-bold">
+                        <div className="flex items-center gap-1.5 text-[#F0EFE2] font-sans font-bold">
                           <Zap size={13} className="text-[#75bf00]" />
                           <span>Semantic Cache</span>
                         </div>
@@ -457,15 +457,15 @@ export function PipelinesView({
               <div className="flex items-center gap-4 text-[11px] text-[#788274]">
                 <div className="flex items-center gap-1.5">
                   <span>24h Requests:</span>
-                  <span className="text-white font-bold">{pipe.requests24h}</span>
+                  <span className="text-[#F0EFE2] font-bold">{pipe.requests24h}</span>
                 </div>
                 <div className="flex items-center gap-1.5 border-l border-dashed border-[#282828] pl-3">
                   <span>P99 Latency:</span>
-                  <span className="text-white font-bold">{pipe.latencyP99}</span>
+                  <span className="text-[#F0EFE2] font-bold">{pipe.latencyP99}</span>
                 </div>
                 <div className="flex items-center gap-1.5 border-l border-dashed border-[#282828] pl-3">
                   <span>Cost Rate:</span>
-                  <span className="text-white font-bold">{pipe.costRate}</span>
+                  <span className="text-[#F0EFE2] font-bold">{pipe.costRate}</span>
                 </div>
               </div>
 
@@ -473,7 +473,7 @@ export function PipelinesView({
                 <button
                   type="button"
                   onClick={() => setSelectedPipelineForTest(pipe)}
-                  className="flex items-center gap-1.5 border border-[#383838] bg-[#1f1f1f] text-[#d1d5db] hover:text-white hover:border-[#75bf00] px-2.5 py-1 text-[11px] rounded-xs transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 border border-[#383838] bg-[#1f1f1f] text-[#d1d5db] hover:text-[#F0EFE2] hover:border-[#75bf00] px-2.5 py-1 text-[11px] rounded-xs transition-colors cursor-pointer"
                 >
                   <Play size={10} className="text-[#75bf00]" />
                   <span>Test route</span>
@@ -482,7 +482,7 @@ export function PipelinesView({
                 <button
                   type="button"
                   onClick={onNavigateToAnalytics}
-                  className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#181818] text-[#a0a89d] hover:text-white px-2.5 py-1 text-[11px] rounded-xs transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#181818] text-[#a0a89d] hover:text-[#F0EFE2] px-2.5 py-1 text-[11px] rounded-xs transition-colors cursor-pointer"
                 >
                   <BarChart3 size={10} />
                   <span>Analytics</span>
@@ -500,13 +500,13 @@ export function PipelinesView({
             <div className="flex items-center justify-between border-b border-[#282828] pb-3">
               <div className="flex items-center gap-2">
                 <Play size={13} className="text-[#75bf00]" />
-                <span className="text-white font-bold text-sm">Test Pipeline Route</span>
+                <span className="text-[#F0EFE2] font-bold text-sm">Test Pipeline Route</span>
                 <span className="text-[#788274]">• {selectedPipelineForTest.name}</span>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedPipelineForTest(null)}
-                className="text-[#788274] hover:text-white cursor-pointer"
+                className="text-[#788274] hover:text-[#F0EFE2] cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -518,7 +518,7 @@ export function PipelinesView({
                 value={testPrompt}
                 onChange={(e) => setTestPrompt(e.target.value)}
                 rows={3}
-                className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs p-2 text-white outline-none text-xs"
+                className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs p-2 text-[#F0EFE2] outline-none text-xs"
               />
             </div>
 
@@ -526,7 +526,7 @@ export function PipelinesView({
               <button
                 type="button"
                 onClick={() => setSelectedPipelineForTest(null)}
-                className="px-3 py-1.5 border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white rounded-xs cursor-pointer text-xs"
+                className="px-3 py-1.5 border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2] rounded-xs cursor-pointer text-xs"
               >
                 Close
               </button>
@@ -559,9 +559,9 @@ export function PipelinesView({
                     <span className="text-[#86dc00] font-bold">{testResult.routeUsed}</span>
                   </div>
                   <div className="flex items-center gap-3 text-[10px] text-[#788274]">
-                    <span>Latency: <strong className="text-white">{testResult.latencyMs}ms</strong></span>
-                    <span>Tokens: <strong className="text-white">{testResult.tokens}</strong></span>
-                    <span>Cached: <strong className="text-white">{testResult.cached ? "Yes" : "No"}</strong></span>
+                    <span>Latency: <strong className="text-[#F0EFE2]">{testResult.latencyMs}ms</strong></span>
+                    <span>Tokens: <strong className="text-[#F0EFE2]">{testResult.tokens}</strong></span>
+                    <span>Cached: <strong className="text-[#F0EFE2]">{testResult.cached ? "Yes" : "No"}</strong></span>
                   </div>
                 </div>
                 <p className="text-[#d1d5db] text-xs leading-relaxed">{testResult.response}</p>
@@ -581,12 +581,12 @@ export function PipelinesView({
             <div className="flex items-center justify-between border-b border-[#282828] pb-3">
               <div className="flex items-center gap-2">
                 <Plus size={13} className="text-[#75bf00]" />
-                <span className="text-white font-bold text-sm">Create New Pipeline</span>
+                <span className="text-[#F0EFE2] font-bold text-sm">Create New Pipeline</span>
               </div>
               <button
                 type="button"
                 onClick={() => setCreateModalOpen(false)}
-                className="text-[#788274] hover:text-white cursor-pointer"
+                className="text-[#788274] hover:text-[#F0EFE2] cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -601,7 +601,7 @@ export function PipelinesView({
                   value={newPipelineName}
                   onChange={(e) => setNewPipelineName(e.target.value)}
                   placeholder="e.g. prod-code-fast-route"
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-white outline-none text-xs font-mono"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-[#F0EFE2] outline-none text-xs font-mono"
                 />
               </div>
 
@@ -610,7 +610,7 @@ export function PipelinesView({
                 <select
                   value={newPrimaryModel}
                   onChange={(e) => setNewPrimaryModel(e.target.value)}
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-white outline-none text-xs font-mono"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-[#F0EFE2] outline-none text-xs font-mono"
                 >
                   <option value="DeepSeek V4 Flash">DeepSeek V4 Flash ($0.14 / 1M)</option>
                   <option value="meta-llama/Llama-3.1-8B-Instruct">Llama 3.1 8B Instruct ($0.10 / 1M)</option>
@@ -624,7 +624,7 @@ export function PipelinesView({
                 <select
                   value={newFallbackModel}
                   onChange={(e) => setNewFallbackModel(e.target.value)}
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-white outline-none text-xs font-mono"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-[#F0EFE2] outline-none text-xs font-mono"
                 >
                   <option value="meta-llama/Llama-3.1-70B-Instruct">Llama 3.1 70B Instruct</option>
                   <option value="DeepSeek V4 Flash">DeepSeek V4 Flash</option>
@@ -634,7 +634,7 @@ export function PipelinesView({
 
               <div>
                 <label className="text-[11px] text-[#788274] block mb-1">
-                  Failover Latency SLA Threshold: <strong className="text-white">{newTimeoutMs}ms</strong>
+                  Failover Latency SLA Threshold: <strong className="text-[#F0EFE2]">{newTimeoutMs}ms</strong>
                 </label>
                 <input
                   type="range"
@@ -652,7 +652,7 @@ export function PipelinesView({
               <button
                 type="button"
                 onClick={() => setCreateModalOpen(false)}
-                className="px-3 py-1.5 border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white rounded-xs cursor-pointer text-xs"
+                className="px-3 py-1.5 border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2] rounded-xs cursor-pointer text-xs"
               >
                 Cancel
               </button>

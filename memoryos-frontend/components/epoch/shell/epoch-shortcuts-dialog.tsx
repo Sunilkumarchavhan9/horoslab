@@ -75,7 +75,7 @@ export function EpochShortcutsDialog({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "w-full max-w-[520px] border shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden text-xs rounded-xs cursor-default",
-          dark ? "border-[#383838] bg-[#181818] text-white" : "border-[#a8b0a2] bg-white text-[#171a17]"
+          dark ? "border-[#383838] bg-[#181818] text-[#F0EFE2]" : "border-[#a8b0a2] bg-white text-[#171a17]"
         )}
       >
         {/* Header */}
@@ -84,10 +84,10 @@ export function EpochShortcutsDialog({
           dark ? "border-[#282828] bg-[#181818]" : "border-[#e1e4df] bg-white"
         )}>
           <div>
-            <h2 className={cn("text-sm font-semibold", dark ? "text-white" : "text-[#171a17]")}>
+            <h2 className={cn("text-sm font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               Keyboard shortcuts
             </h2>
-            <p className={cn("mt-0.5 text-xs", dark ? "text-[#888]" : "text-[#687063]")}>
+            <p className={cn("mt-0.5 text-xs", dark ? "text-[#C8C7BA]" : "text-[#687063]")}>
               A compact guide to the keyboard controls available here.
             </p>
           </div>
@@ -98,7 +98,7 @@ export function EpochShortcutsDialog({
             className={cn(
               "border px-2.5 py-1 text-xs cursor-pointer transition-colors rounded-xs",
               dark
-                ? "border-[#383838] bg-[#222] text-[#ccc] hover:border-white hover:text-white"
+                ? "border-[#383838] bg-[#222] text-[#C8C7BA] hover:border-white hover:text-[#F0EFE2]"
                 : "border-[#d8ddd3] bg-[#f5f7f3] text-[#2a3028] hover:border-[#171a17] hover:text-[#171a17]"
             )}
           >
@@ -136,7 +136,7 @@ export function EpochShortcutsDialog({
                           className={cn(
                             "border px-1.5 py-0.5 text-[10px] rounded-xs",
                             dark
-                              ? "border-[#383838] bg-[#222] text-white"
+                              ? "border-[#383838] bg-[#222] text-[#F0EFE2]"
                               : "border-[#d8ddd3] bg-[#f5f7f3] text-[#2a3028]"
                           )}
                         >

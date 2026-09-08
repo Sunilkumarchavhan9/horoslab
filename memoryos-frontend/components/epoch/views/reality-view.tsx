@@ -302,7 +302,7 @@ export function RealityView({
       {/* Top Header Matching Sleek Dark Style */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#282828] pb-4">
         <div>
-          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-white">
+          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
             <span>Company</span>
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
               reality
@@ -324,7 +324,7 @@ export function RealityView({
           <button
             type="button"
             onClick={onTriggerRediscovery}
-            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] text-white hover:border-[#555] px-3 py-1 text-xs font-medium transition-colors rounded-xs cursor-pointer"
+            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] text-[#F0EFE2] hover:border-[#555] px-3 py-1 text-xs font-medium transition-colors rounded-xs cursor-pointer"
           >
             <RefreshCw size={12} className="text-[#86dc00]" />
             <span>Rediscover Reality</span>
@@ -352,8 +352,8 @@ export function RealityView({
                 className={cn(
                   "pb-2 transition-colors border-b-2 cursor-pointer font-medium whitespace-nowrap",
                   isActive
-                    ? "border-[#75bf00] text-white font-bold"
-                    : "border-transparent text-[#889284] hover:text-white"
+                    ? "border-[#75bf00] text-[#F0EFE2] font-bold"
+                    : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
                 )}
               >
                 <span>{tab.label}</span>
@@ -370,7 +370,7 @@ export function RealityView({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search reality entities..."
-            className="w-full bg-transparent focus:outline-none placeholder:text-[#666] font-mono text-xs text-white"
+            className="w-full bg-transparent focus:outline-none placeholder:text-[#666] font-mono text-xs text-[#F0EFE2]"
           />
         </div>
       </div>
@@ -398,8 +398,8 @@ export function RealityView({
                   className={cn(
                     "px-2.5 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm whitespace-nowrap",
                     filterType === f.id
-                      ? "bg-[#242424] text-white font-bold"
-                      : "text-[#889284] hover:text-white"
+                      ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                      : "text-[#889284] hover:text-[#F0EFE2]"
                   )}
                 >
                   {f.label}
@@ -409,7 +409,7 @@ export function RealityView({
 
             {/* 24 hours Time Window Badge (1:1 Match with User Image) */}
             <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm">
-              <span className="bg-[#242424] text-white font-bold px-2 py-0.5 rounded-sm">
+              <span className="bg-[#242424] text-[#F0EFE2] font-bold px-2 py-0.5 rounded-sm">
                 24 hours
               </span>
             </div>
@@ -450,7 +450,7 @@ export function RealityView({
                       </div>
                       <div className="truncate">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs truncate text-white group-hover:text-[#75bf00]">{ent.name}</span>
+                          <span className="font-bold text-xs truncate text-[#F0EFE2] group-hover:text-[#75bf00]">{ent.name}</span>
                           <span className="text-[10px] text-[#788274] shrink-0">{ent.updatedAt}</span>
                         </div>
                         <div className="text-[10px] text-[#788274]">ID: {ent.id}</div>
@@ -496,7 +496,7 @@ export function RealityView({
 
                     {/* Actions */}
                     <div className="col-span-1 flex items-center justify-end font-mono">
-                      <button type="button" className="text-[#788274] group-hover:text-white p-1 cursor-pointer">
+                      <button type="button" className="text-[#788274] group-hover:text-[#F0EFE2] p-1 cursor-pointer">
                         {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </button>
                     </div>
@@ -508,7 +508,7 @@ export function RealityView({
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="p-3 border border-dashed border-[#282828] rounded-xs space-y-1">
                           <span className="text-[10px] text-[#788274] uppercase tracking-wider">Environment</span>
-                          <div className="font-bold text-white capitalize">{ent.environment}</div>
+                          <div className="font-bold text-[#F0EFE2] capitalize">{ent.environment}</div>
                         </div>
                         <div className="p-3 border border-dashed border-[#282828] rounded-xs space-y-1">
                           <span className="text-[10px] text-[#788274] uppercase tracking-wider">Provenance Trust</span>
@@ -516,7 +516,7 @@ export function RealityView({
                         </div>
                         <div className="p-3 border border-dashed border-[#282828] rounded-xs space-y-1">
                           <span className="text-[10px] text-[#788274] uppercase tracking-wider">Version / Commit</span>
-                          <div className="font-bold text-white">{ent.version ?? "1.0.0"}</div>
+                          <div className="font-bold text-[#F0EFE2]">{ent.version ?? "1.0.0"}</div>
                         </div>
                       </div>
 
@@ -543,7 +543,7 @@ export function RealityView({
         <div className="border border-dashed border-[#282828] bg-[#181818] divide-y divide-[#242424] rounded-xs overflow-hidden font-mono text-xs">
           <div className="p-4 bg-[#141414] border-b border-[#282828] flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-xs text-white uppercase tracking-wider font-sans">
+              <h3 className="font-bold text-xs text-[#F0EFE2] uppercase tracking-wider font-sans">
                 Unknown Engine &amp; Active Hypotheses
               </h3>
               <p className="text-[11px] text-[#788274] mt-0.5">
@@ -560,7 +560,7 @@ export function RealityView({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <HelpCircle size={14} className="text-[#f59e0b] shrink-0" />
-                  <span className="font-bold text-white text-xs">{unk.statement}</span>
+                  <span className="font-bold text-[#F0EFE2] text-xs">{unk.statement}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="border border-[#333] bg-[#202020] text-[#a0a89d] px-2 py-0.5 rounded-xs text-[10px] font-bold">
@@ -574,12 +574,12 @@ export function RealityView({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-[#788274]">
                 <div className="border border-[#262626] bg-[#141414] p-2.5 rounded-xs">
-                  <span className="text-[10px] uppercase text-[#888] block mb-0.5">Decision Dependency</span>
-                  <span className="text-white">{unk.decisionImpact}</span>
+                  <span className="text-[10px] uppercase text-[#C8C7BA] block mb-0.5">Decision Dependency</span>
+                  <span className="text-[#F0EFE2]">{unk.decisionImpact}</span>
                 </div>
                 <div className="border border-[#262626] bg-[#141414] p-2.5 rounded-xs">
-                  <span className="text-[10px] uppercase text-[#888] block mb-0.5">Estimated Resolution Cost</span>
-                  <span className="text-white">{unk.resolutionCost}</span>
+                  <span className="text-[10px] uppercase text-[#C8C7BA] block mb-0.5">Estimated Resolution Cost</span>
+                  <span className="text-[#F0EFE2]">{unk.resolutionCost}</span>
                 </div>
               </div>
             </div>
@@ -603,7 +603,7 @@ export function RealityView({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3 border border-[#282828] bg-[#141414] rounded-xs space-y-1">
               <span className="text-[10px] text-[#788274] uppercase">Reconstructed Facts</span>
-              <div className="font-bold text-base text-white">48 Verified Facts</div>
+              <div className="font-bold text-base text-[#F0EFE2]">48 Verified Facts</div>
             </div>
             <div className="p-3 border border-[#282828] bg-[#141414] rounded-xs space-y-1">
               <span className="text-[10px] text-[#788274] uppercase">State Diff Status</span>
@@ -625,7 +625,7 @@ export function RealityView({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={15} className="text-[#f59e0b]" />
-                  <span className="font-bold text-sm text-white">{conf.entityName}</span>
+                  <span className="font-bold text-sm text-[#F0EFE2]">{conf.entityName}</span>
                 </div>
                 <span className="border border-[#78350f] bg-[#451a03]/40 text-[#f59e0b] px-2 py-0.5 text-[10px] font-bold rounded-xs uppercase">
                   {conf.status}
@@ -667,7 +667,7 @@ export function RealityView({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity size={14} className="text-[#86dc00]" />
-                  <span className="font-bold text-sm text-white">{drift.target}</span>
+                  <span className="font-bold text-sm text-[#F0EFE2]">{drift.target}</span>
                 </div>
                 <span className={cn(
                   "border px-2 py-0.5 text-[10px] font-bold rounded-xs uppercase",

@@ -106,7 +106,7 @@ export function SystemsView({
         dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
       )}>
         <div>
-          <h1 className={cn("text-2xl md:text-3xl font-medium tracking-tight", dark ? "text-white" : "text-[#151515]")}>
+          <h1 className={cn("text-2xl md:text-3xl font-medium tracking-tight", dark ? "text-[#F0EFE2]" : "text-[#151515]")}>
             Candidate{" "}
             <span className="bg-[#75bf00] text-black px-2 py-0.5 font-bold inline-block rounded-xs">
               systems
@@ -133,7 +133,7 @@ export function SystemsView({
         <div className="flex items-center gap-1 overflow-x-auto text-xs font-mono">
           <button
             type="button"
-            className={cn("relative px-3 py-1 text-xs transition-colors rounded-xs font-bold", dark ? "text-white" : "text-[#151515]")}
+            className={cn("relative px-3 py-1 text-xs transition-colors rounded-xs font-bold", dark ? "text-[#F0EFE2]" : "text-[#151515]")}
           >
             <span>All Candidate Architectures ({SAMPLE_CANDIDATE_SYSTEMS.length})</span>
             <span className="absolute bottom-[-13px] left-0 right-0 h-[2px] bg-[#75bf00]" />
@@ -167,7 +167,7 @@ export function SystemsView({
                     <span className="font-mono text-[10px] font-bold px-2 py-0.5 border border-[#75bf00] text-[#75bf00] bg-[#75bf00]/10 rounded-xs">
                       RANK #{cand.paretoRank}
                     </span>
-                    <span className={cn("font-bold text-sm", dark ? "text-white" : "text-[#111]")}>
+                    <span className={cn("font-bold text-sm", dark ? "text-[#F0EFE2]" : "text-[#111]")}>
                       {cand.name}
                     </span>
                   </div>
@@ -201,19 +201,19 @@ export function SystemsView({
                 {/* Metric Summary Strip */}
                 <div className="grid grid-cols-4 gap-2 pt-2 border-t border-dashed border-[#333]/20 font-mono text-xs">
                   <div>
-                    <span className="text-[#888] block text-[9px] uppercase">P95 Latency</span>
+                    <span className="text-[#C8C7BA] block text-[9px] uppercase">P95 Latency</span>
                     <span className="font-bold text-[#75bf00]">{cand.predictedMetrics.p95LatencyMs}ms</span>
                   </div>
                   <div>
-                    <span className="text-[#888] block text-[9px] uppercase">Cost / 1k Req</span>
+                    <span className="text-[#C8C7BA] block text-[9px] uppercase">Cost / 1k Req</span>
                     <span className="font-bold text-[#75bf00]">${cand.predictedMetrics.costPer1kReqUsd}</span>
                   </div>
                   <div>
-                    <span className="text-[#888] block text-[9px] uppercase">Quality Retention</span>
+                    <span className="text-[#C8C7BA] block text-[9px] uppercase">Quality Retention</span>
                     <span className="font-bold text-[#75bf00]">{cand.predictedMetrics.qualityRetentionPct}%</span>
                   </div>
                   <div>
-                    <span className="text-[#888] block text-[9px] uppercase">Monthly TCO</span>
+                    <span className="text-[#C8C7BA] block text-[9px] uppercase">Monthly TCO</span>
                     <span className="font-bold">${cand.predictedMetrics.monthlyTcoUsd}</span>
                   </div>
                 </div>
@@ -233,18 +233,18 @@ export function SystemsView({
             <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#75bf00]">
               SYSTEM INSPECTOR
             </span>
-            <span className="font-mono text-[10px] text-[#888]">Compatibility: {selectedSystem.compatibilityScorePct}%</span>
+            <span className="font-mono text-[10px] text-[#C8C7BA]">Compatibility: {selectedSystem.compatibilityScorePct}%</span>
           </div>
 
           <div>
-            <h3 className={cn("text-base font-bold", dark ? "text-white" : "text-[#111]")}>
+            <h3 className={cn("text-base font-bold", dark ? "text-[#F0EFE2]" : "text-[#111]")}>
               {selectedSystem.name}
             </h3>
             <p className="text-xs text-[#788274] font-mono mt-0.5">ID: {selectedSystem.id}</p>
           </div>
 
           <div className="space-y-2">
-            <span className="text-[10px] font-mono font-bold text-[#888] uppercase block">
+            <span className="text-[10px] font-mono font-bold text-[#C8C7BA] uppercase block">
               Component Composition
             </span>
             <div className="space-y-1.5 font-mono text-xs">
@@ -252,7 +252,7 @@ export function SystemsView({
                 <div key={i} className="p-2 border rounded-xs border-[#333]/20 bg-black/5 dark:bg-white/5 space-y-0.5">
                   <div className="flex justify-between text-[11px] font-bold text-[#75bf00] uppercase">
                     <span>{c.role}</span>
-                    <span className="text-[#888]">{c.hardware}</span>
+                    <span className="text-[#C8C7BA]">{c.hardware}</span>
                   </div>
                   <div className="text-[10px] truncate">{c.model} on {c.runtime}</div>
                 </div>
@@ -281,7 +281,7 @@ export function SystemsView({
               className={cn(
                 "w-full py-1.5 text-xs font-bold font-mono border rounded-xs transition-colors flex items-center justify-center gap-1.5",
                 dark
-                  ? "border-[#444] bg-[#222] text-white hover:bg-[#333]"
+                  ? "border-[#444] bg-[#222] text-[#F0EFE2] hover:bg-[#333]"
                   : "border-[#ccc] bg-white text-black hover:bg-[#f0f0f0]"
               )}
             >

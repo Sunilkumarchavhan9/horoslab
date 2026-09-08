@@ -97,7 +97,7 @@ export function FinOpsCostView({
     <div className="space-y-6 max-w-[1040px] mx-auto pb-20 font-sans text-xs text-left animate-in fade-in duration-150">
       {/* Top Header Matching RunInfra 1:1 */}
       <div>
-        <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-white">
+        <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
           <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
             Billing
           </span>
@@ -111,8 +111,8 @@ export function FinOpsCostView({
         {/* SECTION 1: CREDITS (Screenshot 1) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <CreditCard size={11} />
               </div>
               <span>Credits</span>
@@ -129,7 +129,7 @@ export function FinOpsCostView({
                   <Key size={13} className="text-[#86dc00]" />
                 </div>
                 <div className="space-y-1">
-                  <div className="font-bold text-white text-xs">
+                  <div className="font-bold text-[#F0EFE2] text-xs">
                     ${currentBalance.toFixed(2)} free balance remaining
                   </div>
                   <p className="text-[11px] text-[#90988c] leading-relaxed">
@@ -155,8 +155,8 @@ export function FinOpsCostView({
         {/* SECTION 2: SPEND TIER (Screenshot 1 & 4) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <Layers size={11} />
               </div>
               <span>Spend tier</span>
@@ -175,7 +175,7 @@ export function FinOpsCostView({
                     ● Active
                   </span>
                 </div>
-                <div className="text-base font-bold text-white">Starter</div>
+                <div className="text-base font-bold text-[#F0EFE2]">Starter</div>
                 <p className="text-[11px] text-[#788274]">
                   Capacity follows this workspace&apos;s paid credit purchase history.
                 </p>
@@ -183,7 +183,7 @@ export function FinOpsCostView({
 
               <div className="space-y-1">
                 <span className="text-[10px] font-mono text-[#788274] uppercase">LIFETIME PURCHASES</span>
-                <div className="text-base font-bold text-white font-mono">$0.00</div>
+                <div className="text-base font-bold text-[#F0EFE2] font-mono">$0.00</div>
                 <p className="text-[11px] text-[#788274]">
                   Paid credit purchases only. Promotional grants do not raise this tier.
                 </p>
@@ -193,7 +193,7 @@ export function FinOpsCostView({
             {/* Progress Bar */}
             <div className="space-y-1.5 border-t border-[#242424] pt-3">
               <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-white">Next unlock: Builder</span>
+                <span className="font-bold text-[#F0EFE2]">Next unlock: Builder</span>
                 <span className="text-[#788274]">$0.00 of $50.00</span>
               </div>
               <div className="w-full bg-[#202020] h-1.5 rounded-full overflow-hidden">
@@ -217,7 +217,7 @@ export function FinOpsCostView({
               <button
                 type="button"
                 onClick={() => setStarterDrawerOpen(!starterDrawerOpen)}
-                className="flex items-center justify-between w-full text-xs text-[#889084] hover:text-white transition-colors cursor-pointer py-1"
+                className="flex items-center justify-between w-full text-xs text-[#889084] hover:text-[#F0EFE2] transition-colors cursor-pointer py-1"
               >
                 <span>What Starter unlocks</span>
                 {starterDrawerOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
@@ -227,22 +227,22 @@ export function FinOpsCostView({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 animate-in fade-in duration-100 font-mono">
                   <div className="p-3 border border-dashed border-[#282828] bg-[#181818] rounded-xs space-y-1">
                     <span className="text-[10px] text-[#788274] uppercase block">HOSTED CONCURRENCY</span>
-                    <div className="font-bold text-white text-xs">4 concurrent requests</div>
+                    <div className="font-bold text-[#F0EFE2] text-xs">4 concurrent requests</div>
                   </div>
 
                   <div className="p-3 border border-dashed border-[#282828] bg-[#181818] rounded-xs space-y-1">
                     <span className="text-[10px] text-[#788274] uppercase block">HOSTED THROUGHPUT</span>
-                    <div className="font-bold text-white text-xs">200,000 tokens/min</div>
+                    <div className="font-bold text-[#F0EFE2] text-xs">200,000 tokens/min</div>
                   </div>
 
                   <div className="p-3 border border-dashed border-[#282828] bg-[#181818] rounded-xs space-y-1">
                     <span className="text-[10px] text-[#788274] uppercase block">REQUEST RATE</span>
-                    <div className="font-bold text-white text-xs">1,000 requests/min</div>
+                    <div className="font-bold text-[#F0EFE2] text-xs">1,000 requests/min</div>
                   </div>
 
                   <div className="p-3 border border-dashed border-[#282828] bg-[#181818] rounded-xs space-y-1">
                     <span className="text-[10px] text-[#788274] uppercase block">GPU RUN CONCURRENCY</span>
-                    <div className="font-bold text-white text-xs">1 concurrent runs</div>
+                    <div className="font-bold text-[#F0EFE2] text-xs">1 concurrent runs</div>
                     <p className="text-[10px] text-[#666] font-sans">
                       Optimization runs that can use GPU capacity together.
                     </p>
@@ -250,7 +250,7 @@ export function FinOpsCostView({
 
                   <div className="p-3 border border-dashed border-[#282828] bg-[#181818] rounded-xs space-y-1 sm:col-span-2">
                     <span className="text-[10px] text-[#788274] uppercase block">AGENT TOOL SPEND</span>
-                    <div className="font-bold text-white text-xs">$5.00 per turn</div>
+                    <div className="font-bold text-[#F0EFE2] text-xs">$5.00 per turn</div>
                   </div>
                 </div>
               )}
@@ -261,8 +261,8 @@ export function FinOpsCostView({
         {/* SECTION 3: AUTO RECHARGE (Screenshot 1) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <RotateCcw size={11} />
               </div>
               <span>Auto recharge</span>
@@ -274,7 +274,7 @@ export function FinOpsCostView({
 
           <div className="md:col-span-8 flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-0.5">
-              <div className="font-bold text-white text-xs">Auto-recharge</div>
+              <div className="font-bold text-[#F0EFE2] text-xs">Auto-recharge</div>
               <p className="text-[11px] text-[#788274]">
                 Off. Turn on to keep a minimum balance automatically.
               </p>
@@ -283,7 +283,7 @@ export function FinOpsCostView({
             <button
               type="button"
               onClick={() => setAddCardModalOpen(true)}
-              className="flex items-center gap-1.5 border border-[#383838] bg-[#1a1a1a] hover:bg-[#242424] text-[#a0a89d] hover:text-white px-3 py-1.5 rounded-xs text-xs font-mono transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 border border-[#383838] bg-[#1a1a1a] hover:bg-[#242424] text-[#a0a89d] hover:text-[#F0EFE2] px-3 py-1.5 rounded-xs text-xs font-mono transition-colors cursor-pointer"
             >
               <CreditCard size={11} />
               <span>Add a card to enable</span>
@@ -294,8 +294,8 @@ export function FinOpsCostView({
         {/* SECTION 4: SPEND LIMIT (Screenshot 2) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <Clock size={11} />
               </div>
               <span>Spend limit</span>
@@ -318,7 +318,7 @@ export function FinOpsCostView({
                     "px-3 py-1 text-xs rounded-xs border transition-colors cursor-pointer",
                     spendLimitPreset === preset
                       ? "border-[#75bf00] text-[#75bf00] bg-[#182012] font-bold"
-                      : "border-[#333] bg-[#181818] text-[#888] hover:border-[#555] hover:text-white"
+                      : "border-[#333] bg-[#181818] text-[#C8C7BA] hover:border-[#555] hover:text-[#F0EFE2]"
                   )}
                 >
                   {preset === "nolimit" ? "No limit" : `$${preset}`}
@@ -335,7 +335,7 @@ export function FinOpsCostView({
                     value={customSpendLimit}
                     onChange={(e) => setCustomSpendLimit(e.target.value)}
                     placeholder="5"
-                    className="w-full bg-[#181818] border border-[#333] focus:border-[#75bf00] rounded-xs pl-6 pr-3 py-1.5 text-xs text-white placeholder-[#666] outline-none font-mono"
+                    className="w-full bg-[#181818] border border-[#333] focus:border-[#75bf00] rounded-xs pl-6 pr-3 py-1.5 text-xs text-[#F0EFE2] placeholder-[#666] outline-none font-mono"
                   />
                 </div>
                 <button
@@ -358,8 +358,8 @@ export function FinOpsCostView({
         {/* SECTION 5: COST USAGE (Screenshot 2) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <BarChart3 size={11} />
               </div>
               <span>Cost Usage</span>
@@ -385,8 +385,8 @@ export function FinOpsCostView({
                     className={cn(
                       "px-2.5 py-0.5 rounded-xs transition-colors text-[11px] cursor-pointer",
                       costPeriod === p
-                        ? "bg-[#282828] text-white font-bold"
-                        : "text-[#788274] hover:text-white"
+                        ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                        : "text-[#788274] hover:text-[#F0EFE2]"
                     )}
                   >
                     {p}
@@ -399,11 +399,11 @@ export function FinOpsCostView({
             <div className="grid grid-cols-2 gap-4 border-b border-[#242424] pb-3">
               <div>
                 <span className="text-[10px] text-[#788274] uppercase block">AVG COST</span>
-                <div className="font-bold text-white text-xs mt-0.5">$0.1633</div>
+                <div className="font-bold text-[#F0EFE2] text-xs mt-0.5">$0.1633</div>
               </div>
               <div>
                 <span className="text-[10px] text-[#788274] uppercase block">TODAY RATE</span>
-                <div className="font-bold text-white text-xs mt-0.5">$0.00/hr</div>
+                <div className="font-bold text-[#F0EFE2] text-xs mt-0.5">$0.00/hr</div>
                 <p className="text-[10px] text-[#666] font-sans">Average hourly spend for today in UTC.</p>
               </div>
             </div>
@@ -413,10 +413,10 @@ export function FinOpsCostView({
               {/* Spend Chart */}
               <div className="border border-dashed border-[#282828] bg-[#141414] rounded-xs p-3 space-y-2">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-white">Spend over time</span>
+                  <span className="font-bold text-[#F0EFE2]">Spend over time</span>
                   <span className="text-[#788274] text-[10px]">USD</span>
                 </div>
-                <div className="text-xs font-bold text-white">$0.49 <span className="text-[10px] text-[#788274] font-normal">USD, last 30d</span></div>
+                <div className="text-xs font-bold text-[#F0EFE2]">$0.49 <span className="text-[10px] text-[#788274] font-normal">USD, last 30d</span></div>
                 
                 {/* SVG Graph Grid with Green Dot */}
                 <div className="h-20 w-full relative pt-2">
@@ -436,10 +436,10 @@ export function FinOpsCostView({
               {/* Requests Chart */}
               <div className="border border-dashed border-[#282828] bg-[#141414] rounded-xs p-3 space-y-2">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-white">Requests over time</span>
+                  <span className="font-bold text-[#F0EFE2]">Requests over time</span>
                   <span className="text-[#788274] text-[10px]">Daily UTC</span>
                 </div>
-                <div className="text-xs font-bold text-white">3 <span className="text-[10px] text-[#788274] font-normal">requests, last 30d</span></div>
+                <div className="text-xs font-bold text-[#F0EFE2]">3 <span className="text-[10px] text-[#788274] font-normal">requests, last 30d</span></div>
 
                 {/* SVG Graph Grid with Green Dot */}
                 <div className="h-20 w-full relative pt-2">
@@ -462,8 +462,8 @@ export function FinOpsCostView({
         {/* SECTION 6: CREDIT ACTIVITY (Screenshot 3) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <Clock size={11} />
               </div>
               <span>Credit Activity</span>
@@ -487,7 +487,7 @@ export function FinOpsCostView({
                 {creditActivity.map((act) => (
                   <div key={act.id} className="p-3 flex items-center justify-between hover:bg-[#181818] transition-colors">
                     <div className="space-y-0.5">
-                      <div className="font-bold text-white text-xs">{act.title}</div>
+                      <div className="font-bold text-[#F0EFE2] text-xs">{act.title}</div>
                       <div className="text-[10px] text-[#788274]">{act.time}</div>
                     </div>
 
@@ -499,7 +499,7 @@ export function FinOpsCostView({
                             ? "text-[#86dc00]"
                             : act.type === "reserved"
                             ? "text-[#a0a89d]"
-                            : "text-white"
+                            : "text-[#F0EFE2]"
                         )}
                       >
                         {act.amount}
@@ -516,8 +516,8 @@ export function FinOpsCostView({
         {/* SECTION 7: INVOICES (Screenshot 3) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6">
           <div className="md:col-span-4 space-y-1">
-            <div className="flex items-center gap-2 font-bold text-white text-xs">
-              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#888]">
+            <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
+              <div className="w-5 h-5 rounded-xs border border-[#333] bg-[#1a1a1a] flex items-center justify-center text-[#C8C7BA]">
                 <FileText size={11} />
               </div>
               <span>Invoices</span>
@@ -533,7 +533,7 @@ export function FinOpsCostView({
                 <FileText size={14} />
               </div>
               <div className="space-y-1">
-                <div className="font-bold text-white text-xs">No invoices</div>
+                <div className="font-bold text-[#F0EFE2] text-xs">No invoices</div>
                 <p className="text-xs text-[#788274] max-w-md leading-relaxed">
                   Invoices come from the retired monthly plans. Credit purchases do not produce one, and every top-up, charge and refund is listed in Credit Activity above.
                 </p>
@@ -551,7 +551,7 @@ export function FinOpsCostView({
             className="w-full max-w-md border border-[#282828] bg-[#141414] rounded-sm p-6 text-xs space-y-4 shadow-2xl text-left"
           >
             <div className="space-y-1">
-              <h2 className="text-sm font-bold text-white tracking-tight">Add Inference Balance</h2>
+              <h2 className="text-sm font-bold text-[#F0EFE2] tracking-tight">Add Inference Balance</h2>
               <p className="text-xs text-[#90988c] leading-relaxed">
                 Add credits to fund your hosted models, automated pipelines, and benchmark runs.
               </p>
@@ -571,7 +571,7 @@ export function FinOpsCostView({
                       "py-2 font-mono text-xs rounded-xs border transition-colors cursor-pointer text-center",
                       fundAmount === amt
                         ? "border-[#75bf00] bg-[#1a2416] text-[#86dc00] font-bold"
-                        : "border-[#333] bg-[#181818] text-white hover:border-[#555]"
+                        : "border-[#333] bg-[#181818] text-[#F0EFE2] hover:border-[#555]"
                     )}
                   >
                     ${amt}
@@ -584,7 +584,7 @@ export function FinOpsCostView({
               <button
                 type="button"
                 onClick={() => setAddFundsModalOpen(false)}
-                className="px-4 py-2 border border-[#383838] bg-[#1e1e1e] hover:bg-[#282828] text-white font-medium rounded-xs cursor-pointer text-xs transition-colors"
+                className="px-4 py-2 border border-[#383838] bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] font-medium rounded-xs cursor-pointer text-xs transition-colors"
               >
                 Cancel
               </button>
@@ -605,7 +605,7 @@ export function FinOpsCostView({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-100 backdrop-blur-xs">
           <div className="w-full max-w-md border border-[#282828] bg-[#141414] rounded-sm p-6 text-xs space-y-4 shadow-2xl text-left">
             <div className="space-y-1">
-              <h2 className="text-sm font-bold text-white tracking-tight">Add Payment Card</h2>
+              <h2 className="text-sm font-bold text-[#F0EFE2] tracking-tight">Add Payment Card</h2>
               <p className="text-xs text-[#90988c] leading-relaxed">
                 Add a credit or debit card for automatic top-ups when your balance falls below the trigger.
               </p>
@@ -617,7 +617,7 @@ export function FinOpsCostView({
                 <input
                   type="text"
                   placeholder="•••• •••• •••• 4242"
-                  className="w-full bg-[#181818] border border-[#333] rounded-xs px-3 py-2 text-white outline-none mt-1"
+                  className="w-full bg-[#181818] border border-[#333] rounded-xs px-3 py-2 text-[#F0EFE2] outline-none mt-1"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -626,7 +626,7 @@ export function FinOpsCostView({
                   <input
                     type="text"
                     placeholder="MM / YY"
-                    className="w-full bg-[#181818] border border-[#333] rounded-xs px-3 py-2 text-white outline-none mt-1"
+                    className="w-full bg-[#181818] border border-[#333] rounded-xs px-3 py-2 text-[#F0EFE2] outline-none mt-1"
                   />
                 </div>
                 <div>
@@ -634,7 +634,7 @@ export function FinOpsCostView({
                   <input
                     type="text"
                     placeholder="123"
-                    className="w-full bg-[#181818] border border-[#333] rounded-xs px-3 py-2 text-white outline-none mt-1"
+                    className="w-full bg-[#181818] border border-[#333] rounded-xs px-3 py-2 text-[#F0EFE2] outline-none mt-1"
                   />
                 </div>
               </div>
@@ -644,7 +644,7 @@ export function FinOpsCostView({
               <button
                 type="button"
                 onClick={() => setAddCardModalOpen(false)}
-                className="px-4 py-2 border border-[#383838] bg-[#1e1e1e] hover:bg-[#282828] text-white font-medium rounded-xs cursor-pointer text-xs transition-colors"
+                className="px-4 py-2 border border-[#383838] bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] font-medium rounded-xs cursor-pointer text-xs transition-colors"
               >
                 Cancel
               </button>

@@ -82,8 +82,8 @@ export function EpochSubnav({
               className={cn(
                 "relative flex items-center gap-1.5 whitespace-nowrap px-3 py-2 text-xs font-mono transition-colors focus:outline-none cursor-pointer",
                 isActive
-                  ? "text-white font-bold"
-                  : "text-[#889084] hover:text-white"
+                  ? "text-[#F0EFE2] font-bold"
+                  : "text-[#889084] hover:text-[#F0EFE2]"
               )}
             >
               <Icon size={13} className={isActive ? "text-[#75bf00]" : "text-[#788274]"} />

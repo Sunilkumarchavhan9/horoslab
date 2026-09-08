@@ -289,10 +289,10 @@ export function PipelineWorkspaceView({
           <button
             type="button"
             onClick={onBack || onNavigateToPipelines}
-            className="flex items-center justify-center p-1 text-white hover:opacity-80 transition-opacity"
+            className="flex items-center justify-center p-1 text-[#F0EFE2] hover:opacity-80 transition-opacity"
             title="Back to pipelines"
           >
-            <EpochIcon className="w-5 h-4 text-white" />
+            <EpochIcon className="w-5 h-4 text-[#F0EFE2]" />
           </button>
 
           {/* View Mode Dropdown Trigger matching Screenshot 1 */}
@@ -539,8 +539,8 @@ export function PipelineWorkspaceView({
                     className={cn(
                       "flex items-center gap-1.5 px-3 py-1 text-xs font-mono transition-colors cursor-pointer rounded-sm shrink-0 whitespace-nowrap",
                       isActive
-                        ? "bg-[#242424] text-white font-bold"
-                        : "text-[#889284] hover:text-white"
+                        ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                        : "text-[#889284] hover:text-[#F0EFE2]"
                     )}
                   >
                     {tab === "optimization" && <Zap size={11} className="text-[#75bf00]" />}
@@ -559,7 +559,7 @@ export function PipelineWorkspaceView({
                     {openTabs.length > 1 && (
                       <span
                         onClick={(e) => handleCloseTab(e, tab)}
-                        className="text-[#888] text-[10px] hover:text-white ml-0.5 opacity-60 group-hover:opacity-100"
+                        className="text-[#C8C7BA] text-[10px] hover:text-[#F0EFE2] ml-0.5 opacity-60 group-hover:opacity-100"
                       >
                         ×
                       </span>
@@ -572,12 +572,12 @@ export function PipelineWorkspaceView({
               {searchViewsModalOpen && (
                 <div className={cn(
                   "flex items-center gap-1 px-2.5 py-1 font-semibold text-xs border shrink-0",
-                  dark ? "border-[#75bf00] bg-[#141d14] text-white" : "border-[#75bf00] bg-[#f0fbe6] text-[#171a17]"
+                  dark ? "border-[#75bf00] bg-[#141d14] text-[#F0EFE2]" : "border-[#75bf00] bg-[#f0fbe6] text-[#171a17]"
                 )}>
                   <span>New tab</span>
                   <span
                     onClick={() => setSearchViewsModalOpen(false)}
-                    className="text-[#888] text-[10px] hover:text-white cursor-pointer ml-1"
+                    className="text-[#C8C7BA] text-[10px] hover:text-[#F0EFE2] cursor-pointer ml-1"
                   >
                     ×
                   </span>
@@ -594,7 +594,7 @@ export function PipelineWorkspaceView({
                   "px-2 py-1 transition-colors rounded-xs border border-transparent cursor-pointer flex items-center justify-center",
                   searchViewsModalOpen
                     ? "text-[#75bf00] bg-[#1c2a12] border-[#75bf00]"
-                    : "text-[#687063] hover:text-[#171a17] dark:hover:text-white"
+                    : "text-[#687063] hover:text-[#171a17] dark:hover:text-[#F0EFE2]"
                 )}
                 title="Add view or jump to tab"
               >
@@ -604,11 +604,11 @@ export function PipelineWorkspaceView({
               {searchViewsModalOpen && (
                 <div className={cn(
                   "absolute left-0 top-full mt-2 w-64 border shadow-2xl p-1.5 space-y-1 font-mono text-xs z-[999] rounded-xs animate-in fade-in zoom-in-95 duration-100",
-                  dark ? "border-[#333] bg-[#141414] text-white" : "border-[#c9cec4] bg-white text-[#171a17]"
+                  dark ? "border-[#333] bg-[#141414] text-[#F0EFE2]" : "border-[#c9cec4] bg-white text-[#171a17]"
                 )}>
                   <div className="text-[10px] text-[#889284] px-2.5 py-1 uppercase tracking-wider font-semibold border-b border-[#242424] flex items-center justify-between">
                     <span>Add Workspace Tab</span>
-                    <button type="button" onClick={() => setSearchViewsModalOpen(false)} className="hover:text-white cursor-pointer">
+                    <button type="button" onClick={() => setSearchViewsModalOpen(false)} className="hover:text-[#F0EFE2] cursor-pointer">
                       <X size={12} />
                     </button>
                   </div>
@@ -617,11 +617,11 @@ export function PipelineWorkspaceView({
                     {[
                       { id: "optimization" as ActiveWorkspaceTab, label: "Optimization", icon: Zap, color: "text-[#75bf00]" },
                       { id: "benchmarks" as ActiveWorkspaceTab, label: "Benchmarks", icon: FlaskConical, color: "text-[#75bf00]" },
-                      { id: "plan" as ActiveWorkspaceTab, label: "Execution Plan", icon: FileText, color: "text-white" },
-                      { id: "deploy" as ActiveWorkspaceTab, label: "Deploy Options", icon: Rocket, color: "text-white" },
+                      { id: "plan" as ActiveWorkspaceTab, label: "Execution Plan", icon: FileText, color: "text-[#F0EFE2]" },
+                      { id: "deploy" as ActiveWorkspaceTab, label: "Deploy Options", icon: Rocket, color: "text-[#F0EFE2]" },
                       { id: "experiment" as ActiveWorkspaceTab, label: "Experiment", icon: Shuffle, color: "text-[#e6b800]" },
-                      { id: "code" as ActiveWorkspaceTab, label: "Generated Code", icon: Code, color: "text-white" },
-                      { id: "config" as ActiveWorkspaceTab, label: "Serving Config", icon: Sliders, color: "text-white" },
+                      { id: "code" as ActiveWorkspaceTab, label: "Generated Code", icon: Code, color: "text-[#F0EFE2]" },
+                      { id: "config" as ActiveWorkspaceTab, label: "Serving Config", icon: Sliders, color: "text-[#F0EFE2]" },
                     ].map((item) => {
                       const ItemIcon = item.icon;
                       const isAlreadyOpen = openTabs.includes(item.id);
@@ -632,8 +632,8 @@ export function PipelineWorkspaceView({
                           className={cn(
                             "flex items-center justify-between px-2.5 py-1.5 rounded-xs cursor-pointer transition-colors text-xs",
                             activeTab === item.id
-                              ? dark ? "bg-[#282828] text-white font-bold" : "bg-[#f0f4ee] font-bold"
-                              : dark ? "hover:bg-[#202020] text-[#a0a89d] hover:text-white" : "hover:bg-[#f8faf7] text-[#555]"
+                              ? dark ? "bg-[#282828] text-[#F0EFE2] font-bold" : "bg-[#f0f4ee] font-bold"
+                              : dark ? "hover:bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2]" : "hover:bg-[#f8faf7] text-[#555]"
                           )}
                         >
                           <div className="flex items-center gap-2">
@@ -664,7 +664,7 @@ export function PipelineWorkspaceView({
                 "flex items-center gap-1.5 border px-2 py-1 transition-colors cursor-pointer rounded-xs",
                 headerPopover === "gpu"
                   ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
-                  : dark ? "border-[#383838] bg-[#1a1f1a] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
+                  : dark ? "border-[#383838] bg-[#1a1f1a] text-[#F0EFE2] hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
               )}
             >
               <NvidiaLogo size={13} />
@@ -680,10 +680,10 @@ export function PipelineWorkspaceView({
                 <div className="flex items-center justify-between border border-[#282828] bg-[#1a1a1a] p-2 rounded-sm">
                   <div className="flex items-center gap-2">
                     <NvidiaLogo size={14} />
-                    <span className="font-bold text-white">A100</span>
+                    <span className="font-bold text-[#F0EFE2]">A100</span>
                   </div>
                   <div className="flex items-center gap-3 text-[11px]">
-                    <span className="text-white font-bold">40 GB</span>
+                    <span className="text-[#F0EFE2] font-bold">40 GB</span>
                     <span className="text-[#889284]">High-end</span>
                   </div>
                 </div>
@@ -700,7 +700,7 @@ export function PipelineWorkspaceView({
                 "flex items-center gap-1.5 border px-2 py-1 transition-colors cursor-pointer rounded-xs",
                 headerPopover === "github"
                   ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
-                  : dark ? "border-[#383838] bg-[#1a1f1a] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
+                  : dark ? "border-[#383838] bg-[#1a1f1a] text-[#F0EFE2] hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
               )}
             >
               <GithubLogo size={13} />
@@ -709,14 +709,14 @@ export function PipelineWorkspaceView({
 
             {headerPopover === "github" && (
               <div className="absolute right-0 top-full mt-2 w-80 border border-dashed border-[#383838] bg-[#141414] p-4 rounded-sm font-mono text-xs z-50 shadow-2xl space-y-3">
-                <h4 className="font-bold text-white text-sm">Push your code to GitHub</h4>
+                <h4 className="font-bold text-[#F0EFE2] text-sm">Push your code to GitHub</h4>
                 <p className="text-[#889284] text-[11px] leading-relaxed">
                   Send this session&apos;s generated pipeline files to a repository you own, with the optimization details in the commit message when available.
                 </p>
                 <button
                   type="button"
                   onClick={() => alert("Connecting GitHub OAuth...")}
-                  className="w-full border border-[#383838] bg-[#222] hover:bg-[#282828] text-white font-bold py-1.5 rounded-sm flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                  className="w-full border border-[#383838] bg-[#222] hover:bg-[#282828] text-[#F0EFE2] font-bold py-1.5 rounded-sm flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <GithubLogo size={14} />
                   <span>Connect GitHub</span>
@@ -734,7 +734,7 @@ export function PipelineWorkspaceView({
                 "flex items-center gap-1 border px-2 py-1 transition-colors cursor-pointer rounded-xs",
                 headerPopover === "feedback"
                   ? "border-[#75bf00] bg-[#1a2216] text-[#a3e635]"
-                  : dark ? "border-[#383838] bg-[#1a1f1a] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
+                  : dark ? "border-[#383838] bg-[#1a1f1a] text-[#F0EFE2] hover:border-[#75bf00]" : "border-[#d8ddd3] bg-[#fafbfa] text-[#171a17]"
               )}
             >
               <MessageSquare size={11} />
@@ -744,8 +744,8 @@ export function PipelineWorkspaceView({
             {headerPopover === "feedback" && (
               <div className="absolute right-0 top-full mt-2 w-88 border border-dashed border-[#383838] bg-[#141414] p-4 rounded-sm font-mono text-xs z-50 shadow-2xl space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-white">Send Feedback</h4>
-                  <button type="button" onClick={() => setHeaderPopover(null)} className="text-[#889284] hover:text-white cursor-pointer">
+                  <h4 className="font-bold text-[#F0EFE2]">Send Feedback</h4>
+                  <button type="button" onClick={() => setHeaderPopover(null)} className="text-[#889284] hover:text-[#F0EFE2] cursor-pointer">
                     <X size={13} />
                   </button>
                 </div>
@@ -765,8 +765,8 @@ export function PipelineWorkspaceView({
                       className={cn(
                         "px-2.5 py-1 text-[11px] font-mono rounded-sm border cursor-pointer transition-colors whitespace-nowrap",
                         feedbackCategory === tab.id
-                          ? "border-[#3a3a3a] bg-[#242424] text-white font-bold"
-                          : "border-transparent text-[#889284] hover:text-white"
+                          ? "border-[#3a3a3a] bg-[#242424] text-[#F0EFE2] font-bold"
+                          : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
                       )}
                     >
                       {tab.label}
@@ -780,13 +780,13 @@ export function PipelineWorkspaceView({
                   onChange={(e) => setFeedbackMessage(e.target.value)}
                   placeholder="Describe the issue, suggestion, or question..."
                   rows={3}
-                  className="w-full border border-[#282828] bg-[#1a1a1a] p-2.5 text-xs text-white placeholder-[#666] outline-none rounded-sm font-mono"
+                  className="w-full border border-[#282828] bg-[#1a1a1a] p-2.5 text-xs text-[#F0EFE2] placeholder-[#666] outline-none rounded-sm font-mono"
                 />
 
                 {/* Include session info toggle */}
                 <div className="flex items-center justify-between pt-1">
                   <div>
-                    <span className="text-white text-xs block font-bold">Include session info</span>
+                    <span className="text-[#F0EFE2] text-xs block font-bold">Include session info</span>
                     <span className="text-[10px] text-[#788274] block">URL, browser, and screen size to help us debug.</span>
                   </div>
                   <button
@@ -844,7 +844,7 @@ export function PipelineWorkspaceView({
                 <div>
                   <span className="text-[#889284] text-[11px] block">Session cost</span>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xl font-bold text-white">$0.49</span>
+                    <span className="text-xl font-bold text-[#F0EFE2]">$0.49</span>
                     <span className="flex items-center gap-1 text-[11px] text-[#889284]">
                       <span className="h-2 w-2 rounded-full bg-[#889284]" />
                       Idle
@@ -855,19 +855,19 @@ export function PipelineWorkspaceView({
                 <div className="border-t border-[#242424] pt-3">
                   <span className="text-[#889284] text-[11px] block">Balance</span>
                   <div className="flex items-center justify-between mt-1">
-                    <span className="text-white">Balance remaining</span>
-                    <span className="font-bold text-white">$9.51</span>
+                    <span className="text-[#F0EFE2]">Balance remaining</span>
+                    <span className="font-bold text-[#F0EFE2]">$9.51</span>
                   </div>
                 </div>
 
                 <div className="border-t border-[#242424] pt-3 space-y-1">
                   <span className="text-[#889284] text-[11px] block">Compute used</span>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-white flex items-center gap-1.5">
+                    <span className="text-[#F0EFE2] flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#889284]" />
                       Agent tokens
                     </span>
-                    <span className="font-bold text-white">$0.49</span>
+                    <span className="font-bold text-[#F0EFE2]">$0.49</span>
                   </div>
                   <p className="text-[10px] text-[#666] leading-tight pt-0.5">
                     Each message holds $1.00 and settles to actual token cost (typically under $0.20).
@@ -919,7 +919,7 @@ export function PipelineWorkspaceView({
                 <div className="flex justify-end pt-1">
                   <div className={cn(
                     "border px-3.5 py-2.5 rounded-lg max-w-xl text-xs leading-relaxed transition-colors",
-                    dark ? "border-[#2e2e2e] bg-[#202020] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]"
+                    dark ? "border-[#2e2e2e] bg-[#202020] text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#171a17]"
                   )}>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span>Optimize</span>
@@ -951,12 +951,12 @@ export function PipelineWorkspaceView({
                   <div className="flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-1.5 truncate">
                       {expandedThoughts["t1"] !== false ? (
-                        <ChevronDown size={14} className="text-[#888888] shrink-0" />
+                        <ChevronDown size={14} className="text-[#C8C7BA] shrink-0" />
                       ) : (
-                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                        <ChevronRight size={14} className="text-[#C8C7BA] shrink-0" />
                       )}
-                      <span className="font-bold text-white">Thoughts</span>
-                      <span className="text-[#888888] truncate pl-1 font-mono">
+                      <span className="font-bold text-[#F0EFE2]">Thoughts</span>
+                      <span className="text-[#C8C7BA] truncate pl-1 font-mono">
                         The request is execution-grade: Llama 3.1 8B, vLLM, cost-first GPU selection,...
                       </span>
                     </div>
@@ -966,7 +966,7 @@ export function PipelineWorkspaceView({
                         e.stopPropagation();
                         toggleThought("t1");
                       }}
-                      className="text-[#888888] hover:text-white shrink-0 ml-2 font-mono text-xs cursor-pointer"
+                      className="text-[#C8C7BA] hover:text-[#F0EFE2] shrink-0 ml-2 font-mono text-xs cursor-pointer"
                     >
                       Verbose
                     </button>
@@ -996,7 +996,7 @@ export function PipelineWorkspaceView({
                         <FileText size={15} />
                       </div>
                       <div>
-                        <div className="font-bold text-xs text-white">Requirements collected</div>
+                        <div className="font-bold text-xs text-[#F0EFE2]">Requirements collected</div>
                         <div className="text-[11px] text-[#788274] leading-relaxed pt-0.5">
                           Collected: use case, sector, scale, deployment, goal, format, preferred models, runs on, concurrency, context window, mode
                         </div>
@@ -1005,7 +1005,7 @@ export function PipelineWorkspaceView({
                     {expandedSteps["requirements"] ? (
                       <ChevronDown size={15} className="text-[#75bf00] shrink-0 mt-1" />
                     ) : (
-                      <ChevronRight size={15} className="text-[#888888] shrink-0 mt-1" />
+                      <ChevronRight size={15} className="text-[#C8C7BA] shrink-0 mt-1" />
                     )}
                   </div>
 
@@ -1036,32 +1036,32 @@ export function PipelineWorkspaceView({
                       {/* JSON Intake Payload Block matching RunInfra scroll UI */}
                       <div className="border border-[#222222] bg-[#050505] rounded-none text-[#a0a89d] space-y-1 text-[10.5px] max-h-52 overflow-auto p-3.5 [scrollbar-width:thin] [scrollbar-color:#2a2a2a_#050505] leading-relaxed">
                         <div>{"{"}</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;intake&quot;:</span> {"{"}</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;mode&quot;:</span> <span className="text-[#75bf00]">&quot;optimize&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;sector&quot;:</span> <span className="text-[#75bf00]">&quot;other&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;useCase&quot;:</span> <span className="text-[#75bf00]">&quot;general inference&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;outputTarget&quot;:</span> <span className="text-[#75bf00]">&quot;managed_endpoint&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;expectedScale&quot;:</span> <span className="text-[#75bf00]">&quot;prototype&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;maxContextLen&quot;:</span> <span className="text-white">2048</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;deploymentTarget&quot;:</span> <span className="text-[#75bf00]">&quot;cloud_managed&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;optimizationGoal&quot;:</span> <span className="text-[#75bf00]">&quot;cost&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;pipelineIntentV1&quot;:</span> {"{"}</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;source&quot;:</span> <span className="text-[#75bf00]">&quot;deterministic-intake&quot;</span>,</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;version&quot;:</span> <span className="text-white">1</span>,</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;topology&quot;:</span> <span className="text-[#75bf00]">&quot;single-model&quot;</span>,</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;modalities&quot;:</span> [<span className="text-[#75bf00]">&quot;llm&quot;</span>],</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;fingerprint&quot;:</span> <span className="text-[#75bf00]">&quot;v1:single-model:llm&quot;</span></div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;intake&quot;:</span> {"{"}</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;mode&quot;:</span> <span className="text-[#75bf00]">&quot;optimize&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;sector&quot;:</span> <span className="text-[#75bf00]">&quot;other&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;useCase&quot;:</span> <span className="text-[#75bf00]">&quot;general inference&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;outputTarget&quot;:</span> <span className="text-[#75bf00]">&quot;managed_endpoint&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;expectedScale&quot;:</span> <span className="text-[#75bf00]">&quot;prototype&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;maxContextLen&quot;:</span> <span className="text-[#F0EFE2]">2048</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;deploymentTarget&quot;:</span> <span className="text-[#75bf00]">&quot;cloud_managed&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;optimizationGoal&quot;:</span> <span className="text-[#75bf00]">&quot;cost&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;pipelineIntentV1&quot;:</span> {"{"}</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;source&quot;:</span> <span className="text-[#75bf00]">&quot;deterministic-intake&quot;</span>,</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;version&quot;:</span> <span className="text-[#F0EFE2]">1</span>,</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;topology&quot;:</span> <span className="text-[#75bf00]">&quot;single-model&quot;</span>,</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;modalities&quot;:</span> [<span className="text-[#75bf00]">&quot;llm&quot;</span>],</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;fingerprint&quot;:</span> <span className="text-[#75bf00]">&quot;v1:single-model:llm&quot;</span></div>
                         <div className="pl-6">{"}"},</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;deploymentProfile&quot;:</span> <span className="text-[#75bf00]">&quot;production&quot;</span>,</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;expectedConcurrency&quot;:</span> <span className="text-white">1</span></div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;deploymentProfile&quot;:</span> <span className="text-[#75bf00]">&quot;production&quot;</span>,</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;expectedConcurrency&quot;:</span> <span className="text-[#F0EFE2]">1</span></div>
                         <div className="pl-3">{"}"},</div>
-                        <div className="pl-3"><span className="text-[#75bf00]">&quot;success&quot;:</span> <span className="text-white">true</span>,</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;intakeWarnings&quot;:</span> [</div>
+                        <div className="pl-3"><span className="text-[#75bf00]">&quot;success&quot;:</span> <span className="text-[#F0EFE2]">true</span>,</div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;intakeWarnings&quot;:</span> [</div>
                         <div className="pl-6 text-amber-400/90">&quot;targetLatencyMs=500 was NOT saved: no user message states this latency target. Ask the user for their actual target.&quot;,</div>
                         <div className="pl-6 text-amber-400/90">&quot;targetVramGb=16 was NOT saved: no user message states this VRAM budget. Ask the user for their actual VRAM budget.&quot;,</div>
                         <div className="pl-6 text-amber-400/90">&quot;preferredGpu=auto was NOT saved: no user message names this GPU. GPU selection stays auto; ask the user.&quot;</div>
                         <div className="pl-3">],</div>
-                        <div className="pl-3"><span className="text-[#75bf00]">&quot;readyToConfirm&quot;:</span> <span className="text-white">true</span></div>
+                        <div className="pl-3"><span className="text-[#75bf00]">&quot;readyToConfirm&quot;:</span> <span className="text-[#F0EFE2]">true</span></div>
                         <div>{"}"}</div>
                       </div>
 
@@ -1087,14 +1087,14 @@ export function PipelineWorkspaceView({
                       )}>
                         <FileText size={15} />
                       </div>
-                      <span className="font-bold text-xs text-white">Intake updated</span>
+                      <span className="font-bold text-xs text-[#F0EFE2]">Intake updated</span>
                     </div>
                     <div className="flex items-center gap-2 text-[11px] font-mono text-[#788274]">
                       <span>Other, Prototype, Cloud (Managed), Low Cost</span>
                       {expandedSteps["intake"] ? (
                         <ChevronDown size={15} className="text-[#75bf00]" />
                       ) : (
-                        <ChevronRight size={15} className="text-[#888888]" />
+                        <ChevronRight size={15} className="text-[#C8C7BA]" />
                       )}
                     </div>
                   </div>
@@ -1103,23 +1103,23 @@ export function PipelineWorkspaceView({
                     <div className="mt-3.5 pt-3.5 border-t border-[#222222] space-y-2 font-sans text-[11px] text-[#a0a89d] animate-in fade-in duration-150">
                       <div className="flex justify-between py-1 border-b border-[#222]">
                         <span className="text-[#788274]">Use Case</span>
-                        <span className="text-white font-mono">general inference</span>
+                        <span className="text-[#F0EFE2] font-mono">general inference</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-[#222]">
                         <span className="text-[#788274]">Sector</span>
-                        <span className="text-white font-mono">Other</span>
+                        <span className="text-[#F0EFE2] font-mono">Other</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-[#222]">
                         <span className="text-[#788274]">Scale</span>
-                        <span className="text-white font-mono">Prototype</span>
+                        <span className="text-[#F0EFE2] font-mono">Prototype</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-[#222]">
                         <span className="text-[#788274]">Deployment</span>
-                        <span className="text-white font-mono">Cloud (Managed)</span>
+                        <span className="text-[#F0EFE2] font-mono">Cloud (Managed)</span>
                       </div>
                       <div className="flex justify-between py-1">
                         <span className="text-[#788274]">Goal</span>
-                        <span className="text-white font-mono">Low Cost</span>
+                        <span className="text-[#F0EFE2] font-mono">Low Cost</span>
                       </div>
                     </div>
                   )}
@@ -1133,12 +1133,12 @@ export function PipelineWorkspaceView({
                   <div className="flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-1.5 truncate">
                       {expandedThoughts["t2"] !== false ? (
-                        <ChevronDown size={14} className="text-[#888888] shrink-0" />
+                        <ChevronDown size={14} className="text-[#C8C7BA] shrink-0" />
                       ) : (
-                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                        <ChevronRight size={14} className="text-[#C8C7BA] shrink-0" />
                       )}
-                      <span className="font-bold text-white">Thoughts</span>
-                      <span className="text-[#888888] truncate pl-1 font-mono">
+                      <span className="font-bold text-[#F0EFE2]">Thoughts</span>
+                      <span className="text-[#C8C7BA] truncate pl-1 font-mono">
                         The model resolved successfully and the requested numerical fields were...
                       </span>
                     </div>
@@ -1148,7 +1148,7 @@ export function PipelineWorkspaceView({
                         e.stopPropagation();
                         toggleThought("t2");
                       }}
-                      className="text-[#888888] hover:text-white shrink-0 ml-2 font-mono text-xs cursor-pointer"
+                      className="text-[#C8C7BA] hover:text-[#F0EFE2] shrink-0 ml-2 font-mono text-xs cursor-pointer"
                     >
                       Verbose
                     </button>
@@ -1177,14 +1177,14 @@ export function PipelineWorkspaceView({
                       )}>
                         <Search size={15} />
                       </div>
-                      <span className="font-bold text-xs text-white">GPU feasibility</span>
+                      <span className="font-bold text-xs text-[#F0EFE2]">GPU feasibility</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs font-mono text-[#e0e4dd]">
                       <span>A100-40GB</span>
                       {expandedSteps["gpu"] ? (
                         <ChevronDown size={15} className="text-[#75bf00]" />
                       ) : (
-                        <ChevronRight size={15} className="text-[#888888]" />
+                        <ChevronRight size={15} className="text-[#C8C7BA]" />
                       )}
                     </div>
                   </div>
@@ -1196,7 +1196,7 @@ export function PipelineWorkspaceView({
                       </p>
 
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 border border-[#383838] bg-[#181818] text-white font-mono text-[10.5px] rounded-xs">
+                        <span className="px-2 py-0.5 border border-[#383838] bg-[#181818] text-[#F0EFE2] font-mono text-[10.5px] rounded-xs">
                           Recommended: 1x A100-40GB
                         </span>
                       </div>
@@ -1223,24 +1223,24 @@ export function PipelineWorkspaceView({
                               <td className="p-2">9.6-14.4s</td>
                               <td className="p-2">19.5GB</td>
                               <td className="p-2">$0.0039</td>
-                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#888]">Comfortable</span></td>
+                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#C8C7BA]">Comfortable</span></td>
                             </tr>
                             <tr className="hover:bg-[#1c1c1c]">
                               <td className="p-2 font-semibold">L4</td>
                               <td className="p-2">20.3-30.5s</td>
                               <td className="p-2">19.5GB</td>
                               <td className="p-2">$0.0056</td>
-                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#888]">Comfortable</span></td>
+                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#C8C7BA]">Comfortable</span></td>
                             </tr>
                             <tr className="hover:bg-[#1c1c1c]">
                               <td className="p-2 font-semibold">A10G</td>
                               <td className="p-2">10.2-15.2s</td>
                               <td className="p-2">19.5GB</td>
                               <td className="p-2">$0.0039</td>
-                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#888]">Comfortable</span></td>
+                              <td className="p-2 text-right"><span className="border border-[#333] px-1.5 py-0.5 rounded-xs text-[#C8C7BA]">Comfortable</span></td>
                             </tr>
                             <tr className="bg-[#1b2416] border-l-2 border-l-[#75bf00]">
-                              <td className="p-2 font-bold text-white flex items-center gap-1.5">
+                              <td className="p-2 font-bold text-[#F0EFE2] flex items-center gap-1.5">
                                 <span>A100-40GB</span>
                                 <span className="border border-[#384820] bg-[#182613] text-[#75bf00] px-1 text-[9px] rounded-xs font-normal">Recommended</span>
                               </td>
@@ -1268,12 +1268,12 @@ export function PipelineWorkspaceView({
                   <div className="flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-1.5 truncate">
                       {expandedThoughts["t3"] !== false ? (
-                        <ChevronDown size={14} className="text-[#888888] shrink-0" />
+                        <ChevronDown size={14} className="text-[#C8C7BA] shrink-0" />
                       ) : (
-                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                        <ChevronRight size={14} className="text-[#C8C7BA] shrink-0" />
                       )}
-                      <span className="font-bold text-white">Thoughts</span>
-                      <span className="text-[#888888] truncate pl-1 font-mono">
+                      <span className="font-bold text-[#F0EFE2]">Thoughts</span>
+                      <span className="text-[#C8C7BA] truncate pl-1 font-mono">
                         The feasibility result confirms that the model&apos;s catalog weight size is 16GB...
                       </span>
                     </div>
@@ -1283,7 +1283,7 @@ export function PipelineWorkspaceView({
                         e.stopPropagation();
                         toggleThought("t3");
                       }}
-                      className="text-[#888888] hover:text-white shrink-0 ml-2 font-mono text-xs cursor-pointer"
+                      className="text-[#C8C7BA] hover:text-[#F0EFE2] shrink-0 ml-2 font-mono text-xs cursor-pointer"
                     >
                       Verbose
                     </button>
@@ -1312,12 +1312,12 @@ export function PipelineWorkspaceView({
                       )}>
                         <Layers size={15} />
                       </div>
-                      <span className="font-bold text-xs text-white">Plan drafted</span>
+                      <span className="font-bold text-xs text-[#F0EFE2]">Plan drafted</span>
                     </div>
                     {expandedSteps["plan"] ? (
                       <ChevronDown size={15} className="text-[#75bf00]" />
                     ) : (
-                      <ChevronRight size={15} className="text-[#888888]" />
+                      <ChevronRight size={15} className="text-[#C8C7BA]" />
                     )}
                   </div>
 
@@ -1337,14 +1337,14 @@ export function PipelineWorkspaceView({
                       {/* JSON ToolInputs Spec matching RunInfra scroll UI */}
                       <div className="border border-[#1a1a1a] bg-[#050505] rounded-xl text-[#a0a89d] space-y-1 text-[10.5px] max-h-52 overflow-auto p-3.5 [scrollbar-width:thin] [scrollbar-color:#2a2a2a_#050505]">
                         <div>{"{"}</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;engine&quot;:</span> <span className="text-[#75bf00]">&quot;serving&quot;</span>,</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;status&quot;:</span> <span className="text-[#75bf00]">&quot;pending&quot;</span>,</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;modality&quot;:</span> <span className="text-[#75bf00]">&quot;llm&quot;</span>,</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;dependsOn&quot;:</span> [<span className="text-[#75bf00]">&quot;phase-baseline&quot;</span>],</div>
-                        <div className="pl-3"><span className="text-[#888]">&quot;toolInputs&quot;:</span> {"{"}</div>
-                        <div className="pl-6"><span className="text-[#888]">&quot;apply_serving_config&quot;:</span> {"{"}</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;techniques&quot;:</span> [<span className="text-[#75bf00]">&quot;vllm-continuous-batching&quot;</span>],</div>
-                        <div className="pl-9"><span className="text-[#888]">&quot;techniqueKnobs&quot;:</span> [</div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;engine&quot;:</span> <span className="text-[#75bf00]">&quot;serving&quot;</span>,</div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;status&quot;:</span> <span className="text-[#75bf00]">&quot;pending&quot;</span>,</div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;modality&quot;:</span> <span className="text-[#75bf00]">&quot;llm&quot;</span>,</div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;dependsOn&quot;:</span> [<span className="text-[#75bf00]">&quot;phase-baseline&quot;</span>],</div>
+                        <div className="pl-3"><span className="text-[#C8C7BA]">&quot;toolInputs&quot;:</span> {"{"}</div>
+                        <div className="pl-6"><span className="text-[#C8C7BA]">&quot;apply_serving_config&quot;:</span> {"{"}</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;techniques&quot;:</span> [<span className="text-[#75bf00]">&quot;vllm-continuous-batching&quot;</span>],</div>
+                        <div className="pl-9"><span className="text-[#C8C7BA]">&quot;techniqueKnobs&quot;:</span> [</div>
                         <div className="pl-12 text-[#75bf00]">&quot;maxNumSeqs&quot;,</div>
                         <div className="pl-12 text-[#75bf00]">&quot;maxNumBatchedTokens&quot;,</div>
                         <div className="pl-12 text-[#75bf00]">&quot;enablePrefixCaching&quot;,</div>
@@ -1378,7 +1378,7 @@ export function PipelineWorkspaceView({
                       )}>
                         <Layers size={14} />
                       </div>
-                      <span className="font-bold text-xs text-white">Plan ready</span>
+                      <span className="font-bold text-xs text-[#F0EFE2]">Plan ready</span>
                     </div>
 
                     <div className="flex items-center gap-2 font-mono text-[11px] text-[#788274]">
@@ -1386,7 +1386,7 @@ export function PipelineWorkspaceView({
                       {expandedSteps["plan_ready"] !== false ? (
                         <ChevronDown size={14} className="text-[#75bf00] shrink-0" />
                       ) : (
-                        <ChevronRight size={14} className="text-[#888888] shrink-0" />
+                        <ChevronRight size={14} className="text-[#C8C7BA] shrink-0" />
                       )}
                     </div>
                   </div>
@@ -1397,7 +1397,7 @@ export function PipelineWorkspaceView({
                         Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default; vLLM is locked by user. GPU chosen by feasibility: 1x A100-40GB for the lowest modeled per-request cost and 19.5GB peak-VRAM fit.
                       </p>
 
-                      <p className="text-[11px] text-[#888888]">
+                      <p className="text-[11px] text-[#C8C7BA]">
                         Recommended path: vLLM on A100-40GB. Review the plan before execution.
                       </p>
 
@@ -1415,15 +1415,15 @@ export function PipelineWorkspaceView({
                       {/* Financial Breakdown Table */}
                       <div className="pt-2 font-mono text-xs space-y-2">
                         <div className="flex items-center justify-between py-1.5 border-t border-dashed border-[#282828]">
-                          <span className="text-[#888888]">Estimated run charge</span>
-                          <span className="font-bold text-white">$18.50</span>
+                          <span className="text-[#C8C7BA]">Estimated run charge</span>
+                          <span className="font-bold text-[#F0EFE2]">$18.50</span>
                         </div>
                         <div className="flex items-center justify-between py-1.5 border-t border-dashed border-[#282828]">
-                          <span className="text-[#888888]">Temporary hold</span>
-                          <span className="font-bold text-white">$37.00</span>
+                          <span className="text-[#C8C7BA]">Temporary hold</span>
+                          <span className="font-bold text-[#F0EFE2]">$37.00</span>
                         </div>
                         <div className="flex items-center justify-between py-1.5 border-t border-b border-dashed border-[#282828]">
-                          <span className="text-[#888888]">Available balance</span>
+                          <span className="text-[#C8C7BA]">Available balance</span>
                           <span className="font-bold text-[#75bf00]">$9.51</span>
                         </div>
 
@@ -1441,7 +1441,7 @@ export function PipelineWorkspaceView({
                         <button
                           type="button"
                           onClick={() => handleOpenTab("plan")}
-                          className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+                          className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none transition-colors cursor-pointer"
                         >
                           <ExternalLink size={12} />
                           <span>Open Plan</span>
@@ -1449,14 +1449,14 @@ export function PipelineWorkspaceView({
                         <button
                           type="button"
                           onClick={() => alert("Reducing plan cost knobs...")}
-                          className="border border-[#383838] bg-[#181818] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+                          className="border border-[#383838] bg-[#181818] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none transition-colors cursor-pointer"
                         >
                           Reduce plan cost
                         </button>
                         <button
                           type="button"
                           onClick={() => alert("Refreshing balance...")}
-                          className="border border-[#383838] bg-[#181818] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+                          className="border border-[#383838] bg-[#181818] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none transition-colors cursor-pointer"
                         >
                           Refresh balance
                         </button>
@@ -1489,8 +1489,8 @@ export function PipelineWorkspaceView({
                         <ShieldAlert size={12} />
                       </div>
                       <div className="flex items-center gap-2 font-mono">
-                        <span className="font-semibold text-xs text-white">Human Gate: Production Approval</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded-none border border-[#383838] bg-[#151515] text-[#888]">
+                        <span className="font-semibold text-xs text-[#F0EFE2]">Human Gate: Production Approval</span>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-none border border-[#383838] bg-[#151515] text-[#C8C7BA]">
                           Gate C • Review
                         </span>
                       </div>
@@ -1499,7 +1499,7 @@ export function PipelineWorkspaceView({
                     {expandedSteps["human_gate"] !== false ? (
                       <ChevronDown size={15} className="text-[#75bf00] shrink-0" />
                     ) : (
-                      <ChevronRight size={15} className="text-[#888888] shrink-0" />
+                      <ChevronRight size={15} className="text-[#C8C7BA] shrink-0" />
                     )}
                   </div>
 
@@ -1516,7 +1516,7 @@ export function PipelineWorkspaceView({
                         <div className="flex items-center justify-between border-b border-[#282828] pb-2">
                           <div className="flex items-center gap-2">
                             <Sparkles size={14} className="text-[#a3e635]" />
-                            <span className="font-bold text-white uppercase tracking-wider text-xs">
+                            <span className="font-bold text-[#F0EFE2] uppercase tracking-wider text-xs">
                               {selectedMode === "Experiment" ? "VERIFIED EXPERIMENT RESULT" : "VERIFIED OPTIMIZATION RESULT"}
                             </span>
                           </div>
@@ -1529,19 +1529,19 @@ export function PipelineWorkspaceView({
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
                           <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
                             <div className="text-[#889284] text-[10px]">P99 Latency:</div>
-                            <div className="font-bold text-white text-xs">184ms → 139ms <span className="text-[#a3e635] font-normal text-[11px]">(-24%)</span></div>
+                            <div className="font-bold text-[#F0EFE2] text-xs">184ms → 139ms <span className="text-[#a3e635] font-normal text-[11px]">(-24%)</span></div>
                           </div>
                           <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
                             <div className="text-[#889284] text-[10px]">Throughput:</div>
-                            <div className="font-bold text-white text-xs">401 → 518 tok/s <span className="text-[#a3e635] font-normal text-[11px]">(+29%)</span></div>
+                            <div className="font-bold text-[#F0EFE2] text-xs">401 → 518 tok/s <span className="text-[#a3e635] font-normal text-[11px]">(+29%)</span></div>
                           </div>
                           <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
                             <div className="text-[#889284] text-[10px]">Cost Impact:</div>
-                            <div className="font-bold text-white text-xs">-$54.60/mo <span className="text-[#a3e635] font-normal text-[11px]">(-31%)</span></div>
+                            <div className="font-bold text-[#F0EFE2] text-xs">-$54.60/mo <span className="text-[#a3e635] font-normal text-[11px]">(-31%)</span></div>
                           </div>
                           <div className="p-2.5 border border-[#282828] bg-[#181818] rounded-sm space-y-0.5">
                             <div className="text-[#889284] text-[10px]">Quality Score:</div>
-                            <div className="font-bold text-white text-xs">98.7% <span className="text-[#889284] font-normal text-[11px]">(Maintained)</span></div>
+                            <div className="font-bold text-[#F0EFE2] text-xs">98.7% <span className="text-[#889284] font-normal text-[11px]">(Maintained)</span></div>
                           </div>
                         </div>
 
@@ -1556,8 +1556,8 @@ export function PipelineWorkspaceView({
                                 className={cn(
                                   "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
                                   deliverableActiveTab === "config"
-                                    ? "bg-[#242424] text-white font-bold"
-                                    : "text-[#889284] hover:text-white"
+                                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                                    : "text-[#889284] hover:text-[#F0EFE2]"
                                 )}
                               >
                                 Serving Config
@@ -1568,8 +1568,8 @@ export function PipelineWorkspaceView({
                                 className={cn(
                                   "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
                                   deliverableActiveTab === "docker"
-                                    ? "bg-[#242424] text-white font-bold"
-                                    : "text-[#889284] hover:text-white"
+                                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                                    : "text-[#889284] hover:text-[#F0EFE2]"
                                 )}
                               >
                                 Dockerfile
@@ -1580,8 +1580,8 @@ export function PipelineWorkspaceView({
                                 className={cn(
                                   "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
                                   deliverableActiveTab === "helm"
-                                    ? "bg-[#242424] text-white font-bold"
-                                    : "text-[#889284] hover:text-white"
+                                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                                    : "text-[#889284] hover:text-[#F0EFE2]"
                                 )}
                               >
                                 Kubernetes Helm
@@ -1592,8 +1592,8 @@ export function PipelineWorkspaceView({
                                 className={cn(
                                   "px-2.5 py-0.5 text-[10px] transition-colors rounded-sm cursor-pointer font-mono",
                                   deliverableActiveTab === "rollback"
-                                    ? "bg-[#242424] text-white font-bold"
-                                    : "text-[#889284] hover:text-white"
+                                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                                    : "text-[#889284] hover:text-[#F0EFE2]"
                                 )}
                               >
                                 Rollback Script
@@ -1659,7 +1659,7 @@ echo "Rollback completed cleanly."`}</pre>
                           <div className="flex items-center gap-1.5">
                             <ShieldCheck size={12} className="text-[#a3e635]" />
                             <span>SHA-256 Provenance Hash:</span>
-                            <span className="font-mono text-white text-[9.5px]">8f9b2c3a4e7f1d...d9e1</span>
+                            <span className="font-mono text-[#F0EFE2] text-[9.5px]">8f9b2c3a4e7f1d...d9e1</span>
                           </div>
                           <button
                             type="button"
@@ -1685,7 +1685,7 @@ echo "Rollback completed cleanly."`}</pre>
                           <button
                             type="button"
                             onClick={() => setExportModalOpen(true)}
-                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
                             title="Export reproducible system stack"
                           >
                             <Box size={12} />
@@ -1695,7 +1695,7 @@ echo "Rollback completed cleanly."`}</pre>
                           <button
                             type="button"
                             onClick={() => setExportModalOpen(true)}
-                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#181818] hover:bg-[#222] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-sm transition-colors cursor-pointer text-xs"
                             title="Download complete runnable delivery bundle"
                           >
                             <Download size={12} />
@@ -1717,7 +1717,7 @@ echo "Rollback completed cleanly."`}</pre>
                           <button
                             type="button"
                             onClick={() => setActiveTab("deploy")}
-                            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] hover:bg-[#282828] text-white px-3.5 py-1.5 text-xs rounded-sm transition-colors cursor-pointer font-bold"
+                            className="flex items-center gap-1.5 border border-[#383838] bg-[#222] hover:bg-[#282828] text-[#F0EFE2] px-3.5 py-1.5 text-xs rounded-sm transition-colors cursor-pointer font-bold"
                           >
                             <Rocket size={12} className="text-[#a3e635]" />
                             <span>Deploy to Cluster</span>
@@ -1726,7 +1726,7 @@ echo "Rollback completed cleanly."`}</pre>
                           <button
                             type="button"
                             onClick={() => setReplayModalOpen(true)}
-                            className="flex items-center gap-1 border border-[#383838] bg-[#181818] text-white text-xs px-2.5 py-1.5 rounded-sm hover:bg-[#222] hover:border-white transition-colors cursor-pointer"
+                            className="flex items-center gap-1 border border-[#383838] bg-[#181818] text-[#F0EFE2] text-xs px-2.5 py-1.5 rounded-sm hover:bg-[#222] hover:border-white transition-colors cursor-pointer"
                           >
                             <RefreshCw size={11} />
                             <span>Run Again</span>
@@ -1739,7 +1739,7 @@ echo "Rollback completed cleanly."`}</pre>
                         <button
                           type="button"
                           onClick={() => alert("Copied message content to clipboard.")}
-                          className="p-1 hover:text-white transition-colors cursor-pointer rounded-xs"
+                          className="p-1 hover:text-[#F0EFE2] transition-colors cursor-pointer rounded-xs"
                           title="Copy"
                         >
                           <Copy size={13} />
@@ -1751,7 +1751,7 @@ echo "Rollback completed cleanly."`}</pre>
                             "p-1 transition-colors cursor-pointer rounded-xs",
                             feedbackRating === "liked"
                               ? "border border-[#75bf00]/40 bg-[#75bf00]/15 text-[#75bf00]"
-                              : "hover:text-white"
+                              : "hover:text-[#F0EFE2]"
                           )}
                           title="Good response"
                         >
@@ -1764,7 +1764,7 @@ echo "Rollback completed cleanly."`}</pre>
                             "p-1 transition-colors cursor-pointer rounded-xs",
                             feedbackRating === "disliked"
                               ? "border border-red-500/40 bg-red-500/15 text-red-400"
-                              : "hover:text-white"
+                              : "hover:text-[#F0EFE2]"
                           )}
                           title="Bad response"
                         >
@@ -1773,7 +1773,7 @@ echo "Rollback completed cleanly."`}</pre>
                         <button
                           type="button"
                           onClick={() => alert("Regenerating decision analysis...")}
-                          className="p-1 hover:text-white transition-colors cursor-pointer rounded-xs"
+                          className="p-1 hover:text-[#F0EFE2] transition-colors cursor-pointer rounded-xs"
                           title="Regenerate"
                         >
                           <RotateCcw size={13} />
@@ -1800,7 +1800,7 @@ echo "Rollback completed cleanly."`}</pre>
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Reply, or / for commands"
-                    className="w-full bg-transparent border-0 outline-none resize-none font-sans text-xs text-white placeholder:text-[#666] leading-relaxed"
+                    className="w-full bg-transparent border-0 outline-none resize-none font-sans text-xs text-[#F0EFE2] placeholder:text-[#666] leading-relaxed"
                   />
 
                   {/* Bottom Bar Inside Composer */}
@@ -1809,7 +1809,7 @@ echo "Rollback completed cleanly."`}</pre>
                       <button
                         type="button"
                         onClick={() => setRunContextOpen(!runContextOpen)}
-                        className="flex items-center gap-1 text-[11px] font-mono text-[#889284] hover:text-white transition-colors"
+                        className="flex items-center gap-1 text-[11px] font-mono text-[#889284] hover:text-[#F0EFE2] transition-colors"
                       >
                         <span>Run context</span>
                         <ChevronDown size={11} />
@@ -1821,7 +1821,7 @@ echo "Rollback completed cleanly."`}</pre>
                           "absolute bottom-full left-0 mb-2 w-72 border p-3.5 shadow-2xl space-y-3 font-mono text-xs z-50 rounded-xs animate-in fade-in zoom-in-95 duration-100",
                           dark ? "border-[#282828] bg-[#141414] text-[#e0e4dd]" : "border-[#c9cec4] bg-white text-[#171a17]"
                         )}>
-                          <div className="font-bold text-white text-xs">
+                          <div className="font-bold text-[#F0EFE2] text-xs">
                             Run context
                           </div>
 
@@ -1829,7 +1829,7 @@ echo "Rollback completed cleanly."`}</pre>
                             {/* Item 1: Engine */}
                             <div className="border-b border-dashed border-[#242424] pb-2 space-y-0.5">
                               <span className="text-[#889284] text-[10px] block">Engine</span>
-                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                              <div className="flex items-center gap-1.5 font-bold text-[#F0EFE2] text-xs">
                                 <VLLMLogo size={13} />
                                 <span>{chipRuntime}</span>
                               </div>
@@ -1838,7 +1838,7 @@ echo "Rollback completed cleanly."`}</pre>
                             {/* Item 2: GPU */}
                             <div className="border-b border-dashed border-[#242424] pb-2 space-y-0.5">
                               <span className="text-[#889284] text-[10px] block">GPU</span>
-                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                              <div className="flex items-center gap-1.5 font-bold text-[#F0EFE2] text-xs">
                                 <NvidiaLogo size={13} />
                                 <span>{chipCompute.split("-")[0] || "A100"}</span>
                               </div>
@@ -1847,7 +1847,7 @@ echo "Rollback completed cleanly."`}</pre>
                             {/* Item 3: Runs on */}
                             <div className="border-b border-dashed border-[#242424] pb-2 space-y-0.5">
                               <span className="text-[#889284] text-[10px] block">Runs on</span>
-                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                              <div className="flex items-center gap-1.5 font-bold text-[#F0EFE2] text-xs">
                                 <Cloud size={13} className="text-[#889284]" />
                                 <span>Managed cloud</span>
                               </div>
@@ -1856,7 +1856,7 @@ echo "Rollback completed cleanly."`}</pre>
                             {/* Item 4: Format */}
                             <div className="space-y-0.5">
                               <span className="text-[#889284] text-[10px] block">Format</span>
-                              <div className="flex items-center gap-1.5 font-bold text-white text-xs">
+                              <div className="flex items-center gap-1.5 font-bold text-[#F0EFE2] text-xs">
                                 <Cloud size={13} className="text-[#889284]" />
                                 <span>Managed endpoint</span>
                               </div>
@@ -1882,7 +1882,7 @@ echo "Rollback completed cleanly."`}</pre>
                           className={cn(
                             "flex items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors rounded-xs",
                             dark
-                              ? "border-[#383838] bg-[#202020] text-white hover:border-[#444]"
+                              ? "border-[#383838] bg-[#202020] text-[#F0EFE2] hover:border-[#444]"
                               : "border-[#d8ddd3] bg-[#fafbfa] text-[#2a3028]"
                           )}
                         >
@@ -1904,7 +1904,7 @@ echo "Rollback completed cleanly."`}</pre>
                           <div className={cn(
                             "absolute right-0 bottom-full mb-2 w-80 border shadow-2xl p-1.5 space-y-1 text-xs z-50 rounded-xs animate-in fade-in zoom-in-95 duration-100",
                             dark
-                              ? "border-[#333] bg-[#181818] text-white"
+                              ? "border-[#333] bg-[#181818] text-[#F0EFE2]"
                               : "border-[#c9cec4] bg-white text-[#171a17]"
                           )}>
                             {/* Optimize Option */}
@@ -1924,19 +1924,19 @@ echo "Rollback completed cleanly."`}</pre>
                                 size={16}
                                 className={cn(
                                   "shrink-0 mt-0.5",
-                                  selectedMode === "Optimize" ? "text-[#75bf00]" : dark ? "text-[#888]" : "text-[#788274]"
+                                  selectedMode === "Optimize" ? "text-[#75bf00]" : dark ? "text-[#C8C7BA]" : "text-[#788274]"
                                 )}
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <span className={cn("font-medium text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                                  <span className={cn("font-medium text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                                     Optimize
                                   </span>
                                   {selectedMode === "Optimize" && (
                                     <Check size={14} className="text-[#75bf00]" />
                                   )}
                                 </div>
-                                <p className={cn("text-[11px] mt-0.5 leading-relaxed", dark ? "text-[#888]" : "text-[#666]")}>
+                                <p className={cn("text-[11px] mt-0.5 leading-relaxed", dark ? "text-[#C8C7BA]" : "text-[#666]")}>
                                   Full run: measure candidates and apply the winner.
                                 </p>
                               </div>
@@ -1959,19 +1959,19 @@ echo "Rollback completed cleanly."`}</pre>
                                 size={16}
                                 className={cn(
                                   "shrink-0 mt-0.5",
-                                  selectedMode === "Experiment" ? "text-[#75bf00]" : dark ? "text-[#888]" : "text-[#788274]"
+                                  selectedMode === "Experiment" ? "text-[#75bf00]" : dark ? "text-[#C8C7BA]" : "text-[#788274]"
                                 )}
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <span className={cn("font-medium text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                                  <span className={cn("font-medium text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                                     Experiment
                                   </span>
                                   {selectedMode === "Experiment" && (
                                     <Check size={14} className="text-[#75bf00]" />
                                   )}
                                 </div>
-                                <p className={cn("text-[11px] mt-0.5 leading-relaxed", dark ? "text-[#888]" : "text-[#666]")}>
+                                <p className={cn("text-[11px] mt-0.5 leading-relaxed", dark ? "text-[#C8C7BA]" : "text-[#666]")}>
                                   Exploratory run: measure candidates side by side.
                                   <br />
                                   No winner is applied.
@@ -1989,7 +1989,7 @@ echo "Rollback completed cleanly."`}</pre>
                             setReplyText("");
                           }
                         }}
-                        className="flex h-7 w-7 items-center justify-center border border-[#383838] bg-[#282828] text-[#889284] hover:border-white hover:text-white transition-colors rounded-xs"
+                        className="flex h-7 w-7 items-center justify-center border border-[#383838] bg-[#282828] text-[#889284] hover:border-white hover:text-[#F0EFE2] transition-colors rounded-xs"
                         title="Send command"
                       >
                         <ArrowUp size={13} />
@@ -2033,13 +2033,13 @@ echo "Rollback completed cleanly."`}</pre>
                 <div className="flex items-center justify-between border-b border-[#242424] pb-3 text-xs font-mono">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#788274]" />
-                    <span className="text-[#888]">Baseline</span>
+                    <span className="text-[#C8C7BA]">Baseline</span>
                   </div>
-                  <span className="text-[#888]">vLLM</span>
+                  <span className="text-[#C8C7BA]">vLLM</span>
                 </div>
 
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-white">
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]">
                     Optimization results
                   </h3>
                 </div>
@@ -2122,51 +2122,51 @@ echo "Rollback completed cleanly."`}</pre>
 
                 {/* Plan Header & Goal */}
                 <div className="space-y-3">
-                  <h2 className="text-base font-bold text-white leading-snug">
+                  <h2 className="text-base font-bold text-[#F0EFE2] leading-snug">
                     Plan: Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cl...
                   </h2>
                   <div className="text-[#a0a89d] text-xs leading-relaxed">
-                    <strong className="text-white">Goal.</strong> Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default;{" "}
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 font-mono text-[11px] text-white">
+                    <strong className="text-[#F0EFE2]">Goal.</strong> Optimize meta-llama/Llama-3.1-8B-Instruct for cost, no numeric target set. Runs on managed cloud by default;{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 font-mono text-[11px] text-[#F0EFE2]">
                       <VLLMLogo size={10} />
                       <span>vLLM</span>
-                      <ChevronDown size={10} className="text-[#888]" />
+                      <ChevronDown size={10} className="text-[#C8C7BA]" />
                     </span>{" "}
                     is locked by user. GPU chosen by feasibility: 1x{" "}
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 font-mono text-[11px] text-white">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 font-mono text-[11px] text-[#F0EFE2]">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                       <span>A100 40GB</span>
-                      <ChevronDown size={10} className="text-[#888]" />
+                      <ChevronDown size={10} className="text-[#C8C7BA]" />
                     </span>{" "}
                     for the lowest modeled per-request cost and 19.5GB peak-VRAM fit.
                   </div>
                   <div className="text-xs text-[#a0a89d]">
-                    <strong className="text-white">Expected runtime.</strong> ≈ 6 min (330s total).
+                    <strong className="text-[#F0EFE2]">Expected runtime.</strong> ≈ 6 min (330s total).
                   </div>
                 </div>
 
                 {/* Section 1: Context */}
                 <div className="space-y-2.5 pt-2">
-                  <h3 className="font-bold text-xs text-white">Context</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Context</h3>
                   <div className="space-y-2.5 font-mono text-xs text-[#d0d4cd] pl-3">
                     <div className="flex items-center gap-3">
                       <span className="w-32 text-[#788274] font-sans">Models:</span>
-                      <span className="font-semibold text-white">meta-llama/Llama-3.1-8B-Instruct</span>
+                      <span className="font-semibold text-[#F0EFE2]">meta-llama/Llama-3.1-8B-Instruct</span>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <span className="w-32 text-[#788274] font-sans">Backend:</span>
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 text-white">
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 text-[#F0EFE2]">
                         <VLLMLogo size={10} />
                         <span>vLLM</span>
-                        <ChevronDown size={10} className="text-[#888]" />
+                        <ChevronDown size={10} className="text-[#C8C7BA]" />
                       </span>
                     </div>
 
                     <div className="flex items-start gap-3">
                       <span className="w-32 text-[#788274] font-sans shrink-0">Deployment:</span>
                       <div>
-                        <span className="text-white font-sans">RunInfra cloud (gated)</span>
+                        <span className="text-[#F0EFE2] font-sans">RunInfra cloud (gated)</span>
                         <p className="text-[11px] text-[#788274] font-sans mt-0.5">
                           Deployment is not part of this runbook; execution will stop at verified optimization artifacts.
                         </p>
@@ -2176,14 +2176,14 @@ echo "Rollback completed cleanly."`}</pre>
                     <div className="flex items-start gap-3">
                       <span className="w-32 text-[#788274] font-sans shrink-0">GPU:</span>
                       <div>
-                        <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 text-white">
+                        <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs inline-flex items-center gap-1 text-[#F0EFE2]">
                           <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                           <span>A100 40GB</span>
-                          <ChevronDown size={10} className="text-[#888]" />
+                          <ChevronDown size={10} className="text-[#C8C7BA]" />
                         </span>
                         <span className="text-[#788274] font-sans ml-2 text-[11px]">(unverified plan choice)</span>
                         <div className="text-[11px] text-[#788274] font-sans mt-1.5 flex items-start gap-1">
-                          <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs text-white text-[10px] font-mono shrink-0">
+                          <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs text-[#F0EFE2] text-[10px] font-mono shrink-0">
                             A100 40GB ▾
                           </span>
                           <span>is a provisional plan choice. No matching session-scoped measured per-GPU rows or catalog estimator recommendation is available.</span>
@@ -2193,34 +2193,34 @@ echo "Rollback completed cleanly."`}</pre>
 
                     <div className="flex items-center gap-3">
                       <span className="w-32 text-[#788274] font-sans">Target:</span>
-                      <span className="font-sans">Achievable at <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs font-mono text-white text-[10px]">FP16</span></span>
+                      <span className="font-sans">Achievable at <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 rounded-xs font-mono text-[#F0EFE2] text-[10px]">FP16</span></span>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <span className="w-32 text-[#788274] font-sans">Cost (estimate):</span>
-                      <span className="text-white font-sans">~$0.0029 / request <span className="text-[#788274] text-[11px]">(agent estimate, not validated)</span></span>
+                      <span className="text-[#F0EFE2] font-sans">~$0.0029 / request <span className="text-[#788274] text-[11px]">(agent estimate, not validated)</span></span>
                     </div>
                   </div>
                 </div>
 
                 {/* Section 2: Reasoning */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Reasoning</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Reasoning</h3>
                   <p className="leading-relaxed text-[#a0a89d] text-xs">
-                    The catalog reports 16GB <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-white">FP16</span> weights, and the feasibility workload models 19.5GB peak VRAM. For 2,048 input and 256 output tokens, 1x{" "}
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                    The catalog reports 16GB <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">FP16</span> weights, and the feasibility workload models 19.5GB peak VRAM. For 2,048 input and 256 output tokens, 1x{" "}
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                       <span>A100 40GB</span>
                       <ChevronDown size={9} />
                     </span>{" "}
                     has the lowest modeled request cost at $0.002866, versus $0.003884 on{" "}
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                       <span>A10G</span>
                       <ChevronDown size={9} />
                     </span>{" "}
                     and $0.003930 on 2x{" "}
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                       <span>T4</span>
                       <ChevronDown size={9} />
@@ -2231,10 +2231,10 @@ echo "Rollback completed cleanly."`}</pre>
 
                 {/* Section 3: Tradeoffs */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Tradeoffs</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Tradeoffs</h3>
                   <div className="space-y-2 text-[#a0a89d] text-xs">
                     <div className="flex items-start gap-2">
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white shrink-0 inline-flex items-center gap-0.5">
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] shrink-0 inline-flex items-center gap-0.5">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                         <span>A100 40GB</span>
                         <ChevronDown size={9} />
@@ -2243,22 +2243,22 @@ echo "Rollback completed cleanly."`}</pre>
                     </div>
                     <p>The 3,935 to 5,891ms modeled end-to-end range is advisory only and will be replaced by a measured baseline.</p>
                     <p>
-                      Quantization, <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">Speculative Decoding</span>, KV compression, and kernel work are not included.
+                      Quantization, <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">Speculative Decoding</span>, KV compression, and kernel work are not included.
                     </p>
                   </div>
                 </div>
 
                 {/* Section 4: Rejected Alternatives */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Rejected Alternatives</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Rejected Alternatives</h3>
                   <div className="space-y-2 text-[#a0a89d] text-xs">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                         <span>SGLang</span>
                         <ChevronDown size={9} />
                       </span>
                       <span>and</span>
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                         <span>TensorRT-LLM</span>
                         <ChevronDown size={9} />
@@ -2266,25 +2266,25 @@ echo "Rollback completed cleanly."`}</pre>
                       <span>are not compared because the user selected vLLM.</span>
                     </div>
                     <p>
-                      Quantization, <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">Speculative Decoding</span>, KV compression, and custom kernels are excluded because they were not explicitly requested; the latter optimizer phases are also unavailable in the current trial budget.
+                      Quantization, <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">Speculative Decoding</span>, KV compression, and custom kernels are excluded because they were not explicitly requested; the latter optimizer phases are also unavailable in the current trial budget.
                     </p>
                   </div>
                 </div>
 
                 {/* Section 5: Optimization Techniques */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Optimization Techniques</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Optimization Techniques</h3>
                   <div className="flex items-center gap-1.5 flex-wrap text-xs text-[#a0a89d]">
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                       <VLLMLogo size={9} />
                       <span>vLLM</span>
                       <ChevronDown size={9} />
                     </span>
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">
                       Continuous Batching
                     </span>
                     <span>: Lossless</span>
-                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                    <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                       <VLLMLogo size={9} />
                       <span>vLLM</span>
                       <ChevronDown size={9} />
@@ -2295,23 +2295,23 @@ echo "Rollback completed cleanly."`}</pre>
 
                 {/* Section 6: Model Facts */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Model Facts</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Model Facts</h3>
                   <div className="space-y-1.5 text-xs text-[#a0a89d] pl-3">
                     <div>
-                      <strong className="text-white">meta-llama/Llama-3.1-8B-Instruct:</strong> meta-llama/Llama-3.1-8B-Instruct
+                      <strong className="text-[#F0EFE2]">meta-llama/Llama-3.1-8B-Instruct:</strong> meta-llama/Llama-3.1-8B-Instruct
                     </div>
                     <div className="pl-4 space-y-1">
                       <div>Modality: llm</div>
                       <div>Detected as llm from the model architecture, not an explicit modality. Correct it if wrong.</div>
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span>Notes: 16GB est; 8B;</span>
-                        <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-1">
+                        <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-1">
                           <span className="text-[#3b82f6]">♾️</span>
                           <span>Llama 3.1 8B</span>
                           <ChevronDown size={9} />
                         </span>
                         <span>;</span>
-                        <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-white">FP16</span>
+                        <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">FP16</span>
                         <span>; access: unknown</span>
                       </div>
                     </div>
@@ -2320,7 +2320,7 @@ echo "Rollback completed cleanly."`}</pre>
 
                 {/* Section 7: Execution Plan */}
                 <div className="space-y-3 pt-2">
-                  <h3 className="font-bold text-xs text-white">Execution Plan</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Execution Plan</h3>
                   <p className="text-xs text-[#a0a89d]">
                     Diagnosis is complete. The phases below will run in this order once you accept the plan.
                   </p>
@@ -2328,69 +2328,69 @@ echo "Rollback completed cleanly."`}</pre>
                   <div className="space-y-4 pl-3">
                     {/* Phase 1 */}
                     <div className="space-y-1">
-                      <h4 className="font-bold text-xs text-white">1. Hardware selection</h4>
+                      <h4 className="font-bold text-xs text-[#F0EFE2]">1. Hardware selection</h4>
                       <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
-                        <div><strong className="text-white">Engine:</strong> Hardware Engine</div>
-                        <div><strong className="text-white">Strategy:</strong> GPU compatibility sweep</div>
-                        <div><strong className="text-white">Why:</strong> Estimate VRAM, latency, and request cost across compatible GPUs before any paid run.</div>
+                        <div><strong className="text-[#F0EFE2]">Engine:</strong> Hardware Engine</div>
+                        <div><strong className="text-[#F0EFE2]">Strategy:</strong> GPU compatibility sweep</div>
+                        <div><strong className="text-[#F0EFE2]">Why:</strong> Estimate VRAM, latency, and request cost across compatible GPUs before any paid run.</div>
                       </div>
                     </div>
 
                     {/* Phase 2 */}
                     <div className="space-y-1">
-                      <h4 className="font-bold text-xs text-white">2. Baseline profile</h4>
+                      <h4 className="font-bold text-xs text-[#F0EFE2]">2. Baseline profile</h4>
                       <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
-                        <div><strong className="text-white">Engine:</strong> Profiler</div>
-                        <div><strong className="text-white">Strategy:</strong> Measured baseline profile</div>
+                        <div><strong className="text-[#F0EFE2]">Engine:</strong> Profiler</div>
+                        <div><strong className="text-[#F0EFE2]">Strategy:</strong> Measured baseline profile</div>
                         <div className="flex items-center gap-1">
-                          <strong className="text-white">Why:</strong> Run the <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-white">FP16</span> baseline on the selected GPU and record latency, throughput, and VRAM.
+                          <strong className="text-[#F0EFE2]">Why:</strong> Run the <span className="border border-[#383838] bg-[#202020] px-1 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">FP16</span> baseline on the selected GPU and record latency, throughput, and VRAM.
                         </div>
                       </div>
                     </div>
 
                     {/* Phase 3 */}
                     <div className="space-y-1">
-                      <h4 className="font-bold text-xs text-white">3. Apply Serving config tuning</h4>
+                      <h4 className="font-bold text-xs text-[#F0EFE2]">3. Apply Serving config tuning</h4>
                       <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
-                        <div><strong className="text-white">Engine:</strong> Serving Engine</div>
+                        <div><strong className="text-[#F0EFE2]">Engine:</strong> Serving Engine</div>
                         <div className="flex items-center gap-1">
-                          <strong className="text-white">Strategy:</strong>
-                          <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                          <strong className="text-[#F0EFE2]">Strategy:</strong>
+                          <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                             <VLLMLogo size={9} />
                             <span>vLLM</span>
                             <ChevronDown size={9} />
                           </span>
                           <span>serving candidate sweep</span>
                         </div>
-                        <div><strong className="text-white">Why:</strong> Benchmark a small set of serving configs and keep the one that improves tail latency or throughput.</div>
+                        <div><strong className="text-[#F0EFE2]">Why:</strong> Benchmark a small set of serving configs and keep the one that improves tail latency or throughput.</div>
                       </div>
                     </div>
 
                     {/* Phase 4 */}
                     <div className="space-y-1">
-                      <h4 className="font-bold text-xs text-white">4. Benchmark Serving config tuning</h4>
+                      <h4 className="font-bold text-xs text-[#F0EFE2]">4. Benchmark Serving config tuning</h4>
                       <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
-                        <div><strong className="text-white">Engine:</strong> Serving Engine</div>
+                        <div><strong className="text-[#F0EFE2]">Engine:</strong> Serving Engine</div>
                         <div className="flex items-center gap-1">
-                          <strong className="text-white">Strategy:</strong>
-                          <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white inline-flex items-center gap-0.5">
+                          <strong className="text-[#F0EFE2]">Strategy:</strong>
+                          <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2] inline-flex items-center gap-0.5">
                             <VLLMLogo size={9} />
                             <span>vLLM</span>
                             <ChevronDown size={9} />
                           </span>
                           <span>serving candidate sweep</span>
                         </div>
-                        <div><strong className="text-white">Why:</strong> Benchmark a small set of serving configs and keep the one that improves tail latency or throughput.</div>
+                        <div><strong className="text-[#F0EFE2]">Why:</strong> Benchmark a small set of serving configs and keep the one that improves tail latency or throughput.</div>
                       </div>
                     </div>
 
                     {/* Phase 5 */}
                     <div className="space-y-1">
-                      <h4 className="font-bold text-xs text-white">5. Compare baseline vs optimized</h4>
+                      <h4 className="font-bold text-xs text-[#F0EFE2]">5. Compare baseline vs optimized</h4>
                       <div className="pl-4 space-y-0.5 text-xs text-[#a0a89d]">
-                        <div><strong className="text-white">Engine:</strong> Comparison</div>
-                        <div><strong className="text-white">Strategy:</strong> Baseline-vs-optimized verdict (recorded, 0 GPU)</div>
-                        <div><strong className="text-white">Why:</strong> Rank the measured pre-optimization baseline against the optimized version this run produced, side by side (0 GPU; reads results the optimization phases already recorded).</div>
+                        <div><strong className="text-[#F0EFE2]">Engine:</strong> Comparison</div>
+                        <div><strong className="text-[#F0EFE2]">Strategy:</strong> Baseline-vs-optimized verdict (recorded, 0 GPU)</div>
+                        <div><strong className="text-[#F0EFE2]">Why:</strong> Rank the measured pre-optimization baseline against the optimized version this run produced, side by side (0 GPU; reads results the optimization phases already recorded).</div>
                       </div>
                     </div>
                   </div>
@@ -2398,22 +2398,22 @@ echo "Rollback completed cleanly."`}</pre>
 
                 {/* Section 8: Files / Artifacts */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Files / Artifacts</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Files / Artifacts</h3>
                   <div className="space-y-1.5 text-xs text-[#a0a89d] pl-3">
-                    <div><strong className="text-white">Pipeline tab graph:</strong> Update nodes, backend, GPU, and optimization metadata.</div>
-                    <div><strong className="text-white">Optimization ledger:</strong> Record baseline, skipped, failed, and winning experiments.</div>
+                    <div><strong className="text-[#F0EFE2]">Pipeline tab graph:</strong> Update nodes, backend, GPU, and optimization metadata.</div>
+                    <div><strong className="text-[#F0EFE2]">Optimization ledger:</strong> Record baseline, skipped, failed, and winning experiments.</div>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <strong className="text-white">Code tab files:</strong> Regenerate
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">serve.sh</span>,
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">Dockerfile</span>, and
-                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-white">compose</span> from accepted results.
+                      <strong className="text-[#F0EFE2]">Code tab files:</strong> Regenerate
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">serve.sh</span>,
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">Dockerfile</span>, and
+                      <span className="border border-[#383838] bg-[#202020] px-1.5 py-0.2 rounded-xs font-mono text-[10px] text-[#F0EFE2]">compose</span> from accepted results.
                     </div>
                   </div>
                 </div>
 
                 {/* Section 9: Caveats */}
                 <div className="space-y-2 pt-2">
-                  <h3 className="font-bold text-xs text-white">Caveats</h3>
+                  <h3 className="font-bold text-xs text-[#F0EFE2]">Caveats</h3>
                   <div className="space-y-1 text-xs text-[#a0a89d] pl-3">
                     <p>This is the execution plan, not completed benchmark evidence yet.</p>
                     <p>The GPU choice is unverified and the cost figure is an agent estimate.</p>
@@ -2450,12 +2450,12 @@ echo "Rollback completed cleanly."`}</pre>
                 <div className="flex flex-wrap items-center justify-between border-b border-[#282828] pb-3">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#75bf00]" />
-                    <span className="text-white font-bold font-sans text-sm">Comparison Lab</span>
+                    <span className="text-[#F0EFE2] font-bold font-sans text-sm">Comparison Lab</span>
                     <span className="border border-dashed border-[#75bf00]/40 bg-[#75bf00]/10 text-[#75bf00] px-2 py-0.5 text-[10px] rounded-xs font-bold">
                       ● 4 Candidates Evaluated
                     </span>
                   </div>
-                  <span className="text-[#888] text-[11px]">
+                  <span className="text-[#C8C7BA] text-[11px]">
                     Measured in Ephemeral MicroVM Sandboxes (EIG Score: 9.2/10)
                   </span>
                 </div>
@@ -2483,7 +2483,7 @@ echo "Rollback completed cleanly."`}</pre>
                       <tbody className="divide-y divide-dashed divide-[#222]">
                         <tr className="bg-[#75bf00]/5 hover:bg-[#75bf00]/10 transition-colors border-l-2 border-l-[#75bf00]">
                           <td className="p-2.5">
-                            <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                            <div className="font-bold text-[#F0EFE2] font-sans flex items-center gap-1.5">
                               <QwenLogo size={14} />
                               <span>Qwen 2.5 32B</span>
                               <span className="text-[10px] font-mono text-[#777] flex items-center gap-1">
@@ -2492,7 +2492,7 @@ echo "Rollback completed cleanly."`}</pre>
                             </div>
                             <div className="text-[9px] text-[#75bf00] font-mono mt-0.5">● OPTIMAL CHOICE (WINNER)</div>
                           </td>
-                          <td className="p-2.5 text-[#ccc]">
+                          <td className="p-2.5 text-[#C8C7BA]">
                             <div className="flex items-center gap-1.5">
                               <NvidiaLogo size={12} />
                               <span>1x A100-40GB</span>
@@ -2500,9 +2500,9 @@ echo "Rollback completed cleanly."`}</pre>
                           </td>
                           <td className="p-2.5 font-bold text-[#75bf00]">28.4ms</td>
                           <td className="p-2.5 font-bold text-[#75bf00]">34.1ms</td>
-                          <td className="p-2.5 text-white">310 t/s</td>
+                          <td className="p-2.5 text-[#F0EFE2]">310 t/s</td>
                           <td className="p-2.5 text-[#777]">13.2 GB</td>
-                          <td className="p-2.5 font-bold text-white">$0.10</td>
+                          <td className="p-2.5 font-bold text-[#F0EFE2]">$0.10</td>
                           <td className="p-2.5 font-bold text-[#75bf00]">99.1%</td>
                           <td className="p-2.5 text-right">
                             <span className="text-[#75bf00] font-bold text-[10px]">SELECTED</span>
@@ -2510,7 +2510,7 @@ echo "Rollback completed cleanly."`}</pre>
                         </tr>
                         <tr className="hover:bg-[#181818] transition-colors">
                           <td className="p-2.5">
-                            <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                            <div className="font-bold text-[#F0EFE2] font-sans flex items-center gap-1.5">
                               <MetaLogo size={14} />
                               <span>Llama 3.1 8B</span>
                               <span className="text-[10px] font-mono text-[#777] flex items-center gap-1">
@@ -2527,9 +2527,9 @@ echo "Rollback completed cleanly."`}</pre>
                           </td>
                           <td className="p-2.5 font-bold text-[#75bf00]">38.2ms</td>
                           <td className="p-2.5 font-bold text-[#75bf00]">38.2ms</td>
-                          <td className="p-2.5 text-[#ccc]">245 t/s</td>
+                          <td className="p-2.5 text-[#C8C7BA]">245 t/s</td>
                           <td className="p-2.5 text-[#777]">14.8 GB</td>
-                          <td className="p-2.5 text-white">$0.12</td>
+                          <td className="p-2.5 text-[#F0EFE2]">$0.12</td>
                           <td className="p-2.5 text-[#75bf00]">99.4%</td>
                           <td className="p-2.5 text-right">
                             <span className="text-[#777] text-[10px]">VERIFIED</span>
@@ -2537,7 +2537,7 @@ echo "Rollback completed cleanly."`}</pre>
                         </tr>
                         <tr className="hover:bg-[#181818] transition-colors">
                           <td className="p-2.5">
-                            <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                            <div className="font-bold text-[#F0EFE2] font-sans flex items-center gap-1.5">
                               <MetaLogo size={14} />
                               <span>Llama 3.1 70B</span>
                               <span className="text-[10px] font-mono text-[#777] flex items-center gap-1">
@@ -2552,11 +2552,11 @@ echo "Rollback completed cleanly."`}</pre>
                               <span>2x H100-80GB</span>
                             </div>
                           </td>
-                          <td className="p-2.5 font-bold text-white">62.4ms</td>
-                          <td className="p-2.5 font-bold text-white">78.5ms</td>
-                          <td className="p-2.5 text-[#ccc]">142 t/s</td>
+                          <td className="p-2.5 font-bold text-[#F0EFE2]">62.4ms</td>
+                          <td className="p-2.5 font-bold text-[#F0EFE2]">78.5ms</td>
+                          <td className="p-2.5 text-[#C8C7BA]">142 t/s</td>
                           <td className="p-2.5 text-[#777]">48.5 GB</td>
-                          <td className="p-2.5 text-white">$0.85</td>
+                          <td className="p-2.5 text-[#F0EFE2]">$0.85</td>
                           <td className="p-2.5 text-[#75bf00]">99.8%</td>
                           <td className="p-2.5 text-right">
                             <span className="text-[#777] text-[10px]">VERIFIED</span>
@@ -2570,15 +2570,15 @@ echo "Rollback completed cleanly."`}</pre>
                 {/* Measured Results & Sandbox Execution Panel (Section 37) */}
                 <div className="p-4 border border-dashed border-[#262626] bg-[#141414] rounded-xs space-y-3">
                   <div className="flex items-center justify-between text-xs border-b border-dashed border-[#222] pb-2">
-                    <span className="font-bold text-white">Sandbox MicroVM Container (#sbx-env-isolated-vllm-01)</span>
+                    <span className="font-bold text-[#F0EFE2]">Sandbox MicroVM Container (#sbx-env-isolated-vllm-01)</span>
                     <span className="text-[10px] text-[#75bf00]">● Isolated Execution Verified</span>
                   </div>
 
                   <div className="grid grid-cols-4 gap-2 text-[11px] text-[#777]">
-                    <div>CPU: <span className="text-white">8 cores</span></div>
-                    <div>Memory: <span className="text-white">32 GB</span></div>
+                    <div>CPU: <span className="text-[#F0EFE2]">8 cores</span></div>
+                    <div>Memory: <span className="text-[#F0EFE2]">32 GB</span></div>
                     <div>GPU: <span className="text-[#75bf00]">1x A100 VFIO</span></div>
-                    <div>Timeout: <span className="text-white">300s</span></div>
+                    <div>Timeout: <span className="text-[#F0EFE2]">300s</span></div>
                   </div>
 
                   <pre className="p-2.5 bg-[#0d0d0d] border border-dashed border-[#282828] text-[10px] text-[#75bf00] rounded-xs leading-relaxed overflow-x-auto">
@@ -2601,7 +2601,7 @@ echo "Rollback completed cleanly."`}</pre>
                   <FlaskConical size={20} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-white">
+                  <h3 className="text-sm font-semibold text-[#F0EFE2]">
                     This model is not ready for Current preview.
                   </h3>
                   <p className="text-xs text-[#788274] mt-1.5 max-w-sm leading-relaxed">
@@ -2611,14 +2611,14 @@ echo "Rollback completed cleanly."`}</pre>
                 <div className="flex items-center gap-2.5 pt-2">
                   <button
                     type="button"
-                    className="border border-[#383838] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-white transition-colors"
+                    className="border border-[#383838] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-[#F0EFE2] transition-colors"
                   >
                     Test Baseline instead
                   </button>
                   <button
                     type="button"
                     onClick={() => handleOpenTab("plan")}
-                    className="border border-[#383838] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-white transition-colors"
+                    className="border border-[#383838] bg-[#1a201a] px-3.5 py-1.5 text-xs text-[#d0d4cd] rounded hover:border-white hover:text-[#F0EFE2] transition-colors"
                   >
                     Open the plan
                   </button>
@@ -2630,12 +2630,12 @@ echo "Rollback completed cleanly."`}</pre>
             {activeTab === "code" && (
               <div className="p-6 space-y-5 flex-1">
                 <div className="flex items-center justify-between border-b border-[#242424] pb-3 text-xs font-mono">
-                  <div className="flex items-center gap-2 text-[#888]">
+                  <div className="flex items-center gap-2 text-[#C8C7BA]">
                     <Layers size={13} />
                     <span>Models</span>
-                    <span className="text-white font-semibold">Llama 3.1 8B Instruct</span>
+                    <span className="text-[#F0EFE2] font-semibold">Llama 3.1 8B Instruct</span>
                   </div>
-                  <span className="text-[#888]">vLLM</span>
+                  <span className="text-[#C8C7BA]">vLLM</span>
                 </div>
 
                 <div className="py-20 flex flex-col items-center justify-center text-center space-y-3">
@@ -2646,7 +2646,7 @@ echo "Rollback completed cleanly."`}</pre>
                     <Code size={20} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-white">No code yet</h3>
+                    <h3 className="text-sm font-semibold text-[#F0EFE2]">No code yet</h3>
                     <p className="text-xs text-[#788274] mt-1 max-w-sm leading-relaxed">
                       Generated serve scripts, deployment configs, and pipeline definitions appear here as the agent builds your pipeline.
                     </p>
@@ -2659,12 +2659,12 @@ echo "Rollback completed cleanly."`}</pre>
             {activeTab === "config" && (
               <div className="p-6 space-y-5 flex-1 max-w-[800px] text-xs">
                 <div className="flex items-center justify-between border-b border-[#242424] pb-3 text-xs font-mono">
-                  <div className="flex items-center gap-2 text-[#888]">
+                  <div className="flex items-center gap-2 text-[#C8C7BA]">
                     <Layers size={13} />
                     <span>Models</span>
-                    <span className="text-white font-semibold">Llama 3.1 8B Instruct</span>
+                    <span className="text-[#F0EFE2] font-semibold">Llama 3.1 8B Instruct</span>
                   </div>
-                  <span className="text-[#888]">vLLM</span>
+                  <span className="text-[#C8C7BA]">vLLM</span>
                 </div>
 
                 {/* Top Card: Model Configuration */}
@@ -2673,7 +2673,7 @@ echo "Rollback completed cleanly."`}</pre>
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
                 )}>
                   <div className="text-[10px] uppercase font-mono text-[#788274]">Config</div>
-                  <h4 className="font-semibold text-xs text-white">Model configuration</h4>
+                  <h4 className="font-semibold text-xs text-[#F0EFE2]">Model configuration</h4>
                   <p className="text-[11px] text-[#788274]">Configuration unlocks when a plan is accepted.</p>
                 </div>
 
@@ -2683,24 +2683,24 @@ echo "Rollback completed cleanly."`}</pre>
                   dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white"
                 )}>
                   <div className="px-4 py-2.5 flex items-center justify-between">
-                    <span className="font-semibold text-xs text-white">Session intake</span>
-                    <span className="border border-[#383838] bg-[#181818] px-1.5 py-0.2 text-[10px] text-[#888] font-mono rounded-xs">
+                    <span className="font-semibold text-xs text-[#F0EFE2]">Session intake</span>
+                    <span className="border border-[#383838] bg-[#181818] px-1.5 py-0.2 text-[10px] text-[#C8C7BA] font-mono rounded-xs">
                       Read-only
                     </span>
                   </div>
 
                   <div className="p-4 space-y-2 font-mono text-xs">
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#888]">Model</span>
-                      <span className="text-white font-semibold">meta-llama/Llama-3.1-8B-Instruct</span>
+                      <span className="text-[#C8C7BA]">Model</span>
+                      <span className="text-[#F0EFE2] font-semibold">meta-llama/Llama-3.1-8B-Instruct</span>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#888]">Engine</span>
-                      <span className="text-white">vLLM</span>
+                      <span className="text-[#C8C7BA]">Engine</span>
+                      <span className="text-[#F0EFE2]">vLLM</span>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#888]">Planned GPU</span>
-                      <span className="text-white">A100-40GB</span>
+                      <span className="text-[#C8C7BA]">Planned GPU</span>
+                      <span className="text-[#F0EFE2]">A100-40GB</span>
                     </div>
                   </div>
 
@@ -2716,12 +2716,12 @@ echo "Rollback completed cleanly."`}</pre>
               <div className="flex-1 flex flex-col justify-between p-4 relative min-h-[460px]">
                 {/* Top Toolbar */}
                 <div className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#202020] p-1 rounded-xs w-fit text-xs font-mono text-[#788274]">
-                  <button type="button" className="p-1 hover:text-white hover:bg-[#282828] rounded-xs" title="Undo"><Undo size={13} /></button>
-                  <button type="button" className="p-1 hover:text-white hover:bg-[#282828] rounded-xs" title="Redo"><Redo size={13} /></button>
+                  <button type="button" className="p-1 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs" title="Undo"><Undo size={13} /></button>
+                  <button type="button" className="p-1 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs" title="Redo"><Redo size={13} /></button>
                   <div className="h-3 w-px bg-[#2e2e2e] mx-1" />
-                  <button type="button" className="p-1 hover:text-white hover:bg-[#282828] rounded-xs" title="Auto Layout"><Grid size={13} /></button>
-                  <button type="button" className="p-1 hover:text-white hover:bg-[#282828] rounded-xs" title="Import"><Download size={13} /></button>
-                  <button type="button" className="p-1 hover:text-white hover:bg-[#282828] rounded-xs" title="Export"><Upload size={13} /></button>
+                  <button type="button" className="p-1 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs" title="Auto Layout"><Grid size={13} /></button>
+                  <button type="button" className="p-1 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs" title="Import"><Download size={13} /></button>
+                  <button type="button" className="p-1 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs" title="Export"><Upload size={13} /></button>
                 </div>
 
                 {/* Center Canvas Box */}
@@ -2741,11 +2741,11 @@ echo "Rollback completed cleanly."`}</pre>
 
                 {/* Bottom Left Zoom Controls */}
                 <div className="flex items-center gap-1 border border-[#2e2e2e] bg-[#202020] p-1 rounded-xs w-fit text-xs font-mono text-[#788274]">
-                  <button type="button" className="px-1.5 py-0.5 hover:text-white hover:bg-[#282828] rounded-xs"><Minus size={11} /></button>
+                  <button type="button" className="px-1.5 py-0.5 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs"><Minus size={11} /></button>
                   <span className="px-2 text-[11px] font-mono text-[#a0a89d]">100%</span>
-                  <button type="button" className="px-1.5 py-0.5 hover:text-white hover:bg-[#282828] rounded-xs"><Plus size={11} /></button>
+                  <button type="button" className="px-1.5 py-0.5 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs"><Plus size={11} /></button>
                   <div className="h-3 w-px bg-[#2e2e2e] mx-1" />
-                  <button type="button" className="p-1 hover:text-white hover:bg-[#282828] rounded-xs" title="Fit to Screen"><Maximize2 size={12} /></button>
+                  <button type="button" className="p-1 hover:text-[#F0EFE2] hover:bg-[#282828] rounded-xs" title="Fit to Screen"><Maximize2 size={12} /></button>
                 </div>
               </div>
             )}
@@ -2760,7 +2760,7 @@ echo "Rollback completed cleanly."`}</pre>
                 )}>
                   <div className="text-[10px] font-mono text-[#788274] uppercase tracking-wider">Benchmarks</div>
                   <div className="flex items-center gap-2 mt-1">
-                    <h2 className="text-sm font-bold text-white">Model not recorded</h2>
+                    <h2 className="text-sm font-bold text-[#F0EFE2]">Model not recorded</h2>
                     <span className="text-xs text-[#6e756a] font-mono">no winner</span>
                   </div>
                 </div>
@@ -2775,7 +2775,7 @@ echo "Rollback completed cleanly."`}</pre>
                     <button
                       type="button"
                       onClick={() => handleOpenTab("optimization")}
-                      className="text-[#788274] hover:text-white font-mono transition-colors cursor-pointer"
+                      className="text-[#788274] hover:text-[#F0EFE2] font-mono transition-colors cursor-pointer"
                     >
                       Optimization
                     </button>
@@ -2817,7 +2817,7 @@ echo "Rollback completed cleanly."`}</pre>
               <div className="p-6 space-y-5 flex-1 max-w-[800px] text-xs font-sans">
                 <div className="flex items-center justify-between border-b border-[#282828] pb-3">
                   <div>
-                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                    <h2 className="text-xs font-bold text-[#F0EFE2] uppercase tracking-wider">
                       Cryptographic Proof Package
                     </h2>
                     <p className="text-[11px] text-[#788274] font-mono mt-0.5">
@@ -2836,25 +2836,25 @@ echo "Rollback completed cleanly."`}</pre>
                 )}>
                   <div className="space-y-1.5 border-b border-[#282828] pb-3 text-[11px]">
                     <div className="flex items-center justify-between">
-                      <span className="text-[#888]">Proof SHA-256:</span>
-                      <span className="text-white font-semibold truncate max-w-xs">sha256:7f8a9e14c09d51b3a88f7236e788c3a1e4b9d029f</span>
+                      <span className="text-[#C8C7BA]">Proof SHA-256:</span>
+                      <span className="text-[#F0EFE2] font-semibold truncate max-w-xs">sha256:7f8a9e14c09d51b3a88f7236e788c3a1e4b9d029f</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#888]">Independent Verifier:</span>
-                      <span className="text-white">Epoch Verifier v2.4</span>
+                      <span className="text-[#C8C7BA]">Independent Verifier:</span>
+                      <span className="text-[#F0EFE2]">Epoch Verifier v2.4</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 pt-1">
                     <div className="p-3 border border-[#282828] bg-[#181818] rounded-xs space-y-1">
-                      <div className="font-semibold text-white text-[11px]">SLO #1: Cost Reduction</div>
-                      <div className="text-[11px] text-white font-bold">Passed (-34.2%)</div>
+                      <div className="font-semibold text-[#F0EFE2] text-[11px]">SLO #1: Cost Reduction</div>
+                      <div className="text-[11px] text-[#F0EFE2] font-bold">Passed (-34.2%)</div>
                       <div className="text-[10px] text-[#788274]">Baseline: $182K → Verified: $120.4K</div>
                     </div>
 
                     <div className="p-3 border border-[#282828] bg-[#181818] rounded-xs space-y-1">
-                      <div className="font-semibold text-white text-[11px]">SLO #2: P99 Latency</div>
-                      <div className="text-[11px] text-white font-bold">Passed (184ms)</div>
+                      <div className="font-semibold text-[#F0EFE2] text-[11px]">SLO #2: P99 Latency</div>
+                      <div className="text-[11px] text-[#F0EFE2] font-bold">Passed (184ms)</div>
                       <div className="text-[10px] text-[#788274]">Peak concurrency: 128 streams</div>
                     </div>
                   </div>
@@ -2875,7 +2875,7 @@ echo "Rollback completed cleanly."`}</pre>
                       <Sparkles size={16} />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-xs text-white">Deployment unlocks at $50 in lifetime credits</h4>
+                      <h4 className="font-semibold text-xs text-[#F0EFE2]">Deployment unlocks at $50 in lifetime credits</h4>
                       <p className="text-[11px] text-[#788274] mt-0.5">
                         Add funds to unlock it. Your balance then pays for the traffic you serve.
                       </p>
@@ -2895,7 +2895,7 @@ echo "Rollback completed cleanly."`}</pre>
                   "border rounded-xs p-4 space-y-1.5",
                   dark ? "border-[#282828] bg-[#202020]" : "border-[#d8ddd3] bg-white"
                 )}>
-                  <h4 className="font-semibold text-xs text-white">No model to deploy yet</h4>
+                  <h4 className="font-semibold text-xs text-[#F0EFE2]">No model to deploy yet</h4>
                   <p className="text-[11px] text-[#788274]">
                     Add a model in the Pipeline tab. After an optimization run, deploy options appear here.
                   </p>
@@ -2911,12 +2911,12 @@ echo "Rollback completed cleanly."`}</pre>
               <button
                 type="button"
                 onClick={() => setTerminalOpen(!terminalOpen)}
-                className="flex w-full items-center justify-between px-4 py-2 text-xs font-mono text-[#788274] hover:text-white"
+                className="flex w-full items-center justify-between px-4 py-2 text-xs font-mono text-[#788274] hover:text-[#F0EFE2]"
               >
                 <div className="flex items-center gap-2">
                   <Terminal size={12} />
                   <span>Terminal</span>
-                  <span className="bg-[#282828] border border-[#383838] px-1.5 py-0.2 text-[10px] text-white rounded-xs">1</span>
+                  <span className="bg-[#282828] border border-[#383838] px-1.5 py-0.2 text-[10px] text-[#F0EFE2] rounded-xs">1</span>
                 </div>
                 <ChevronRight
                   size={12}
@@ -2937,7 +2937,7 @@ echo "Rollback completed cleanly."`}</pre>
                           "px-2 py-0.5 text-[11px]",
                           logFilter === filter
                             ? "bg-[#75bf00] text-[#111] font-bold"
-                            : "text-[#788274] hover:text-white"
+                            : "text-[#788274] hover:text-[#F0EFE2]"
                         )}
                       >
                         {filter}
@@ -2980,7 +2980,7 @@ echo "Rollback completed cleanly."`}</pre>
           <div
             className={cn(
               "w-full max-w-[620px] rounded-xs border p-4 shadow-2xl space-y-4 text-xs font-sans",
-              dark ? "border-[#383838] bg-[#202020] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]"
+              dark ? "border-[#383838] bg-[#202020] text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#171a17]"
             )}
             onClick={(e) => e.stopPropagation()}
           >
@@ -2997,7 +2997,7 @@ echo "Rollback completed cleanly."`}</pre>
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search views"
-                  className="bg-transparent text-xs text-white placeholder:text-[#666] outline-none w-full font-mono"
+                  className="bg-transparent text-xs text-[#F0EFE2] placeholder:text-[#666] outline-none w-full font-mono"
                 />
               </div>
               <kbd className="border border-[#383838] bg-[#202020] px-1.5 py-0.5 font-mono text-[10px] text-[#788274] rounded-xs">
