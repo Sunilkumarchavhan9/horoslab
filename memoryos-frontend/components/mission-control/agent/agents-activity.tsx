@@ -7,7 +7,7 @@ import { CommandBar, SectionHeader, SplitPane } from "./agent-shared-components"
 
 export function AgentsActivity() {
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar className="border-b-0" />
  
  <div className="flex-1 overflow-hidden">
@@ -29,7 +29,7 @@ export function AgentsActivity() {
  ].map(m => (
  <div key={m.label} className="p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] flex flex-col gap-2 relative overflow-hidden group">
  <div className="flex justify-between items-start relative z-10">
- <span className="text-[12px] text-foreground/50 dark:text-white/50 font-bold uppercase tracking-wider">{m.label}</span>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50 font-bold uppercase tracking-wider">{m.label}</span>
  <div className={cn("p-2 rounded bg-muted dark:bg-white/5", m.color)}>
  {m.icon}
  </div>
@@ -48,7 +48,7 @@ export function AgentsActivity() {
  <div className="rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] p-6 flex flex-col gap-6">
  <div className="flex flex-col">
  <h3 className="text-[14px] font-bold">Activity Heatmap</h3>
- <span className="text-[12px] text-foreground/50 dark:text-white/50">Most active operating hours</span>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Most active operating hours</span>
  </div>
  <div className="grid grid-cols-12 gap-1 h-32">
  {Array.from({length: 12}).map((_, col) => (
@@ -72,7 +72,7 @@ export function AgentsActivity() {
  </div>
  ))}
  </div>
- <div className="flex justify-between text-[10px] font-mono text-foreground/40 dark:text-white/40">
+ <div className="flex justify-between text-[10px] font-mono text-foreground/40 dark:text-[#F0EFE2]/40">
  <span>00:00</span>
  <span>12:00</span>
  <span>24:00</span>
@@ -83,7 +83,7 @@ export function AgentsActivity() {
  <div className="rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] p-6 flex flex-col gap-6">
  <div className="flex flex-col">
  <h3 className="text-[14px] font-bold">Compute Utilization</h3>
- <span className="text-[12px] text-foreground/50 dark:text-white/50">Tokens / CPU cycles across institutions</span>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Tokens / CPU cycles across institutions</span>
  </div>
  <div className="flex-1 flex items-end gap-2 px-6 pb-2 border-l border-b border-border dark:border-white/10 relative">
  <div className="w-1/4 bg-emerald-500/80 rounded-t-sm hover:opacity-80 transition-opacity" style={{ height: '60%' }} title="Engineering" />
@@ -91,7 +91,7 @@ export function AgentsActivity() {
  <div className="w-1/4 bg-[#0f52ff]/80 rounded-t-sm hover:opacity-80 transition-opacity" style={{ height: '30%' }} title="HR" />
  <div className="w-1/4 bg-purple-500/80 rounded-t-sm hover:opacity-80 transition-opacity" style={{ height: '45%' }} title="Finance" />
  </div>
- <div className="flex justify-between px-6 text-[10px] font-bold uppercase tracking-wider text-foreground/40 dark:text-white/40">
+ <div className="flex justify-between px-6 text-[10px] font-bold uppercase tracking-wider text-foreground/40 dark:text-[#F0EFE2]/40">
  <span>Eng</span>
  <span>Sec</span>
  <span>HR</span>
@@ -105,7 +105,7 @@ export function AgentsActivity() {
  <div className="flex flex-col h-full bg-card dark:bg-[#0a0a0a]">
  <div className="p-6 border-b border-border dark:border-white/10 shrink-0 bg-card dark:bg-[#121212]">
  <h3 className="text-[16px] font-bold tracking-tight">Recent Audit Events</h3>
- <p className="text-[12px] text-foreground/50 dark:text-white/50 mt-1">Chronological log of agent actions</p>
+ <p className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50 mt-1">Chronological log of agent actions</p>
  </div>
 
  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 relative before:absolute before:inset-0 before:ml-8 before:-translate-x-px before:h-full before:w-px before:bg-black/10 dark:before:bg-card/10">
@@ -131,10 +131,10 @@ export function AgentsActivity() {
  </div>
  <div className="flex flex-col bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md p-3 w-full ">
  <div className="flex items-center justify-between mb-1">
- <span className="text-[12px] font-bold text-foreground dark:text-white">{event.agent}</span>
- <span className="text-[10px] text-foreground/40 dark:text-white/40 font-mono">{event.time}</span>
+ <span className="text-[12px] font-bold text-foreground dark:text-[#F0EFE2]">{event.agent}</span>
+ <span className="text-[10px] text-foreground/40 dark:text-[#F0EFE2]/40 font-mono">{event.time}</span>
  </div>
- <span className="text-[13px] text-foreground/70 dark:text-white/70">{event.action}</span>
+ <span className="text-[13px] text-foreground/70 dark:text-[#F0EFE2]/70">{event.action}</span>
  </div>
  </div>
  ))}
