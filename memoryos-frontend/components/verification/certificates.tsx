@@ -126,14 +126,14 @@ export function VerificationCertificates() {
                    className="w-full max-w-lg bg-white rounded-md shadow-[0_30px_60px_rgba(0,0,0,0.4)] overflow-hidden relative"
                 >
                    {/* Cert Header */}
-                   <div className="bg-[#0f52ff] p-8 text-white relative overflow-hidden">
+                   <div className="bg-[#0f52ff] p-8 text-[#F0EFE2] relative overflow-hidden">
                       <div className="absolute -right-12 -top-12 opacity-10"><Fingerprint className="size-48" /></div>
                       <div className="relative z-10 flex items-center gap-4 mb-2">
                          <div className="size-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-md">
-                            <ShieldCheck className="size-6 text-white" />
+                            <ShieldCheck className="size-6 text-[#F0EFE2]" />
                          </div>
                          <div>
-                            <div className="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Epoch Network</div>
+                            <div className="text-[#F0EFE2]/70 text-xs font-bold uppercase tracking-widest mb-1">Epoch Network</div>
                             <h2 className="text-2xl font-bold tracking-tight">Verification Certificate</h2>
                          </div>
                       </div>
@@ -208,18 +208,18 @@ export function VerificationCertificates() {
              
              {/* Bottom Action Bar */}
              <div className="bg-black p-4 flex justify-center gap-4">
-                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 px-6">
+                <Button variant="outline" className="bg-white/10 border-white/20 text-[#F0EFE2] hover:bg-white/20 h-10 px-6">
                    <FileText className="size-4 mr-2" /> Download PDF
                 </Button>
-                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 px-6">
+                <Button variant="outline" className="bg-white/10 border-white/20 text-[#F0EFE2] hover:bg-white/20 h-10 px-6">
                    <FileJson className="size-4 mr-2" /> Raw JSON
                 </Button>
-                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 px-6">
+                <Button variant="outline" className="bg-white/10 border-white/20 text-[#F0EFE2] hover:bg-white/20 h-10 px-6">
                    <Share2 className="size-4 mr-2" /> Share API
                 </Button>
              </div>
              
-             <button className="absolute top-6 right-6 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors" onClick={() => setSelectedCertId(null)}>
+             <button className="absolute top-6 right-6 p-2 rounded-full bg-black/40 hover:bg-black/60 text-[#F0EFE2] transition-colors" onClick={() => setSelectedCertId(null)}>
                <X className="size-5" />
              </button>
           </motion.div>
