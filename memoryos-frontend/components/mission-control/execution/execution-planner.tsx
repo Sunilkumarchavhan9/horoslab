@@ -14,14 +14,14 @@ export function ExecutionPlanner({ onViewNode }: { onViewNode?: (id: string) => 
  };
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar>
  <div className="flex items-center gap-6 w-1/2">
- <span className="text-[13px] font-bold text-foreground dark:text-white flex items-center gap-2">
+ <span className="text-[13px] font-bold text-foreground dark:text-[#F0EFE2] flex items-center gap-2">
  <Target className="size-4" />
  Mission #193
  </span>
- <span className="text-[13px] text-foreground/50 dark:text-white/50 border-l border-border dark:border-white/10 pl-4">
+ <span className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50 border-l border-border dark:border-white/10 pl-4">
  Strategy Canvas
  </span>
  </div>
@@ -75,14 +75,14 @@ export function ExecutionPlanner({ onViewNode }: { onViewNode?: (id: string) => 
  >
  <div className="flex items-start justify-between mb-3">
  <div className="flex flex-col">
- <h3 className="text-[14px] font-bold tracking-tight text-foreground dark:text-white group-hover:text-[#0f52ff] transition-colors">{node.name}</h3>
- <span className="text-[12px] text-foreground/50 dark:text-white/50">{node.agent}</span>
+ <h3 className="text-[14px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2] group-hover:text-[#0f52ff] transition-colors">{node.name}</h3>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">{node.agent}</span>
  </div>
  <div className={cn(
  "size-6 rounded-full border-2 flex items-center justify-center shrink-0",
  node.status === "COMPLETED" ? "border-emerald-500 text-emerald-500 bg-emerald-500/10" :
  node.status === "RUNNING" ? "border-[#0f52ff] text-[#0f52ff] bg-[#0f52ff]/10 animate-pulse" :
- "border-black/20 dark:border-white/20 text-foreground/30 dark:text-white/30"
+ "border-black/20 dark:border-white/20 text-foreground/30 dark:text-[#F0EFE2]/30"
  )}>
  {node.status === "COMPLETED" ? <CheckCircle2 className="size-3.5" /> : 
  node.status === "RUNNING" ? <Zap className="size-3.5" /> : 
@@ -94,11 +94,11 @@ export function ExecutionPlanner({ onViewNode }: { onViewNode?: (id: string) => 
  <span className={cn(
  node.status === "COMPLETED" ? "text-emerald-500" :
  node.status === "RUNNING" ? "text-[#0f52ff]" :
- "text-foreground/40 dark:text-white/40"
+ "text-foreground/40 dark:text-[#F0EFE2]/40"
  )}>
  {node.status}
  </span>
- <span className="text-foreground/40 dark:text-white/40 flex items-center gap-1">
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40 flex items-center gap-1">
  <Clock className="size-3" /> {node.duration}
  </span>
  </div>
@@ -113,7 +113,7 @@ export function ExecutionPlanner({ onViewNode }: { onViewNode?: (id: string) => 
  <div className="flex flex-col h-full bg-card dark:bg-[#121212]">
  <div className="p-6 border-b border-border dark:border-white/10 shrink-0">
  <h3 className="text-[16px] font-bold tracking-tight">Plan Steps</h3>
- <p className="text-[12px] text-foreground/50 dark:text-white/50 mt-1">Linear execution strategy</p>
+ <p className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50 mt-1">Linear execution strategy</p>
  </div>
 
  <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
@@ -124,13 +124,13 @@ export function ExecutionPlanner({ onViewNode }: { onViewNode?: (id: string) => 
  "size-8 rounded-full border-2 flex items-center justify-center shrink-0 bg-card dark:bg-[#121212] transition-colors cursor-pointer",
  node.status === "COMPLETED" ? "border-emerald-500 text-emerald-500" :
  node.status === "RUNNING" ? "border-[#0f52ff] text-[#0f52ff]" :
- "border-border dark:border-white/10 text-foreground/30 dark:text-white/30 group-hover:border-black/30 dark:group-hover:border-white/30"
+ "border-border dark:border-white/10 text-foreground/30 dark:text-[#F0EFE2]/30 group-hover:border-black/30 dark:group-hover:border-white/30"
  )}>
  {i + 1}
  </div>
  <div className="flex flex-col pt-1.5 cursor-pointer" onClick={() => handleNodeClick(node.id)}>
- <span className={cn("text-[13px] font-bold transition-colors", selectedNode === node.id ? "text-[#0f52ff]" : "text-foreground dark:text-white")}>{node.name}</span>
- <span className="text-[11px] text-foreground/50 dark:text-white/50">{node.agent}</span>
+ <span className={cn("text-[13px] font-bold transition-colors", selectedNode === node.id ? "text-[#0f52ff]" : "text-foreground dark:text-[#F0EFE2]")}>{node.name}</span>
+ <span className="text-[11px] text-foreground/50 dark:text-[#F0EFE2]/50">{node.agent}</span>
  
  {node.status === "COMPLETED" && (
  <div className="mt-3 p-2 bg-emerald-500/5 border border-emerald-500/10 rounded-md flex items-center gap-2 text-[11px] font-mono text-emerald-600 dark:text-emerald-400">
