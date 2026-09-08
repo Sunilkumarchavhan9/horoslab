@@ -223,7 +223,7 @@ export function EpochCommandDialog({
           "flex items-center gap-3 border-b px-4 py-3.5",
           dark ? "border-[#282828] bg-[#181818]" : "border-[#e5e8e3] bg-white"
         )}>
-          <Search size={17} className={dark ? "text-[#888]" : "text-[#788274]"} />
+          <Search size={17} className={dark ? "text-[#C8C7BA]" : "text-[#788274]"} />
           <input
             autoFocus
             value={query}
@@ -231,7 +231,7 @@ export function EpochCommandDialog({
             placeholder="Search pipelines and commands"
             className={cn(
               "w-full bg-transparent text-sm outline-none",
-              dark ? "text-white placeholder:text-[#666]" : "text-[#171a17] placeholder:text-[#8b9386]"
+              dark ? "text-[#F0EFE2] placeholder:text-[#666]" : "text-[#171a17] placeholder:text-[#8b9386]"
             )}
           />
         </div>
@@ -256,10 +256,10 @@ export function EpochCommandDialog({
                   "flex w-full items-center justify-between px-3 py-2.5 text-left text-xs transition-colors rounded-none cursor-pointer",
                   selectedIndex === idx
                     ? dark
-                      ? "bg-[#282828] text-white"
+                      ? "bg-[#282828] text-[#F0EFE2]"
                       : "bg-[#edf1eb] text-[#151515]"
                     : dark
-                    ? "text-[#ccc] hover:bg-[#202020]"
+                    ? "text-[#C8C7BA] hover:bg-[#202020]"
                     : "text-[#3e443b] hover:bg-[#f6f8f4]"
                 )}
               >
@@ -272,7 +272,7 @@ export function EpochCommandDialog({
                   </span>
                   <span className={cn(
                     "font-medium text-xs",
-                    dark ? "text-white" : "text-[#171a17]"
+                    dark ? "text-[#F0EFE2]" : "text-[#171a17]"
                   )}>
                     {item.title}
                   </span>

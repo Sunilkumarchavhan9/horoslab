@@ -175,7 +175,7 @@ export function EnterpriseSection() {
           </div>
           <a
             href="#contact"
-            className="inline-flex min-w-[190px] items-center justify-center bg-[hsl(var(--primary))] px-6 py-3 text-[14px] font-medium text-white"
+            className="inline-flex min-w-[190px] items-center justify-center bg-[hsl(var(--primary))] px-6 py-3 text-[14px] font-medium text-[#F0EFE2]"
           >
             Request enterprise intro →
           </a>

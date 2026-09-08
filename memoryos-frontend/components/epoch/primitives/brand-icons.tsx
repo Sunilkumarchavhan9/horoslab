@@ -211,7 +211,7 @@ export function FluxLogo({ className, size = 13 }: BrandIconProps) {
       viewBox="0 0 24 24"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-white", className)}
+      className={cn("shrink-0 inline-block align-middle text-[#F0EFE2]", className)}
     >
       <path d="M0 20.683L12.01 2.5 24 20.683h-2.233L12.009 5.878 3.471 18.806h12.122l1.239 1.877H0z" />
       <path d="M8.069 16.724l2.073-3.115 2.074 3.115H8.069zM18.24 20.683l-5.668-8.707h2.177l5.686 8.707h-2.196zM19.74 11.676l2.13-3.19 2.13 3.19h-4.26z" />
@@ -463,7 +463,7 @@ export function AppleLogo({ className, size = 14 }: BrandIconProps) {
       viewBox="0 0 24 24"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-white", className)}
+      className={cn("shrink-0 inline-block align-middle text-[#F0EFE2]", className)}
     >
       <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.64 1.35-.57.65-1.07 1.71-.93 2.73 1 .08 2.03-.49 2.65-1.23" />
     </svg>
@@ -527,7 +527,7 @@ export function GitHubLogo({ className, size = 15 }: BrandIconProps) {
       viewBox="0 0 24 24"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-white", className)}
+      className={cn("shrink-0 inline-block align-middle text-[#F0EFE2]", className)}
     >
       <path
         fillRule="evenodd"
@@ -608,3 +608,120 @@ export function MicrosoftLogo({ className, size = 13 }: BrandIconProps) {
     </svg>
   );
 }
+
+
+export function OneXLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+
+export function TeslaLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 4v16M4 4h16M8 8h8" />
+    </svg>
+  );
+}
+
+export function K8sFaviconLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93" />
+    </svg>
+  );
+}
+
+
+import { EpochLogo as OriginalEpochLogo } from "./epoch-logo";
+
+export const EpochLogo = (props: any) => <OriginalEpochLogo {...props} />;
+export const EpochWordmarkLogo = (props: any) => <OriginalEpochLogo variant="wordmark" {...props} />;
+
+
+export function RunPodLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  );
+}
+
+export function ModalLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  );
+}
+
+export function OpenTelemetryLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      <path d="M2 12h20" />
+    </svg>
+  );
+}
+
+// Custom added logos for Embeddings Page
+export function JinaLogo({ className, size = 13 }: BrandIconProps) {
+  return (
+    <img
+      src="https://cdn-avatars.huggingface.co/v1/production/uploads/603763514de52ff951d89793/wD54VbAHHyHop3uYlJKl4.png"
+      alt="Jina AI"
+      width={size}
+      height={size}
+      className={cn("shrink-0 inline-block align-middle rounded-xs object-contain", className)}
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function MixedbreadLogo({ className, size = 13 }: BrandIconProps) {
+  return (
+    <img
+      src="https://cdn-avatars.huggingface.co/v1/production/uploads/643ee0870d1194da249bd7fe/voYdYlFgQH5vyMwyMNluZ.png"
+      alt="Mixedbread"
+      width={size}
+      height={size}
+      className={cn("shrink-0 inline-block align-middle rounded-[20%] object-contain", className)}
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function SnowflakeLogo({ className, size = 13 }: BrandIconProps) {
+  return (
+    <img
+      src="https://cdn-avatars.huggingface.co/v1/production/uploads/64dc52cf858f8a41c12fc819/O9-MWzRjWzbNP_DQlMb-7.png"
+      alt="Snowflake"
+      width={size}
+      height={size}
+      className={cn("shrink-0 inline-block align-middle rounded-[20%] object-contain", className)}
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+
+export function NomicLogo({ className, size = 13 }: BrandIconProps) {
+  return (
+    <img
+      src="https://cdn-avatars.huggingface.co/v1/production/uploads/641f01fe6d51620635e118e9/wy0ax27ok1-uHWoUAHSEs.png"
+      alt="Nomic AI"
+      width={size}
+      height={size}
+      className={cn("shrink-0 inline-block align-middle rounded-[20%] object-contain", className)}
+      referrerPolicy="no-referrer"
+    />
+  );
+}
+

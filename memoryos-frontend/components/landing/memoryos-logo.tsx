@@ -9,7 +9,7 @@ type MemoryOSLogoProps = {
 export function MemoryOSLogo({ className }: MemoryOSLogoProps) {
   return (
     <MemoryOSFullLogo 
-      className={className || "h-8 w-auto text-slate-900 dark:text-white"} 
+      className={className || "h-8 w-auto text-slate-900 dark:text-[#F0EFE2]"} 
     />
   );
 }

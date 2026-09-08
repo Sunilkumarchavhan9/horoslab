@@ -26,12 +26,12 @@ export function ActiveMissionInspector({
  <div className={cn("flex flex-col h-full w-full", isDark ? "bg-[#121212]" : "bg-card")}>
  <div className={cn("px-6 py-6 border-b shrink-0 flex items-start justify-between", isDark ? "border-white/10" : "border-border")}>
  <div>
- <h2 className={cn("text-[15px] font-semibold tracking-tight", isDark ? "text-white" : "text-foreground")}>{mission.name}</h2>
+ <h2 className={cn("text-[15px] font-semibold tracking-tight", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{mission.name}</h2>
  <p className={cn("text-[12px] mt-0.5", textMuted)}>Status: {mission.status.toUpperCase()}</p>
  </div>
  <button 
  onClick={onClose}
- className={cn("p-1.5 rounded-md transition-colors", isDark ? "hover:bg-card/10 text-white/50 hover:text-white" : "hover:bg-black/10 text-foreground/50 hover:text-foreground")}
+ className={cn("p-1.5 rounded-md transition-colors", isDark ? "hover:bg-card/10 text-[#F0EFE2]/50 hover:text-[#F0EFE2]" : "hover:bg-black/10 text-foreground/50 hover:text-foreground")}
  >
  <X className="size-4" />
  </button>
@@ -44,7 +44,7 @@ export function ActiveMissionInspector({
  onClick={() => setActiveTab(tab)}
  className={cn(
  "py-3 text-[12.5px] font-medium transition-all relative whitespace-nowrap",
- activeTab === tab ? (isDark ? "text-white" : "text-foreground") : cn(textMuted, isDark ? "hover:text-white/70" : "hover:text-foreground/70")
+ activeTab === tab ? (isDark ? "text-[#F0EFE2]" : "text-foreground") : cn(textMuted, isDark ? "hover:text-[#F0EFE2]/70" : "hover:text-foreground/70")
  )}
  >
  {tab}
@@ -60,15 +60,15 @@ export function ActiveMissionInspector({
  <div className={cn("p-3 rounded-md border text-[13px]", isDark ? "bg-card/[0.02] border-white/10" : "bg-muted/50 border-border")}>
  <div className="flex justify-between mb-2">
  <span className={textMuted}>Owner</span>
- <span className={cn("font-semibold", isDark ? "text-white" : "text-foreground")}>{mission.planner}</span>
+ <span className={cn("font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{mission.planner}</span>
  </div>
  <div className="flex justify-between mb-2">
  <span className={textMuted}>Runtime</span>
- <span className={cn("font-semibold", isDark ? "text-white" : "text-foreground")}>{mission.started}</span>
+ <span className={cn("font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{mission.started}</span>
  </div>
  <div className="flex justify-between">
  <span className={textMuted}>Risk Level</span>
- <span className={cn("font-semibold", mission.risk === "High" ? "text-red-500" : (isDark ? "text-white" : "text-foreground"))}>{mission.risk}</span>
+ <span className={cn("font-semibold", mission.risk === "High" ? "text-red-500" : (isDark ? "text-[#F0EFE2]" : "text-foreground"))}>{mission.risk}</span>
  </div>
  </div>
 

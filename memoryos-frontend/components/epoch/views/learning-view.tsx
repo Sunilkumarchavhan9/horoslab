@@ -56,12 +56,12 @@ export function LearningView({ dark = true, onNavigateToMission }: LearningViewP
       icon: <MetaLogo size={22} />,
       intentPrompt: (
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#889284] font-mono py-1">
-          <span className="text-white font-bold">Optimize</span>
-          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-white border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
+          <span className="text-[#F0EFE2] font-bold">Optimize</span>
+          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-[#F0EFE2] border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
             <MetaLogo size={12} /> Llama 3.1 8B
           </span>
           <span>on</span>
-          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-white border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
+          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-[#F0EFE2] border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
             <VLLMLogo size={12} /> vLLM
           </span>
           <span>for lower cost while preserving quality and P99 latency</span>
@@ -135,12 +135,12 @@ spec:
       icon: <NvidiaLogo size={22} />,
       intentPrompt: (
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#889284] font-mono py-1">
-          <span className="text-white font-bold">Teach</span>
-          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-white border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
+          <span className="text-[#F0EFE2] font-bold">Teach</span>
+          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-[#F0EFE2] border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
             <NvidiaLogo size={12} /> epoch-decoder-v1.4
           </span>
           <span>to decode physical objects on</span>
-          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-white border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
+          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-[#F0EFE2] border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
             Vehicle-07
           </span>
           <span>from @lidar-data and @thermal-imu before driving</span>
@@ -197,12 +197,12 @@ spec:
       icon: <SGLangLogo size={22} />,
       intentPrompt: (
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#889284] font-mono py-1">
-          <span className="text-white font-bold">Optimize</span>
-          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-white border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
+          <span className="text-[#F0EFE2] font-bold">Optimize</span>
+          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-[#F0EFE2] border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
             <SGLangLogo size={12} /> Cluster-US-East
           </span>
           <span>cooling policy on</span>
-          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-white border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
+          <span className="inline-flex items-center gap-1 bg-[#1a1a1a] text-[#F0EFE2] border border-[#333333] px-1.5 py-0.5 rounded-none text-[11px]">
             Rack 04-12
           </span>
           <span>for lower PUE and zero thermal throttling</span>
@@ -330,7 +330,7 @@ spec:
             <button
               type="button"
               onClick={() => setSelectedExpId(null)}
-              className="flex items-center gap-1.5 border border-[#383838] bg-[#202020] hover:border-white text-white px-3 py-1.5 rounded-none font-mono text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 border border-[#383838] bg-[#202020] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none font-mono text-xs transition-colors cursor-pointer"
             >
               <ArrowLeft size={13} />
               <span>All experiences</span>
@@ -345,7 +345,7 @@ spec:
 
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-white tracking-wide">{selectedExp.title}</h1>
+                  <h1 className="text-xl font-bold text-[#F0EFE2] tracking-wide">{selectedExp.title}</h1>
                   <span className="text-[10px] text-[#75bf00] font-mono font-bold flex items-center gap-1 px-2 py-0.5 border border-[#283818] bg-[#121c0e]">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#75bf00]" />
                     {selectedExp.verdict}
@@ -363,7 +363,7 @@ spec:
             <button
               type="button"
               onClick={() => handleCopyCode(selectedExp.snippets[codeTab])}
-              className="flex items-center gap-1.5 border border-[#383838] bg-[#202020] hover:border-white text-white px-3 py-1.5 rounded-none transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 border border-[#383838] bg-[#202020] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none transition-colors cursor-pointer"
             >
               {copiedCode ? <Check size={13} className="text-[#75bf00]" /> : <Copy size={13} />}
               <span>{copiedCode ? "Copied Config!" : "Copy Config"}</span>
@@ -384,13 +384,13 @@ spec:
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 font-mono text-xs py-2 border-b border-dashed border-[#282828]">
           <div className="space-y-0.5">
             <div className="text-[#889284] text-[10px] uppercase tracking-wider">↓ P99 LATENCY</div>
-            <div className="text-2xl font-bold text-white">{selectedExp.latency}</div>
+            <div className="text-2xl font-bold text-[#F0EFE2]">{selectedExp.latency}</div>
             <div className="text-[10px] text-[#75bf00]">Verified 24% reduction</div>
           </div>
 
           <div className="space-y-0.5">
             <div className="text-[#889284] text-[10px] uppercase tracking-wider">↑ THROUGHPUT</div>
-            <div className="text-2xl font-bold text-white">{selectedExp.throughput}</div>
+            <div className="text-2xl font-bold text-[#F0EFE2]">{selectedExp.throughput}</div>
             <div className="text-[10px] text-[#889284]">Target capacity fit</div>
           </div>
 
@@ -402,7 +402,7 @@ spec:
 
           <div className="space-y-0.5">
             <div className="text-[#889284] text-[10px] uppercase tracking-wider">QUALITY RETENTION</div>
-            <div className="text-2xl font-bold text-white">{selectedExp.quality}</div>
+            <div className="text-2xl font-bold text-[#F0EFE2]">{selectedExp.quality}</div>
             <div className="text-[10px] text-[#889284]">0 Accuracy Loss</div>
           </div>
         </div>
@@ -412,7 +412,7 @@ spec:
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs">
               <Terminal size={14} className="text-[#788274]" />
-              <span className="font-bold text-white text-sm font-mono">&lt;/&gt; Serving configuration</span>
+              <span className="font-bold text-[#F0EFE2] text-sm font-mono">&lt;/&gt; Serving configuration</span>
             </div>
 
             <div className="flex items-center gap-1 text-xs">
@@ -424,8 +424,8 @@ spec:
                   className={cn(
                     "px-2.5 py-1 text-xs font-mono transition-colors border cursor-pointer",
                     codeTab === tab
-                      ? "border-[#555555] bg-[#2a2a2a] text-white font-bold"
-                      : "border-transparent text-[#889284] hover:text-white"
+                      ? "border-[#555555] bg-[#2a2a2a] text-[#F0EFE2] font-bold"
+                      : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
                   )}
                 >
                   {tab === "vllm" ? "vLLM Config" : tab === "docker" ? "Dockerfile" : tab === "k8s" ? "Kubernetes" : "curl"}
@@ -446,7 +446,7 @@ spec:
         {/* Full Specification Table (Exact 1:1 Match to Image 5 Full Spec Accordion) */}
         <div className="p-4 border border-[#282828] bg-[#171717] space-y-3 rounded-none font-mono">
           <div className="flex items-center justify-between border-b border-dashed border-[#282828] pb-2">
-            <span className="font-bold text-white text-xs uppercase tracking-wider">FULL SPECIFICATION &amp; PROVENANCE</span>
+            <span className="font-bold text-[#F0EFE2] text-xs uppercase tracking-wider">FULL SPECIFICATION &amp; PROVENANCE</span>
             <span className="text-xs text-[#788274]">{selectedExp.domain}</span>
           </div>
 
@@ -454,7 +454,7 @@ spec:
             {selectedExp.spec.map((item, idx) => (
               <div key={idx} className="py-2.5 flex items-center justify-between gap-4">
                 <span className="text-[#889284] uppercase text-[10.5px] shrink-0 font-bold">{item.key}</span>
-                <span className={cn("text-right font-mono truncate", item.highlight ? "text-[#75bf00] font-bold" : "text-white")}>
+                <span className={cn("text-right font-mono truncate", item.highlight ? "text-[#75bf00] font-bold" : "text-[#F0EFE2]")}>
                   {item.val}
                 </span>
               </div>
@@ -474,7 +474,7 @@ spec:
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-white tracking-wide">Learning</h1>
+            <h1 className="text-xl font-bold text-[#F0EFE2] tracking-wide">Learning</h1>
             <span className="bg-[#75bf00] text-[#111] font-bold font-mono px-1.5 py-0.5 rounded text-[10px]">
               FLYWHEEL
             </span>
@@ -487,7 +487,7 @@ spec:
         <button
           type="button"
           onClick={() => alert("Re-evaluating shadow models against current world state...")}
-          className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#202020] hover:border-white text-white px-3 py-1.5 rounded-none font-mono text-xs transition-colors cursor-pointer self-start md:self-auto"
+          className="flex items-center gap-1.5 border border-[#2e2e2e] bg-[#202020] hover:border-white text-[#F0EFE2] px-3 py-1.5 rounded-none font-mono text-xs transition-colors cursor-pointer self-start md:self-auto"
         >
           <RefreshCw size={12} />
           <span>Re-evaluate Flywheel</span>
@@ -511,8 +511,8 @@ spec:
               className={cn(
                 "px-3 py-1 text-xs font-mono transition-colors cursor-pointer rounded-sm flex items-center gap-1.5 whitespace-nowrap",
                 isActive
-                  ? "bg-[#242424] text-white font-bold"
-                  : "text-[#889284] hover:text-white"
+                  ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                  : "text-[#889284] hover:text-[#F0EFE2]"
               )}
             >
               <span>{tab.label}</span>
@@ -534,7 +534,7 @@ spec:
                 placeholder="Find experience records..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent text-white placeholder-[#666666] outline-none text-xs w-full font-mono"
+                className="bg-transparent text-[#F0EFE2] placeholder-[#666666] outline-none text-xs w-full font-mono"
               />
             </div>
 
@@ -549,8 +549,8 @@ spec:
                   className={cn(
                     "px-2 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm",
                     selectedDomainFilter === dom
-                      ? "bg-[#242424] text-white font-bold"
-                      : "text-[#a0a89d] hover:text-white"
+                      ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                      : "text-[#a0a89d] hover:text-[#F0EFE2]"
                   )}
                 >
                   {dom}
@@ -575,7 +575,7 @@ spec:
 
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-sm text-white group-hover:text-[#75bf00] transition-colors truncate">
+                      <h3 className="font-bold text-sm text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors truncate">
                         {exp.title}
                       </h3>
                       <span className="text-[10px] text-[#788274] shrink-0 flex items-center gap-1">
@@ -593,17 +593,17 @@ spec:
 
                     {/* Inline Key Metrics Matching Image 1 */}
                     <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-[#a0a89d] pt-1">
-                      <span>↓ P99: <span className="text-white font-bold">{exp.latency}</span></span>
-                      <span>↑ Throughput: <span className="text-white font-bold">{exp.throughput}</span></span>
-                      <span>Cost: <span className="text-white font-bold">{exp.cost}</span></span>
-                      <span>Quality: <span className="text-white font-bold">{exp.quality}</span></span>
+                      <span>↓ P99: <span className="text-[#F0EFE2] font-bold">{exp.latency}</span></span>
+                      <span>↑ Throughput: <span className="text-[#F0EFE2] font-bold">{exp.throughput}</span></span>
+                      <span>Cost: <span className="text-[#F0EFE2] font-bold">{exp.cost}</span></span>
+                      <span>Quality: <span className="text-[#F0EFE2] font-bold">{exp.quality}</span></span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 shrink-0 pt-1">
                   <span className="text-[11px] text-[#788274]">{exp.timestamp}</span>
-                  <ChevronRight size={15} className="text-[#788274] group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight size={15} className="text-[#788274] group-hover:text-[#F0EFE2] group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
             ))}
@@ -622,15 +622,15 @@ spec:
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-sm">{les.title}</span>
+                    <span className="font-bold text-[#F0EFE2] text-sm">{les.title}</span>
                     <span className="text-[10px] text-[#788274] font-bold">● Confidence: {les.confidence}</span>
                   </div>
                   <p className="text-xs text-[#a0a89d] font-sans leading-relaxed">
                     &quot;{les.rule}&quot;
                   </p>
                   <div className="flex items-center gap-4 text-[11px] text-[#788274] pt-1">
-                    <span>Scope: <span className="text-white">{les.hardwareScope}</span></span>
-                    <span>Gain: <span className="text-white font-bold">{les.measuredGain}</span></span>
+                    <span>Scope: <span className="text-[#F0EFE2]">{les.hardwareScope}</span></span>
+                    <span>Gain: <span className="text-[#F0EFE2] font-bold">{les.measuredGain}</span></span>
                   </div>
                 </div>
               </div>
@@ -638,7 +638,7 @@ spec:
               <button
                 type="button"
                 onClick={() => alert(`Applied lesson ${les.id} to active mission!`)}
-                className="border border-[#383838] bg-[#202020] hover:border-white text-white font-mono text-xs px-3 py-1.5 shrink-0 cursor-pointer"
+                className="border border-[#383838] bg-[#202020] hover:border-white text-[#F0EFE2] font-mono text-xs px-3 py-1.5 shrink-0 cursor-pointer"
               >
                 Apply Lesson
               </button>
@@ -658,14 +658,14 @@ spec:
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-sm">{evo.version}</span>
+                    <span className="font-bold text-[#F0EFE2] text-sm">{evo.version}</span>
                     <span className="text-[10px] text-[#889284]">{evo.type}</span>
                     <span className="text-[10px] text-[#788274] font-bold">● {evo.status}</span>
                   </div>
                   <p className="text-xs text-[#a0a89d] font-sans">
                     {evo.description}
                   </p>
-                  <div className="text-xs text-white font-bold pt-0.5">
+                  <div className="text-xs text-[#F0EFE2] font-bold pt-0.5">
                     ★ Measured Evolution Delta: {evo.delta}
                   </div>
                 </div>
@@ -674,7 +674,7 @@ spec:
               <button
                 type="button"
                 onClick={() => alert(`Promoting ${evo.version} to 100% production...`)}
-                className="border border-[#383838] bg-[#202020] hover:border-white text-white font-mono text-xs px-3 py-1.5 shrink-0 cursor-pointer"
+                className="border border-[#383838] bg-[#202020] hover:border-white text-[#F0EFE2] font-mono text-xs px-3 py-1.5 shrink-0 cursor-pointer"
               >
                 Promote Version
               </button>
@@ -688,7 +688,7 @@ spec:
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono text-xs py-2">
           <div className="space-y-1">
             <div className="text-[#889284] text-[10px] uppercase">TEACHING DATA INDEX</div>
-            <div className="text-xl font-bold text-white">dataset-v8.2</div>
+            <div className="text-xl font-bold text-[#F0EFE2]">dataset-v8.2</div>
             <p className="text-[11px] text-[#a0a89d] font-sans">
               1,482 verified experience pairs distilled into preference fine-tuning triplets.
             </p>
@@ -696,7 +696,7 @@ spec:
 
           <div className="space-y-1">
             <div className="text-[#889284] text-[10px] uppercase">LORA ADAPTATIONS</div>
-            <div className="text-xl font-bold text-white">18 Skill Adapters</div>
+            <div className="text-xl font-bold text-[#F0EFE2]">18 Skill Adapters</div>
             <p className="text-[11px] text-[#a0a89d] font-sans">
               Active rank-16 LoRA adapters trained on physical perception & cost routing.
             </p>
@@ -704,7 +704,7 @@ spec:
 
           <div className="space-y-1">
             <div className="text-[#889284] text-[10px] uppercase">SHADOW SAFETY</div>
-            <div className="text-xl font-bold text-white">100% Passed</div>
+            <div className="text-xl font-bold text-[#F0EFE2]">100% Passed</div>
             <p className="text-[11px] text-[#a0a89d] font-sans">
               0 quality regressions detected during shadow evaluation window.
             </p>

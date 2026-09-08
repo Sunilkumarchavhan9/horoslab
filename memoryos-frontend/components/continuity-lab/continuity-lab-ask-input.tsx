@@ -126,7 +126,7 @@ export function ContinuityLabAskInput({
           rows={5}
           disabled={loading || disabled}
           placeholder={placeholder}
-          className="min-h-[12rem] w-full resize-none bg-transparent px-5 pb-2 pt-5 text-base leading-relaxed text-white placeholder:text-white/45 focus:outline-none disabled:opacity-50"
+          className="min-h-[12rem] w-full resize-none bg-transparent px-5 pb-2 pt-5 text-base leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/45 focus:outline-none disabled:opacity-50"
         />
 
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 pb-3">
@@ -163,11 +163,11 @@ export function ContinuityLabAskInput({
                         )}
                       >
                         <span className="grid size-10 shrink-0 place-items-center rounded-md bg-white/[0.06]">
-                          <Icon className="size-4 text-white/80" />
+                          <Icon className="size-4 text-[#F0EFE2]/80" />
                         </span>
                         <span>
-                          <span className="block text-sm font-semibold text-white">{opt.label}</span>
-                          <span className="mt-1 block text-sm leading-snug text-white/45">
+                          <span className="block text-sm font-semibold text-[#F0EFE2]">{opt.label}</span>
+                          <span className="mt-1 block text-sm leading-snug text-[#F0EFE2]/45">
                             {opt.description}
                           </span>
                         </span>
@@ -177,8 +177,8 @@ export function ContinuityLabAskInput({
                   <div className="mx-2 my-2 border-t border-white/[0.06]" />
                   <label className="flex cursor-pointer items-center justify-between gap-3 rounded-md px-2 py-2 hover:bg-white/[0.04]">
                     <span>
-                      <span className="block text-sm font-semibold text-white">Deep mode</span>
-                      <span className="mt-1 block text-sm text-white/45">
+                      <span className="block text-sm font-semibold text-[#F0EFE2]">Deep mode</span>
+                      <span className="mt-1 block text-sm text-[#F0EFE2]/45">
                         More thorough answers with deeper reasoning
                       </span>
                     </span>
@@ -200,7 +200,7 @@ export function ContinuityLabAskInput({
               <button
                 type="button"
                 onClick={() => setPlusOpen((v) => !v)}
-                className="inline-flex size-9 items-center justify-center rounded-full bg-white/[0.06] text-white/70 hover:bg-white/[0.09] hover:text-white"
+                className="inline-flex size-9 items-center justify-center rounded-full bg-white/[0.06] text-[#F0EFE2]/70 hover:bg-white/[0.09] hover:text-[#F0EFE2]"
                 aria-label="Add attachment"
               >
                 <Plus className="size-5" />
@@ -210,9 +210,9 @@ export function ContinuityLabAskInput({
                   <button
                     type="button"
                     onClick={() => imageInputRef.current?.click()}
-                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm font-medium text-white/80 hover:bg-white/[0.06]"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm font-medium text-[#F0EFE2]/80 hover:bg-white/[0.06]"
                   >
-                    <ImagePlus className="size-4 text-white/60" />
+                    <ImagePlus className="size-4 text-[#F0EFE2]/60" />
                     Upload image
                   </button>
                   {showRepoControls ? (
@@ -222,9 +222,9 @@ export function ContinuityLabAskInput({
                         setPlusOpen(false);
                         onOpenRepoModal();
                       }}
-                      className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm font-medium text-white/80 hover:bg-white/[0.06]"
+                      className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm font-medium text-[#F0EFE2]/80 hover:bg-white/[0.06]"
                     >
-                      <FolderGit2 className="size-4 text-white/60" />
+                      <FolderGit2 className="size-4 text-[#F0EFE2]/60" />
                       Add files/repos
                     </button>
                   ) : null}
@@ -242,7 +242,7 @@ export function ContinuityLabAskInput({
               "inline-flex size-9 shrink-0 items-center justify-center rounded-full transition",
               value.trim()
                 ? "bg-white text-[#0A0A0A] hover:bg-white/90 disabled:opacity-35"
-                : "cursor-default bg-transparent text-white/45",
+                : "cursor-default bg-transparent text-[#F0EFE2]/45",
             )}
             aria-label={value.trim() ? "Start session" : "Voice input unavailable"}
           >
@@ -258,13 +258,13 @@ export function ContinuityLabAskInput({
       </div>
 
       {showRepoControls ? (
-        <div className="mt-3 flex flex-wrap items-center gap-3 px-3 text-sm text-white/85">
+        <div className="mt-3 flex flex-wrap items-center gap-3 px-3 text-sm text-[#F0EFE2]/85">
           <button
             type="button"
             onClick={onOpenRepoModal}
-            className="inline-flex h-8 max-w-[24rem] items-center gap-1.5 text-sm text-white hover:text-white/85"
+            className="inline-flex h-8 max-w-[24rem] items-center gap-1.5 text-sm text-[#F0EFE2] hover:text-[#F0EFE2]/85"
           >
-            <FolderGit2 className="size-4 shrink-0 text-white/75" />
+            <FolderGit2 className="size-4 shrink-0 text-[#F0EFE2]/75" />
             <span className="truncate">{repo ?? "Select repository"}</span>
           </button>
           {repo ? (

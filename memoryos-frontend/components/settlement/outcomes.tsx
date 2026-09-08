@@ -182,15 +182,15 @@ export function SettlementOutcomes() {
 
 function ImpactMetric({ label, value, icon, trend, highlight }: any) {
    return (
-      <div className={`p-4 rounded-md border flex flex-col justify-between ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-white shadow-lg' : 'bg-white border-black/5 shadow-sm text-black'}`}>
+      <div className={`p-4 rounded-md border flex flex-col justify-between ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-[#F0EFE2] shadow-lg' : 'bg-white border-black/5 shadow-sm text-black'}`}>
          <div className="flex justify-between items-start mb-2">
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${highlight ? 'text-white/70' : 'text-black/50'}`}>{label}</div>
-            <div className={highlight ? 'text-white' : 'text-black/40'}>{icon}</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${highlight ? 'text-[#F0EFE2]/70' : 'text-black/50'}`}>{label}</div>
+            <div className={highlight ? 'text-[#F0EFE2]' : 'text-black/40'}>{icon}</div>
          </div>
          <div className="flex items-end gap-2">
             <div className="text-2xl font-bold tracking-tight">{value}</div>
-            {trend === 'up' && <TrendingUp className={`size-4 mb-1 ${highlight ? 'text-white' : 'text-[#2da44e]'}`} />}
-            {trend === 'down' && <TrendingDown className={`size-4 mb-1 ${highlight ? 'text-white' : 'text-[#cf222e]'}`} />}
+            {trend === 'up' && <TrendingUp className={`size-4 mb-1 ${highlight ? 'text-[#F0EFE2]' : 'text-[#2da44e]'}`} />}
+            {trend === 'down' && <TrendingDown className={`size-4 mb-1 ${highlight ? 'text-[#F0EFE2]' : 'text-[#cf222e]'}`} />}
          </div>
       </div>
    )
@@ -198,9 +198,9 @@ function ImpactMetric({ label, value, icon, trend, highlight }: any) {
 
 function ChainNode({ label, detail, status, highlight }: any) {
    return (
-      <div className={`flex flex-col items-center text-center relative z-10 w-[140px] p-3 rounded-md border ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-white shadow-md scale-110' : 'bg-white border-black/10'}`}>
-         <div className={`text-xs font-bold mb-0.5 ${highlight ? 'text-white' : 'text-black'}`}>{label}</div>
-         <div className={`text-[10px] ${highlight ? 'text-white/80' : 'text-black/50'}`}>{detail}</div>
+      <div className={`flex flex-col items-center text-center relative z-10 w-[140px] p-3 rounded-md border ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-[#F0EFE2] shadow-md scale-110' : 'bg-white border-black/10'}`}>
+         <div className={`text-xs font-bold mb-0.5 ${highlight ? 'text-[#F0EFE2]' : 'text-black'}`}>{label}</div>
+         <div className={`text-[10px] ${highlight ? 'text-[#F0EFE2]/80' : 'text-black/50'}`}>{detail}</div>
       </div>
    )
 }

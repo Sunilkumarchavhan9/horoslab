@@ -106,8 +106,8 @@ function ActivateSnapshotDialog({
         className="w-full max-w-md rounded-md border border-white/[0.1] bg-[#1a1a1a] p-5 shadow-2xl"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <h2 className="text-base font-semibold text-white">Activate this snapshot?</h2>
-        <p className="mt-2 text-sm leading-relaxed text-white/55">
+        <h2 className="text-base font-semibold text-[#F0EFE2]">Activate this snapshot?</h2>
+        <p className="mt-2 text-sm leading-relaxed text-[#F0EFE2]/55">
           All new sessions will use this snapshot instead of automatically picking the latest build.
           Scheduled environment refreshes will pause until you resume auto-updates.
         </p>
@@ -262,7 +262,7 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
   if (!loaded) {
     return (
       <ContinuityLabSettingsSectionFrame sectionId="environment" titleOverride="Snapshot">
-        <p className="text-sm text-white/45">Loading snapshot…</p>
+        <p className="text-sm text-[#F0EFE2]/45">Loading snapshot…</p>
       </ContinuityLabSettingsSectionFrame>
     );
   }
@@ -271,10 +271,10 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
     return (
       <ContinuityLabSettingsSectionFrame sectionId="environment" titleOverride="Snapshot">
         {loadError ? <p className="mb-2 text-xs text-amber-200/90">{loadError}</p> : null}
-        <p className="text-sm text-white/55">Snapshot not found.</p>
+        <p className="text-sm text-[#F0EFE2]/55">Snapshot not found.</p>
         <Link
           href={`${ENVIRONMENT_PATH}?tab=snapshots`}
-          className="mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white"
+          className="mt-4 inline-flex items-center gap-1.5 text-sm text-[#F0EFE2]/60 hover:text-[#F0EFE2]"
         >
           <ArrowLeft className="size-3.5" />
           Back to snapshots
@@ -297,7 +297,7 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
     >
       <Link
         href={`${ENVIRONMENT_PATH}?tab=snapshots`}
-        className="-mt-2 mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to snapshots
@@ -310,7 +310,7 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
               Active
             </span>
           ) : null}
-          <h1 className="text-lg font-semibold text-white">
+          <h1 className="text-lg font-semibold text-[#F0EFE2]">
             Snapshot on {formatSnapshotTitle(snapshot.builtAt)}
           </h1>
         </div>
@@ -326,27 +326,27 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
 
       <SettingsFlatPanel className="mb-6 grid gap-4 py-4 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="text-xs text-white/45">Status</p>
+          <p className="text-xs text-[#F0EFE2]/45">Status</p>
           <p className="mt-1 text-sm font-medium text-emerald-300/90">
             {snapshot.status === "failed" ? "Build failed" : "Build successful"}
           </p>
         </div>
         <div>
-          <p className="text-xs text-white/45">Trigger</p>
-          <p className="mt-1 text-sm font-medium text-white capitalize">
+          <p className="text-xs text-[#F0EFE2]/45">Trigger</p>
+          <p className="mt-1 text-sm font-medium text-[#F0EFE2] capitalize">
             {snapshot.trigger ?? "manual"}
           </p>
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-[#F0EFE2]/40">
             {snapshot.triggeredBy ?? user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? "—"}
           </p>
         </div>
         <div>
-          <p className="text-xs text-white/45">Started</p>
-          <p className="mt-1 text-sm font-medium text-white">{formatSnapshotTitle(snapshot.builtAt)}</p>
+          <p className="text-xs text-[#F0EFE2]/45">Started</p>
+          <p className="mt-1 text-sm font-medium text-[#F0EFE2]">{formatSnapshotTitle(snapshot.builtAt)}</p>
         </div>
         <div>
-          <p className="text-xs text-white/45">Duration</p>
-          <p className="mt-1 text-sm font-medium text-white">
+          <p className="text-xs text-[#F0EFE2]/45">Duration</p>
+          <p className="mt-1 text-sm font-medium text-[#F0EFE2]">
             {formatDuration(snapshot.durationMs)}
           </p>
         </div>
@@ -354,7 +354,7 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
 
       {!snapshot.active ? (
         <SettingsFlatPanel className="mb-6 flex flex-wrap items-center justify-between gap-3 py-4">
-          <p className="text-sm text-white/55">Use this build for new sessions.</p>
+          <p className="text-sm text-[#F0EFE2]/55">Use this build for new sessions.</p>
           <SettingsPrimaryButton onClick={() => setActivateOpen(true)}>
             Activate this snapshot
           </SettingsPrimaryButton>
@@ -362,8 +362,8 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
       ) : null}
 
       <div id="build-logs" className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold text-white">Build logs</h2>
-        <p className="text-xs text-white/40">
+        <h2 className="text-sm font-semibold text-[#F0EFE2]">Build logs</h2>
+        <p className="text-xs text-[#F0EFE2]/40">
           {blueprintCount} {blueprintCount === 1 ? "blueprint" : "blueprints"} ·{" "}
           {snapshot.repoCount}{" "}
           {snapshot.repoCount === 1 ? "repository" : "repositories"}
@@ -374,12 +374,12 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
         <div className="grid min-h-[420px] grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)]">
           <aside className="border-b border-white/[0.06] p-3 md:border-b-0 md:border-r">
             <div className="relative mb-2">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/30" />
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/30" />
               <input
                 value={repoFilter}
                 onChange={(e) => setRepoFilter(e.target.value)}
                 placeholder="Filter repositories"
-                className="h-8 w-full rounded-md border border-white/[0.08] bg-black/40 pl-8 pr-2 text-xs text-white placeholder:text-white/30 focus:border-white/[0.16] focus:outline-none"
+                className="h-8 w-full rounded-md border border-white/[0.08] bg-black/40 pl-8 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:border-white/[0.16] focus:outline-none"
               />
             </div>
             <ul className="space-y-0.5">
@@ -393,8 +393,8 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
                       className={cn(
                         "flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-xs transition",
                         active
-                          ? "bg-white/[0.08] text-white"
-                          : "text-white/60 hover:bg-white/[0.04] hover:text-white/85",
+                          ? "bg-white/[0.08] text-[#F0EFE2]"
+                          : "text-[#F0EFE2]/60 hover:bg-white/[0.04] hover:text-[#F0EFE2]/85",
                       )}
                     >
                       {section.status === "success" ? (
@@ -413,26 +413,26 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
           <div className="flex min-h-0 flex-col">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] px-3 py-2.5">
               <div>
-                <p className="text-sm font-medium text-white">{activeSection?.label ?? "All"}</p>
-                <p className="text-xs text-white/40">
+                <p className="text-sm font-medium text-[#F0EFE2]">{activeSection?.label ?? "All"}</p>
+                <p className="text-xs text-[#F0EFE2]/40">
                   Finished in {formatDuration(activeSection?.durationMs)}
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/30" />
+                  <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/30" />
                   <input
                     value={logSearch}
                     onChange={(e) => setLogSearch(e.target.value)}
                     placeholder="Search logs"
-                    className="h-8 w-40 rounded-md border border-white/[0.08] bg-black/40 pl-8 pr-2 text-xs text-white placeholder:text-white/30 focus:border-white/[0.16] focus:outline-none"
+                    className="h-8 w-40 rounded-md border border-white/[0.08] bg-black/40 pl-8 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:border-white/[0.16] focus:outline-none"
                   />
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white/75"
+                      className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
                       aria-label="Log options"
                     >
                       <MoreHorizontal className="size-4" />
@@ -440,10 +440,10 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="min-w-[160px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-white"
+                    className="min-w-[160px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-[#F0EFE2]"
                   >
                     <DropdownMenuItem
-                      className="gap-2 text-xs text-white/85 focus:bg-[#141414] focus:text-white"
+                      className="gap-2 text-xs text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
                       onSelect={downloadLogs}
                     >
                       <Download className="size-3.5" />
@@ -453,7 +453,7 @@ export function ContinuityLabEnvironmentSnapshotDetail({ snapshotId }: { snapsho
                 </DropdownMenu>
               </div>
             </div>
-            <pre className="min-h-[320px] flex-1 overflow-auto p-4 font-mono text-[11px] leading-relaxed text-white/75">
+            <pre className="min-h-[320px] flex-1 overflow-auto p-4 font-mono text-[11px] leading-relaxed text-[#F0EFE2]/75">
               {displayedLog || "No log lines match your search."}
             </pre>
           </div>

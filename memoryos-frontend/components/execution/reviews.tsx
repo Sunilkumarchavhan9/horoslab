@@ -30,7 +30,7 @@ export function ExecutionReviews() {
             </div>
             {!selectedReview && (
               <div className="flex gap-2">
-                 <Button className="bg-[#2da44e] hover:bg-[#2c974b] text-white rounded-md shadow-sm h-8 px-3 text-xs">
+                 <Button className="bg-[#2da44e] hover:bg-[#2c974b] text-[#F0EFE2] rounded-md shadow-sm h-8 px-3 text-xs">
                     New Review Queue
                  </Button>
               </div>
@@ -103,7 +103,7 @@ export function ExecutionReviews() {
                    <span className="text-black/40 font-normal">#{selectedReview.id.split('-')[1]}</span>
                 </h2>
                 <div className="flex items-center gap-2 mt-2">
-                   <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white ${selectedReview.status === 'APPROVED' ? 'bg-[#8250df]' : selectedReview.status === 'REJECTED' ? 'bg-[#cf222e]' : 'bg-[#2da44e]'}`}>
+                   <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-[#F0EFE2] ${selectedReview.status === 'APPROVED' ? 'bg-[#8250df]' : selectedReview.status === 'REJECTED' ? 'bg-[#cf222e]' : 'bg-[#2da44e]'}`}>
                       {selectedReview.status === 'APPROVED' ? <GitMerge className="size-3.5" /> : <GitPullRequest className="size-3.5" />}
                       {selectedReview.status === 'PENDING' ? 'Open' : selectedReview.status === 'APPROVED' ? 'Merged' : 'Closed'}
                    </div>
@@ -118,7 +118,7 @@ export function ExecutionReviews() {
                    <Button variant="outline" className="h-8 text-xs bg-white text-red-600 hover:text-red-700 hover:bg-red-50 border-black/10">
                       Reject
                    </Button>
-                   <Button className="h-8 text-xs bg-[#2da44e] hover:bg-[#2c974b] text-white shadow-sm">
+                   <Button className="h-8 text-xs bg-[#2da44e] hover:bg-[#2c974b] text-[#F0EFE2] shadow-sm">
                       Approve & Merge
                    </Button>
                 </div>
@@ -210,14 +210,14 @@ export function ExecutionReviews() {
                    {/* Bottom Approval Area */}
                    <div className="relative pt-6 pb-12 flex gap-4">
                       <div className="absolute left-[-11px] top-8 size-6 rounded-full bg-[#2da44e] flex items-center justify-center z-10 border-[3px] border-white">
-                         <Check className="size-3 text-white" />
+                         <Check className="size-3 text-[#F0EFE2]" />
                       </div>
                       <div className="ml-8 w-full bg-[#f6f8fa] border border-[#d0d7de] rounded-md p-4">
                          <h4 className="font-semibold text-black mb-2">Add your review</h4>
                          <textarea className="w-full h-24 border border-[#d0d7de] rounded bg-white p-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#0f52ff]" placeholder="Leave a comment..."></textarea>
                          <div className="flex justify-end mt-3 gap-2">
                             <Button variant="outline" className="h-8 text-xs bg-[#f3f4f6]">Comment</Button>
-                            <Button className="h-8 text-xs bg-[#2da44e] hover:bg-[#2c974b] text-white">Approve Review</Button>
+                            <Button className="h-8 text-xs bg-[#2da44e] hover:bg-[#2c974b] text-[#F0EFE2]">Approve Review</Button>
                          </div>
                       </div>
                    </div>

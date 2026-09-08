@@ -20,7 +20,7 @@ type PersonalAuthShellProps = {
 
 export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
   return (
-    <main className="relative min-h-svh overflow-hidden bg-[#08090c] text-white">
+    <main className="relative min-h-svh overflow-hidden bg-[#08090c] text-[#F0EFE2]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(49,75,244,0.16),rgba(255,255,255,0)_34%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,9,59,0.36)_0%,rgba(10,43,167,0.16)_28%,rgba(8,9,12,0)_58%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_78%,rgba(9,40,145,0.3),rgba(8,9,12,0)_44%)]" />
@@ -39,14 +39,14 @@ export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
 
           <a
             href="#"
-            className="inline-flex min-h-[42px] items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-2 text-[13px] font-semibold text-white/95 shadow-[0_14px_32px_rgba(0,0,0,0.28)] backdrop-blur-md transition hover:bg-[linear-gradient(180deg,#1f2530_0%,#0b0d15_100%)] sm:min-h-[48px] sm:px-6 sm:py-3 sm:text-[15px]"
+            className="inline-flex min-h-[42px] items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-2 text-[13px] font-semibold text-[#F0EFE2]/95 shadow-[0_14px_32px_rgba(0,0,0,0.28)] backdrop-blur-md transition hover:bg-[linear-gradient(180deg,#1f2530_0%,#0b0d15_100%)] sm:min-h-[48px] sm:px-6 sm:py-3 sm:text-[15px]"
           >
             Epoch API↗
           </a>
         </div>
 
         <div className="mx-auto flex w-full max-w-[980px] flex-1 flex-col items-center justify-center pb-6 pt-10 text-center sm:pb-8 sm:pt-14 lg:pt-16">
-          <h1 className="max-w-[980px] text-balance text-[30px] font-semibold tracking-[-0.065em] text-white sm:text-[42px] md:text-[56px] lg:text-[68px]">
+          <h1 className="max-w-[980px] text-balance text-[30px] font-semibold tracking-[-0.065em] text-[#F0EFE2] sm:text-[42px] md:text-[56px] lg:text-[68px]">
             Never forget anything, anywhere with Epoch
           </h1>
 

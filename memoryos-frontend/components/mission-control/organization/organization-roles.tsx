@@ -40,7 +40,7 @@ export function OrganizationRoles() {
  title="Roles & Permissions" 
  description="Manage human access control for the Epoch workspace. Runtime capabilities for AI agents are managed separately under Governance."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
  Create Custom Role
  </button>
@@ -51,19 +51,19 @@ export function OrganizationRoles() {
  <thead>
  <tr className="bg-muted/50 dark:bg-[#050505] border-b border-border dark:border-white/10">
  <th className="px-6 py-3 text-[12px] font-medium text-muted-foreground dark:text-muted-foreground w-[200px]">Feature</th>
- <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-white cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[0])}>
+ <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-[#F0EFE2] cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[0])}>
  Admin
  </th>
- <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-white cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[1])}>
+ <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-[#F0EFE2] cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[1])}>
  Engineer
  </th>
- <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-white cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[2])}>
+ <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-[#F0EFE2] cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[2])}>
  Viewer
  </th>
- <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-white cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[3])}>
+ <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-[#F0EFE2] cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[3])}>
  Finance
  </th>
- <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-white cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[4])}>
+ <th className="px-6 py-3 text-[12px] font-medium text-foreground dark:text-[#F0EFE2] cursor-pointer hover:bg-accent transition-colors" onClick={() => setSelectedRole(ROLES[4])}>
  Security
  </th>
  </tr>
@@ -71,7 +71,7 @@ export function OrganizationRoles() {
  <tbody>
  {PERMISSIONS.map((perm, idx) => (
  <tr key={idx} className="border-b border-border dark:border-white/5 last:border-0 hover:bg-muted/50/50 dark:hover:bg-[#1a1a1a]/50">
- <td className="px-6 py-3 text-[13px] font-medium text-foreground dark:text-white">
+ <td className="px-6 py-3 text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">
  {perm.feature}
  </td>
  <td className="px-6 py-3 text-[12px]">
@@ -114,11 +114,11 @@ export function OrganizationRoles() {
  <div className="flex flex-col gap-2 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] p-6 text-[13px]">
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2">
  <span className="text-muted-foreground">Type</span>
- <span className="font-medium text-foreground dark:text-white">{selectedRole.type}</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2]">{selectedRole.type}</span>
  </div>
  <div className="flex justify-between pt-2">
  <span className="text-muted-foreground">Assigned Members</span>
- <span className="font-mono text-foreground dark:text-white">{selectedRole.members}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2]">{selectedRole.members}</span>
  </div>
  </div>
  </div>
@@ -127,7 +127,7 @@ export function OrganizationRoles() {
  <div className="flex flex-col gap-3">
  <div className="p-6 rounded-md border border-[#0f52ff]/20 bg-[#0f52ff]/5 flex items-start gap-3">
  <ShieldAlert className="size-4 text-[#0f52ff] shrink-0 mt-0.5" />
- <p className="text-[12px] text-foreground/80 dark:text-[#ccc] leading-relaxed">
+ <p className="text-[12px] text-foreground/80 dark:text-[#C8C7BA] leading-relaxed">
  System roles cannot be modified or deleted. To create granular permissions, create a Custom Role instead.
  </p>
  </div>

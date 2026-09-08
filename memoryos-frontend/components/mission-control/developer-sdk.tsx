@@ -41,8 +41,8 @@ export function DeveloperSDK() {
  const renderSidebar = () => (
  <div className="flex flex-col w-full px-6 py-8">
  <div className="flex items-center gap-2 px-3 mb-6">
- <Box className="size-5 text-foreground dark:text-white" />
- <span className="font-semibold text-foreground dark:text-white">Epoch SDK</span>
+ <Box className="size-5 text-foreground dark:text-[#F0EFE2]" />
+ <span className="font-semibold text-foreground dark:text-[#F0EFE2]">Epoch SDK</span>
  </div>
  
  <div className="flex flex-col gap-1">
@@ -53,8 +53,8 @@ export function DeveloperSDK() {
  className={cn(
  "px-3 py-2 rounded-md text-[13px] font-medium text-left transition-colors",
  activeTab === tab 
- ? "bg-muted dark:bg-white/10 text-foreground dark:text-white" 
- : "text-muted-foreground dark:text-muted-foreground hover:bg-accent dark:hover:bg-card/5 hover:text-foreground dark:hover:text-white"
+ ? "bg-muted dark:bg-white/10 text-foreground dark:text-[#F0EFE2]" 
+ : "text-muted-foreground dark:text-muted-foreground hover:bg-accent dark:hover:bg-card/5 hover:text-foreground dark:hover:text-[#F0EFE2]"
  )}
  >
  {tab}
@@ -136,7 +136,7 @@ export function DeveloperSDK() {
  <div className="flex items-center gap-3 px-6 py-6 border-b border-border dark:border-white/5 bg-muted/50 dark:bg-[#030303]">
  <Terminal className="size-4 text-muted-foreground" />
  <span className="text-[13px] font-medium text-foreground dark:text-[#eee]">Live Connection Test</span>
- <button className="ml-auto px-3 py-1.5 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[12px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="ml-auto px-3 py-1.5 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[12px] font-medium flex items-center gap-2 hover:opacity-90">
  <Play className="size-3" />
  Run
  </button>

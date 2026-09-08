@@ -36,7 +36,7 @@ export function ActiveMissionCard({
  </div>
  <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-[4px] tracking-widest uppercase border", 
  mission.status === "running" ? "bg-[#0f52ff]/10 text-[#0f52ff] border-[#0f52ff]/20" : 
- mission.status === "waiting_review" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-muted dark:bg-white/10 text-foreground/60 dark:text-white/60 border-transparent"
+ mission.status === "waiting_review" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-muted dark:bg-white/10 text-foreground/60 dark:text-[#F0EFE2]/60 border-transparent"
  )}>
  {mission.status.replace("_", " ")}
  </span>
@@ -72,7 +72,7 @@ export function ActiveMissionCard({
  <div className={cn("absolute bottom-0 left-0 w-full p-3 flex items-center justify-between gap-2 border-t opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200", isDark ? "bg-[#121212] border-white/10" : "bg-card border-border")}>
  <button 
  onClick={(e) => { e.stopPropagation(); onViewMission?.(mission.id); }}
- className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md bg-[#0f52ff] text-white text-[12px] font-medium hover:bg-[#0f52ff]/90 transition-colors"
+ className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md bg-[#0f52ff] text-[#F0EFE2] text-[12px] font-medium hover:bg-[#0f52ff]/90 transition-colors"
  >
  <Maximize2 className="size-3.5" /> Workspace
  </button>

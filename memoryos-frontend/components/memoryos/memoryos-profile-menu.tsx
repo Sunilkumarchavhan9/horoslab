@@ -41,7 +41,7 @@ export function MemoryosProfileMenuTrigger({
         "grid size-9 place-items-center rounded-full border text-sm font-semibold shadow-sm transition",
         lightShell
           ? "border-[#E5E7EB] bg-white text-[#111827] hover:bg-[#F9FAFB]"
-          : "border-white/[0.08] bg-white/[0.06] text-white hover:bg-white/[0.1]",
+          : "border-white/[0.08] bg-white/[0.06] text-[#F0EFE2] hover:bg-white/[0.1]",
         className,
       )}
       aria-label="Account menu"
@@ -98,7 +98,7 @@ export function MemoryosProfileMenu({
           className={cn(
             "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-[13px] font-medium transition",
             darkMenu
-              ? "text-white/70 hover:bg-white/[0.04] hover:text-white"
+              ? "text-[#F0EFE2]/70 hover:bg-white/[0.04] hover:text-[#F0EFE2]"
               : "text-[#6B7280] hover:bg-[#F9FAFB] hover:text-[#111827]",
             triggerClassName,
           )}
@@ -107,7 +107,7 @@ export function MemoryosProfileMenu({
           <span
             className={cn(
               "grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold",
-              darkMenu ? "bg-white/[0.08] text-white" : "bg-[#E0E7FF] text-[#4338CA]",
+              darkMenu ? "bg-white/[0.08] text-[#F0EFE2]" : "bg-[#E0E7FF] text-[#4338CA]",
             )}
           >
             {userInitial}
@@ -128,7 +128,7 @@ export function MemoryosProfileMenu({
             "absolute top-full z-50 mt-2 w-72 isolate overflow-hidden rounded-md border shadow-xl",
             fullWidthTrigger ? "left-0" : "right-0",
             darkMenu
-              ? "border-white/[0.08] bg-[#141414] text-white"
+              ? "border-white/[0.08] bg-[#141414] text-[#F0EFE2]"
               : "border-[#E5E7EB] bg-white text-[#111827]",
           )}
         >
@@ -142,7 +142,7 @@ export function MemoryosProfileMenu({
             <p
               className={cn(
                 "mt-1 truncate text-sm",
-                darkMenu ? "text-white/55" : "text-[#6B7280]",
+                darkMenu ? "text-[#F0EFE2]/55" : "text-[#6B7280]",
               )}
             >
               {userEmail}
@@ -157,7 +157,7 @@ export function MemoryosProfileMenu({
             <p
               className={cn(
                 "mb-2 text-[10px] font-semibold uppercase tracking-[0.14em]",
-                darkMenu ? "text-white/40" : "text-[#9CA3AF]",
+                darkMenu ? "text-[#F0EFE2]/40" : "text-[#9CA3AF]",
               )}
             >
               Theme

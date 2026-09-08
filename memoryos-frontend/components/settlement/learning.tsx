@@ -159,7 +159,7 @@ export function SettlementLearning() {
                 
                 {selectedLearning.status === 'APPLIED' && (
                    <div className="mt-12 bg-[#e6ffec] border border-[#2da44e]/30 p-6 rounded-md w-full max-w-md flex flex-col items-center text-center">
-                      <div className="size-12 bg-[#2da44e] rounded-full flex items-center justify-center text-white mb-4">
+                      <div className="size-12 bg-[#2da44e] rounded-full flex items-center justify-center text-[#F0EFE2] mb-4">
                          <CheckCircle2 className="size-6" />
                       </div>
                       <h4 className="font-bold text-[#2da44e] text-lg mb-1">Institution Evolved</h4>
@@ -176,10 +176,10 @@ export function SettlementLearning() {
 
 function Metric({ label, value, icon, color, highlight }: any) {
    return (
-      <div className={`p-4 rounded-md border flex flex-col justify-between ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-white shadow-lg' : 'bg-white border-black/5 shadow-sm text-black'}`}>
+      <div className={`p-4 rounded-md border flex flex-col justify-between ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-[#F0EFE2] shadow-lg' : 'bg-white border-black/5 shadow-sm text-black'}`}>
          <div className="flex justify-between items-start mb-2">
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${highlight ? 'text-white/70' : 'text-black/50'}`}>{label}</div>
-            <div className={highlight ? 'text-white' : color || 'text-black/40'}>{icon}</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${highlight ? 'text-[#F0EFE2]/70' : 'text-black/50'}`}>{label}</div>
+            <div className={highlight ? 'text-[#F0EFE2]' : color || 'text-black/40'}>{icon}</div>
          </div>
          <div className="text-2xl font-bold tracking-tight">{value}</div>
       </div>
@@ -188,9 +188,9 @@ function Metric({ label, value, icon, color, highlight }: any) {
 
 function VersionNode({ version, detail, highlight }: any) {
    return (
-      <div className={`flex flex-col items-center text-center w-32 relative z-10 p-3 rounded-md border ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-white scale-110 shadow-lg' : 'bg-white border-black/10 text-black'}`}>
-         <div className={`font-bold mb-1 ${highlight ? 'text-white' : 'text-black'}`}>{version}</div>
-         <div className={`text-[10px] ${highlight ? 'text-white/80' : 'text-black/50'}`}>{detail}</div>
+      <div className={`flex flex-col items-center text-center w-32 relative z-10 p-3 rounded-md border ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-[#F0EFE2] scale-110 shadow-lg' : 'bg-white border-black/10 text-black'}`}>
+         <div className={`font-bold mb-1 ${highlight ? 'text-[#F0EFE2]' : 'text-black'}`}>{version}</div>
+         <div className={`text-[10px] ${highlight ? 'text-[#F0EFE2]/80' : 'text-black/50'}`}>{detail}</div>
       </div>
    )
 }
@@ -219,7 +219,7 @@ function PatternNode({ icon, title, detail, type, highlight, status }: any) {
             <div className="flex justify-between items-start mb-0.5">
                <div className="font-bold text-black text-sm">{title}</div>
                {status && (
-                  <div className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${status === 'APPLIED' ? 'bg-[#2da44e] text-white' : 'bg-black/10 text-black/60'}`}>{status}</div>
+                  <div className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${status === 'APPLIED' ? 'bg-[#2da44e] text-[#F0EFE2]' : 'bg-black/10 text-black/60'}`}>{status}</div>
                )}
             </div>
             <div className="text-xs text-black/60 font-medium leading-relaxed">{detail}</div>

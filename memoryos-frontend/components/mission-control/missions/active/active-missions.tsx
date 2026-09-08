@@ -28,7 +28,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  const { resolved } = useThemePreference();
  const isDark = resolved === "dark";
  const bgCard = isDark ? "bg-[#121212] border-white/10" : "bg-card border-border";
- const textMuted = isDark ? "text-white/50" : "text-foreground/50";
+ const textMuted = isDark ? "text-[#F0EFE2]/50" : "text-foreground/50";
 
  useEffect(() => {
  const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
@@ -171,7 +171,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  <div className="flex items-center justify-between">
  <div>
  <div className="flex items-center gap-3">
- <h1 className={cn("text-xl font-semibold tracking-tight", isDark ? "text-white" : "text-foreground")}>Active Missions</h1>
+ <h1 className={cn("text-xl font-semibold tracking-tight", isDark ? "text-[#F0EFE2]" : "text-foreground")}>Active Missions</h1>
  <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5", isDark ? "bg-[#eef7ee]/10 text-[#4ade80]" : "bg-[#eef7ee] text-[#2a7b2a]")}>
  <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isDark ? "bg-[#4ade80]" : "bg-[#2a7b2a]")} />
  Live Control
@@ -184,11 +184,11 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  <div className={cn("flex items-center gap-6 mr-4 border-r pr-6", isDark ? "border-white/10" : "border-border")}>
  <div className="flex flex-col">
  <span className={cn("text-[11px] font-medium uppercase tracking-wider", textMuted)}>Active Missions</span>
- <span className={cn("text-[18px] font-semibold", isDark ? "text-white" : "text-foreground")}>{summary.active}</span>
+ <span className={cn("text-[18px] font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{summary.active}</span>
  </div>
  <div className="flex flex-col">
  <span className={cn("text-[11px] font-medium uppercase tracking-wider", textMuted)}>Running Agents</span>
- <span className={cn("text-[18px] font-semibold", isDark ? "text-white" : "text-foreground")}>{summary.workers}</span>
+ <span className={cn("text-[18px] font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{summary.workers}</span>
  </div>
  <div className="flex flex-col">
  <span className={cn("text-[11px] font-medium uppercase tracking-wider", textMuted)}>Waiting Approval</span>
@@ -204,11 +204,11 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  </div>
  <div className="flex flex-col">
  <span className={cn("text-[11px] font-medium uppercase tracking-wider", textMuted)}>Average Duration</span>
- <span className={cn("text-[18px] font-semibold", isDark ? "text-white" : "text-foreground")}>{summary.avgDuration}</span>
+ <span className={cn("text-[18px] font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{summary.avgDuration}</span>
  </div>
  </div>
 
- <button onClick={handleCreateMission} disabled={creating} className="flex items-center gap-2 px-6 py-1.5 bg-[#0f52ff] text-white rounded-md text-[13px] font-semibold hover:bg-[#0f52ff]/90 transition-colors ">
+ <button onClick={handleCreateMission} disabled={creating} className="flex items-center gap-2 px-6 py-1.5 bg-[#0f52ff] text-[#F0EFE2] rounded-md text-[13px] font-semibold hover:bg-[#0f52ff]/90 transition-colors ">
  <Plus className="size-4" /> {creating ? "Launching..." : "Launch Mission"}
  </button>
  </div>
@@ -221,7 +221,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  {/* Center Grid */}
  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 relative">
  <div className="flex items-center gap-3 mb-6">
- <div className={cn("flex items-center gap-2 px-3 py-1.5 bg-card dark:bg-[#121212] border rounded-md text-[13px] flex-1 max-w-sm transition-colors cursor-text", isDark ? "border-white/10 text-white" : "border-border text-foreground")}>
+ <div className={cn("flex items-center gap-2 px-3 py-1.5 bg-card dark:bg-[#121212] border rounded-md text-[13px] flex-1 max-w-sm transition-colors cursor-text", isDark ? "border-white/10 text-[#F0EFE2]" : "border-border text-foreground")}>
  <Search className="size-4 shrink-0 opacity-50" />
  <input 
  type="text" 
@@ -235,7 +235,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  <div className="flex gap-2">
  {['Filter', 'Priority', 'Institution', 'Status'].map(filter => (
  <button key={filter} className={cn("px-3 py-1.5 border rounded-md text-[12.5px] font-medium transition-colors", 
- isDark ? "bg-[#121212] border-white/10 hover:bg-card/5 text-white/80" : "bg-card border-border hover:bg-accent text-foreground/80"
+ isDark ? "bg-[#121212] border-white/10 hover:bg-card/5 text-[#F0EFE2]/80" : "bg-card border-border hover:bg-accent text-foreground/80"
  )}>
  {filter} <span className="ml-1 opacity-50">▾</span>
  </button>
@@ -245,8 +245,8 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
 
  {visibleMissions.length === 0 ? (
  <div className="flex flex-col items-center justify-center w-full min-h-[400px] text-center border-2 border-dashed rounded-md border-border dark:border-white/10 bg-muted/50 dark:bg-white/[0.02]">
- <Rocket className="size-12 mb-4 text-foreground/20 dark:text-white/20" />
- <h3 className="text-lg font-semibold mb-1 text-foreground/80 dark:text-white/80">
+ <Rocket className="size-12 mb-4 text-foreground/20 dark:text-[#F0EFE2]/20" />
+ <h3 className="text-lg font-semibold mb-1 text-foreground/80 dark:text-[#F0EFE2]/80">
  {query
   ? "No missions found"
   : githubConnected
@@ -265,7 +265,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
    type="button"
    onClick={() => void handleCreateMission()}
    disabled={creating || !workspaceId}
-   className="flex items-center gap-2 px-5 py-2 bg-[#0f52ff] text-white rounded-md text-[13px] font-semibold hover:bg-[#0f52ff]/90 transition-colors disabled:opacity-60"
+   className="flex items-center gap-2 px-5 py-2 bg-[#0f52ff] text-[#F0EFE2] rounded-md text-[13px] font-semibold hover:bg-[#0f52ff]/90 transition-colors disabled:opacity-60"
   >
    <Plus className="size-4" />
    {creating ? "Launching..." : githubConnected ? "Launch Release v1.0" : "Launch Mission"}

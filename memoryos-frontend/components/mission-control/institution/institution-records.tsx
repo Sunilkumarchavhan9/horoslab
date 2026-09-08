@@ -64,20 +64,20 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  const selectedInst = MOCK_INSTITUTIONS.find(i => i.id === selectedId);
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-white font-sans">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-[#F0EFE2] font-sans">
  <CommandBar>
  <div className="flex items-center gap-6 w-1/2">
  <div className="relative w-full max-w-md">
- <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-foreground/40 dark:text-white/40" />
+ <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-foreground/40 dark:text-[#F0EFE2]/40" />
  <input 
  type="text" 
  placeholder="Search institutions..." 
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-muted dark:bg-white/5 border border-border dark:border-white/10 rounded-md h-9 pl-9 pr-4 text-[13px] text-foreground dark:text-white placeholder:text-foreground/30 dark:text-white/30 focus:outline-none focus:border-[#0f52ff]/50 focus:ring-1 focus:ring-[#0f52ff]/20 transition-all"
+ className="w-full bg-muted dark:bg-white/5 border border-border dark:border-white/10 rounded-md h-9 pl-9 pr-4 text-[13px] text-foreground dark:text-[#F0EFE2] placeholder:text-foreground/30 dark:text-[#F0EFE2]/30 focus:outline-none focus:border-[#0f52ff]/50 focus:ring-1 focus:ring-[#0f52ff]/20 transition-all"
  />
  </div>
- <button className="p-2 rounded-md hover:bg-accent dark:bg-white/5 text-foreground/60 dark:text-white/60 hover:text-foreground dark:text-white transition-colors border border-transparent hover:border-border dark:border-white/10">
+ <button className="p-2 rounded-md hover:bg-accent dark:bg-white/5 text-foreground/60 dark:text-[#F0EFE2]/60 hover:text-foreground dark:text-[#F0EFE2] transition-colors border border-transparent hover:border-border dark:border-white/10">
  <Filter className="size-4" />
  </button>
  </div>
@@ -85,18 +85,18 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  <div className="flex items-center p-0.5 bg-muted dark:bg-white/5 rounded-md border border-border dark:border-white/10 mr-4">
  <button 
  onClick={() => setViewMode("list")}
- className={cn("p-1.5 rounded-sm transition-colors", viewMode === "list" ? "bg-black/10 dark:bg-white/10 text-foreground dark:text-white" : "text-foreground/40 dark:text-white/40 hover:text-foreground dark:text-white")}
+ className={cn("p-1.5 rounded-sm transition-colors", viewMode === "list" ? "bg-black/10 dark:bg-white/10 text-foreground dark:text-[#F0EFE2]" : "text-foreground/40 dark:text-[#F0EFE2]/40 hover:text-foreground dark:text-[#F0EFE2]")}
  >
  <List className="size-3.5" />
  </button>
  <button 
  onClick={() => setViewMode("grid")}
- className={cn("p-1.5 rounded-sm transition-colors", viewMode === "grid" ? "bg-black/10 dark:bg-white/10 text-foreground dark:text-white" : "text-foreground/40 dark:text-white/40 hover:text-foreground dark:text-white")}
+ className={cn("p-1.5 rounded-sm transition-colors", viewMode === "grid" ? "bg-black/10 dark:bg-white/10 text-foreground dark:text-[#F0EFE2]" : "text-foreground/40 dark:text-[#F0EFE2]/40 hover:text-foreground dark:text-[#F0EFE2]")}
  >
  <LayoutGrid className="size-3.5" />
  </button>
  </div>
- <button className="flex items-center gap-2 px-3 py-1.5 bg-[#0f52ff] hover:bg-[#0042e6] text-foreground dark:text-white rounded-md text-[13px] font-medium transition-colors">
+ <button className="flex items-center gap-2 px-3 py-1.5 bg-[#0f52ff] hover:bg-[#0042e6] text-foreground dark:text-[#F0EFE2] rounded-md text-[13px] font-medium transition-colors">
  <Plus className="size-4" />
  Institution
  </button>
@@ -108,13 +108,13 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
  <div className="flex items-center justify-between mb-6">
  <h1 className="text-[24px] font-semibold tracking-tight">Active Institutions</h1>
- <span className="text-[13px] text-foreground/50 dark:text-white/50">{MOCK_INSTITUTIONS.length} running</span>
+ <span className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50">{MOCK_INSTITUTIONS.length} running</span>
  </div>
 
  {viewMode === "list" ? (
  <div className="rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#121212] overflow-hidden">
  <table className="w-full text-left text-[13px]">
- <thead className="bg-muted dark:bg-white/5 border-b border-border dark:border-white/10 text-foreground/50 dark:text-white/50 font-medium">
+ <thead className="bg-muted dark:bg-white/5 border-b border-border dark:border-white/10 text-foreground/50 dark:text-[#F0EFE2]/50 font-medium">
  <tr>
  <th className="px-6 py-3 font-medium">Institution</th>
  <th className="px-6 py-3 font-medium">Status</th>
@@ -136,10 +136,10 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  )}
  >
  <td className="px-6 py-3.5">
- <div className="font-semibold text-foreground dark:text-white group-hover:text-[#0f52ff] transition-colors">{inst.name}</div>
+ <div className="font-semibold text-foreground dark:text-[#F0EFE2] group-hover:text-[#0f52ff] transition-colors">{inst.name}</div>
  </td>
  <td className="px-6 py-3.5"><StatusBadge status={inst.status} /></td>
- <td className="px-6 py-3.5 text-foreground/70 dark:text-white/70">{inst.owner}</td>
+ <td className="px-6 py-3.5 text-foreground/70 dark:text-[#F0EFE2]/70">{inst.owner}</td>
  <td className="px-6 py-3.5">
  <span className={cn(
  "px-2 py-0.5 rounded text-[11px] font-medium",
@@ -148,7 +148,7 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  "bg-red-500/10 text-red-500"
  )}>{inst.risk}</span>
  </td>
- <td className="px-6 py-3.5 font-mono text-[12px] text-foreground/60 dark:text-white/60">{inst.version}</td>
+ <td className="px-6 py-3.5 font-mono text-[12px] text-foreground/60 dark:text-[#F0EFE2]/60">{inst.version}</td>
  <td className="px-6 py-3.5">
  <div className="flex items-center gap-2">
  <div className="w-16 h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
@@ -157,13 +157,13 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  style={{ width: `${inst.health}%` }} 
  />
  </div>
- <span className="text-[11px] text-foreground/50 dark:text-white/50 w-6">{inst.health}%</span>
+ <span className="text-[11px] text-foreground/50 dark:text-[#F0EFE2]/50 w-6">{inst.health}%</span>
  </div>
  </td>
  <td className="px-6 py-3.5 text-right">
  <button 
  onClick={(e) => { e.stopPropagation(); onSelect?.(inst.id); }}
- className="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-black/10 dark:bg-white/10 text-foreground/60 dark:text-white/60 hover:text-foreground dark:text-white transition-all flex items-center gap-1 text-[12px] font-medium"
+ className="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-black/10 dark:bg-white/10 text-foreground/60 dark:text-[#F0EFE2]/60 hover:text-foreground dark:text-[#F0EFE2] transition-all flex items-center gap-1 text-[12px] font-medium"
  >
  Open <ArrowRight className="size-3.5" />
  </button>
@@ -190,29 +190,29 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  </div>
  
  <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-[12px] mb-5">
- <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-white/40">Version</span><span className="font-mono text-foreground/80 dark:text-white/80">{inst.version}</span></div>
- <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-white/40">Missions</span><span className="text-foreground/80 dark:text-white/80">{inst.missions}</span></div>
- <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-white/40">Agents</span><span className="text-foreground/80 dark:text-white/80">{inst.agents}</span></div>
- <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-white/40">Last Mutation</span><span className="text-foreground/80 dark:text-white/80">{inst.lastMutation}</span></div>
+ <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-[#F0EFE2]/40">Version</span><span className="font-mono text-foreground/80 dark:text-[#F0EFE2]/80">{inst.version}</span></div>
+ <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-[#F0EFE2]/40">Missions</span><span className="text-foreground/80 dark:text-[#F0EFE2]/80">{inst.missions}</span></div>
+ <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-[#F0EFE2]/40">Agents</span><span className="text-foreground/80 dark:text-[#F0EFE2]/80">{inst.agents}</span></div>
+ <div className="flex flex-col gap-1"><span className="text-foreground/40 dark:text-[#F0EFE2]/40">Last Mutation</span><span className="text-foreground/80 dark:text-[#F0EFE2]/80">{inst.lastMutation}</span></div>
  </div>
 
  <div className="flex items-center gap-3 mt-auto pt-4 border-t border-border dark:border-white/5">
  <div className="flex-1 flex items-center gap-2">
- <div className="text-[11px] font-medium text-foreground/50 dark:text-white/50">Health</div>
+ <div className="text-[11px] font-medium text-foreground/50 dark:text-[#F0EFE2]/50">Health</div>
  <div className="flex-1 h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
  <div 
  className={cn("h-full rounded-full", inst.health > 90 ? "bg-emerald-500" : inst.health > 50 ? "bg-amber-500" : "bg-red-500")} 
  style={{ width: `${inst.health}%` }} 
  />
  </div>
- <div className="text-[11px] font-mono text-foreground/80 dark:text-white/80">{inst.health}%</div>
+ <div className="text-[11px] font-mono text-foreground/80 dark:text-[#F0EFE2]/80">{inst.health}%</div>
  </div>
  </div>
  
  {selectedId === inst.id && (
  <button 
  onClick={(e) => { e.stopPropagation(); onSelect?.(inst.id); }}
- className="absolute inset-0 z-10 m-auto h-8 w-24 bg-[#0f52ff] text-foreground dark:text-white text-[12px] font-medium rounded-md flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity "
+ className="absolute inset-0 z-10 m-auto h-8 w-24 bg-[#0f52ff] text-foreground dark:text-[#F0EFE2] text-[12px] font-medium rounded-md flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity "
  >
  Open <ArrowRight className="size-3.5" />
  </button>
@@ -230,9 +230,9 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  <div className="flex items-start justify-between">
  <div>
  <h2 className="text-[18px] font-semibold tracking-tight">{selectedInst.name}</h2>
- <div className="text-[13px] text-foreground/50 dark:text-white/50 mt-1">{selectedInst.id}</div>
+ <div className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50 mt-1">{selectedInst.id}</div>
  </div>
- <button className="p-1.5 rounded hover:bg-black/10 dark:bg-white/10 text-foreground/50 dark:text-white/50 hover:text-foreground dark:text-white transition-colors">
+ <button className="p-1.5 rounded hover:bg-black/10 dark:bg-white/10 text-foreground/50 dark:text-[#F0EFE2]/50 hover:text-foreground dark:text-[#F0EFE2] transition-colors">
  <MoreHorizontal className="size-4" />
  </button>
  </div>
@@ -250,29 +250,29 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  </div>
 
  <div className="space-y-4 border-t border-border dark:border-white/10 pt-5">
- <h3 className="text-[11px] font-semibold uppercase tracking-wider text-foreground/40 dark:text-white/40">Properties</h3>
+ <h3 className="text-[11px] font-semibold uppercase tracking-wider text-foreground/40 dark:text-[#F0EFE2]/40">Properties</h3>
  <div className="grid grid-cols-2 gap-6 text-[13px]">
  <div className="flex flex-col gap-1">
- <span className="text-foreground/40 dark:text-white/40">Owner</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Owner</span>
  <span>{selectedInst.owner}</span>
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-foreground/40 dark:text-white/40">Runtime</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Runtime</span>
  <span>14,204 hrs</span>
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-foreground/40 dark:text-white/40">Policies</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Policies</span>
  <span>24 active</span>
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-foreground/40 dark:text-white/40">Evidence</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Evidence</span>
  <span>1.2M records</span>
  </div>
  </div>
  </div>
 
  <div className="space-y-4 border-t border-border dark:border-white/10 pt-5">
- <h3 className="text-[11px] font-semibold uppercase tracking-wider text-foreground/40 dark:text-white/40">Recent Missions</h3>
+ <h3 className="text-[11px] font-semibold uppercase tracking-wider text-foreground/40 dark:text-[#F0EFE2]/40">Recent Missions</h3>
  <div className="space-y-2">
  {[1, 2, 3].map(i => (
  <div key={i} className="p-3 rounded-md border border-border dark:border-white/5 bg-card/[0.02] hover:bg-card/[0.04] cursor-pointer transition-colors group">
@@ -280,14 +280,14 @@ export function InstitutionRecords({ onSelect }: { onSelect?: (id: string) => vo
  <span className="text-[12px] font-medium group-hover:text-[#0f52ff] transition-colors">Security Audit Q{i}</span>
  <span className="text-[10px] text-emerald-500 font-bold uppercase">Pass</span>
  </div>
- <div className="text-[11px] text-foreground/40 dark:text-white/40">Completed 2 days ago</div>
+ <div className="text-[11px] text-foreground/40 dark:text-[#F0EFE2]/40">Completed 2 days ago</div>
  </div>
  ))}
  </div>
  </div>
  </div>
  ) : (
- <div className="flex items-center justify-center h-full text-foreground/30 dark:text-white/30 text-[13px]">
+ <div className="flex items-center justify-center h-full text-foreground/30 dark:text-[#F0EFE2]/30 text-[13px]">
  Select an institution
  </div>
  )}

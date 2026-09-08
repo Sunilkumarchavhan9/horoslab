@@ -102,7 +102,7 @@ export function RealityFabricEventTimeline() {
  key={filter}
  className={cn(
  "px-3 py-1.5 rounded-full text-[12px] font-medium transition-colors border",
- filter === "All" ? "bg-black text-white border-black" : "bg-card border-border text-muted-foreground hover:bg-muted hover:text-foreground/80"
+ filter === "All" ? "bg-black text-[#F0EFE2] border-black" : "bg-card border-border text-muted-foreground hover:bg-muted hover:text-foreground/80"
  )}
  >
  {filter}

@@ -290,15 +290,15 @@ export function AdaptiveRewardObservatory() {
           <div className="flex items-center gap-4">
             <h3 className="text-[14px] font-bold text-gray-900 tracking-wide uppercase">Adaptive Reward Observatory</h3>
             {isInteractive && (
-              <button onClick={() => setShowCounterfactual(!showCounterfactual)} className="text-[10px] font-bold bg-white border border-gray-200 px-2 py-1 rounded hover:bg-gray-50 transition-colors text-gray-500 uppercase z-20 relative">
+              <button onClick={() => setShowCounterfactual(!showCounterfactual)} className="text-[10px] font-bold bg-white border border-gray-200 px-2 py-1 rounded hover:bg-gray-50 transition-colors text-[#C8C7BA] uppercase z-20 relative">
                 {showCounterfactual ? "Hide Futures" : "Compare Futures"}
               </button>
             )}
           </div>
           <div className="text-right">
-            <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-1">Live Readout</div>
+            <div className="text-[10px] text-[#C8C7BA] font-mono uppercase tracking-widest mb-1">Live Readout</div>
             <div className="flex items-baseline gap-4">
-              <div className="text-[11px] font-mono text-gray-400">Step {activeStep.toLocaleString()}</div>
+              <div className="text-[11px] font-mono text-[#C8C7BA]">Step {activeStep.toLocaleString()}</div>
               <div className={`text-[20px] font-mono font-bold ${activeReward >= 0.9 ? 'text-emerald-600' : 'text-[#2477ff]'}`}>
                 {activeReward.toFixed(3)}
               </div>
@@ -383,7 +383,7 @@ export function AdaptiveRewardObservatory() {
 
       {/* RIGHT: Configuration Console */}
       <div className="flex-[3] flex flex-col justify-center">
-        <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-6 border-b border-blue-100 pb-2">Experiment Ledger</div>
+        <div className="text-[10px] text-[#C8C7BA] font-mono uppercase tracking-widest mb-6 border-b border-blue-100 pb-2">Experiment Ledger</div>
         <div className="flex flex-col gap-5">
           {[
             { label: "max_steps", value: "10,000" },

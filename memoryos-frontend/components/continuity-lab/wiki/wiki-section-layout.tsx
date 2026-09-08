@@ -20,7 +20,7 @@ export function WikiSectionLayout({
   return (
     <div className={cn("space-y-8", className)}>
       {description ? (
-        <p className="max-w-3xl text-sm leading-relaxed text-white/65">{description}</p>
+        <p className="max-w-3xl text-sm leading-relaxed text-[#F0EFE2]/65">{description}</p>
       ) : null}
       {children}
       {footer}
@@ -39,9 +39,9 @@ export function WikiContentBlock({ title, description, children, className }: Wi
   return (
     <section className={cn("space-y-3", className)}>
       <div>
-        <h3 className="text-sm font-semibold text-white">{title}</h3>
+        <h3 className="text-sm font-semibold text-[#F0EFE2]">{title}</h3>
         {description ? (
-          <p className="mt-1 text-xs leading-relaxed text-white/45">{description}</p>
+          <p className="mt-1 text-xs leading-relaxed text-[#F0EFE2]/45">{description}</p>
         ) : null}
       </div>
       {children}
@@ -58,14 +58,14 @@ type WikiDataTableProps = {
 export function WikiDataTable({ columns, rows, emptyMessage }: WikiDataTableProps) {
   if (!rows.length) {
     return emptyMessage ? (
-      <p className="text-sm text-white/45">{emptyMessage}</p>
+      <p className="text-sm text-[#F0EFE2]/45">{emptyMessage}</p>
     ) : null;
   }
 
   return (
     <div className={cn(subtlePanel(), "overflow-x-auto")}>
       <table className="w-full min-w-[320px] text-left text-sm">
-        <thead className="border-b border-white/[0.06] bg-[#1a1a1a] text-[10px] uppercase tracking-wide text-white/40">
+        <thead className="border-b border-white/[0.06] bg-[#1a1a1a] text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
           <tr>
             {columns.map((col) => (
               <th key={col.key} className={cn("px-4 py-2 font-semibold", col.className)}>
@@ -78,7 +78,7 @@ export function WikiDataTable({ columns, rows, emptyMessage }: WikiDataTableProp
           {rows.map((row, index) => (
             <tr key={index} className="border-b border-white/[0.06] last:border-0">
               {columns.map((col) => (
-                <td key={col.key} className={cn("px-4 py-2.5 text-white/75", col.className)}>
+                <td key={col.key} className={cn("px-4 py-2.5 text-[#F0EFE2]/75", col.className)}>
                   {row[col.key]}
                 </td>
               ))}
@@ -100,9 +100,9 @@ export function WikiMetricCards({ items }: WikiMetricCardsProps) {
     <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
         <div key={item.label} className={cn(subtlePanel(), "p-3")}>
-          <dt className="text-[10px] uppercase tracking-wide text-white/40">{item.label}</dt>
-          <dd className="mt-1 text-lg font-semibold text-white">{item.value}</dd>
-          {item.hint ? <dd className="mt-1 text-xs text-white/45">{item.hint}</dd> : null}
+          <dt className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">{item.label}</dt>
+          <dd className="mt-1 text-lg font-semibold text-[#F0EFE2]">{item.value}</dd>
+          {item.hint ? <dd className="mt-1 text-xs text-[#F0EFE2]/45">{item.hint}</dd> : null}
         </div>
       ))}
     </dl>

@@ -172,7 +172,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
         <div className="flex items-center justify-between p-4 border-b border-dashed border-[#282828] bg-[#171717]">
           <div className="flex items-center gap-2.5">
             <Package className="text-[#75bf00]" size={18} />
-            <h2 className="text-base font-bold text-white tracking-wide">
+            <h2 className="text-base font-bold text-[#F0EFE2] tracking-wide">
               Reproducibility Bundle &amp; Download Kit
             </h2>
             <span className="text-[10px] text-[#889284] border border-[#2e2e2e] bg-[#202020] px-2 py-0.5 font-bold">
@@ -183,7 +183,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
           <button
             type="button"
             onClick={onClose}
-            className="text-[#889284] hover:text-white transition-colors cursor-pointer p-1"
+            className="text-[#889284] hover:text-[#F0EFE2] transition-colors cursor-pointer p-1"
           >
             <X size={18} />
           </button>
@@ -198,8 +198,8 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
               className={cn(
                 "py-2.5 transition-colors border-b-2 cursor-pointer font-bold",
                 activeTab === "export"
-                  ? "border-[#75bf00] text-white"
-                  : "border-transparent text-[#889284] hover:text-white"
+                  ? "border-[#75bf00] text-[#F0EFE2]"
+                  : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
               )}
             >
               Export Stack File Tree (Sec 49)
@@ -210,8 +210,8 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
               className={cn(
                 "py-2.5 transition-colors border-b-2 cursor-pointer font-bold",
                 activeTab === "download"
-                  ? "border-[#75bf00] text-white"
-                  : "border-transparent text-[#889284] hover:text-white"
+                  ? "border-[#75bf00] text-[#F0EFE2]"
+                  : "border-transparent text-[#889284] hover:text-[#F0EFE2]"
               )}
             >
               Download Kit Manifests (Sec 50)
@@ -250,7 +250,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
                           "flex items-center gap-2 w-full text-left px-2 py-1 transition-colors cursor-pointer",
                           selectedFile === item.path
                             ? "bg-[#252525] text-[#75bf00] font-bold"
-                            : "text-[#a0a89d] hover:text-white hover:bg-[#1a1a1a]"
+                            : "text-[#a0a89d] hover:text-[#F0EFE2] hover:bg-[#1a1a1a]"
                         )}
                       >
                         <File size={13} />
@@ -261,7 +261,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
 
                   return (
                     <div key={idx} className="space-y-1">
-                      <div className="flex items-center gap-2 text-white font-bold px-2 py-1">
+                      <div className="flex items-center gap-2 text-[#F0EFE2] font-bold px-2 py-1">
                         <Folder size={13} className="text-[#eab308]" />
                         <span>{item.name}</span>
                       </div>
@@ -276,7 +276,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
                               "flex items-center gap-2 w-full text-left px-2 py-1 transition-colors cursor-pointer",
                               selectedFile === child.path
                                 ? "bg-[#252525] text-[#75bf00] font-bold"
-                                : "text-[#a0a89d] hover:text-white hover:bg-[#1a1a1a]"
+                                : "text-[#a0a89d] hover:text-[#F0EFE2] hover:bg-[#1a1a1a]"
                             )}
                           >
                             <File size={13} />
@@ -294,7 +294,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
             <div className="md:col-span-2 p-4 space-y-3 flex flex-col justify-between overflow-hidden bg-[#141414]">
               <div className="space-y-2 flex-1 overflow-hidden flex flex-col">
                 <div className="flex items-center justify-between border-b border-[#282828] pb-2">
-                  <div className="flex items-center gap-2 font-bold text-white text-xs">
+                  <div className="flex items-center gap-2 font-bold text-[#F0EFE2] text-xs">
                     <FileCode size={14} className="text-[#75bf00]" />
                     <span>{selectedFile}</span>
                   </div>
@@ -302,7 +302,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
                   <button
                     type="button"
                     onClick={handleCopy}
-                    className="flex items-center gap-1 text-[#889284] hover:text-white text-xs transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-[#889284] hover:text-[#F0EFE2] text-xs transition-colors cursor-pointer"
                   >
                     {copied ? <Check size={13} className="text-[#75bf00]" /> : <Copy size={13} />}
                     <span>{copied ? "Copied!" : "Copy"}</span>
@@ -323,7 +323,7 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
           <div className="p-6 space-y-4 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[#282828] pb-3">
               <div>
-                <h3 className="font-bold text-white text-sm">Runnable Delivery Bundle</h3>
+                <h3 className="font-bold text-[#F0EFE2] text-sm">Runnable Delivery Bundle</h3>
                 <p className="text-xs text-[#889284] font-sans">
                   Copy or export reproducible execution manifests for serving, containers, and physical sensor setups.
                 </p>
@@ -338,8 +338,8 @@ Run \`docker build -t vllm-optimized .\` to build and deploy locally or to your 
                     className={cn(
                       "px-3 py-1 text-xs font-mono transition-colors border cursor-pointer",
                       downloadTab === tab
-                        ? "border-[#555555] bg-[#222222] text-white font-bold"
-                        : "border-[#282828] bg-[#171717] text-[#889284] hover:text-white"
+                        ? "border-[#555555] bg-[#222222] text-[#F0EFE2] font-bold"
+                        : "border-[#282828] bg-[#171717] text-[#889284] hover:text-[#F0EFE2]"
                     )}
                   >
                     {tab === "vllm" ? "vLLM Config" : tab === "docker" ? "Dockerfile" : tab === "k8s" ? "Kubernetes" : "Perception / Sensor"}

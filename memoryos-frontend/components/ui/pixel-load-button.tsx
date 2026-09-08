@@ -45,8 +45,8 @@ export function pixelToneFromClassName(className?: string): PixelLoadTone {
     || className.includes("bg-[#F9FAFB]")
     || className.includes("text-[#374151]")
   ) {
-    return className.includes("bg-[#111827]") || className.includes("text-white") ? "dark" : "light";
+    return className.includes("bg-[#111827]") || className.includes("text-[#F0EFE2]") ? "dark" : "light";
   }
-  if (className.includes("bg-[#111827]") || className.includes("text-white")) return "dark";
+  if (className.includes("bg-[#111827]") || className.includes("text-[#F0EFE2]")) return "dark";
   return "muted";
 }

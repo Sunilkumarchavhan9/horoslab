@@ -30,23 +30,23 @@ export function VerificationPassFail() {
            </h1>
            
            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="col-span-2 bg-[#2da44e] rounded-md p-6 text-white shadow-[0_12px_40px_rgba(45,164,78,0.2)] flex flex-col justify-between relative overflow-hidden">
+              <div className="col-span-2 bg-[#2da44e] rounded-md p-6 text-[#F0EFE2] shadow-[0_12px_40px_rgba(45,164,78,0.2)] flex flex-col justify-between relative overflow-hidden">
                  <div className="absolute top-0 right-0 p-4 opacity-20"><CheckCircle2 className="size-24" /></div>
                  <div className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-90">Total Passed</div>
                  <div className="text-6xl font-bold tracking-tighter">1,204</div>
               </div>
               
-              <div className="bg-[#cf222e] rounded-md p-6 text-white shadow-sm flex flex-col justify-between">
+              <div className="bg-[#cf222e] rounded-md p-6 text-[#F0EFE2] shadow-sm flex flex-col justify-between">
                  <div className="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Failed</div>
                  <div className="text-4xl font-bold tracking-tighter">23</div>
               </div>
               
-              <div className="bg-[#6e7781] rounded-md p-6 text-white shadow-sm flex flex-col justify-between">
+              <div className="bg-[#6e7781] rounded-md p-6 text-[#F0EFE2] shadow-sm flex flex-col justify-between">
                  <div className="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Unknown</div>
                  <div className="text-4xl font-bold tracking-tighter">14</div>
               </div>
               
-              <div className="bg-[#0f52ff] rounded-md p-6 text-white shadow-sm flex flex-col justify-between">
+              <div className="bg-[#0f52ff] rounded-md p-6 text-[#F0EFE2] shadow-sm flex flex-col justify-between">
                  <div className="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Running</div>
                  <div className="text-4xl font-bold tracking-tighter animate-pulse">2</div>
               </div>
@@ -143,7 +143,7 @@ export function VerificationPassFail() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
-            className="flex-1 bg-[#1e1e1e] flex flex-col relative z-20 text-white overflow-hidden shadow-2xl"
+            className="flex-1 bg-[#1e1e1e] flex flex-col relative z-20 text-[#F0EFE2] overflow-hidden shadow-2xl"
           >
              {/* Inspector Header */}
              <div className="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
@@ -153,7 +153,7 @@ export function VerificationPassFail() {
                   </div>
                   <h2 className="text-3xl font-bold tracking-tight">{selectedMission.title}</h2>
                </div>
-               <button className="p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors" onClick={() => setSelectedMissionId(null)}>
+               <button className="p-2 rounded-full hover:bg-white/10 text-[#F0EFE2]/50 hover:text-[#F0EFE2] transition-colors" onClick={() => setSelectedMissionId(null)}>
                  <X className="size-6" />
                </button>
              </div>
@@ -202,9 +202,9 @@ export function VerificationPassFail() {
                            className="mt-4 bg-gradient-to-br from-[#0f52ff] to-[#0a38b5] p-6 rounded-md border border-white/20 shadow-[0_0_50px_rgba(15,82,255,0.3)] w-full text-center relative overflow-hidden"
                          >
                             <div className="absolute -right-6 -top-6 opacity-10"><Fingerprint className="size-32" /></div>
-                            <ShieldCheck className="size-10 text-white mx-auto mb-3" />
-                            <h4 className="text-white font-bold text-lg mb-1">Cryptographic Certificate</h4>
-                            <div className="text-white/70 text-sm mb-4">Issued and signed by Epoch Network</div>
+                            <ShieldCheck className="size-10 text-[#F0EFE2] mx-auto mb-3" />
+                            <h4 className="text-[#F0EFE2] font-bold text-lg mb-1">Cryptographic Certificate</h4>
+                            <div className="text-[#F0EFE2]/70 text-sm mb-4">Issued and signed by Epoch Network</div>
                             <button className="bg-white text-[#0f52ff] px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-white/90 transition-colors">
                                View Certificate
                             </button>
@@ -223,8 +223,8 @@ export function VerificationPassFail() {
 function TrustNode({ icon, title, detail, status, delay, giant }: any) {
    
    let bg = 'bg-[#2a2a2a] border-white/10'
-   let text = 'text-white'
-   let iconColor = 'text-white/50'
+   let text = 'text-[#F0EFE2]'
+   let iconColor = 'text-[#F0EFE2]/50'
    
    if (status === 'PASS' || status === 'COMPLETED') {
       iconColor = 'text-[#2da44e]'
@@ -238,7 +238,7 @@ function TrustNode({ icon, title, detail, status, delay, giant }: any) {
 
    if (giant) {
       bg = status === 'PASS' ? 'bg-[#2da44e] border-[#2da44e]' : status === 'FAIL' ? 'bg-[#cf222e] border-[#cf222e]' : 'bg-[#6e7781] border-[#6e7781]'
-      iconColor = 'text-white'
+      iconColor = 'text-[#F0EFE2]'
    }
 
    return (
@@ -252,8 +252,8 @@ function TrustNode({ icon, title, detail, status, delay, giant }: any) {
             {icon}
          </div>
          <div>
-            <div className={`font-bold ${giant ? 'text-2xl text-white' : 'text-lg text-white'}`}>{title}</div>
-            <div className={`text-sm ${giant ? 'text-white/80' : 'text-white/50'}`}>{detail}</div>
+            <div className={`font-bold ${giant ? 'text-2xl text-[#F0EFE2]' : 'text-lg text-[#F0EFE2]'}`}>{title}</div>
+            <div className={`text-sm ${giant ? 'text-[#F0EFE2]/80' : 'text-[#F0EFE2]/50'}`}>{detail}</div>
          </div>
       </motion.div>
    )

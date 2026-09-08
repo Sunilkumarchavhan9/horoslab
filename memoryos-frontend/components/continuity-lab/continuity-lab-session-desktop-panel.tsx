@@ -226,7 +226,7 @@ export function ContinuityLabSessionDesktopPanel({
           <button
             type="button"
             onClick={onToggleFullscreen}
-            className="absolute right-3 top-3 z-30 inline-flex size-8 items-center justify-center rounded-md border border-white/10 bg-[#111111]/90 text-white/70 transition hover:bg-[#1a1a1a] hover:text-white"
+            className="absolute right-3 top-3 z-30 inline-flex size-8 items-center justify-center rounded-md border border-white/10 bg-[#111111]/90 text-[#F0EFE2]/70 transition hover:bg-[#1a1a1a] hover:text-[#F0EFE2]"
             aria-label="Fullscreen desktop"
             title="Fullscreen desktop"
           >
@@ -237,9 +237,9 @@ export function ContinuityLabSessionDesktopPanel({
         {centerLabel ? (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6">
             <div className="max-w-md text-center">
-              <p className="text-sm font-medium text-white/55">{centerLabel}</p>
+              <p className="text-sm font-medium text-[#F0EFE2]/55">{centerLabel}</p>
               {isDisconnected ? (
-                <p className="mt-2 text-xs text-white/35">
+                <p className="mt-2 text-xs text-[#F0EFE2]/35">
                   {streamState?.message ??
                     desktopState.runtimeMessage ??
                     "Reconnect the desktop runtime to restore the live view."}
@@ -259,22 +259,22 @@ export function ContinuityLabSessionDesktopPanel({
             />
           </div>
           <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-[#101010] px-3 py-2">
-            <div className="flex min-w-0 items-center gap-2 text-[11px] text-white/55">
+            <div className="flex min-w-0 items-center gap-2 text-[11px] text-[#F0EFE2]/55">
               <button
                 type="button"
-                className="rounded-full border border-white/10 px-2 py-0.5 text-white/45 hover:bg-white/5 hover:text-white"
+                className="rounded-full border border-white/10 px-2 py-0.5 text-[#F0EFE2]/45 hover:bg-white/5 hover:text-[#F0EFE2]"
                 aria-label="Back"
               >
                 ←
               </button>
               <button
                 type="button"
-                className="rounded-full border border-white/10 px-2 py-0.5 text-white/45 hover:bg-white/5 hover:text-white"
+                className="rounded-full border border-white/10 px-2 py-0.5 text-[#F0EFE2]/45 hover:bg-white/5 hover:text-[#F0EFE2]"
                 aria-label="Forward"
               >
                 →
               </button>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-white/75">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[#F0EFE2]/75">
                 <span className={cn("size-2 rounded-full", statusDotClass)} />
                 {statusLabel}
               </span>

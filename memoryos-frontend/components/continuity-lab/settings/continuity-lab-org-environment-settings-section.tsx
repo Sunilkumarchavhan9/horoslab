@@ -191,8 +191,8 @@ function EnvironmentTabs({
           className={cn(
             "h-9 rounded-md px-3 text-sm font-semibold transition",
             active === item.id
-              ? "bg-white/[0.06] text-white"
-              : "text-white/45 hover:bg-white/[0.03] hover:text-white/70",
+              ? "bg-white/[0.06] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/45 hover:bg-white/[0.03] hover:text-[#F0EFE2]/70",
           )}
         >
           {item.label}
@@ -211,11 +211,11 @@ function EnvironmentMetricCard({
 }) {
   return (
     <div className="rounded-md border border-white/[0.07] bg-[#1a1a1a] px-5 py-5">
-      <div className="flex items-center gap-1.5 text-sm font-medium text-white/45">
+      <div className="flex items-center gap-1.5 text-sm font-medium text-[#F0EFE2]/45">
         <span>{label}</span>
-        <Info className="size-3.5 text-white/35" aria-hidden />
+        <Info className="size-3.5 text-[#F0EFE2]/35" aria-hidden />
       </div>
-      <div className="mt-2 min-h-8 text-[22px] font-medium leading-snug text-white">{value}</div>
+      <div className="mt-2 min-h-8 text-[22px] font-medium leading-snug text-[#F0EFE2]">{value}</div>
     </div>
   );
 }
@@ -262,21 +262,21 @@ function MigrationSessionDialog({
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[calc(100vw-2rem)] rounded-md border border-white/[0.1] bg-[#1f1f1f] p-6 text-white shadow-2xl shadow-black/50 sm:max-w-[820px]"
+        className="max-w-[calc(100vw-2rem)] rounded-md border border-white/[0.1] bg-[#1f1f1f] p-6 text-[#F0EFE2] shadow-2xl shadow-black/50 sm:max-w-[820px]"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white/75"
+          className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
           aria-label="Close"
         >
           <X className="size-4" />
         </button>
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-white">
+          <DialogTitle className="text-xl font-semibold text-[#F0EFE2]">
             Run migration session
           </DialogTitle>
-          <DialogDescription className="max-w-[720px] text-base font-medium leading-snug text-white/45">
+          <DialogDescription className="max-w-[720px] text-base font-medium leading-snug text-[#F0EFE2]/45">
             Starts a session to draft or refine blueprints for the selected repositories. MemoryOS
             inspects your current snapshot and writes blueprints for the declarative environment.{" "}
             <a
@@ -290,7 +290,7 @@ function MigrationSessionDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="mt-3">
-          <p className="text-base font-semibold text-white">
+          <p className="text-base font-semibold text-[#F0EFE2]">
             Repositories for this session ({selected.length})
           </p>
           <div className="mt-3 overflow-hidden rounded-md border border-white/[0.08] bg-[#1b1b1b]">
@@ -305,26 +305,26 @@ function MigrationSessionDialog({
                 )}
                 aria-label={allSelected ? "Clear selected repositories" : "Select all repositories"}
               >
-                {allSelected ? <Check className="size-3.5 text-white/75" /> : null}
+                {allSelected ? <Check className="size-3.5 text-[#F0EFE2]/75" /> : null}
               </button>
               <div className="relative min-w-0 flex-1">
-                <Search className="pointer-events-none absolute left-0 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+                <Search className="pointer-events-none absolute left-0 top-1/2 size-4 -translate-y-1/2 text-[#F0EFE2]/35" />
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => onSearchChange(event.target.value)}
                   placeholder="Search repositories..."
-                  className="h-8 w-full bg-transparent pl-8 text-base font-medium text-white outline-none placeholder:text-white/35"
+                  className="h-8 w-full bg-transparent pl-8 text-base font-medium text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35"
                 />
               </div>
             </div>
             <div className="min-h-[124px] max-h-[300px] overflow-y-auto">
               {repos.length === 0 ? (
-                <div className="flex min-h-[124px] items-center justify-center px-6 text-center text-base font-semibold text-white/45">
+                <div className="flex min-h-[124px] items-center justify-center px-6 text-center text-base font-semibold text-[#F0EFE2]/45">
                   All repositories have been migrated
                 </div>
               ) : filtered.length === 0 ? (
-                <div className="flex min-h-[124px] items-center justify-center px-6 text-center text-sm text-white/45">
+                <div className="flex min-h-[124px] items-center justify-center px-6 text-center text-sm text-[#F0EFE2]/45">
                   No repositories match your search.
                 </div>
               ) : (
@@ -340,18 +340,18 @@ function MigrationSessionDialog({
                           className="flex w-full items-center gap-3 px-5 py-3 text-left transition hover:bg-white/[0.03]"
                         >
                           <span className="inline-flex size-5 shrink-0 items-center justify-center rounded border border-white/[0.14] bg-white/[0.03]">
-                            {checked ? <Check className="size-3.5 text-white/75" /> : null}
+                            {checked ? <Check className="size-3.5 text-[#F0EFE2]/75" /> : null}
                           </span>
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold text-white">
+                            <span className="block truncate text-sm font-semibold text-[#F0EFE2]">
                               {parts?.repo ?? row.repo}
                             </span>
-                            <span className="mt-0.5 block truncate text-xs text-white/45">
+                            <span className="mt-0.5 block truncate text-xs text-[#F0EFE2]/45">
                               {parts ? `${parts.owner} · ` : ""}
                               {formatRelativeAdded(row.addedAt)}
                             </span>
                           </span>
-                          <span className="text-xs text-white/45">
+                          <span className="text-xs text-[#F0EFE2]/45">
                             {row.included ? "Included" : "Excluded"}
                           </span>
                         </button>
@@ -367,7 +367,7 @@ function MigrationSessionDialog({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/85 transition hover:bg-white/[0.08]"
+            className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/85 transition hover:bg-white/[0.08]"
           >
             Cancel
           </button>
@@ -375,7 +375,7 @@ function MigrationSessionDialog({
             type="button"
             onClick={onRun}
             disabled={selected.length === 0 || running}
-            className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-45"
+            className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-45"
           >
             {running
               ? "Running..."
@@ -406,22 +406,22 @@ function RevertClassicDialog({
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[calc(100vw-2rem)] rounded-md border border-white/[0.1] bg-[#1f1f1f] p-6 text-white shadow-2xl shadow-black/50 sm:max-w-[760px]"
+        className="max-w-[calc(100vw-2rem)] rounded-md border border-white/[0.1] bg-[#1f1f1f] p-6 text-[#F0EFE2] shadow-2xl shadow-black/50 sm:max-w-[760px]"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white/75"
+          className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
           aria-label="Close"
         >
           <X className="size-4" />
         </button>
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-white">
+          <DialogTitle className="text-xl font-semibold text-[#F0EFE2]">
             Revert to classic environment?
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 text-base font-semibold text-white/45">
+        <div className="space-y-4 text-base font-semibold text-[#F0EFE2]/45">
           <ul className="ml-5 list-disc space-y-1.5">
             <li>New sessions will use the classic environment</li>
             <li>Active sessions continue on declarative until they end</li>
@@ -436,7 +436,7 @@ function RevertClassicDialog({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/85 transition hover:bg-white/[0.08]"
+            className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/85 transition hover:bg-white/[0.08]"
           >
             Cancel
           </button>
@@ -444,7 +444,7 @@ function RevertClassicDialog({
             type="button"
             onClick={onConfirm}
             disabled={saving}
-            className="inline-flex h-9 items-center rounded-md bg-[#FF3B3B] px-3.5 text-sm font-semibold text-white transition hover:bg-[#FF4B4B] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-9 items-center rounded-md bg-[#FF3B3B] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#FF4B4B] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? "Reverting..." : "Revert to classic"}
           </button>
@@ -727,7 +727,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -736,7 +736,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
       {loadError ? (
         <p className="mb-2 text-xs text-amber-200/90">{loadError}</p>
       ) : !loaded ? (
-        <p className="mb-2 text-xs text-white/40">Loading settings…</p>
+        <p className="mb-2 text-xs text-[#F0EFE2]/40">Loading settings…</p>
       ) : null}
 
       {saveState === "error" ? (
@@ -751,7 +751,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
           </button>
         </div>
       ) : saveState === "saving" ? (
-        <p className="mb-2 text-xs text-white/40">Saving…</p>
+        <p className="mb-2 text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="mb-2 text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -761,14 +761,14 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
       {tab === "blueprints" ? (
         <div className="mt-6 space-y-8">
           <div>
-            <h2 className="mb-4 text-sm font-semibold text-white">Configuration</h2>
+            <h2 className="mb-4 text-sm font-semibold text-[#F0EFE2]">Configuration</h2>
             <SettingsCard
               title="Organization blueprint"
               description="Runs on every build"
               actions={
                 <Link
                   href={ENVIRONMENT_BLUEPRINT_PATH}
-                  className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-white/90 transition hover:bg-white/[0.08]"
+                  className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-[#F0EFE2]/90 transition hover:bg-white/[0.08]"
                 >
                   Edit
                 </Link>
@@ -782,12 +782,12 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                 />
               ) : (
                 <SettingsFlatPanel className="py-8 text-center">
-                  <p className="text-sm text-white/55">
+                  <p className="text-sm text-[#F0EFE2]/55">
                     No organization blueprint yet. Add setup scripts shared across all repos.
                   </p>
                   <Link
                     href={ENVIRONMENT_BLUEPRINT_PATH}
-                    className="mt-4 inline-flex h-9 items-center rounded-md bg-[#2563EB] px-4 text-sm font-medium text-white transition hover:bg-[#3B82F6]"
+                    className="mt-4 inline-flex h-9 items-center rounded-md bg-[#2563EB] px-4 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6]"
                   >
                     Create blueprint
                   </Link>
@@ -818,7 +818,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                 <button
                   type="button"
                   onClick={() => setRepoModalOpen(true)}
-                  className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/90 transition hover:bg-white/[0.08]"
+                  className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/90 transition hover:bg-white/[0.08]"
                 >
                   Add
                 </button>
@@ -831,12 +831,12 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
 
             {settings.enrolledRepos.length === 0 ? (
               <SettingsFlatPanel className="py-10 text-center">
-                <p className="text-sm text-white/55">
+                <p className="text-sm text-[#F0EFE2]/55">
                   No repositories yet. Add repositories to include in environment builds.
                 </p>
               </SettingsFlatPanel>
             ) : filteredRepos.length === 0 ? (
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-[#F0EFE2]/50">
                 {repoFilter === "connection_issues"
                   ? "No repositories with connection issues."
                   : "No repositories match your search."}
@@ -861,7 +861,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                             type="button"
                             onClick={() => moveRepo(row.repo, -1)}
                             disabled={index <= 0}
-                            className="text-white/25 hover:text-white/55 disabled:opacity-20"
+                            className="text-[#F0EFE2]/25 hover:text-[#F0EFE2]/55 disabled:opacity-20"
                             aria-label={`Move ${row.repo} up`}
                           >
                             <ChevronDown className="size-2.5 rotate-180" />
@@ -870,13 +870,13 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                             type="button"
                             onClick={() => moveRepo(row.repo, 1)}
                             disabled={index >= settings.enrolledRepos.length - 1}
-                            className="text-white/25 hover:text-white/55 disabled:opacity-20"
+                            className="text-[#F0EFE2]/25 hover:text-[#F0EFE2]/55 disabled:opacity-20"
                             aria-label={`Move ${row.repo} down`}
                           >
                             <ChevronDown className="size-2.5" />
                           </button>
                         </div>
-                        <FolderGit2 className="size-4 shrink-0 text-white/35" aria-hidden />
+                        <FolderGit2 className="size-4 shrink-0 text-[#F0EFE2]/35" aria-hidden />
                         <button
                           type="button"
                           onClick={() => setSelectedRepo(row.repo)}
@@ -887,23 +887,23 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                               : "hover:bg-white/[0.03]",
                           )}
                         >
-                          <p className="truncate text-sm font-medium text-white">{displayName}</p>
-                          <p className="mt-0.5 truncate text-xs text-white/45">{subtitle}</p>
+                          <p className="truncate text-sm font-medium text-[#F0EFE2]">{displayName}</p>
+                          <p className="mt-0.5 truncate text-xs text-[#F0EFE2]/45">{subtitle}</p>
                         </button>
                         <Link
                           href={repoBlueprintSettingsPath(row.repo)}
-                          className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-white/30 hover:text-white/55"
+                          className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-[#F0EFE2]/30 hover:text-[#F0EFE2]/55"
                           title="Open full page"
                         >
                           Open
                         </Link>
-                        <span className="shrink-0 text-xs text-white/50">
+                        <span className="shrink-0 text-xs text-[#F0EFE2]/50">
                           {row.included ? "Included" : "Excluded"}
                         </span>
                         <button
                           type="button"
                           onClick={() => removeRepo(row.repo)}
-                          className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-transparent text-white/0 transition hover:border-white/[0.08] hover:bg-white/[0.06] hover:text-white/50 group-hover:border-white/[0.08] group-hover:text-white/40"
+                          className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-transparent text-[#F0EFE2]/0 transition hover:border-white/[0.08] hover:bg-white/[0.06] hover:text-[#F0EFE2]/50 group-hover:border-white/[0.08] group-hover:text-[#F0EFE2]/40"
                           aria-label={`Remove ${row.repo}`}
                         >
                           <Trash2 className="size-3.5" />
@@ -934,8 +934,8 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
               <SettingsFlatPanel className="space-y-3 py-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-white">{formatWhen(active.builtAt)}</p>
-                    <p className="mt-1 text-xs text-white/45">
+                    <p className="text-sm font-medium text-[#F0EFE2]">{formatWhen(active.builtAt)}</p>
+                    <p className="mt-1 text-xs text-[#F0EFE2]/45">
                       {snapshotBlueprintLabel(active)} ·{" "}
                       {active.repoCount}{" "}
                       {active.repoCount === 1 ? "repository" : "repositories"}
@@ -943,13 +943,13 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                   </div>
                   <Link
                     href={environmentSnapshotPath(active.id)}
-                    className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6]"
+                    className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6]"
                   >
                     View snapshot
                   </Link>
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] pt-3">
-                  <p className="text-xs text-white/45">
+                  <p className="text-xs text-[#F0EFE2]/45">
                     Understand how this snapshot was built.
                   </p>
                   <Link
@@ -962,7 +962,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
               </SettingsFlatPanel>
             ) : (
               <SettingsFlatPanel className="py-8 text-center">
-                <p className="text-sm text-white/55">No snapshots yet. Build one from your blueprint and repos.</p>
+                <p className="text-sm text-[#F0EFE2]/55">No snapshots yet. Build one from your blueprint and repos.</p>
               </SettingsFlatPanel>
             )}
           </SettingsCard>
@@ -973,8 +973,8 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
           >
             <SettingsFlatPanel className="flex flex-wrap items-center justify-between gap-3 py-4">
               <div>
-                <p className="text-sm font-medium text-white">Auto-build snapshots</p>
-                <p className="mt-1 text-xs text-white/45">
+                <p className="text-sm font-medium text-[#F0EFE2]">Auto-build snapshots</p>
+                <p className="mt-1 text-xs text-[#F0EFE2]/45">
                   Rebuild when blueprints change or on a refresh schedule.
                 </p>
               </div>
@@ -994,7 +994,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                 type="button"
                 onClick={() => void handleBuildSnapshot()}
                 disabled={buildingSnapshot}
-                className="inline-flex h-9 items-center rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-9 items-center rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {buildingSnapshot ? "Building…" : "Build snapshot"}
               </button>
@@ -1005,7 +1005,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
             ) : null}
             {settings.snapshots.length === 0 ? (
               <SettingsFlatPanel className="py-8 text-center">
-                <p className="text-sm text-white/55">No snapshots recorded yet.</p>
+                <p className="text-sm text-[#F0EFE2]/55">No snapshots recorded yet.</p>
               </SettingsFlatPanel>
             ) : (
               <SettingsFlatPanel className="!px-0">
@@ -1017,7 +1017,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-medium text-white">
+                          <span className="text-sm font-medium text-[#F0EFE2]">
                             {formatWhen(snapshot.builtAt)}
                           </span>
                           {snapshot.active ? (
@@ -1026,7 +1026,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                             </span>
                           ) : null}
                         </div>
-                        <p className="mt-0.5 text-xs text-white/45">
+                        <p className="mt-0.5 text-xs text-[#F0EFE2]/45">
                           {snapshot.repoCount}{" "}
                           {snapshot.repoCount === 1 ? "repository" : "repositories"}
                         </p>
@@ -1034,13 +1034,13 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                       {snapshot.status === "success" ? (
                         <Check className="size-4 text-emerald-300/80" aria-hidden />
                       ) : snapshot.status === "building" ? (
-                        <RefreshCw className="size-4 animate-spin text-white/45" aria-hidden />
+                        <RefreshCw className="size-4 animate-spin text-[#F0EFE2]/45" aria-hidden />
                       ) : null}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
                             type="button"
-                            className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white"
+                            className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                             aria-label="Snapshot options"
                           >
                             <MoreHorizontal className="size-4" />
@@ -1048,9 +1048,9 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="min-w-[180px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-white"
+                          className="min-w-[180px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-[#F0EFE2]"
                         >
-                          <DropdownMenuItem asChild className="gap-2 text-xs text-white/85 focus:bg-[#141414] focus:text-white">
+                          <DropdownMenuItem asChild className="gap-2 text-xs text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]">
                             <Link href={environmentSnapshotPath(snapshot.id)}>
                               <Eye className="size-3.5" />
                               View details
@@ -1058,7 +1058,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                           </DropdownMenuItem>
                           {!snapshot.active ? (
                             <DropdownMenuItem
-                              className="gap-2 text-xs text-white/85 focus:bg-[#141414] focus:text-white"
+                              className="gap-2 text-xs text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
                               onSelect={() => void handleActivateSnapshot(snapshot.id)}
                             >
                               <Pin className="size-3.5" />
@@ -1080,7 +1080,7 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                 </ul>
               </SettingsFlatPanel>
             )}
-            <p className="mt-3 text-[11px] text-white/35">{ENVIRONMENT_SNAPSHOT_BUILD_NOTE}</p>
+            <p className="mt-3 text-[11px] text-[#F0EFE2]/35">{ENVIRONMENT_SNAPSHOT_BUILD_NOTE}</p>
           </SettingsCard>
         </div>
       ) : null}
@@ -1102,13 +1102,13 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                 {settings.migrationCompletedAt ? (
                   <Check className="mt-0.5 size-4 shrink-0 text-emerald-300/90" aria-hidden />
                 ) : (
-                  <RefreshCw className="mt-0.5 size-4 shrink-0 text-white/40" aria-hidden />
+                  <RefreshCw className="mt-0.5 size-4 shrink-0 text-[#F0EFE2]/40" aria-hidden />
                 )}
                 <div>
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-[#F0EFE2]">
                     {settings.migrationCompletedAt ? "Migration complete" : "Migration pending"}
                   </p>
-                  <p className="mt-1 max-w-lg text-sm font-medium text-white/50">
+                  <p className="mt-1 max-w-lg text-sm font-medium text-[#F0EFE2]/50">
                     {totalBlueprintCount}{" "}
                     {totalBlueprintCount === 1 ? "blueprint" : "blueprints"} ·{" "}
                     {active ? latestBuildLabel : "No snapshot built yet"}
@@ -1123,14 +1123,14 @@ export function ContinuityLabOrgEnvironmentSettingsSection() {
                   type="button"
                   onClick={openMigrationModal}
                   disabled={buildingSnapshot}
-                  className="inline-flex h-9 items-center rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-9 items-center rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {buildingSnapshot ? "Running..." : "Run migration session"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setRevertModalOpen(true)}
-                  className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/90 transition hover:bg-white/[0.08]"
+                  className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/90 transition hover:bg-white/[0.08]"
                 >
                   Revert to classic
                 </button>

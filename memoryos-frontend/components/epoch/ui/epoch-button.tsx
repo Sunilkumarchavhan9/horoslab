@@ -21,7 +21,7 @@ export function EpochButton({
   let baseStyle = "border font-medium transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 select-none flex items-center justify-center gap-2";
 
   if (variant === "primary") {
-    baseStyle += " border-[#171a17] bg-[#171a17] text-white hover:bg-[#2b302a]";
+    baseStyle += " border-[#171a17] bg-[#171a17] text-[#F0EFE2] hover:bg-[#2b302a]";
   } else if (variant === "action") {
     baseStyle += " border-[#65a30d] bg-[#75bf00] text-[#151515] hover:bg-[#83d400] font-semibold";
   } else if (variant === "secondary") {

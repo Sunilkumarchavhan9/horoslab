@@ -132,13 +132,13 @@ export function ContinuityLabAskAdvanced() {
     <div className="mx-auto flex min-h-full max-w-6xl flex-col px-4 py-8 sm:px-6 sm:py-10">
       <Link
         href="/continuity-lab"
-        className="mb-6 inline-flex w-fit items-center gap-1.5 text-sm text-white/55 hover:text-white"
+        className="mb-6 inline-flex w-fit items-center gap-1.5 text-sm text-[#F0EFE2]/55 hover:text-[#F0EFE2]"
       >
         <ArrowLeft className="size-4" />
         Back to Sessions
       </Link>
 
-      <div className={cn(subtlePanel(), "mb-6 flex border-[#4338CA]/35 bg-[#4338CA]/10 px-4 py-3 text-sm text-white/80")}>
+      <div className={cn(subtlePanel(), "mb-6 flex border-[#4338CA]/35 bg-[#4338CA]/10 px-4 py-3 text-sm text-[#F0EFE2]/80")}>
         <Info className="mr-3 mt-0.5 size-4 shrink-0 text-indigo-300" />
         <p>
           Every session uses MemoryOS continuity — resume context, governance, and company
@@ -167,7 +167,7 @@ export function ContinuityLabAskAdvanced() {
 
       <div className="flex min-h-0 flex-1 flex-col gap-6 lg:flex-row">
         <nav className="shrink-0 lg:w-56">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/40">
             Capabilities
           </p>
           <ul className="space-y-0.5">
@@ -179,8 +179,8 @@ export function ContinuityLabAskAdvanced() {
                   className={cn(
                     "w-full rounded-md px-3 py-2 text-left text-sm transition",
                     activeSection === section.id
-                      ? "bg-[#4338CA]/20 font-medium text-white"
-                      : "text-white/60 hover:bg-[#141414] hover:text-white",
+                      ? "bg-[#4338CA]/20 font-medium text-[#F0EFE2]"
+                      : "text-[#F0EFE2]/60 hover:bg-[#141414] hover:text-[#F0EFE2]",
                   )}
                 >
                   {section.label}
@@ -191,16 +191,16 @@ export function ContinuityLabAskAdvanced() {
         </nav>
 
         <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-semibold text-white">{active.label}</h2>
-          <p className="mt-1 text-xs text-white/45">Pick a capability card to prefill or start a session.</p>
+          <h2 className="text-sm font-semibold text-[#F0EFE2]">{active.label}</h2>
+          <p className="mt-1 text-xs text-[#F0EFE2]/45">Pick a capability card to prefill or start a session.</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {active.cards.map((card) => (
               <article
                 key={card.id}
                 className={cn(subtlePanel(), "flex flex-col p-4 transition hover:bg-[#222222]")}
               >
-                <h3 className="text-sm font-semibold text-white">{card.title}</h3>
-                <p className="mt-2 flex-1 text-xs leading-relaxed text-white/50">
+                <h3 className="text-sm font-semibold text-[#F0EFE2]">{card.title}</h3>
+                <p className="mt-2 flex-1 text-xs leading-relaxed text-[#F0EFE2]/50">
                   {card.description}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -216,7 +216,7 @@ export function ContinuityLabAskAdvanced() {
                   {card.href ? (
                     <Link
                       href={card.href}
-                      className="inline-flex h-8 items-center gap-1 rounded-md border border-[#3A3A3A] px-3 text-xs text-white/80 hover:bg-[#141414]"
+                      className="inline-flex h-8 items-center gap-1 rounded-md border border-[#3A3A3A] px-3 text-xs text-[#F0EFE2]/80 hover:bg-[#141414]"
                     >
                       Open
                       <ArrowRight className="size-3" />

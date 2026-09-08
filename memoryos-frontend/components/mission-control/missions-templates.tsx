@@ -68,7 +68,7 @@ export function MissionsTemplates() {
  const { resolved } = useThemePreference();
  const isDark = resolved === "dark";
  const bgCard = isDark ? "bg-[#121212] border-white/10" : "bg-card border-border";
- const textMuted = isDark ? "text-white/50" : "text-foreground/50";
+ const textMuted = isDark ? "text-[#F0EFE2]/50" : "text-foreground/50";
 
  const visibleTemplates = TEMPLATES.filter(t => 
  `${t.name} ${t.category} ${t.description}`.toLowerCase().includes(query.toLowerCase())
@@ -92,12 +92,12 @@ export function MissionsTemplates() {
  <div className="flex items-center justify-between">
  <div>
  <div className="flex items-center gap-3">
- <h1 className={cn("text-xl font-semibold tracking-tight", isDark ? "text-white" : "text-foreground")}>Mission Templates</h1>
+ <h1 className={cn("text-xl font-semibold tracking-tight", isDark ? "text-[#F0EFE2]" : "text-foreground")}>Mission Templates</h1>
  </div>
  <p className={cn("text-[13px] mt-1", textMuted)}>Standardized workflows and operational contracts.</p>
  </div>
  
- <button className="flex items-center gap-2 px-6 py-1.5 bg-[#0f52ff] text-white rounded-md text-[13px] font-semibold hover:bg-[#0f52ff]/90 transition-colors ">
+ <button className="flex items-center gap-2 px-6 py-1.5 bg-[#0f52ff] text-[#F0EFE2] rounded-md text-[13px] font-semibold hover:bg-[#0f52ff]/90 transition-colors ">
  + New Template
  </button>
  </div>
@@ -109,7 +109,7 @@ export function MissionsTemplates() {
  {/* Center Grid */}
  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 relative">
  <div className="flex items-center gap-3 mb-6">
- <div className={cn("flex items-center gap-2 px-3 py-1.5 bg-card dark:bg-[#121212] border rounded-md text-[13px] flex-1 max-w-sm transition-colors cursor-text", isDark ? "border-white/10 text-white" : "border-border text-foreground")}>
+ <div className={cn("flex items-center gap-2 px-3 py-1.5 bg-card dark:bg-[#121212] border rounded-md text-[13px] flex-1 max-w-sm transition-colors cursor-text", isDark ? "border-white/10 text-[#F0EFE2]" : "border-border text-foreground")}>
  <Search className="size-4 shrink-0 opacity-50" />
  <input 
  type="text" 
@@ -122,12 +122,12 @@ export function MissionsTemplates() {
  
  <div className="flex gap-2">
  <button className={cn("px-3 py-1.5 border rounded-md text-[12.5px] font-medium transition-colors", 
- isDark ? "bg-[#121212] border-white/10 hover:bg-card/5 text-white/80" : "bg-card border-border hover:bg-accent text-foreground/80"
+ isDark ? "bg-[#121212] border-white/10 hover:bg-card/5 text-[#F0EFE2]/80" : "bg-card border-border hover:bg-accent text-foreground/80"
  )}>
  Category <span className="ml-1 opacity-50">▾</span>
  </button>
  <button className={cn("px-3 py-1.5 border rounded-md text-[12.5px] font-medium transition-colors", 
- isDark ? "bg-[#121212] border-white/10 hover:bg-card/5 text-white/80" : "bg-card border-border hover:bg-accent text-foreground/80"
+ isDark ? "bg-[#121212] border-white/10 hover:bg-card/5 text-[#F0EFE2]/80" : "bg-card border-border hover:bg-accent text-foreground/80"
  )}>
  Risk Level <span className="ml-1 opacity-50">▾</span>
  </button>
@@ -155,7 +155,7 @@ export function MissionsTemplates() {
 
  <div className="flex flex-wrap gap-1.5 mb-4">
  {template.roles.map(role => (
- <span key={role} className={cn("px-2 py-0.5 rounded-[4px] text-[10px] font-bold uppercase tracking-wider border", isDark ? "bg-card/5 border-white/10 text-white/70" : "bg-muted border-border text-foreground/70")}>
+ <span key={role} className={cn("px-2 py-0.5 rounded-[4px] text-[10px] font-bold uppercase tracking-wider border", isDark ? "bg-card/5 border-white/10 text-[#F0EFE2]/70" : "bg-muted border-border text-foreground/70")}>
  {role}
  </span>
  ))}
@@ -182,12 +182,12 @@ export function MissionsTemplates() {
  
  <div className={cn("px-6 py-6 border-b shrink-0 flex items-start justify-between", isDark ? "border-white/10" : "border-border")}>
  <div>
- <h2 className={cn("text-[15px] font-semibold tracking-tight", isDark ? "text-white" : "text-foreground")}>{selectedTemplate.name}</h2>
+ <h2 className={cn("text-[15px] font-semibold tracking-tight", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{selectedTemplate.name}</h2>
  <p className={cn("text-[12px] mt-0.5", textMuted)}>{selectedTemplate.category}</p>
  </div>
  <button 
  onClick={() => setSelectedTemplate(null)}
- className={cn("p-1.5 rounded-md transition-colors", isDark ? "hover:bg-card/10 text-white/50 hover:text-white" : "hover:bg-black/10 text-foreground/50 hover:text-foreground")}
+ className={cn("p-1.5 rounded-md transition-colors", isDark ? "hover:bg-card/10 text-[#F0EFE2]/50 hover:text-[#F0EFE2]" : "hover:bg-black/10 text-foreground/50 hover:text-foreground")}
  >
  <Search className="size-4 opacity-0" /> {/* Spacer */}
  <span className="absolute top-4 right-4">✕</span>
@@ -201,7 +201,7 @@ export function MissionsTemplates() {
  onClick={() => setInspectorTab(tab)}
  className={cn(
  "py-3 text-[12.5px] font-medium transition-all relative whitespace-nowrap",
- inspectorTab === tab ? (isDark ? "text-white" : "text-foreground") : cn(textMuted, isDark ? "hover:text-white/70" : "hover:text-foreground/70")
+ inspectorTab === tab ? (isDark ? "text-[#F0EFE2]" : "text-foreground") : cn(textMuted, isDark ? "hover:text-[#F0EFE2]/70" : "hover:text-foreground/70")
  )}
  >
  {tab}
@@ -218,11 +218,11 @@ export function MissionsTemplates() {
  <div className={cn("p-3 rounded-md border text-[13px]", isDark ? "bg-card/[0.02] border-white/10" : "bg-muted/50 border-border")}>
  <div className="flex justify-between mb-2">
  <span className={textMuted}>Authority</span>
- <span className={cn("font-semibold", isDark ? "text-white" : "text-foreground")}>{selectedTemplate.authority}</span>
+ <span className={cn("font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{selectedTemplate.authority}</span>
  </div>
  <div className="flex justify-between">
  <span className={textMuted}>Est. Runtime</span>
- <span className={cn("font-semibold", isDark ? "text-white" : "text-foreground")}>{selectedTemplate.runtime}</span>
+ <span className={cn("font-semibold", isDark ? "text-[#F0EFE2]" : "text-foreground")}>{selectedTemplate.runtime}</span>
  </div>
  </div>
 
@@ -241,7 +241,7 @@ export function MissionsTemplates() {
  <div className={cn("text-[12px] font-semibold uppercase tracking-wider", textMuted)}>Governing Policies</div>
  <div className="flex flex-col gap-1.5">
  {selectedTemplate.policies.map(policy => (
- <div key={policy} className={cn("flex items-center gap-2 text-[12.5px] px-3 py-2 rounded-md border", isDark ? "bg-card/5 border-white/10 text-white" : "bg-muted border-border text-foreground")}>
+ <div key={policy} className={cn("flex items-center gap-2 text-[12.5px] px-3 py-2 rounded-md border", isDark ? "bg-card/5 border-white/10 text-[#F0EFE2]" : "bg-muted border-border text-foreground")}>
  <FileSignature className="size-3.5 text-amber-500" />
  <span className="font-medium">{policy}</span>
  </div>
@@ -249,7 +249,7 @@ export function MissionsTemplates() {
  </div>
  </div>
 
- <button className="w-full mt-6 flex items-center justify-center gap-2 py-2.5 rounded-md bg-[#0f52ff] text-white text-[13px] font-medium hover:bg-[#0f52ff]/90 transition-colors ">
+ <button className="w-full mt-6 flex items-center justify-center gap-2 py-2.5 rounded-md bg-[#0f52ff] text-[#F0EFE2] text-[13px] font-medium hover:bg-[#0f52ff]/90 transition-colors ">
  <GitPullRequest className="size-4" /> Instantiate Mission
  </button>
  </div>

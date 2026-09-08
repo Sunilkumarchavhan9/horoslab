@@ -72,7 +72,7 @@ export function AccountProfile() {
  <h4 className="text-[14px] font-bold text-foreground mb-1">Reset Organization Data</h4>
  <p className="text-[13px] text-foreground/60">Remove all documents, memories, connections, and org settings. Billing and members are kept.</p>
  </div>
- <Button className="shrink-0 h-9 px-6 font-semibold text-[13px] bg-red-500 hover:bg-red-600 text-white ">
+ <Button className="shrink-0 h-9 px-6 font-semibold text-[13px] bg-red-500 hover:bg-red-600 text-[#F0EFE2] ">
  RESET
  </Button>
  </div>
@@ -82,7 +82,7 @@ export function AccountProfile() {
  <h4 className="text-[14px] font-bold text-foreground mb-1">Delete Organization</h4>
  <p className="text-[13px] text-foreground/60">Permanently delete this organization and all its data.</p>
  </div>
- <Button className="shrink-0 h-9 px-6 font-semibold text-[13px] bg-red-500 hover:bg-red-600 text-white ">
+ <Button className="shrink-0 h-9 px-6 font-semibold text-[13px] bg-red-500 hover:bg-red-600 text-[#F0EFE2] ">
  DELETE
  </Button>
  </div>

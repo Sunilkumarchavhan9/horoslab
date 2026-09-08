@@ -121,7 +121,7 @@ export function highlightYamlLine(line: string): ReactNode {
       <>
         {kvMatch[1]}
         <span className="text-cyan-300/90">{kvMatch[2]}</span>
-        <span className="text-white/55">{kvMatch[3]}</span>
+        <span className="text-[#F0EFE2]/55">{kvMatch[3]}</span>
         <span className="text-amber-200/85">{kvMatch[4]}</span>
       </>
     );
@@ -131,7 +131,7 @@ export function highlightYamlLine(line: string): ReactNode {
     return (
       <>
         {listMatch[1]}
-        <span className="text-white/55">{listMatch[2]}</span>
+        <span className="text-[#F0EFE2]/55">{listMatch[2]}</span>
         <span className="text-cyan-300/80">{listMatch[3]}</span>
       </>
     );
@@ -149,14 +149,14 @@ export function BlueprintToast({
   return (
     <div
       role="status"
-      className="fixed bottom-6 right-6 z-[130] flex items-center gap-2.5 rounded-md border border-white/[0.12] bg-[#1a1a1a] px-4 py-3 text-sm font-medium text-white shadow-2xl"
+      className="fixed bottom-6 right-6 z-[130] flex items-center gap-2.5 rounded-md border border-white/[0.12] bg-[#1a1a1a] px-4 py-3 text-sm font-medium text-[#F0EFE2] shadow-2xl"
     >
       <Check className="size-4 shrink-0 text-emerald-400" aria-hidden />
       <span>{message}</span>
       <button
         type="button"
         onClick={onDismiss}
-        className="ml-1 text-white/45 hover:text-white/75"
+        className="ml-1 text-[#F0EFE2]/45 hover:text-[#F0EFE2]/75"
         aria-label="Dismiss"
       >
         <X className="size-3.5" />
@@ -221,24 +221,24 @@ function AddBlueprintDialog({
       >
         <div className="flex items-start justify-between border-b border-white/[0.08] px-5 py-4">
           <div>
-            <h2 id="add-blueprint-title" className="text-base font-semibold text-white">
+            <h2 id="add-blueprint-title" className="text-base font-semibold text-[#F0EFE2]">
               Add blueprint
             </h2>
-            <p className="mt-1 text-sm text-white/50">
+            <p className="mt-1 text-sm text-[#F0EFE2]/50">
               Configure setup commands and knowledge for a subdirectory of {repoFullName}.
             </p>
           </div>
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white/75"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
             aria-label="Close"
           >
             <X className="size-4" />
           </button>
         </div>
         <div className="space-y-2 px-5 py-4">
-          <label htmlFor="blueprint-directory-path" className="text-sm font-medium text-white/85">
+          <label htmlFor="blueprint-directory-path" className="text-sm font-medium text-[#F0EFE2]/85">
             Directory path
           </label>
           <input
@@ -247,12 +247,12 @@ function AddBlueprintDialog({
             value={directoryPath}
             onChange={(e) => setDirectoryPath(e.target.value)}
             placeholder="packages/api"
-            className="h-10 w-full rounded-md border border-[#2563EB]/60 bg-[#111111] px-3 text-sm text-white placeholder:text-white/30 focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]/40"
+            className="h-10 w-full rounded-md border border-[#2563EB]/60 bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]/40"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleContinue();
             }}
           />
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-[#F0EFE2]/40">
             Must be an existing directory in {repoFullName}. Used as the blueprint label.
           </p>
         </div>
@@ -260,7 +260,7 @@ function AddBlueprintDialog({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-transparent px-4 text-sm font-medium text-white/80 transition hover:bg-white/[0.06]"
+            className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-transparent px-4 text-sm font-medium text-[#F0EFE2]/80 transition hover:bg-white/[0.06]"
           >
             Cancel
           </button>
@@ -268,7 +268,7 @@ function AddBlueprintDialog({
             type="button"
             onClick={handleContinue}
             disabled={!directoryPath.trim()}
-            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-4 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40"
+            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-4 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40"
           >
             Continue
           </button>
@@ -467,7 +467,7 @@ export function ContinuityLabBlueprintYamlIde({
       >
         {guideOpen ? (
           <aside className="border-b border-white/[0.06] p-4 md:border-b-0 md:border-r">
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/35">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#F0EFE2]/35">
               Guide
             </p>
             <ul className="space-y-2">
@@ -492,10 +492,10 @@ export function ContinuityLabBlueprintYamlIde({
                         className={cn(
                           "mt-0.5 size-3 shrink-0",
                           isActive
-                            ? "fill-white/70 text-white/70"
+                            ? "fill-white/70 text-[#F0EFE2]/70"
                             : lineIndex !== null
                               ? "text-emerald-400/60"
-                              : "text-white/25",
+                              : "text-[#F0EFE2]/25",
                         )}
                         aria-hidden
                       />
@@ -503,16 +503,16 @@ export function ContinuityLabBlueprintYamlIde({
                         <p
                           className={cn(
                             "text-xs font-semibold",
-                            isActive ? "text-white" : "text-white/90",
+                            isActive ? "text-[#F0EFE2]" : "text-[#F0EFE2]/90",
                           )}
                         >
                           {section.title}
                         </p>
-                        <p className="mt-1 text-[11px] leading-relaxed text-white/45">
+                        <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/45">
                           {section.body}
                         </p>
                         {lineIndex !== null ? (
-                          <p className="mt-1 font-mono text-[10px] text-white/30">
+                          <p className="mt-1 font-mono text-[10px] text-[#F0EFE2]/30">
                             Line {lineIndex + 1}
                           </p>
                         ) : null}
@@ -524,10 +524,10 @@ export function ContinuityLabBlueprintYamlIde({
             </ul>
             <div className="mt-6 border-t border-white/[0.06] pt-4">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/35">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#F0EFE2]/35">
                   Workspaces
                 </p>
-                <span className="text-[10px] text-white/35">{workspaces.length}</span>
+                <span className="text-[10px] text-[#F0EFE2]/35">{workspaces.length}</span>
               </div>
               <ul className="mt-2 space-y-1">
                 {workspaces.map((workspace) => {
@@ -540,8 +540,8 @@ export function ContinuityLabBlueprintYamlIde({
                         className={cn(
                           "w-full rounded-md border px-3 py-2 text-left text-xs font-medium transition",
                           active
-                            ? "border-white/[0.08] bg-white/[0.06] text-white"
-                            : "border-transparent text-white/55 hover:bg-white/[0.04] hover:text-white/80",
+                            ? "border-white/[0.08] bg-white/[0.06] text-[#F0EFE2]"
+                            : "border-transparent text-[#F0EFE2]/55 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80",
                         )}
                       >
                         {workspace.label}
@@ -553,7 +553,7 @@ export function ContinuityLabBlueprintYamlIde({
               <button
                 type="button"
                 onClick={() => setAddBlueprintOpen(true)}
-                className="mt-2 w-full rounded-md border border-dashed border-white/[0.08] px-3 py-2 text-xs text-white/45 transition hover:border-white/[0.14] hover:bg-white/[0.03] hover:text-white/65"
+                className="mt-2 w-full rounded-md border border-dashed border-white/[0.08] px-3 py-2 text-xs text-[#F0EFE2]/45 transition hover:border-white/[0.14] hover:bg-white/[0.03] hover:text-[#F0EFE2]/65"
               >
                 + Add blueprint
               </button>
@@ -564,7 +564,7 @@ export function ContinuityLabBlueprintYamlIde({
         <div className={cn("relative flex min-h-0 flex-col", disabled && "opacity-40")}>
           {setupOverlayMessage ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0A0A0A]/60">
-              <p className="rounded-md border border-white/[0.08] bg-[#111111] px-4 py-3 text-sm font-medium text-white/75">
+              <p className="rounded-md border border-white/[0.08] bg-[#111111] px-4 py-3 text-sm font-medium text-[#F0EFE2]/75">
                 {setupOverlayMessage}
               </p>
             </div>
@@ -596,7 +596,7 @@ export function ContinuityLabBlueprintYamlIde({
                         type="button"
                         onClick={() => mockRunBlock(block)}
                         disabled={Boolean(runningBlockId)}
-                        className="inline-flex size-[18px] shrink-0 items-center justify-center rounded-full border border-white/[0.18] text-white/55 transition hover:border-white/35 hover:bg-white/[0.06] hover:text-white disabled:opacity-30"
+                        className="inline-flex size-[18px] shrink-0 items-center justify-center rounded-full border border-white/[0.18] text-[#F0EFE2]/55 transition hover:border-white/35 hover:bg-white/[0.06] hover:text-[#F0EFE2] disabled:opacity-30"
                         aria-label={block.label}
                       >
                         <Play className="size-2 fill-current" />
@@ -604,7 +604,7 @@ export function ContinuityLabBlueprintYamlIde({
                     ) : (
                       <span className="inline-block size-[18px] shrink-0" />
                     )}
-                    <span className="min-w-[1.75rem] pr-1.5 text-right text-white/20">
+                    <span className="min-w-[1.75rem] pr-1.5 text-right text-[#F0EFE2]/20">
                       {index + 1}
                     </span>
                   </div>
@@ -632,7 +632,7 @@ export function ContinuityLabBlueprintYamlIde({
                 onChange={(e) => onChange(e.target.value)}
                 disabled={disabled}
                 spellCheck={false}
-                className="absolute inset-0 z-[1] min-h-full w-full resize-none bg-transparent px-3 py-2 font-mono text-xs leading-[1.625rem] text-transparent caret-white placeholder:text-white/25 focus:outline-none disabled:cursor-not-allowed"
+                className="absolute inset-0 z-[1] min-h-full w-full resize-none bg-transparent px-3 py-2 font-mono text-xs leading-[1.625rem] text-transparent caret-white placeholder:text-[#F0EFE2]/25 focus:outline-none disabled:cursor-not-allowed"
                 placeholder={placeholder}
               />
             </div>
@@ -648,7 +648,7 @@ export function ContinuityLabBlueprintYamlIde({
             onPointerCancel={onResizePointerUp}
             className="group flex h-2 shrink-0 cursor-row-resize items-center justify-center border-y border-white/[0.06] bg-[#0a0a0a] hover:bg-white/[0.04]"
           >
-            <GripHorizontal className="size-3.5 text-white/25 group-hover:text-white/45" />
+            <GripHorizontal className="size-3.5 text-[#F0EFE2]/25 group-hover:text-[#F0EFE2]/45" />
           </div>
 
           <div className="shrink-0 bg-[#0a0a0a]">
@@ -656,14 +656,14 @@ export function ContinuityLabBlueprintYamlIde({
               <button
                 type="button"
                 onClick={() => setOutputOpen((prev) => !prev)}
-                className="flex min-w-0 flex-1 items-center gap-2 text-left text-xs font-medium text-white/70 hover:text-white/90"
+                className="flex min-w-0 flex-1 items-center gap-2 text-left text-xs font-medium text-[#F0EFE2]/70 hover:text-[#F0EFE2]/90"
               >
-                <Terminal className="size-3.5 shrink-0 text-white/40" aria-hidden />
+                <Terminal className="size-3.5 shrink-0 text-[#F0EFE2]/40" aria-hidden />
                 {runningBlockId ? "Running…" : "Ready"}
                 {lastRunStatus === "success" ? (
                   <>
                     <Check className="size-3.5 shrink-0 text-emerald-400" aria-hidden />
-                    <span className="truncate font-normal text-white/40">Last run: succeeded</span>
+                    <span className="truncate font-normal text-[#F0EFE2]/40">Last run: succeeded</span>
                   </>
                 ) : null}
               </button>
@@ -675,7 +675,7 @@ export function ContinuityLabBlueprintYamlIde({
                       setRunLog([]);
                       setLastRunStatus("idle");
                     }}
-                    className="inline-flex size-7 items-center justify-center rounded-md text-white/40 hover:bg-white/[0.06] hover:text-white/70"
+                    className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/40 hover:bg-white/[0.06] hover:text-[#F0EFE2]/70"
                     aria-label="Clear output"
                   >
                     <X className="size-3.5" />
@@ -684,7 +684,7 @@ export function ContinuityLabBlueprintYamlIde({
                 <button
                   type="button"
                   onClick={() => setOutputOpen((prev) => !prev)}
-                  className="inline-flex size-7 items-center justify-center rounded-md text-white/40 hover:bg-white/[0.06] hover:text-white/70"
+                  className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/40 hover:bg-white/[0.06] hover:text-[#F0EFE2]/70"
                   aria-label={outputOpen ? "Collapse output" : "Expand output"}
                 >
                   {outputOpen ? (
@@ -701,7 +701,7 @@ export function ContinuityLabBlueprintYamlIde({
                 className="overflow-y-auto border-t border-white/[0.06] bg-[#080808] px-4 py-4 font-mono text-[11px] leading-relaxed"
               >
                 {runLog.length === 0 ? (
-                  <p className="text-center text-white/45">
+                  <p className="text-center text-[#F0EFE2]/45">
                     Run your setup steps against a live environment with your repository
                     pre-cloned. Results appear here in real time.
                   </p>
@@ -709,10 +709,10 @@ export function ContinuityLabBlueprintYamlIde({
                   <div className="space-y-3">
                     {runLog.map((entry) => (
                       <div key={entry.id}>
-                        <p className="text-white/55">▶ {entry.runLabel}</p>
+                        <p className="text-[#F0EFE2]/55">▶ {entry.runLabel}</p>
                         {entry.status !== "running" ? (
                           <>
-                            <p className="mt-1 text-white/35">=== {entry.header} ===</p>
+                            <p className="mt-1 text-[#F0EFE2]/35">=== {entry.header} ===</p>
                             <p
                               className={cn(
                                 "mt-0.5",

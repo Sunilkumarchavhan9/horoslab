@@ -55,7 +55,7 @@ export function MissionDetailCertificate({ mission }: { mission: EpochMissionDet
  </div>
 
  <div className="bg-card border border-border rounded-md overflow-hidden flex flex-col md:flex-row">
- <div className="bg-[#111] w-full md:w-[280px] p-8 flex flex-col items-center justify-center text-center text-white shrink-0 relative overflow-hidden">
+ <div className="bg-[#111] w-full md:w-[280px] p-8 flex flex-col items-center justify-center text-center text-[#F0EFE2] shrink-0 relative overflow-hidden">
  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "16px 16px" }} />
  <Award className="size-16 text-[#f38020] mb-4 relative z-10" strokeWidth={1.5} />
  <h2 className="text-[20px] font-bold tracking-tight relative z-10">Verification<br />Certificate</h2>

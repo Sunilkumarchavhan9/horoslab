@@ -293,7 +293,7 @@ function InviteComposer({
  type="button"
  disabled={!canSubmit}
  onClick={() => void submit()}
- className="h-10 gap-2 rounded-md bg-[#0f52ff] px-6 font-semibold text-white shadow-[0_10px_24px_rgba(15,82,255,0.18)] hover:bg-[#0a45e0]"
+ className="h-10 gap-2 rounded-md bg-[#0f52ff] px-6 font-semibold text-[#F0EFE2] shadow-[0_10px_24px_rgba(15,82,255,0.18)] hover:bg-[#0a45e0]"
  >
  <UserPlus className="size-4" />
  {saving ? "Sending" : "Send invite"}

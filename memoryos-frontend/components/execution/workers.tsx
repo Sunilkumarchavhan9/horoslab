@@ -119,13 +119,13 @@ export function ExecutionWorkers() {
                    <div className="bg-[#1e1e1e] rounded-md p-4 text-[12px] font-mono text-[#d4d4d4] overflow-x-auto shadow-inner leading-relaxed">
                       {selectedWorker.logs.map((log, i) => (
                          <div key={i} className="flex gap-3 opacity-80">
-                            <span className="text-white/30 w-5 text-right">{i+1}</span>
+                            <span className="text-[#F0EFE2]/30 w-5 text-right">{i+1}</span>
                             <span>{log}</span>
                          </div>
                       ))}
                       {selectedWorker.status === 'RUNNING' && (
                          <div className="flex gap-3 mt-1 animate-pulse text-[#4ade80]">
-                            <span className="text-white/30 w-5 text-right">{selectedWorker.logs.length + 1}</span>
+                            <span className="text-[#F0EFE2]/30 w-5 text-right">{selectedWorker.logs.length + 1}</span>
                             <span>█</span>
                          </div>
                       )}
@@ -149,7 +149,7 @@ function WorkerCard({ worker, isSelected, onClick }: any) {
       <div className="p-5 flex-1">
          <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-               <div className={`size-10 rounded-md flex items-center justify-center shrink-0 ${worker.status === 'RUNNING' ? 'bg-[#0f52ff] text-white shadow-lg shadow-[#0f52ff]/20' : 'bg-black/5 text-black/50'}`}>
+               <div className={`size-10 rounded-md flex items-center justify-center shrink-0 ${worker.status === 'RUNNING' ? 'bg-[#0f52ff] text-[#F0EFE2] shadow-lg shadow-[#0f52ff]/20' : 'bg-black/5 text-black/50'}`}>
                   <Cpu className="size-5" />
                </div>
                <div>
@@ -181,7 +181,7 @@ function WorkerCard({ worker, isSelected, onClick }: any) {
       
       {/* Streaming Terminal Section */}
       <div className="bg-[#111] p-4 text-[11px] font-mono text-[#a3a3a3] border-t-4 border-t-black/5 relative overflow-hidden">
-         <div className="flex items-center justify-between mb-3 text-white/40">
+         <div className="flex items-center justify-between mb-3 text-[#F0EFE2]/40">
             <div className="flex items-center gap-1.5"><TerminalSquare className="size-3" /> Live Terminal</div>
             <div className="flex gap-1.5"><div className="size-2 rounded-full bg-red-500"/><div className="size-2 rounded-full bg-yellow-500"/><div className="size-2 rounded-full bg-green-500"/></div>
          </div>
@@ -190,7 +190,7 @@ function WorkerCard({ worker, isSelected, onClick }: any) {
             {worker.logs.map((log: string, i: number) => (
                <div key={i} className="flex gap-2">
                   <span className="text-[#0f52ff]">❯</span>
-                  <span className={i === worker.logs.length - 1 && worker.status === 'RUNNING' ? 'text-white' : ''}>{log}</span>
+                  <span className={i === worker.logs.length - 1 && worker.status === 'RUNNING' ? 'text-[#F0EFE2]' : ''}>{log}</span>
                </div>
             ))}
             {worker.status === 'RUNNING' && (

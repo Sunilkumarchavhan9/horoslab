@@ -31,7 +31,7 @@ export function StatusBadge({ status }: { status: "ACTIVE" | "DEGRADED" | "OFFLI
  );
  }
  return (
- <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 text-foreground/70 dark:text-white/70 text-[10px] font-bold tracking-wider">
+ <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 border border-black/20 dark:border-white/20 text-foreground/70 dark:text-[#F0EFE2]/70 text-[10px] font-bold tracking-wider">
  <div className="size-1.5 rounded-full bg-muted0 dark:bg-white/50" />
  PAUSED
  </div>
@@ -63,8 +63,8 @@ export function SectionHeader({ title, description, action }: { title: string, d
  return (
  <div className="flex items-start justify-between mb-6">
  <div className="flex flex-col gap-1">
- <h2 className="text-[20px] font-semibold text-foreground dark:text-white tracking-tight">{title}</h2>
- {description && <p className="text-[13px] text-foreground/50 dark:text-white/50">{description}</p>}
+ <h2 className="text-[20px] font-semibold text-foreground dark:text-[#F0EFE2] tracking-tight">{title}</h2>
+ {description && <p className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50">{description}</p>}
  </div>
  {action && <div>{action}</div>}
  </div>

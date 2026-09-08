@@ -82,7 +82,7 @@ function MemoryEntryList({
   branch: string;
 }) {
   if (!entries.length) {
-    return <p className="text-sm text-white/45">No contract memories in this section yet.</p>;
+    return <p className="text-sm text-[#F0EFE2]/45">No contract memories in this section yet.</p>;
   }
   return (
     <ul className="space-y-3">
@@ -91,18 +91,18 @@ function MemoryEntryList({
         return (
           <li key={entry.memoryId} className="border border-[#2F2F2F] bg-[#111111] px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-medium text-white">{entry.summary}</p>
-              <span className="text-[10px] uppercase tracking-wide text-white/40">
+              <p className="text-sm font-medium text-[#F0EFE2]">{entry.summary}</p>
+              <span className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                 {formatWikiRelativeTime(entry.updatedAt)}
               </span>
             </div>
             {entry.content?.trim() ? (
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-white/60">
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-[#F0EFE2]/60">
                 {entry.content.trim()}
               </p>
             ) : null}
             {entry.sourceRef ? (
-              <p className="mt-2 text-[10px] text-white/40">
+              <p className="mt-2 text-[10px] text-[#F0EFE2]/40">
                 Source:{" "}
                 {(() => {
                   const href = parseSourceRefHref(entry.sourceRef);
@@ -136,7 +136,7 @@ function MemoryEntryList({
                 ))}
               </div>
             ) : null}
-            <p className="mt-2 text-[10px] text-white/35">
+            <p className="mt-2 text-[10px] text-[#F0EFE2]/35">
               {entry.contractCategory} · confidence {Math.round((entry.confidence ?? 0) * 100)}%
             </p>
           </li>
@@ -367,7 +367,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
   if (!repoFullName) {
     return (
       <div className="px-5 py-10">
-        <p className="text-sm text-white/60">Repository not found in your connected GitHub scope.</p>
+        <p className="text-sm text-[#F0EFE2]/60">Repository not found in your connected GitHub scope.</p>
         <Link href="/continuity-lab/wiki" className="mt-4 inline-block text-sm text-indigo-300 underline">
           Back to wiki index
         </Link>
@@ -388,7 +388,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
   function renderSectionBody() {
     if (loading) {
       return (
-        <p className="flex items-center gap-2 text-sm text-white/50">
+        <p className="flex items-center gap-2 text-sm text-[#F0EFE2]/50">
           <Loader2 className="size-4 animate-spin" />
           Loading {sectionDef.label}…
         </p>
@@ -451,8 +451,8 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                     { key: "kind", label: "Type" },
                   ]}
                   rows={techStack.map((row) => ({
-                    name: <span className="font-mono text-white/85">{row.name}</span>,
-                    version: <span className="font-mono text-white/60">{row.version}</span>,
+                    name: <span className="font-mono text-[#F0EFE2]/85">{row.name}</span>,
+                    version: <span className="font-mono text-[#F0EFE2]/60">{row.version}</span>,
                     kind: row.kind,
                   }))}
                 />
@@ -544,7 +544,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                 description={`From ${repoWorkspace.readme.path} in the connected repository.`}
               >
                 <div className="border border-[#2F2F2F] bg-[#111111] p-4">
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-white/70">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#F0EFE2]/70">
                     {repoWorkspace.readme.excerpt}
                   </p>
                   <a
@@ -562,7 +562,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
 
             {brief?.whatChangedRecently?.length ? (
               <WikiContentBlock title="What changed recently">
-                <ul className="list-disc space-y-1 pl-5 text-sm text-white/70">
+                <ul className="list-disc space-y-1 pl-5 text-sm text-[#F0EFE2]/70">
                   {brief.whatChangedRecently.map((line) => (
                     <li key={line}>{line}</li>
                   ))}
@@ -586,7 +586,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
             ) : null}
 
             {!repoWorkspace?.readme?.excerpt && !brief?.whatChangedRecently?.length ? (
-              <p className="text-sm text-white/45">
+              <p className="text-sm text-[#F0EFE2]/45">
                 No README or recent project-state changes recorded yet.
               </p>
             ) : null}
@@ -630,7 +630,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                 <MemoryEntryList entries={sectionDecisions} repoFullName={repoName} branch={branch} />
               </WikiContentBlock>
             ) : (
-              <p className="text-sm text-white/45">
+              <p className="text-sm text-[#F0EFE2]/45">
                 No deployment runbooks or config files detected yet.
               </p>
             )}
@@ -704,8 +704,8 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="border-b border-[#2F2F2F] bg-[#0A0A0A] px-4 py-3 sm:px-6">
-            <nav className="flex flex-wrap items-center gap-1 text-xs text-white/45">
-              <Link href="/continuity-lab/wiki" className="hover:text-white">
+            <nav className="flex flex-wrap items-center gap-1 text-xs text-[#F0EFE2]/45">
+              <Link href="/continuity-lab/wiki" className="hover:text-[#F0EFE2]">
                 Operational Wiki
               </Link>
               {repoParts ? (
@@ -713,19 +713,19 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                   <ChevronRight className="size-3" />
                   <span>{repoParts.owner}</span>
                   <ChevronRight className="size-3" />
-                  <span className="font-mono text-white/85">{repoParts.repo}</span>
+                  <span className="font-mono text-[#F0EFE2]/85">{repoParts.repo}</span>
                 </>
               ) : (
                 <>
                   <ChevronRight className="size-3" />
-                  <span className="font-mono text-white/85">{repoFullName}</span>
+                  <span className="font-mono text-[#F0EFE2]/85">{repoFullName}</span>
                 </>
               )}
             </nav>
 
             <div className="mt-3 flex flex-wrap items-center gap-3">
               {lastUpdated ? (
-                <span className="text-[11px] text-white/40">
+                <span className="text-[11px] text-[#F0EFE2]/40">
                   Updated {formatWikiRelativeTime(lastUpdated)}
                 </span>
               ) : null}
@@ -736,7 +736,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                     ? "border-emerald-500/30 text-emerald-200/90"
                     : generating
                       ? "border-amber-500/30 text-amber-100/90"
-                      : "border-[#3A3A3A] text-white/45",
+                      : "border-[#3A3A3A] text-[#F0EFE2]/45",
                 )}
               >
                 {indexed ? "Indexed" : generating ? "Generating" : "Not indexed"}
@@ -753,24 +753,24 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                 onChange={setBranch}
               />
               <div className="relative min-w-[10rem] flex-1 sm:max-w-xs">
-                <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/35" />
+                <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/35" />
                 <input
                   type="search"
                   value={sectionSearch}
                   onChange={(e) => setSectionSearch(e.target.value)}
                   placeholder="Search this section…"
-                  className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#111111] pl-8 pr-2 text-xs text-white placeholder:text-white/35 focus:border-[#4338CA] focus:outline-none"
+                  className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#111111] pl-8 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#4338CA] focus:outline-none"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => setSourcesOpen(true)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-[#3A3A3A] px-2.5 text-[11px] font-medium text-white/80 hover:border-[#4338CA]/50"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-[#3A3A3A] px-2.5 text-[11px] font-medium text-[#F0EFE2]/80 hover:border-[#4338CA]/50"
               >
                 <FileCode2 className="size-3.5" />
                 Relevant source files
                 {sourcePaths.length > 0 ? (
-                  <span className="rounded bg-[#1a1a2e] px-1.5 py-0.5 text-[10px] tabular-nums text-white/70">
+                  <span className="rounded bg-[#1a1a2e] px-1.5 py-0.5 text-[10px] tabular-nums text-[#F0EFE2]/70">
                     {sourcePaths.length}
                   </span>
                 ) : null}
@@ -779,14 +779,14 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                 href={githubRepoUrl(repoFullName)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-8 items-center gap-1 rounded-md border border-[#3A3A3A] px-2.5 text-[11px] text-white/70 hover:text-white"
+                className="inline-flex h-8 items-center gap-1 rounded-md border border-[#3A3A3A] px-2.5 text-[11px] text-[#F0EFE2]/70 hover:text-[#F0EFE2]"
               >
                 <WikiGithubIcon className="size-3.5" />
                 GitHub
                 <ExternalLink className="size-3" />
               </a>
               <select
-                className="h-8 rounded-md border border-[#3A3A3A] bg-[#111111] px-2 text-xs text-white/80 lg:hidden"
+                className="h-8 rounded-md border border-[#3A3A3A] bg-[#111111] px-2 text-xs text-[#F0EFE2]/80 lg:hidden"
                 value={section}
                 onChange={(e) => {
                   router.push(wikiRepoHref(projectId, wikiSectionFromQuery(e.target.value)));
@@ -805,8 +805,8 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
           </header>
 
           <article className="flex-1 px-4 py-6 sm:px-8">
-            <h2 className="text-xl font-semibold text-white">{sectionDef.label}</h2>
-            <p className="mt-1 text-xs text-white/40">
+            <h2 className="text-xl font-semibold text-[#F0EFE2]">{sectionDef.label}</h2>
+            <p className="mt-1 text-xs text-[#F0EFE2]/40">
               {repoFullName}
               {lastUpdated ? ` · Updated ${formatWikiRelativeTime(lastUpdated)}` : ""}
             </p>
@@ -814,7 +814,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
 
             {childSections.length > 0 && section === "overview" ? (
               <div className="mt-10 border-t border-[#2F2F2F] pt-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">
                   Navigation
                 </p>
                 <ul className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -822,7 +822,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
                     <li key={child.id}>
                       <Link
                         href={wikiRepoHref(projectId, child.id)}
-                        className="block rounded-md border border-[#2F2F2F] bg-[#111111] px-4 py-3 text-sm text-white/75 transition hover:border-[#4338CA]/40 hover:text-white"
+                        className="block rounded-md border border-[#2F2F2F] bg-[#111111] px-4 py-3 text-sm text-[#F0EFE2]/75 transition hover:border-[#4338CA]/40 hover:text-[#F0EFE2]"
                       >
                         {child.label}
                       </Link>
@@ -836,7 +836,7 @@ export function WikiRepoPage({ projectId }: WikiRepoPageProps) {
       </div>
 
       {!github.connected ? (
-        <div className="mx-4 mb-4 border border-[#4338CA]/40 bg-[#4338CA]/10 px-4 py-3 text-sm text-white/70">
+        <div className="mx-4 mb-4 border border-[#4338CA]/40 bg-[#4338CA]/10 px-4 py-3 text-sm text-[#F0EFE2]/70">
           Connect GitHub to use Ask on this wiki.{" "}
           <Link href="/mission-control?section=connectors" className="text-indigo-300 underline">
             Connect GitHub

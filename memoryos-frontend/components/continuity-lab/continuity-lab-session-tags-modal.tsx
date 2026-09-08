@@ -90,14 +90,14 @@ export function ContinuityLabSessionTagsModal({
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6366F1]">
               Session
             </p>
-            <h2 id="edit-session-tags-title" className="mt-1 text-lg font-semibold text-white">
+            <h2 id="edit-session-tags-title" className="mt-1 text-lg font-semibold text-[#F0EFE2]">
               Edit session tags
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414]"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -106,7 +106,7 @@ export function ContinuityLabSessionTagsModal({
 
         <div className="max-h-[min(70vh,480px)] overflow-y-auto px-5 py-4">
           <label className="block">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
               Other tags
             </span>
             <div className="mt-1.5 flex gap-2">
@@ -121,12 +121,12 @@ export function ContinuityLabSessionTagsModal({
                   }
                 }}
                 placeholder="Add a tag…"
-                className="min-w-0 flex-1 border border-[#2F2F2F] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#6366F1]"
+                className="min-w-0 flex-1 border border-[#2F2F2F] bg-[#111111] px-3 py-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 outline-none focus:border-[#6366F1]"
               />
               <button
                 type="button"
                 onClick={() => addTag(otherInput)}
-                className="shrink-0 border border-[#3A3A3A] px-3 py-2 text-xs font-medium text-white hover:bg-[#141414]"
+                className="shrink-0 border border-[#3A3A3A] px-3 py-2 text-xs font-medium text-[#F0EFE2] hover:bg-[#141414]"
               >
                 Add
               </button>
@@ -140,7 +140,7 @@ export function ContinuityLabSessionTagsModal({
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    className="inline-flex items-center gap-1 border border-[#3A3A3A] bg-[#141414] px-2 py-1 text-[11px] text-white/85 hover:border-rose-500/50 hover:text-rose-200"
+                    className="inline-flex items-center gap-1 border border-[#3A3A3A] bg-[#141414] px-2 py-1 text-[11px] text-[#F0EFE2]/85 hover:border-rose-500/50 hover:text-rose-200"
                     title="Remove tag"
                   >
                     {tag}
@@ -150,11 +150,11 @@ export function ContinuityLabSessionTagsModal({
               ))}
             </ul>
           ) : (
-            <p className="mt-4 text-[11px] text-white/35">No tags yet.</p>
+            <p className="mt-4 text-[11px] text-[#F0EFE2]/35">No tags yet.</p>
           )}
 
           <div className="mt-6">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
               Quick select tags
             </p>
             <ul className="mt-2 flex flex-wrap gap-1.5">
@@ -171,7 +171,7 @@ export function ContinuityLabSessionTagsModal({
                         "border px-2.5 py-1 text-[11px] transition",
                         selected
                           ? "border-[#6366F1] bg-[#4338CA]/20 text-indigo-100"
-                          : "border-[#2F2F2F] bg-[#111111] text-white/70 hover:border-[#3A3A3A]",
+                          : "border-[#2F2F2F] bg-[#111111] text-[#F0EFE2]/70 hover:border-[#3A3A3A]",
                       )}
                     >
                       {tag}
@@ -187,7 +187,7 @@ export function ContinuityLabSessionTagsModal({
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#3A3A3A] px-4 py-2 text-xs font-medium text-white/80 hover:bg-[#141414]"
+            className="border border-[#3A3A3A] px-4 py-2 text-xs font-medium text-[#F0EFE2]/80 hover:bg-[#141414]"
           >
             Cancel
           </button>
@@ -195,7 +195,7 @@ export function ContinuityLabSessionTagsModal({
             type="button"
             disabled={saving}
             onClick={handleSave}
-            className="inline-flex items-center gap-2 bg-[#6366F1] px-4 py-2 text-xs font-semibold text-white hover:bg-[#4F46E5] disabled:opacity-50"
+            className="inline-flex items-center gap-2 bg-[#6366F1] px-4 py-2 text-xs font-semibold text-[#F0EFE2] hover:bg-[#4F46E5] disabled:opacity-50"
           >
             {saving ? <Loader2 className="size-3.5 animate-spin" /> : null}
             Save

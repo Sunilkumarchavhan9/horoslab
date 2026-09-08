@@ -7,7 +7,7 @@ import { CommandBar, SectionHeader, SplitPane } from "./execution-shared-compone
 
 export function ExecutionReviews() {
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#050505] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#050505] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar className="border-b-0" />
 
  <div className="flex-1 overflow-hidden relative">
@@ -32,7 +32,7 @@ export function ExecutionReviews() {
  </div>
  <div className="flex flex-col">
  <h3 className="text-[16px] font-bold">Security Review</h3>
- <span className="text-[12px] text-foreground/50 dark:text-white/50">Evaluating output from Coding Agent</span>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Evaluating output from Coding Agent</span>
  </div>
  </div>
  <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-[#0f52ff]/20 bg-[#0f52ff]/10 text-[#0f52ff] text-[11px] font-bold uppercase tracking-wider animate-pulse">
@@ -42,18 +42,18 @@ export function ExecutionReviews() {
 
  <div className="grid grid-cols-2 gap-6 mt-6">
  <div className="p-6 bg-muted dark:bg-white/5 border border-border dark:border-white/10 rounded-md">
- <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground/50 dark:text-white/50 mb-3 flex items-center gap-1.5"><GitCommit className="size-3" /> Output Diff</h4>
+ <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground/50 dark:text-[#F0EFE2]/50 mb-3 flex items-center gap-1.5"><GitCommit className="size-3" /> Output Diff</h4>
  <div className="font-mono text-[11px] space-y-1">
  <div className="text-red-500">- const apiKey = "sk-12345";</div>
  <div className="text-emerald-500">+ const apiKey = process.env.API_KEY;</div>
- <div className="text-foreground/50 dark:text-white/50">&nbsp;&nbsp;await db.connect(apiKey);</div>
+ <div className="text-foreground/50 dark:text-[#F0EFE2]/50">&nbsp;&nbsp;await db.connect(apiKey);</div>
  </div>
  </div>
  <div className="p-6 bg-[#0f52ff]/5 border border-[#0f52ff]/10 rounded-md">
  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#0f52ff]/70 mb-3 flex items-center gap-1.5"><FileText className="size-3" /> Reviewer Notes</h4>
- <div className="text-[12px] text-foreground/70 dark:text-white/70 space-y-2">
+ <div className="text-[12px] text-foreground/70 dark:text-[#F0EFE2]/70 space-y-2">
  <p>Analyzing commit for common vulnerabilities...</p>
- <ul className="list-disc pl-4 space-y-1 text-foreground/50 dark:text-white/50">
+ <ul className="list-disc pl-4 space-y-1 text-foreground/50 dark:text-[#F0EFE2]/50">
  <li>Secrets exposure: <span className="text-emerald-500">Fixed</span></li>
  <li>SQL Injection: <span className="text-amber-500 animate-pulse">Scanning...</span></li>
  </ul>
@@ -74,7 +74,7 @@ export function ExecutionReviews() {
  </div>
  <div className="flex flex-col">
  <h3 className="text-[16px] font-bold">Architecture Review</h3>
- <span className="text-[12px] text-foreground/50 dark:text-white/50">Evaluating output from Planner</span>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Evaluating output from Planner</span>
  </div>
  </div>
  <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 text-[11px] font-bold uppercase tracking-wider">
@@ -82,7 +82,7 @@ export function ExecutionReviews() {
  </div>
  </div>
  
- <div className="text-[13px] text-foreground/60 dark:text-white/60 bg-muted dark:bg-white/5 p-6 rounded-md">
+ <div className="text-[13px] text-foreground/60 dark:text-[#F0EFE2]/60 bg-muted dark:bg-white/5 p-6 rounded-md">
  "The execution graph correctly isolates the coding environment from the deployment agent. Proceeding with execution."
  </div>
  </div>
@@ -94,12 +94,12 @@ export function ExecutionReviews() {
  <div className="flex flex-col h-full bg-card dark:bg-[#121212]">
  <div className="p-6 border-b border-border dark:border-white/10 shrink-0">
  <h3 className="text-[16px] font-bold tracking-tight">Review Requirements</h3>
- <p className="text-[12px] text-foreground/50 dark:text-white/50 mt-1">Policy gates for this mission</p>
+ <p className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50 mt-1">Policy gates for this mission</p>
  </div>
 
  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
  <div>
- <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground/50 dark:text-white/50 mb-3">Required Checks</h4>
+ <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground/50 dark:text-[#F0EFE2]/50 mb-3">Required Checks</h4>
  <div className="flex flex-col gap-2">
  <div className="flex items-center justify-between p-3 rounded-md border border-emerald-500/20 bg-emerald-500/5">
  <span className="text-[13px] font-semibold text-emerald-600 dark:text-emerald-400">Architecture</span>
@@ -110,7 +110,7 @@ export function ExecutionReviews() {
  <span className="text-[11px] font-bold text-[#0f52ff] uppercase tracking-wider animate-pulse">Running</span>
  </div>
  <div className="flex items-center justify-between p-3 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5 opacity-50">
- <span className="text-[13px] font-semibold text-foreground dark:text-white">Human Approval</span>
+ <span className="text-[13px] font-semibold text-foreground dark:text-[#F0EFE2]">Human Approval</span>
  <span className="text-[11px] font-bold uppercase tracking-wider">Pending</span>
  </div>
  </div>

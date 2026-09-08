@@ -33,7 +33,7 @@ function ConnectorCallbackCompleteContent() {
   }, [provider, status]);
 
   return (
-    <main className="min-h-screen bg-[#0d0d0f] px-6 py-16 text-white">
+    <main className="min-h-screen bg-[#0d0d0f] px-6 py-16 text-[#F0EFE2]">
       <section className="mx-auto max-w-md rounded-2xl border border-white/10 bg-white/[0.06] p-8 text-center shadow-2xl">
         <div className={`mx-auto mb-5 flex size-12 items-center justify-center rounded-full ${status === "connected" ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"}`}>
           {status === "connected" ? "✓" : "!"}
@@ -41,7 +41,7 @@ function ConnectorCallbackCompleteContent() {
         <h1 className="text-xl font-semibold">
           {status === "connected" ? `${label} connected` : `${label} connection failed`}
         </h1>
-        <p className="mt-3 text-sm text-white/60">
+        <p className="mt-3 text-sm text-[#F0EFE2]/60">
           {status === "connected"
             ? "Mission Control will refresh in the original tab. This tab will close automatically."
             : detail || "Return to Mission Control and try connecting again."}
@@ -62,7 +62,7 @@ export default function ConnectorCallbackCompletePage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-[#0d0d0f] px-6 py-16 text-white">
+        <main className="min-h-screen bg-[#0d0d0f] px-6 py-16 text-[#F0EFE2]">
           <section className="mx-auto max-w-md rounded-2xl border border-white/10 bg-white/[0.06] p-8 text-center shadow-2xl">
             Loading connector result...
           </section>

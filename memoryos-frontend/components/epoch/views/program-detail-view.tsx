@@ -333,7 +333,7 @@ export function ProgramDetailView({
                 <div key={h.id} className="border border-[#d8ddd3] bg-[#fafbfa] p-4 text-xs">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="border border-[#171a17] bg-[#171a17] px-2 py-0.5 font-mono font-bold text-white text-[11px]">
+                      <span className="border border-[#171a17] bg-[#171a17] px-2 py-0.5 font-mono font-bold text-[#F0EFE2] text-[11px]">
                         {h.id}
                       </span>
                       <span className="font-semibold text-sm text-[#171a17]">{h.statement}</span>

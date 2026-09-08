@@ -23,7 +23,7 @@ export function OrganizationMembers() {
  title="Members" 
  description="Manage human access to this workspace. Organization roles dictate UI access, while AI runtime authority is managed in Governance."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <UserPlus className="size-4" />
  Invite Members
  </button>
@@ -32,19 +32,19 @@ export function OrganizationMembers() {
  <div className="grid grid-cols-4 gap-6 mb-8">
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111]">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Total Members</span>
- <div className="text-[24px] font-semibold text-foreground dark:text-white mt-1">42</div>
+ <div className="text-[24px] font-semibold text-foreground dark:text-[#F0EFE2] mt-1">42</div>
  </div>
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111]">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Invited</span>
- <div className="text-[24px] font-semibold text-foreground dark:text-white mt-1">3</div>
+ <div className="text-[24px] font-semibold text-foreground dark:text-[#F0EFE2] mt-1">3</div>
  </div>
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111]">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Admins</span>
- <div className="text-[24px] font-semibold text-foreground dark:text-white mt-1">4</div>
+ <div className="text-[24px] font-semibold text-foreground dark:text-[#F0EFE2] mt-1">4</div>
  </div>
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111]">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Guests</span>
- <div className="text-[24px] font-semibold text-foreground dark:text-white mt-1">12</div>
+ <div className="text-[24px] font-semibold text-foreground dark:text-[#F0EFE2] mt-1">12</div>
  </div>
  </div>
 
@@ -82,26 +82,26 @@ export function OrganizationMembers() {
  >
  <td className="px-6 py-3">
  <div className="flex items-center gap-3">
- <div className="size-8 rounded-full bg-gradient-to-br from-[#0f52ff] to-[#60a5fa] flex items-center justify-center text-white text-[12px] font-bold shrink-0">
+ <div className="size-8 rounded-full bg-gradient-to-br from-[#0f52ff] to-[#60a5fa] flex items-center justify-center text-[#F0EFE2] text-[12px] font-bold shrink-0">
  {member.name.charAt(0)}
  </div>
  <div className="flex flex-col min-w-0">
- <span className="text-[13px] font-medium text-foreground dark:text-white truncate">{member.name}</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2] truncate">{member.name}</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground truncate">{member.email}</span>
  </div>
  </div>
  </td>
  <td className="px-6 py-3">
- <span className="text-[13px] text-foreground/80 dark:text-[#ccc]">{member.role}</span>
+ <span className="text-[13px] text-foreground/80 dark:text-[#C8C7BA]">{member.role}</span>
  </td>
  <td className="px-6 py-3">
- <span className="text-[13px] text-foreground/80 dark:text-[#ccc]">{member.team}</span>
+ <span className="text-[13px] text-foreground/80 dark:text-[#C8C7BA]">{member.team}</span>
  </td>
  <td className="px-6 py-3">
  <StatusBadge status={member.status} />
  </td>
  <td className="px-6 py-3 text-right">
- <button className="p-1.5 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-white transition-colors rounded">
+ <button className="p-1.5 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-[#F0EFE2] transition-colors rounded">
  <MoreHorizontal className="size-4" />
  </button>
  </td>
@@ -123,11 +123,11 @@ export function OrganizationMembers() {
  <div className="flex-1 p-6 flex flex-col gap-8">
  
  <div className="flex flex-col items-center gap-3 text-center">
- <div className="size-16 rounded-full bg-gradient-to-br from-[#0f52ff] to-[#60a5fa] flex items-center justify-center text-white text-[24px] font-bold ">
+ <div className="size-16 rounded-full bg-gradient-to-br from-[#0f52ff] to-[#60a5fa] flex items-center justify-center text-[#F0EFE2] text-[24px] font-bold ">
  {selectedMember.name.charAt(0)}
  </div>
  <div className="flex flex-col gap-1">
- <h3 className="text-[16px] font-semibold text-foreground dark:text-white">{selectedMember.name}</h3>
+ <h3 className="text-[16px] font-semibold text-foreground dark:text-[#F0EFE2]">{selectedMember.name}</h3>
  <span className="text-[12px] text-muted-foreground dark:text-muted-foreground flex items-center justify-center gap-1">
  <Mail className="size-3" /> {selectedMember.email}
  </span>
@@ -140,19 +140,19 @@ export function OrganizationMembers() {
  <div className="flex flex-col gap-2 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] p-6 text-[13px]">
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2">
  <span className="text-muted-foreground">Workspace Role</span>
- <span className="font-medium text-foreground dark:text-white flex items-center gap-1.5"><Shield className="size-3.5"/> {selectedMember.role}</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2] flex items-center gap-1.5"><Shield className="size-3.5"/> {selectedMember.role}</span>
  </div>
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2 pt-2">
  <span className="text-muted-foreground">Institutions</span>
- <span className="font-mono text-foreground dark:text-white">{selectedMember.institutions}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2]">{selectedMember.institutions}</span>
  </div>
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2 pt-2">
  <span className="text-muted-foreground">Missions Invoked</span>
- <span className="font-mono text-foreground dark:text-white">{selectedMember.missions}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2]">{selectedMember.missions}</span>
  </div>
  <div className="flex justify-between pt-2">
  <span className="text-muted-foreground">Last Active</span>
- <span className="font-medium text-foreground dark:text-white flex items-center gap-1.5"><Clock className="size-3"/> {selectedMember.lastActive}</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2] flex items-center gap-1.5"><Clock className="size-3"/> {selectedMember.lastActive}</span>
  </div>
  </div>
  </div>
@@ -163,7 +163,7 @@ export function OrganizationMembers() {
  <div className="flex items-start gap-3">
  <MonitorSmartphone className="size-4 text-muted-foreground mt-0.5" />
  <div className="flex flex-col">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Mac OS • Chrome</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Mac OS • Chrome</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">San Francisco, US • Current session</span>
  </div>
  </div>

@@ -248,7 +248,7 @@ function PlannerNode({ id, title, subtitle, icon, status, progress, isSelected, 
          `}>
             <div className={`size-8 rounded-md flex items-center justify-center mb-2 ${
                status === 'COMPLETED' ? 'bg-black/5 text-black/60' : 
-               status === 'RUNNING' ? 'bg-[#0f52ff] text-white animate-pulse' : 
+               status === 'RUNNING' ? 'bg-[#0f52ff] text-[#F0EFE2] animate-pulse' : 
                'bg-white border border-black/10 text-black/30'
             }`}>
                {icon}
@@ -272,14 +272,14 @@ function PlannerNode({ id, title, subtitle, icon, status, progress, isSelected, 
 
          {/* Amazing Interaction Hover Stats */}
          {hoverStats && (
-            <div className="absolute top-1/2 left-[180px] -translate-y-1/2 w-[200px] bg-black text-white p-3 rounded-md shadow-2xl opacity-0 group-hover/node:opacity-100 group-hover/node:translate-x-2 pointer-events-none transition-all z-50">
-               <div className="text-[10px] font-bold text-white/50 uppercase tracking-wider mb-2 border-b border-white/10 pb-1">Live Metrics</div>
+            <div className="absolute top-1/2 left-[180px] -translate-y-1/2 w-[200px] bg-black text-[#F0EFE2] p-3 rounded-md shadow-2xl opacity-0 group-hover/node:opacity-100 group-hover/node:translate-x-2 pointer-events-none transition-all z-50">
+               <div className="text-[10px] font-bold text-[#F0EFE2]/50 uppercase tracking-wider mb-2 border-b border-white/10 pb-1">Live Metrics</div>
                <div className="space-y-1.5 text-xs">
-                  <div className="flex justify-between"><span className="text-white/60">CPU</span><span className="font-mono">82%</span></div>
-                  <div className="flex justify-between"><span className="text-white/60">Tokens</span><span className="font-mono">4,021</span></div>
-                  <div className="flex justify-between"><span className="text-white/60">Latency</span><span className="font-mono">142ms</span></div>
-                  <div className="flex justify-between"><span className="text-white/60">Tool</span><span className="text-[#4ade80]">grep_search</span></div>
-                  <div className="flex justify-between"><span className="text-white/60">File</span><span className="truncate max-w-[80px]">auth.ts</span></div>
+                  <div className="flex justify-between"><span className="text-[#F0EFE2]/60">CPU</span><span className="font-mono">82%</span></div>
+                  <div className="flex justify-between"><span className="text-[#F0EFE2]/60">Tokens</span><span className="font-mono">4,021</span></div>
+                  <div className="flex justify-between"><span className="text-[#F0EFE2]/60">Latency</span><span className="font-mono">142ms</span></div>
+                  <div className="flex justify-between"><span className="text-[#F0EFE2]/60">Tool</span><span className="text-[#4ade80]">grep_search</span></div>
+                  <div className="flex justify-between"><span className="text-[#F0EFE2]/60">File</span><span className="truncate max-w-[80px]">auth.ts</span></div>
                </div>
             </div>
          )}

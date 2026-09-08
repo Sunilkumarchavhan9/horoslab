@@ -178,11 +178,11 @@ export function ExperimentsView({
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold font-sans text-xs uppercase tracking-wider">
               Benchmark Runner & Sandbox
             </span>
-            <h1 className="text-lg font-bold font-mono tracking-tight text-white">
+            <h1 className="text-lg font-bold font-mono tracking-tight text-[#F0EFE2]">
               Experiment Fabric
             </h1>
           </div>
-          <p className="mt-1 text-xs text-[#888]">
+          <p className="mt-1 text-xs text-[#C8C7BA]">
             Maximizing Expected Information Gain (EIG), bounded microVM sandbox execution, and economic outcome normalization.
           </p>
         </div>
@@ -216,8 +216,8 @@ export function ExperimentsView({
                 className={cn(
                   "px-2.5 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm",
                   isActive
-                    ? "bg-[#242424] text-white font-bold"
-                    : "text-[#889284] hover:text-white"
+                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                    : "text-[#889284] hover:text-[#F0EFE2]"
                 )}
               >
                 <span>{tab.label}</span>
@@ -228,7 +228,7 @@ export function ExperimentsView({
 
         {/* 24 hours Time Window Badge (1:1 Match with User Image) */}
         <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm">
-          <span className="bg-[#242424] text-white font-bold px-2 py-0.5 rounded-sm">
+          <span className="bg-[#242424] text-[#F0EFE2] font-bold px-2 py-0.5 rounded-sm">
             24 hours
           </span>
         </div>
@@ -257,7 +257,7 @@ export function ExperimentsView({
                 {SAMPLE_BENCHMARK_MATRIX.map((row, idx) => (
                   <tr key={row.candidateId} className="hover:bg-[#181818] transition-colors">
                     <td className="p-3">
-                      <div className="font-bold text-white font-sans flex items-center gap-1.5">
+                      <div className="font-bold text-[#F0EFE2] font-sans flex items-center gap-1.5">
                         {getModelBrandIcon(row.model)}
                         <span>{row.model}</span>
                       </div>
@@ -270,7 +270,7 @@ export function ExperimentsView({
                         )}
                       </div>
                     </td>
-                    <td className="p-3 text-[#ccc] text-[11px]">
+                    <td className="p-3 text-[#C8C7BA] text-[11px]">
                       <div className="flex items-center gap-1.5">
                         {getRuntimeBrandIcon(row.runtime)}
                         <span>{row.runtime}</span>
@@ -284,15 +284,15 @@ export function ExperimentsView({
                     </td>
                     <td className="p-3 font-bold text-[#75bf00]">{row.ttftMs}ms</td>
                     <td className="p-3 font-bold text-[#75bf00]">{row.p95LatencyMs}ms</td>
-                    <td className="p-3 text-[#ccc]">{row.tokensPerSec} t/s</td>
+                    <td className="p-3 text-[#C8C7BA]">{row.tokensPerSec} t/s</td>
                     <td className="p-3 text-[#777]">{row.vramUsageGb} GB</td>
-                    <td className="p-3 font-bold text-white">${row.costPer1MTokensUsd}</td>
+                    <td className="p-3 font-bold text-[#F0EFE2]">${row.costPer1MTokensUsd}</td>
                     <td className="p-3 font-bold text-[#75bf00]">{row.qualityScore}%</td>
                     <td className="p-3 text-right">
                       <button
                         type="button"
                         onClick={() => onDeployCandidate?.(row.candidateId)}
-                        className="px-2.5 py-1 border border-dashed border-[#383838] bg-[#181818] hover:border-[#75bf00] hover:text-[#75bf00] text-white rounded-xs text-[10px] whitespace-nowrap transition-colors cursor-pointer"
+                        className="px-2.5 py-1 border border-dashed border-[#383838] bg-[#181818] hover:border-[#75bf00] hover:text-[#75bf00] text-[#F0EFE2] rounded-xs text-[10px] whitespace-nowrap transition-colors cursor-pointer"
                       >
                         Deploy Candidate
                       </button>
@@ -312,7 +312,7 @@ export function ExperimentsView({
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-dashed border-[#222] pb-3">
               <div className="flex items-center gap-2">
                 <Lock className="text-[#75bf00]" size={14} />
-                <h3 className="text-xs font-bold text-white">
+                <h3 className="text-xs font-bold text-[#F0EFE2]">
                   Isolated MicroVM Sandbox Container ({SAMPLE_SANDBOX_RUN.sandboxId})
                 </h3>
               </div>
@@ -325,11 +325,11 @@ export function ExperimentsView({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               <div className="p-2.5 border border-dashed border-[#282828] bg-[#111111] rounded-xs">
                 <span className="text-[#666] text-[10px] uppercase block">CPU CONTAINER CAP</span>
-                <span className="font-bold text-white text-xs mt-0.5 block">{SAMPLE_SANDBOX_RUN.resourceLimits.cpu}</span>
+                <span className="font-bold text-[#F0EFE2] text-xs mt-0.5 block">{SAMPLE_SANDBOX_RUN.resourceLimits.cpu}</span>
               </div>
               <div className="p-2.5 border border-dashed border-[#282828] bg-[#111111] rounded-xs">
                 <span className="text-[#666] text-[10px] uppercase block">MEMORY LIMIT</span>
-                <span className="font-bold text-white text-xs mt-0.5 block">{SAMPLE_SANDBOX_RUN.resourceLimits.memory}</span>
+                <span className="font-bold text-[#F0EFE2] text-xs mt-0.5 block">{SAMPLE_SANDBOX_RUN.resourceLimits.memory}</span>
               </div>
               <div className="p-2.5 border border-dashed border-[#282828] bg-[#111111] rounded-xs">
                 <span className="text-[#666] text-[10px] uppercase block">GPU VFIO PASSTHROUGH</span>
@@ -337,7 +337,7 @@ export function ExperimentsView({
               </div>
               <div className="p-2.5 border border-dashed border-[#282828] bg-[#111111] rounded-xs">
                 <span className="text-[#666] text-[10px] uppercase block">TIMEOUT CAP</span>
-                <span className="font-bold text-white text-xs mt-0.5 block">{SAMPLE_SANDBOX_RUN.resourceLimits.timeoutSec}s</span>
+                <span className="font-bold text-[#F0EFE2] text-xs mt-0.5 block">{SAMPLE_SANDBOX_RUN.resourceLimits.timeoutSec}s</span>
               </div>
             </div>
 
@@ -361,7 +361,7 @@ export function ExperimentsView({
                 <button
                   type="button"
                   onClick={() => copyDigest(SAMPLE_SANDBOX_RUN.capturedEvidenceDigest)}
-                  className="text-[#777] hover:text-white p-0.5 cursor-pointer transition-colors"
+                  className="text-[#777] hover:text-[#F0EFE2] p-0.5 cursor-pointer transition-colors"
                 >
                   {copiedSha ? <Check size={11} className="text-[#75bf00]" /> : <Copy size={11} />}
                 </button>
@@ -376,7 +376,7 @@ export function ExperimentsView({
         <div className="space-y-4 font-mono">
           <div className="p-4 border border-dashed border-[#262626] bg-[#141414] rounded-xs space-y-4">
             <div>
-              <h3 className="text-xs font-bold text-white">
+              <h3 className="text-xs font-bold text-[#F0EFE2]">
                 Economic Normalization Formula: Total Cost / Successful Outcomes
               </h3>
               <p className="text-xs text-[#777] font-sans mt-1">
@@ -413,7 +413,7 @@ export function ExperimentsView({
           <div className="w-full max-w-lg border border-[#282828] bg-[#141414] rounded-xs p-6 text-xs space-y-4 shadow-2xl text-left font-mono">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <h2 className="text-sm font-bold text-white font-sans">Launch Benchmark Experiment</h2>
+                <h2 className="text-sm font-bold text-[#F0EFE2] font-sans">Launch Benchmark Experiment</h2>
                 <p className="text-[11px] text-[#777]">
                   Configure candidate system sweeps, dataset workloads, and budget caps.
                 </p>
@@ -421,7 +421,7 @@ export function ExperimentsView({
               <button
                 type="button"
                 onClick={() => setLaunchModalOpen(false)}
-                className="text-[#777] hover:text-white cursor-pointer"
+                className="text-[#777] hover:text-[#F0EFE2] cursor-pointer"
               >
                 <X size={13} />
               </button>
@@ -433,7 +433,7 @@ export function ExperimentsView({
                 <select
                   value={selectedModel}
                   onChange={(e) => setSelectedModel(e.target.value)}
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-xs text-white outline-none"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-xs text-[#F0EFE2] outline-none"
                 >
                   <option value="meta-llama/Llama-3.1-70B-Instruct">meta-llama/Llama-3.1-70B-Instruct</option>
                   <option value="Qwen/Qwen2.5-32B-Instruct">Qwen/Qwen2.5-32B-Instruct</option>
@@ -446,7 +446,7 @@ export function ExperimentsView({
                 <select
                   value={selectedDataset}
                   onChange={(e) => setSelectedDataset(e.target.value)}
-                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-xs text-white outline-none"
+                  className="w-full bg-[#181818] border border-dashed border-[#383838] focus:border-[#75bf00] rounded-xs px-3 py-1.5 text-xs text-[#F0EFE2] outline-none"
                 >
                   <option value="Synthetic Load Sweep (1,000 reqs)">Synthetic Load Sweep (1,000 reqs)</option>
                   <option value="Enterprise RAG Groundedness Eval (500 queries)">Enterprise RAG Groundedness Eval (500 queries)</option>
@@ -466,7 +466,7 @@ export function ExperimentsView({
                         "flex-1 py-1.5 text-xs border border-dashed rounded-xs transition-colors cursor-pointer",
                         selectedBudget === b
                           ? "border-[#75bf00] bg-[#75bf00]/10 text-[#75bf00] font-bold"
-                          : "border-[#383838] bg-[#181818] text-[#777] hover:text-white"
+                          : "border-[#383838] bg-[#181818] text-[#777] hover:text-[#F0EFE2]"
                       )}
                     >
                       {b}
@@ -480,7 +480,7 @@ export function ExperimentsView({
               <button
                 type="button"
                 onClick={() => setLaunchModalOpen(false)}
-                className="px-4 py-2 border border-dashed border-[#383838] bg-[#181818] hover:bg-[#222] text-white rounded-xs cursor-pointer text-xs transition-colors"
+                className="px-4 py-2 border border-dashed border-[#383838] bg-[#181818] hover:bg-[#222] text-[#F0EFE2] rounded-xs cursor-pointer text-xs transition-colors"
               >
                 Cancel
               </button>

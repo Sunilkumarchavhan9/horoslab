@@ -163,7 +163,7 @@ export function ContinuityLabSessionMenu({
             type="button"
             onClick={(e) => e.preventDefault()}
             className={cn(
-              "inline-flex size-7 shrink-0 items-center justify-center text-white/50 hover:bg-[#141414] hover:text-white",
+              "inline-flex size-7 shrink-0 items-center justify-center text-[#F0EFE2]/50 hover:bg-[#141414] hover:text-[#F0EFE2]",
               triggerClassName,
             )}
             aria-label="Session options"
@@ -173,45 +173,45 @@ export function ContinuityLabSessionMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align={align}
-          className="min-w-[240px] border border-[#2F2F2F] bg-[#0d0d0d] p-1 text-white"
+          className="min-w-[240px] border border-[#2F2F2F] bg-[#0d0d0d] p-1 text-[#F0EFE2]"
         >
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => handleArchive()}
           >
             <Archive className="size-3.5" />
             {isArchived ? "Unarchive" : "Archive"}
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => handlePin()}
           >
             <Pin className="size-3.5" />
             {isPinned ? "Unpin" : "Pin"}
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => setTagsModalOpen(true)}
           >
             <Tag className="size-3.5" />
             Edit tags
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => void copySessionId()}
           >
             <Copy className="size-3.5" />
             Copy session ID
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => setNetworkModalOpen(true)}
           >
             <Globe className="size-3.5" />
             Update network config
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => handleRename()}
           >
             <SquarePen className="size-3.5" />
@@ -219,7 +219,7 @@ export function ContinuityLabSessionMenu({
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white data-disabled:opacity-40"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2] data-disabled:opacity-40"
             title="Team visibility requires org-scoped sessions (not available locally)"
           >
             <EyeOff className="size-3.5" />
@@ -229,14 +229,14 @@ export function ContinuityLabSessionMenu({
           <DropdownMenuSeparator className="bg-[#2F2F2F]" />
 
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => handleDuplicate()}
           >
             <Users className="size-3.5" />
             Start duplicate session
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]"
             onSelect={() => onAnalyze?.()}
             disabled={!onAnalyze}
             title={onAnalyze ? undefined : "Open a session to analyze continuity"}
@@ -249,7 +249,7 @@ export function ContinuityLabSessionMenu({
 
           <DropdownMenuItem
             disabled
-            className="gap-2 text-white/85 focus:bg-[#141414] focus:text-white data-disabled:opacity-40"
+            className="gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2] data-disabled:opacity-40"
             title="Sandbox reboot requires a runtime API (not wired in Continuity Lab yet)"
           >
             <RefreshCw className="size-3.5" />
@@ -268,7 +268,7 @@ export function ContinuityLabSessionMenu({
 
           <DropdownMenuItem
             className={cn(
-              "gap-2 text-white/85 focus:bg-[#141414] focus:text-white",
+              "gap-2 text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]",
               !onFocusMode && "data-disabled:opacity-40",
             )}
             disabled={!onFocusMode}
@@ -283,13 +283,13 @@ export function ContinuityLabSessionMenu({
           >
             <Focus className="size-3.5" />
             {focusModeActive ? "Exit focus mode" : "Focus mode"}
-            <span className="ml-auto text-[10px] text-white/30">{focusShortcutLabel()}</span>
+            <span className="ml-auto text-[10px] text-[#F0EFE2]/30">{focusShortcutLabel()}</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator className="bg-[#2F2F2F]" />
 
-          <DropdownMenuLabel className="px-2 py-2 text-[10px] font-normal leading-relaxed text-white/40">
-            <span className="block text-white/55">Session insights</span>
+          <DropdownMenuLabel className="px-2 py-2 text-[10px] font-normal leading-relaxed text-[#F0EFE2]/40">
+            <span className="block text-[#F0EFE2]/55">Session insights</span>
             {stats ? (
               <>
                 <span className="mt-1.5 block">
@@ -299,18 +299,18 @@ export function ContinuityLabSessionMenu({
                 <span className="block">Transcript ~{formatSizeKb(stats.estimatedSizeKb)}</span>
               </>
             ) : (
-              <span className="mt-1.5 block text-white/30">
+              <span className="mt-1.5 block text-[#F0EFE2]/30">
                 Open session for message stats
               </span>
             )}
             {category ? (
               <span className="mt-1 block truncate">Project: {category}</span>
             ) : null}
-            <span className="mt-1.5 block truncate font-mono text-[9px] text-white/35">
+            <span className="mt-1.5 block truncate font-mono text-[9px] text-[#F0EFE2]/35">
               {session.id}
             </span>
             {session.repo ? (
-              <span className="mt-0.5 block truncate text-white/35">{session.repo}</span>
+              <span className="mt-0.5 block truncate text-[#F0EFE2]/35">{session.repo}</span>
             ) : null}
             {(meta.tags?.length ?? 0) > 0 ? (
               <span className="mt-0.5 block truncate">Tags: {meta.tags!.join(", ")}</span>

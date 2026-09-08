@@ -349,11 +349,11 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  <div className="fixed inset-0 z-50 flex items-center justify-center bg-muted5 px-6">
  <div className="w-full max-w-md rounded-md border border-[#2a2a2a] bg-[#141414] shadow-2xl">
  <div className="border-b border-white/10 px-6 py-6">
- <h2 className="text-[18px] font-semibold text-white">Rename institution</h2>
- <p className="mt-1 text-[13px] text-white/60">Update the live institution name without leaving the app.</p>
+ <h2 className="text-[18px] font-semibold text-[#F0EFE2]">Rename institution</h2>
+ <p className="mt-1 text-[13px] text-[#F0EFE2]/60">Update the live institution name without leaving the app.</p>
  </div>
  <div className="px-6 py-6">
- <label className="text-[12px] font-semibold uppercase tracking-wider text-white/60">New name</label>
+ <label className="text-[12px] font-semibold uppercase tracking-wider text-[#F0EFE2]/60">New name</label>
  <input
  autoFocus
  value={renameDraft}
@@ -364,14 +364,14 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  void submitRename();
  }
  }}
- className="mt-2 w-full rounded-md border border-white/15 bg-[#0f0f0f] px-3 py-2 text-[14px] text-white outline-none ring-0 placeholder:text-white/35 focus:border-[#f38020]"
+ className="mt-2 w-full rounded-md border border-white/15 bg-[#0f0f0f] px-3 py-2 text-[14px] text-[#F0EFE2] outline-none ring-0 placeholder:text-[#F0EFE2]/35 focus:border-[#f38020]"
  placeholder="Enter a new institution name"
  />
  <div className="mt-5 flex items-center justify-end gap-3">
  <button
  type="button"
  onClick={() => setRenameOpen(false)}
- className="rounded-md border border-white/15 px-6 py-2 text-[13px] font-medium text-white/80 hover:bg-card/5"
+ className="rounded-md border border-white/15 px-6 py-2 text-[13px] font-medium text-[#F0EFE2]/80 hover:bg-card/5"
  >
  Cancel
  </button>
@@ -379,7 +379,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  type="button"
  onClick={() => void submitRename()}
  disabled={savingAction === "rename"}
- className="rounded-md bg-[#f38020] px-6 py-2 text-[13px] font-semibold text-white disabled:opacity-60"
+ className="rounded-md bg-[#f38020] px-6 py-2 text-[13px] font-semibold text-[#F0EFE2] disabled:opacity-60"
  >
  {savingAction === "rename" ? "Saving..." : "Rename"}
  </button>

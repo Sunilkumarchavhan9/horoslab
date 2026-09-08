@@ -37,11 +37,11 @@ type KeyValueRow = { key: string; value: string };
 type HeaderRow = { name: string; value: string };
 
 const inputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none";
 const monoInputClass = cn(inputClass, "font-mono text-xs");
 
 const bluePrimaryClass =
-  "inline-flex h-9 items-center rounded-md bg-indigo-500 px-4 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-60";
+  "inline-flex h-9 items-center rounded-md bg-indigo-500 px-4 text-sm font-medium text-[#F0EFE2] transition hover:bg-indigo-400 disabled:opacity-60";
 
 const AUTH_OPTIONS: { value: McpAuthType; label: string }[] = [
   { value: "none", label: "None" },
@@ -256,18 +256,18 @@ function ImportJsonModal({
       <div className="flex w-full max-w-lg flex-col rounded-md border border-white/[0.08] bg-[#1a1a1a] shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
           <div>
-            <h2 id="import-json-title" className="text-lg font-semibold text-white">
+            <h2 id="import-json-title" className="text-lg font-semibold text-[#F0EFE2]">
               Import JSON config
             </h2>
-            <p className="mt-1 text-xs text-white/45">
+            <p className="mt-1 text-xs text-[#F0EFE2]/45">
               Paste an MCP config (Cursor, Windsurf, or MemoryOS{" "}
-              <code className="text-white/60">mcpServers</code> format).
+              <code className="text-[#F0EFE2]/60">mcpServers</code> format).
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-white/50 hover:bg-white/[0.06] hover:text-white"
+            className="rounded-md p-1 text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -282,7 +282,7 @@ function ImportJsonModal({
             }}
             rows={14}
             spellCheck={false}
-            className="w-full resize-y rounded-md border border-white/[0.08] bg-[#0f0f0f] px-3 py-2 font-mono text-xs leading-relaxed text-white/90 focus:border-white/20 focus:outline-none"
+            className="w-full resize-y rounded-md border border-white/[0.08] bg-[#0f0f0f] px-3 py-2 font-mono text-xs leading-relaxed text-[#F0EFE2]/90 focus:border-white/20 focus:outline-none"
           />
           {error ? <p className="mt-2 text-xs text-red-400">{error}</p> : null}
         </div>
@@ -341,13 +341,13 @@ function AddSecretModal({
     >
       <div className="flex w-full max-w-md flex-col rounded-md border border-white/[0.08] bg-[#1a1a1a] shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
-          <h2 id="add-secret-title" className="text-lg font-semibold text-white">
+          <h2 id="add-secret-title" className="text-lg font-semibold text-[#F0EFE2]">
             Add secret
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-white/50 hover:bg-white/[0.06] hover:text-white"
+            className="rounded-md p-1 text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -355,17 +355,17 @@ function AddSecretModal({
         </div>
         <div className="space-y-4 px-5 py-4">
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-white/70">Scope</span>
+            <span className="text-xs font-medium text-[#F0EFE2]/70">Scope</span>
             <select
               value={scope}
               onChange={(e) => setScope(e.target.value as "organization")}
-              className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white focus:border-white/20 focus:outline-none"
+              className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] focus:border-white/20 focus:outline-none"
             >
               <option value="organization">Organization</option>
             </select>
           </label>
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-white/70">Secret name</span>
+            <span className="text-xs font-medium text-[#F0EFE2]/70">Secret name</span>
             <input
               value={key}
               onChange={(e) => {
@@ -377,7 +377,7 @@ function AddSecretModal({
             />
           </label>
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-white/70">Secret value</span>
+            <span className="text-xs font-medium text-[#F0EFE2]/70">Secret value</span>
             <div className="relative">
               <input
                 type={showValue && !redacted ? "text" : "password"}
@@ -392,7 +392,7 @@ function AddSecretModal({
               <button
                 type="button"
                 onClick={() => setShowValue((v) => !v)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-white/40 hover:text-white/70"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#F0EFE2]/40 hover:text-[#F0EFE2]/70"
                 aria-label={showValue ? "Hide value" : "Show value"}
               >
                 {showValue ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -400,8 +400,8 @@ function AddSecretModal({
             </div>
           </label>
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-white/70">
-              Note <span className="font-normal text-white/35">(optional)</span>
+            <span className="text-xs font-medium text-[#F0EFE2]/70">
+              Note <span className="font-normal text-[#F0EFE2]/35">(optional)</span>
             </span>
             <input
               value={note}
@@ -411,7 +411,7 @@ function AddSecretModal({
             />
           </label>
           <label className="flex cursor-pointer items-center justify-between gap-3 rounded-md border border-white/[0.08] bg-[#111111] px-3 py-2.5">
-            <span className="text-sm text-white/80">Redacted</span>
+            <span className="text-sm text-[#F0EFE2]/80">Redacted</span>
             <input
               type="checkbox"
               checked={redacted}
@@ -442,7 +442,7 @@ function ArgsListEditor({
   if (args.length === 0) {
     return (
       <div className="space-y-3">
-        <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-white/40">
+        <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-[#F0EFE2]/40">
           No arguments added
         </p>
         <button
@@ -475,7 +475,7 @@ function ArgsListEditor({
             <button
               type="button"
               onClick={() => onChange(args.filter((_, j) => j !== i))}
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/45 hover:bg-white/[0.04] hover:text-white/80"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/45 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80"
               aria-label="Remove argument"
             >
               <Trash2 className="size-3.5" />
@@ -525,7 +525,7 @@ function KeyValueListEditor({
   return (
     <div className="space-y-3">
       {rows.length === 0 ? (
-        <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-white/40">
+        <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-[#F0EFE2]/40">
           {emptyMessage}
         </p>
       ) : (
@@ -548,7 +548,7 @@ function KeyValueListEditor({
               <button
                 type="button"
                 onClick={() => removeRow(i)}
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/45 hover:bg-white/[0.04] hover:text-white/80"
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/45 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80"
                 aria-label="Remove row"
               >
                 <Trash2 className="size-3.5" />
@@ -589,7 +589,7 @@ function HeaderListEditor({
   return (
     <div className="space-y-3">
       {rows.length === 0 ? (
-        <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-white/40">
+        <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-[#F0EFE2]/40">
           No custom headers added
         </p>
       ) : (
@@ -611,7 +611,7 @@ function HeaderListEditor({
               <button
                 type="button"
                 onClick={() => removeRow(i)}
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/45 hover:bg-white/[0.04] hover:text-white/80"
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/45 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80"
                 aria-label="Remove header"
               >
                 <Trash2 className="size-3.5" />
@@ -753,15 +753,15 @@ export function ContinuityLabAddCustomMcpPage() {
     <ContinuityLabSettingsSectionFrame sectionId="connections">
       <Link
         href={backHref}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white/80"
+        className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" />
         Back to connections
       </Link>
 
       <header className="mb-6">
-        <h1 className="text-lg font-semibold text-white">{pageTitle}</h1>
-        <p className="mt-1 text-sm text-white/45">{pageDescription}</p>
+        <h1 className="text-lg font-semibold text-[#F0EFE2]">{pageTitle}</h1>
+        <p className="mt-1 text-sm text-[#F0EFE2]/45">{pageDescription}</p>
       </header>
 
       {importOpen ? (
@@ -778,7 +778,7 @@ export function ContinuityLabAddCustomMcpPage() {
         <div className={cn(subtlePanel(), "overflow-hidden bg-[#1a1a1a] p-5")}>
           <div className="mb-5 flex items-start justify-between gap-4">
             <span
-              className="inline-flex size-12 shrink-0 items-center justify-center rounded-md border border-white/[0.08] bg-[#0f0f0f] text-lg font-semibold text-white/35"
+              className="inline-flex size-12 shrink-0 items-center justify-center rounded-md border border-white/[0.08] bg-[#0f0f0f] text-lg font-semibold text-[#F0EFE2]/35"
               aria-hidden
             >
               {setupPreset ? (
@@ -799,22 +799,22 @@ export function ContinuityLabAddCustomMcpPage() {
                   icon.trim().slice(0, 2)
                 )
               ) : (
-                <HelpCircle className="size-5 text-white/30" />
+                <HelpCircle className="size-5 text-[#F0EFE2]/30" />
               )}
             </span>
             <button
               type="button"
               onClick={() => setImportOpen(true)}
-              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-white/[0.08] bg-transparent px-3.5 text-sm font-medium text-white/85 hover:bg-white/[0.04]"
+              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-white/[0.08] bg-transparent px-3.5 text-sm font-medium text-[#F0EFE2]/85 hover:bg-white/[0.04]"
             >
-              <Braces className="size-3.5 text-white/50" />
+              <Braces className="size-3.5 text-[#F0EFE2]/50" />
               Import JSON
             </button>
           </div>
 
           <div className="space-y-4">
             <label className="block space-y-1.5">
-              <span className="text-xs font-medium text-white/70">Server name</span>
+              <span className="text-xs font-medium text-[#F0EFE2]/70">Server name</span>
               <input
                 required
                 value={name}
@@ -824,8 +824,8 @@ export function ContinuityLabAddCustomMcpPage() {
               />
             </label>
             <label className="block space-y-1.5">
-              <span className="text-xs font-medium text-white/70">
-                Icon <span className="font-normal text-white/35">(optional emoji or URL)</span>
+              <span className="text-xs font-medium text-[#F0EFE2]/70">
+                Icon <span className="font-normal text-[#F0EFE2]/35">(optional emoji or URL)</span>
               </span>
               <input
                 value={icon}
@@ -835,13 +835,13 @@ export function ContinuityLabAddCustomMcpPage() {
               />
             </label>
             <label className="block space-y-1.5">
-              <span className="text-xs font-medium text-white/70">Short description</span>
+              <span className="text-xs font-medium text-[#F0EFE2]/70">Short description</span>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="What does this server provide?"
-                className="w-full resize-none rounded-md border border-white/[0.08] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                className="w-full resize-none rounded-md border border-white/[0.08] bg-[#111111] px-3 py-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
               />
             </label>
           </div>
@@ -851,14 +851,14 @@ export function ContinuityLabAddCustomMcpPage() {
           <SettingsFlatPanel className="py-1">
             <div className="space-y-4 py-3">
               <label className="block space-y-1.5">
-                <span className="text-xs font-medium text-white/70">Transport type</span>
+                <span className="text-xs font-medium text-[#F0EFE2]/70">Transport type</span>
                 <select
                   value={transport}
                   onChange={(e) => {
                     setTransport(e.target.value as McpTransportType);
                     setConnectionError(null);
                   }}
-                  className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white focus:border-white/20 focus:outline-none"
+                  className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] focus:border-white/20 focus:outline-none"
                 >
                   {MCP_TRANSPORT_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -867,14 +867,14 @@ export function ContinuityLabAddCustomMcpPage() {
                   ))}
                 </select>
                 {transportMeta ? (
-                  <p className="text-xs text-white/40">{transportMeta.description}</p>
+                  <p className="text-xs text-[#F0EFE2]/40">{transportMeta.description}</p>
                 ) : null}
               </label>
 
               {remote ? (
                 <>
                   <label className="block space-y-1.5">
-                    <span className="text-xs font-medium text-white/70">Server URL</span>
+                    <span className="text-xs font-medium text-[#F0EFE2]/70">Server URL</span>
                     <input
                       value={serverUrl}
                       onChange={(e) => {
@@ -892,11 +892,11 @@ export function ContinuityLabAddCustomMcpPage() {
                     />
                   </label>
                   <label className="block space-y-1.5">
-                    <span className="text-xs font-medium text-white/70">Authentication</span>
+                    <span className="text-xs font-medium text-[#F0EFE2]/70">Authentication</span>
                     <select
                       value={authType}
                       onChange={(e) => setAuthType(e.target.value as McpAuthType)}
-                      className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white focus:border-white/20 focus:outline-none"
+                      className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] focus:border-white/20 focus:outline-none"
                     >
                       {AUTH_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>
@@ -907,9 +907,9 @@ export function ContinuityLabAddCustomMcpPage() {
                   </label>
                   {authType === "authorization_header" ? (
                     <label className="block space-y-1.5">
-                      <span className="text-xs font-medium text-white/70">
+                      <span className="text-xs font-medium text-[#F0EFE2]/70">
                         Header name{" "}
-                        <span className="font-normal text-white/35">(optional)</span>
+                        <span className="font-normal text-[#F0EFE2]/35">(optional)</span>
                       </span>
                       <input
                         value={authHeaderName}
@@ -917,25 +917,25 @@ export function ContinuityLabAddCustomMcpPage() {
                         placeholder="Authorization"
                         className={monoInputClass}
                       />
-                      <p className="text-xs text-white/40">
+                      <p className="text-xs text-[#F0EFE2]/40">
                         Leave blank to use{" "}
-                        <code className="text-white/55">Authorization</code>, or reference a
+                        <code className="text-[#F0EFE2]/55">Authorization</code>, or reference a
                         secret with{" "}
-                        <code className="text-white/55">$SECRET_NAME</code> in the header value
+                        <code className="text-[#F0EFE2]/55">$SECRET_NAME</code> in the header value
                         via custom headers.
                       </p>
                     </label>
                   ) : null}
                   {authType === "oauth" ? (
-                    <p className="rounded-md border border-white/[0.08] bg-[#0f0f0f] px-3 py-2 text-xs text-white/45">
+                    <p className="rounded-md border border-white/[0.08] bg-[#0f0f0f] px-3 py-2 text-xs text-[#F0EFE2]/45">
                       OAuth credentials are stored locally until server-side connector auth ships.
                     </p>
                   ) : null}
                   <div>
                     <div className="mb-1">
-                      <span className="text-xs font-medium text-white/70">Custom headers</span>
+                      <span className="text-xs font-medium text-[#F0EFE2]/70">Custom headers</span>
                     </div>
-                    <p className="mb-2 text-xs text-white/40">
+                    <p className="mb-2 text-xs text-[#F0EFE2]/40">
                       Optional headers sent with every request
                     </p>
                     <HeaderListEditor rows={customHeaderRows} onChange={setCustomHeaderRows} />
@@ -944,7 +944,7 @@ export function ContinuityLabAddCustomMcpPage() {
               ) : (
                 <>
                   <label className="block space-y-1.5">
-                    <span className="text-xs font-medium text-white/70">Command</span>
+                    <span className="text-xs font-medium text-[#F0EFE2]/70">Command</span>
                     <input
                       value={command}
                       onChange={(e) => {
@@ -960,22 +960,22 @@ export function ContinuityLabAddCustomMcpPage() {
                           : undefined,
                       )}
                     />
-                    <p className="text-xs text-white/40">
+                    <p className="text-xs text-[#F0EFE2]/40">
                       Executable to start the MCP server (e.g.{" "}
-                      <code className="text-white/55">npx</code>,{" "}
-                      <code className="text-white/55">node</code>,{" "}
-                      <code className="text-white/55">uvx</code>).
+                      <code className="text-[#F0EFE2]/55">npx</code>,{" "}
+                      <code className="text-[#F0EFE2]/55">node</code>,{" "}
+                      <code className="text-[#F0EFE2]/55">uvx</code>).
                     </p>
                   </label>
                   <div>
                     <div className="mb-2">
-                      <span className="text-xs font-medium text-white/70">Arguments</span>
+                      <span className="text-xs font-medium text-[#F0EFE2]/70">Arguments</span>
                     </div>
                     <ArgsListEditor args={args} onChange={setArgs} />
                   </div>
                   <div>
                     <div className="mb-2">
-                      <span className="text-xs font-medium text-white/70">
+                      <span className="text-xs font-medium text-[#F0EFE2]/70">
                         Environment variables
                       </span>
                     </div>
@@ -999,9 +999,9 @@ export function ContinuityLabAddCustomMcpPage() {
         </SettingsCard>
 
         <SettingsCard title="Secrets">
-          <p className="text-xs text-white/45">
+          <p className="text-xs text-[#F0EFE2]/45">
             Store sensitive values as secrets and reference them in env or headers as{" "}
-            <code className="rounded bg-white/[0.06] px-1 font-mono text-[11px] text-white/70">
+            <code className="rounded bg-white/[0.06] px-1 font-mono text-[11px] text-[#F0EFE2]/70">
               $SECRET_NAME
             </code>
             . Values are kept in this browser until server-side storage ships.
@@ -1009,7 +1009,7 @@ export function ContinuityLabAddCustomMcpPage() {
           <SettingsFlatPanel className="mt-3 py-1">
             <div className="space-y-3 py-3">
               {secrets.length === 0 ? (
-                <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-white/40">
+                <p className="rounded-md border border-dashed border-white/[0.08] bg-[#0f0f0f] px-4 py-6 text-center text-sm text-[#F0EFE2]/40">
                   No secrets added
                 </p>
               ) : (
@@ -1020,14 +1020,14 @@ export function ContinuityLabAddCustomMcpPage() {
                       className="flex items-center gap-3 rounded-md border border-white/[0.08] bg-[#0f0f0f] px-3 py-2"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-mono text-xs font-medium text-white/85">
+                        <p className="truncate font-mono text-xs font-medium text-[#F0EFE2]/85">
                           {secret.key}
                         </p>
-                        <p className="truncate font-mono text-[11px] text-white/40">
+                        <p className="truncate font-mono text-[11px] text-[#F0EFE2]/40">
                           {secret.redacted !== false ? "••••••••" : secret.value}
                         </p>
                         {secret.note ? (
-                          <p className="mt-0.5 truncate text-[11px] text-white/35">
+                          <p className="mt-0.5 truncate text-[11px] text-[#F0EFE2]/35">
                             {secret.note}
                           </p>
                         ) : null}
@@ -1035,7 +1035,7 @@ export function ContinuityLabAddCustomMcpPage() {
                       <button
                         type="button"
                         onClick={() => setSecrets(secrets.filter((_, j) => j !== i))}
-                        className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/45 hover:bg-white/[0.04] hover:text-white/80"
+                        className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/45 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80"
                         aria-label={`Delete secret ${secret.key}`}
                       >
                         <Trash2 className="size-3.5" />
@@ -1059,7 +1059,7 @@ export function ContinuityLabAddCustomMcpPage() {
         <div className="flex justify-end gap-3 pt-2">
           <Link
             href={backHref}
-            className="inline-flex h-9 items-center px-3 text-sm font-medium text-white/55 hover:text-white/80"
+            className="inline-flex h-9 items-center px-3 text-sm font-medium text-[#F0EFE2]/55 hover:text-[#F0EFE2]/80"
           >
             Cancel
           </Link>

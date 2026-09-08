@@ -1,156 +1,104 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Check } from "lucide-react";
-import Dither from "@/components/ui/Dither";
 import { MemoryOSFullLogo } from "@/components/landing/memoryos-full-logo";
 
 const FAQ_ITEMS = [
   {
-    question: "What is an institution run?",
-    answer:
-      "An institution run is one governed workflow with a mission, authority boundary, assigned agents or humans, evidence duties, verification, settlement, and a fitness record.",
+    question: "What is RunInfra?",
+    answer: "Describe what you want to run. RunInfra picks compatible open models, benchmarks GPUs, tunes the runtime, and gives you a deploy-ready stack.",
   },
   {
-    question: "Who is Epoch for right now?",
-    answer:
-      "Teams beginning to deploy AI workforces across engineering, infrastructure, support, security, or operations and needing proof, authority, and auditability before scale.",
+    question: "What are RunInfra Model APIs?",
+    answer: "RunInfra Model APIs provide drop-in compatible endpoints (like OpenAI's format) powered by optimized open-source models running on managed or dedicated infrastructure.",
   },
   {
-    question: "Is Epoch an agent platform?",
-    answer:
-      "No. Epoch sits above agent platforms. Agent infrastructure gives agents identity, tools, communication, and compute. Epoch turns those agents into governed institutions.",
+    question: "How do I build my first pipeline?",
+    answer: "Simply enter your prompt and target constraints in the Composer. RunInfra will automatically select the best model, serve it, and generate a fully optimized pipeline.",
   },
   {
-    question: "How does verification work?",
-    answer:
-      "Epoch separates execution from verification. Claims are checked against required evidence and return PASS, FAIL, or UNKNOWN before the outcome can be settled.",
+    question: "Which AI models are supported?",
+    answer: "We support all major open models including Llama 3, Mistral, Qwen, DeepSeek, and Gemma, continuously updated as new state-of-the-art models are released.",
   },
   {
-    question: "Do you need production write access?",
-    answer:
-      "No. Early founder runs can stay read-only or tightly scoped. Any write capability must be explicit, mission-bound, time-limited, and revocable.",
+    question: "How does GPU kernel optimization work?",
+    answer: "Our engine profiles your specific workload against multiple inference backends (like vLLM, SGLang, TensorRT-LLM) to automatically select the optimal batching and kernel strategy.",
   },
   {
-    question: "What does a founder call produce?",
-    answer:
-      "A mission contract, authority map, evidence plan, verification result, settlement record, and the first reusable institution template for your organization.",
+    question: "Can I deploy pipelines as APIs?",
+    answer: "Yes, every optimized pipeline can be instantly deployed as a scalable REST API or exported as a containerized stack for your own infrastructure.",
   },
+  {
+    question: "How is this different from using closed-source APIs?",
+    answer: "You get the same effortless developer experience as closed APIs, but with complete ownership of the model, transparent pricing, and no vendor lock-in.",
+  },
+  {
+    question: "Is my data secure?",
+    answer: "Absolutely. We offer isolated GPU infrastructure, end-to-end encryption, and guarantee that your data is never used for training.",
+  }
 ];
 
-export function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+export const FaqSection = () => {
+  const [activeFaq, setActiveFaq] = useState(0);
 
   return (
-    <section className="w-full bg-white py-24 font-sans text-slate-900 md:py-32">
-      <div className="mx-auto max-w-[1000px] px-6 lg:px-12">
-        <h2 className="mb-16 text-4xl font-medium leading-[1.1] tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
-          The mechanics, <span className="text-[#0015FF]">in plain English.</span>
-        </h2>
+    <section className="relative w-full py-32 bg-[#151515] overflow-hidden flex flex-col items-center border-t border-dashed border-[#333]">
+      {/* Vertical Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+      </div>
 
-        <div className="border-t border-slate-200">
-          {FAQ_ITEMS.map((item, index) => {
-            const isOpen = openIndex === index;
-
-            return (
-              <div key={item.question} className="border-b border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="group flex w-full items-center justify-between px-2 py-6 text-left transition-colors hover:bg-slate-50/50"
-                >
-                  <div className="flex items-center gap-6 md:gap-10">
-                    <span className="w-6 font-mono text-xs text-slate-400 md:text-sm">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="pr-4 text-[17px] font-medium text-slate-800 md:text-xl">
-                      {item.question}
-                    </span>
-                  </div>
-                  <span className={`shrink-0 text-slate-400 transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="5" x2="12" y2="19" />
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                  </span>
-                </button>
-
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pb-6 pl-14 pr-4 text-[15px] leading-relaxed text-slate-600 md:pl-20 md:text-[16px]">
-                        {item.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
+      <div className="w-full flex flex-col items-center relative z-10 px-4">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4">
+            Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs">questions</span>
+          </h2>
+          <p className="text-[#C8C7BA] text-lg">
+            Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
+          </p>
         </div>
 
-        <div className="mt-32 border-t border-dashed border-[#c9d8ee] pt-8 md:pt-16">
-          <h2 className="mb-12 text-4xl font-medium leading-[1.1] tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
-            See how teams turn agent work into institutions.
-          </h2>
+        {/* Pills */}
+        <div className="flex flex-wrap justify-center gap-3 max-w-5xl mb-16">
+          {FAQ_ITEMS.map((faq, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveFaq(idx)}
+              className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${
+                activeFaq === idx
+                  ? "bg-[#75bf00] text-black"
+                  : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
+              }`}
+            >
+              {faq.question}
+            </button>
+          ))}
+        </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_300px]">
-            <div className="relative flex min-h-[260px] flex-col justify-center overflow-hidden bg-[#0015FF] p-6 text-white md:p-10">
-              <div className="absolute inset-0 z-0">
-                <Dither
-                  waveColor={[0, 0.08235294117647059, 1]}
-                  disableAnimation={false}
-                  enableMouseInteraction={false}
-                  mouseRadius={0.3}
-                  colorNum={9}
-                  pixelSize={2}
-                  waveAmplitude={0.7}
-                  waveFrequency={5.5}
-                  waveSpeed={0}
-                />
-              </div>
-              <div className="relative z-10">
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-white/80">
-                  Founder-led onboarding
-                </p>
-                <p className="max-w-[28rem] text-[14px] leading-7 text-white/80">
-                  Founder-led teams can sign up, connect GitHub and Slack, ask Reality a question, and create a mission without manual setup.
-                </p>
-                <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[13px] font-medium text-white">
-                  <Check className="size-4 text-[#3aff7d]" />
-                  No placeholder onboarding
-                </div>
-              </div>
-            </div>
+        {/* Dotted line */}
+        <div className="w-full max-w-5xl h-px border-t border-dashed border-[#333] mb-12" />
 
-            <div className="flex flex-col gap-4">
-              <a
-                href="/mission-control"
-                className="flex h-16 items-center justify-between bg-white px-6 text-[15px] font-medium text-[#0015FF] transition-colors hover:bg-slate-50"
-              >
-                <span>Open Mission Control</span>
-                <span>&rarr;</span>
-              </a>
-              <a
-                href="https://cal.com/vegito"
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-16 items-center justify-between bg-[#0015FF] px-6 text-[15px] font-medium text-white transition-colors hover:bg-[#0015FF]/90"
-              >
-                <span>Book Founder Call</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
+        {/* Answer Content */}
+        <div className="flex items-start gap-5 max-w-5xl w-full text-left px-4 md:px-12">
+          <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-md flex items-center justify-center h-10 w-10">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+               <path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-[17px] font-bold text-[#f2efe8] mb-3">
+              {FAQ_ITEMS[activeFaq].question}
+            </h3>
+            <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
+              {FAQ_ITEMS[activeFaq].answer}
+            </p>
           </div>
         </div>
       </div>
     </section>
   );
-}
+};

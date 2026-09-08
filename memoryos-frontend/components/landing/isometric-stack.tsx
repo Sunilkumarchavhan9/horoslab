@@ -152,7 +152,7 @@ export function IsometricStack() {
                     borderBottom: "1px solid #0735a3",
                   }}
                 >
-                  <span className="text-white font-bold text-2xl tracking-wide drop-shadow-md">
+                  <span className="text-[#F0EFE2] font-bold text-2xl tracking-wide drop-shadow-md">
                     {layer.leftText}
                   </span>
                 </div>
@@ -171,7 +171,7 @@ export function IsometricStack() {
                     borderBottom: "1px solid #052470",
                   }}
                 >
-                  <span className="text-white font-bold text-2xl tracking-wide drop-shadow-md whitespace-nowrap">
+                  <span className="text-[#F0EFE2] font-bold text-2xl tracking-wide drop-shadow-md whitespace-nowrap">
                     {layer.rightText}
                   </span>
                 </div>
@@ -190,7 +190,7 @@ export function IsometricStack() {
                     borderBottom: "1px solid #0735a3",
                   }}
                 >
-                  <span className="text-white font-bold text-2xl tracking-wide drop-shadow-md">
+                  <span className="text-[#F0EFE2] font-bold text-2xl tracking-wide drop-shadow-md">
                     {layer.leftText}
                   </span>
                 </div>
@@ -209,7 +209,7 @@ export function IsometricStack() {
                     borderBottom: "1px solid #052470",
                   }}
                 >
-                  <span className="text-white font-bold text-2xl tracking-wide drop-shadow-md whitespace-nowrap">
+                  <span className="text-[#F0EFE2] font-bold text-2xl tracking-wide drop-shadow-md whitespace-nowrap">
                     {layer.rightText}
                   </span>
                 </div>

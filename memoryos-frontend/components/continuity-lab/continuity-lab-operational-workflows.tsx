@@ -83,11 +83,11 @@ function DarkModal({
       />
       <div className="relative z-10 w-full max-w-lg border border-[#3A3A3A] bg-[#111111] shadow-xl">
         <div className="flex items-center justify-between border-b border-[#2F2F2F] px-4 py-3">
-          <p className="text-sm font-semibold text-white">{title}</p>
+          <p className="text-sm font-semibold text-[#F0EFE2]">{title}</p>
           <button
             type="button"
             onClick={onClose}
-            className="text-white/50 hover:text-white"
+            className="text-[#F0EFE2]/50 hover:text-[#F0EFE2]"
           >
             <X className="size-4" />
           </button>
@@ -413,8 +413,8 @@ export function ContinuityLabOperationalWorkflows({
     <>
       <section className="mt-10 w-full space-y-4 text-left">
         <div>
-          <h2 className="text-sm font-semibold text-white">Operational continuity</h2>
-          <p className="mt-1 text-xs text-white/45">
+          <h2 className="text-sm font-semibold text-[#F0EFE2]">Operational continuity</h2>
+          <p className="mt-1 text-xs text-[#F0EFE2]/45">
             Resume incidents, reviews, and agent work — not a blank chat.
           </p>
         </div>
@@ -428,19 +428,19 @@ export function ContinuityLabOperationalWorkflows({
                   <Icon
                     className={cn(
                       "size-4 shrink-0",
-                      card.disabled ? "text-white/25" : "text-indigo-300",
+                      card.disabled ? "text-[#F0EFE2]/25" : "text-indigo-300",
                     )}
                   />
                   {card.loading ? (
-                    <Loader2 className="size-3.5 animate-spin text-white/40" />
+                    <Loader2 className="size-3.5 animate-spin text-[#F0EFE2]/40" />
                   ) : card.href && !card.disabled ? (
-                    <ArrowRight className="size-3.5 text-white/30" />
+                    <ArrowRight className="size-3.5 text-[#F0EFE2]/30" />
                   ) : null}
                 </div>
                 <p
                   className={cn(
                     "mt-3 text-sm font-semibold",
-                    card.disabled ? "text-white/35" : "text-white",
+                    card.disabled ? "text-[#F0EFE2]/35" : "text-[#F0EFE2]",
                   )}
                 >
                   {card.title}
@@ -448,7 +448,7 @@ export function ContinuityLabOperationalWorkflows({
                 <p
                   className={cn(
                     "mt-1 text-xs leading-relaxed",
-                    card.disabled ? "text-white/25" : "text-white/50",
+                    card.disabled ? "text-[#F0EFE2]/25" : "text-[#F0EFE2]/50",
                   )}
                 >
                   {card.disabled && card.disabledReason
@@ -518,7 +518,7 @@ export function ContinuityLabOperationalWorkflows({
             {modal.files.map((file) => (
               <li
                 key={file}
-                className={cn(subtlePanel(), "px-3 py-2 font-mono text-xs text-white/80")}
+                className={cn(subtlePanel(), "px-3 py-2 font-mono text-xs text-[#F0EFE2]/80")}
               >
                 {file}
               </li>
@@ -536,7 +536,7 @@ export function ContinuityLabOperationalWorkflows({
               setModal(null);
               void startSession(prompt, "Risky files review from operational brief.");
             }}
-            className="mt-4 inline-flex h-9 w-full items-center justify-center gap-2 bg-[#4338CA] text-xs font-semibold text-white hover:bg-[#4f46e5] disabled:opacity-40"
+            className="mt-4 inline-flex h-9 w-full items-center justify-center gap-2 bg-[#4338CA] text-xs font-semibold text-[#F0EFE2] hover:bg-[#4f46e5] disabled:opacity-40"
           >
             {activeWorkflow === "session" ? (
               <>
@@ -555,9 +555,9 @@ export function ContinuityLabOperationalWorkflows({
 
       {modal?.kind === "lineage" ? (
         <DarkModal title="Latest action lineage" onClose={() => setModal(null)}>
-          <div className="space-y-3 text-sm text-white/75">
-            <p className="font-semibold text-white">{modal.item.actionMemory.action}</p>
-            <p className="text-xs leading-relaxed text-white/55">{modal.item.actionMemory.reason}</p>
+          <div className="space-y-3 text-sm text-[#F0EFE2]/75">
+            <p className="font-semibold text-[#F0EFE2]">{modal.item.actionMemory.action}</p>
+            <p className="text-xs leading-relaxed text-[#F0EFE2]/55">{modal.item.actionMemory.reason}</p>
             <span
               className={cn(
                 "inline-block border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
@@ -570,7 +570,7 @@ export function ContinuityLabOperationalWorkflows({
             >
               {modal.item.actionMemory.outcome.replace(/_/g, " ")}
             </span>
-            <pre className={cn(subtlePanel(), "whitespace-pre-wrap p-3 font-sans text-xs leading-relaxed text-white/60")}>
+            <pre className={cn(subtlePanel(), "whitespace-pre-wrap p-3 font-sans text-xs leading-relaxed text-[#F0EFE2]/60")}>
               {formatLineageSummary(modal.item)}
             </pre>
           </div>
@@ -588,7 +588,7 @@ export function ContinuityLabOperationalWorkflows({
                 setModal(null);
                 void startSession(prompt, "Continue after rollback from action lineage.");
               }}
-              className="mt-4 inline-flex h-9 w-full items-center justify-center gap-2 bg-[#4338CA] text-xs font-semibold text-white hover:bg-[#4f46e5] disabled:opacity-40"
+              className="mt-4 inline-flex h-9 w-full items-center justify-center gap-2 bg-[#4338CA] text-xs font-semibold text-[#F0EFE2] hover:bg-[#4f46e5] disabled:opacity-40"
             >
               Continue from rollback
               <ArrowRight className="size-3.5" />

@@ -95,7 +95,7 @@ export function ExecutionApprovals() {
                 {/* Actions */}
                 {selectedApproval.status === 'WAITING' && (
                    <div className="p-6 bg-white border-b border-black/5 flex gap-3">
-                      <Button className="flex-1 bg-[#2da44e] hover:bg-[#2c974b] text-white shadow-sm shadow-[#2da44e]/20 h-10">
+                      <Button className="flex-1 bg-[#2da44e] hover:bg-[#2c974b] text-[#F0EFE2] shadow-sm shadow-[#2da44e]/20 h-10">
                          <CheckCircle2 className="size-4 mr-2" /> Approve Request
                       </Button>
                       <Button variant="outline" className="flex-1 bg-white text-red-600 border-red-200 hover:bg-red-50 h-10">
@@ -154,14 +154,14 @@ export function ExecutionApprovals() {
                       <div className="relative pl-6 space-y-6 before:absolute before:inset-y-1 before:left-2 before:w-px before:bg-black/10">
                          <div className="relative">
                             <div className="absolute -left-[29px] top-1 size-4 rounded-full bg-[#2da44e] border-2 border-white flex items-center justify-center">
-                               <CheckCircle2 className="size-2.5 text-white" />
+                               <CheckCircle2 className="size-2.5 text-[#F0EFE2]" />
                             </div>
                             <div className="text-sm font-semibold text-black">Security Review Passed</div>
                             <div className="text-xs text-black/50">SecOps Bot • 2 hours ago</div>
                          </div>
                          <div className="relative">
                             <div className="absolute -left-[29px] top-1 size-4 rounded-full bg-[#2da44e] border-2 border-white flex items-center justify-center">
-                               <CheckCircle2 className="size-2.5 text-white" />
+                               <CheckCircle2 className="size-2.5 text-[#F0EFE2]" />
                             </div>
                             <div className="text-sm font-semibold text-black">Budget Pre-approved</div>
                             <div className="text-xs text-black/50">Finance Policy • 1 hour ago</div>

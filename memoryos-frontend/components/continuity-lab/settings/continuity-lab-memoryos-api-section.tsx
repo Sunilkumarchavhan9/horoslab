@@ -297,14 +297,14 @@ function CompactSelect<T extends string>({
 
   return (
     <div ref={ref} className={cn("relative", className)}>
-      {label ? <p className="mb-1.5 text-xs font-semibold text-white/80">{label}</p> : null}
+      {label ? <p className="mb-1.5 text-xs font-semibold text-[#F0EFE2]/80">{label}</p> : null}
       <button
         type="button"
         onClick={() => setOpen((next) => !next)}
-        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.08] bg-[#171717] px-3 text-left text-sm font-medium text-white/82 hover:border-white/14"
+        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.08] bg-[#171717] px-3 text-left text-sm font-medium text-[#F0EFE2]/82 hover:border-white/14"
       >
         <span className="truncate">{value}</span>
-        <ChevronDown className="size-3.5 shrink-0 text-white/35" aria-hidden />
+        <ChevronDown className="size-3.5 shrink-0 text-[#F0EFE2]/35" aria-hidden />
       </button>
       {open ? (
         <div
@@ -316,7 +316,7 @@ function CompactSelect<T extends string>({
           {options.map((option, index) => (
             <div key={option}>
               {groupLabel && index === 1 ? (
-                <p className="px-3 py-2 text-xs font-semibold text-white/35">{groupLabel}</p>
+                <p className="px-3 py-2 text-xs font-semibold text-[#F0EFE2]/35">{groupLabel}</p>
               ) : null}
               <button
                 type="button"
@@ -326,11 +326,11 @@ function CompactSelect<T extends string>({
                 }}
                 className={cn(
                   "flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium hover:bg-white/[0.05]",
-                  value === option ? "text-white" : "text-white/74",
+                  value === option ? "text-[#F0EFE2]" : "text-[#F0EFE2]/74",
                 )}
               >
                 <span>{option}</span>
-                {value === option ? <Check className="size-3.5 text-white/70" aria-hidden /> : null}
+                {value === option ? <Check className="size-3.5 text-[#F0EFE2]/70" aria-hidden /> : null}
               </button>
             </div>
           ))}
@@ -374,22 +374,22 @@ function SearchableQuickTestSelect({
       <button
         type="button"
         onClick={() => setOpen((next) => !next)}
-        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.08] bg-[#171717] px-3 text-left text-sm font-semibold text-white transition hover:border-white/15"
+        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.08] bg-[#171717] px-3 text-left text-sm font-semibold text-[#F0EFE2] transition hover:border-white/15"
       >
         <span className="min-w-0 truncate">{selected.label}</span>
-        <ChevronDown className="size-3.5 shrink-0 text-white/35" aria-hidden />
+        <ChevronDown className="size-3.5 shrink-0 text-[#F0EFE2]/35" aria-hidden />
       </button>
       {open ? (
         <div className="absolute right-0 top-full z-50 mt-1 max-h-[340px] w-[min(360px,calc(100vw-32px))] overflow-hidden rounded-md border border-white/[0.1] bg-[#1B1B1B] shadow-2xl">
           <div className="border-b border-white/[0.06] p-2">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/30" />
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/30" />
               <input
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={searchPlaceholder}
-                className="h-8 w-full rounded-md border border-transparent bg-transparent pl-8 pr-2 text-sm text-white placeholder:text-white/45 focus:border-white/[0.08] focus:bg-[#111111] focus:outline-none"
+                className="h-8 w-full rounded-md border border-transparent bg-transparent pl-8 pr-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/45 focus:border-white/[0.08] focus:bg-[#111111] focus:outline-none"
               />
             </div>
           </div>
@@ -405,24 +405,24 @@ function SearchableQuickTestSelect({
                   }}
                   className={cn(
                     "flex w-full items-start justify-between gap-3 px-3 py-2.5 text-left text-sm hover:bg-white/[0.05]",
-                    value === option.value ? "bg-white/[0.04] text-white" : "text-white/78",
+                    value === option.value ? "bg-white/[0.04] text-[#F0EFE2]" : "text-[#F0EFE2]/78",
                   )}
                 >
                   <span className="min-w-0">
                     <span className="block truncate font-semibold">{option.label}</span>
                     {option.description ? (
-                      <span className="mt-0.5 block truncate text-xs font-medium text-white/45">
+                      <span className="mt-0.5 block truncate text-xs font-medium text-[#F0EFE2]/45">
                         {option.description}
                       </span>
                     ) : null}
                   </span>
                   {value === option.value ? (
-                    <Check className="mt-0.5 size-3.5 shrink-0 text-white/65" aria-hidden />
+                    <Check className="mt-0.5 size-3.5 shrink-0 text-[#F0EFE2]/65" aria-hidden />
                   ) : null}
                 </button>
               ))
             ) : (
-              <p className="px-3 py-3 text-sm text-white/45">No matches</p>
+              <p className="px-3 py-3 text-sm text-[#F0EFE2]/45">No matches</p>
             )}
           </div>
         </div>
@@ -451,8 +451,8 @@ function SettingsTabs({
           className={cn(
             "inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold transition",
             active === tab.id
-              ? "bg-white/[0.08] text-white"
-              : "text-white/48 hover:bg-white/[0.04] hover:text-white/75",
+              ? "bg-white/[0.08] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/48 hover:bg-white/[0.04] hover:text-[#F0EFE2]/75",
           )}
         >
           {tab.label}
@@ -499,31 +499,31 @@ function ServiceUsersTable({
       <table className="w-full min-w-[860px] table-fixed text-left text-sm">
         <thead>
           <tr className="bg-white/[0.05]">
-            <th className="w-[22%] px-4 py-3 font-semibold text-white">Name</th>
-            <th className="w-[18%] px-4 py-3 font-semibold text-white">Scope</th>
-            <th className="w-[22%] px-4 py-3 font-semibold text-white">Role name</th>
-            <th className="w-[18%] px-4 py-3 font-semibold text-white">Created at</th>
-            <th className="w-[16%] px-4 py-3 font-semibold text-white">Expires at</th>
-            <th className="w-[4%] px-3 py-3 text-right font-semibold text-white" aria-label="Actions" />
+            <th className="w-[22%] px-4 py-3 font-semibold text-[#F0EFE2]">Name</th>
+            <th className="w-[18%] px-4 py-3 font-semibold text-[#F0EFE2]">Scope</th>
+            <th className="w-[22%] px-4 py-3 font-semibold text-[#F0EFE2]">Role name</th>
+            <th className="w-[18%] px-4 py-3 font-semibold text-[#F0EFE2]">Created at</th>
+            <th className="w-[16%] px-4 py-3 font-semibold text-[#F0EFE2]">Expires at</th>
+            <th className="w-[4%] px-3 py-3 text-right font-semibold text-[#F0EFE2]" aria-label="Actions" />
           </tr>
         </thead>
         <tbody>
           {rows.length > 0 ? (
             rows.map((row) => (
               <tr key={row.id} className="border-t border-white/[0.06]">
-                <td className="min-w-0 px-4 py-4 font-medium text-white/80">
+                <td className="min-w-0 px-4 py-4 font-medium text-[#F0EFE2]/80">
                   <span className="block truncate">{row.name}</span>
                 </td>
-                <td className="px-4 py-4 text-white/55">{row.scope}</td>
-                <td className="px-4 py-4 text-white/65">{row.role}</td>
-                <td className="px-4 py-4 text-white/55">{formatDate(row.createdAt)}</td>
-                <td className="px-4 py-4 text-white/55">{formatDate(row.expiresAt)}</td>
+                <td className="px-4 py-4 text-[#F0EFE2]/55">{row.scope}</td>
+                <td className="px-4 py-4 text-[#F0EFE2]/65">{row.role}</td>
+                <td className="px-4 py-4 text-[#F0EFE2]/55">{formatDate(row.createdAt)}</td>
+                <td className="px-4 py-4 text-[#F0EFE2]/55">{formatDate(row.expiresAt)}</td>
                 <td className="px-3 py-4 text-right">
                   <button
                     type="button"
                     onClick={() => onRemove(row.id)}
                     disabled={removingId === row.id}
-                    className="inline-flex size-8 items-center justify-center rounded-md text-white/35 hover:bg-white/[0.06] hover:text-white/70"
+                    className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/35 hover:bg-white/[0.06] hover:text-[#F0EFE2]/70"
                     aria-label={`Remove ${row.name}`}
                   >
                     <Trash2 className="size-4" aria-hidden />
@@ -534,8 +534,8 @@ function ServiceUsersTable({
           ) : (
             <tr>
               <td colSpan={6} className="px-4 py-16 text-center">
-                <p className="text-base font-semibold text-white">{emptyTitle}</p>
-                <p className="mx-auto mt-3 max-w-md text-sm text-white/55">{emptyDescription}</p>
+                <p className="text-base font-semibold text-[#F0EFE2]">{emptyTitle}</p>
+                <p className="mx-auto mt-3 max-w-md text-sm text-[#F0EFE2]/55">{emptyDescription}</p>
               </td>
             </tr>
           )}
@@ -570,8 +570,8 @@ function ProvisionServiceUserModal({
       <div className="w-full max-w-[448px] rounded-md border border-white/[0.1] bg-[#1B1B1B] p-5 shadow-2xl">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-white">Provision organization service user</h2>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/50">
+            <h2 className="text-lg font-semibold text-[#F0EFE2]">Provision organization service user</h2>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#F0EFE2]/50">
               Create an organization-level service user. The service user will need to be assigned
               appropriate roles within the selected organization.
             </p>
@@ -579,7 +579,7 @@ function ProvisionServiceUserModal({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close service user modal"
           >
             <X className="size-4" aria-hidden />
@@ -588,7 +588,7 @@ function ProvisionServiceUserModal({
 
         <div className="space-y-4">
           <label className="block">
-            <span className="mb-1.5 block text-sm font-semibold text-white/84">
+            <span className="mb-1.5 block text-sm font-semibold text-[#F0EFE2]/84">
               Display name <span className="text-red-400">*</span>
             </span>
             <input
@@ -597,7 +597,7 @@ function ProvisionServiceUserModal({
               onChange={(event) => setName(event.target.value)}
               placeholder="Enter display name"
               autoFocus
-              className="h-9 w-full rounded-md border border-white/[0.1] bg-[#242424] px-3 text-sm text-white placeholder:text-white/35 focus:border-[#3B82F6] focus:outline-none"
+              className="h-9 w-full rounded-md border border-white/[0.1] bg-[#242424] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#3B82F6] focus:outline-none"
             />
           </label>
 
@@ -627,7 +627,7 @@ function ProvisionServiceUserModal({
             menuClassName="left-0 right-auto min-w-[128px]"
           />
 
-          <p className="text-sm font-medium text-white/45">
+          <p className="text-sm font-medium text-[#F0EFE2]/45">
             {error
               ? error
               : name.trim().length === 0
@@ -644,7 +644,7 @@ function ProvisionServiceUserModal({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-9 items-center rounded-md border border-white/[0.1] bg-white/[0.06] px-3.5 text-sm font-semibold text-white/86 hover:bg-white/[0.1]"
+            className="inline-flex h-9 items-center rounded-md border border-white/[0.1] bg-white/[0.06] px-3.5 text-sm font-semibold text-[#F0EFE2]/86 hover:bg-white/[0.1]"
           >
             Cancel
           </button>
@@ -659,7 +659,7 @@ function ProvisionServiceUserModal({
                 expiration,
               });
             }}
-            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-semibold text-white hover:bg-[#3B82F6] disabled:opacity-45"
+            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#3B82F6] disabled:opacity-45"
           >
             {busy ? "Provisioning..." : "Provision service user"}
           </button>
@@ -696,15 +696,15 @@ function CreateApiKeyModal({
       <div className="w-full max-w-[560px] rounded-md border border-white/[0.1] bg-[#121212] p-5 shadow-2xl">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-white">Create API key</h2>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/50">
+            <h2 className="text-lg font-semibold text-[#F0EFE2]">Create API key</h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#F0EFE2]/50">
               Set the key name, credit cap, reset cadence, and expiration before we mint the key.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close API key modal"
           >
             <X className="size-4" aria-hidden />
@@ -734,19 +734,19 @@ function CreateApiKeyModal({
           }}
         >
           <label className="block">
-            <span className="mb-1.5 block text-sm font-semibold text-white/84">Name</span>
+            <span className="mb-1.5 block text-sm font-semibold text-[#F0EFE2]/84">Name</span>
             <input
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder='e.g. "Chatbot Key"'
               autoFocus
-              className="h-10 w-full rounded-md border border-white/[0.1] bg-[#1c1c1c] px-3 text-sm text-white placeholder:text-white/35 focus:border-[#3B82F6] focus:outline-none"
+              className="h-10 w-full rounded-md border border-white/[0.1] bg-[#1c1c1c] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#3B82F6] focus:outline-none"
             />
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-sm font-semibold text-white/84">
+            <span className="mb-1.5 block text-sm font-semibold text-[#F0EFE2]/84">
               Credit limit (optional)
             </span>
             <input
@@ -755,7 +755,7 @@ function CreateApiKeyModal({
               value={creditLimit}
               onChange={(event) => setCreditLimit(event.target.value)}
               placeholder="Leave blank for unlimited"
-              className="h-10 w-full rounded-md border border-white/[0.1] bg-[#1c1c1c] px-3 text-sm text-white placeholder:text-white/35 focus:border-[#3B82F6] focus:outline-none"
+              className="h-10 w-full rounded-md border border-white/[0.1] bg-[#1c1c1c] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#3B82F6] focus:outline-none"
             />
           </label>
 
@@ -777,7 +777,7 @@ function CreateApiKeyModal({
             menuClassName="left-0 right-auto min-w-full"
           />
 
-          <p className="text-sm font-medium text-white/45">
+          <p className="text-sm font-medium text-[#F0EFE2]/45">
             {error
               ? error
               : name.trim().length === 0
@@ -791,14 +791,14 @@ function CreateApiKeyModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex h-9 items-center rounded-md border border-white/[0.1] bg-white/[0.06] px-3.5 text-sm font-semibold text-white/86 hover:bg-white/[0.1]"
+              className="inline-flex h-9 items-center rounded-md border border-white/[0.1] bg-white/[0.06] px-3.5 text-sm font-semibold text-[#F0EFE2]/86 hover:bg-white/[0.1]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!canCreate}
-              className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-semibold text-white hover:bg-[#3B82F6] disabled:opacity-45"
+              className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#3B82F6] disabled:opacity-45"
             >
               {busy ? "Creating..." : "Create"}
             </button>
@@ -830,12 +830,12 @@ function QuickTestStep({
       )}
     >
       <div className="flex min-w-0 items-start gap-3">
-        <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-xs font-semibold text-white/80">
+        <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-xs font-semibold text-[#F0EFE2]/80">
           {number}
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-white">{title}</p>
-          <p className="mt-1 text-sm text-white/50">{description}</p>
+          <p className="text-sm font-semibold text-[#F0EFE2]">{title}</p>
+          <p className="mt-1 text-sm text-[#F0EFE2]/50">{description}</p>
         </div>
       </div>
       {children ? <div className="shrink-0 sm:min-w-[128px]">{children}</div> : null}
@@ -919,8 +919,8 @@ function LegacyApiKeysSection({
             <Info className="size-3" aria-hidden />
           </span>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-white">Tip</p>
-            <p className="mt-2 text-sm text-white/55">
+            <p className="text-sm font-semibold text-[#F0EFE2]">Tip</p>
+            <p className="mt-2 text-sm text-[#F0EFE2]/55">
               To give MemoryOS access to third-party credentials, use{" "}
               <Link
                 href="/continuity-lab/settings/secrets"
@@ -936,15 +936,15 @@ function LegacyApiKeysSection({
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold text-white">API keys</h2>
-          <p className="mt-1 text-sm text-white/55">Tied to your account - do not share</p>
+          <h2 className="text-base font-semibold text-[#F0EFE2]">API keys</h2>
+          <p className="mt-1 text-sm text-[#F0EFE2]/55">Tied to your account - do not share</p>
         </div>
 
         <div className="rounded-md border border-white/[0.08] bg-[#1A1A1A] px-4">
           <div className="flex flex-col gap-3 border-b border-white/[0.06] py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <div className="flex items-center gap-2 text-sm font-semibold text-[#F0EFE2]">
               <span>Key type</span>
-              <Info className="size-3.5 text-white/35" aria-label="Personal keys are tied to your user account." />
+              <Info className="size-3.5 text-[#F0EFE2]/35" aria-label="Personal keys are tied to your user account." />
             </div>
             <CompactSelect
               value={keyType}
@@ -958,28 +958,28 @@ function LegacyApiKeysSection({
           <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               {loading && !activePersonalKey ? (
-                <p className="text-sm font-semibold text-white">Loading API keys...</p>
+                <p className="text-sm font-semibold text-[#F0EFE2]">Loading API keys...</p>
               ) : keyValue ? (
                 <>
-                  <p className="text-sm font-semibold text-white">Personal API key</p>
-                  <p className="mt-1 text-sm text-white/55">Keep this key secure</p>
+                  <p className="text-sm font-semibold text-[#F0EFE2]">Personal API key</p>
+                  <p className="mt-1 text-sm text-[#F0EFE2]/55">Keep this key secure</p>
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-semibold text-white">No personal API key</p>
-                  <p className="mt-1 text-sm text-white/55">Create a key to start using the API</p>
+                  <p className="text-sm font-semibold text-[#F0EFE2]">No personal API key</p>
+                  <p className="mt-1 text-sm text-[#F0EFE2]/55">Create a key to start using the API</p>
                 </>
               )}
             </div>
             {keyValue ? (
               <div className="flex min-w-0 items-center gap-2 sm:max-w-[340px]">
-                <code className="min-w-0 truncate rounded-md border border-white/[0.08] bg-[#242424] px-3 py-2 font-mono text-xs font-semibold text-white">
+                <code className="min-w-0 truncate rounded-md border border-white/[0.08] bg-[#242424] px-3 py-2 font-mono text-xs font-semibold text-[#F0EFE2]">
                   {displayedKeyValue}
                 </code>
                 <button
                   type="button"
                   onClick={() => onCopyToken(keyValue)}
-                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white"
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                   aria-label="Copy personal API key"
                   title={copiedToken ? "Copied" : "Copy API key"}
                 >
@@ -988,7 +988,7 @@ function LegacyApiKeysSection({
                 <button
                   type="button"
                   onClick={() => setKeyVisible((next) => !next)}
-                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-white/35 transition hover:bg-white/[0.06] hover:text-white"
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-[#F0EFE2]/35 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                   aria-label={keyVisible ? "Hide personal API key" : "Show personal API key"}
                   title={keyVisible ? "Hide key" : "Show key"}
                 >
@@ -1003,7 +1003,7 @@ function LegacyApiKeysSection({
                   onCreateStart();
                   setCreateOpen(true);
                 }}
-                className="inline-flex h-9 shrink-0 items-center justify-center rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-white transition hover:bg-[#60A5FA] disabled:opacity-45"
+                className="inline-flex h-9 shrink-0 items-center justify-center rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#60A5FA] disabled:opacity-45"
               >
                 {generating ? "Generating..." : "Generate API Key"}
               </button>
@@ -1032,8 +1032,8 @@ function LegacyApiKeysSection({
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold text-white">Quick test</h2>
-          <p className="mt-1 text-sm text-white/55">
+          <h2 className="text-base font-semibold text-[#F0EFE2]">Quick test</h2>
+          <p className="mt-1 text-sm text-[#F0EFE2]/55">
             Try creating a session with the MemoryOS API. Optionally select a snapshot and playbook.
           </p>
         </div>
@@ -1079,13 +1079,13 @@ function LegacyApiKeysSection({
               <button
                 type="button"
                 onClick={onCopyCurl}
-                className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] bg-[#171717] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+                className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] bg-[#171717] text-[#F0EFE2]/60 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                 aria-label="Copy curl command"
                 title={copiedCurl ? "Copied" : "Copy curl command"}
               >
                 {copiedCurl ? <Check className="size-3.5 text-emerald-300" /> : <Copy className="size-3.5" />}
               </button>
-              <pre className="overflow-x-auto p-5 pr-14 text-xs leading-6 text-white/82">
+              <pre className="overflow-x-auto p-5 pr-14 text-xs leading-6 text-[#F0EFE2]/82">
                 <code>{curlExample}</code>
               </pre>
             </div>
@@ -1379,20 +1379,20 @@ export function ContinuityLabMemoryOSApiSection() {
     >
       <Link
         href="/continuity-lab/settings/general"
-        className="inline-flex items-center gap-2 text-sm font-medium text-white/50 hover:text-white/75"
+        className="inline-flex items-center gap-2 text-sm font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/75"
       >
         <ArrowLeft className="size-4" aria-hidden />
         Back to organization
       </Link>
 
       <div>
-        <h1 className="text-xl font-semibold text-white">MemoryOS API</h1>
-        <div className="mt-2 flex min-w-0 items-center gap-2 text-sm text-white/55">
+        <h1 className="text-xl font-semibold text-[#F0EFE2]">MemoryOS API</h1>
+        <div className="mt-2 flex min-w-0 items-center gap-2 text-sm text-[#F0EFE2]/55">
           <span className="min-w-0 truncate">Organization ID: {resolvedOrgId}</span>
           <button
             type="button"
             onClick={() => void copyOrgId()}
-            className="inline-flex size-6 shrink-0 items-center justify-center rounded text-white/45 hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex size-6 shrink-0 items-center justify-center rounded text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Copy organization ID"
             title={copiedOrg ? "Copied" : "Copy organization ID"}
           >
@@ -1428,7 +1428,7 @@ export function ContinuityLabMemoryOSApiSection() {
                     setServiceActionError(null);
                     setProvisionOpen(true);
                   }}
-                  className="inline-flex h-9 items-center rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-white hover:bg-[#60A5FA]"
+                  className="inline-flex h-9 items-center rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#60A5FA]"
                 >
                   Provision service user
                 </button>

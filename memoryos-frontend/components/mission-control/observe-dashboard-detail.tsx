@@ -1781,7 +1781,7 @@ export function ObserveDashboardDetail({ id, onBack, mode = "view", createdDashb
  <p className="text-[11px] text-[#667085]">Blank dashboard builder</p>
  </div>
  <div className="flex items-center gap-2">
- <Button onClick={handleAddBlankDashboardCard} className="h-8 px-6 text-[13px] font-medium bg-[#0f52ff] hover:bg-[#0044ff] text-white">
+ <Button onClick={handleAddBlankDashboardCard} className="h-8 px-6 text-[13px] font-medium bg-[#0f52ff] hover:bg-[#0044ff] text-[#F0EFE2]">
  Save
  </Button>
  <Button
@@ -1934,7 +1934,7 @@ export function ObserveDashboardDetail({ id, onBack, mode = "view", createdDashb
  <h1 className="text-[18px] font-semibold text-foreground tracking-tight">Start from a blank dashboard</h1>
  </div>
  <div className="flex items-center gap-2">
- <Button onClick={handleAddBlankDashboardCard} className="h-8 px-6 text-[13px] font-medium bg-[#0f52ff] hover:bg-[#0044ff] text-white">Add</Button>
+ <Button onClick={handleAddBlankDashboardCard} className="h-8 px-6 text-[13px] font-medium bg-[#0f52ff] hover:bg-[#0044ff] text-[#F0EFE2]">Add</Button>
  <Button variant="outline" onClick={handleCancelBlankDashboardCard} className="h-8 px-6 text-[13px] font-medium border-border !text-foreground/90 hover:bg-card">Cancel</Button>
  </div>
  </div>
@@ -2008,7 +2008,7 @@ export function ObserveDashboardDetail({ id, onBack, mode = "view", createdDashb
  <LinkIcon className="size-3.5 mr-1.5" />
  Copy link
  </Button>
- <Button className="h-8 px-3 text-[12px] font-medium bg-[#0f52ff] hover:bg-[#0044ff] text-white">
+ <Button className="h-8 px-3 text-[12px] font-medium bg-[#0f52ff] hover:bg-[#0044ff] text-[#F0EFE2]">
  <Plus className="size-3.5 mr-1.5" />
  Add a chart
  </Button>

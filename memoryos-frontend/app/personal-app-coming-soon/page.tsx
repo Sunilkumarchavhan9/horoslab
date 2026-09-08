@@ -12,7 +12,7 @@ export default function PersonalAppComingSoonPage() {
         <div className="mt-8">
           <a
             href="/"
-            className="inline-flex items-center rounded-md bg-blue-600 px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-blue-600 px-5 py-2.5 text-[14px] font-medium text-[#F0EFE2] transition hover:bg-blue-700"
           >
             Back To Home
           </a>

@@ -45,7 +45,7 @@ export function InstitutionTemplates() {
  <div className="max-w-4xl w-full mx-auto">
  <button 
  onClick={() => setSelectedId(null)}
- className="flex items-center gap-1.5 text-foreground/50 dark:text-white/50 hover:text-foreground dark:text-white transition-colors text-[13px] font-medium mb-8"
+ className="flex items-center gap-1.5 text-foreground/50 dark:text-[#F0EFE2]/50 hover:text-foreground dark:text-[#F0EFE2] transition-colors text-[13px] font-medium mb-8"
  >
  ← Back to Templates
  </button>
@@ -56,11 +56,11 @@ export function InstitutionTemplates() {
  {template.icon}
  </div>
  <div className="flex flex-col gap-2">
- <h1 className="text-[28px] font-bold text-foreground dark:text-white tracking-tight leading-none">{template.name}</h1>
- <p className="text-[15px] text-foreground/60 dark:text-white/60 max-w-xl">{template.description}</p>
+ <h1 className="text-[28px] font-bold text-foreground dark:text-[#F0EFE2] tracking-tight leading-none">{template.name}</h1>
+ <p className="text-[15px] text-foreground/60 dark:text-[#F0EFE2]/60 max-w-xl">{template.description}</p>
  </div>
  </div>
- <button className="flex items-center gap-2 px-6 py-3 bg-[#0f52ff] hover:bg-[#0042e6] text-foreground dark:text-white rounded-md text-[14px] font-bold transition-colors ">
+ <button className="flex items-center gap-2 px-6 py-3 bg-[#0f52ff] hover:bg-[#0042e6] text-foreground dark:text-[#F0EFE2] rounded-md text-[14px] font-bold transition-colors ">
  <Download className="size-4" /> Install Institution
  </button>
  </div>
@@ -68,26 +68,26 @@ export function InstitutionTemplates() {
  <div className="grid grid-cols-2 gap-8">
  <div className="space-y-8">
  <div>
- <h3 className="text-[14px] font-semibold text-foreground dark:text-white mb-4">Included Roles</h3>
+ <h3 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2] mb-4">Included Roles</h3>
  <div className="space-y-3">
  {["Lead Coordinator", "Research Agent", "Reviewer"].map((role, i) => (
  <div key={i} className="p-3 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5 flex items-center justify-between">
- <span className="text-[13px] font-medium text-foreground dark:text-white">{role}</span>
- <span className="text-[11px] px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 text-foreground/60 dark:text-white/60">GPT-4</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">{role}</span>
+ <span className="text-[11px] px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 text-foreground/60 dark:text-[#F0EFE2]/60">GPT-4</span>
  </div>
  ))}
  </div>
  </div>
  <div>
- <h3 className="text-[14px] font-semibold text-foreground dark:text-white mb-4">Default Policies</h3>
+ <h3 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2] mb-4">Default Policies</h3>
  <div className="space-y-3">
  <div className="p-3 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5">
- <div className="text-[13px] font-medium text-foreground dark:text-white mb-1">Human-in-the-loop</div>
- <div className="text-[12px] text-foreground/50 dark:text-white/50">Requires explicit approval before merging code or sending external communications.</div>
+ <div className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2] mb-1">Human-in-the-loop</div>
+ <div className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Requires explicit approval before merging code or sending external communications.</div>
  </div>
  <div className="p-3 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5">
- <div className="text-[13px] font-medium text-foreground dark:text-white mb-1">Evidence Retention</div>
- <div className="text-[12px] text-foreground/50 dark:text-white/50">All agent reasoning traces are kept for 90 days.</div>
+ <div className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2] mb-1">Evidence Retention</div>
+ <div className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">All agent reasoning traces are kept for 90 days.</div>
  </div>
  </div>
  </div>
@@ -95,15 +95,15 @@ export function InstitutionTemplates() {
  
  <div className="space-y-6">
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a]">
- <h3 className="text-[14px] font-semibold text-foreground dark:text-white mb-4">Quick Facts</h3>
+ <h3 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2] mb-4">Quick Facts</h3>
  <div className="space-y-4 text-[13px]">
  <div className="flex flex-col gap-1">
- <span className="text-foreground/40 dark:text-white/40">Estimated Runtime</span>
- <span className="text-foreground dark:text-white">{template.runtime}</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Estimated Runtime</span>
+ <span className="text-foreground dark:text-[#F0EFE2]">{template.runtime}</span>
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-foreground/40 dark:text-white/40">Required Capabilities</span>
- <span className="text-foreground dark:text-white">File System, Network, Git</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Required Capabilities</span>
+ <span className="text-foreground dark:text-[#F0EFE2]">File System, Network, Git</span>
  </div>
  </div>
  </div>
@@ -112,7 +112,7 @@ export function InstitutionTemplates() {
  <h3 className="text-[14px] font-semibold text-emerald-500 mb-4 flex items-center gap-2">
  <ShieldCheck className="size-4" /> Pre-verified
  </h3>
- <p className="text-[13px] text-foreground/70 dark:text-white/70 leading-relaxed">
+ <p className="text-[13px] text-foreground/70 dark:text-[#F0EFE2]/70 leading-relaxed">
  This template has been officially verified by the Epoch team. It contains no unsafe syscalls and complies with standard AI safety bounds.
  </p>
  </div>
@@ -142,15 +142,15 @@ export function InstitutionTemplates() {
  {template.icon}
  </div>
  <div>
- <h3 className="text-[18px] font-semibold text-foreground dark:text-white tracking-tight mb-2 group-hover:text-[#0f52ff] transition-colors">{template.name}</h3>
- <p className="text-[13px] text-foreground/50 dark:text-white/50 leading-relaxed h-16">{template.description}</p>
+ <h3 className="text-[18px] font-semibold text-foreground dark:text-[#F0EFE2] tracking-tight mb-2 group-hover:text-[#0f52ff] transition-colors">{template.name}</h3>
+ <p className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50 leading-relaxed h-16">{template.description}</p>
  </div>
  </div>
  
  <div className="px-6 py-6 border-t border-border dark:border-white/5 bg-card/[0.02] flex-1">
  <ul className="space-y-2">
  {template.features.map((feat, i) => (
- <li key={i} className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-white/70">
+ <li key={i} className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-[#F0EFE2]/70">
  <CheckCircle2 className="size-4 text-emerald-500 shrink-0" />
  {feat}
  </li>
@@ -159,7 +159,7 @@ export function InstitutionTemplates() {
  </div>
 
  <div className="px-6 py-6 border-t border-border dark:border-white/5 flex items-center justify-between">
- <span className="text-[11px] text-foreground/40 dark:text-white/40">{template.runtime}</span>
+ <span className="text-[11px] text-foreground/40 dark:text-[#F0EFE2]/40">{template.runtime}</span>
  <button className="flex items-center gap-1 text-[12px] font-medium text-[#0f52ff] group-hover:underline">
  Preview <ArrowRight className="size-3.5" />
  </button>

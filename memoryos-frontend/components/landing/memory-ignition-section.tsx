@@ -28,7 +28,7 @@ const TypingChat = () => {
       <motion.div
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="bg-[#0015FF] text-white p-5 rounded-md rounded-bl-sm max-w-[280px] shadow-lg text-[13px] leading-relaxed font-medium"
+        className="bg-[#0015FF] text-[#F0EFE2] p-5 rounded-md rounded-bl-sm max-w-[280px] shadow-lg text-[13px] leading-relaxed font-medium"
       >
         {displayed}
         <span className="animate-pulse inline-block ml-1">_</span>
@@ -230,7 +230,7 @@ export function MemoryIgnitionSection() {
                     {/* Top Pill */}
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#7b61ff] to-[#5b3df5] rounded-md px-4 py-2 flex items-center gap-2 shadow-[0_4px_15px_rgba(99,102,241,0.4)] z-10 w-max">
                       <div className="w-3.5 h-3.5 rounded-full border-[2px] border-white/20 border-t-[#00ffcc] border-l-[#00ffcc] animate-spin"></div>
-                      <span className="text-white text-[13px] font-medium tracking-wide">Coverage 78%</span>
+                      <span className="text-[#F0EFE2] text-[13px] font-medium tracking-wide">Coverage 78%</span>
                       {/* Smooth rounded downward pointer using SVG */}
                       <svg className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 text-[#6853f8]" width="14" height="7" viewBox="0 0 14 7" fill="none">
                         <path d="M 0 0 L 14 0 L 8.5 5.5 C 7.5 6.5 6.5 6.5 5.5 5.5 Z" fill="currentColor" />
@@ -303,7 +303,7 @@ export function MemoryIgnitionSection() {
                               {row.map((c, j) => (
                                 <div key={j} className="bg-white border border-slate-200 shadow-sm rounded-full px-4 flex items-center gap-2 shrink-0 h-[38px]" style={{ width: c.w }}>
                                   <span className="text-[13px] font-medium text-slate-700 whitespace-nowrap overflow-hidden text-ellipsis">{c.label}</span>
-                                  {c.check && <div className="w-4 h-4 shrink-0 rounded-full bg-[#00c569] flex items-center justify-center ml-auto"><Check className="w-2.5 h-2.5 text-white" strokeWidth={3} /></div>}
+                                  {c.check && <div className="w-4 h-4 shrink-0 rounded-full bg-[#00c569] flex items-center justify-center ml-auto"><Check className="w-2.5 h-2.5 text-[#F0EFE2]" strokeWidth={3} /></div>}
                                 </div>
                               ))}
                             </div>
@@ -328,7 +328,7 @@ export function MemoryIgnitionSection() {
                         <circle cx="12" cy="12" r="10" stroke="url(#spinGrad)" strokeWidth="3.5" strokeLinecap="round" />
                         <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.2)" strokeWidth="3.5" />
                       </svg>
-                      <span className="text-white text-[13px] font-medium tracking-wide">Coverage 78%</span>
+                      <span className="text-[#F0EFE2] text-[13px] font-medium tracking-wide">Coverage 78%</span>
                       {/* Smooth rounded downward pointer using SVG */}
                       <svg className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 text-[#4879de]" width="14" height="7" viewBox="0 0 14 7" fill="none">
                         <path d="M 0 0 L 14 0 L 8.5 5.5 C 7.5 6.5 6.5 6.5 5.5 5.5 Z" fill="currentColor" />

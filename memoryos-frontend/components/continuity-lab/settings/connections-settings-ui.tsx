@@ -192,21 +192,21 @@ function McpServersTab({ onSuggest }: { onSuggest: () => void }) {
           placeholder="Search MCP servers"
           className="min-w-[220px] max-w-md flex-1"
         />
-        <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-medium text-white/45">
+        <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-medium text-[#F0EFE2]/45">
           {installedCount} installed
         </span>
         <div className="relative" ref={filterRef}>
           <button
             type="button"
             onClick={() => setFilterOpen((o) => !o)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white/80 hover:border-white/15"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2]/80 hover:border-white/15"
           >
             {filterLabel}
-            <ChevronDown className="size-3.5 text-white/40" />
+            <ChevronDown className="size-3.5 text-[#F0EFE2]/40" />
           </button>
           {filterOpen ? (
             <div className="absolute left-0 top-full z-30 mt-1 min-w-[200px] rounded-md border border-white/[0.08] bg-[#141416] py-1 shadow-xl">
-              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-white/35">
+              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/35">
                 Status
               </p>
               {MCP_INSTALL_FILTERS.map((id) => {
@@ -219,17 +219,17 @@ function McpServersTab({ onSuggest }: { onSuggest: () => void }) {
                     onClick={() => {
                       setInstallFilter(id);
                     }}
-                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-white/80 hover:bg-white/[0.04]"
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-[#F0EFE2]/80 hover:bg-white/[0.04]"
                   >
                     {label}
                     {installFilter === id ? (
-                      <Check className="size-3.5 text-white/60" />
+                      <Check className="size-3.5 text-[#F0EFE2]/60" />
                     ) : null}
                   </button>
                 );
               })}
               <div className="my-1 border-t border-white/[0.06]" />
-              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-white/35">
+              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/35">
                 Category
               </p>
               {CATEGORY_OPTIONS.map((opt) => (
@@ -239,11 +239,11 @@ function McpServersTab({ onSuggest }: { onSuggest: () => void }) {
                   onClick={() => {
                     setCategoryFilter(opt.id);
                   }}
-                  className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-white/80 hover:bg-white/[0.04]"
+                  className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-[#F0EFE2]/80 hover:bg-white/[0.04]"
                 >
                   {opt.label}
                   {categoryFilter === opt.id ? (
-                    <Check className="size-3.5 text-white/60" />
+                    <Check className="size-3.5 text-[#F0EFE2]/60" />
                   ) : null}
                 </button>
               ))}
@@ -253,14 +253,14 @@ function McpServersTab({ onSuggest }: { onSuggest: () => void }) {
         <button
           type="button"
           onClick={onSuggest}
-          className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/[0.08] bg-transparent px-3.5 text-sm font-medium text-white/85 hover:bg-white/[0.04]"
+          className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/[0.08] bg-transparent px-3.5 text-sm font-medium text-[#F0EFE2]/85 hover:bg-white/[0.04]"
         >
-          <Lightbulb className="size-3.5 text-white/50" />
+          <Lightbulb className="size-3.5 text-[#F0EFE2]/50" />
           Suggest
         </button>
         <Link
           href={CUSTOM_MCP_NEW_PATH}
-          className="inline-flex h-9 items-center gap-1.5 rounded-md bg-indigo-500 px-3.5 text-sm font-medium text-white hover:bg-indigo-400"
+          className="inline-flex h-9 items-center gap-1.5 rounded-md bg-indigo-500 px-3.5 text-sm font-medium text-[#F0EFE2] hover:bg-indigo-400"
         >
           <Plus className="size-3.5" />
           Add a custom MCP
@@ -269,15 +269,15 @@ function McpServersTab({ onSuggest }: { onSuggest: () => void }) {
 
       {recommended.length > 0 ? (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-white">Recommended</h2>
+          <h2 className="mb-3 text-sm font-semibold text-[#F0EFE2]">Recommended</h2>
           <McpServerGrid entries={recommended} onToggleInstall={toggleInstall} />
         </section>
       ) : null}
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-white">All servers</h2>
+        <h2 className="mb-3 text-sm font-semibold text-[#F0EFE2]">All servers</h2>
         {allServers.length === 0 ? (
-          <p className={cn(subtlePanel(), "px-4 py-8 text-center text-sm text-white/45")}>
+          <p className={cn(subtlePanel(), "px-4 py-8 text-center text-sm text-[#F0EFE2]/45")}>
             No MCP servers match your filters.
           </p>
         ) : (
@@ -330,19 +330,19 @@ function McpServerCard({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h3 className="truncate text-sm font-semibold text-white">{entry.name}</h3>
+            <h3 className="truncate text-sm font-semibold text-[#F0EFE2]">{entry.name}</h3>
             {entry.verified ? (
               <BadgeCheck className="size-3.5 shrink-0 text-sky-400" aria-label="Verified" />
             ) : null}
           </div>
-          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/45">
+          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#F0EFE2]/45">
             {entry.description}
           </p>
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2">
         {!entry.installed ? (
-          <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-white/50">
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-[#F0EFE2]/50">
             Not installed
           </span>
         ) : (
@@ -391,17 +391,17 @@ function McpSuggestModal({ onClose }: { onClose: () => void }) {
       <div className="w-full max-w-md rounded-md bg-[#141416] p-6 shadow-2xl">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 id="mcp-suggest-title" className="text-lg font-semibold text-white">
+            <h2 id="mcp-suggest-title" className="text-lg font-semibold text-[#F0EFE2]">
               Suggest MCP Integration
             </h2>
-            <p className="mt-1 text-xs text-white/45">
+            <p className="mt-1 text-xs text-[#F0EFE2]/45">
               We review suggestions and add popular integrations to the catalog.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-white/50 hover:bg-white/[0.06] hover:text-white"
+            className="rounded-md p-1 text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -422,29 +422,29 @@ function McpSuggestModal({ onClose }: { onClose: () => void }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <label className="block space-y-1.5">
-              <span className="text-xs font-medium text-white/70">Name</span>
+              <span className="text-xs font-medium text-[#F0EFE2]/70">Name</span>
               <input
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#0A0A0A] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#0A0A0A] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
                 placeholder="e.g. Airtable"
               />
             </label>
             <label className="block space-y-1.5">
-              <span className="text-xs font-medium text-white/70">Documentation Link</span>
+              <span className="text-xs font-medium text-[#F0EFE2]/70">Documentation Link</span>
               <input
                 type="url"
                 value={docsUrl}
                 onChange={(e) => setDocsUrl(e.target.value)}
-                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#0A0A0A] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#0A0A0A] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
                 placeholder="https://…"
               />
             </label>
             <label className="block space-y-1.5">
-              <span className="flex items-center justify-between text-xs font-medium text-white/70">
+              <span className="flex items-center justify-between text-xs font-medium text-[#F0EFE2]/70">
                 Description
-                <span className="text-white/35">
+                <span className="text-[#F0EFE2]/35">
                   {description.length}/{maxDesc}
                 </span>
               </span>
@@ -452,7 +452,7 @@ function McpSuggestModal({ onClose }: { onClose: () => void }) {
                 value={description}
                 onChange={(e) => setDescription(e.target.value.slice(0, maxDesc))}
                 rows={4}
-                className="w-full resize-none rounded-md border border-white/[0.08] bg-[#0A0A0A] px-3 py-2 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                className="w-full resize-none rounded-md border border-white/[0.08] bg-[#0A0A0A] px-3 py-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
                 placeholder="What should this integration do?"
               />
             </label>
@@ -460,7 +460,7 @@ function McpSuggestModal({ onClose }: { onClose: () => void }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="h-9 rounded-md border border-white/[0.08] px-4 text-sm font-medium text-white/80 hover:bg-white/[0.04]"
+                className="h-9 rounded-md border border-white/[0.08] px-4 text-sm font-medium text-[#F0EFE2]/80 hover:bg-white/[0.04]"
               >
                 Cancel
               </button>
@@ -550,14 +550,14 @@ function IntegrationConfigureDrawer({
               <SettingsIntegrationIcon id={integrationId} className="size-5" />
             </span>
             <div className="min-w-0">
-              <h2 className="truncate text-base font-semibold text-white">{name}</h2>
-              {detail ? <p className="truncate text-xs text-white/45">{detail}</p> : null}
+              <h2 className="truncate text-base font-semibold text-[#F0EFE2]">{name}</h2>
+              {detail ? <p className="truncate text-xs text-[#F0EFE2]/45">{detail}</p> : null}
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-white/50 hover:bg-white/[0.06] hover:text-white"
+            className="rounded-md p-1 text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close panel"
           >
             <X className="size-4" />
@@ -565,16 +565,16 @@ function IntegrationConfigureDrawer({
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
           {stub ? (
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-[#F0EFE2]/50">
               {name} is not available yet. We will add this provider in a future release.
             </p>
           ) : connected ? (
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-[#F0EFE2]/50">
               {name} is connected for your organization. OAuth completes via Mission Control
               callback; sync and advanced settings live there too.
             </p>
           ) : (
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-[#F0EFE2]/50">
               Connect {name} to ingest memories and power agent sessions. You will be redirected to
               complete OAuth, then returned to Mission Control.
             </p>
@@ -603,7 +603,7 @@ function IntegrationConfigureDrawer({
             ) : null}
             <Link
               href={DEV_CONSOLE_CONNECTORS_HREF}
-              className="inline-flex h-9 items-center rounded-md border border-white/[0.08] px-4 text-sm font-medium text-white/85 hover:bg-white/[0.04]"
+              className="inline-flex h-9 items-center rounded-md border border-white/[0.08] px-4 text-sm font-medium text-[#F0EFE2]/85 hover:bg-white/[0.04]"
             >
               Mission Control
             </Link>
@@ -711,7 +711,7 @@ function ConnectionsIntegrationsPanel({
           placeholder="Search integrations"
           className="max-w-md"
         />
-        <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-medium text-white/45">
+        <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-medium text-[#F0EFE2]/45">
           {loading ? "…" : `${connectedCount} connected`}
         </span>
       </SettingsToolbar>
@@ -722,7 +722,7 @@ function ConnectionsIntegrationsPanel({
 
       {sections.map((section) => (
         <section key={section.title}>
-          <h2 className="mb-2 text-sm font-semibold text-white">{section.title}</h2>
+          <h2 className="mb-2 text-sm font-semibold text-[#F0EFE2]">{section.title}</h2>
           <div className={cn(subtlePanel(), "divide-y divide-white/[0.06] overflow-hidden")}>
             {section.rows.map((row) => {
               const connected = isRowConnected(row);
@@ -760,12 +760,12 @@ function ConnectionsIntegrationsPanel({
       ))}
 
       {sections.length === 0 ? (
-        <p className={cn(subtlePanel(), "px-4 py-8 text-center text-sm text-white/45")}>
+        <p className={cn(subtlePanel(), "px-4 py-8 text-center text-sm text-[#F0EFE2]/45")}>
           No integrations match your search.
         </p>
       ) : null}
 
-      <p className="text-xs text-white/40">
+      <p className="text-xs text-[#F0EFE2]/40">
         GitHub, Slack, and Jira use OAuth through the Mission Control callback. GitLab, Bitbucket,
         Microsoft Teams, and Linear are not available yet.
       </p>

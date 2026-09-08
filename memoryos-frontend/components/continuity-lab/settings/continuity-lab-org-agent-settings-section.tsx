@@ -51,7 +51,7 @@ import { cn } from "@/lib/utils";
 const SAVE_DEBOUNCE_MS = 450;
 
 const inputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none";
 
 const textareaClass = cn(
   inputClass,
@@ -97,17 +97,17 @@ function CreateSlashCommandModal({
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 id="slash-command-title" className="text-base font-semibold text-white">
+            <h2 id="slash-command-title" className="text-base font-semibold text-[#F0EFE2]">
               Create Slash Command
             </h2>
-            <p className="mt-1 text-xs text-white/45">
+            <p className="mt-1 text-xs text-[#F0EFE2]/45">
               Custom commands are available to everyone in your organization.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/60 hover:bg-white/[0.06]"
+            className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/60 hover:bg-white/[0.06]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -115,10 +115,10 @@ function CreateSlashCommandModal({
         </div>
 
         <div className="space-y-3">
-          <label className="block text-xs font-medium text-white/70">
+          <label className="block text-xs font-medium text-[#F0EFE2]/70">
             Command name
             <div className="relative mt-1">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-white/40">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-[#F0EFE2]/40">
                 /
               </span>
               <input
@@ -130,7 +130,7 @@ function CreateSlashCommandModal({
               />
             </div>
           </label>
-          <label className="block text-xs font-medium text-white/70">
+          <label className="block text-xs font-medium text-[#F0EFE2]/70">
             Description
             <input
               type="text"
@@ -140,7 +140,7 @@ function CreateSlashCommandModal({
               className={cn(inputClass, "mt-1")}
             />
           </label>
-          <label className="block text-xs font-medium text-white/70">
+          <label className="block text-xs font-medium text-[#F0EFE2]/70">
             Prompt
             <textarea
               value={prompt}
@@ -173,14 +173,14 @@ function SlashCommandRow({ command }: { command: LabSlashCommand }) {
     <div className="flex gap-3 border-b border-white/[0.06] px-3 py-3 last:border-b-0">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-sm font-medium text-white">/{command.name}</span>
+          <span className="font-mono text-sm font-medium text-[#F0EFE2]">/{command.name}</span>
           {command.system ? (
-            <span className="rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/45">
+            <span className="rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
               System
             </span>
           ) : null}
         </div>
-        <p className="mt-1 text-xs text-white/45">{command.description}</p>
+        <p className="mt-1 text-xs text-[#F0EFE2]/45">{command.description}</p>
       </div>
     </div>
   );
@@ -376,7 +376,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -396,7 +396,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
           </button>
         </div>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -422,7 +422,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
                   : "OpenRouter not configured"}
             </span>
             {companyModel?.model && openRouterConnected ? (
-              <span className="text-xs text-white/45">
+              <span className="text-xs text-[#F0EFE2]/45">
                 Default model: {companyModel.model.replace(/^openrouter\//, "")}
               </span>
             ) : null}
@@ -492,7 +492,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
               />
             ) : (
               <div className="space-y-2">
-                <p className="text-sm text-white/55">
+                <p className="text-sm text-[#F0EFE2]/55">
                   Configure an OpenRouter API key and model before choosing a default agent profile.
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -508,7 +508,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
                   </button>
                   <Link
                     href={MEMORYOS_API_KEYS_PATH}
-                    className="inline-flex h-9 items-center rounded-md border border-white/[0.12] px-3.5 text-sm font-medium text-white/80 hover:bg-white/[0.06]"
+                    className="inline-flex h-9 items-center rounded-md border border-white/[0.12] px-3.5 text-sm font-medium text-[#F0EFE2]/80 hover:bg-white/[0.06]"
                   >
                     API Keys settings
                   </Link>
@@ -588,7 +588,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
             hint="Monthly spend cap in USD (optional)"
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-white/50">$</span>
+              <span className="text-sm text-[#F0EFE2]/50">$</span>
               <input
                 type="number"
                 min={0}
@@ -603,7 +603,7 @@ export function ContinuityLabOrgAgentSettingsSection() {
               </SettingsSecondaryButton>
             </div>
             {usageLimitMsg ? (
-              <p className="mt-2 text-xs text-white/45">{usageLimitMsg}</p>
+              <p className="mt-2 text-xs text-[#F0EFE2]/45">{usageLimitMsg}</p>
             ) : null}
           </SettingsFieldRow>
         </SettingsFlatPanel>

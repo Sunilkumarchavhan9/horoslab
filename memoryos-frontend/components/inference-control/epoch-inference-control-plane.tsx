@@ -439,7 +439,7 @@ export function EpochInferenceControlPlane({
           {loading && !overview ? (
             <div className={cn(
               "flex min-h-[300px] flex-col items-center justify-center border border-dashed p-12 text-center rounded-xs",
-              dark ? "border-[#282828] bg-[#141414] text-[#888]" : "border-[#c9cec4] bg-white text-[#6b7367]"
+              dark ? "border-[#282828] bg-[#141414] text-[#C8C7BA]" : "border-[#c9cec4] bg-white text-[#6b7367]"
             )}>
               <span className="h-6 w-6 animate-spin rounded-full border-2 border-[#75bf00] border-t-transparent mb-3" />
               <p className="text-xs font-mono uppercase tracking-[0.14em]">

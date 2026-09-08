@@ -217,7 +217,7 @@ export function DeploymentsView({
           type="button"
           className={cn(
             "flex items-center gap-1.5 border px-3 py-1.5 text-xs font-semibold rounded-xs transition-colors shadow-xs",
-            dark ? "border-[#383838] bg-[#202020] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#171a17]"
+            dark ? "border-[#383838] bg-[#202020] text-[#F0EFE2] hover:border-[#75bf00]" : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#171a17]"
           )}
         >
           <Plus size={13} />
@@ -242,8 +242,8 @@ export function DeploymentsView({
               className={cn(
                 "px-2.5 py-0.5 text-xs font-mono transition-colors cursor-pointer rounded-sm flex items-center gap-1.5",
                 filterTab === tab.id
-                  ? "bg-[#242424] text-white font-bold"
-                  : "text-[#889284] hover:text-white"
+                  ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                  : "text-[#889284] hover:text-[#F0EFE2]"
               )}
             >
               <span>{tab.label}</span>
@@ -306,7 +306,7 @@ export function DeploymentsView({
                   )} />
                   <div className="truncate">
                     <div className="flex items-center gap-1.5">
-                      <span className={cn("font-semibold text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                      <span className={cn("font-semibold text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                         {item.name}
                       </span>
                       <span className={cn(
@@ -341,7 +341,7 @@ export function DeploymentsView({
 
                 {/* 3. Requests (24h) */}
                 <div className="col-span-2 text-right font-mono">
-                  <div className={cn("font-bold text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                  <div className={cn("font-bold text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                     {item.requests24h}
                   </div>
                   <div className="text-[11px] text-[#788274]">
@@ -362,7 +362,7 @@ export function DeploymentsView({
                 {/* 5. Latency */}
                 <div className="col-span-2 text-right font-mono flex items-center justify-end gap-2">
                   <div>
-                    <div className={cn("font-bold text-xs", dark ? "text-white" : "text-[#171a17]")}>
+                    <div className={cn("font-bold text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
                       {item.latencyP95}
                     </div>
                     <div className="text-[11px] text-[#788274]">
@@ -370,9 +370,9 @@ export function DeploymentsView({
                     </div>
                   </div>
                   {isExpanded ? (
-                    <ChevronUp size={14} className="text-[#888] shrink-0" />
+                    <ChevronUp size={14} className="text-[#C8C7BA] shrink-0" />
                   ) : (
-                    <ChevronDown size={14} className="text-[#888] shrink-0" />
+                    <ChevronDown size={14} className="text-[#C8C7BA] shrink-0" />
                   )}
                 </div>
               </div>
@@ -393,7 +393,7 @@ export function DeploymentsView({
 
                       <div className={cn(
                         "flex items-center justify-between border border-dashed px-3 py-2 rounded-xs",
-                        dark ? "border-[#333] bg-[#151515] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]"
+                        dark ? "border-[#333] bg-[#151515] text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#171a17]"
                       )}>
                         <span className="text-xs truncate">{item.endpointUrl}</span>
                         <button
@@ -403,7 +403,7 @@ export function DeploymentsView({
                             "flex items-center gap-1 font-sans text-xs ml-2 px-2 py-0.5 rounded-xs transition-colors shrink-0",
                             copiedKeyId === item.id
                               ? "text-[#75bf00] font-bold"
-                              : dark ? "text-[#889084] hover:text-white bg-[#222]" : "text-[#656d60] hover:text-black bg-[#f2f4f0]"
+                              : dark ? "text-[#889084] hover:text-[#F0EFE2] bg-[#222]" : "text-[#656d60] hover:text-black bg-[#f2f4f0]"
                           )}
                         >
                           {copiedKeyId === item.id ? <Check size={12} /> : <Copy size={12} />}
@@ -414,15 +414,15 @@ export function DeploymentsView({
                       <div className="grid grid-cols-3 gap-2 text-xs pt-1">
                         <div className={cn("border border-dashed p-2 rounded-xs", dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white")}>
                           <span className="text-[10px] text-[#788274] block uppercase font-sans">Active Version</span>
-                          <span className={cn("font-bold text-xs truncate block", dark ? "text-white" : "text-[#171a17]")}>{item.activeVersion}</span>
+                          <span className={cn("font-bold text-xs truncate block", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{item.activeVersion}</span>
                         </div>
                         <div className={cn("border border-dashed p-2 rounded-xs", dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white")}>
                           <span className="text-[10px] text-[#788274] block uppercase font-sans">Region</span>
-                          <span className={cn("font-bold text-xs truncate block", dark ? "text-white" : "text-[#171a17]")}>{item.region}</span>
+                          <span className={cn("font-bold text-xs truncate block", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{item.region}</span>
                         </div>
                         <div className={cn("border border-dashed p-2 rounded-xs", dark ? "border-[#2e2e2e] bg-[#202020]" : "border-[#d8ddd3] bg-white")}>
                           <span className="text-[10px] text-[#788274] block uppercase font-sans">Created</span>
-                          <span className={cn("font-bold text-xs truncate block", dark ? "text-white" : "text-[#171a17]")}>{item.createdAt}</span>
+                          <span className={cn("font-bold text-xs truncate block", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{item.createdAt}</span>
                         </div>
                       </div>
                     </div>
@@ -438,7 +438,7 @@ export function DeploymentsView({
                           type="button"
                           className={cn(
                             "flex items-center gap-1.5 border border-dashed px-3 py-1.5 text-xs font-semibold rounded-xs transition-colors",
-                            dark ? "border-[#383838] bg-[#252525] text-white hover:border-[#75bf00]" : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#171a17]"
+                            dark ? "border-[#383838] bg-[#252525] text-[#F0EFE2] hover:border-[#75bf00]" : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-[#171a17]"
                           )}
                         >
                           <Play size={12} />
@@ -450,7 +450,7 @@ export function DeploymentsView({
                           onClick={() => onRollback?.(item.id)}
                           className={cn(
                             "flex items-center gap-1.5 border border-dashed px-3 py-1.5 text-xs font-medium rounded-xs transition-colors",
-                            dark ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white" : "border-[#d8ddd3] bg-white text-[#525a4d]"
+                            dark ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#525a4d]"
                           )}
                         >
                           <RotateCcw size={12} />
@@ -461,7 +461,7 @@ export function DeploymentsView({
                           type="button"
                           className={cn(
                             "flex items-center gap-1.5 border border-dashed px-3 py-1.5 text-xs font-medium rounded-xs transition-colors",
-                            dark ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white" : "border-[#d8ddd3] bg-white text-[#525a4d]"
+                            dark ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#525a4d]"
                           )}
                         >
                           <Pause size={12} />

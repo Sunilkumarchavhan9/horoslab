@@ -76,17 +76,17 @@ export function MissionWorkspace({
  // Custom colors based on theme
  const bgColor = isDark ? "#0a0a0a" : "#f9f9f9";
  const borderColor = isDark ? "border-white/10" : "border-border";
- const textMuted = isDark ? "text-white/50" : "text-foreground/50";
+ const textMuted = isDark ? "text-[#F0EFE2]/50" : "text-foreground/50";
  const handleColor = isDark ? "bg-card/10 hover:bg-card/20" : "bg-black/10 hover:bg-black/20";
 
  return (
- <div className={cn("flex flex-col h-full w-full overflow-hidden font-sans", isDark ? "bg-[#0a0a0a] text-white" : "bg-[#F9F9F9] text-foreground")}>
+ <div className={cn("flex flex-col h-full w-full overflow-hidden font-sans", isDark ? "bg-[#0a0a0a] text-[#F0EFE2]" : "bg-[#F9F9F9] text-foreground")}>
  
  {/* HEADER */}
  <header className={cn("px-6 py-3 shrink-0 flex items-center justify-between border-b z-20", borderColor, isDark ? "bg-[#121212]" : "bg-card")}>
  <div className="flex items-center gap-6">
  {onBack && (
- <button onClick={onBack} className={cn("px-2 py-1.5 rounded text-[13px] font-medium border flex items-center gap-1", isDark ? "border-white/10 hover:bg-card/5 text-white/70" : "border-border hover:bg-accent text-foreground/70")}>
+ <button onClick={onBack} className={cn("px-2 py-1.5 rounded text-[13px] font-medium border flex items-center gap-1", isDark ? "border-white/10 hover:bg-card/5 text-[#F0EFE2]/70" : "border-border hover:bg-accent text-foreground/70")}>
  ← Back
  </button>
  )}
@@ -96,11 +96,11 @@ export function MissionWorkspace({
  <span className="px-1.5 py-0.5 rounded-[4px] bg-blue-500/10 text-blue-600 text-[10px] font-bold uppercase tracking-wider border border-blue-500/20">Running</span>
  </div>
  <div className="flex items-center gap-6 mt-1 text-[12px]">
- <span className={textMuted}>Institution: <strong className={isDark ? "text-white/90" : "text-foreground/90"}>Engineering</strong></span>
- <span className={textMuted}>Owner: <strong className={isDark ? "text-white/90" : "text-foreground/90"}>Epoch Planner</strong></span>
- <span className={textMuted}>Priority: <strong className={isDark ? "text-white/90" : "text-foreground/90"}>P1</strong></span>
+ <span className={textMuted}>Institution: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>Engineering</strong></span>
+ <span className={textMuted}>Owner: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>Epoch Planner</strong></span>
+ <span className={textMuted}>Priority: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>P1</strong></span>
  <span className={textMuted}>Risk: <strong className="text-amber-500">Medium</strong></span>
- <span className={textMuted}>Runtime: <strong className={isDark ? "text-white/90" : "text-foreground/90"}>14m 23s</strong></span>
+ <span className={textMuted}>Runtime: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>14m 23s</strong></span>
  </div>
  </div>
  </div>
@@ -115,7 +115,7 @@ export function MissionWorkspace({
  <button className={cn("px-3 py-1.5 rounded-md text-[12.5px] font-medium transition-colors border flex items-center gap-1.5 text-red-500 border-red-500/20 bg-red-500/5 hover:bg-red-500/10")}>
  <Square className="size-3.5" /> Terminate
  </button>
- <button className="px-3 py-1.5 rounded-md bg-[#0f52ff] text-white text-[12.5px] font-medium hover:bg-[#0f52ff]/90 transition-colors flex items-center gap-1.5 ml-2 ">
+ <button className="px-3 py-1.5 rounded-md bg-[#0f52ff] text-[#F0EFE2] text-[12.5px] font-medium hover:bg-[#0f52ff]/90 transition-colors flex items-center gap-1.5 ml-2 ">
  <CheckCircle className="size-3.5" /> Approve Action
  </button>
  </div>
@@ -139,7 +139,7 @@ export function MissionWorkspace({
  step.status === "complete" ? "bg-green-500" : step.status === "active" ? "bg-[#0f52ff] shadow-[0_0_8px_rgba(15,82,255,0.5)]" : isDark ? "bg-card/20" : "bg-black/20"
  )} />
  <div className="flex flex-col -mt-1 group-hover:translate-x-1 transition-transform">
- <span className={cn("text-[13px] font-medium", step.status === "pending" ? textMuted : isDark ? "text-white" : "text-foreground")}>{step.title}</span>
+ <span className={cn("text-[13px] font-medium", step.status === "pending" ? textMuted : isDark ? "text-[#F0EFE2]" : "text-foreground")}>{step.title}</span>
  <span className={cn("text-[11px] mt-0.5", textMuted)}>{step.time}</span>
  </div>
  </div>
@@ -216,15 +216,15 @@ export function MissionWorkspace({
  <div className="flex flex-col gap-3 text-[12px]">
  <div className="flex flex-col gap-1">
  <span className="font-semibold text-[#0f52ff]">Human</span>
- <span className={cn("p-2 rounded-md bg-muted dark:bg-white/10", isDark ? "text-white" : "text-foreground")}>Please update the authentication logic in main.ts.</span>
+ <span className={cn("p-2 rounded-md bg-muted dark:bg-white/10", isDark ? "text-[#F0EFE2]" : "text-foreground")}>Please update the authentication logic in main.ts.</span>
  </div>
  <div className="flex flex-col gap-1">
  <span className="font-semibold text-purple-500">Planner Agent</span>
- <span className={cn("p-2 rounded-md bg-muted dark:bg-white/10", isDark ? "text-white" : "text-foreground")}>I've assigned the Coding Agent to modify main.ts and added the Security Agent for review.</span>
+ <span className={cn("p-2 rounded-md bg-muted dark:bg-white/10", isDark ? "text-[#F0EFE2]" : "text-foreground")}>I've assigned the Coding Agent to modify main.ts and added the Security Agent for review.</span>
  </div>
  <div className="flex flex-col gap-1">
  <span className="font-semibold text-green-500">Coding Agent</span>
- <span className={cn("p-2 rounded-md bg-muted dark:bg-white/10", isDark ? "text-white" : "text-foreground")}>
+ <span className={cn("p-2 rounded-md bg-muted dark:bg-white/10", isDark ? "text-[#F0EFE2]" : "text-foreground")}>
  Changes applied. <a href="#" className="text-[#0f52ff] hover:underline">Evidence #42</a>
  </span>
  </div>
@@ -273,8 +273,8 @@ export function MissionWorkspace({
  key={tab}
  onClick={() => setInspectorTab(tab)}
  className={cn("px-3 py-1.5 text-[11px] font-medium rounded-md whitespace-nowrap transition-colors",
- inspectorTab === tab ? (isDark ? "bg-card/10 text-white" : "bg-black/10 text-foreground")
- : (isDark ? "text-white/70 hover:bg-card/5" : "text-foreground/70 hover:bg-accent")
+ inspectorTab === tab ? (isDark ? "bg-card/10 text-[#F0EFE2]" : "bg-black/10 text-foreground")
+ : (isDark ? "text-[#F0EFE2]/70 hover:bg-card/5" : "text-foreground/70 hover:bg-accent")
  )}
  >
  {tab}
@@ -286,7 +286,7 @@ export function MissionWorkspace({
  {inspectorTab === "Overview" && (
  <div className="space-y-6">
  <div>
- <h3 className="text-[12px] font-semibold text-foreground/60 dark:text-white/60 uppercase tracking-wider mb-2">Metadata</h3>
+ <h3 className="text-[12px] font-semibold text-foreground/60 dark:text-[#F0EFE2]/60 uppercase tracking-wider mb-2">Metadata</h3>
  <div className="p-3 rounded-md border bg-muted/50 dark:bg-white/[0.02] border-border dark:border-white/5 text-[13px] space-y-2">
  <div className="flex justify-between"><span className={textMuted}>ID</span><span className="font-mono text-[11px]">{id || "miss_8f9a2b"}</span></div>
  <div className="flex justify-between"><span className={textMuted}>Created</span><span>Oct 24, 10:00 AM</span></div>
@@ -295,7 +295,7 @@ export function MissionWorkspace({
  </div>
 
  <div>
- <h3 className="text-[12px] font-semibold text-foreground/60 dark:text-white/60 uppercase tracking-wider mb-2">Active Claims</h3>
+ <h3 className="text-[12px] font-semibold text-foreground/60 dark:text-[#F0EFE2]/60 uppercase tracking-wider mb-2">Active Claims</h3>
  <div className="space-y-2">
  <div className={cn("p-2.5 rounded-md border flex items-start gap-2", isDark ? "bg-card/5 border-white/10" : "bg-muted border-border")}>
  <CheckCircle2 className="size-4 text-green-500 mt-0.5 shrink-0" />
@@ -310,7 +310,7 @@ export function MissionWorkspace({
  )}
 
  {inspectorTab === "JSON" && (
- <div className={cn("p-6 rounded-md font-mono text-[11px] overflow-x-auto", isDark ? "bg-black text-white/80" : "bg-slate-100 text-foreground/80")}>
+ <div className={cn("p-6 rounded-md font-mono text-[11px] overflow-x-auto", isDark ? "bg-black text-[#F0EFE2]/80" : "bg-slate-100 text-foreground/80")}>
  <pre>
  {JSON.stringify({
  id: id || "miss_8f9a2b",

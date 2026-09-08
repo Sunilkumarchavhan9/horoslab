@@ -95,7 +95,7 @@ export function InstitutionInspector({ entityData }: { entityData: any }) {
                         <button className="px-2 py-1 bg-background border border-border rounded text-[10px] font-semibold hover:bg-muted transition-colors shadow-sm">Edit</button>
                         <button className="px-2 py-1 bg-background border border-border rounded text-[10px] font-semibold hover:bg-muted transition-colors shadow-sm">Clone</button>
                         <button className="px-2 py-1 bg-background border border-border rounded text-[10px] font-semibold hover:bg-muted transition-colors shadow-sm">Compare Versions</button>
-                        <button className="px-2 py-1 bg-red-500/10 text-red-500 border border-red-500/30 rounded text-[10px] font-semibold hover:bg-red-500 hover:text-white transition-colors shadow-sm">Archive</button>
+                        <button className="px-2 py-1 bg-red-500/10 text-red-500 border border-red-500/30 rounded text-[10px] font-semibold hover:bg-red-500 hover:text-[#F0EFE2] transition-colors shadow-sm">Archive</button>
                     </div>
                 </div>
 

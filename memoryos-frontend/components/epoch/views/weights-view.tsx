@@ -29,7 +29,7 @@ export function WeightsView({
   const [filterTab, setFilterTab] = useState<"all" | "validated" | "incomplete" | "failed">("incomplete");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const primaryText = dark ? "text-white" : "text-[#171a17]";
+  const primaryText = dark ? "text-[#F0EFE2]" : "text-[#171a17]";
   const secondaryText = dark ? "text-[#889084]" : "text-[#687063]";
 
   return (
@@ -62,7 +62,7 @@ export function WeightsView({
           className={cn(
             "flex items-center gap-1.5 border border-dashed px-3 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono",
             dark
-              ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white hover:border-[#75bf00]"
+              ? "border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2] hover:border-[#75bf00]"
               : "border-[#d8ddd3] bg-white text-[#525a4d] hover:text-black hover:border-black"
           )}
         >
@@ -91,10 +91,10 @@ export function WeightsView({
                   "flex items-center gap-1.5 px-3 py-1 border border-dashed transition-colors rounded-xs",
                   isActive
                     ? dark
-                      ? "border-[#555] bg-[#282828] text-white font-bold"
+                      ? "border-[#555] bg-[#282828] text-[#F0EFE2] font-bold"
                       : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
                     : dark
-                    ? "border-transparent text-[#788274] hover:text-white"
+                    ? "border-transparent text-[#788274] hover:text-[#F0EFE2]"
                     : "border-transparent text-[#687063] hover:text-[#171a17]"
                 )}
               >
@@ -146,9 +146,9 @@ export function WeightsView({
         <div className="py-20 flex flex-col items-center justify-center text-center p-6 space-y-4">
           <div className={cn(
             "flex h-12 w-12 items-center justify-center border border-dashed rounded-xs",
-            dark ? "border-[#383838] bg-[#1a1a1a] text-[#888]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#555]"
+            dark ? "border-[#383838] bg-[#1a1a1a] text-[#C8C7BA]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#555]"
           )}>
-            <Box size={22} className="text-[#888]" />
+            <Box size={22} className="text-[#C8C7BA]" />
           </div>
 
           <div className="space-y-1 max-w-sm">
@@ -166,7 +166,7 @@ export function WeightsView({
             className={cn(
               "flex items-center gap-1.5 border border-dashed px-3.5 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono",
               dark
-                ? "border-[#383838] bg-[#222] text-white hover:border-[#75bf00] hover:text-[#75bf00]"
+                ? "border-[#383838] bg-[#222] text-[#F0EFE2] hover:border-[#75bf00] hover:text-[#75bf00]"
                 : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-black"
             )}
           >

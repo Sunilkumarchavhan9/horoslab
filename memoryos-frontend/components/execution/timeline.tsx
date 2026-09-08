@@ -61,7 +61,7 @@ export function ExecutionTimeline() {
                            }}
                            className={`w-[180px] p-4 rounded-md border bg-white flex flex-col items-center text-center transition-shadow ${isCurrent ? 'shadow-[0_8px_30px_rgba(15,82,255,0.15)] ring-2 ring-[#0f52ff]/20' : 'shadow-sm'}`}
                         >
-                           <div className={`size-10 rounded-full flex items-center justify-center mb-3 ${isCurrent ? 'bg-[#0f52ff] text-white' : isVisible ? 'bg-black/5 text-black' : 'bg-black/5 text-black/30'}`}>
+                           <div className={`size-10 rounded-full flex items-center justify-center mb-3 ${isCurrent ? 'bg-[#0f52ff] text-[#F0EFE2]' : isVisible ? 'bg-black/5 text-black' : 'bg-black/5 text-black/30'}`}>
                               {step.icon}
                            </div>
                            <h4 className={`text-sm font-semibold mb-1 ${isCurrent ? 'text-[#0f52ff]' : isVisible ? 'text-black' : 'text-black/40'}`}>{step.label}</h4>
@@ -81,7 +81,7 @@ export function ExecutionTimeline() {
                </Button>
                <Button 
                  size="icon" 
-                 className={`rounded-full size-14 shadow-md transition-colors ${isPlaying ? 'bg-black text-white hover:bg-black/80' : 'bg-[#0f52ff] hover:bg-[#0f52ff]/90 text-white'}`}
+                 className={`rounded-full size-14 shadow-md transition-colors ${isPlaying ? 'bg-black text-[#F0EFE2] hover:bg-black/80' : 'bg-[#0f52ff] hover:bg-[#0f52ff]/90 text-[#F0EFE2]'}`}
                  onClick={() => setIsPlaying(!isPlaying)}
                >
                   {isPlaying ? <Pause className="size-6" /> : <Play className="size-6 ml-1" />}

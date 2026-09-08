@@ -30,7 +30,7 @@ function statusBadgeClass(status: ExecutionProposalSummary["status"]): string {
   if (status === "failed" || status === "rejected") {
     return "border-rose-500/40 bg-rose-500/10 text-rose-200";
   }
-  return "border-[#3A3A3A] bg-[#141414] text-white/55";
+  return "border-[#3A3A3A] bg-[#141414] text-[#F0EFE2]/55";
 }
 
 export function ContinuityLabGovernancePanel({
@@ -118,7 +118,7 @@ export function ContinuityLabGovernancePanel({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex items-center justify-between gap-2 border-b border-[#2F2F2F] px-3 py-2">
-        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-white/45">
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
           <Shield className="size-3 text-indigo-300" />
           Governed actions
         </span>
@@ -127,7 +127,7 @@ export function ContinuityLabGovernancePanel({
             type="button"
             onClick={() => void loadProposals()}
             disabled={loading}
-            className="inline-flex size-7 items-center justify-center text-white/50 hover:text-white"
+            className="inline-flex size-7 items-center justify-center text-[#F0EFE2]/50 hover:text-[#F0EFE2]"
             aria-label="Refresh proposals"
           >
             <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
@@ -154,12 +154,12 @@ export function ContinuityLabGovernancePanel({
         ) : null}
 
         {loading ? (
-          <p className="flex items-center gap-2 text-xs text-white/40">
+          <p className="flex items-center gap-2 text-xs text-[#F0EFE2]/40">
             <Loader2 className="size-3.5 animate-spin" />
             Loading proposals…
           </p>
         ) : proposals.length === 0 ? (
-          <div className="space-y-2 text-xs text-white/40">
+          <div className="space-y-2 text-xs text-[#F0EFE2]/40">
             <p>No pending governed actions.</p>
             <button
               type="button"
@@ -178,10 +178,10 @@ export function ContinuityLabGovernancePanel({
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-medium text-white">
+                    <p className="truncate text-xs font-medium text-[#F0EFE2]">
                       {proposal.adapter} · {proposal.actionType}
                     </p>
-                    <p className="mt-0.5 text-[10px] text-white/40">
+                    <p className="mt-0.5 text-[10px] text-[#F0EFE2]/40">
                       {proposal.riskTier} risk
                     </p>
                   </div>
@@ -214,7 +214,7 @@ export function ContinuityLabGovernancePanel({
                         type="button"
                         disabled={busyId === proposal.id}
                         onClick={() => void handleReview(proposal.id, "reject", proposal.riskTier)}
-                        className="border border-[#3A3A3A] px-2 py-0.5 text-[10px] text-white/60 disabled:opacity-40"
+                        className="border border-[#3A3A3A] px-2 py-0.5 text-[10px] text-[#F0EFE2]/60 disabled:opacity-40"
                       >
                         Reject
                       </button>
@@ -225,7 +225,7 @@ export function ContinuityLabGovernancePanel({
                       type="button"
                       disabled={busyId === proposal.id}
                       onClick={() => void handleExecute(proposal.id)}
-                      className="border border-[#3A3A3A] px-2 py-0.5 text-[10px] text-white/70 disabled:opacity-40"
+                      className="border border-[#3A3A3A] px-2 py-0.5 text-[10px] text-[#F0EFE2]/70 disabled:opacity-40"
                     >
                       {busyId === proposal.id ? "…" : "Execute"}
                     </button>

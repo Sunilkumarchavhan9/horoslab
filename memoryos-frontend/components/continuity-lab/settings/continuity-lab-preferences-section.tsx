@@ -179,7 +179,7 @@ export function ContinuityLabPreferencesSection() {
           Could not save to the server. Changes are kept in this browser until you sign in again.
         </p>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -199,7 +199,7 @@ export function ContinuityLabPreferencesSection() {
                     unoptimized
                   />
                 ) : (
-                  <span className="flex size-full items-center justify-center text-sm font-semibold text-white/50">
+                  <span className="flex size-full items-center justify-center text-sm font-semibold text-[#F0EFE2]/50">
                     {displayName.slice(0, 1).toUpperCase() || "?"}
                   </span>
                 )}
@@ -210,7 +210,7 @@ export function ContinuityLabPreferencesSection() {
                 onClick={() => {
                   /* v1: avatar managed via Clerk account */
                 }}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/70 hover:text-white disabled:opacity-40"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#F0EFE2]/70 hover:text-[#F0EFE2] disabled:opacity-40"
               >
                 <Pencil className="size-3.5" aria-hidden />
                 Edit
@@ -224,11 +224,11 @@ export function ContinuityLabPreferencesSection() {
               onChange={(e) => updatePrefs({ displayName: e.target.value })}
               onBlur={() => void persistToApi(prefs)}
               placeholder={clerkName || "Your name"}
-              className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+              className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
             />
           </SettingsFieldRow>
           <SettingsFieldRow label="Email">
-            <p className="text-sm text-white/80">{email}</p>
+            <p className="text-sm text-[#F0EFE2]/80">{email}</p>
           </SettingsFieldRow>
           <SettingsFieldRow label="User ID" hint="Copy your MemoryOS user identifier.">
             <SettingsCopyValue

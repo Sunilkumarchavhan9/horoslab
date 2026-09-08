@@ -23,7 +23,7 @@ export function DeveloperToolAdapters() {
  title="Tool Adapters" 
  description="Connect external platforms to feed reality data into Epoch. Adapters translate vendor-specific events into unified Reality Fabric schemas."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
  Add Adapter
  </button>
@@ -44,10 +44,10 @@ export function DeveloperToolAdapters() {
  <div className="flex items-start justify-between mb-6">
  <div className="flex items-center gap-3">
  <div className="size-10 rounded-md border border-border dark:border-white/10 bg-muted/50 dark:bg-[#050505] flex items-center justify-center">
- <adapter.icon className="size-5 text-foreground dark:text-white" />
+ <adapter.icon className="size-5 text-foreground dark:text-[#F0EFE2]" />
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-[14px] font-semibold text-foreground dark:text-white leading-none">{adapter.name}</span>
+ <span className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2] leading-none">{adapter.name}</span>
  <span className="text-[12px] font-medium text-muted-foreground dark:text-muted-foreground leading-none">{adapter.provider}</span>
  </div>
  </div>
@@ -82,7 +82,7 @@ export function DeveloperToolAdapters() {
  <p className="text-[13px] text-muted-foreground dark:text-muted-foreground leading-relaxed">
  Connect your {selectedAdapter.provider} account using OAuth to allow Epoch to ingest events and dispatch tools.
  </p>
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium w-full mt-2">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium w-full mt-2">
  Connect {selectedAdapter.provider}
  </button>
  </div>
@@ -90,15 +90,15 @@ export function DeveloperToolAdapters() {
  <div className="flex flex-col gap-0 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] text-[13px]">
  <div className="flex justify-between p-3 border-b border-border dark:border-white/5">
  <span className="text-muted-foreground">Auth Method</span>
- <span className="font-medium text-foreground dark:text-white">OAuth 2.0</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2]">OAuth 2.0</span>
  </div>
  <div className="flex justify-between p-3 border-b border-border dark:border-white/5">
  <span className="text-muted-foreground">Workspace</span>
- <span className="font-medium text-foreground dark:text-white">acmecorp</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2]">acmecorp</span>
  </div>
  <div className="flex justify-between p-3">
  <span className="text-muted-foreground">Connected By</span>
- <span className="font-medium text-foreground dark:text-white">admin@acme.com</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2]">admin@acme.com</span>
  </div>
  </div>
  )}
@@ -107,10 +107,10 @@ export function DeveloperToolAdapters() {
  <div className="flex flex-col gap-3">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Granted Scopes</span>
  <div className="flex flex-wrap gap-1.5 p-3 rounded-md border border-border dark:border-white/10 bg-muted/50 dark:bg-[#050505]">
- <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#ccc]">repo:read</span>
- <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#ccc]">repo:write</span>
- <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#ccc]">pull_requests:write</span>
- <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#ccc]">issues:read</span>
+ <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#C8C7BA]">repo:read</span>
+ <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#C8C7BA]">repo:write</span>
+ <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#C8C7BA]">pull_requests:write</span>
+ <span className="px-2 py-1 rounded bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground/80 dark:text-[#C8C7BA]">issues:read</span>
  </div>
  </div>
 
@@ -119,11 +119,11 @@ export function DeveloperToolAdapters() {
  <div className="flex flex-col gap-2 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] p-6 text-[13px]">
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2">
  <span className="text-muted-foreground dark:text-muted-foreground">Events (24h)</span>
- <span className="font-mono text-foreground dark:text-white font-medium">14,291</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2] font-medium">14,291</span>
  </div>
  <div className="flex justify-between pt-2">
  <span className="text-muted-foreground dark:text-muted-foreground">Error Rate</span>
- <span className="font-mono text-foreground dark:text-white font-medium">0.01%</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2] font-medium">0.01%</span>
  </div>
  </div>
  </div>

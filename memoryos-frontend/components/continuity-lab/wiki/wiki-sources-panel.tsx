@@ -33,15 +33,15 @@ export function WikiSourcesPanel({
     >
       <div className="flex items-center justify-between border-b border-[#2F2F2F] px-4 py-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/40">
             Sources
           </p>
-          <p className="mt-0.5 text-sm font-medium text-white">Relevant source files</p>
+          <p className="mt-0.5 text-sm font-medium text-[#F0EFE2]">Relevant source files</p>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex size-8 items-center justify-center text-white/60 hover:bg-[#141414] hover:text-white"
+          className="inline-flex size-8 items-center justify-center text-[#F0EFE2]/60 hover:bg-[#141414] hover:text-[#F0EFE2]"
           aria-label="Close sources panel"
         >
           <X className="size-4" />
@@ -61,7 +61,7 @@ export function WikiSourcesPanel({
         </a>
 
         {sourcePaths.length === 0 ? (
-          <p className="text-sm leading-relaxed text-white/45">
+          <p className="text-sm leading-relaxed text-[#F0EFE2]/45">
             No file paths recorded yet. Sync GitHub memory or run a Continuity Lab session to
             populate risky-file and execution lineage paths.
           </p>
@@ -73,9 +73,9 @@ export function WikiSourcesPanel({
                   href={githubBlobUrl(repoFullName, branch, path)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-2 border border-[#2F2F2F] bg-[#111111] px-3 py-2 text-xs text-white/75 transition hover:border-[#4338CA]/40 hover:text-white"
+                  className="flex items-start gap-2 border border-[#2F2F2F] bg-[#111111] px-3 py-2 text-xs text-[#F0EFE2]/75 transition hover:border-[#4338CA]/40 hover:text-[#F0EFE2]"
                 >
-                  <ExternalLink className="mt-0.5 size-3 shrink-0 text-white/35" />
+                  <ExternalLink className="mt-0.5 size-3 shrink-0 text-[#F0EFE2]/35" />
                   <span className="break-all font-mono">{path}</span>
                 </a>
               </li>

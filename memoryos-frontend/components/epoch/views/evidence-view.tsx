@@ -168,11 +168,11 @@ export function EvidenceView({
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold font-sans text-xs uppercase tracking-wider">
               Verification Ledger
             </span>
-            <h1 className="text-lg font-bold font-mono tracking-tight text-white">
+            <h1 className="text-lg font-bold font-mono tracking-tight text-[#F0EFE2]">
               Proof & Evidence
             </h1>
           </div>
-          <p className="mt-1 text-xs text-[#888]">
+          <p className="mt-1 text-xs text-[#C8C7BA]">
             Independent verification of claims, cryptographic evidence bundles, baseline diffs, and verdicts.
           </p>
         </div>
@@ -181,9 +181,9 @@ export function EvidenceView({
           <button
             type="button"
             onClick={() => setExportModalOpen(true)}
-            className="flex items-center gap-1.5 border border-dashed border-[#383838] bg-[#181818] hover:border-[#555] hover:bg-[#222] text-white px-3 py-1.5 text-xs rounded-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 border border-dashed border-[#383838] bg-[#181818] hover:border-[#555] hover:bg-[#222] text-[#F0EFE2] px-3 py-1.5 text-xs rounded-xs transition-colors cursor-pointer"
           >
-            <Download size={12} className="text-[#888]" />
+            <Download size={12} className="text-[#C8C7BA]" />
             <span>Export Proof Package</span>
           </button>
         </div>
@@ -201,7 +201,7 @@ export function EvidenceView({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search claims by ID, query, or verifier..."
-            className="w-full bg-[#141414] border border-dashed border-[#282828] focus:border-[#75bf00] rounded-xs pl-8 pr-3 py-1.5 text-xs text-white placeholder-[#666] outline-none transition-colors"
+            className="w-full bg-[#141414] border border-dashed border-[#282828] focus:border-[#75bf00] rounded-xs pl-8 pr-3 py-1.5 text-xs text-[#F0EFE2] placeholder-[#666] outline-none transition-colors"
           />
         </div>
 
@@ -216,8 +216,8 @@ export function EvidenceView({
                 className={cn(
                   "px-2.5 py-0.5 transition-colors text-xs cursor-pointer rounded-sm font-mono",
                   filterVerdict === v
-                    ? "bg-[#242424] text-white font-bold"
-                    : "text-[#889284] hover:text-white"
+                    ? "bg-[#242424] text-[#F0EFE2] font-bold"
+                    : "text-[#889284] hover:text-[#F0EFE2]"
                 )}
               >
                 {v === "ALL" ? "All" : v.replace("_", " ")}
@@ -227,7 +227,7 @@ export function EvidenceView({
 
           {/* 24 hours Time Window Badge (1:1 Match with User Image) */}
           <div className="inline-flex items-center border border-dashed border-[#383838] bg-[#141414] p-0.5 font-mono text-xs rounded-sm">
-            <span className="bg-[#242424] text-white font-bold px-2 py-0.5 rounded-sm">
+            <span className="bg-[#242424] text-[#F0EFE2] font-bold px-2 py-0.5 rounded-sm">
               24 hours
             </span>
           </div>
@@ -270,24 +270,24 @@ export function EvidenceView({
                       </span>
                     )}
 
-                    <span className="text-white font-bold text-xs">#{c.claimId}</span>
+                    <span className="text-[#F0EFE2] font-bold text-xs">#{c.claimId}</span>
                     <span className="text-[#666] text-[10px]">{c.timestamp}</span>
                   </div>
 
                   <div className="text-[11px] text-[#777]">
-                    Verifier: <span className="text-[#ccc]">{c.verifier}</span>
+                    Verifier: <span className="text-[#C8C7BA]">{c.verifier}</span>
                   </div>
                 </div>
 
-                <h3 className="font-sans text-sm font-semibold text-white leading-normal">
+                <h3 className="font-sans text-sm font-semibold text-[#F0EFE2] leading-normal">
                   {c.title}
                 </h3>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#777] pt-1">
                   <div className="flex flex-wrap items-center gap-4">
-                    <div>Target: <span className="text-white">{c.target}</span></div>
+                    <div>Target: <span className="text-[#F0EFE2]">{c.target}</span></div>
                     <div>
-                      Baseline: <span className="text-[#999]">{c.baseline}</span> → Measured:{" "}
+                      Baseline: <span className="text-[#C8C7BA]">{c.baseline}</span> → Measured:{" "}
                       <span className="text-[#75bf00] font-bold">{c.measured}</span>
                     </div>
                   </div>
@@ -308,13 +308,13 @@ export function EvidenceView({
                 <div className="flex items-center gap-2">
                   <Lock size={10} className="text-[#75bf00]" />
                   <span>SHA-256:</span>
-                  <code className="text-[#888] font-mono text-[10px]">
+                  <code className="text-[#C8C7BA] font-mono text-[10px]">
                     {c.sha256}
                   </code>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(c.sha256, c.id)}
-                    className="text-[#666] hover:text-white p-0.5 cursor-pointer transition-colors"
+                    className="text-[#666] hover:text-[#F0EFE2] p-0.5 cursor-pointer transition-colors"
                     title="Copy Checksum"
                   >
                     {copiedShaId === c.id ? <Check size={10} className="text-[#75bf00]" /> : <Copy size={10} />}
@@ -328,8 +328,8 @@ export function EvidenceView({
               {isExpanded && (
                 <div className="p-4 border-t border-dashed border-[#222] bg-[#0d0d0d] space-y-3 animate-in fade-in duration-100">
                   {c.reason && (
-                    <div className="p-3 border border-dashed border-[#333] bg-[#161616] text-[#ccc] rounded-xs text-xs font-sans">
-                      <strong className="text-white font-mono uppercase text-[10px] tracking-wider block mb-0.5">Audit Finding:</strong>
+                    <div className="p-3 border border-dashed border-[#333] bg-[#161616] text-[#C8C7BA] rounded-xs text-xs font-sans">
+                      <strong className="text-[#F0EFE2] font-mono uppercase text-[10px] tracking-wider block mb-0.5">Audit Finding:</strong>
                       {c.reason}
                     </div>
                   )}
@@ -353,9 +353,9 @@ export function EvidenceView({
                         <tbody className="divide-y divide-dashed divide-[#222]">
                           {c.metricsDiff?.map((m, idx) => (
                             <tr key={idx} className="hover:bg-[#181818] transition-colors">
-                              <td className="py-2 px-3 font-medium text-white">{m.name}</td>
+                              <td className="py-2 px-3 font-medium text-[#F0EFE2]">{m.name}</td>
                               <td className="py-2 px-3 text-[#777]">{m.baseline}</td>
-                              <td className="py-2 px-3 text-white font-bold">{m.measured}</td>
+                              <td className="py-2 px-3 text-[#F0EFE2] font-bold">{m.measured}</td>
                               <td className="py-2 px-3 text-[#75bf00] font-mono">{m.delta}</td>
                               <td className="py-2 px-3 text-right font-mono">
                                 {m.status === "PASS" ? (
@@ -383,7 +383,7 @@ export function EvidenceView({
           <div className="w-full max-w-xl border border-[#282828] bg-[#141414] rounded-xs p-6 text-xs space-y-4 shadow-2xl text-left font-mono">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <h2 className="text-sm font-bold text-white">Export Proof Package</h2>
+                <h2 className="text-sm font-bold text-[#F0EFE2]">Export Proof Package</h2>
                 <p className="text-[11px] text-[#777]">
                   Machine-verifiable JSON bundle containing all evidence and SHA-256 checksums.
                 </p>
@@ -391,7 +391,7 @@ export function EvidenceView({
               <button
                 type="button"
                 onClick={() => setExportModalOpen(false)}
-                className="text-[#777] hover:text-white cursor-pointer"
+                className="text-[#777] hover:text-[#F0EFE2] cursor-pointer"
               >
                 <X size={13} />
               </button>
@@ -407,7 +407,7 @@ export function EvidenceView({
               <button
                 type="button"
                 onClick={() => setExportModalOpen(false)}
-                className="px-4 py-2 border border-dashed border-[#383838] bg-[#181818] hover:bg-[#222] text-white rounded-xs cursor-pointer text-xs transition-colors"
+                className="px-4 py-2 border border-dashed border-[#383838] bg-[#181818] hover:bg-[#222] text-[#F0EFE2] rounded-xs cursor-pointer text-xs transition-colors"
               >
                 Close
               </button>

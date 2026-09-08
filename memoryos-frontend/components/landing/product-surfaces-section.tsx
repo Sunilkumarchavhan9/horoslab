@@ -125,14 +125,14 @@ export function ProductSurfacesSection() {
                           />
                         </div>
                         <div className="relative z-10 flex flex-col h-full px-5 py-5 pointer-events-none">
-                          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50 mt-auto drop-shadow-md">
+                          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#F0EFE2]/50 mt-auto drop-shadow-md">
                             Principle
                           </div>
-                          <div className="mt-4 max-w-[16rem] text-[18px] font-medium leading-snug text-white drop-shadow-md">
+                          <div className="mt-4 max-w-[16rem] text-[18px] font-medium leading-snug text-[#F0EFE2] drop-shadow-md">
                             {principle.title}
                           </div>
                           {principle.description && (
-                            <div className="mt-3 text-[14px] leading-relaxed text-white/80 drop-shadow-md">
+                            <div className="mt-3 text-[14px] leading-relaxed text-[#F0EFE2]/80 drop-shadow-md">
                               {principle.description}
                             </div>
                           )}

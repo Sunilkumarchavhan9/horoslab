@@ -28,12 +28,12 @@ export function InstitutionDetails({ id, onBack }: { id: string, onBack: () => v
  ];
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-white font-sans">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-[#F0EFE2] font-sans">
  <CommandBar className="border-b-0 h-14 shrink-0">
  <div className="flex items-center gap-6">
  <button 
  onClick={onBack}
- className="p-1.5 rounded-md hover:bg-black/10 dark:bg-white/10 text-foreground/70 dark:text-white/70 hover:text-foreground dark:text-white transition-colors"
+ className="p-1.5 rounded-md hover:bg-black/10 dark:bg-white/10 text-foreground/70 dark:text-[#F0EFE2]/70 hover:text-foreground dark:text-[#F0EFE2] transition-colors"
  >
  <ArrowLeft className="size-4" />
  </button>
@@ -44,10 +44,10 @@ export function InstitutionDetails({ id, onBack }: { id: string, onBack: () => v
  </div>
 
  <div className="flex items-center gap-2">
- <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-black/10 dark:bg-white/10 text-[12px] font-medium text-foreground/70 dark:text-white/70 hover:text-foreground dark:text-white transition-colors">
+ <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-black/10 dark:bg-white/10 text-[12px] font-medium text-foreground/70 dark:text-[#F0EFE2]/70 hover:text-foreground dark:text-[#F0EFE2] transition-colors">
  <Share2 className="size-3.5" /> Share
  </button>
- <button className="p-1.5 rounded-md hover:bg-black/10 dark:bg-white/10 text-foreground/70 dark:text-white/70 hover:text-foreground dark:text-white transition-colors">
+ <button className="p-1.5 rounded-md hover:bg-black/10 dark:bg-white/10 text-foreground/70 dark:text-[#F0EFE2]/70 hover:text-foreground dark:text-[#F0EFE2] transition-colors">
  <MoreHorizontal className="size-4" />
  </button>
  </div>
@@ -61,8 +61,8 @@ export function InstitutionDetails({ id, onBack }: { id: string, onBack: () => v
  className={cn(
  "flex items-center gap-2 px-3 py-2.5 text-[13px] font-medium border-b-2 transition-colors relative top-[1px]",
  activeTab === tab.id 
- ? "border-[#0f52ff] text-foreground dark:text-white" 
- : "border-transparent text-foreground/50 dark:text-white/50 hover:text-foreground/80 dark:text-white/80 hover:border-black/20 dark:border-white/20"
+ ? "border-[#0f52ff] text-foreground dark:text-[#F0EFE2]" 
+ : "border-transparent text-foreground/50 dark:text-[#F0EFE2]/50 hover:text-foreground/80 dark:text-[#F0EFE2]/80 hover:border-black/20 dark:border-white/20"
  )}
  >
  {tab.icon}
@@ -80,7 +80,7 @@ export function InstitutionDetails({ id, onBack }: { id: string, onBack: () => v
  
  {/* Placeholders for tabs not explicitly detailed yet */}
  {["Overview", "Missions", "Audit"].includes(activeTab) && (
- <div className="flex items-center justify-center h-full text-foreground/40 dark:text-white/40">
+ <div className="flex items-center justify-center h-full text-foreground/40 dark:text-[#F0EFE2]/40">
  {activeTab} view coming soon
  </div>
  )}

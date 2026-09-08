@@ -27,7 +27,7 @@ export function EvidenceArtifacts({ onOpenWorkspace }: { onOpenWorkspace?: (id: 
             <h1 className="text-2xl font-semibold tracking-tight text-black">Artifacts</h1>
             <p className="text-sm text-black/50 mt-1">What outputs did the missions produce?</p>
           </div>
-          <Button className="bg-[#0f52ff] hover:bg-[#0f52ff]/90 text-white rounded-full px-5 shadow-sm transition-all shadow-[#0f52ff]/20">
+          <Button className="bg-[#0f52ff] hover:bg-[#0f52ff]/90 text-[#F0EFE2] rounded-full px-5 shadow-sm transition-all shadow-[#0f52ff]/20">
             <Upload className="size-4 mr-2" /> Upload Artifact
           </Button>
         </div>
@@ -143,7 +143,7 @@ export function EvidenceArtifacts({ onOpenWorkspace }: { onOpenWorkspace?: (id: 
           </div>
           
           <div className="p-5 border-t border-black/5 bg-white mt-auto flex gap-2">
-            <Button className="flex-1 bg-black text-white hover:bg-black/80" onClick={() => onOpenWorkspace?.(selectedArtifact.id)}>
+            <Button className="flex-1 bg-black text-[#F0EFE2] hover:bg-black/80" onClick={() => onOpenWorkspace?.(selectedArtifact.id)}>
               Open Evidence
             </Button>
             <Button variant="outline" className="w-12 px-0 text-black/60">

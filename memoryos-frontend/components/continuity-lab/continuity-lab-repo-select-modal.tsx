@@ -161,15 +161,15 @@ export function ContinuityLabRepoSelectModal({
       >
         <div className="flex items-start justify-between gap-3 px-6 pb-4 pt-6">
           <div>
-            <h2 id="repo-select-title" className="text-lg font-semibold text-white">
+            <h2 id="repo-select-title" className="text-lg font-semibold text-[#F0EFE2]">
               {title}
             </h2>
-            <p className="mt-2 text-sm text-white/50">{description}</p>
+            <p className="mt-2 text-sm text-[#F0EFE2]/50">{description}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -177,7 +177,7 @@ export function ContinuityLabRepoSelectModal({
         </div>
 
         <div className="px-6">
-          <span className="inline-flex h-9 items-center rounded-md bg-white/[0.07] px-3 text-sm font-semibold text-white">
+          <span className="inline-flex h-9 items-center rounded-md bg-white/[0.07] px-3 text-sm font-semibold text-[#F0EFE2]">
             Your repos {repos.length}
           </span>
         </div>
@@ -194,25 +194,25 @@ export function ContinuityLabRepoSelectModal({
               />
             </label>
             <div className="relative min-w-0">
-              <Search className="pointer-events-none absolute left-0 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+              <Search className="pointer-events-none absolute left-0 top-1/2 size-4 -translate-y-1/2 text-[#F0EFE2]/35" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search repositories..."
-                className="h-14 w-full bg-transparent pl-7 pr-3 text-sm font-medium text-white placeholder:text-white/40 focus:outline-none"
+                className="h-14 w-full bg-transparent pl-7 pr-3 text-sm font-medium text-[#F0EFE2] placeholder:text-[#F0EFE2]/40 focus:outline-none"
               />
             </div>
-            <div className="px-3 text-xs font-semibold text-white/45">Last indexed</div>
+            <div className="px-3 text-xs font-semibold text-[#F0EFE2]/45">Last indexed</div>
           </div>
 
           <div className="min-h-[330px] overflow-y-auto">
             {loading ? (
-              <div className="flex items-center justify-center gap-2 py-16 text-sm text-white/50">
+              <div className="flex items-center justify-center gap-2 py-16 text-sm text-[#F0EFE2]/50">
                 <Loader2 className="size-4 animate-spin" />
                 Loading repositories…
               </div>
             ) : filtered.length === 0 ? (
-              <p className="px-3 py-12 text-center text-sm text-white/45">
+              <p className="px-3 py-12 text-center text-sm text-[#F0EFE2]/45">
                 {repos.length === 0
                   ? "No repositories found. Connect GitHub in settings first."
                   : "No repositories match your search."}
@@ -239,15 +239,15 @@ export function ContinuityLabRepoSelectModal({
                           />
                         </span>
                         <span className="min-w-0 px-0">
-                          <span className="block truncate text-base font-semibold text-white/85">
+                          <span className="block truncate text-base font-semibold text-[#F0EFE2]/85">
                             {repoName}
                           </span>
-                          <span className="mt-1 block truncate text-xs text-white/35">
+                          <span className="mt-1 block truncate text-xs text-[#F0EFE2]/35">
                             {repo.fullName}
                             {repo.private ? " · Private" : ""}
                           </span>
                         </span>
-                        <span className="px-3 text-sm font-medium text-white/45">
+                        <span className="px-3 text-sm font-medium text-[#F0EFE2]/45">
                           {formatLastIndexed(repo.updatedAt ?? lastSyncAt)}
                         </span>
                       </label>
@@ -262,7 +262,7 @@ export function ContinuityLabRepoSelectModal({
         <div className="flex items-center justify-between gap-3 px-6 py-5">
           <Link
             href="/continuity-lab/settings/repositories"
-            className="text-sm font-semibold text-white/45 hover:text-white/70"
+            className="text-sm font-semibold text-[#F0EFE2]/45 hover:text-[#F0EFE2]/70"
           >
             Manage repositories
           </Link>
@@ -270,7 +270,7 @@ export function ContinuityLabRepoSelectModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 rounded-md border border-[#3A3A3A] px-4 text-sm font-semibold text-white/80 hover:bg-white/[0.06]"
+            className="h-9 rounded-md border border-[#3A3A3A] px-4 text-sm font-semibold text-[#F0EFE2]/80 hover:bg-white/[0.06]"
           >
             Cancel
           </button>
@@ -281,7 +281,7 @@ export function ContinuityLabRepoSelectModal({
               onConfirm(draft);
               onClose();
             }}
-            className="h-9 rounded-md bg-[#3b82f6] px-4 text-sm font-semibold text-white disabled:opacity-40"
+            className="h-9 rounded-md bg-[#3b82f6] px-4 text-sm font-semibold text-[#F0EFE2] disabled:opacity-40"
           >
             {confirmLabel ??
               `Select ${draft.length} ${draft.length === 1 ? "repository" : "repositories"}`}

@@ -163,7 +163,7 @@ export function MissionDetailLayout({
  </div>
  ) : isMissingMission ? (
  <div className="bg-card border border-border rounded-md p-12 flex flex-col items-center justify-center text-center h-[400px]">
- <AlertTriangle className="size-12 text-[#ccc] mb-4" />
+ <AlertTriangle className="size-12 text-[#C8C7BA] mb-4" />
  <h2 className="text-[20px] font-semibold text-foreground mb-2">No mission yet</h2>
  <p className="text-[15px] text-muted-foreground max-w-md">
  This workspace does not have a live mission loaded yet. Create one from Active Missions to see the overview, execution, evidence, verification, certificate, institution record, and logs tabs.
@@ -178,7 +178,7 @@ export function MissionDetailLayout({
  </div>
  ) : error ? (
  <div className="bg-card border border-border rounded-md p-12 flex flex-col items-center justify-center text-center h-[400px]">
- <AlertTriangle className="size-12 text-[#ccc] mb-4" />
+ <AlertTriangle className="size-12 text-[#C8C7BA] mb-4" />
  <h2 className="text-[20px] font-semibold text-foreground mb-2">Mission unavailable</h2>
  <p className="text-[15px] text-muted-foreground max-w-md">{error}</p>
  </div>

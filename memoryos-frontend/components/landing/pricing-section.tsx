@@ -197,7 +197,7 @@ export function PricingSection() {
                 <a
                   href={plan.ctaHref}
                   className={`inline-flex w-full items-center justify-center px-4 py-3 text-[14px] font-medium transition md:text-[15px] ${plan.featured
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    ? "bg-blue-600 hover:bg-blue-700 text-[#F0EFE2]"
                     : "border border-[#c9d8ee] bg-white text-slate-900"
                     }`}
                 >
@@ -293,7 +293,7 @@ export function PricingSection() {
               </div>
               <a
                 href="mailto:chavhansunilkumar753@gmail.com?subject=Startup%20program%20application"
-                className="inline-flex min-w-[164px] items-center justify-center whitespace-nowrap bg-blue-600 hover:bg-blue-700 transition-colors px-7 py-3 text-[13px] font-medium text-white md:text-[14px]"
+                className="inline-flex min-w-[164px] items-center justify-center whitespace-nowrap bg-blue-600 hover:bg-blue-700 transition-colors px-7 py-3 text-[13px] font-medium text-[#F0EFE2] md:text-[14px]"
               >
                 Apply now →
               </a>

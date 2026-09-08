@@ -44,7 +44,7 @@ export function WikiDocSidebar({
     if (!sections.length) return null;
     return (
       <div className="mb-4">
-        <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">
+        <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">
           {title}
         </p>
         <ul className="space-y-0.5">
@@ -55,13 +55,13 @@ export function WikiDocSidebar({
                 className={cn(
                   "flex items-center justify-between rounded px-3 py-1.5 text-xs transition",
                   activeSection === section.id
-                    ? "bg-[#1a1a2e] font-medium text-white"
-                    : "text-white/60 hover:bg-[#141414] hover:text-white",
+                    ? "bg-[#1a1a2e] font-medium text-[#F0EFE2]"
+                    : "text-[#F0EFE2]/60 hover:bg-[#141414] hover:text-[#F0EFE2]",
                 )}
               >
                 <span>{sectionById.get(section.id)?.label ?? section.label}</span>
                 {section.nodeCount != null && section.nodeCount > 0 ? (
-                  <span className="text-[10px] tabular-nums text-white/35">{section.nodeCount}</span>
+                  <span className="text-[10px] tabular-nums text-[#F0EFE2]/35">{section.nodeCount}</span>
                 ) : null}
               </Link>
               {section.children?.length ? (
@@ -69,7 +69,7 @@ export function WikiDocSidebar({
                   {section.children.slice(0, 8).map((child) => (
                     <li
                       key={child.id}
-                      className="truncate px-2 py-1 text-[10px] text-white/40"
+                      className="truncate px-2 py-1 text-[10px] text-[#F0EFE2]/40"
                       title={child.label}
                     >
                       {child.label}
@@ -87,7 +87,7 @@ export function WikiDocSidebar({
   function renderWorkspaceGroup(section: WorkspaceNavSection) {
     return (
       <div key={section.id} className="mb-4">
-        <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">
+        <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">
           {section.label}
         </p>
         <ul className="space-y-1">
@@ -98,8 +98,8 @@ export function WikiDocSidebar({
                 className={cn(
                   "block rounded px-3 py-1 text-xs transition",
                   activeSection === "architecture" && focusPath === dir.path
-                    ? "bg-[#1a1a2e] font-medium text-white"
-                    : "text-white/65 hover:bg-[#141414] hover:text-white",
+                    ? "bg-[#1a1a2e] font-medium text-[#F0EFE2]"
+                    : "text-[#F0EFE2]/65 hover:bg-[#141414] hover:text-[#F0EFE2]",
                 )}
               >
                 <span className="font-mono">{dir.name}/</span>
@@ -114,7 +114,7 @@ export function WikiDocSidebar({
                           "block truncate rounded px-2 py-0.5 text-[10px] font-mono transition",
                           activeSection === "architecture" && focusPath === child.path
                             ? "bg-[#4338CA]/15 text-indigo-200"
-                            : "text-white/40 hover:text-white/70",
+                            : "text-[#F0EFE2]/40 hover:text-[#F0EFE2]/70",
                         )}
                         title={child.path}
                       >
@@ -140,23 +140,23 @@ export function WikiDocSidebar({
     >
       <Link
         href="/continuity-lab/wiki"
-        className="mx-3 mb-4 inline-flex items-center gap-1 text-[11px] font-medium text-white/55 hover:text-white"
+        className="mx-3 mb-4 inline-flex items-center gap-1 text-[11px] font-medium text-[#F0EFE2]/55 hover:text-[#F0EFE2]"
       >
         <ChevronLeft className="size-3.5" />
         Back to index
       </Link>
 
       <div className="mx-3 mb-5 border-b border-[#2F2F2F] pb-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">
           Repository
         </p>
         {parts ? (
           <>
-            <p className="mt-1 truncate text-[11px] text-white/45">{parts.owner}</p>
-            <p className="truncate font-mono text-xs font-medium text-white">{parts.repo}</p>
+            <p className="mt-1 truncate text-[11px] text-[#F0EFE2]/45">{parts.owner}</p>
+            <p className="truncate font-mono text-xs font-medium text-[#F0EFE2]">{parts.repo}</p>
           </>
         ) : (
-          <p className="mt-1 truncate font-mono text-xs font-medium text-white">{repoFullName}</p>
+          <p className="mt-1 truncate font-mono text-xs font-medium text-[#F0EFE2]">{repoFullName}</p>
         )}
       </div>
 

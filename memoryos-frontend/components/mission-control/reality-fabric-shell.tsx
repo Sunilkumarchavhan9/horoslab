@@ -34,10 +34,10 @@ export function RealityFabricShell({
  const bgMain = isDark ? "bg-[#0a0a0a]" : "bg-[#F9F9F9]";
  const borderMain = isDark ? "border-white/5" : "border-border";
  const borderSub = isDark ? "border-white/10" : "border-border";
- const textMain = isDark ? "text-white" : "text-foreground";
- const textMuted = isDark ? "text-white/50" : "text-foreground/50";
- const textMutedHover = isDark ? "text-white/70" : "text-foreground/70";
- const iconMuted = isDark ? "text-white/40" : "text-foreground/40";
+ const textMain = isDark ? "text-[#F0EFE2]" : "text-foreground";
+ const textMuted = isDark ? "text-[#F0EFE2]/50" : "text-foreground/50";
+ const textMutedHover = isDark ? "text-[#F0EFE2]/70" : "text-foreground/70";
+ const iconMuted = isDark ? "text-[#F0EFE2]/40" : "text-foreground/40";
  const bgHover = isDark ? "hover:bg-card/10" : "hover:bg-accent";
  const inputBg = isDark ? "bg-card/5" : "bg-muted/50";
 
@@ -84,7 +84,7 @@ export function RealityFabricShell({
  </div>
  </div>
 
- <button className="flex items-center gap-2 px-6 py-1.5 bg-blue-600 text-white rounded-md text-[13px] font-semibold hover:bg-blue-700 transition-colors ">
+ <button className="flex items-center gap-2 px-6 py-1.5 bg-blue-600 text-[#F0EFE2] rounded-md text-[13px] font-semibold hover:bg-blue-700 transition-colors ">
  <Plus className="size-4" /> Connect Source
  </button>
  </div>
@@ -98,7 +98,7 @@ export function RealityFabricShell({
  <input 
  type="text" 
  placeholder={`Search ${title.toLowerCase()}...`} 
- className={cn("bg-transparent border-none outline-none w-full", isDark ? "placeholder:text-white/30" : "placeholder:text-foreground/30", textMain)}
+ className={cn("bg-transparent border-none outline-none w-full", isDark ? "placeholder:text-[#F0EFE2]/30" : "placeholder:text-foreground/30", textMain)}
  />
  </div>
  <button className={cn("flex items-center gap-2 px-3 py-1.5 border rounded-md text-[13px] transition-colors ", inputBg, borderSub, textMutedHover, bgHover)}>
@@ -120,7 +120,7 @@ export function RealityFabricShell({
  {/* Main Workspace Area */}
  <div className={cn("flex-1 flex overflow-hidden", bgMain)}>
  {/* Center Content */}
- <div className={cn("flex-1 overflow-y-auto custom-scrollbar relative p-6", isDark ? "text-white/90" : "text-foreground/90")}>
+ <div className={cn("flex-1 overflow-y-auto custom-scrollbar relative p-6", isDark ? "text-[#F0EFE2]/90" : "text-foreground/90")}>
  {children}
  </div>
  </div>
@@ -151,10 +151,10 @@ export function RealityFabricInspector({ title, subtitle, onClose, children }: I
  const isDark = resolved === "dark";
  const bgMain = isDark ? "bg-[#0a0a0a]" : "bg-[#F9F9F9]";
  const borderMain = isDark ? "border-white/5" : "border-border";
- const textMain = isDark ? "text-white" : "text-foreground";
- const textMuted = isDark ? "text-white/50" : "text-foreground/50";
- const textMutedHover = isDark ? "hover:text-white/80" : "hover:text-foreground/80";
- const iconMuted = isDark ? "text-white/40" : "text-foreground/40";
+ const textMain = isDark ? "text-[#F0EFE2]" : "text-foreground";
+ const textMuted = isDark ? "text-[#F0EFE2]/50" : "text-foreground/50";
+ const textMutedHover = isDark ? "hover:text-[#F0EFE2]/80" : "hover:text-foreground/80";
+ const iconMuted = isDark ? "text-[#F0EFE2]/40" : "text-foreground/40";
  const bgHover = isDark ? "hover:bg-card/10" : "hover:bg-accent";
 
  return (
@@ -181,7 +181,7 @@ export function RealityFabricInspector({ title, subtitle, onClose, children }: I
  onClick={() => setActiveTab(tab)}
  className={cn(
  "py-3 text-[12.5px] font-medium transition-all relative whitespace-nowrap",
- activeTab === tab ? textMain : cn(textMuted, isDark ? "hover:text-white/70" : "hover:text-foreground/70")
+ activeTab === tab ? textMain : cn(textMuted, isDark ? "hover:text-[#F0EFE2]/70" : "hover:text-foreground/70")
  )}
  >
  {tab}
@@ -214,7 +214,7 @@ export function RealityFabricCard({ title, icon, actions, children }: { title: s
  const bgHeader = isDark ? "bg-[#0a0a0a]" : "bg-[#F9F9F9]";
  const borderMain = isDark ? "border-white/5" : "border-border";
  const borderHeader = isDark ? "border-white/5" : "border-border";
- const textMain = isDark ? "text-white" : "text-foreground";
+ const textMain = isDark ? "text-[#F0EFE2]" : "text-foreground";
 
  return (
  <div className={cn("flex flex-col h-full rounded-md border overflow-hidden relative", bgMain, borderMain)}>
@@ -240,12 +240,12 @@ export function RealityFabricProperty({ label, value, type = "text" }: { label: 
  const { resolved } = useThemePreference();
  const isDark = resolved === "dark";
  const borderMain = isDark ? "border-white/5" : "border-border";
- const textLabel = isDark ? "text-white/40" : "text-foreground/40";
- const textCode = isDark ? "text-white" : "text-foreground";
+ const textLabel = isDark ? "text-[#F0EFE2]/40" : "text-foreground/40";
+ const textCode = isDark ? "text-[#F0EFE2]" : "text-foreground";
  const bgCode = isDark ? "bg-card/5" : "bg-muted";
- const textVal = isDark ? "text-white/90" : "text-foreground/90";
+ const textVal = isDark ? "text-[#F0EFE2]/90" : "text-foreground/90";
  const badgeBg = isDark ? "bg-card/5" : "bg-muted";
- const badgeText = isDark ? "text-white/70" : "text-foreground/70";
+ const badgeText = isDark ? "text-[#F0EFE2]/70" : "text-foreground/70";
  const statusColor = isDark ? "text-[#4ade80]" : "text-[#2a7b2a]";
  const statusBg = isDark ? "bg-[#4ade80]" : "bg-[#2a7b2a]";
 
@@ -274,7 +274,7 @@ export function RealityFabricInspectorSection({ title, children, defaultExpanded
  const [expanded, setExpanded] = useState(defaultExpanded);
  const { resolved } = useThemePreference();
  const isDark = resolved === "dark";
- const textHeader = isDark ? "text-white/40 hover:text-white/70" : "text-foreground/40 hover:text-foreground/70";
+ const textHeader = isDark ? "text-[#F0EFE2]/40 hover:text-[#F0EFE2]/70" : "text-foreground/40 hover:text-foreground/70";
  const textIcon = isDark ? "" : "text-foreground/30";
  
  return (

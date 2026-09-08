@@ -278,7 +278,7 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
         descriptionOverride="The repository path is invalid."
         contentClassName="max-w-3xl"
       >
-        <Link href={settingsSectionPath("repositories")} className="text-sm text-white/60 hover:text-white">
+        <Link href={settingsSectionPath("repositories")} className="text-sm text-[#F0EFE2]/60 hover:text-[#F0EFE2]">
           Back to repositories
         </Link>
       </ContinuityLabSettingsSectionFrame>
@@ -302,7 +302,7 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
     >
       <Link
         href={settingsSectionPath("wiki")}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to Wiki
@@ -310,8 +310,8 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-white">{repoFullName}</h2>
-          <p className="mt-1 text-sm text-white/45">
+          <h2 className="text-xl font-semibold text-[#F0EFE2]">{repoFullName}</h2>
+          <p className="mt-1 text-sm text-[#F0EFE2]/45">
             {indexEntry?.status === "generating"
               ? "Indexing in progress"
               : indexEntry?.indexed
@@ -322,7 +322,7 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
         <div className="flex items-center gap-2">
           <Link
             href={wikiRepoHref(projectIdFromRepo(repoFullName))}
-            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium text-white/80 hover:bg-white/[0.08]"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium text-[#F0EFE2]/80 hover:bg-white/[0.08]"
           >
             <BookOpen className="size-3.5" aria-hidden />
             Wiki
@@ -332,7 +332,7 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
             href={githubUrl(repoFullName)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium text-white/80 hover:bg-white/[0.08]"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-medium text-[#F0EFE2]/80 hover:bg-white/[0.08]"
           >
             <GitBranch className="size-3.5" aria-hidden />
             GitHub
@@ -341,20 +341,20 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
         </div>
       </div>
 
-      {saveState === "saving" ? <p className="text-xs text-white/40">Saving...</p> : null}
+      {saveState === "saving" ? <p className="text-xs text-[#F0EFE2]/40">Saving...</p> : null}
       {saveState === "saved" ? <p className="text-xs text-emerald-300">Saved</p> : null}
       {saveState === "error" ? <p className="text-xs text-red-300">Could not save wiki repo settings.</p> : null}
-      {syncState === "syncing" ? <p className="text-xs text-white/40">GitHub sync queued...</p> : null}
+      {syncState === "syncing" ? <p className="text-xs text-[#F0EFE2]/40">GitHub sync queued...</p> : null}
       {syncState === "error" ? <p className="text-xs text-red-300">Could not queue GitHub sync.</p> : null}
-      {!loaded ? <p className="text-sm text-white/45">Loading repository settings...</p> : null}
+      {!loaded ? <p className="text-sm text-[#F0EFE2]/45">Loading repository settings...</p> : null}
 
       <section className="space-y-3">
-        <h3 className="text-base font-semibold text-white">Indexed branches</h3>
+        <h3 className="text-base font-semibold text-[#F0EFE2]">Indexed branches</h3>
         <SettingsFlatPanel className="!px-0">
           <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-white">Indexing</p>
-              <p className="mt-1 text-sm text-white/45">
+              <p className="text-sm font-semibold text-[#F0EFE2]">Indexing</p>
+              <p className="mt-1 text-sm text-[#F0EFE2]/45">
                 Branches indexed for wiki generation and code search
               </p>
             </div>
@@ -368,27 +368,27 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
                     setBranchMenuOpen(true);
                   }
                 }}
-                className="inline-flex h-8 items-center gap-2 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-semibold text-white hover:bg-white/[0.08]"
+                className="inline-flex h-8 items-center gap-2 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 text-sm font-semibold text-[#F0EFE2] hover:bg-white/[0.08]"
               >
                 Add branch
-                <ChevronDown className="size-3.5 text-white/45" aria-hidden />
+                <ChevronDown className="size-3.5 text-[#F0EFE2]/45" aria-hidden />
               </button>
               {branchMenuOpen ? (
                 <div className="absolute right-0 top-full z-40 mt-1 w-80 overflow-hidden rounded-md border border-white/[0.08] bg-[#181818] py-1 shadow-2xl">
                   <div className="border-b border-white/[0.06] px-3 py-2">
                     <div className="relative">
-                      <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-white/30" />
+                      <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-[#F0EFE2]/30" />
                       <input
                         type="search"
                         value={branchSearch}
                         onChange={(event) => setBranchSearch(event.target.value)}
                         placeholder="Search branches..."
-                        className="h-8 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-7 pr-2 text-xs text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                        className="h-8 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-7 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
                       />
                     </div>
                   </div>
                   {!branchesLoaded ? (
-                    <p className="px-3 py-3 text-sm text-white/40">Loading branches...</p>
+                    <p className="px-3 py-3 text-sm text-[#F0EFE2]/40">Loading branches...</p>
                   ) : availableBranches.length > 0 ? (
                     availableBranches.map((branch) => (
                       <button
@@ -398,16 +398,16 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
                           void updateRepoBranches([...indexedBranches, branch]);
                           closeBranchMenu();
                         }}
-                        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-white/80 hover:bg-white/[0.04]"
+                        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#F0EFE2]/80 hover:bg-white/[0.04]"
                       >
                         {branch}
-                        <Check className="size-3.5 text-white/35" aria-hidden />
+                        <Check className="size-3.5 text-[#F0EFE2]/35" aria-hidden />
                       </button>
                     ))
                   ) : branchLoadError && branchNames.length === 0 ? (
-                    <p className="px-3 py-3 text-sm text-white/40">{branchLoadError}</p>
+                    <p className="px-3 py-3 text-sm text-[#F0EFE2]/40">{branchLoadError}</p>
                   ) : (
-                    <p className="px-3 py-3 text-sm text-white/40">No branches found</p>
+                    <p className="px-3 py-3 text-sm text-[#F0EFE2]/40">No branches found</p>
                   )}
                   <button
                     type="button"
@@ -416,7 +416,7 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
                       closeBranchMenu();
                     }}
                     disabled={syncState === "syncing" || branchNames.length + indexedBranches.length === 0}
-                    className="w-full border-t border-white/[0.06] px-3 py-2 text-left text-sm text-white/80 hover:bg-white/[0.04]"
+                    className="w-full border-t border-white/[0.06] px-3 py-2 text-left text-sm text-[#F0EFE2]/80 hover:bg-white/[0.04]"
                   >
                     Re-index all branches
                   </button>
@@ -440,21 +440,21 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
                 {indexedBranches.map((branch) => (
                   <li key={branch} className="flex items-center justify-between gap-3 text-sm">
                     <div className="min-w-0">
-                      <span className="font-mono text-white">
+                      <span className="font-mono text-[#F0EFE2]">
                         {branch}
                         {branch === defaultBranchName ? (
-                          <span className="ml-1 font-sans text-white/45">(default)</span>
+                          <span className="ml-1 font-sans text-[#F0EFE2]/45">(default)</span>
                         ) : null}
                       </span>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2 text-xs text-white/45">
+                    <div className="flex shrink-0 items-center gap-2 text-xs text-[#F0EFE2]/45">
                       <span>{indexEntry?.updatedAt ? formatRelativeDate(indexEntry.updatedAt) : "Not indexed"}</span>
                       {indexEntry?.indexed ? <Check className="size-3.5 text-emerald-300" aria-hidden /> : null}
                       <button
                         type="button"
                         onClick={() => void reindexBranches(indexedBranches)}
                         disabled={syncState === "syncing"}
-                        className="inline-flex size-7 items-center justify-center rounded-md text-white/40 hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
+                        className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/40 hover:bg-white/[0.06] hover:text-[#F0EFE2] disabled:opacity-50"
                         aria-label={`Re-index ${branch}`}
                       >
                         <RefreshCw
@@ -467,7 +467,7 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
                         onClick={() =>
                           void updateRepoBranches(indexedBranches.filter((item) => item !== branch))
                         }
-                        className="inline-flex size-7 items-center justify-center rounded-md text-white/40 hover:bg-white/[0.06] hover:text-white"
+                        className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/40 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                         aria-label={`Remove ${branch}`}
                       >
                         <Trash2 className="size-3.5" aria-hidden />
@@ -477,15 +477,15 @@ export function ContinuityLabWikiRepoIndexingSection({ slug }: { slug: string[] 
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-white/45">No branches indexed.</p>
+              <p className="text-sm text-[#F0EFE2]/45">No branches indexed.</p>
             )}
           </div>
         </SettingsFlatPanel>
       </section>
 
       <section className="space-y-3">
-        <h3 className="text-base font-semibold text-white">Wiki</h3>
-        <p className="text-sm text-white/45">Per-repository overrides for organization-wide defaults</p>
+        <h3 className="text-base font-semibold text-[#F0EFE2]">Wiki</h3>
+        <p className="text-sm text-[#F0EFE2]/45">Per-repository overrides for organization-wide defaults</p>
         <SettingsFlatPanel>
           <SettingsFieldRow label="Wiki effort level" hint="Higher effort generates more detailed wikis">
             <SettingsSelectDropdown<OverrideValue<LabWikiEffort>>

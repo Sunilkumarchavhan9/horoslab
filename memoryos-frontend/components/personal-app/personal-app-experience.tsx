@@ -158,8 +158,8 @@ function TopTab({
       onClick={onClick}
       className={`${styles.pill} px-3 py-1.5 text-sm font-medium tracking-[0.01em] transition md:px-4 md:text-[15px] ${
         active
-          ? "bg-[#0a2d7c] text-white shadow-[inset_0_0_0_1px_rgba(98,145,245,0.72)]"
-          : "bg-transparent text-white/62 hover:text-white"
+          ? "bg-[#0a2d7c] text-[#F0EFE2] shadow-[inset_0_0_0_1px_rgba(98,145,245,0.72)]"
+          : "bg-transparent text-[#F0EFE2]/62 hover:text-[#F0EFE2]"
       }`}
     >
       {label}
@@ -263,7 +263,7 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
   }
 
   return (
-    <main className="min-h-svh bg-[#05070d] text-white">
+    <main className="min-h-svh bg-[#05070d] text-[#F0EFE2]">
       <div className="relative min-h-svh overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_84%,rgba(53,78,237,0.42),rgba(8,10,16,0)_40%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_64%,rgba(12,51,177,0.28),rgba(8,10,16,0)_43%)]" />
@@ -278,10 +278,10 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
               <div className="hidden h-8 w-px bg-white/15 md:block" />
               <button
                 type="button"
-                className={`${styles.pill} inline-flex items-center gap-2 border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-white/92`}
+                className={`${styles.pill} inline-flex items-center gap-2 border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-[#F0EFE2]/92`}
               >
                 <span>MemoryOS Space</span>
-                <span className="text-white/50">⌄</span>
+                <span className="text-[#F0EFE2]/50">⌄</span>
               </button>
             </div>
 
@@ -304,25 +304,25 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
                 type="button"
                 onClick={createFirstMemory}
                 disabled={isSeedingMemory}
-                className={`${styles.pill} border border-white/12 bg-[#0f141f]/85 px-3 py-2 text-sm font-medium text-white/95 md:px-4`}
+                className={`${styles.pill} border border-white/12 bg-[#0f141f]/85 px-3 py-2 text-sm font-medium text-[#F0EFE2]/95 md:px-4`}
               >
                 {isSeedingMemory ? "Saving..." : "+ Add memory"}
               </button>
               <button
                 type="button"
-                className={`${styles.pill} hidden border border-white/12 bg-[#0f141f]/85 px-2.5 py-2 text-sm text-white/75 sm:inline-flex`}
+                className={`${styles.pill} hidden border border-white/12 bg-[#0f141f]/85 px-2.5 py-2 text-sm text-[#F0EFE2]/75 sm:inline-flex`}
                 aria-label="Search"
               >
                 ⌕
               </button>
               <button
                 type="button"
-                className={`${styles.pill} border border-white/12 bg-[#0f141f]/85 px-3 py-2 text-sm font-medium text-white/95 md:px-4`}
+                className={`${styles.pill} border border-white/12 bg-[#0f141f]/85 px-3 py-2 text-sm font-medium text-[#F0EFE2]/95 md:px-4`}
               >
                 Feedback
               </button>
               <span
-                className={`${styles.avatar} grid h-9 w-9 place-items-center bg-[#1a2232] text-xs font-semibold uppercase text-white/90`}
+                className={`${styles.avatar} grid h-9 w-9 place-items-center bg-[#1a2232] text-xs font-semibold uppercase text-[#F0EFE2]/90`}
                 title={userId}
               >
                 {shortUserId.slice(0, 1)}
@@ -338,10 +338,10 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
               <div className="relative z-10 mx-auto flex h-full max-w-[860px] flex-col items-center justify-center text-center">
                 <div className={`${styles.orb} h-16 w-16 rounded-full md:h-20 md:w-20`} />
 
-                <h1 className="mt-6 text-balance text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl md:text-5xl">
+                <h1 className="mt-6 text-balance text-3xl font-semibold tracking-[-0.03em] text-[#F0EFE2] sm:text-4xl md:text-5xl">
                   Help MemoryOS get to know you
                 </h1>
-                <p className="mt-2 text-balance text-base text-white/65 sm:text-lg">
+                <p className="mt-2 text-balance text-base text-[#F0EFE2]/65 sm:text-lg">
                   {liveMemories.length > 0
                     ? `${liveMemories.length} memories already indexed. Keep adding context for better continuity.`
                     : "Add your first memory to unlock retrieval, continuity, and better answers."}
@@ -370,8 +370,8 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
                       type="button"
                       className={`${styles.card} bg-[#161b25]/90 px-4 py-4 text-left transition hover:bg-[#1b2231]`}
                     >
-                      <div className="flex items-center gap-2 text-base font-medium text-white sm:text-lg">
-                        <span className="text-white/72">
+                      <div className="flex items-center gap-2 text-base font-medium text-[#F0EFE2] sm:text-lg">
+                        <span className="text-[#F0EFE2]/72">
                           <ActionIcon kind={action.icon} />
                         </span>
                         <span>{action.title}</span>
@@ -383,7 +383,7 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
 
                 <button
                   type="button"
-                  className="mt-7 text-sm text-[#9ab8ff] transition hover:text-white sm:text-base"
+                  className="mt-7 text-sm text-[#9ab8ff] transition hover:text-[#F0EFE2] sm:text-base"
                 >
                   See more integrations →
                 </button>
@@ -395,20 +395,20 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className={`${styles.pill} border border-white/10 bg-[#0e1524]/90 px-3 py-2 text-sm text-white/92`}
+                    className={`${styles.pill} border border-white/10 bg-[#0e1524]/90 px-3 py-2 text-sm text-[#F0EFE2]/92`}
                   >
                     Memory Copilot ⌄
                   </button>
                   <button
                     type="button"
-                    className={`${styles.pill} border border-white/10 bg-[#0e1524]/90 px-3 py-2 text-sm text-white/92`}
+                    className={`${styles.pill} border border-white/10 bg-[#0e1524]/90 px-3 py-2 text-sm text-[#F0EFE2]/92`}
                   >
                     My Space
                   </button>
                 </div>
                 <button
                   type="button"
-                  className={`${styles.circleButton} border border-white/10 bg-[#0e1524]/90 text-sm text-white/72`}
+                  className={`${styles.circleButton} border border-white/10 bg-[#0e1524]/90 text-sm text-[#F0EFE2]/72`}
                   aria-label="History"
                 >
                   ↺
@@ -417,7 +417,7 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
 
               <div className="mt-8 flex flex-col items-center">
                 <div className={`${styles.spark} h-14 w-14`} aria-hidden />
-                <p className="mt-6 max-w-[28ch] text-center text-xl font-medium leading-tight text-white/92 sm:text-2xl">
+                <p className="mt-6 max-w-[28ch] text-center text-xl font-medium leading-tight text-[#F0EFE2]/92 sm:text-2xl">
                   Ask anything about your product memory...
                 </p>
               </div>
@@ -427,7 +427,7 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
                   <button
                     key={item}
                     type="button"
-                    className={`${styles.pill} bg-[#06173a]/72 px-4 py-2.5 text-left text-sm text-[#77acff] shadow-[inset_0_0_0_1px_rgba(56,97,179,0.48)] transition hover:text-white hover:shadow-[inset_0_0_0_1px_rgba(106,152,242,0.82)]`}
+                    className={`${styles.pill} bg-[#06173a]/72 px-4 py-2.5 text-left text-sm text-[#77acff] shadow-[inset_0_0_0_1px_rgba(56,97,179,0.48)] transition hover:text-[#F0EFE2] hover:shadow-[inset_0_0_0_1px_rgba(106,152,242,0.82)]`}
                   >
                     ⌕ {item}
                   </button>
@@ -447,11 +447,11 @@ export function PersonalAppExperience({ userId }: PersonalAppExperienceProps) {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Ask MemoryOS anything..."
-                    className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/35"
+                    className="w-full bg-transparent text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35"
                   />
                   <button
                     type="button"
-                    className={`${styles.sendButton} bg-[#0f1b32] px-2.5 py-1.5 text-xs font-medium text-white/85 transition hover:bg-[#162746]`}
+                    className={`${styles.sendButton} bg-[#0f1b32] px-2.5 py-1.5 text-xs font-medium text-[#F0EFE2]/85 transition hover:bg-[#162746]`}
                     aria-label="Send"
                   >
                     ↑

@@ -47,7 +47,7 @@ export function ObserveAnalytics() {
  const [activeTab, setActiveTab] = useState("Overview");
 
  return (
- <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar>
  <div className="flex items-center gap-2">
  <BarChart2 className="size-4 text-[#0f52ff]" />
@@ -143,14 +143,14 @@ export function ObserveAnalytics() {
  <Activity className="size-5 text-[#0f52ff]" />
  <h3 className="text-[18px] font-bold tracking-tight">Global Institution Activity Heatmap</h3>
  </div>
- <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40">7 Day Rolling (UTC)</span>
+ <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40">7 Day Rolling (UTC)</span>
  </div>
 
  <div className="flex">
  {/* Y Axis Labels */}
  <div className="flex flex-col justify-between pr-4 py-2 border-r border-border dark:border-white/10 shrink-0">
  {DAYS.map(day => (
- <span key={day} className="text-[12px] font-bold text-foreground/50 dark:text-white/50 h-8 flex items-center">{day}</span>
+ <span key={day} className="text-[12px] font-bold text-foreground/50 dark:text-[#F0EFE2]/50 h-8 flex items-center">{day}</span>
  ))}
  </div>
 
@@ -177,7 +177,7 @@ export function ObserveAnalytics() {
  {/* X Axis Labels */}
  <div className="flex justify-between mt-4">
  {[0, 6, 12, 18, 23].map(hour => (
- <span key={hour} className="text-[12px] font-bold text-foreground/40 dark:text-white/40">{hour}:00</span>
+ <span key={hour} className="text-[12px] font-bold text-foreground/40 dark:text-[#F0EFE2]/40">{hour}:00</span>
  ))}
  </div>
  </div>

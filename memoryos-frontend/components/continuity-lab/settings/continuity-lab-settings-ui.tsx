@@ -15,18 +15,18 @@ export type SettingsBreadcrumbItem = {
 
 export function SettingsBreadcrumb({ items }: { items: SettingsBreadcrumbItem[] }) {
   return (
-    <nav className="mb-3 text-xs text-white/45" aria-label="Breadcrumb">
+    <nav className="mb-3 text-xs text-[#F0EFE2]/45" aria-label="Breadcrumb">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         return (
           <span key={`${item.label}-${index}`}>
-            {index > 0 ? <span className="mx-1.5 text-white/25">/</span> : null}
+            {index > 0 ? <span className="mx-1.5 text-[#F0EFE2]/25">/</span> : null}
             {item.href && !isLast ? (
-              <Link href={item.href} className="hover:text-white/70">
+              <Link href={item.href} className="hover:text-[#F0EFE2]/70">
                 {item.label}
               </Link>
             ) : (
-              <span className={isLast ? "text-white/88" : undefined}>{item.label}</span>
+              <span className={isLast ? "text-[#F0EFE2]/88" : undefined}>{item.label}</span>
             )}
           </span>
         );
@@ -51,9 +51,9 @@ export function SettingsPageHeader({
   return (
     <header className="border-b border-white/[0.06] px-6 py-6 md:px-8 md:py-8">
       {breadcrumb?.length ? <SettingsBreadcrumb items={breadcrumb} /> : null}
-      <h1 className="text-2xl font-semibold tracking-tight text-white">{title}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-[#F0EFE2]">{title}</h1>
       {description ? (
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/50">
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#F0EFE2]/50">
           {description}
           {docHref ? (
             <>
@@ -62,7 +62,7 @@ export function SettingsPageHeader({
                 href={docHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-white/70 underline decoration-white/20 underline-offset-2 hover:text-white"
+                className="font-medium text-[#F0EFE2]/70 underline decoration-white/20 underline-offset-2 hover:text-[#F0EFE2]"
               >
                 {docLabel}
               </a>
@@ -101,13 +101,13 @@ export function SettingsSearchInput({
 }) {
   return (
     <div className={cn("relative min-w-[200px] flex-1", className)}>
-      <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-white/30" />
+      <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/30" />
       <input
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-9 pr-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+        className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-9 pr-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
       />
     </div>
   );
@@ -116,7 +116,7 @@ export function SettingsSearchInput({
 const settingsPrimaryButtonClass = {
   default:
     "inline-flex h-9 items-center gap-1.5 rounded-md bg-white px-3.5 text-sm font-medium text-[#0A0A0A] transition hover:bg-white/90",
-  blue: "inline-flex h-9 items-center gap-1.5 rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6]",
+  blue: "inline-flex h-9 items-center gap-1.5 rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6]",
 } as const;
 
 export function SettingsPrimaryButton({
@@ -172,13 +172,13 @@ export function SettingsTabPills<T extends string>({
           className={cn(
             "rounded-md px-3 py-1.5 text-xs font-medium transition",
             active === tab.id
-              ? "bg-white/[0.1] text-white"
-              : "text-white/50 hover:text-white/75",
+              ? "bg-white/[0.1] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/50 hover:text-[#F0EFE2]/75",
           )}
           >
             {tab.label}
           {tab.count !== undefined ? (
-            <span className="ml-1 tabular-nums text-white/35">({tab.count})</span>
+            <span className="ml-1 tabular-nums text-[#F0EFE2]/35">({tab.count})</span>
           ) : null}
         </button>
       ))}
@@ -204,8 +204,8 @@ export function SettingsCard({
       {title ? (
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-white">{title}</h2>
-            {description ? <p className="mt-1 text-xs text-white/45">{description}</p> : null}
+            <h2 className="text-sm font-semibold text-[#F0EFE2]">{title}</h2>
+            {description ? <p className="mt-1 text-xs text-[#F0EFE2]/45">{description}</p> : null}
           </div>
           {actions ? <div className="shrink-0">{actions}</div> : null}
         </div>
@@ -244,7 +244,7 @@ export function SettingsSelect<T extends string>({
       value={value}
       disabled={disabled}
       onChange={(e) => onChange(e.target.value as T)}
-      className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white focus:border-white/20 focus:outline-none disabled:opacity-50"
+      className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] focus:border-white/20 focus:outline-none disabled:opacity-50"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
@@ -321,13 +321,13 @@ export function SettingsSelectDropdown<T extends string>({
             setOpen(true);
           }
         }}
-        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.08] bg-[#111111] px-3 text-left text-sm text-white/90 transition hover:border-white/15 disabled:opacity-50"
+        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.08] bg-[#111111] px-3 text-left text-sm text-[#F0EFE2]/90 transition hover:border-white/15 disabled:opacity-50"
       >
         <span className="min-w-0 truncate">{selected?.label ?? "Select…"}</span>
         {triggerIcon === "chevrons-up-down" ? (
-          <ChevronsUpDown className="size-3.5 shrink-0 text-white/40" aria-hidden />
+          <ChevronsUpDown className="size-3.5 shrink-0 text-[#F0EFE2]/40" aria-hidden />
         ) : (
-          <ChevronDown className="size-3.5 shrink-0 text-white/40" aria-hidden />
+          <ChevronDown className="size-3.5 shrink-0 text-[#F0EFE2]/40" aria-hidden />
         )}
       </button>
       {open ? (
@@ -340,19 +340,19 @@ export function SettingsSelectDropdown<T extends string>({
           {searchable ? (
             <div className="border-b border-white/[0.06] px-2 py-1.5">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-white/30" />
+                <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-[#F0EFE2]/30" />
                 <input
                   type="search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder={searchPlaceholder}
-                  className="h-7 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-7 pr-2 text-xs text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                  className="h-7 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-7 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
                 />
               </div>
             </div>
           ) : null}
           {filtered.length === 0 ? (
-            <p className="px-3 py-2 text-xs text-white/40">No matches</p>
+            <p className="px-3 py-2 text-xs text-[#F0EFE2]/40">No matches</p>
           ) : (
             filtered.map((opt) => (
               <button
@@ -362,17 +362,17 @@ export function SettingsSelectDropdown<T extends string>({
                   onChange(opt.value);
                   closeMenu();
                 }}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-white/80 transition hover:bg-white/[0.04]"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#F0EFE2]/80 transition hover:bg-white/[0.04]"
               >
                 <span className="min-w-0">
                   <span className="block truncate">{opt.label}</span>
                   {opt.description ? (
-                    <span className="mt-0.5 block truncate text-xs text-white/40">
+                    <span className="mt-0.5 block truncate text-xs text-[#F0EFE2]/40">
                       {opt.description}
                     </span>
                   ) : null}
                 </span>
-                {value === opt.value ? <Check className="size-3.5 shrink-0 text-white/60" /> : null}
+                {value === opt.value ? <Check className="size-3.5 shrink-0 text-[#F0EFE2]/60" /> : null}
               </button>
             ))
           )}
@@ -396,7 +396,7 @@ export function SettingsSecondaryButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-white/90 transition hover:bg-white/[0.08] disabled:opacity-50"
+      className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-[#F0EFE2]/90 transition hover:bg-white/[0.08] disabled:opacity-50"
     >
       {children}
     </button>
@@ -416,14 +416,14 @@ export function SettingsCopyValue({
 }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
-      <code className="min-w-0 flex-1 truncate rounded-md border border-white/[0.06] bg-[#111111] px-3 py-2 font-mono text-xs text-white/75">
+      <code className="min-w-0 flex-1 truncate rounded-md border border-white/[0.06] bg-[#111111] px-3 py-2 font-mono text-xs text-[#F0EFE2]/75">
         {value}
       </code>
       {onCopy ? (
         <button
           type="button"
           onClick={() => void onCopy()}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/60 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]"
           aria-label={ariaLabel}
         >
           {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
@@ -450,7 +450,7 @@ export function SettingsEmptyTable({
             {columns.map((col) => (
               <th
                 key={col}
-                className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-white/35"
+                className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#F0EFE2]/35"
               >
                 {col}
               </th>
@@ -460,7 +460,7 @@ export function SettingsEmptyTable({
         <tbody>
           <tr>
             <td colSpan={columns.length} className="px-4 py-12 text-center">
-              <p className="text-sm text-white/45">{message}</p>
+              <p className="text-sm text-[#F0EFE2]/45">{message}</p>
               {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
             </td>
           </tr>
@@ -484,15 +484,15 @@ export function SettingsRowLink({
   onClick?: () => void;
 }) {
   const className =
-    "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm text-white/85 transition hover:bg-white/[0.04]";
+    "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm text-[#F0EFE2]/85 transition hover:bg-white/[0.04]";
 
   const inner = (
     <>
       <span className="min-w-0 flex-1">
-        <span className="block font-medium text-white">{label}</span>
-        {detail ? <span className="mt-0.5 block text-xs text-white/45">{detail}</span> : null}
+        <span className="block font-medium text-[#F0EFE2]">{label}</span>
+        {detail ? <span className="mt-0.5 block text-xs text-[#F0EFE2]/45">{detail}</span> : null}
       </span>
-      <ChevronRight className="size-4 shrink-0 text-white/30" aria-hidden />
+      <ChevronRight className="size-4 shrink-0 text-[#F0EFE2]/30" aria-hidden />
     </>
   );
 
@@ -531,8 +531,8 @@ export function SettingsFieldRow({
   return (
     <div className="flex flex-col gap-2 border-b border-white/[0.06] py-3 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 sm:max-w-[40%]">
-        <p className="text-sm font-medium text-white">{label}</p>
-        {hint ? <p className="mt-0.5 text-xs text-white/45">{hint}</p> : null}
+        <p className="text-sm font-medium text-[#F0EFE2]">{label}</p>
+        {hint ? <p className="mt-0.5 text-xs text-[#F0EFE2]/45">{hint}</p> : null}
       </div>
       <div className="min-w-0 flex-1 sm:max-w-md">{children}</div>
     </div>
@@ -552,11 +552,11 @@ export function SettingsComingSoon({
 }) {
   return (
     <SettingsCard title={title} description={description}>
-      <p className="text-sm text-white/50">Coming soon in Continuity Lab settings.</p>
+      <p className="text-sm text-[#F0EFE2]/50">Coming soon in Continuity Lab settings.</p>
       {actionHref && actionLabel ? (
         <Link
           href={actionHref}
-          className="mt-3 inline-flex text-sm font-medium text-white/70 underline decoration-white/20 underline-offset-2 hover:text-white"
+          className="mt-3 inline-flex text-sm font-medium text-[#F0EFE2]/70 underline decoration-white/20 underline-offset-2 hover:text-[#F0EFE2]"
         >
           {actionLabel}
         </Link>
@@ -572,7 +572,7 @@ export function ConnectorStatusPill({ connected }: { connected: boolean }) {
         "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
         connected
           ? "bg-emerald-500/15 text-emerald-300"
-          : "bg-white/[0.06] text-white/45",
+          : "bg-white/[0.06] text-[#F0EFE2]/45",
       )}
     >
       {connected ? "Connected" : "Not connected"}
@@ -668,7 +668,7 @@ export function SettingsIntegrationRow({
         {actionControl}
       </div>
     ) : badge ? (
-      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/35">
+      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/35">
         {badge}
       </span>
     ) : null;
@@ -685,12 +685,12 @@ export function SettingsIntegrationRow({
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium text-white">{name}</span>
-        {detail ? <span className="mt-0.5 block text-xs text-white/45">{detail}</span> : null}
+        <span className="block text-sm font-medium text-[#F0EFE2]">{name}</span>
+        {detail ? <span className="mt-0.5 block text-xs text-[#F0EFE2]/45">{detail}</span> : null}
       </span>
       {trailing}
       {href || onClick ? (
-        <ChevronRight className="size-4 shrink-0 text-white/30" aria-hidden />
+        <ChevronRight className="size-4 shrink-0 text-[#F0EFE2]/30" aria-hidden />
       ) : null}
     </>
   );
@@ -743,14 +743,14 @@ export function SettingsOsOption({
       className={cn(
         "flex w-full items-center gap-3 rounded-md border px-3 py-2.5 text-left text-sm transition",
         selected
-          ? "border-white/25 bg-white/[0.06] text-white"
-          : "border-white/[0.06] text-white/70 hover:bg-white/[0.03]",
+          ? "border-white/25 bg-white/[0.06] text-[#F0EFE2]"
+          : "border-white/[0.06] text-[#F0EFE2]/70 hover:bg-white/[0.03]",
       )}
     >
       <OsBrandIcon os={os} className="size-5" muted={!selected} />
       <span className="flex-1 font-medium">{label}</span>
       {selected ? (
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-white/50">
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/50">
           Default
         </span>
       ) : null}

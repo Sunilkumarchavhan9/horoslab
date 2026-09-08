@@ -78,13 +78,13 @@ const ORG_GENERATE_PROMPT =
 const MAX_FILE_BYTES = 512 * 1024;
 
 const saveButtonClass =
-  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40";
+  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40";
 
 const modalInputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none";
 
 const dropdownItemClass =
-  "gap-2.5 rounded-none px-3 py-2 text-xs text-white/85 focus:bg-[#141414] focus:text-white";
+  "gap-2.5 rounded-none px-3 py-2 text-xs text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]";
 
 function formatWhen(iso: string | null | undefined): string {
   if (!iso) return "—";
@@ -151,7 +151,7 @@ function LineDiffView({ before, after }: { before: string; after: string }) {
             "whitespace-pre-wrap break-all px-1",
             row.type === "removed" && "bg-red-500/15 text-red-200/90",
             row.type === "added" && "bg-emerald-500/15 text-emerald-200/90",
-            row.type === "same" && "text-white/55",
+            row.type === "same" && "text-[#F0EFE2]/55",
           )}
         >
           {row.type === "removed" ? "- " : row.type === "added" ? "+ " : "  "}
@@ -220,17 +220,17 @@ function AddSecretModal({
       >
         <div className="flex items-start justify-between gap-3 border-b border-[#2F2F2F] px-5 py-4">
           <div>
-            <h2 id="add-secret-title" className="text-lg font-semibold text-white">
+            <h2 id="add-secret-title" className="text-lg font-semibold text-[#F0EFE2]">
               New organization secret
             </h2>
-            <p className="mt-1 text-xs text-white/50">
+            <p className="mt-1 text-xs text-[#F0EFE2]/50">
               Secrets are available to MemoryOS sessions started with this organization blueprint.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414]"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -244,7 +244,7 @@ function AddSecretModal({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-white/70">Type</label>
+            <label className="text-xs font-medium text-[#F0EFE2]/70">Type</label>
             <SettingsSelect
               value="key-value"
               onChange={() => {}}
@@ -254,7 +254,7 @@ function AddSecretModal({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="secret-name" className="text-xs font-medium text-white/70">
+            <label htmlFor="secret-name" className="text-xs font-medium text-[#F0EFE2]/70">
               Name
             </label>
             <input
@@ -267,7 +267,7 @@ function AddSecretModal({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="secret-value" className="text-xs font-medium text-white/70">
+            <label htmlFor="secret-value" className="text-xs font-medium text-[#F0EFE2]/70">
               Value
             </label>
             <input
@@ -281,7 +281,7 @@ function AddSecretModal({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="secret-note" className="text-xs font-medium text-white/70">
+            <label htmlFor="secret-note" className="text-xs font-medium text-[#F0EFE2]/70">
               Note
             </label>
             <input
@@ -295,8 +295,8 @@ function AddSecretModal({
 
           <div className="flex items-center justify-between gap-3 rounded-md border border-white/[0.06] px-3 py-2.5">
             <div>
-              <p className="text-sm font-medium text-white">Redact value</p>
-              <p className="mt-0.5 text-xs text-white/45">
+              <p className="text-sm font-medium text-[#F0EFE2]">Redact value</p>
+              <p className="mt-0.5 text-xs text-[#F0EFE2]/45">
                 Hide the value from session logs and UI after storing.
               </p>
             </div>
@@ -397,17 +397,17 @@ function ImportSecretsModal({
       >
         <div className="flex items-start justify-between gap-3 border-b border-[#2F2F2F] px-5 py-4">
           <div>
-            <h2 id="import-secrets-title" className="text-lg font-semibold text-white">
+            <h2 id="import-secrets-title" className="text-lg font-semibold text-[#F0EFE2]">
               Import secrets
             </h2>
-            <p className="mt-1 text-xs text-white/50">
+            <p className="mt-1 text-xs text-[#F0EFE2]/50">
               Paste or upload secrets in KEY=VALUE format, one per line.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414]"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -427,13 +427,13 @@ function ImportSecretsModal({
             onClick={() => fileInputRef.current?.click()}
             className="flex w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-white/[0.12] bg-[#111111] px-4 py-8 text-center transition hover:border-white/20 hover:bg-[#141414]"
           >
-            <Upload className="size-5 text-white/40" aria-hidden />
-            <span className="text-sm font-medium text-white/75">Upload .env or text file</span>
-            <span className="text-xs text-white/40">Optional — max 512 KB</span>
+            <Upload className="size-5 text-[#F0EFE2]/40" aria-hidden />
+            <span className="text-sm font-medium text-[#F0EFE2]/75">Upload .env or text file</span>
+            <span className="text-xs text-[#F0EFE2]/40">Optional — max 512 KB</span>
           </button>
 
           <div className="space-y-1.5">
-            <label htmlFor="import-secrets-text" className="text-xs font-medium text-white/70">
+            <label htmlFor="import-secrets-text" className="text-xs font-medium text-[#F0EFE2]/70">
               Paste secrets
             </label>
             <textarea
@@ -442,9 +442,9 @@ function ImportSecretsModal({
               onChange={(e) => setText(e.target.value)}
               rows={8}
               placeholder={"API_KEY=abc123\nDATABASE_URL=postgres://..."}
-              className="w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 py-2 font-mono text-xs leading-relaxed text-white placeholder:text-white/30 focus:border-white/20 focus:outline-none"
+              className="w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 py-2 font-mono text-xs leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:border-white/20 focus:outline-none"
             />
-            <p className="text-[11px] text-white/40">
+            <p className="text-[11px] text-[#F0EFE2]/40">
               Use KEY=VALUE per line. Lines starting with # are ignored. Quotes around values are
               stripped.
             </p>
@@ -452,8 +452,8 @@ function ImportSecretsModal({
 
           <div className="flex items-center justify-between gap-3 rounded-md border border-white/[0.06] px-3 py-2.5">
             <div>
-              <p className="text-sm font-medium text-white">Sensitive / Redacted</p>
-              <p className="mt-0.5 text-xs text-white/45">
+              <p className="text-sm font-medium text-[#F0EFE2]">Sensitive / Redacted</p>
+              <p className="mt-0.5 text-xs text-[#F0EFE2]/45">
                 Mark imported secrets as redacted in the UI.
               </p>
             </div>
@@ -758,7 +758,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
       {!panelExpanded ? (
         <Link
           href={ENVIRONMENT_PAGE}
-          className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+          className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
         >
           <ArrowLeft className="size-3.5" aria-hidden />
           Back to blueprints
@@ -769,7 +769,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
         <p className="mb-2 text-xs text-amber-200/90">{loadError}</p>
       ) : null}
       {!panelExpanded && !loaded ? (
-        <p className="mb-2 text-xs text-white/40">Loading blueprint…</p>
+        <p className="mb-2 text-xs text-[#F0EFE2]/40">Loading blueprint…</p>
       ) : null}
       {!panelExpanded && saveError ? (
         <p className="mb-2 text-xs text-amber-200/90">{saveError}</p>
@@ -785,15 +785,15 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
           <div className="shrink-0 border-b border-white/[0.06] px-8 py-5">
             <Link
               href={ENVIRONMENT_PAGE}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
             >
               <ArrowLeft className="size-3.5" aria-hidden />
               Back to blueprints
             </Link>
-            <h2 className="mt-3 text-xl font-semibold tracking-tight text-white">
+            <h2 className="mt-3 text-xl font-semibold tracking-tight text-[#F0EFE2]">
               Organization blueprint
             </h2>
-            <p className="mt-1 text-sm text-white/45">
+            <p className="mt-1 text-sm text-[#F0EFE2]/45">
               Commands that apply to all sessions and run before repo-specific setup.{" "}
               <a
                 href={ENVIRONMENT_LEARN_MORE_URL}
@@ -828,8 +828,8 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                 className={cn(
                   "inline-flex size-9 items-center justify-center rounded-md transition",
                   guideOpen
-                    ? "bg-white/[0.08] text-white/85"
-                    : "text-white/45 hover:bg-white/[0.06] hover:text-white/80",
+                    ? "bg-white/[0.08] text-[#F0EFE2]/85"
+                    : "text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/80",
                 )}
                 aria-label={guideOpen ? "Hide guide" : "Show guide"}
               >
@@ -856,7 +856,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
             <button
               type="button"
               onClick={() => setPanelExpanded((prev) => !prev)}
-              className="inline-flex size-9 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white/80"
+              className="inline-flex size-9 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/80"
               aria-label={panelExpanded ? "Collapse panel" : "Expand panel"}
             >
               {panelExpanded ? (
@@ -871,7 +871,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                 <button
                   type="button"
                   disabled={deleting}
-                  className="inline-flex size-9 items-center justify-center rounded-md border border-white/[0.12] bg-white/[0.04] text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:opacity-50"
+                  className="inline-flex size-9 items-center justify-center rounded-md border border-white/[0.12] bg-white/[0.04] text-[#F0EFE2]/70 transition hover:bg-white/[0.08] hover:text-[#F0EFE2] disabled:opacity-50"
                   aria-label="More options"
                 >
                   <MoreHorizontal className="size-4" />
@@ -879,7 +879,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="z-50 min-w-[200px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-white shadow-2xl"
+                className="z-50 min-w-[200px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-[#F0EFE2] shadow-2xl"
               >
                 <DropdownMenuItem asChild className={dropdownItemClass}>
                   <a
@@ -887,7 +887,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <ExternalLink className="size-3.5 shrink-0 text-white/45" />
+                    <ExternalLink className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
                     Generate with Devin
                   </a>
                 </DropdownMenuItem>
@@ -897,7 +897,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <ExternalLink className="size-3.5 shrink-0 text-white/45" />
+                    <ExternalLink className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
                     Documentation
                   </a>
                 </DropdownMenuItem>
@@ -949,7 +949,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
           >
             <aside className="border-b border-white/[0.06] p-3 md:border-b-0 md:border-r">
               {versions.length === 0 ? (
-                <p className="px-2 py-6 text-center text-xs text-white/45">
+                <p className="px-2 py-6 text-center text-xs text-[#F0EFE2]/45">
                   No version history yet. Save the blueprint to create the first version.
                 </p>
               ) : (
@@ -964,15 +964,15 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                           className={cn(
                             "w-full rounded-md px-3 py-2.5 text-left transition",
                             active
-                              ? "bg-white/[0.08] text-white"
-                              : "text-white/70 hover:bg-white/[0.04] hover:text-white",
+                              ? "bg-white/[0.08] text-[#F0EFE2]"
+                              : "text-[#F0EFE2]/70 hover:bg-white/[0.04] hover:text-[#F0EFE2]",
                           )}
                         >
                           <span className="block text-xs font-medium">
                             {formatWhen(version.savedAt)}
                           </span>
                           {version.savedBy ? (
-                            <span className="mt-0.5 block truncate text-[11px] text-white/40">
+                            <span className="mt-0.5 block truncate text-[11px] text-[#F0EFE2]/40">
                               {version.savedBy}
                             </span>
                           ) : null}
@@ -986,16 +986,16 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
             <div className={cn("flex min-h-0 flex-col p-4", panelContentMinClass)}>
               {versions.length === 0 || !selectedVersion ? (
                 <div className="flex flex-1 items-center justify-center bg-black text-center">
-                  <p className="text-sm text-white/45">
+                  <p className="text-sm text-[#F0EFE2]/45">
                     No version history yet. Save the blueprint to record the first version.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-xs text-white/45">
+                    <p className="text-xs text-[#F0EFE2]/45">
                       Comparing previous version to{" "}
-                      <span className="text-white/75">{formatWhen(selectedVersion.savedAt)}</span>
+                      <span className="text-[#F0EFE2]/75">{formatWhen(selectedVersion.savedAt)}</span>
                     </p>
                   </div>
                   <LineDiffView before={diffBefore} after={selectedVersion.content} />
@@ -1022,7 +1022,7 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                   onChange={(e) => void handleFileUpload(e)}
                 />
                 {uploadingFile ? (
-                  <span className="inline-flex h-9 shrink-0 cursor-not-allowed items-center rounded-md border border-white/[0.12] px-3.5 text-sm font-medium text-white/40">
+                  <span className="inline-flex h-9 shrink-0 cursor-not-allowed items-center rounded-md border border-white/[0.12] px-3.5 text-sm font-medium text-[#F0EFE2]/40">
                     Uploading…
                   </span>
                 ) : (
@@ -1048,14 +1048,14 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
             >
               {blueprintFiles.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-                  <p className="text-sm font-semibold text-white">No files attached</p>
-                  <p className="mt-2 max-w-md text-sm text-white/45">
+                  <p className="text-sm font-semibold text-[#F0EFE2]">No files attached</p>
+                  <p className="mt-2 max-w-md text-sm text-[#F0EFE2]/45">
                     Drag and drop or click &apos;Upload file&apos; to add one.
                   </p>
                 </div>
               ) : filteredFiles.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center px-6">
-                  <p className="text-sm text-white/50">No files match your search.</p>
+                  <p className="text-sm text-[#F0EFE2]/50">No files match your search.</p>
                 </div>
               ) : (
                 <ul className="divide-y divide-white/[0.06] overflow-y-auto">
@@ -1064,10 +1064,10 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                       key={file.id}
                       className="flex flex-wrap items-center gap-3 px-4 py-3"
                     >
-                      <FileText className="size-4 shrink-0 text-white/35" aria-hidden />
+                      <FileText className="size-4 shrink-0 text-[#F0EFE2]/35" aria-hidden />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-white">{file.name}</p>
-                        <p className="mt-0.5 text-[11px] text-white/40">
+                        <p className="truncate text-sm font-medium text-[#F0EFE2]">{file.name}</p>
+                        <p className="mt-0.5 text-[11px] text-[#F0EFE2]/40">
                           {formatFileSize(file.size)} · {formatWhen(file.uploadedAt)}
                         </p>
                       </div>
@@ -1101,12 +1101,12 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
             <div className={cn("flex flex-1 flex-col bg-black", panelContentMinClass)}>
               {blueprintSecrets.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-                  <p className="text-sm font-semibold text-white">No secrets found</p>
-                  <p className="mt-2 text-sm text-white/45">Add your first secret to get started.</p>
+                  <p className="text-sm font-semibold text-[#F0EFE2]">No secrets found</p>
+                  <p className="mt-2 text-sm text-[#F0EFE2]/45">Add your first secret to get started.</p>
                 </div>
               ) : filteredSecrets.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center px-6">
-                  <p className="text-sm text-white/50">No secrets match your search.</p>
+                  <p className="text-sm text-[#F0EFE2]/50">No secrets match your search.</p>
                 </div>
               ) : (
                 <ul className="divide-y divide-white/[0.06] overflow-y-auto">
@@ -1116,15 +1116,15 @@ export function ContinuityLabEnvironmentBlueprintEditor() {
                       className="flex flex-wrap items-center gap-3 px-4 py-3"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-mono text-sm font-medium text-white">
+                        <p className="truncate font-mono text-sm font-medium text-[#F0EFE2]">
                           {secret.name}
                         </p>
                         {secret.note ? (
-                          <p className="mt-0.5 truncate text-xs text-white/45">{secret.note}</p>
+                          <p className="mt-0.5 truncate text-xs text-[#F0EFE2]/45">{secret.note}</p>
                         ) : null}
                       </div>
                       {secret.redacted ? (
-                        <span className="shrink-0 rounded bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                        <span className="shrink-0 rounded bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                           Redacted
                         </span>
                       ) : null}

@@ -197,7 +197,7 @@ function phaseStatusClass(status: SpinePhase["status"]) {
 }
 
 function scoreClass(ok: boolean) {
-  return ok ? "text-emerald-300" : "text-white/45";
+  return ok ? "text-emerald-300" : "text-[#F0EFE2]/45";
 }
 
 function describeMemoryStreamEvent(payload: MemoryStreamEvent): string {
@@ -238,19 +238,19 @@ function StatCard({
     <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-[11px] text-white/45">{label}</p>
-          <span className="grid size-7 place-items-center rounded-[4px] border border-white/10 bg-white/[0.04] text-white/65">
+          <p className="text-[11px] text-[#F0EFE2]/45">{label}</p>
+          <span className="grid size-7 place-items-center rounded-[4px] border border-white/10 bg-white/[0.04] text-[#F0EFE2]/65">
             <Icon className="size-3.5" strokeWidth={1.8} />
           </span>
         </div>
         {loading ? (
-          <Loader2 className="mt-7 size-5 animate-spin text-white/35" />
+          <Loader2 className="mt-7 size-5 animate-spin text-[#F0EFE2]/35" />
         ) : (
-          <p className="mt-6 text-[28px] font-semibold leading-none tracking-[-0.035em] text-white">
+          <p className="mt-6 text-[28px] font-semibold leading-none tracking-[-0.035em] text-[#F0EFE2]">
             {value}
           </p>
         )}
-        <p className="mt-3 min-h-8 text-[12px] leading-4 text-white/45">{detail}</p>
+        <p className="mt-3 min-h-8 text-[12px] leading-4 text-[#F0EFE2]/45">{detail}</p>
       </CardContent>
     </Card>
   );
@@ -258,7 +258,7 @@ function StatCard({
 
 function LoopChip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-medium text-white/70">
+    <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-medium text-[#F0EFE2]/70">
       {children}
     </span>
   );
@@ -270,22 +270,22 @@ function PhaseCard({ phase }: { phase: SpinePhase }) {
     <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/35">{phase.id}</p>
-          <h3 className="mt-1 text-[14px] font-semibold text-white">{phase.title}</h3>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">{phase.id}</p>
+          <h3 className="mt-1 text-[14px] font-semibold text-[#F0EFE2]">{phase.title}</h3>
         </div>
         <Badge variant="outline" className={cn("rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.14em]", phaseStatusClass(phase.status))}>
           {phase.status}
         </Badge>
       </div>
-      <p className="mt-3 text-[12px] leading-5 text-white/55">
+      <p className="mt-3 text-[12px] leading-5 text-[#F0EFE2]/55">
         {phase.ready ? "Ready to use." : phase.status === "partial" ? "Partially shipped." : "Still blocked."}
       </p>
       {hiddenMetrics.length > 0 ? (
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           {hiddenMetrics.map(([key, value]) => (
             <div key={key} className="rounded-md border border-white/8 bg-black/20 p-2">
-              <p className="text-[10px] uppercase tracking-[0.12em] text-white/35">{key.replace(/_/g, " ")}</p>
-              <p className="mt-1 text-[12px] font-medium text-white">{String(value ?? "-")}</p>
+              <p className="text-[10px] uppercase tracking-[0.12em] text-[#F0EFE2]/35">{key.replace(/_/g, " ")}</p>
+              <p className="mt-1 text-[12px] font-medium text-[#F0EFE2]">{String(value ?? "-")}</p>
             </div>
           ))}
         </div>
@@ -325,18 +325,18 @@ function RecentList({
   return (
     <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
       <CardHeader className="border-b border-white/10 p-4">
-        <CardTitle className="text-[13px] font-medium text-white">{title}</CardTitle>
-        <CardDescription className="text-[12px] text-white/45">{description}</CardDescription>
+        <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">{title}</CardTitle>
+        <CardDescription className="text-[12px] text-[#F0EFE2]/45">{description}</CardDescription>
       </CardHeader>
       <CardContent className="p-4">
         {children ?? (
           <Empty className="min-h-[220px] border border-white/8 bg-black/15">
             <EmptyHeader>
-              <EmptyMedia variant="icon" className="bg-white/[0.03] text-white/60 ring-1 ring-white/10">
+              <EmptyMedia variant="icon" className="bg-white/[0.03] text-[#F0EFE2]/60 ring-1 ring-white/10">
                 <FileText className="size-4" />
               </EmptyMedia>
-              <EmptyTitle className="text-[13px] text-white">{emptyLabel}</EmptyTitle>
-              <EmptyDescription className="max-w-md text-white/45">
+              <EmptyTitle className="text-[13px] text-[#F0EFE2]">{emptyLabel}</EmptyTitle>
+              <EmptyDescription className="max-w-md text-[#F0EFE2]/45">
                 Connect GitHub and capture real work to populate this view.
               </EmptyDescription>
             </EmptyHeader>
@@ -597,18 +597,18 @@ export function ContinuityLabSpinePage() {
   );
 
   return (
-    <div className="min-h-full bg-[#0b0b0b] text-white">
+    <div className="min-h-full bg-[#0b0b0b] text-[#F0EFE2]">
       <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5 px-4 pb-10 pt-5 sm:px-6">
         <header className="rounded-md border border-white/10 bg-white/[0.03] p-5 shadow-none">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/35">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#F0EFE2]/35">
                 Continuity Lab / Inheritance Spine
               </p>
               <h1 className="mt-2 text-[28px] font-semibold tracking-[-0.04em]">
                 Build the loop that compounds company memory.
               </h1>
-              <p className="mt-3 max-w-3xl text-[13px] leading-6 text-white/55">
+              <p className="mt-3 max-w-3xl text-[13px] leading-6 text-[#F0EFE2]/55">
                 This page connects Company Brain, Experience, Skills, and MemoryIgnition into one live view so we can ship the master plan in the order the product actually works.
               </p>
             </div>
@@ -616,7 +616,7 @@ export function ContinuityLabSpinePage() {
               <Button
                 type="button"
                 variant="outline"
-                className="border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]"
+                className="border-white/10 bg-white/[0.04] text-[#F0EFE2] hover:bg-white/[0.08]"
                 onClick={() => {
                   if (!canStartSession) {
                     openCompanyModelModal();
@@ -631,14 +631,14 @@ export function ContinuityLabSpinePage() {
               <Button
                 type="button"
                 variant="outline"
-                className="border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]"
+                className="border-white/10 bg-white/[0.04] text-[#F0EFE2] hover:bg-white/[0.08]"
                 onClick={() => setRefreshIndex((value) => value + 1)}
               >
                 Refresh live data
               </Button>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-white/45">
+          <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-[#F0EFE2]/45">
             <LoopChip>Repo: {selectedRepo ?? "not selected"}</LoopChip>
             <LoopChip>Project: {projectId ?? "workspace-wide"}</LoopChip>
             <LoopChip>Generated: {spine ? formatDate(spine.generatedAt) : "waiting"}</LoopChip>
@@ -674,14 +674,14 @@ export function ContinuityLabSpinePage() {
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.9fr)]">
           <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
             <CardHeader className="border-b border-white/10 p-4">
-              <CardTitle className="text-[13px] font-medium text-white">Product phases</CardTitle>
-              <CardDescription className="text-[12px] text-white/45">
+              <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">Product phases</CardTitle>
+              <CardDescription className="text-[12px] text-[#F0EFE2]/45">
                 The master plan is only real where the phase readiness is real.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
               {loading ? (
-                <div className="flex items-center gap-2 text-sm text-white/45">
+                <div className="flex items-center gap-2 text-sm text-[#F0EFE2]/45">
                   <Loader2 className="size-4 animate-spin" />
                   Loading phase readiness...
                 </div>
@@ -694,11 +694,11 @@ export function ContinuityLabSpinePage() {
               ) : (
                 <Empty className="min-h-[240px] border border-white/8 bg-black/15">
                   <EmptyHeader>
-                    <EmptyMedia variant="icon" className="bg-white/[0.03] text-white/60 ring-1 ring-white/10">
+                    <EmptyMedia variant="icon" className="bg-white/[0.03] text-[#F0EFE2]/60 ring-1 ring-white/10">
                       <BrainCircuit className="size-4" />
                     </EmptyMedia>
-                    <EmptyTitle className="text-[13px] text-white">No spine returned yet</EmptyTitle>
-                    <EmptyDescription className="max-w-md text-white/45">
+                    <EmptyTitle className="text-[13px] text-[#F0EFE2]">No spine returned yet</EmptyTitle>
+                    <EmptyDescription className="max-w-md text-[#F0EFE2]/45">
                       Connect a repo or select a project so the inheritance spine can calculate live readiness.
                     </EmptyDescription>
                   </EmptyHeader>
@@ -709,8 +709,8 @@ export function ContinuityLabSpinePage() {
 
           <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
             <CardHeader className="border-b border-white/10 p-4">
-              <CardTitle className="text-[13px] font-medium text-white">Live loop status</CardTitle>
-              <CardDescription className="text-[12px] text-white/45">
+              <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">Live loop status</CardTitle>
+              <CardDescription className="text-[12px] text-[#F0EFE2]/45">
                 What the product can inherit, execute, and prove right now.
               </CardDescription>
             </CardHeader>
@@ -718,12 +718,12 @@ export function ContinuityLabSpinePage() {
               <div className="rounded-md border border-white/10 bg-black/20 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">Proof chain</p>
-                    <p className="mt-1 text-[13px] font-medium text-white">
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#F0EFE2]/35">Proof chain</p>
+                    <p className="mt-1 text-[13px] font-medium text-[#F0EFE2]">
                       {spine?.proofChain?.lineage ?? "Source -> Memory -> Experience -> Skill -> Outcome"}
                     </p>
                   </div>
-                  <GitBranch className="size-4 text-white/50" />
+                  <GitBranch className="size-4 text-[#F0EFE2]/50" />
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <LoopChip>MemoryIgnition {spine?.memoryIgnition ? "live" : "pending"}</LoopChip>
@@ -733,42 +733,42 @@ export function ContinuityLabSpinePage() {
               </div>
 
               <div className="rounded-md border border-white/10 bg-black/20 p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">MemoryIgnition</p>
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[#F0EFE2]/35">MemoryIgnition</p>
                 <div className="mt-3 grid grid-cols-2 gap-3 text-[12px]">
                   <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                    <p className="text-white/40">Relevant memories</p>
-                    <p className="mt-1 text-lg font-semibold text-white">
+                    <p className="text-[#F0EFE2]/40">Relevant memories</p>
+                    <p className="mt-1 text-lg font-semibold text-[#F0EFE2]">
                       {spine?.memoryIgnition?.relevantMemoryCount ?? 0}
                     </p>
                   </div>
                   <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                    <p className="text-white/40">Executable skills</p>
-                    <p className="mt-1 text-lg font-semibold text-white">
+                    <p className="text-[#F0EFE2]/40">Executable skills</p>
+                    <p className="mt-1 text-lg font-semibold text-[#F0EFE2]">
                       {spine?.memoryIgnition?.executableSkillCount ?? 0}
                     </p>
                   </div>
                   <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                    <p className="text-white/40">Trace proofs</p>
-                    <p className="mt-1 text-lg font-semibold text-white">
+                    <p className="text-[#F0EFE2]/40">Trace proofs</p>
+                    <p className="mt-1 text-lg font-semibold text-[#F0EFE2]">
                       {spine?.memoryIgnition?.traceProofCount ?? 0}
                     </p>
                   </div>
                   <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                    <p className="text-white/40">Approval required</p>
-                    <p className="mt-1 text-lg font-semibold text-white">
+                    <p className="text-[#F0EFE2]/40">Approval required</p>
+                    <p className="mt-1 text-lg font-semibold text-[#F0EFE2]">
                       {spine?.memoryIgnition?.approvalRequired ? "Yes" : "No"}
                     </p>
                   </div>
                 </div>
                 {spine?.memoryIgnition?.recommendedFirstAction ? (
-                  <p className="mt-3 text-[12px] leading-5 text-white/55">
+                  <p className="mt-3 text-[12px] leading-5 text-[#F0EFE2]/55">
                     Next: {spine.memoryIgnition.recommendedFirstAction}
                   </p>
                 ) : null}
               </div>
 
               <div className="rounded-md border border-white/10 bg-black/20 p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">Access layer</p>
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[#F0EFE2]/35">Access layer</p>
                 <div className="mt-3 grid gap-2 text-[12px]">
                   {[
                     ["API keys", spine?.accessLayer?.activeApiKeyCount ?? 0],
@@ -778,8 +778,8 @@ export function ContinuityLabSpinePage() {
                     ["Compatibility", spine?.accessLayer?.compatibilityStatus ?? "unknown"],
                   ].map(([label, value]) => (
                     <div key={String(label)} className="flex items-center justify-between rounded-md border border-white/8 bg-white/[0.03] px-3 py-2">
-                      <span className="text-white/45">{String(label)}</span>
-                      <span className="font-medium text-white">{String(value)}</span>
+                      <span className="text-[#F0EFE2]/45">{String(label)}</span>
+                      <span className="font-medium text-[#F0EFE2]">{String(value)}</span>
                     </div>
                   ))}
                 </div>
@@ -791,8 +791,8 @@ export function ContinuityLabSpinePage() {
         <section className="grid gap-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
           <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
             <CardHeader className="border-b border-white/10 p-4">
-              <CardTitle className="text-[13px] font-medium text-white">Company Brain</CardTitle>
-              <CardDescription className="text-[12px] text-white/45">
+              <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">Company Brain</CardTitle>
+              <CardDescription className="text-[12px] text-[#F0EFE2]/45">
                 Structured memory, proof quality, and learning signals from the current workspace.
               </CardDescription>
             </CardHeader>
@@ -807,38 +807,38 @@ export function ContinuityLabSpinePage() {
                   ["Trace coverage", `${skills?.traceProofCoverage ?? 0}%`, "How much of the skill graph has proof."],
                 ].map(([label, value, detail]) => (
                   <div key={String(label)} className="rounded-md border border-white/10 bg-black/20 p-4">
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">{String(label)}</p>
-                    <p className="mt-2 text-[24px] font-semibold tracking-[-0.035em] text-white">{String(value)}</p>
-                    <p className="mt-2 text-[12px] leading-5 text-white/50">{String(detail)}</p>
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#F0EFE2]/35">{String(label)}</p>
+                    <p className="mt-2 text-[24px] font-semibold tracking-[-0.035em] text-[#F0EFE2]">{String(value)}</p>
+                    <p className="mt-2 text-[12px] leading-5 text-[#F0EFE2]/50">{String(detail)}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-md border border-white/10 bg-white/[0.03] p-4 text-[12px] text-white/55">
+              <div className="mt-4 rounded-md border border-white/10 bg-white/[0.03] p-4 text-[12px] text-[#F0EFE2]/55">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-white/80">Latest experience</p>
-                    <p className="mt-1 text-white">{recentExperience?.task ?? "No experience records yet"}</p>
+                    <p className="text-[#F0EFE2]/80">Latest experience</p>
+                    <p className="mt-1 text-[#F0EFE2]">{recentExperience?.task ?? "No experience records yet"}</p>
                   </div>
-                  <Badge variant="outline" className="rounded-full border-white/10 bg-white/[0.04] text-[10px] uppercase tracking-[0.14em] text-white/60">
+                  <Badge variant="outline" className="rounded-full border-white/10 bg-white/[0.04] text-[10px] uppercase tracking-[0.14em] text-[#F0EFE2]/60">
                     {recentExperience?.status ?? "empty"}
                   </Badge>
                 </div>
                 {recentExperience ? (
-                  <p className="mt-2 text-white/45">{recentExperience.outcome}</p>
+                  <p className="mt-2 text-[#F0EFE2]/45">{recentExperience.outcome}</p>
                 ) : null}
               </div>
-              <div className="mt-4 rounded-md border border-white/10 bg-white/[0.03] p-4 text-[12px] text-white/55">
+              <div className="mt-4 rounded-md border border-white/10 bg-white/[0.03] p-4 text-[12px] text-[#F0EFE2]/55">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-white/80">Latest approved skill</p>
-                    <p className="mt-1 text-white">{recentSkill?.name ?? "No approved skills yet"}</p>
+                    <p className="text-[#F0EFE2]/80">Latest approved skill</p>
+                    <p className="mt-1 text-[#F0EFE2]">{recentSkill?.name ?? "No approved skills yet"}</p>
                   </div>
                   <Badge variant="outline" className="rounded-full border-emerald-500/20 bg-emerald-500/10 text-[10px] uppercase tracking-[0.14em] text-emerald-100">
                     {recentSkill ? "approved" : "waiting"}
                   </Badge>
                 </div>
                 {recentSkill ? (
-                  <p className="mt-2 text-white/45">{recentSkill.trigger}</p>
+                  <p className="mt-2 text-[#F0EFE2]/45">{recentSkill.trigger}</p>
                 ) : null}
               </div>
             </CardContent>
@@ -846,15 +846,15 @@ export function ContinuityLabSpinePage() {
 
           <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
             <CardHeader className="border-b border-white/10 p-4">
-              <CardTitle className="text-[13px] font-medium text-white">Skill compiler</CardTitle>
-              <CardDescription className="text-[12px] text-white/45">
+              <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">Skill compiler</CardTitle>
+              <CardDescription className="text-[12px] text-[#F0EFE2]/45">
                 Turn new experience records into reviewable skill candidates.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
               <div className="rounded-md border border-white/10 bg-black/20 p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">Generate skill candidates</p>
-                <p className="mt-2 text-[13px] leading-5 text-white/60">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[#F0EFE2]/35">Generate skill candidates</p>
+                <p className="mt-2 text-[13px] leading-5 text-[#F0EFE2]/60">
                   Runs the live company-brain compiler against the selected project and refreshes the skills overview.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -862,7 +862,7 @@ export function ContinuityLabSpinePage() {
                     type="button"
                     onClick={() => void handleGenerateSkills()}
                     disabled={generatingSkills || !projectId}
-                    className="bg-[#4338ca] text-white hover:bg-[#4f46e5]"
+                    className="bg-[#4338ca] text-[#F0EFE2] hover:bg-[#4f46e5]"
                   >
                     {generatingSkills ? (
                       <>
@@ -879,7 +879,7 @@ export function ContinuityLabSpinePage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]"
+                    className="border-white/10 bg-white/[0.04] text-[#F0EFE2] hover:bg-white/[0.08]"
                     onClick={() => setRefreshIndex((value) => value + 1)}
                   >
                     Refresh overview
@@ -894,8 +894,8 @@ export function ContinuityLabSpinePage() {
                   <p className="mt-3 text-[12px] text-rose-200">{generateError}</p>
                 ) : null}
               </div>
-              <div className="mt-4 rounded-md border border-white/10 bg-black/20 p-4 text-[12px] text-white/55">
-                <p className="text-white/80">What this does</p>
+              <div className="mt-4 rounded-md border border-white/10 bg-black/20 p-4 text-[12px] text-[#F0EFE2]/55">
+                <p className="text-[#F0EFE2]/80">What this does</p>
                 <ul className="mt-2 space-y-2 leading-5">
                   <li>1. Scans experience records for reusable patterns.</li>
                   <li>2. Emits skill candidates for human review.</li>
@@ -919,24 +919,24 @@ export function ContinuityLabSpinePage() {
                     <div key={record.id} className="rounded-md border border-white/8 bg-black/20 p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-white">{record.task}</p>
-                          <p className="mt-1 text-[11px] text-white/40">{record.sourceRef}</p>
+                          <p className="text-[13px] font-medium text-[#F0EFE2]">{record.task}</p>
+                          <p className="mt-1 text-[11px] text-[#F0EFE2]/40">{record.sourceRef}</p>
                         </div>
-                        <Badge variant="outline" className="rounded-full border-white/10 bg-white/[0.04] text-[10px] uppercase tracking-[0.14em] text-white/60">
+                        <Badge variant="outline" className="rounded-full border-white/10 bg-white/[0.04] text-[10px] uppercase tracking-[0.14em] text-[#F0EFE2]/60">
                           {record.status}
                         </Badge>
                       </div>
                       <div className="mt-3 grid gap-2 text-[12px] sm:grid-cols-2">
                         <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                          <p className="text-white/40">Outcome</p>
-                          <p className="mt-1 text-white">{record.outcome}</p>
+                          <p className="text-[#F0EFE2]/40">Outcome</p>
+                          <p className="mt-1 text-[#F0EFE2]">{record.outcome}</p>
                         </div>
                         <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                          <p className="text-white/40">Lesson</p>
-                          <p className="mt-1 text-white">{record.lesson}</p>
+                          <p className="text-[#F0EFE2]/40">Lesson</p>
+                          <p className="mt-1 text-[#F0EFE2]">{record.lesson}</p>
                         </div>
                       </div>
-                      <p className="mt-3 text-[11px] text-white/45">
+                      <p className="mt-3 text-[11px] text-[#F0EFE2]/45">
                         Updated {formatDate(record.updatedAt)}
                       </p>
                     </div>
@@ -958,8 +958,8 @@ export function ContinuityLabSpinePage() {
                     <div key={skill.id} className="rounded-md border border-white/8 bg-black/20 p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-white">{skill.name}</p>
-                          <p className="mt-1 text-[11px] text-white/40">{skill.trigger}</p>
+                          <p className="text-[13px] font-medium text-[#F0EFE2]">{skill.name}</p>
+                          <p className="mt-1 text-[11px] text-[#F0EFE2]/40">{skill.trigger}</p>
                         </div>
                         <Badge variant="outline" className="rounded-full border-emerald-500/20 bg-emerald-500/10 text-[10px] uppercase tracking-[0.14em] text-emerald-100">
                           approved
@@ -967,14 +967,14 @@ export function ContinuityLabSpinePage() {
                       </div>
                       <div className="mt-3 grid gap-2 text-[12px] sm:grid-cols-2">
                         <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                          <p className="text-white/40">Success rate</p>
-                          <p className="mt-1 text-white">
+                          <p className="text-[#F0EFE2]/40">Success rate</p>
+                          <p className="mt-1 text-[#F0EFE2]">
                             {skill.successRate == null ? "Awaiting outcomes" : `${skill.successRate}%`}
                           </p>
                         </div>
                         <div className="rounded-md border border-white/8 bg-white/[0.03] p-3">
-                          <p className="text-white/40">Source experience</p>
-                          <p className="mt-1 truncate text-white">{skill.sourceExperienceId ?? "not linked"}</p>
+                          <p className="text-[#F0EFE2]/40">Source experience</p>
+                          <p className="mt-1 truncate text-[#F0EFE2]">{skill.sourceExperienceId ?? "not linked"}</p>
                         </div>
                       </div>
                       <div className="mt-3 flex flex-wrap gap-2">
@@ -993,8 +993,8 @@ export function ContinuityLabSpinePage() {
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
           <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
             <CardHeader className="border-b border-white/10 p-4">
-              <CardTitle className="text-[13px] font-medium text-white">Working order</CardTitle>
-              <CardDescription className="text-[12px] text-white/45">
+              <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">Working order</CardTitle>
+              <CardDescription className="text-[12px] text-[#F0EFE2]/45">
                 The shortest build path from company knowledge to inherited agent work.
               </CardDescription>
             </CardHeader>
@@ -1030,17 +1030,17 @@ export function ContinuityLabSpinePage() {
                   return (
                     <div key={step.title} className="rounded-md border border-white/10 bg-black/20 p-4">
                       <div className="flex items-start justify-between gap-3">
-                        <span className={cn("grid size-8 place-items-center rounded-md border", step.ok ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-200" : "border-white/10 bg-white/[0.03] text-white/55")}>
+                        <span className={cn("grid size-8 place-items-center rounded-md border", step.ok ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-200" : "border-white/10 bg-white/[0.03] text-[#F0EFE2]/55")}>
                           <Icon className="size-4" strokeWidth={1.8} />
                         </span>
                         <span className={cn("text-[10px] uppercase tracking-[0.14em]", scoreClass(step.ok))}>
                           {step.ok ? "live" : "pending"}
                         </span>
                       </div>
-                      <p className="mt-4 text-[13px] font-medium text-white">{step.title}</p>
-                      <p className="mt-1 text-[12px] leading-5 text-white/50">{step.detail}</p>
+                      <p className="mt-4 text-[13px] font-medium text-[#F0EFE2]">{step.title}</p>
+                      <p className="mt-1 text-[12px] leading-5 text-[#F0EFE2]/50">{step.detail}</p>
                       {index < items.length - 1 ? (
-                        <div className="mt-4 flex items-center gap-2 text-[11px] text-white/30">
+                        <div className="mt-4 flex items-center gap-2 text-[11px] text-[#F0EFE2]/30">
                           <ArrowRight className="size-3.5" />
                           feeds next stage
                         </div>
@@ -1054,15 +1054,15 @@ export function ContinuityLabSpinePage() {
 
           <Card className="border-white/10 bg-white/[0.03] py-0 shadow-none">
             <CardHeader className="border-b border-white/10 p-4">
-              <CardTitle className="text-[13px] font-medium text-white">What to do next</CardTitle>
-              <CardDescription className="text-[12px] text-white/45">
+              <CardTitle className="text-[13px] font-medium text-[#F0EFE2]">What to do next</CardTitle>
+              <CardDescription className="text-[12px] text-[#F0EFE2]/45">
                 Follow the live product loop instead of broadening scope.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 p-4">
               <div className="rounded-md border border-white/10 bg-black/20 p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-white/35">Recommended next action</p>
-                <p className="mt-2 text-[13px] leading-5 text-white">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[#F0EFE2]/35">Recommended next action</p>
+                <p className="mt-2 text-[13px] leading-5 text-[#F0EFE2]">
                   {spine?.memoryIgnition?.recommendedFirstAction ?? "Generate a live MemoryIgnition brief for the current workspace."}
                 </p>
               </div>
@@ -1091,16 +1091,16 @@ export function ContinuityLabSpinePage() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-[13px] font-medium text-white">{item.label}</p>
-                        <p className="mt-1 text-[12px] leading-5 text-white/45">{item.note}</p>
+                        <p className="text-[13px] font-medium text-[#F0EFE2]">{item.label}</p>
+                        <p className="mt-1 text-[12px] leading-5 text-[#F0EFE2]/45">{item.note}</p>
                       </div>
-                      <ArrowRight className="size-4 text-white/35" />
+                      <ArrowRight className="size-4 text-[#F0EFE2]/35" />
                     </div>
                   </Link>
                 ))}
               </div>
-              <div className="rounded-md border border-white/10 bg-black/20 p-4 text-[12px] text-white/55">
-                <div className="flex items-center gap-2 text-white/80">
+              <div className="rounded-md border border-white/10 bg-black/20 p-4 text-[12px] text-[#F0EFE2]/55">
+                <div className="flex items-center gap-2 text-[#F0EFE2]/80">
                   <CheckCircle2 className="size-4 text-emerald-300" />
                   What this page proves
                 </div>
@@ -1111,8 +1111,8 @@ export function ContinuityLabSpinePage() {
                   <li>The product can show the proof chain instead of a static roadmap.</li>
                 </ul>
               </div>
-              <div className="rounded-md border border-white/10 bg-black/20 p-4 text-[12px] text-white/55">
-                <p className="text-white/80">Current status</p>
+              <div className="rounded-md border border-white/10 bg-black/20 p-4 text-[12px] text-[#F0EFE2]/55">
+                <p className="text-[#F0EFE2]/80">Current status</p>
                 <p className="mt-2 leading-5">
                   {spine?.localProductionReady
                     ? "The live loop is ready to use."

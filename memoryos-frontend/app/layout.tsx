@@ -6,6 +6,7 @@ import { GlobalPixelButtonLoader } from "@/components/ui/global-pixel-button-loa
 import { ThemePreferenceRoot } from "@/components/memoryos/theme-preference-root";
 import { ClerkRootProvider } from "@/components/auth/clerk-root-provider";
 import { KernelProvider } from "@/components/providers/kernel-provider";
+import { GlobalScrollbar } from "@/components/ui/global-scrollbar";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +59,7 @@ export default function RootLayout({
         {process.env.NODE_ENV !== "development" ? (
           <DatadogRumInitLoader />
         ) : null}
+        <GlobalScrollbar />
         <KernelProvider>
           <ThemePreferenceRoot>
             {clerkEnabled ? (

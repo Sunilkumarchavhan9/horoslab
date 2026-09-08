@@ -253,7 +253,7 @@ export function EpochLoopGraph({
     return true;
   });
 
-  const primaryText = dark ? "text-white" : "text-[#171a17]";
+  const primaryText = dark ? "text-[#F0EFE2]" : "text-[#171a17]";
   const secondaryText = dark ? "text-[#889084]" : "text-[#687063]";
 
   return (
@@ -301,7 +301,7 @@ export function EpochLoopGraph({
                 "px-2.5 py-0.5 rounded-xs capitalize text-[11px] border border-dashed transition-colors",
                 filterCategory === cat
                   ? dark ? "bg-[#282828] text-[#75bf00] font-bold border-[#75bf00]" : "bg-[#eaeaea] text-[#111] font-bold border-[#75bf00]"
-                  : dark ? "border-transparent text-[#788274] hover:text-white" : "border-transparent text-[#687063] hover:text-black"
+                  : dark ? "border-transparent text-[#788274] hover:text-[#F0EFE2]" : "border-transparent text-[#687063] hover:text-black"
               )}
             >
               {cat}
@@ -415,7 +415,7 @@ export function EpochLoopGraph({
                 <div className="col-span-1 flex items-center justify-end font-mono">
                   <button
                     type="button"
-                    className="text-[#788274] hover:text-white p-1"
+                    className="text-[#788274] hover:text-[#F0EFE2] p-1"
                   >
                     {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>

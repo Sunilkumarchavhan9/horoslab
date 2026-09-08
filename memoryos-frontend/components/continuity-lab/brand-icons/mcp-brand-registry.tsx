@@ -147,7 +147,7 @@ export function McpBrandIcon({
   const Icon = getMcpBrandIcon(key);
   if (Icon) {
     const pathId = resolveMcpBrandPathId(key) ?? key;
-    const tone = MONOCHROME_TONE_IDS.has(pathId) ? "text-white" : undefined;
+    const tone = MONOCHROME_TONE_IDS.has(pathId) ? "text-[#F0EFE2]" : undefined;
     return createElement(Icon, { className: cn(tone, className) });
   }
 
@@ -162,7 +162,7 @@ export function McpBrandIcon({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center font-bold uppercase tracking-wide text-white/55",
+        "inline-flex shrink-0 items-center justify-center font-bold uppercase tracking-wide text-[#F0EFE2]/55",
         className,
       )}
       aria-hidden

@@ -24,7 +24,7 @@ import type { LabScheduleFrequency } from "@/lib/continuity-lab/lab-schedules-ty
 import { cn } from "@/lib/utils";
 
 const applyButtonClass =
-  "h-8 w-full rounded-md bg-[#2563EB] text-xs font-semibold text-white hover:bg-[#3B82F6]";
+  "h-8 w-full rounded-md bg-[#2563EB] text-xs font-semibold text-[#F0EFE2] hover:bg-[#3B82F6]";
 
 const pillBase =
   "inline-flex items-center gap-1 rounded-[5px] px-2 py-0.5 text-xs font-medium text-[#60A5FA] bg-[#2563EB]/20 hover:bg-[#2563EB]/28";
@@ -127,7 +127,7 @@ function FrequencySchedulePanel({
             onClick={() => setTab(id)}
             className={cn(
               "flex-1 rounded px-2 py-1 text-xs font-semibold transition",
-              tab === id ? "bg-[#2563EB] text-white" : "text-white/50 hover:text-white/70",
+              tab === id ? "bg-[#2563EB] text-[#F0EFE2]" : "text-[#F0EFE2]/50 hover:text-[#F0EFE2]/70",
             )}
           >
             {id === "rrule" ? "Custom" : "Visual"}
@@ -138,19 +138,19 @@ function FrequencySchedulePanel({
       {tab === "visual" ? (
         <div className="mt-3 space-y-3">
           <div>
-            <p className="text-xs text-white/50">Repeat every</p>
+            <p className="text-xs text-[#F0EFE2]/50">Repeat every</p>
             <div className="mt-1 flex gap-1.5">
               <input
                 type="number"
                 min={1}
                 value={interval}
                 onChange={(e) => setInterval(e.target.value)}
-                className="h-8 w-12 rounded-md border border-white/10 bg-transparent px-1.5 text-xs text-white"
+                className="h-8 w-12 rounded-md border border-white/10 bg-transparent px-1.5 text-xs text-[#F0EFE2]"
               />
               <select
                 value={intervalUnit}
                 onChange={(e) => setIntervalUnit(e.target.value as ScheduleIntervalUnit)}
-                className="h-8 min-w-0 flex-1 rounded-md border border-white/10 bg-transparent px-2 text-xs capitalize text-white"
+                className="h-8 min-w-0 flex-1 rounded-md border border-white/10 bg-transparent px-2 text-xs capitalize text-[#F0EFE2]"
               >
                 <option value="hour">Hour</option>
                 <option value="day">Day</option>
@@ -161,7 +161,7 @@ function FrequencySchedulePanel({
 
           {intervalUnit === "week" ? (
             <div>
-              <p className="text-xs text-white/50">Repeat on</p>
+              <p className="text-xs text-[#F0EFE2]/50">Repeat on</p>
               <div className="mt-1.5 flex justify-between gap-0.5">
                 {CIRCLE_DAYS.map((day) => {
                   const selected = repeatDays.includes(day.code);
@@ -173,8 +173,8 @@ function FrequencySchedulePanel({
                       className={cn(
                         "flex size-8 items-center justify-center rounded-full text-[11px] font-semibold transition",
                         selected
-                          ? "bg-[#2563EB] text-white"
-                          : "bg-white/[0.06] text-white/50 hover:bg-white/10",
+                          ? "bg-[#2563EB] text-[#F0EFE2]"
+                          : "bg-white/[0.06] text-[#F0EFE2]/50 hover:bg-white/10",
                       )}
                       aria-pressed={selected}
                     >
@@ -187,11 +187,11 @@ function FrequencySchedulePanel({
           ) : null}
 
           <div>
-            <p className="text-xs text-white/50">
+            <p className="text-xs text-[#F0EFE2]/50">
               Time ({timezoneLabel}) · {formatGmtOffset(timezone)}
             </p>
             <div className="mt-1 grid grid-cols-2 gap-1.5">
-              <label className="text-[10px] text-white/45">
+              <label className="text-[10px] text-[#F0EFE2]/45">
                 Hour
                 <input
                   type="number"
@@ -199,10 +199,10 @@ function FrequencySchedulePanel({
                   max={23}
                   value={draftHour}
                   onChange={(e) => setDraftHour(Number(e.target.value) || 0)}
-                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-white"
+                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-[#F0EFE2]"
                 />
               </label>
-              <label className="text-[10px] text-white/45">
+              <label className="text-[10px] text-[#F0EFE2]/45">
                 Minute
                 <input
                   type="number"
@@ -210,7 +210,7 @@ function FrequencySchedulePanel({
                   max={59}
                   value={draftMinute}
                   onChange={(e) => setDraftMinute(Number(e.target.value) || 0)}
-                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-white"
+                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-[#F0EFE2]"
                 />
               </label>
             </div>
@@ -227,9 +227,9 @@ function FrequencySchedulePanel({
             onChange={(e) => setRruleDraft(e.target.value)}
             rows={3}
             placeholder="FREQ=WEEKLY;BYDAY=MO;BYHOUR=9;BYMINUTE=0"
-            className="w-full resize-y rounded-md border border-white/10 bg-transparent px-2.5 py-2 font-mono text-xs leading-relaxed text-white placeholder:text-white/35 focus:border-[#2563EB]/50 focus:outline-none"
+            className="w-full resize-y rounded-md border border-white/10 bg-transparent px-2.5 py-2 font-mono text-xs leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#2563EB]/50 focus:outline-none"
           />
-          <p className="text-[11px] text-white/45">
+          <p className="text-[11px] text-[#F0EFE2]/45">
             RFC 5545 RRULE. Applied summary: {scheduleChipSummary("schedule", config)}
           </p>
           <button type="button" onClick={applyRrule} className={applyButtonClass}>

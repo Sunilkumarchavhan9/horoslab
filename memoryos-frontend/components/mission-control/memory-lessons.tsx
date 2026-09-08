@@ -243,7 +243,7 @@ export function MemoryLessons({ onViewDetail }: { onViewDetail?: (id: string) =>
  <button className="w-full py-2 bg-card border border-border hover:bg-card text-foreground/90 rounded text-[13px] font-medium transition-colors flex items-center justify-center gap-2" disabled>
  <Settings className="size-3.5" /> Edit
  </button>
- <button className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[13px] font-medium transition-colors flex items-center justify-center gap-2" disabled>
+ <button className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-[#F0EFE2] rounded text-[13px] font-medium transition-colors flex items-center justify-center gap-2" disabled>
  <Check className="size-3.5" /> Apply
  </button>
  <button className="w-full py-2 bg-card border border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-foreground/90 rounded text-[13px] font-medium transition-colors flex items-center justify-center gap-2" disabled>

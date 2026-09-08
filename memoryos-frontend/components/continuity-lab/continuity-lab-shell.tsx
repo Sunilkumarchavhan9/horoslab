@@ -74,7 +74,7 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   return (
     <div
-      className={cn("continuity-lab-root flex h-dvh w-full overflow-hidden text-white", labMainBg)}
+      className={cn("continuity-lab-root flex h-dvh w-full overflow-hidden text-[#F0EFE2]", labMainBg)}
       suppressHydrationWarning
     >
       {!inSettings ? (
@@ -113,7 +113,7 @@ function ShellInner({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="inline-flex size-9 items-center justify-center rounded-md text-white/80 hover:bg-white/[0.06]"
+            className="inline-flex size-9 items-center justify-center rounded-md text-[#F0EFE2]/80 hover:bg-white/[0.06]"
             aria-label="Open menu"
           >
             <Menu className="size-4" />
@@ -123,7 +123,7 @@ function ShellInner({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => setSidebarOpen(false)}
-              className="ml-auto inline-flex size-9 items-center justify-center text-white/70"
+              className="ml-auto inline-flex size-9 items-center justify-center text-[#F0EFE2]/70"
               aria-label="Close menu"
             >
               <X className="size-4" />

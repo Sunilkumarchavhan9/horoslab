@@ -190,12 +190,12 @@ function PagerDutyBrandIcon({ className }: IconProps) {
 
 /** Schedule clock icon (Lucide, ISC) for trigger menus/cards. */
 export function ScheduleTriggerIcon({ className }: IconProps) {
-  return <Clock3 className={cn("shrink-0 text-white/80", className)} aria-hidden />;
+  return <Clock3 className={cn("shrink-0 text-[#F0EFE2]/80", className)} aria-hidden />;
 }
 
 /** Webhook/link icon (Lucide, ISC) for trigger menus/cards. */
 export function WebhookTriggerIcon({ className }: IconProps) {
-  return <Link2 className={cn("shrink-0 text-white/80", className)} aria-hidden />;
+  return <Link2 className={cn("shrink-0 text-[#F0EFE2]/80", className)} aria-hidden />;
 }
 
 const TRIGGER_FAMILY_ICONS: Record<TriggerFamilyIconId, React.ComponentType<IconProps>> = {
@@ -213,7 +213,7 @@ export function TriggerFamilyIcon({
   className?: string;
 }) {
   const Icon = TRIGGER_FAMILY_ICONS[id];
-  const tone = id === "github" ? "text-white" : undefined;
+  const tone = id === "github" ? "text-[#F0EFE2]" : undefined;
   return <Icon className={cn(tone, className)} />;
 }
 
@@ -284,13 +284,13 @@ export function ConnectorBrandIcon({ id, className = "size-4" }: { id: string; c
   const key = connectorBrandId(id);
   if (!key) return null;
   const Icon = CONNECTOR_ICONS[key];
-  const tone = key === "github" ? "text-white" : undefined;
+  const tone = key === "github" ? "text-[#F0EFE2]" : undefined;
   if (Icon) return <Icon className={cn(tone, className)} />;
   const label = CONNECTOR_LABELS[key];
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-sm text-[9px] font-bold uppercase leading-none text-white/65",
+        "inline-flex shrink-0 items-center justify-center rounded-sm text-[9px] font-bold uppercase leading-none text-[#F0EFE2]/65",
         className,
       )}
       aria-hidden
@@ -309,7 +309,7 @@ export function SettingsIntegrationIcon({
   className?: string;
 }) {
   const Icon = SETTINGS_INTEGRATION_ICONS[id];
-  const tone = id === "github" ? "text-white" : undefined;
+  const tone = id === "github" ? "text-[#F0EFE2]" : undefined;
   return <Icon className={cn(tone, className)} />;
 }
 
@@ -353,7 +353,7 @@ function IntegrationPillIcon({ pill, className }: { pill: AutomationIntegrationP
     return <ConnectorBrandIcon id={connector} className={className} />;
   }
   return (
-    <span className={cn("text-[9px] font-bold uppercase tracking-wide text-white/50", className)}>
+    <span className={cn("text-[9px] font-bold uppercase tracking-wide text-[#F0EFE2]/50", className)}>
       {pill.slice(0, 2)}
     </span>
   );
@@ -410,8 +410,8 @@ export function AutomationIntegrationPills({
           className={cn(
             "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium",
             muted
-              ? "border-[#2F2F2F] bg-[#0A0A0A]/50 text-white/35"
-              : "border-[#3A3A3A] bg-[#0A0A0A] text-white/60",
+              ? "border-[#2F2F2F] bg-[#0A0A0A]/50 text-[#F0EFE2]/35"
+              : "border-[#3A3A3A] bg-[#0A0A0A] text-[#F0EFE2]/60",
           )}
           title={PILL_LABELS[pill]}
         >

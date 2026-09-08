@@ -208,7 +208,7 @@ export function RecoveryInspector({ entityData }: { entityData: any }) {
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-semibold text-foreground">Status</span>
                                             {MOCK_RECOVERY_DETAILS.strategy.checkpointResume.available ? (
-                                                <Badge className="bg-blue-500 text-white">Available</Badge>
+                                                <Badge className="bg-blue-500 text-[#F0EFE2]">Available</Badge>
                                             ) : (
                                                 <Badge variant="outline" className="text-muted-foreground">Unavailable</Badge>
                                             )}
@@ -275,7 +275,7 @@ export function RecoveryInspector({ entityData }: { entityData: any }) {
                                                     <span className="text-[11px] font-mono text-blue-500">{MOCK_RECOVERY_DETAILS.strategy.checkpointResume.id}</span>
                                                     <span className="text-xs text-muted-foreground mt-2">{MOCK_RECOVERY_DETAILS.strategy.checkpointResume.savedState}</span>
                                                 </div>
-                                                <Badge className="bg-blue-500 text-white">Ready for Resume</Badge>
+                                                <Badge className="bg-blue-500 text-[#F0EFE2]">Ready for Resume</Badge>
                                             </div>
                                         ) : (
                                             <span className="text-sm text-muted-foreground">No checkpoints available for this execution.</span>

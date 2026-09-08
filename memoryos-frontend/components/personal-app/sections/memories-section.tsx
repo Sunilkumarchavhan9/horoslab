@@ -89,7 +89,7 @@ export function MemoriesSection() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-semibold tracking-[-0.05em]">Memories</h1>
-          <p className="mt-1 text-[13px] text-white/40">{SAMPLE_MEMORIES.length} memories stored across all sessions.</p>
+          <p className="mt-1 text-[13px] text-[#F0EFE2]/40">{SAMPLE_MEMORIES.length} memories stored across all sessions.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -129,7 +129,7 @@ export function MemoriesSection() {
       </div>
 
       <div className="relative">
-        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F0EFE2]/30" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="6" cy="6" r="4.5" />
           <path d="M9.5 9.5L13 13" />
         </svg>
@@ -138,7 +138,7 @@ export function MemoriesSection() {
           placeholder="Search memories..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-[8px] border border-white/10 bg-[#161616] py-2.5 pl-10 pr-4 text-[13px] text-white placeholder-white/25 outline-none transition-colors focus:border-[#4f93ff]/40 focus:bg-[#1a1a1a]"
+          className="w-full rounded-[8px] border border-white/10 bg-[#161616] py-2.5 pl-10 pr-4 text-[13px] text-[#F0EFE2] placeholder-white/25 outline-none transition-colors focus:border-[#4f93ff]/40 focus:bg-[#1a1a1a]"
         />
       </div>
 
@@ -150,21 +150,21 @@ export function MemoriesSection() {
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[10px] border border-white/8 bg-[#141414] py-16 text-center">
-          <p className="mt-3 text-[13px] text-white/30">No memories match your search.</p>
+          <p className="mt-3 text-[13px] text-[#F0EFE2]/30">No memories match your search.</p>
         </div>
       ) : view === "grid" ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {filtered.map((memory) => (
             <div key={memory.id} className="group relative overflow-hidden rounded-[10px] border border-white/8 bg-[#141414] p-4 transition-colors hover:border-white/14 hover:bg-[#181818]" style={{ borderTopColor: memory.accent, borderTopWidth: "2px" }}>
-              <p className="text-[13px] leading-[1.6] text-white/76">{memory.content}</p>
+              <p className="text-[13px] leading-[1.6] text-[#F0EFE2]/76">{memory.content}</p>
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
                 {memory.tags.map((tag) => (
                   <span key={tag} className="rounded-[4px] px-2 py-0.5 text-[10px] font-medium tracking-[0.04em]" style={{ background: `${memory.accent}18`, color: memory.accent }}>{tag}</span>
                 ))}
               </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-[11px] text-white/30">{memory.source}</span>
-                <span className="text-[11px] text-white/25">{memory.ago}</span>
+                <span className="text-[11px] text-[#F0EFE2]/30">{memory.source}</span>
+                <span className="text-[11px] text-[#F0EFE2]/25">{memory.ago}</span>
               </div>
             </div>
           ))}
@@ -175,16 +175,16 @@ export function MemoriesSection() {
             <div key={memory.id} className="flex items-start gap-4 rounded-[8px] border border-white/8 bg-[#141414] px-4 py-3.5 transition-colors hover:border-white/14 hover:bg-[#181818]">
               <div className="mt-0.5 h-2 w-2 shrink-0 rounded-full" style={{ background: memory.accent }} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] text-white/76">{memory.content}</p>
+                <p className="truncate text-[13px] text-[#F0EFE2]/76">{memory.content}</p>
                 <div className="mt-1.5 flex flex-wrap items-center gap-2">
                   {memory.tags.map((tag) => (
-                    <span key={tag} className="text-[10px] text-white/30">#{tag}</span>
+                    <span key={tag} className="text-[10px] text-[#F0EFE2]/30">#{tag}</span>
                   ))}
                 </div>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className="text-[11px] text-white/25">{memory.ago}</span>
-                <span className="text-[11px] text-white/30">{memory.source}</span>
+                <span className="text-[11px] text-[#F0EFE2]/25">{memory.ago}</span>
+                <span className="text-[11px] text-[#F0EFE2]/30">{memory.source}</span>
               </div>
             </div>
           ))}

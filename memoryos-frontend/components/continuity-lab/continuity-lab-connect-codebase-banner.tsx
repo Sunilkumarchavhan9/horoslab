@@ -19,7 +19,7 @@ export function ContinuityLabConnectCodebaseBanner({
   return (
     <div className={cn(bannerStrip(), className)}>
       <p className="flex min-w-0 flex-1 items-center gap-2 leading-snug">
-        <GitBranch className="size-3.5 shrink-0 text-white/40" aria-hidden />
+        <GitBranch className="size-3.5 shrink-0 text-[#F0EFE2]/40" aria-hidden />
         <span>
           {isAsk
             ? "Connect GitHub to scope Ask to your repositories."
@@ -28,7 +28,7 @@ export function ContinuityLabConnectCodebaseBanner({
       </p>
       <Link
         href="/continuity-lab?select_org=true"
-        className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-white/80 hover:text-white"
+        className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-[#F0EFE2]/80 hover:text-[#F0EFE2]"
       >
         Connect GitHub
         <ArrowRight className="size-3" />
@@ -54,7 +54,7 @@ export function ContinuityLabConnectCompanyModelBanner({
       <button
         type="button"
         onClick={onConnect}
-        className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-white/80 hover:text-white"
+        className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-[#F0EFE2]/80 hover:text-[#F0EFE2]"
       >
         Connect model
         <ArrowRight className="size-3" />

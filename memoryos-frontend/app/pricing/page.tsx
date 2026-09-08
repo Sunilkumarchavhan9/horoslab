@@ -42,7 +42,7 @@ function PlanCard({ name, price, limits, features, overage, ctaLabel, onClick, d
         type="button"
         onClick={onClick}
         disabled={disabled}
-        className="mt-4 inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-4 inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-[#F0EFE2] hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {ctaLabel}
       </button>

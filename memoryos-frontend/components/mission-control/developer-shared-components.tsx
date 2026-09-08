@@ -46,7 +46,7 @@ export function DeveloperHeader({ title, description, badge }: { title: string, 
  <div className="flex items-center gap-3 mb-2">
  <h1 className="text-[28px] font-semibold tracking-tight text-foreground dark:text-[#fff]">{title}</h1>
  {badge && (
- <span className="px-2 py-0.5 rounded-md bg-muted dark:bg-white/10 text-[11px] font-mono font-medium text-foreground/60 dark:text-white/60">
+ <span className="px-2 py-0.5 rounded-md bg-muted dark:bg-white/10 text-[11px] font-mono font-medium text-foreground/60 dark:text-[#F0EFE2]/60">
  {badge}
  </span>
  )}
@@ -64,8 +64,8 @@ export function CodeBlock({ code, language = "json", className }: { code: string
  return (
  <div className={cn("rounded-md bg-[#111] dark:bg-[#000] border border-border dark:border-white/10 overflow-hidden", className)}>
  <div className="flex items-center justify-between px-6 py-2 border-b border-white/10 bg-[#1a1a1a]">
- <span className="text-[11px] font-mono font-medium text-white/50 lowercase">{language}</span>
- <button className="text-[11px] font-medium text-white/50 hover:text-white transition-colors">Copy</button>
+ <span className="text-[11px] font-mono font-medium text-[#F0EFE2]/50 lowercase">{language}</span>
+ <button className="text-[11px] font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2] transition-colors">Copy</button>
  </div>
  <pre className="p-6 text-[13px] font-mono text-[#e4e4e4] overflow-x-auto whitespace-pre-wrap leading-relaxed">
  {code}
@@ -90,13 +90,13 @@ export function ParameterTable({ parameters }: { parameters: Array<{ name: strin
  <td className="px-6 py-3 align-top">
  <div className="flex flex-col gap-1">
  <div className="flex items-center gap-2">
- <span className="text-[13px] font-mono font-medium text-foreground dark:text-white">{param.name}</span>
+ <span className="text-[13px] font-mono font-medium text-foreground dark:text-[#F0EFE2]">{param.name}</span>
  {param.required && <span className="text-[10px] text-red-500 font-medium tracking-wide uppercase">Req</span>}
  </div>
  <span className="text-[12px] font-mono text-muted-foreground dark:text-muted-foreground">{param.type}</span>
  </div>
  </td>
- <td className="px-6 py-3 align-top text-[13px] text-foreground/80 dark:text-[#ccc] leading-relaxed">
+ <td className="px-6 py-3 align-top text-[13px] text-foreground/80 dark:text-[#C8C7BA] leading-relaxed">
  {param.description}
  </td>
  </tr>
@@ -123,7 +123,7 @@ export function StatusBadge({ status }: { status: "healthy" | "warning" | "error
  case "critical":
  return "bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20";
  default:
- return "bg-muted text-foreground/80 border-border dark:bg-white/5 dark:text-[#ccc] dark:border-white/10";
+ return "bg-muted text-foreground/80 border-border dark:bg-white/5 dark:text-[#C8C7BA] dark:border-white/10";
  }
  };
 

@@ -47,7 +47,7 @@ const PARTNERSHIP_PITCH =
 const PARTNERSHIP_MAILTO = `mailto:partnerships@memoryos.dev?subject=${encodeURIComponent("MemoryOS integration partnership")}&body=${encodeURIComponent(`${PARTNERSHIP_PITCH}\n\n`)}`;
 
 const inputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 font-mono text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 font-mono text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none";
 
 type ProviderKeyDraft = Record<ModelProviderKeyId, string>;
 
@@ -224,7 +224,7 @@ export function ContinuityLabOrgDesktopSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -236,7 +236,7 @@ export function ContinuityLabOrgDesktopSettingsSection() {
           succeeds.
         </p>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -282,17 +282,17 @@ export function ContinuityLabOrgDesktopSettingsSection() {
         <SettingsFlatPanel>
           <div className="flex flex-col gap-3 border-b border-white/[0.06] px-3 py-3 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <p className="text-sm font-medium text-white">Account activity</p>
-              <p className="mt-0.5 text-xs text-white/45">
+              <p className="text-sm font-medium text-[#F0EFE2]">Account activity</p>
+              <p className="mt-0.5 text-xs text-[#F0EFE2]/45">
                 Usage metering for MemoryOS Desktop is not live yet — the usage page is a preview.
               </p>
             </div>
             <Link
               href="/continuity-lab/settings/usage"
-              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-white/90 transition hover:bg-white/[0.08]"
+              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-[#F0EFE2]/90 transition hover:bg-white/[0.08]"
             >
               View usage
-              <ExternalLink className="size-3.5 text-white/50" aria-hidden />
+              <ExternalLink className="size-3.5 text-[#F0EFE2]/50" aria-hidden />
             </Link>
           </div>
         </SettingsFlatPanel>
@@ -312,7 +312,7 @@ export function ContinuityLabOrgDesktopSettingsSection() {
             />
           </SettingsFieldRow>
         </SettingsFlatPanel>
-        <p className="mt-2 text-[11px] text-white/35">
+        <p className="mt-2 text-[11px] text-[#F0EFE2]/35">
           Stub: the desktop client does not ship yet — this preference is stored for your organization
           and will apply when MemoryOS Desktop connects.
         </p>
@@ -322,13 +322,13 @@ export function ContinuityLabOrgDesktopSettingsSection() {
         <button
           type="button"
           onClick={() => setKeysExpanded((prev) => !prev)}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-white/70 transition hover:text-white"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#F0EFE2]/70 transition hover:text-[#F0EFE2]"
           aria-expanded={keysExpanded}
         >
           {keysExpanded ? (
-            <ChevronDown className="size-4 text-white/45" aria-hidden />
+            <ChevronDown className="size-4 text-[#F0EFE2]/45" aria-hidden />
           ) : (
-            <ChevronRight className="size-4 text-white/45" aria-hidden />
+            <ChevronRight className="size-4 text-[#F0EFE2]/45" aria-hidden />
           )}
           Model provider API keys
         </button>
@@ -361,7 +361,7 @@ export function ContinuityLabOrgDesktopSettingsSection() {
               error={keyErrors.openrouter}
             />
 
-            <p className="text-[11px] text-white/35">
+            <p className="text-[11px] text-[#F0EFE2]/35">
               OpenAI and other providers will appear here as MemoryOS Desktop adds native routing.
             </p>
           </div>
@@ -372,20 +372,20 @@ export function ContinuityLabOrgDesktopSettingsSection() {
         <button
           type="button"
           onClick={() => setPartnershipExpanded((prev) => !prev)}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-white/70 transition hover:text-white"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#F0EFE2]/70 transition hover:text-[#F0EFE2]"
           aria-expanded={partnershipExpanded}
         >
           {partnershipExpanded ? (
-            <ChevronDown className="size-4 text-white/45" aria-hidden />
+            <ChevronDown className="size-4 text-[#F0EFE2]/45" aria-hidden />
           ) : (
-            <ChevronRight className="size-4 text-white/45" aria-hidden />
+            <ChevronRight className="size-4 text-[#F0EFE2]/45" aria-hidden />
           )}
           Share your integration
         </button>
 
         {partnershipExpanded ? (
           <div className="mt-4 space-y-3">
-            <p className="text-xs text-white/45">
+            <p className="text-xs text-[#F0EFE2]/45">
               Building a plugin, MCP server, or IDE extension? Copy this one-liner for outreach or
               open a partnership email draft.
             </p>
@@ -397,12 +397,12 @@ export function ContinuityLabOrgDesktopSettingsSection() {
             />
             <a
               href={PARTNERSHIP_MAILTO}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-white/90 transition hover:bg-white/[0.08]"
+              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-medium text-[#F0EFE2]/90 transition hover:bg-white/[0.08]"
             >
               Email partnership inquiry
-              <ExternalLink className="size-3.5 text-white/50" aria-hidden />
+              <ExternalLink className="size-3.5 text-[#F0EFE2]/50" aria-hidden />
             </a>
-            <p className="text-[11px] text-white/35">
+            <p className="text-[11px] text-[#F0EFE2]/35">
               partnerships@memoryos.dev is a placeholder until a live inbox is published — adjust
               before sending.
             </p>
@@ -440,16 +440,16 @@ function ProviderKeyCard({
     <div className={cn("rounded-md border border-white/[0.08] bg-[#111111] p-4")}>
       <div className="mb-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-sm font-semibold text-white">{title}</h3>
+          <h3 className="text-sm font-semibold text-[#F0EFE2]">{title}</h3>
           {configured ? (
             <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
               Key saved
             </span>
           ) : null}
         </div>
-        <p className="mt-1 text-xs text-white/45">{description}</p>
+        <p className="mt-1 text-xs text-[#F0EFE2]/45">{description}</p>
         {configured && masked ? (
-          <p className="mt-2 font-mono text-xs text-white/55">Stored: {masked}</p>
+          <p className="mt-2 font-mono text-xs text-[#F0EFE2]/55">Stored: {masked}</p>
         ) : null}
       </div>
 

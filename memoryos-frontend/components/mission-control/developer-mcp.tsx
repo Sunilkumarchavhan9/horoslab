@@ -70,7 +70,7 @@ export function DeveloperMCP() {
  const renderSidebar = () => (
  <div className="flex flex-col w-full py-6">
  <div className="px-6 mb-6">
- <h2 className="text-[14px] font-semibold text-foreground dark:text-white">Tool Explorer</h2>
+ <h2 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2]">Tool Explorer</h2>
  </div>
  
  <div className="flex flex-col gap-6">
@@ -89,7 +89,7 @@ export function DeveloperMCP() {
  className={cn(
  "flex items-center justify-between px-6 py-2 text-[13px] text-left transition-colors",
  activeTool === tool.id
- ? "bg-muted dark:bg-white/10 text-foreground dark:text-white font-medium border-r-2 border-[#111] dark:border-white"
+ ? "bg-muted dark:bg-white/10 text-foreground dark:text-[#F0EFE2] font-medium border-r-2 border-[#111] dark:border-white"
  : "text-muted-foreground dark:text-[#aaa] hover:bg-accent dark:hover:bg-card/5"
  )}
  >
@@ -135,7 +135,7 @@ export function DeveloperMCP() {
  <div className="flex items-center gap-3 px-6 py-6 border-b border-border dark:border-white/5 bg-muted/50 dark:bg-[#030303]">
  <Wrench className="size-4 text-muted-foreground" />
  <span className="text-[13px] font-medium text-foreground dark:text-[#eee]">MCP Inspector</span>
- <button className="ml-auto px-3 py-1.5 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[12px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="ml-auto px-3 py-1.5 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[12px] font-medium flex items-center gap-2 hover:opacity-90">
  <Play className="size-3" />
  Execute
  </button>

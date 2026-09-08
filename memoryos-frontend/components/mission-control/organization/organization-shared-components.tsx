@@ -37,7 +37,7 @@ export function OrganizationHeader({ title, description, badge }: { title: strin
  <div className="flex items-center gap-3 mb-2">
  <h1 className="text-[28px] font-semibold tracking-tight text-foreground dark:text-[#fff]">{title}</h1>
  {badge && (
- <span className="px-2 py-0.5 rounded-md bg-muted dark:bg-white/10 text-[11px] font-mono font-medium text-foreground dark:text-white">
+ <span className="px-2 py-0.5 rounded-md bg-muted dark:bg-white/10 text-[11px] font-mono font-medium text-foreground dark:text-[#F0EFE2]">
  {badge}
  </span>
  )}
@@ -77,7 +77,7 @@ export function StatusBadge({ status }: { status: "healthy" | "warning" | "error
  case "fail":
  return "bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20";
  default:
- return "bg-muted text-foreground/80 border-border dark:bg-white/5 dark:text-[#ccc] dark:border-white/10";
+ return "bg-muted text-foreground/80 border-border dark:bg-white/5 dark:text-[#C8C7BA] dark:border-white/10";
  }
  };
 

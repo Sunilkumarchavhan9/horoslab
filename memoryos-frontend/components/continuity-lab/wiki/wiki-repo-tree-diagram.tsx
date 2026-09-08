@@ -35,7 +35,7 @@ export function WikiRepoTreeDiagram({ nodes, focusPath, className }: WikiRepoTre
   if (!nodes.length) {
     return (
       <div className="rounded-md border border-dashed border-[#3A3A3A] bg-[#0D0D0D]/60 px-4 py-6 text-center">
-        <p className="text-sm text-white/45">
+        <p className="text-sm text-[#F0EFE2]/45">
           Connect GitHub and sync this repo to render repository structure.
         </p>
       </div>
@@ -49,7 +49,7 @@ export function WikiRepoTreeDiagram({ nodes, focusPath, className }: WikiRepoTre
         className,
       )}
     >
-      <div className="mb-3 flex flex-wrap gap-3 text-[10px] uppercase tracking-wide text-white/40">
+      <div className="mb-3 flex flex-wrap gap-3 text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
         {(["frontend", "backend", "static", "config"] as const).map((group) => {
           const style = GROUP_STYLES[group];
           if (!grouped.has(group)) return null;
@@ -71,7 +71,7 @@ export function WikiRepoTreeDiagram({ nodes, focusPath, className }: WikiRepoTre
               key={node.id}
               className={cn(
                 "flex items-center gap-2 rounded px-2 py-1",
-                isFocused ? "bg-[#4338CA]/20 text-white" : "text-white/70",
+                isFocused ? "bg-[#4338CA]/20 text-[#F0EFE2]" : "text-[#F0EFE2]/70",
               )}
               style={{ paddingLeft: `${8 + node.depth * 16}px` }}
             >
@@ -80,7 +80,7 @@ export function WikiRepoTreeDiagram({ nodes, focusPath, className }: WikiRepoTre
               ) : (
                 <span className="size-1.5 shrink-0 rounded-full bg-white/20" />
               )}
-              <span className={cn(node.type === "dir" ? "text-white/90" : "text-white/60")}>
+              <span className={cn(node.type === "dir" ? "text-[#F0EFE2]/90" : "text-[#F0EFE2]/60")}>
                 {node.type === "dir" ? "▸ " : "· "}
                 {node.label}
               </span>

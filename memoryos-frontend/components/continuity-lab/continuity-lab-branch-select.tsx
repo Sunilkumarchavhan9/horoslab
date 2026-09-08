@@ -54,31 +54,31 @@ export function ContinuityLabBranchSelect({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-8 max-w-[14rem] items-center gap-1.5 text-sm font-medium text-white hover:text-white/85"
+        className="inline-flex h-8 max-w-[14rem] items-center gap-1.5 text-sm font-medium text-[#F0EFE2] hover:text-[#F0EFE2]/85"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <GitBranch className="size-4 shrink-0 text-white/65" />
+        <GitBranch className="size-4 shrink-0 text-[#F0EFE2]/65" />
         <span className="truncate">{value || "main"}</span>
-        <ChevronDown className="size-3.5 shrink-0 text-white/45" />
+        <ChevronDown className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
       </button>
 
       {open ? (
         <div className="absolute left-0 top-[calc(100%+6px)] z-30 w-64 overflow-hidden rounded-md border border-[#2F2F2F] bg-[#1d1d1d] shadow-2xl">
           <div className="border-b border-[#2F2F2F] p-2">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-white/35" />
+              <Search className="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/35" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search branches..."
-                className="h-9 w-full rounded-md border border-transparent bg-transparent pl-8 pr-2 text-sm text-white placeholder:text-white/45 focus:border-[#3A3A3A] focus:outline-none"
+                className="h-9 w-full rounded-md border border-transparent bg-transparent pl-8 pr-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/45 focus:border-[#3A3A3A] focus:outline-none"
               />
             </div>
           </div>
           <ul role="listbox" className="max-h-48 overflow-y-auto py-1">
             {filtered.length === 0 ? (
-              <li className="px-3 py-2 text-xs text-white/45">No branches found</li>
+              <li className="px-3 py-2 text-xs text-[#F0EFE2]/45">No branches found</li>
             ) : (
               filtered.map((branch) => (
                 <li key={branch}>
@@ -92,7 +92,7 @@ export function ContinuityLabBranchSelect({
                       setSearch("");
                     }}
                     className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-white/80 hover:bg-white/[0.06]",
+                      "flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-[#F0EFE2]/80 hover:bg-white/[0.06]",
                       branch === value && "bg-white/[0.08]",
                     )}
                   >

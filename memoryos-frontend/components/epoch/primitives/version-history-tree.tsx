@@ -28,7 +28,7 @@ export function VersionHistoryTree({
   return (
     <div className={cn(
       "border p-4 font-mono text-xs rounded-xs transition-colors",
-      dark ? "border-[#2e2e2e] bg-[#202020] text-white" : "border-[#d8ddd3] bg-white text-[#171a17]",
+      dark ? "border-[#2e2e2e] bg-[#202020] text-[#F0EFE2]" : "border-[#d8ddd3] bg-white text-[#171a17]",
       className
     )}>
       <div className={cn(
@@ -37,7 +37,7 @@ export function VersionHistoryTree({
       )}>
         <span className={cn(
           "font-sans text-xs font-semibold uppercase tracking-[0.14em]",
-          dark ? "text-white" : "text-[#171a17]"
+          dark ? "text-[#F0EFE2]" : "text-[#171a17]"
         )}>
           Lineage & Version Tree
         </span>
@@ -64,7 +64,7 @@ export function VersionHistoryTree({
                   node.isActive
                     ? "border-[#75bf00] bg-[#75bf00] text-black"
                     : dark
-                    ? "border-[#383838] bg-[#1a1a1a] text-[#888]"
+                    ? "border-[#383838] bg-[#1a1a1a] text-[#C8C7BA]"
                     : "border-[#c9cec4] bg-[#fafbfa] text-[#6b7367]"
                 )}
               >
@@ -78,13 +78,13 @@ export function VersionHistoryTree({
               )}>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className={cn("font-bold", dark ? "text-white" : "text-[#171a17]")}>{node.version}</span>
+                    <span className={cn("font-bold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>{node.version}</span>
                     {node.isActive ? (
                       <span className="border border-[#75bf00]/40 bg-[#162916] text-[#a3e635] px-1.5 py-0.2 text-[10px] font-bold rounded-xs">
                         ACTIVE RUNTIME
                       </span>
                     ) : idx === 1 ? (
-                      <span className={cn("border px-1.5 py-0.2 text-[10px] rounded-xs", dark ? "border-[#383838] text-[#888]" : "border-[#d8ddd3] text-[#666]")}>
+                      <span className={cn("border px-1.5 py-0.2 text-[10px] rounded-xs", dark ? "border-[#383838] text-[#C8C7BA]" : "border-[#d8ddd3] text-[#666]")}>
                         PREVIOUS STABLE
                       </span>
                     ) : null}
@@ -100,7 +100,7 @@ export function VersionHistoryTree({
                       onClick={() => onSelectVersion(node.version)}
                       className={cn(
                         "flex items-center gap-1 border px-2 py-0.5 text-[11px] font-sans rounded-xs transition-colors",
-                        dark ? "border-[#383838] bg-[#1a1a1a] text-[#aaa] hover:text-white hover:border-[#555]" : "border-[#c9cec4] bg-white text-[#4b5247] hover:bg-[#f6f7f5]"
+                        dark ? "border-[#383838] bg-[#1a1a1a] text-[#aaa] hover:text-[#F0EFE2] hover:border-[#555]" : "border-[#c9cec4] bg-white text-[#4b5247] hover:bg-[#f6f7f5]"
                       )}
                     >
                       <RotateCcw size={10} /> Rollback

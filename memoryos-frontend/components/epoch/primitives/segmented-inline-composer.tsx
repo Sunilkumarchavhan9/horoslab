@@ -103,7 +103,7 @@ function renderSegments(root: HTMLElement, segments: ComposerSegment[], animate 
     const chip = document.createElement("span");
     chip.contentEditable = "false";
     chip.dataset.entity = JSON.stringify(segment);
-    chip.className = "mx-0.5 inline-flex cursor-pointer select-none items-center rounded-xs border border-[#383838] bg-[#222222] px-1.5 py-0.5 align-middle text-xs font-medium text-white transition-all hover:border-[#75bf00] hover:shadow-[0_0_8px_rgba(117,191,0,0.25)] active:scale-95";
+    chip.className = "mx-0.5 inline-flex cursor-pointer select-none items-center rounded-xs border border-[#383838] bg-[#222222] px-1.5 py-0.5 align-middle text-xs font-medium text-[#F0EFE2] transition-all hover:border-[#75bf00] hover:shadow-[0_0_8px_rgba(117,191,0,0.25)] active:scale-95";
     chip.textContent = "";
     if (segment.type === "model") {
       const icon = document.createElement("span");
@@ -237,7 +237,7 @@ export const SegmentedInlineComposer = forwardRef<SegmentedInlineComposerHandle,
     const chip = document.createElement("span");
     chip.contentEditable = "false";
     chip.dataset.entity = JSON.stringify(entity);
-    chip.className = "mx-0.5 inline-flex cursor-pointer select-none items-center rounded-xs border border-[#383838] bg-[#222222] px-1.5 py-0.5 align-middle text-xs font-medium text-white";
+    chip.className = "mx-0.5 inline-flex cursor-pointer select-none items-center rounded-xs border border-[#383838] bg-[#222222] px-1.5 py-0.5 align-middle text-xs font-medium text-[#F0EFE2]";
     chip.textContent = "";
     const icon = document.createElement("span");
     icon.className = "mr-1 inline-flex items-center";
@@ -301,9 +301,9 @@ export const SegmentedInlineComposer = forwardRef<SegmentedInlineComposerHandle,
   const filtered = suggestions.filter((model) => model.name.toLowerCase().includes(query.toLowerCase()) || model.id.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
   return (
     <>
-      <div ref={editorRef} contentEditable suppressContentEditableWarning onInput={() => { publish(); saveCaret(); updateMentionMenu(); }} onKeyDown={onKeyDown} onKeyUp={saveCaret} onMouseUp={saveCaret} onClick={() => { saveCaret(); setMenu(null); }} className={cn("relative min-h-[44px] w-full cursor-text text-xs leading-relaxed outline-none md:text-sm", dark ? "text-white" : "text-[#171a17]")} />
+      <div ref={editorRef} contentEditable suppressContentEditableWarning onInput={() => { publish(); saveCaret(); updateMentionMenu(); }} onKeyDown={onKeyDown} onKeyUp={saveCaret} onMouseUp={saveCaret} onClick={() => { saveCaret(); setMenu(null); }} className={cn("relative min-h-[44px] w-full cursor-text text-xs leading-relaxed outline-none md:text-sm", dark ? "text-[#F0EFE2]" : "text-[#171a17]")} />
       {menu && filtered.length > 0 && (
-        <div style={{ left: menu.x, top: menu.y }} className={cn("absolute z-[100] w-72 border p-1.5 shadow-2xl rounded-xs", dark ? "border-[#333] bg-[#181818] text-white" : "border-[#c9cec4] bg-white text-[#171a17]")}>
+        <div style={{ left: menu.x, top: menu.y }} className={cn("absolute z-[100] w-72 border p-1.5 shadow-2xl rounded-xs", dark ? "border-[#333] bg-[#181818] text-[#F0EFE2]" : "border-[#c9cec4] bg-white text-[#171a17]")}>
           {filtered.map((model) => <button key={model.id} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insert(model)} className="flex w-full items-center gap-2 rounded-xs px-2 py-1.5 text-left text-xs hover:bg-[#282828]"><BrandIcon model={{ type: "model", id: model.repositoryId ?? model.id, label: model.name, metadata: { provider: model.org, repositoryId: model.repositoryId ?? model.id, iconType: model.iconType } }} /><span className="truncate">{model.name}</span></button>)}
         </div>
       )}

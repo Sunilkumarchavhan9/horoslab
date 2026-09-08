@@ -59,7 +59,7 @@ function OsDefaultFlyout({
       <button
         type="button"
         role="menuitem"
-        className="block w-full px-3 py-1.5 text-left text-[11px] text-white/85 hover:bg-[#1F1F1F]"
+        className="block w-full px-3 py-1.5 text-left text-[11px] text-[#F0EFE2]/85 hover:bg-[#1F1F1F]"
         onClick={() => {
           onSetUserDefault(osId);
           onClose();
@@ -225,16 +225,16 @@ export function ContinuityLabAskContextBar({
     : displayRepos;
 
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] text-white/55">
+    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] text-[#F0EFE2]/55">
       <div ref={repoRef} className="relative">
         <button
           type="button"
           onClick={() => setRepoOpen((value) => !value)}
-          className="inline-flex h-6 items-center gap-1.5 rounded-md bg-white/[0.06] px-2 font-medium text-white/80 hover:bg-white/[0.09] hover:text-white"
+          className="inline-flex h-6 items-center gap-1.5 rounded-md bg-white/[0.06] px-2 font-medium text-[#F0EFE2]/80 hover:bg-white/[0.09] hover:text-[#F0EFE2]"
           aria-expanded={repoOpen}
           aria-haspopup="listbox"
         >
-          <FolderGit2 className="size-3.5 text-white/55" />
+          <FolderGit2 className="size-3.5 text-[#F0EFE2]/55" />
           <span>{repoLabel}</span>
         </button>
         {repoOpen ? (
@@ -244,12 +244,12 @@ export function ContinuityLabAskContextBar({
             aria-label="Selected repositories"
           >
             <div className="flex h-12 items-center gap-2 border-b border-[#303030] px-4">
-              <Search className="size-4 text-white/42" />
+              <Search className="size-4 text-[#F0EFE2]/42" />
               <input
                 value={repoSearch}
                 onChange={(event) => setRepoSearch(event.target.value)}
                 placeholder="Search for a repository"
-                className="min-w-0 flex-1 bg-transparent text-sm font-medium text-white outline-none placeholder:text-white/42"
+                className="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/42"
               />
             </div>
             <div className="max-h-56 overflow-y-auto py-1">
@@ -264,14 +264,14 @@ export function ContinuityLabAskContextBar({
                     >
                       <span className="size-4 rounded border border-white/12 bg-transparent" />
                       <span className="min-w-0">
-                        <span className="truncate text-sm font-semibold text-white/88">{name}</span>
-                        <span className="ml-2 text-xs font-semibold text-white/38">{owner}</span>
+                        <span className="truncate text-sm font-semibold text-[#F0EFE2]/88">{name}</span>
+                        <span className="ml-2 text-xs font-semibold text-[#F0EFE2]/38">{owner}</span>
                       </span>
                     </button>
                   );
                 })
               ) : (
-                <p className="px-4 py-4 text-sm text-white/45">
+                <p className="px-4 py-4 text-sm text-[#F0EFE2]/45">
                   {displayRepos.length === 0 ? "No repositories selected." : "No repositories match."}
                 </p>
               )}
@@ -282,19 +282,19 @@ export function ContinuityLabAskContextBar({
                 setRepoOpen(false);
                 onOpenRepos();
               }}
-              className="flex h-12 w-full items-center justify-between border-t border-[#303030] px-4 text-left text-sm font-semibold text-white/78 hover:bg-white/[0.04] hover:text-white"
+              className="flex h-12 w-full items-center justify-between border-t border-[#303030] px-4 text-left text-sm font-semibold text-[#F0EFE2]/78 hover:bg-white/[0.04] hover:text-[#F0EFE2]"
             >
               <span className="inline-flex items-center gap-3">
-                <Plus className="size-4 text-white/45" />
+                <Plus className="size-4 text-[#F0EFE2]/45" />
                 Add repositories
               </span>
-              <ExternalLink className="size-4 text-white/38" />
+              <ExternalLink className="size-4 text-[#F0EFE2]/38" />
             </button>
           </div>
         ) : null}
       </div>
 
-      <span className="text-white/20">·</span>
+      <span className="text-[#F0EFE2]/20">·</span>
 
       <div ref={osRef} className="relative">
         <button
@@ -303,13 +303,13 @@ export function ContinuityLabAskContextBar({
             setOsOpen((v) => !v);
             setStarFlyoutOs(null);
           }}
-          className="inline-flex items-center gap-1.5 hover:text-white/80"
+          className="inline-flex items-center gap-1.5 hover:text-[#F0EFE2]/80"
           aria-expanded={osOpen}
           aria-haspopup="listbox"
         >
           <OsBrandIcon os={os} className="size-4" />
-          <span className="font-medium text-white/75">{selectedOs.label}</span>
-          <ChevronDown className="size-3 text-white/40" />
+          <span className="font-medium text-[#F0EFE2]/75">{selectedOs.label}</span>
+          <ChevronDown className="size-3 text-[#F0EFE2]/40" />
         </button>
         {osOpen ? (
           <div
@@ -337,7 +337,7 @@ export function ContinuityLabAskContextBar({
                       onClick={() => selectOs(opt.id)}
                       className={cn(
                         "flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-xs",
-                        isSelected ? "text-white" : "text-white/70",
+                        isSelected ? "text-[#F0EFE2]" : "text-[#F0EFE2]/70",
                       )}
                     >
                       <OsBrandIcon os={opt.id} className="size-4" muted={!isSelected} />
@@ -371,7 +371,7 @@ export function ContinuityLabAskContextBar({
         ) : null}
         {toast ? (
           <div
-            className="absolute bottom-[calc(100%+6px)] left-0 z-50 max-w-[18rem] rounded-md border border-[#2F2F2F] bg-[#141414] px-3 py-2 text-[11px] text-white/85 shadow-xl"
+            className="absolute bottom-[calc(100%+6px)] left-0 z-50 max-w-[18rem] rounded-md border border-[#2F2F2F] bg-[#141414] px-3 py-2 text-[11px] text-[#F0EFE2]/85 shadow-xl"
             role="status"
           >
             {toast}
@@ -379,7 +379,7 @@ export function ContinuityLabAskContextBar({
         ) : null}
       </div>
 
-      <span className="text-white/20">·</span>
+      <span className="text-[#F0EFE2]/20">·</span>
 
       <Link
         href="/continuity-lab/settings/plans"
@@ -388,11 +388,11 @@ export function ContinuityLabAskContextBar({
         Upgrade plan
       </Link>
 
-      <span className="text-white/20">·</span>
+      <span className="text-[#F0EFE2]/20">·</span>
 
       <Link
         href={advancedHref}
-        className="inline-flex items-center gap-0.5 font-medium text-white/70 hover:text-white"
+        className="inline-flex items-center gap-0.5 font-medium text-[#F0EFE2]/70 hover:text-[#F0EFE2]"
       >
         Advanced capabilities
         <ChevronRight className="size-3.5" />

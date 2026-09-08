@@ -44,7 +44,7 @@ function MotionLabel({ top, left, text, isActive }: any) {
 
 function PillBadge({ label, icon }: { label: string, icon: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 text-white rounded-full border border-slate-700 shadow-[0_0_12px_rgba(15,23,42,0.4)] whitespace-nowrap">
+    <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 text-[#F0EFE2] rounded-full border border-slate-700 shadow-[0_0_12px_rgba(15,23,42,0.4)] whitespace-nowrap">
       {icon}
       <span className="text-[11px] font-medium font-mono tracking-tight">{label}</span>
     </div>

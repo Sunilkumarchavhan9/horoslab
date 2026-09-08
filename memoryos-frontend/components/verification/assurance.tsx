@@ -196,7 +196,7 @@ function AssuranceNode({ id, icon, title, detail, isSelected, onClick, giant }: 
          onClick={onClick}
          className={`cursor-pointer transition-all flex flex-col items-center text-center relative z-10 w-[240px] p-4 rounded-md bg-white border ${isSelected ? 'border-[#0f52ff] shadow-[0_8px_30px_rgba(15,82,255,0.15)] ring-2 ring-[#0f52ff]/20 scale-105' : 'border-black/10 shadow-sm hover:border-black/20 hover:shadow-md'}`}
       >
-         <div className={`rounded-md flex items-center justify-center mb-3 ${giant ? 'size-12 bg-[#2da44e] text-white' : 'size-10 bg-[#f6f8fa] text-black/50 border border-black/5'}`}>
+         <div className={`rounded-md flex items-center justify-center mb-3 ${giant ? 'size-12 bg-[#2da44e] text-[#F0EFE2]' : 'size-10 bg-[#f6f8fa] text-black/50 border border-black/5'}`}>
             {icon}
          </div>
          <h4 className={`font-bold leading-tight mb-1 ${giant ? 'text-xl text-[#2da44e]' : 'text-sm text-black'}`}>{title}</h4>

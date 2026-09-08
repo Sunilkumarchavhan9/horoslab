@@ -137,7 +137,7 @@ export function RegistryView({
     setTimeout(() => setCopiedHashId(null), 2000);
   };
 
-  const primaryText = dark ? "text-white" : "text-[#171a17]";
+  const primaryText = dark ? "text-[#F0EFE2]" : "text-[#171a17]";
   const secondaryText = dark ? "text-[#889084]" : "text-[#656d60]";
 
   const getDeploySnippet = (artifact: RegistryArtifact) => {
@@ -217,10 +217,10 @@ spec:
                 "flex items-center gap-1.5 px-3 py-1 border border-dashed transition-colors rounded-xs",
                 filterTab === tab.id
                   ? dark
-                    ? "border-[#555] bg-[#282828] text-white font-bold"
+                    ? "border-[#555] bg-[#282828] text-[#F0EFE2] font-bold"
                     : "border-[#888] bg-[#eaeaea] text-[#111] font-bold"
                   : dark
-                  ? "border-transparent text-[#788274] hover:text-white"
+                  ? "border-transparent text-[#788274] hover:text-[#F0EFE2]"
                   : "border-transparent text-[#687063] hover:text-[#171a17]"
               )}
             >
@@ -338,7 +338,7 @@ spec:
                       e.stopPropagation();
                       handleCopyHash(artifact.integrityHash, artifact.id);
                     }}
-                    className="text-[#666] hover:text-white transition-colors p-1"
+                    className="text-[#666] hover:text-[#F0EFE2] transition-colors p-1"
                     title="Copy SHA256 checksum"
                   >
                     {isCopied ? <Check size={11} className="text-[#75bf00]" /> : <Copy size={11} />}
@@ -372,7 +372,7 @@ spec:
                 <div className="col-span-1 flex items-center justify-end gap-1 font-mono">
                   <button
                     type="button"
-                    className="p-1 text-[#788274] hover:text-white transition-colors"
+                    className="p-1 text-[#788274] hover:text-[#F0EFE2] transition-colors"
                   >
                     {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
@@ -400,7 +400,7 @@ spec:
                             className={cn(
                               "p-2 border border-dashed rounded-xs flex items-center justify-between text-[11px]",
                               ver.isActive
-                                ? dark ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-white" : "border-[#75bf00]/50 bg-[#f5faee] text-[#111]"
+                                ? dark ? "border-[#75bf00]/40 bg-[#75bf00]/10 text-[#F0EFE2]" : "border-[#75bf00]/50 bg-[#f5faee] text-[#111]"
                                 : dark ? "border-[#333] bg-[#111] text-[#777]" : "border-[#ddd] bg-white text-[#666]"
                             )}
                           >
@@ -413,7 +413,7 @@ spec:
                                   </span>
                                 )}
                               </div>
-                              <div className="text-[10px] text-[#888] truncate">{ver.label}</div>
+                              <div className="text-[10px] text-[#C8C7BA] truncate">{ver.label}</div>
                             </div>
                             <span className="text-[10px] text-[#666] shrink-0">{ver.createdAt}</span>
                           </div>
@@ -440,7 +440,7 @@ spec:
                                 "px-2 py-0.5 text-[10px] uppercase border border-dashed rounded-xs transition-colors",
                                 activeDeployTab === tab
                                   ? "border-[#75bf00] bg-[#75bf00]/10 text-[#75bf00] font-bold"
-                                  : "border-transparent text-[#788274] hover:text-white"
+                                  : "border-transparent text-[#788274] hover:text-[#F0EFE2]"
                               )}
                             >
                               {tab}
@@ -458,7 +458,7 @@ spec:
                         <button
                           type="button"
                           onClick={() => handleCopyHash(getDeploySnippet(artifact), artifact.id + "-code")}
-                          className="absolute top-2 right-2 p-1.5 bg-[#222] border border-dashed border-[#444] rounded-xs text-[#888] hover:text-white transition-colors"
+                          className="absolute top-2 right-2 p-1.5 bg-[#222] border border-dashed border-[#444] rounded-xs text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors"
                           title="Copy snippet"
                         >
                           <Copy size={11} />
@@ -477,9 +477,9 @@ spec:
           <div className="py-20 flex flex-col items-center justify-center text-center p-6 space-y-3 font-mono">
             <div className={cn(
               "flex h-10 w-10 items-center justify-center border border-dashed rounded-xs",
-              dark ? "border-[#383838] bg-[#1a1a1a] text-[#888]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#555]"
+              dark ? "border-[#383838] bg-[#1a1a1a] text-[#C8C7BA]" : "border-[#d8ddd3] bg-[#f8faf6] text-[#555]"
             )}>
-              <Database size={18} className="text-[#888]" />
+              <Database size={18} className="text-[#C8C7BA]" />
             </div>
 
             <div className="space-y-1 max-w-sm">
@@ -497,7 +497,7 @@ spec:
               className={cn(
                 "flex items-center gap-1.5 border border-dashed px-3.5 py-1.5 text-xs font-medium transition-colors rounded-xs",
                 dark
-                  ? "border-[#383838] bg-[#222] text-white hover:border-[#75bf00] hover:text-[#75bf00]"
+                  ? "border-[#383838] bg-[#222] text-[#F0EFE2] hover:border-[#75bf00] hover:text-[#75bf00]"
                   : "border-[#d8ddd3] bg-white text-[#171a17] hover:border-black"
               )}
             >

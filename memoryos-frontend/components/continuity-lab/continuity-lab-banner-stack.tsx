@@ -90,7 +90,7 @@ export function ContinuityLabBannerStack({
       <div
         className={cn(
           stickyStripBannerClass,
-          "relative w-full overflow-x-hidden overflow-y-hidden text-[13px] leading-none text-white sm:text-sm",
+          "relative w-full overflow-x-hidden overflow-y-hidden text-[13px] leading-none text-[#F0EFE2] sm:text-sm",
           stripMotionClass,
         )}
         onMouseEnter={() => setPaused(true)}

@@ -131,7 +131,7 @@ export function ContinuityLabOrgSchedulesSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -139,12 +139,12 @@ export function ContinuityLabOrgSchedulesSection() {
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-[#2563EB]/30 bg-[#2563EB]/10 px-3 py-2.5 text-xs text-blue-100/95">
         <p>
-          <span className="font-medium text-white">Schedules is a legacy feature — </span>
+          <span className="font-medium text-[#F0EFE2]">Schedules is a legacy feature — </span>
           migrate to Automations for supported triggers and workflows.
         </p>
         <Link
           href="/continuity-lab/automations"
-          className="inline-flex h-8 shrink-0 items-center rounded-md border border-[#2563EB]/40 bg-[#2563EB]/20 px-3 text-xs font-semibold text-white transition hover:bg-[#2563EB]/30"
+          className="inline-flex h-8 shrink-0 items-center rounded-md border border-[#2563EB]/40 bg-[#2563EB]/20 px-3 text-xs font-semibold text-[#F0EFE2] transition hover:bg-[#2563EB]/30"
         >
           Go to Automations
         </Link>
@@ -184,7 +184,7 @@ export function ContinuityLabOrgSchedulesSection() {
               {["Name", "Type", "Schedule", "Updated"].map((col) => (
                 <th
                   key={col}
-                  className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-white/35"
+                  className="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#F0EFE2]/35"
                 >
                   {col}
                 </th>
@@ -194,14 +194,14 @@ export function ContinuityLabOrgSchedulesSection() {
           <tbody>
             {loading && filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-12 text-center text-sm text-white/45">
+                <td colSpan={4} className="px-4 py-12 text-center text-sm text-[#F0EFE2]/45">
                   Loading schedules…
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-4 py-12 text-center">
-                  <p className="text-sm text-white/45">{emptyMessage}</p>
+                  <p className="text-sm text-[#F0EFE2]/45">{emptyMessage}</p>
                   {searchQuery === "" && scope === "mine" ? (
                     <button
                       type="button"
@@ -212,7 +212,7 @@ export function ContinuityLabOrgSchedulesSection() {
                     </button>
                   ) : null}
                   {searchQuery === "" && scope === "all" ? (
-                    <p className="mt-2 text-xs text-white/40">
+                    <p className="mt-2 text-xs text-[#F0EFE2]/40">
                       Create a schedule to automate recurring sessions
                     </p>
                   ) : null}
@@ -228,21 +228,21 @@ export function ContinuityLabOrgSchedulesSection() {
                   }
                 >
                   <td className="px-4 py-3">
-                    <span className="font-medium text-white">{row.name}</span>
+                    <span className="font-medium text-[#F0EFE2]">{row.name}</span>
                     {currentUserId && row.createdBy === currentUserId ? (
-                      <span className="ml-2 text-[10px] font-medium uppercase tracking-wide text-white/30">
+                      <span className="ml-2 text-[10px] font-medium uppercase tracking-wide text-[#F0EFE2]/30">
                         Yours
                       </span>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3 text-white/60">{scheduleTypeLabel(row.type)}</td>
-                  <td className="px-4 py-3 text-white/60">
+                  <td className="px-4 py-3 text-[#F0EFE2]/60">{scheduleTypeLabel(row.type)}</td>
+                  <td className="px-4 py-3 text-[#F0EFE2]/60">
                     <span className="block">{frequencySummary(row)}</span>
-                    <span className="mt-0.5 block text-[11px] text-white/35">
+                    <span className="mt-0.5 block text-[11px] text-[#F0EFE2]/35">
                       {formatNextRunLabel(row)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-white/50">{formatUpdatedAt(row.updatedAt)}</td>
+                  <td className="px-4 py-3 text-[#F0EFE2]/50">{formatUpdatedAt(row.updatedAt)}</td>
                 </tr>
               ))
             )}

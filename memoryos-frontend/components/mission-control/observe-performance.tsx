@@ -77,7 +77,7 @@ export function ObservePerformance() {
  };
 
  return (
- <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar>
  <div className="flex items-center gap-2">
  <Server className="size-4 text-[#0f52ff]" />
@@ -136,7 +136,7 @@ export function ObservePerformance() {
  </div>
  <div className="flex flex-col">
  <span className="text-[15px] font-bold tracking-tight">{node.name}</span>
- <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40">{node.type}</span>
+ <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40">{node.type}</span>
  </div>
  </div>
  <div className="flex items-center gap-1.5">
@@ -147,8 +147,8 @@ export function ObservePerformance() {
  <div className="flex items-center gap-6 pt-4 border-t border-border dark:border-white/5">
  {Object.entries(node.metrics).map(([key, val]) => (
  <div key={key} className="flex flex-col">
- <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40">{key}</span>
- <span className="text-[14px] font-mono font-bold text-foreground/70 dark:text-white/70">{val}</span>
+ <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40">{key}</span>
+ <span className="text-[14px] font-mono font-bold text-foreground/70 dark:text-[#F0EFE2]/70">{val}</span>
  </div>
  ))}
  </div>
@@ -174,7 +174,7 @@ export function ObservePerformance() {
  <inspectorTarget.icon className="size-8 opacity-60" />
  <div className="flex flex-col">
  <span className="text-[18px] font-bold tracking-tight">{inspectorTarget.name}</span>
- <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40">{inspectorTarget.type} Node</span>
+ <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40">{inspectorTarget.type} Node</span>
  </div>
  </div>
  <div className={cn(
@@ -189,7 +189,7 @@ export function ObservePerformance() {
  <div className="grid grid-cols-2 gap-6">
  {Object.entries(inspectorTarget.metrics).map(([key, val]) => (
  <div key={key} className="p-6 rounded-md border border-border dark:border-white/10 bg-card/50 dark:bg-[#121212]/50">
- <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 block mb-2">{key}</span>
+ <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 block mb-2">{key}</span>
  <span className="text-[24px] font-mono font-bold">{val as string}</span>
  </div>
  ))}
@@ -197,7 +197,7 @@ export function ObservePerformance() {
 
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5">
  <h4 className="text-[13px] font-bold mb-3">System Logs (tail -f)</h4>
- <div className="font-mono text-[11px] text-foreground/60 dark:text-white/60 space-y-2">
+ <div className="font-mono text-[11px] text-foreground/60 dark:text-[#F0EFE2]/60 space-y-2">
  <p>[OK] Daemon running successfully.</p>
  <p>[OK] Memory footprint stabilized at {inspectorTarget.metrics.mem || "nominal levels"}.</p>
  {inspectorTarget.status === "Warning" && (

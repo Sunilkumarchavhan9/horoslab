@@ -132,7 +132,7 @@ export function NavMegaDropdown({
                           <div className="relative z-10">
                             {card.content ? card.content : (
                               <>
-                                <h4 className="flex items-center gap-2 text-[15px] font-bold text-white">
+                                <h4 className="flex items-center gap-2 text-[15px] font-bold text-[#F0EFE2]">
                                   {card.title}
                                   <ArrowRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-1" />
                                 </h4>
@@ -167,11 +167,11 @@ export function NavMegaDropdown({
                           <motion.div key={itemIdx} variants={prefersReducedMotion ? undefined : STAGGER_ITEM}>
                             <Link href={item.href} className="group flex items-start gap-4 rounded-md p-3 transition-colors hover:bg-slate-50/80">
                               {item.icon ? (
-                                <div className={`mt-0.5 flex shrink-0 h-10 w-10 items-center justify-center rounded-[6px] bg-gradient-to-br text-white shadow-sm transition-transform group-hover:scale-105 border ${iconClasses}`}>
+                                <div className={`mt-0.5 flex shrink-0 h-10 w-10 items-center justify-center rounded-[6px] bg-gradient-to-br text-[#F0EFE2] shadow-sm transition-transform group-hover:scale-105 border ${iconClasses}`}>
                                   {item.icon}
                                 </div>
                               ) : (
-                                  <div className="mt-0.5 flex shrink-0 h-10 w-10 items-center justify-center rounded-[6px] bg-slate-100 text-slate-400 group-hover:bg-[#2732fc] group-hover:text-white transition-all">
+                                  <div className="mt-0.5 flex shrink-0 h-10 w-10 items-center justify-center rounded-[6px] bg-slate-100 text-slate-400 group-hover:bg-[#2732fc] group-hover:text-[#F0EFE2] transition-all">
                                       <div className="h-2 w-2 rounded-full bg-current" />
                                   </div>
                               )}
@@ -208,7 +208,7 @@ export function NavMegaDropdown({
                           <div className="relative z-10">
                             {card.content ? card.content : (
                               <>
-                                <h4 className="flex items-center gap-2 text-[15px] font-bold text-white">
+                                <h4 className="flex items-center gap-2 text-[15px] font-bold text-[#F0EFE2]">
                                   {card.title}
                                   <ArrowRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-1" />
                                 </h4>

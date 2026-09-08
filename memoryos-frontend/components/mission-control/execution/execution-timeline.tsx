@@ -22,7 +22,7 @@ export function ExecutionTimeline() {
  const togglePlayback = () => setIsPlaying(!isPlaying);
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-white font-sans overflow-hidden relative">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#0a0a0a] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden relative">
  <CommandBar className="border-b-0" />
 
  {/* Main Graph Area (Replay visualizer) */}
@@ -36,7 +36,7 @@ export function ExecutionTimeline() {
  {/* Central Visualization (Mock) */}
  <div className="flex-1 flex items-center justify-center p-8 mt-12">
  <div className="flex flex-col items-center gap-12">
- <div className="text-[48px] font-mono font-bold text-foreground/10 dark:text-white/10 tracking-widest transition-all">
+ <div className="text-[48px] font-mono font-bold text-foreground/10 dark:text-[#F0EFE2]/10 tracking-widest transition-all">
  {MOCK_REPLAY_EVENTS[activeEventIndex].time}
  </div>
  
@@ -47,7 +47,7 @@ export function ExecutionTimeline() {
  "size-16 rounded-md flex items-center justify-center border transition-all duration-500",
  i < activeEventIndex ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 scale-95 opacity-50" :
  i === activeEventIndex ? "bg-[#0f52ff]/10 border-[#0f52ff]/50 text-[#0f52ff] shadow-[0_0_30px_rgba(15,82,255,0.2)] scale-110 ring-4 ring-[#0f52ff]/10" :
- "bg-card dark:bg-[#121212] border-border dark:border-white/10 text-foreground/30 dark:text-white/30 scale-90 opacity-30"
+ "bg-card dark:bg-[#121212] border-border dark:border-white/10 text-foreground/30 dark:text-[#F0EFE2]/30 scale-90 opacity-30"
  )}>
  {i === 0 && <Zap className="size-6" />}
  {i === 1 && <Activity className="size-6" />}
@@ -73,16 +73,16 @@ export function ExecutionTimeline() {
  {/* Playback Controls & Timeline Scrubber */}
  <div className="absolute bottom-0 left-0 w-full h-[140px] bg-card/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-t border-border dark:border-white/10 p-6 flex flex-col gap-6">
  <div className="flex items-center gap-6">
- <button className="p-2 rounded-full bg-muted dark:bg-white/5 hover:bg-black/10 dark:hover:bg-card/10 transition-colors text-foreground dark:text-white">
+ <button className="p-2 rounded-full bg-muted dark:bg-white/5 hover:bg-black/10 dark:hover:bg-card/10 transition-colors text-foreground dark:text-[#F0EFE2]">
  <Rewind className="size-4" />
  </button>
  <button 
  onClick={togglePlayback}
- className="size-12 rounded-full bg-[#0f52ff] hover:bg-[#0042e6] text-white flex items-center justify-center transition-colors "
+ className="size-12 rounded-full bg-[#0f52ff] hover:bg-[#0042e6] text-[#F0EFE2] flex items-center justify-center transition-colors "
  >
  {isPlaying ? <Pause className="size-5" /> : <Play className="size-5 ml-1" />}
  </button>
- <button className="p-2 rounded-full bg-muted dark:bg-white/5 hover:bg-black/10 dark:hover:bg-card/10 transition-colors text-foreground dark:text-white">
+ <button className="p-2 rounded-full bg-muted dark:bg-white/5 hover:bg-black/10 dark:hover:bg-card/10 transition-colors text-foreground dark:text-[#F0EFE2]">
  <FastForward className="size-4" />
  </button>
 
@@ -115,7 +115,7 @@ export function ExecutionTimeline() {
  )} />
  <span className={cn(
  "absolute top-4 text-[10px] font-mono whitespace-nowrap transition-all duration-300",
- isActive ? "text-[#0f52ff] font-bold opacity-100" : "text-foreground/40 dark:text-white/40 opacity-0 group-hover:opacity-100"
+ isActive ? "text-[#0f52ff] font-bold opacity-100" : "text-foreground/40 dark:text-[#F0EFE2]/40 opacity-0 group-hover:opacity-100"
  )}>
  {event.time}
  </span>

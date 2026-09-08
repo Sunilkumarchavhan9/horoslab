@@ -30,7 +30,7 @@ export function VerificationRuns() {
               <p className="text-sm text-black/50 mt-1">Every verification executed by Epoch.</p>
             </div>
             <div className="flex items-center gap-3">
-               <Button className="bg-black hover:bg-black/80 text-white rounded-md shadow-sm h-9 px-4 text-sm font-medium">
+               <Button className="bg-black hover:bg-black/80 text-[#F0EFE2] rounded-md shadow-sm h-9 px-4 text-sm font-medium">
                   Run Verification
                </Button>
             </div>
@@ -169,7 +169,7 @@ function RunCard({ run, isSelected, onClick }: any) {
       className={`group rounded-md border bg-white p-5 cursor-pointer transition-all flex items-center gap-6 ${isSelected ? 'border-[#0f52ff] shadow-[0_8px_30px_rgba(15,82,255,0.08)] ring-1 ring-[#0f52ff]' : 'border-black/10 shadow-sm hover:border-black/20 hover:shadow-md'}`}
     >
       <div className="shrink-0 flex items-center justify-center">
-         <div className={`size-12 rounded-full border-4 flex items-center justify-center ${run.status === 'PASS' ? 'border-[#e6ffec] bg-[#2da44e] text-white' : run.status === 'FAIL' ? 'border-[#ffebe9] bg-[#cf222e] text-white' : 'border-[#eef3ff] bg-[#0f52ff] text-white'}`}>
+         <div className={`size-12 rounded-full border-4 flex items-center justify-center ${run.status === 'PASS' ? 'border-[#e6ffec] bg-[#2da44e] text-[#F0EFE2]' : run.status === 'FAIL' ? 'border-[#ffebe9] bg-[#cf222e] text-[#F0EFE2]' : 'border-[#eef3ff] bg-[#0f52ff] text-[#F0EFE2]'}`}>
             {run.status === 'PASS' ? <CheckCircle2 className="size-6" /> : run.status === 'FAIL' ? <XCircle className="size-6" /> : <Activity className="size-6 animate-pulse" />}
          </div>
       </div>
@@ -218,14 +218,14 @@ function PipelineNode({ icon, label, sub, delay, status, highlight, pulse, final
          initial={{ opacity: 0, y: 10 }}
          animate={{ opacity: 1, y: 0 }}
          transition={{ delay, duration: 0.4 }}
-         className={`w-full max-w-[280px] p-3 rounded-md border flex items-center gap-3 relative z-10 transition-colors ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-white shadow-lg' : final && status === 'FAIL' ? 'bg-[#cf222e] border-[#cf222e] text-white shadow-lg' : final && status === 'PASS' ? 'bg-[#2da44e] border-[#2da44e] text-white shadow-lg' : 'bg-white border-black/10 shadow-sm'}`}
+         className={`w-full max-w-[280px] p-3 rounded-md border flex items-center gap-3 relative z-10 transition-colors ${highlight ? 'bg-[#0f52ff] border-[#0f52ff] text-[#F0EFE2] shadow-lg' : final && status === 'FAIL' ? 'bg-[#cf222e] border-[#cf222e] text-[#F0EFE2] shadow-lg' : final && status === 'PASS' ? 'bg-[#2da44e] border-[#2da44e] text-[#F0EFE2] shadow-lg' : 'bg-white border-black/10 shadow-sm'}`}
       >
          <div className={`size-8 rounded-md flex items-center justify-center shrink-0 ${highlight || final ? 'bg-white/20' : 'bg-black/5'}`}>
             <div className={pulse ? 'animate-pulse' : ''}>{icon}</div>
          </div>
          <div>
-            <div className={`text-sm font-semibold ${highlight || final ? 'text-white' : 'text-black'}`}>{label}</div>
-            <div className={`text-xs ${highlight || final ? 'text-white/80' : 'text-black/50'}`}>{sub}</div>
+            <div className={`text-sm font-semibold ${highlight || final ? 'text-[#F0EFE2]' : 'text-black'}`}>{label}</div>
+            <div className={`text-xs ${highlight || final ? 'text-[#F0EFE2]/80' : 'text-black/50'}`}>{sub}</div>
          </div>
       </motion.div>
    )

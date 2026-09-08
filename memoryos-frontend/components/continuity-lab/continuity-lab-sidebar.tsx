@@ -115,7 +115,7 @@ function RecentSectionShell({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0">
-        <p className="px-0.5 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">
+        <p className="px-0.5 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/40">
           {title}
         </p>
         {headerExtra}
@@ -136,7 +136,7 @@ function RecentSearchInput({
 }) {
   return (
     <div className="relative mb-2">
-      <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3 -translate-y-1/2 text-white/35" />
+      <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3 -translate-y-1/2 text-[#F0EFE2]/35" />
       <input
         type="search"
         value={value}
@@ -342,7 +342,7 @@ export function ContinuityLabSidebar({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.15 }}
           >
-            <MemoryOSFullLogo className="h-6 w-auto text-white" iconColor="#d4af37" textColor="#ffffff" />
+            <MemoryOSFullLogo className="h-6 w-auto text-[#F0EFE2]" iconColor="#d4af37" textColor="#ffffff" />
           </motion.div>
         )}
         {onToggleCollapse && !mobile ? (
@@ -350,7 +350,7 @@ export function ContinuityLabSidebar({
             type="button"
             onClick={onToggleCollapse}
             className={cn(
-              "inline-flex size-8 items-center justify-center rounded-md text-white/40 transition hover:bg-white/[0.06] hover:text-white/70",
+              "inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/40 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/70",
               !collapsed && "shrink-0",
             )}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -407,7 +407,7 @@ export function ContinuityLabSidebar({
               }
             >
               {filteredRecentPrs.length === 0 ? (
-                <p className="px-0.5 text-[11px] leading-relaxed text-white/45">
+                <p className="px-0.5 text-[11px] leading-relaxed text-[#F0EFE2]/45">
                   No pull requests
                   {recentPrs.length === 0 ? (
                     <>
@@ -432,12 +432,12 @@ export function ContinuityLabSidebar({
                       <Link
                         href={`/continuity-lab/review?pr=${encodeURIComponent(entry.url)}`}
                         onClick={() => mobile && setSidebarOpen(false)}
-                        className="block rounded-md px-2 py-1.5 transition hover:bg-white/[0.04] hover:text-white"
+                        className="block rounded-md px-2 py-1.5 transition hover:bg-white/[0.04] hover:text-[#F0EFE2]"
                       >
-                        <p className="truncate font-mono text-xs font-medium text-white/80">
+                        <p className="truncate font-mono text-xs font-medium text-[#F0EFE2]/80">
                           {entry.fullName}
                         </p>
-                        <p className="mt-0.5 truncate text-[10px] text-white/40">
+                        <p className="mt-0.5 truncate text-[10px] text-[#F0EFE2]/40">
                           {formatPrLabel(entry)}
                         </p>
                       </Link>
@@ -459,7 +459,7 @@ export function ContinuityLabSidebar({
               }
             >
               {filteredRecentAutomations.length === 0 ? (
-                <p className="px-0.5 text-[11px] leading-relaxed text-white/45">
+                <p className="px-0.5 text-[11px] leading-relaxed text-[#F0EFE2]/45">
                   No automations
                   {recentAutomations.length === 0 ? (
                     <>
@@ -483,9 +483,9 @@ export function ContinuityLabSidebar({
                       <Link
                         href={`/continuity-lab/automations/${encodeURIComponent(entry.id)}/edit`}
                         onClick={() => mobile && setSidebarOpen(false)}
-                        className="block rounded-md px-2 py-1.5 transition hover:bg-white/[0.04] hover:text-white"
+                        className="block rounded-md px-2 py-1.5 transition hover:bg-white/[0.04] hover:text-[#F0EFE2]"
                       >
-                        <p className="truncate text-xs font-medium text-white/80">
+                        <p className="truncate text-xs font-medium text-[#F0EFE2]/80">
                           {entry.name}
                         </p>
                       </Link>
@@ -500,7 +500,7 @@ export function ContinuityLabSidebar({
             <RecentSectionShell title="Recent repos">
               {recentWikiRepos.length === 0 &&
               !connector.payload.github.repos.length ? (
-                <p className="px-0.5 text-[11px] leading-relaxed text-white/45">
+                <p className="px-0.5 text-[11px] leading-relaxed text-[#F0EFE2]/45">
                   Connect GitHub and open a repo wiki.
                 </p>
               ) : (
@@ -522,7 +522,7 @@ export function ContinuityLabSidebar({
                             "block px-2 py-1.5 transition",
                             pathname.includes(pid)
                               ? labNavActive
-                              : "text-white/60 hover:bg-white/[0.04] hover:text-white",
+                              : "text-[#F0EFE2]/60 hover:bg-white/[0.04] hover:text-[#F0EFE2]",
                           )}
                         >
                           <p className="truncate font-mono text-xs font-medium">
@@ -573,7 +573,7 @@ export function ContinuityLabSidebar({
           )}
         >
           <SidebarNavIcon>
-            <Zap className="size-4 text-white/50" />
+            <Zap className="size-4 text-[#F0EFE2]/50" />
           </SidebarNavIcon>
           {!collapsed && <span>Upgrade</span>}
         </Link>
@@ -609,7 +609,7 @@ export function ContinuityLabSidebar({
           {!collapsed && (
             <span className="flex flex-1 items-center justify-between gap-2">
               Company Model
-              <span className="text-[9px] uppercase tracking-wide text-white/40">
+              <span className="text-[9px] uppercase tracking-wide text-[#F0EFE2]/40">
                 {modelReady ? "Ready" : "Set up"}
               </span>
             </span>

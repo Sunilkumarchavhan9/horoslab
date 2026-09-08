@@ -234,14 +234,14 @@ function WaveGraph({
           </div>
 
           {/* Dark Tooltip Card with Vertical Color Bars and Model Logos */}
-          <div className="bg-[#0e0e0e] border border-[#282828] rounded-[6px] p-2 shadow-2xl text-[11px] font-sans min-w-[200px] space-y-1.5 text-white">
+          <div className="bg-[#0e0e0e] border border-[#282828] rounded-[6px] p-2 shadow-2xl text-[11px] font-sans min-w-[200px] space-y-1.5 text-[#F0EFE2]">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-1.5 truncate">
                 <span className="w-1 h-3 rounded-full shrink-0" style={{ backgroundColor: color1 }} />
                 {icon1 && <span className="shrink-0 flex items-center">{icon1}</span>}
                 <span className="text-[#a0a89d] text-[11px] truncate">{label1}</span>
               </div>
-              <span className="font-bold font-mono text-white text-[11px] shrink-0">
+              <span className="font-bold font-mono text-[#F0EFE2] text-[11px] shrink-0">
                 {val1}
                 {unit1}
               </span>
@@ -254,7 +254,7 @@ function WaveGraph({
                   {icon2 && <span className="shrink-0 flex items-center">{icon2}</span>}
                   <span className="text-[#a0a89d] text-[11px] truncate">{label2}</span>
                 </div>
-                <span className="font-bold font-mono text-white text-[11px] shrink-0">
+                <span className="font-bold font-mono text-[#F0EFE2] text-[11px] shrink-0">
                   {val2}
                   {unit2}
                 </span>
@@ -268,7 +268,7 @@ function WaveGraph({
                   {icon3 && <span className="shrink-0 flex items-center">{icon3}</span>}
                   <span className="text-[#a0a89d] text-[11px] truncate">{label3}</span>
                 </div>
-                <span className="font-bold font-mono text-white text-[11px] shrink-0">
+                <span className="font-bold font-mono text-[#F0EFE2] text-[11px] shrink-0">
                   {points3[safeIdx]}
                   {unit3}
                 </span>
@@ -325,7 +325,7 @@ export function UsageAnalyticsView({
       {/* Top Header Matching Screenshot 1 */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#282828] pb-4">
         <div>
-          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-white">
+          <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
             <span>Usage</span>
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
               Analytics
@@ -339,7 +339,7 @@ export function UsageAnalyticsView({
         <button
           type="button"
           onClick={onNavigateToModelApis}
-          className="flex items-center gap-1.5 border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-white hover:border-[#75bf00] px-3 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono cursor-pointer"
+          className="flex items-center gap-1.5 border border-[#383838] bg-[#202020] text-[#a0a89d] hover:text-[#F0EFE2] hover:border-[#75bf00] px-3 py-1.5 text-xs font-medium transition-colors rounded-xs font-mono cursor-pointer"
         >
           <span>Model APIs</span>
         </button>
@@ -354,7 +354,7 @@ export function UsageAnalyticsView({
             "flex items-center gap-2 pb-2.5 transition-colors relative font-semibold cursor-pointer",
             subTab === "model_apis"
               ? "text-[#75bf00]"
-              : "text-[#788274] hover:text-white"
+              : "text-[#788274] hover:text-[#F0EFE2]"
           )}
         >
           <BarChart3 size={14} />
@@ -371,7 +371,7 @@ export function UsageAnalyticsView({
             "flex items-center gap-2 pb-2.5 transition-colors relative font-semibold cursor-pointer",
             subTab === "deployments"
               ? "text-[#75bf00]"
-              : "text-[#788274] hover:text-white"
+              : "text-[#788274] hover:text-[#F0EFE2]"
           )}
         >
           <Layers size={14} />
@@ -409,7 +409,7 @@ export function UsageAnalyticsView({
                 <button
                   type="button"
                   onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-                  className="flex items-center gap-2 border border-dashed border-[#383838] bg-[#1a1a1a] text-white px-2.5 py-1 text-xs rounded-xs hover:border-[#555] transition-colors cursor-pointer"
+                  className="flex items-center gap-2 border border-dashed border-[#383838] bg-[#1a1a1a] text-[#F0EFE2] px-2.5 py-1 text-xs rounded-xs hover:border-[#555] transition-colors cursor-pointer"
                 >
                   <span className="text-[#788274]">Model</span>
                   <span className="font-semibold">{selectedModel}</span>
@@ -417,7 +417,7 @@ export function UsageAnalyticsView({
                 </button>
 
                 {modelDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-64 border border-dashed border-[#383838] bg-[#181818] text-white shadow-2xl p-1 space-y-0.5 z-50 rounded-xs text-xs">
+                  <div className="absolute right-0 top-full mt-1 w-64 border border-dashed border-[#383838] bg-[#181818] text-[#F0EFE2] shadow-2xl p-1 space-y-0.5 z-50 rounded-xs text-xs">
                     {modelsList.map((m) => (
                       <button
                         key={m.name}
@@ -455,8 +455,8 @@ export function UsageAnalyticsView({
                     className={cn(
                       "px-2.5 py-0.5 rounded-xs transition-colors text-[11px] cursor-pointer",
                       timeRange === t.id
-                        ? "bg-[#282828] text-white font-bold"
-                        : "text-[#788274] hover:text-white"
+                        ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                        : "text-[#788274] hover:text-[#F0EFE2]"
                     )}
                   >
                     {t.label}
@@ -472,8 +472,8 @@ export function UsageAnalyticsView({
                   className={cn(
                     "px-2 py-0.5 rounded-xs transition-colors text-[11px] cursor-pointer",
                     layoutMode === "2_col"
-                      ? "bg-[#282828] text-white font-bold"
-                      : "text-[#788274] hover:text-white"
+                      ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                      : "text-[#788274] hover:text-[#F0EFE2]"
                   )}
                 >
                   2 per row
@@ -484,8 +484,8 @@ export function UsageAnalyticsView({
                   className={cn(
                     "px-2 py-0.5 rounded-xs transition-colors text-[11px] cursor-pointer",
                     layoutMode === "1_col"
-                      ? "bg-[#282828] text-white font-bold"
-                      : "text-[#788274] hover:text-white"
+                      ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                      : "text-[#788274] hover:text-[#F0EFE2]"
                   )}
                 >
                   1 per row
@@ -498,7 +498,7 @@ export function UsageAnalyticsView({
                   setTimeRange("7d");
                   setLayoutMode("2_col");
                 }}
-                className="flex items-center gap-1 text-[11px] text-[#788274] hover:text-white transition-colors px-1 cursor-pointer"
+                className="flex items-center gap-1 text-[11px] text-[#788274] hover:text-[#F0EFE2] transition-colors px-1 cursor-pointer"
               >
                 <RotateCcw size={10} />
                 <span>Reset layout</span>
@@ -510,22 +510,22 @@ export function UsageAnalyticsView({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 border border-dashed border-[#282828] bg-[#141414] rounded-xs text-xs font-mono">
             <div className="flex items-center justify-between px-2">
               <span className="text-[11px] text-[#788274]">SPEND</span>
-              <span className="font-bold text-xs text-white">$482.10</span>
+              <span className="font-bold text-xs text-[#F0EFE2]">$482.10</span>
             </div>
 
             <div className="flex items-center justify-between px-2 border-l border-dashed border-[#282828]">
               <span className="text-[11px] text-[#788274]">REQUESTS</span>
-              <span className="font-bold text-xs text-white">412,890</span>
+              <span className="font-bold text-xs text-[#F0EFE2]">412,890</span>
             </div>
 
             <div className="flex items-center justify-between px-2 border-l border-dashed border-[#282828]">
               <span className="text-[11px] text-[#788274]">INPUT TOKENS</span>
-              <span className="font-bold text-xs text-white">5.2M</span>
+              <span className="font-bold text-xs text-[#F0EFE2]">5.2M</span>
             </div>
 
             <div className="flex items-center justify-between px-2 border-l border-dashed border-[#282828]">
               <span className="text-[11px] text-[#788274]">OUTPUT TOKENS</span>
-              <span className="font-bold text-xs text-white">1.2M</span>
+              <span className="font-bold text-xs text-[#F0EFE2]">1.2M</span>
             </div>
           </div>
 
@@ -540,7 +540,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Request volume</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Request volume</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">{selectedModel}</div>
@@ -555,7 +555,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">412,890</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">412,890</div>
                 <div className="flex items-center gap-3 text-[11px] mt-0.5">
                   <span className="flex items-center gap-1 text-[#86dc00]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#86dc00]" />
@@ -601,7 +601,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Input tokens</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Input tokens</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">{selectedModel}</div>
@@ -616,7 +616,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">5,214,800</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">5,214,800</div>
                 <div className="flex items-center gap-1.5 text-[11px] text-[#60a5fa] mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#60a5fa]" />
                   <span>Input tokens</span>
@@ -650,7 +650,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Output tokens</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Output tokens</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">{selectedModel}</div>
@@ -665,7 +665,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">1,248,300</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">1,248,300</div>
                 <div className="flex items-center gap-1.5 text-[11px] text-[#86dc00] mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#86dc00]" />
                   <span>Output tokens</span>
@@ -699,7 +699,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Request outcomes</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Request outcomes</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">{selectedModel}</div>
@@ -714,7 +714,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">99.88%</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">99.88%</div>
                 <div className="flex items-center gap-3 text-[11px] mt-0.5">
                   <span className="flex items-center gap-1 text-[#86dc00]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#86dc00]" />
@@ -765,7 +765,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Requests by model</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Requests by model</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">7 days</div>
@@ -780,7 +780,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">1,219,490</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">1,219,490</div>
                 <div className="text-[11px] text-[#788274] mt-0.5">Across 5 hosted models</div>
               </div>
 
@@ -816,7 +816,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Tokens by model</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Tokens by model</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">7 days</div>
@@ -831,7 +831,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">14,820,000</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">14,820,000</div>
                 <div className="flex items-center gap-3 text-[11px] mt-0.5">
                   <span className="flex items-center gap-1 text-[#60a5fa]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#60a5fa]" />
@@ -876,7 +876,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Requests by API key</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Requests by API key</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">7 days</div>
@@ -891,7 +891,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">412,890</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">412,890</div>
                 <div className="text-[11px] text-[#788274] mt-0.5">key_prod_runtime_9a4f (Primary)</div>
               </div>
 
@@ -925,7 +925,7 @@ export function UsageAnalyticsView({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-white text-xs">Tokens by API key</span>
+                      <span className="font-bold text-[#F0EFE2] text-xs">Tokens by API key</span>
                       <Info size={11} className="text-[#666]" />
                     </div>
                     <div className="text-[11px] text-[#788274] mt-0.5">7 days</div>
@@ -940,7 +940,7 @@ export function UsageAnalyticsView({
                   </div>
                 </div>
 
-                <div className="text-base font-bold text-white mt-2">6,463,100</div>
+                <div className="text-base font-bold text-[#F0EFE2] mt-2">6,463,100</div>
                 <div className="flex items-center gap-3 text-[11px] mt-0.5">
                   <span className="flex items-center gap-1 text-[#60a5fa]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#60a5fa]" />
@@ -984,7 +984,7 @@ export function UsageAnalyticsView({
       {subTab === "deployments" && (
         <div className="space-y-6 font-mono text-xs animate-in fade-in duration-150">
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-dashed border-[#282828] pb-2">
-            <span className="text-white font-bold font-sans">Active Deployed Pipeline Route Metrics</span>
+            <span className="text-[#F0EFE2] font-bold font-sans">Active Deployed Pipeline Route Metrics</span>
             <div className="flex items-center gap-3">
               <div className="flex items-center border border-dashed border-[#383838] bg-[#181818] p-0.5 rounded-xs font-mono text-[11px]">
                 <button
@@ -994,7 +994,7 @@ export function UsageAnalyticsView({
                     "px-2.5 py-0.5 rounded-xs transition-colors cursor-pointer",
                     deploymentsState === "active"
                       ? "bg-[#282828] text-[#75bf00] font-bold"
-                      : "text-[#788274] hover:text-white"
+                      : "text-[#788274] hover:text-[#F0EFE2]"
                   )}
                 >
                   Active Routes (2)
@@ -1006,7 +1006,7 @@ export function UsageAnalyticsView({
                     "px-2.5 py-0.5 rounded-xs transition-colors cursor-pointer",
                     deploymentsState === "empty"
                       ? "bg-[#282828] text-[#75bf00] font-bold"
-                      : "text-[#788274] hover:text-white"
+                      : "text-[#788274] hover:text-[#F0EFE2]"
                   )}
                 >
                   Empty State
@@ -1019,17 +1019,17 @@ export function UsageAnalyticsView({
           {deploymentsState === "empty" ? (
             /* IMAGE 2 UI: Empty Deployments State matching Screenshot 2 */
             <div className="flex flex-col items-center justify-center min-h-[380px] border border-dashed border-[#282828] bg-[#141414] rounded-xs p-12 text-center font-sans">
-              <div className="w-12 h-12 rounded-xs border border-dashed border-[#383838] bg-[#1d1d1d] flex items-center justify-center text-[#888] mb-4 shadow-md">
-                <Rocket size={22} className="text-[#888]" />
+              <div className="w-12 h-12 rounded-xs border border-dashed border-[#383838] bg-[#1d1d1d] flex items-center justify-center text-[#C8C7BA] mb-4 shadow-md">
+                <Rocket size={22} className="text-[#C8C7BA]" />
               </div>
-              <h3 className="text-sm font-semibold text-white">No deployments yet</h3>
+              <h3 className="text-sm font-semibold text-[#F0EFE2]">No deployments yet</h3>
               <p className="text-xs text-[#788274] mt-1 max-w-sm">
                 Create a pipeline deployment to begin measuring deployment analytics.
               </p>
               <button
                 type="button"
                 onClick={onNavigateToPipelines}
-                className="mt-5 border border-dashed border-[#444] bg-[#222] hover:bg-[#2e2e2e] hover:border-[#75bf00] text-white text-xs font-mono px-4 py-2 rounded-xs transition-colors cursor-pointer shadow-sm"
+                className="mt-5 border border-dashed border-[#444] bg-[#222] hover:bg-[#2e2e2e] hover:border-[#75bf00] text-[#F0EFE2] text-xs font-mono px-4 py-2 rounded-xs transition-colors cursor-pointer shadow-sm"
               >
                 Go to pipelines
               </button>
@@ -1042,8 +1042,8 @@ export function UsageAnalyticsView({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#75bf00]" />
-                    <span className="text-white font-bold font-sans">prod-fast-rag-v2</span>
-                    <span className="text-[10px] text-[#888] font-mono">api.epoch.run/v1/pipelines/prod-fast-rag-v2</span>
+                    <span className="text-[#F0EFE2] font-bold font-sans">prod-fast-rag-v2</span>
+                    <span className="text-[10px] text-[#C8C7BA] font-mono">api.epoch.run/v1/pipelines/prod-fast-rag-v2</span>
                   </div>
                   <span className="bg-[#75bf00]/10 text-[#75bf00] border border-dashed border-[#75bf00]/40 px-2 py-0.5 text-[10px] rounded-xs font-bold">
                     ACTIVE
@@ -1053,7 +1053,7 @@ export function UsageAnalyticsView({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1">
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">24H REQUESTS</div>
-                    <div className="text-sm font-bold text-white mt-0.5">540,210</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">540,210</div>
                   </div>
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">P99 LATENCY</div>
@@ -1061,7 +1061,7 @@ export function UsageAnalyticsView({
                   </div>
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">COST RATE</div>
-                    <div className="text-sm font-bold text-white mt-0.5">$0.14 / 1M</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">$0.14 / 1M</div>
                   </div>
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">CACHE HIT RATE</div>
@@ -1088,8 +1088,8 @@ export function UsageAnalyticsView({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#f59e0b]" />
-                    <span className="text-white font-bold font-sans">code-generation-ensemble</span>
-                    <span className="text-[10px] text-[#888] font-mono">api.epoch.run/v1/pipelines/code-generation-ensemble</span>
+                    <span className="text-[#F0EFE2] font-bold font-sans">code-generation-ensemble</span>
+                    <span className="text-[10px] text-[#C8C7BA] font-mono">api.epoch.run/v1/pipelines/code-generation-ensemble</span>
                   </div>
                   <span className="bg-[#f59e0b]/10 text-[#f59e0b] border border-dashed border-[#f59e0b]/40 px-2 py-0.5 text-[10px] rounded-xs font-bold">
                     CANARY (90/10 SPLIT)
@@ -1099,7 +1099,7 @@ export function UsageAnalyticsView({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1">
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">24H REQUESTS</div>
-                    <div className="text-sm font-bold text-white mt-0.5">412,890</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">412,890</div>
                   </div>
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">P99 LATENCY</div>
@@ -1107,7 +1107,7 @@ export function UsageAnalyticsView({
                   </div>
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">COST RATE</div>
-                    <div className="text-sm font-bold text-white mt-0.5">$0.18 / 1M</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">$0.18 / 1M</div>
                   </div>
                   <div className="p-2.5 bg-[#181818] border border-dashed border-[#282828] rounded-xs">
                     <div className="text-[10px] text-[#777]">CANARY ACCURACY</div>

@@ -85,7 +85,7 @@ export function CompanyModelForm({ compact = false, onSaved }: CompanyModelFormP
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 py-8 text-sm text-white/50">
+      <div className="flex items-center gap-2 py-8 text-sm text-[#F0EFE2]/50">
         <Loader2 className="size-4 animate-spin" />
         Loading company model…
       </div>
@@ -121,9 +121,9 @@ export function CompanyModelForm({ compact = false, onSaved }: CompanyModelFormP
       </div>
 
       {!compact ? (
-        <p className="text-sm leading-relaxed text-white/55">
+        <p className="text-sm leading-relaxed text-[#F0EFE2]/55">
           Paste your OpenRouter key first, then pick a model. One key unlocks free and premium
-          models — no repo <code className="text-white/75">.env</code> edits required.
+          models — no repo <code className="text-[#F0EFE2]/75">.env</code> edits required.
         </p>
       ) : null}
 
@@ -134,7 +134,7 @@ export function CompanyModelForm({ compact = false, onSaved }: CompanyModelFormP
       ) : null}
 
       <label className="grid gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/50">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/50">
           OpenRouter API key
         </span>
         <input
@@ -146,18 +146,18 @@ export function CompanyModelForm({ compact = false, onSaved }: CompanyModelFormP
               ? "Saved. Paste a new key to rotate."
               : "Paste key from openrouter.ai/keys"
           }
-          className="h-10 border border-[#3A3A3A] bg-[#050505] px-3 text-sm text-white outline-none focus:border-[#6366F1]"
+          className="h-10 border border-[#3A3A3A] bg-[#050505] px-3 text-sm text-[#F0EFE2] outline-none focus:border-[#6366F1]"
         />
       </label>
 
       <label className="grid gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/50">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/50">
           Model
         </span>
         <select
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          className="h-10 border border-[#3A3A3A] bg-[#050505] px-3 text-sm text-white outline-none focus:border-[#6366F1]"
+          className="h-10 border border-[#3A3A3A] bg-[#050505] px-3 text-sm text-[#F0EFE2] outline-none focus:border-[#6366F1]"
         >
           {OPENROUTER_MODEL_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -168,18 +168,18 @@ export function CompanyModelForm({ compact = false, onSaved }: CompanyModelFormP
       </label>
 
       <label className="grid gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/50">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/50">
           Custom model id
         </span>
         <input
           value={customModel}
           onChange={(e) => setCustomModel(e.target.value)}
           placeholder="pareto-code or google/gemma-2-9b-it:free"
-          className="h-10 border border-[#3A3A3A] bg-[#050505] px-3 text-sm text-white outline-none focus:border-[#6366F1]"
+          className="h-10 border border-[#3A3A3A] bg-[#050505] px-3 text-sm text-[#F0EFE2] outline-none focus:border-[#6366F1]"
         />
-        <span className="text-[11px] text-white/40">
+        <span className="text-[11px] text-[#F0EFE2]/40">
           Optional — overrides the preset above. Use OpenRouter ids like{" "}
-          <code className="text-white/55">google/gemma-2-9b-it:free</code>.
+          <code className="text-[#F0EFE2]/55">google/gemma-2-9b-it:free</code>.
         </span>
       </label>
 
@@ -197,7 +197,7 @@ export function CompanyModelForm({ compact = false, onSaved }: CompanyModelFormP
           (!snapshot?.apiKeySet && !apiKey.trim())
         }
         onClick={() => void handleSave()}
-        className="inline-flex h-10 items-center justify-center gap-2 bg-[#4338CA] px-4 text-sm font-semibold text-white hover:bg-[#4f46e5] disabled:opacity-40"
+        className="inline-flex h-10 items-center justify-center gap-2 bg-[#4338CA] px-4 text-sm font-semibold text-[#F0EFE2] hover:bg-[#4f46e5] disabled:opacity-40"
       >
         {saving ? (
           <>

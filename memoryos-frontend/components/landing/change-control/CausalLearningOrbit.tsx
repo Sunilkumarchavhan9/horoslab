@@ -306,7 +306,7 @@ export function CausalLearningOrbit() {
                     <div className="text-[12px] font-bold text-[#059669] uppercase tracking-wide flex items-center justify-end gap-2 mb-1">
                         <ShieldCheck size={14} /> Next Mission Protected
                     </div>
-                    <div className="text-[10px] text-gray-500 mb-4">Failure pattern inherited before execution</div>
+                    <div className="text-[10px] text-[#C8C7BA] mb-4">Failure pattern inherited before execution</div>
 
                     <div className="inline-block border border-emerald-100 bg-emerald-50/50 rounded p-3 text-[9px] font-mono text-emerald-900 shadow-sm text-left">
                         <div className="flex justify-between gap-6 mb-1"><span>PATCH ACTIVE</span><span className="font-bold">v2</span></div>
@@ -319,7 +319,7 @@ export function CausalLearningOrbit() {
             <div className="mt-auto flex justify-between items-end border-t border-gray-100 pt-4 z-10 relative">
                 <div>
                     <h3 className="text-[13px] font-bold text-gray-900 tracking-widest uppercase mb-1">Causal Learning Trace</h3>
-                    <div className="text-[10px] font-mono text-gray-500 flex items-center gap-2">
+                    <div className="text-[10px] font-mono text-[#C8C7BA] flex items-center gap-2">
                         REALITY <ChevronRight size={10} /> EVIDENCE <ChevronRight size={10} /> PROTECTION
                     </div>
                 </div>

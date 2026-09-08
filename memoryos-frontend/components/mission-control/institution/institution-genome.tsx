@@ -70,7 +70,7 @@ function TreeItem({ node, depth = 0, selectedId, onSelect }: { node: TreeNode, d
  }}
  className={cn(
  "flex items-center gap-1.5 px-2 py-1 cursor-pointer select-none transition-colors group",
- isSelected ? "bg-[#0f52ff]/20 text-foreground dark:text-white" : "hover:bg-accent dark:bg-white/5 text-foreground/70 dark:text-white/70 hover:text-foreground dark:text-white"
+ isSelected ? "bg-[#0f52ff]/20 text-foreground dark:text-[#F0EFE2]" : "hover:bg-accent dark:bg-white/5 text-foreground/70 dark:text-[#F0EFE2]/70 hover:text-foreground dark:text-[#F0EFE2]"
  )}
  style={{ paddingLeft: `${depth * 12 + 8}px` }}
  >
@@ -104,7 +104,7 @@ export function InstitutionGenome() {
  leftWidth="280px"
  left={
  <div className="py-2 bg-card dark:bg-[#0a0a0a] min-h-full">
- <div className="px-6 py-2 text-[11px] font-semibold text-foreground/40 dark:text-white/40 uppercase tracking-wider mb-1">
+ <div className="px-6 py-2 text-[11px] font-semibold text-foreground/40 dark:text-[#F0EFE2]/40 uppercase tracking-wider mb-1">
  Genome Explorer
  </div>
  {GENOME_TREE.map(node => (
@@ -116,8 +116,8 @@ export function InstitutionGenome() {
  <div className="flex flex-col h-full bg-card dark:bg-[#121212]">
  <div className="flex items-center justify-between px-6 py-6 border-b border-border dark:border-white/10 shrink-0">
  <div className="flex flex-col">
- <h2 className="text-[18px] font-semibold text-foreground dark:text-white tracking-tight">Required Approvals</h2>
- <span className="text-[12px] text-foreground/50 dark:text-white/50 font-mono mt-0.5">authority.approvals</span>
+ <h2 className="text-[18px] font-semibold text-foreground dark:text-[#F0EFE2] tracking-tight">Required Approvals</h2>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50 font-mono mt-0.5">authority.approvals</span>
  </div>
  <div className="flex items-center gap-1 bg-muted dark:bg-white/5 p-1 rounded-md">
  {(["JSON", "History", "Dependencies"] as const).map(t => (
@@ -126,7 +126,7 @@ export function InstitutionGenome() {
  onClick={() => setRightTab(t)}
  className={cn(
  "px-3 py-1.5 rounded text-[12px] font-medium transition-colors",
- rightTab === t ? "bg-black/10 dark:bg-white/10 text-foreground dark:text-white " : "text-foreground/50 dark:text-white/50 hover:text-foreground dark:text-white hover:bg-accent dark:bg-white/5"
+ rightTab === t ? "bg-black/10 dark:bg-white/10 text-foreground dark:text-[#F0EFE2] " : "text-foreground/50 dark:text-[#F0EFE2]/50 hover:text-foreground dark:text-[#F0EFE2] hover:bg-accent dark:bg-white/5"
  )}
  >
  {t}
@@ -165,10 +165,10 @@ export function InstitutionGenome() {
  </div>
  <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5 ">
  <div className="flex items-center justify-between space-x-2 mb-1">
- <div className="font-semibold text-foreground dark:text-white text-[13px]">Updated Quorum size</div>
- <time className="font-mono text-foreground/40 dark:text-white/40 text-[11px]">v{14-i}</time>
+ <div className="font-semibold text-foreground dark:text-[#F0EFE2] text-[13px]">Updated Quorum size</div>
+ <time className="font-mono text-foreground/40 dark:text-[#F0EFE2]/40 text-[11px]">v{14-i}</time>
  </div>
- <div className="text-foreground/60 dark:text-white/60 text-[12px]">Changed quorum requirement from 1 to 2 for extra security.</div>
+ <div className="text-foreground/60 dark:text-[#F0EFE2]/60 text-[12px]">Changed quorum requirement from 1 to 2 for extra security.</div>
  </div>
  </div>
  ))}
@@ -176,7 +176,7 @@ export function InstitutionGenome() {
  )}
  
  {rightTab === "Dependencies" && (
- <div className="flex items-center justify-center h-full text-foreground/30 dark:text-white/30 text-[13px]">
+ <div className="flex items-center justify-center h-full text-foreground/30 dark:text-[#F0EFE2]/30 text-[13px]">
  Dependency graph visualization coming soon
  </div>
  )}

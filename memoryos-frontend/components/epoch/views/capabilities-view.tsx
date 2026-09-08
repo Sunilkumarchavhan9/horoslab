@@ -168,7 +168,7 @@ export function CapabilitiesView({
         dark ? "border-[#2e2e2e]" : "border-[#d8ddd3]"
       )}>
         <div>
-          <h1 className={cn("text-2xl md:text-3xl font-medium tracking-tight", dark ? "text-white" : "text-[#151515]")}>
+          <h1 className={cn("text-2xl md:text-3xl font-medium tracking-tight", dark ? "text-[#F0EFE2]" : "text-[#151515]")}>
             Capability{" "}
             <span className="bg-[#75bf00] text-black px-2 py-0.5 font-bold inline-block rounded-xs">
               fabric
@@ -207,8 +207,8 @@ export function CapabilitiesView({
                 className={cn(
                   "relative px-3 py-1 text-xs transition-colors rounded-xs",
                   isActive
-                    ? dark ? "text-white font-bold" : "text-[#151515] font-bold"
-                    : dark ? "text-[#788274] hover:text-white" : "text-[#687063] hover:text-black"
+                    ? dark ? "text-[#F0EFE2] font-bold" : "text-[#151515] font-bold"
+                    : dark ? "text-[#788274] hover:text-[#F0EFE2]" : "text-[#687063] hover:text-black"
                 )}
               >
                 <span>{tab.label}</span>
@@ -227,7 +227,7 @@ export function CapabilitiesView({
           {/* Modality Filter Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-1 text-xs font-mono">
-              <span className="text-[#888] mr-1">Input Modality:</span>
+              <span className="text-[#C8C7BA] mr-1">Input Modality:</span>
               {["all", "text", "audio", "image", "video", "document", "tabular", "telemetry"].map((m) => (
                 <button
                   key={m}
@@ -238,7 +238,7 @@ export function CapabilitiesView({
                     selectedInputModality === m
                       ? "border-[#75bf00] bg-[#75bf00]/10 font-bold text-[#75bf00]"
                       : dark
-                      ? "border-[#333] text-[#888] hover:text-white"
+                      ? "border-[#333] text-[#C8C7BA] hover:text-[#F0EFE2]"
                       : "border-[#ddd] text-[#666] hover:text-black"
                   )}
                 >
@@ -248,7 +248,7 @@ export function CapabilitiesView({
             </div>
 
             <div className="relative">
-              <Search className="absolute left-2.5 top-2 text-[#888]" size={13} />
+              <Search className="absolute left-2.5 top-2 text-[#C8C7BA]" size={13} />
               <input
                 type="text"
                 value={searchQuery}
@@ -256,7 +256,7 @@ export function CapabilitiesView({
                 placeholder="Search capabilities..."
                 className={cn(
                   "pl-7 pr-3 py-1 text-xs font-mono border rounded-xs w-56",
-                  dark ? "border-[#333] bg-[#181818] text-white" : "border-[#ddd] bg-white text-black"
+                  dark ? "border-[#333] bg-[#181818] text-[#F0EFE2]" : "border-[#ddd] bg-white text-black"
                 )}
               />
             </div>
@@ -277,12 +277,12 @@ export function CapabilitiesView({
                     <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 border border-[#75bf00]/30 text-[#75bf00] bg-[#75bf00]/10 rounded-xs uppercase">
                       {cap.task}
                     </span>
-                    <span className="font-mono text-[10px] text-[#888]">
+                    <span className="font-mono text-[10px] text-[#C8C7BA]">
                       {cap.providerCount} providers
                     </span>
                   </div>
 
-                  <h3 className={cn("text-sm font-bold mt-2.5", dark ? "text-white" : "text-[#111]")}>
+                  <h3 className={cn("text-sm font-bold mt-2.5", dark ? "text-[#F0EFE2]" : "text-[#111]")}>
                     {cap.name}
                   </h3>
 
@@ -307,10 +307,10 @@ export function CapabilitiesView({
                 </div>
 
                 <div className="space-y-2 pt-2 border-t border-dashed border-[#333]/20 text-[11px] font-mono">
-                  <div className="text-[#888] truncate">
+                  <div className="text-[#C8C7BA] truncate">
                     <strong>Runtimes:</strong> {cap.supportedRuntimes.join(", ")}
                   </div>
-                  <div className="text-[#888] truncate">
+                  <div className="text-[#C8C7BA] truncate">
                     <strong>Hardware:</strong> {cap.supportedHardware.join(", ")}
                   </div>
 
@@ -345,7 +345,7 @@ export function CapabilitiesView({
           >
             <div className="flex items-center justify-between border-b border-dashed border-[#333]/20 pb-3">
               <div>
-                <h3 className={cn("text-sm font-bold", dark ? "text-white" : "text-[#111]")}>
+                <h3 className={cn("text-sm font-bold", dark ? "text-[#F0EFE2]" : "text-[#111]")}>
                   Hugging Face Hub Model Truth Layer
                 </h3>
                 <p className="text-xs text-[#788274] mt-0.5">
@@ -369,14 +369,14 @@ export function CapabilitiesView({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm text-[#75bf00]">{model.id}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 border rounded-xs text-[#888]">
+                      <span className="text-[10px] px-1.5 py-0.2 border rounded-xs text-[#C8C7BA]">
                         {model.parameters}
                       </span>
-                      <span className="text-[10px] px-1.5 py-0.2 border rounded-xs text-[#888]">
+                      <span className="text-[10px] px-1.5 py-0.2 border rounded-xs text-[#C8C7BA]">
                         {model.license}
                       </span>
                     </div>
-                    <span className="text-[10px] text-[#888]">SHA: {model.commitSha.slice(0, 10)}...</span>
+                    <span className="text-[10px] text-[#C8C7BA]">SHA: {model.commitSha.slice(0, 10)}...</span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] pt-1">
@@ -403,7 +403,7 @@ export function CapabilitiesView({
               dark ? "border-[#2e2e2e] bg-[#181818]" : "border-[#d8ddd3] bg-white"
             )}
           >
-            <h3 className={cn("text-sm font-bold", dark ? "text-white" : "text-[#111]")}>
+            <h3 className={cn("text-sm font-bold", dark ? "text-[#F0EFE2]" : "text-[#111]")}>
               Runtime Engine & Hardware Compatibility Matrix
             </h3>
 
@@ -413,7 +413,7 @@ export function CapabilitiesView({
                   <VLLMLogo size={14} />
                   <span>vLLM (v0.6.2)</span>
                 </div>
-                <div className="text-[11px] text-[#888]">
+                <div className="text-[11px] text-[#C8C7BA]">
                   • PagedAttention v2 with FP8 KV cache<br />
                   • Continuous batching with speculative decoding<br />
                   • Target: NVIDIA H100 / A100 / L40S
@@ -425,7 +425,7 @@ export function CapabilitiesView({
                   <SGLangLogo size={14} />
                   <span>SGLang (v0.3.4)</span>
                 </div>
-                <div className="text-[11px] text-[#888]">
+                <div className="text-[11px] text-[#C8C7BA]">
                   • RadixAttention prefix caching for agent loops<br />
                   • Jump-forward decoding for structured JSON<br />
                   • Target: Multi-turn RAG & Agentic Workloads
@@ -437,7 +437,7 @@ export function CapabilitiesView({
                   <NvidiaLogo size={14} />
                   <span>TensorRT-LLM (v0.12)</span>
                 </div>
-                <div className="text-[11px] text-[#888]">
+                <div className="text-[11px] text-[#C8C7BA]">
                   • In-flight batching & custom kernel fusions<br />
                   • Sub-millisecond TTFT on NVIDIA H100 SXM5<br />
                   • Target: Ultra low latency SLA (&lt;30ms p99)

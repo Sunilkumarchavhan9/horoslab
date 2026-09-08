@@ -459,7 +459,7 @@ export function IntelligenceInspector({ entityData }: { entityData: any }) {
                                     <CheckCircle2 className="size-5 text-emerald-500 shrink-0 mt-0.5" />
                                     <div className="flex flex-col gap-2">
                                         <span className="text-sm font-medium text-emerald-500">{MOCK_INTELLIGENCE_DETAILS.rootCause.suggestedFix}</span>
-                                        <button className="self-start px-3 py-1.5 bg-emerald-500 text-white rounded text-xs font-semibold hover:bg-emerald-600 transition-colors mt-2">Apply Configuration Change</button>
+                                        <button className="self-start px-3 py-1.5 bg-emerald-500 text-[#F0EFE2] rounded text-xs font-semibold hover:bg-emerald-600 transition-colors mt-2">Apply Configuration Change</button>
                                     </div>
                                 </Card>
                             </div>
@@ -705,7 +705,7 @@ export function IntelligenceInspector({ entityData }: { entityData: any }) {
                                                 <span className={cn(
                                                     log.includes("[WARN]") ? "text-orange-300" : 
                                                     log.includes("[SUCCESS]") ? "text-emerald-400 font-semibold" : 
-                                                    "text-gray-300"
+                                                    "text-[#C8C7BA]"
                                                 )}>{log}</span>
                                             </div>
                                         ))}
@@ -826,7 +826,7 @@ export function IntelligenceInspector({ entityData }: { entityData: any }) {
                                                     <span className={cn(
                                                         log.includes("[WARN]") ? "text-orange-300" : 
                                                         log.includes("[SUCCESS]") ? "text-emerald-400 font-semibold" : 
-                                                        "text-gray-300"
+                                                        "text-[#C8C7BA]"
                                                     )}>{log}</span>
                                                 </div>
                                             ))}
@@ -841,7 +841,7 @@ export function IntelligenceInspector({ entityData }: { entityData: any }) {
                                                     <span className={cn(
                                                         log.includes("[WARN]") ? "text-orange-300" : 
                                                         log.includes("[FAILED]") ? "text-red-400 font-semibold" : 
-                                                        "text-gray-300"
+                                                        "text-[#C8C7BA]"
                                                     )}>{log}</span>
                                                 </div>
                                             ))}

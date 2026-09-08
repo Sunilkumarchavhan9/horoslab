@@ -152,7 +152,7 @@ export function ContinuityLabAskPrompt({
           rows={5}
           disabled={loading || disabled}
           placeholder={placeholder}
-          className="min-h-[7.5rem] w-full resize-none bg-transparent px-5 pb-2 pt-5 text-[15px] leading-relaxed text-white placeholder:text-white/30 focus:outline-none disabled:opacity-50 sm:min-h-[8.5rem] sm:text-base"
+          className="min-h-[7.5rem] w-full resize-none bg-transparent px-5 pb-2 pt-5 text-[15px] leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:outline-none disabled:opacity-50 sm:min-h-[8.5rem] sm:text-base"
         />
 
         <div className="flex items-center justify-between gap-2 border-t border-white/[0.06] px-3 py-2.5">
@@ -161,11 +161,11 @@ export function ContinuityLabAskPrompt({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/[0.06] px-3 text-xs font-medium text-white/85 hover:bg-white/[0.09]"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/[0.06] px-3 text-xs font-medium text-[#F0EFE2]/85 hover:bg-white/[0.09]"
                 >
                   <ActiveAgentIcon className="size-3.5 text-[#6366F1]" />
                   {activeAgent.label}
-                  <ChevronDown className="size-3 text-white/45" />
+                  <ChevronDown className="size-3 text-[#F0EFE2]/45" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -173,7 +173,7 @@ export function ContinuityLabAskPrompt({
                 align="start"
                 sideOffset={8}
                 collisionPadding={12}
-                className="z-50 min-w-[240px] !w-64 border border-white/[0.06] bg-[#1a1a1a] p-1 text-white shadow-xl"
+                className="z-50 min-w-[240px] !w-64 border border-white/[0.06] bg-[#1a1a1a] p-1 text-[#F0EFE2] shadow-xl"
               >
                 {AGENT_OPTIONS.map((opt) => {
                   const Icon = opt.icon;
@@ -181,7 +181,7 @@ export function ContinuityLabAskPrompt({
                     <DropdownMenuItem
                       key={opt.id}
                       className={cn(
-                        "items-start gap-3 rounded-none px-3 py-2.5 text-left focus:bg-white/[0.06] focus:text-white",
+                        "items-start gap-3 rounded-none px-3 py-2.5 text-left focus:bg-white/[0.06] focus:text-[#F0EFE2]",
                         agentType === opt.id && "bg-white/[0.06]",
                       )}
                       onSelect={() => {
@@ -191,10 +191,10 @@ export function ContinuityLabAskPrompt({
                     >
                       <Icon className="mt-0.5 size-4 shrink-0 text-[#6366F1]" />
                       <span>
-                        <span className="block text-xs font-semibold text-white">
+                        <span className="block text-xs font-semibold text-[#F0EFE2]">
                           {opt.label}
                         </span>
-                        <span className="mt-0.5 block text-[11px] leading-snug text-white/45">
+                        <span className="mt-0.5 block text-[11px] leading-snug text-[#F0EFE2]/45">
                           {opt.description}
                         </span>
                       </span>
@@ -208,7 +208,7 @@ export function ContinuityLabAskPrompt({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex size-9 items-center justify-center rounded-full bg-white/[0.06] text-white/70 hover:bg-white/[0.09] hover:text-white"
+                  className="inline-flex size-9 items-center justify-center rounded-full bg-white/[0.06] text-[#F0EFE2]/70 hover:bg-white/[0.09] hover:text-[#F0EFE2]"
                   aria-label="Add attachment"
                 >
                   <Plus className="size-4" />
@@ -219,27 +219,27 @@ export function ContinuityLabAskPrompt({
                 align="start"
                 sideOffset={8}
                 collisionPadding={12}
-                className="z-50 min-w-[208px] !w-52 border border-white/[0.06] bg-[#1a1a1a] p-1 text-white shadow-xl"
+                className="z-50 min-w-[208px] !w-52 border border-white/[0.06] bg-[#1a1a1a] p-1 text-[#F0EFE2] shadow-xl"
               >
                 <DropdownMenuItem
-                  className="gap-2 rounded-none px-3 py-2 text-xs text-white/80 focus:bg-white/[0.06] focus:text-white"
+                  className="gap-2 rounded-none px-3 py-2 text-xs text-[#F0EFE2]/80 focus:bg-white/[0.06] focus:text-[#F0EFE2]"
                   onSelect={() => imageInputRef.current?.click()}
                 >
-                  <ImagePlus className="size-3.5 text-white/50" />
+                  <ImagePlus className="size-3.5 text-[#F0EFE2]/50" />
                   Upload image
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="gap-2 rounded-none px-3 py-2 text-xs text-white/80 focus:bg-white/[0.06] focus:text-white"
+                  className="gap-2 rounded-none px-3 py-2 text-xs text-[#F0EFE2]/80 focus:bg-white/[0.06] focus:text-[#F0EFE2]"
                   onSelect={onOpenRepos}
                 >
-                  <FolderGit2 className="size-3.5 text-white/50" />
+                  <FolderGit2 className="size-3.5 text-[#F0EFE2]/50" />
                   Add files/repos
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="gap-2 rounded-none px-3 py-2 text-xs text-white/80 focus:bg-white/[0.06] focus:text-white"
+                  className="gap-2 rounded-none px-3 py-2 text-xs text-[#F0EFE2]/80 focus:bg-white/[0.06] focus:text-[#F0EFE2]"
                   onSelect={() => fileInputRef.current?.click()}
                 >
-                  <Plus className="size-3.5 text-white/50" />
+                  <Plus className="size-3.5 text-[#F0EFE2]/50" />
                   Attach file note
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -286,7 +286,7 @@ export function ContinuityLabAskPrompt({
             />
           ) : null}
           {confirmBeforeWork ? (
-            <p className="mt-2 text-[11px] text-white/45">
+            <p className="mt-2 text-[11px] text-[#F0EFE2]/45">
               Confirm-before-work is on — you&apos;ll review a short summary
               before the agent runs.
             </p>

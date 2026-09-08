@@ -1,157 +1,291 @@
-import { ThesisManifestoSection } from "@/components/landing/thesis-manifesto-section";
-import { BlueBand } from "@/components/landing/blue-band";
-import { MemoryIgnitionSection } from "@/components/landing/memory-ignition-section";
-import { TheProblemSection } from "@/components/landing/the-problem-section";
-import { ThePainSection } from "@/components/landing/the-pain-section";
-import { InstitutionRuntimeSection } from "@/components/landing/institution-runtime-section";
-import { LandingFooter } from "@/components/landing/landing-footer";
-import { HeroSection } from "@/components/landing/hero-section";
-import { LandingNav } from "@/components/landing/landing-nav";
-import { PersonalMemorySection } from "@/components/landing/personal-memory-section";
-import { VerificationAssuranceCaseSection } from "@/components/landing/verification-assurance-case-section";
-import { SectionLabel } from "@/components/landing/section-label";
-import { MistakeImmunityGrid } from "@/components/landing/mistake-immunity-grid";
-import { WhatWeDoSection } from "@/components/landing/what-we-do-section";
-import { RealitySettlementSection } from "@/components/landing/reality-settlement-section";
-import { ProductSurfacesSection } from "@/components/landing/product-surfaces-section";
-import { DeveloperExperienceSection } from "@/components/landing/developer-experience-section";
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { LandingNavbar } from "@/components/landing/landing-navbar";
+import { LandingHero } from "@/components/landing/landing-hero";
+import { ResultInspectionSection } from "@/components/landing/result-inspection-section";
+import { FeatureShowcase } from "@/components/landing/feature-showcase";
+import { ModelApisSection } from "@/components/landing/model-apis-section";
+import { HardwareDeploymentSection } from "@/components/landing/hardware-deployment-section";
+import { DeploymentOptionsSection } from "@/components/landing/deployment-options-section";
+import { SupportedStackSection } from "@/components/landing/supported-stack-section";
 import { FaqSection } from "@/components/landing/faq-section";
+import { FooterCtaSection } from "@/components/landing/footer-cta-section";
+import { AuthModal } from "@/components/epoch/modals/auth-modal";
+import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
+import { PixelFilter } from "@/components/epoch/primitives/pixel-filter";
+import { X } from "lucide-react";
+import gsap from "gsap";
 
 export default function Home() {
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">(
+    "sign-in",
+  );
+  const [showFloatingComposer, setShowFloatingComposer] = useState(false);
+  const prevShowFloatingComposer = useRef(false);
+  const [isFloatingComposerDismissed, setIsFloatingComposerDismissed] =
+    useState(false);
+  const composerWrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (composerWrapperRef.current) {
+      gsap.set(composerWrapperRef.current, { xPercent: -50, x: 0 });
+    }
+
+    let animationFrameId: number;
+
+    const handleScrollAndResize = () => {
+      // Reset dismissal if scrolled back to hero
+      if (window.scrollY < 300) {
+        setIsFloatingComposerDismissed(false);
+      }
+
+      const shouldShow = window.scrollY > window.innerHeight * 0.8;
+      setShowFloatingComposer(shouldShow);
+
+      const dockTarget = document.getElementById("composer-dock-target");
+      const composerElement = composerWrapperRef.current;
+
+      if (composerElement) {
+        if (dockTarget && shouldShow && !isFloatingComposerDismissed) {
+          const dockRect = dockTarget.getBoundingClientRect();
+          // Check if dock has entered the viewport from the bottom.
+          // We keep it docked even if it scrolls past the top of the screen so it naturally scrolls away.
+          const hasDockEntered = dockRect.top < window.innerHeight;
+
+          if (hasDockEntered) {
+            gsap.to(composerElement, {
+              xPercent: 0,
+              x: 0,
+              y: 0,
+              left: dockRect.left,
+              top: dockRect.top,
+              width: dockRect.width,
+              bottom: "auto",
+              maxWidth: "none",
+              duration: 0.4,
+              ease: "power3.out",
+              overwrite: "auto",
+            });
+            return;
+          }
+        }
+
+        // Default floating behavior (bottom center)
+        gsap.to(composerElement, {
+          xPercent: -50,
+          x: 0,
+          y: 0,
+          left: "50%",
+          top: "auto",
+          bottom: "1.5rem", // 24px (bottom-6)
+          width: "100%",
+          maxWidth: "56rem", // max-w-4xl
+          duration: 0.4,
+          ease: "power3.out",
+          overwrite: "auto",
+        });
+      }
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(handleScrollAndResize);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll(); // initial layout
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isFloatingComposerDismissed]);
+
+  // Magical Pixel Dissolve / Assemble Effect
+  useEffect(() => {
+    if (showFloatingComposer === prevShowFloatingComposer.current) return;
+    prevShowFloatingComposer.current = showFloatingComposer;
+
+    if (isFloatingComposerDismissed) return;
+
+    const filterTarget = document.getElementById("shatter-displacement");
+    const heroComposer = document.getElementById("hero-composer-wrapper");
+    const globalComposerInner = document.getElementById(
+      "global-composer-inner",
+    );
+
+    if (filterTarget && heroComposer && globalComposerInner) {
+      // Temporarily apply the SVG filter to both elements during transition
+      heroComposer.style.filter = "url(#pixelate-shatter)";
+      globalComposerInner.style.filter = "url(#pixelate-shatter)";
+
+      if (showFloatingComposer) {
+        // Hero -> Global Transition (Scroll Down)
+        gsap
+          .timeline()
+          .to(filterTarget, {
+            attr: { scale: 120 },
+            duration: 0.3,
+            ease: "power2.in",
+          })
+          .add(() => {
+            heroComposer.style.opacity = "0";
+            globalComposerInner.style.opacity = "1";
+            heroComposer.style.pointerEvents = "none";
+            globalComposerInner.style.pointerEvents = "auto";
+          })
+          .to(filterTarget, {
+            attr: { scale: 0 },
+            duration: 0.3,
+            ease: "power2.out",
+          })
+          .add(() => {
+            heroComposer.style.filter = "none";
+            globalComposerInner.style.filter = "none";
+          });
+      } else {
+        // Global -> Hero Transition (Scroll Up)
+        gsap
+          .timeline()
+          .to(filterTarget, {
+            attr: { scale: 120 },
+            duration: 0.3,
+            ease: "power2.in",
+          })
+          .add(() => {
+            globalComposerInner.style.opacity = "0";
+            heroComposer.style.opacity = "1";
+            globalComposerInner.style.pointerEvents = "none";
+            heroComposer.style.pointerEvents = "auto";
+          })
+          .to(filterTarget, {
+            attr: { scale: 0 },
+            duration: 0.3,
+            ease: "power2.out",
+          })
+          .add(() => {
+            heroComposer.style.filter = "none";
+            globalComposerInner.style.filter = "none";
+          });
+      }
+    }
+  }, [showFloatingComposer, isFloatingComposerDismissed]);
+
   return (
-    <main className="landing-root min-h-screen bg-white pb-0 pt-16 lg:pt-[60px]">
-      <div className="fixed left-0 top-0 z-[80] w-full border-b border-[#c9d8ee] bg-white">
-        <LandingNav />
+    <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-mono selection:bg-[#75bf00] selection:text-black">
+      <PixelFilter />
+
+      {/* Top Header Navbar */}
+      <LandingNavbar
+        onOpenDashboard={() => {
+          setAuthModalMode("sign-in");
+          setAuthModalOpen(true);
+        }}
+        onOpenSignIn={() => {
+          setAuthModalMode("sign-in");
+          setAuthModalOpen(true);
+        }}
+        onOpenSignUp={() => {
+          setAuthModalMode("sign-up");
+          setAuthModalOpen(true);
+        }}
+        dark={true}
+      />
+
+      {/* Main Landing Sections */}
+      <main>
+        {/* 1. Hero Section with Natural Language Token Composer */}
+        <LandingHero
+          onLaunchPrompt={(params) => {
+            setAuthModalMode("sign-in");
+            setAuthModalOpen(true);
+          }}
+          dark={true}
+        />
+
+        {/* 2. Reality & Capability Architecture Canvas Section */}
+        <ResultInspectionSection
+          onOpenSignIn={() => {
+            setAuthModalMode("sign-in");
+            setAuthModalOpen(true);
+          }}
+          dark={true}
+        />
+
+        {/* 3. Feature Showcase Sticky Scroll Section */}
+        <FeatureShowcase
+          onOpenSignIn={() => {
+            setAuthModalMode("sign-in");
+            setAuthModalOpen(true);
+          }}
+          dark={true}
+        />
+
+        {/* 4. Model APIs & Build Your Own Stack Section */}
+        <ModelApisSection dark={true} />
+
+        {/* 5. Hardware Deployment Section */}
+        <HardwareDeploymentSection />
+
+        {/* 6. Deployment Options Section */}
+        <DeploymentOptionsSection />
+
+        {/* 7. Supported Stack Section */}
+        <SupportedStackSection />
+        
+        {/* 8. FAQ Section */}
+        <FaqSection />
+
+        {/* 9. Footer CTA & Footer */}
+        <FooterCtaSection />
+      </main>
+
+      {/* Global Floating Composer that appears on scroll and docks using GSAP */}
+      <div
+        ref={composerWrapperRef}
+        className="fixed z-50 pointer-events-none"
+        style={{
+          left: "50%",
+          bottom: "1.5rem",
+          width: "100%",
+          maxWidth: "56rem",
+        }}
+      >
+        <div
+          id="global-composer-inner"
+          className="w-full group pointer-events-none"
+          style={{ opacity: 0 }}
+        >
+          <div className="relative rounded-[2px] w-full px-2 sm:px-4">
+            <button
+              onClick={() => setIsFloatingComposerDismissed(true)}
+              className="absolute -top-3 -right-3 opacity-0 group-hover:opacity-100 w-6 h-6 bg-[#1a1a1a] border border-[#333333] rounded-full flex items-center justify-center text-[#C8C7BA] hover:text-[#F0EFE2] hover:bg-[#252525] transition-all z-10 shadow-lg"
+            >
+              <X size={12} />
+            </button>
+            <TokenPromptInput
+              onSubmit={(prompt) => {
+                setAuthModalMode("sign-in");
+                setAuthModalOpen(true);
+              }}
+              dark={true}
+              hideHeader={true}
+              showSuggestions={false}
+            />
+          </div>
+        </div>
       </div>
 
-      <section className="relative w-full">
-        <HeroSection />
-        <BlueBand />
-      </section>
-
-      <div className="mx-auto max-w-[1240px] border-x border-b border-[#c9d8ee] bg-white">
-        <section id="what-we-do" className="relative">
-          <SectionLabel
-            title="AUTONOMOUS ORGANIZATION INFRASTRUCTURE"
-            index="[1/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <WhatWeDoSection />
-        </section>
-
-        <section id="how-it-works" className="relative">
-          <SectionLabel
-            title="THE ORGANIZATION LOOP"
-            index="[2/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <TheProblemSection />
-        </section>
-
-        <section id="memory-ignition" className="relative">
-          <SectionLabel
-            title="RUNTIME BRIEF"
-            index="[3/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <MemoryIgnitionSection />
-        </section>
-
-        <section id="under-the-hood" className="relative">
-          <SectionLabel
-            title="WHY AGENT PLATFORMS BREAK"
-            index="[4/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <MistakeImmunityGrid />
-        </section>
-
-        <section id="the-thesis" className="relative bg-white">
-          <SectionLabel
-            title="THESIS"
-            index="[5/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <ThesisManifestoSection />
-        </section>
-
-        <section id="the-pain" className="relative bg-white">
-          <SectionLabel
-            title="THE AUTONOMY GAP"
-            index="[6/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <ThePainSection />
-        </section>
-
-        <section id="personal-memory" className="relative bg-white">
-          <SectionLabel
-            title="WHAT EPOCH IS"
-            index="[7/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <PersonalMemorySection />
-        </section>
-
-        <section id="institution-runtime" className="relative">
-          <SectionLabel
-            title="INSTITUTION RUNTIME"
-            index="[8/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <InstitutionRuntimeSection />
-        </section>
-
-        <section id="verification" className="relative">
-          <SectionLabel
-            title="VERIFICATION & ASSURANCE"
-            index="[9/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <VerificationAssuranceCaseSection />
-        </section>
-
-        <section id="reality-settlement" className="relative">
-          <SectionLabel
-            title="REALITY SETTLEMENT"
-            index="[10/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <RealitySettlementSection />
-        </section>
-
-        <section id="developer-experience" className="relative">
-          <SectionLabel
-            title="AGENT-NATIVE INTEGRATIONS"
-            index="[11/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <DeveloperExperienceSection />
-        </section>
-
-        <section id="product-surfaces" className="relative">
-          <SectionLabel
-            title="AUTHORITY & TRUST"
-            index="[12/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <ProductSurfacesSection />
-        </section>
-
-        <section id="faq" className="relative">
-          <SectionLabel
-            title="FAQ"
-            index="[13/13]"
-            className="sticky top-16 z-[70] lg:top-[60px]"
-          />
-          <FaqSection />
-        </section>
-      </div>
-
-      <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-white">
-        <LandingFooter />
-      </div>
-    </main>
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authModalMode}
+      />
+    </div>
   );
 }
-

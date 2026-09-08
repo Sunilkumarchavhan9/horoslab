@@ -32,7 +32,7 @@ export function WikiOperationalMapPanel({
 
   if (!hasMap && !hasGraph && !hasRepoTree) {
     return (
-      <p className="text-sm text-white/45">
+      <p className="text-sm text-[#F0EFE2]/45">
         No operational map or repository structure for this repo yet. Sync GitHub or add contract
         memories.
       </p>

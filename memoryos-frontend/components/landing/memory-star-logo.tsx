@@ -11,7 +11,7 @@ type MemoryStarLogoProps = {
 
 export function MemoryStarLogo({ tone = "auto", className, iconColor, textColor }: MemoryStarLogoProps) {
   const colorClass =
-    tone === "white" ? "text-white" : tone === "black" ? "text-black" : "text-current";
+    tone === "white" ? "text-[#F0EFE2]" : tone === "black" ? "text-black" : "text-current";
 
   return (
     <MemoryOSFullLogo

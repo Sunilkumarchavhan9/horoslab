@@ -88,7 +88,7 @@ export function ObserveTimeline() {
  };
 
  return (
- <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar>
  <div className="flex items-center gap-2">
  <Activity className="size-4 text-[#0f52ff]" />
@@ -104,7 +104,7 @@ export function ObserveTimeline() {
  />
  
  <div className="flex items-center gap-3 mb-10 overflow-x-auto custom-scrollbar pb-2">
- <Filter className="size-4 text-foreground/40 dark:text-white/40 mr-2 shrink-0" />
+ <Filter className="size-4 text-foreground/40 dark:text-[#F0EFE2]/40 mr-2 shrink-0" />
  {FILTER_TAGS.map(tag => (
  <button
  key={tag}
@@ -112,8 +112,8 @@ export function ObserveTimeline() {
  className={cn(
  "px-6 py-1.5 rounded-full text-[13px] font-bold transition-all whitespace-nowrap shrink-0 border",
  activeFilter === tag 
- ? "bg-black text-white dark:bg-white dark:text-black border-transparent "
- : "bg-card/50 dark:bg-[#121212]/50 border-border dark:border-white/10 text-foreground/60 dark:text-white/60 hover:border-black/30 dark:hover:border-white/30"
+ ? "bg-black text-[#F0EFE2] dark:bg-white dark:text-black border-transparent "
+ : "bg-card/50 dark:bg-[#121212]/50 border-border dark:border-white/10 text-foreground/60 dark:text-[#F0EFE2]/60 hover:border-black/30 dark:hover:border-white/30"
  )}
  >
  {tag}
@@ -148,11 +148,11 @@ export function ObserveTimeline() {
  isTop ? "bottom-16" : "top-16"
  )}>
  <div className="flex items-center justify-between mb-3">
- <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40">{event.type}</span>
+ <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40">{event.type}</span>
  <span className="text-[12px] font-mono font-bold text-[#0f52ff]">{event.time}</span>
  </div>
  <h4 className="text-[15px] font-bold tracking-tight mb-2 leading-snug">{event.title}</h4>
- <p className="text-[13px] text-foreground/60 dark:text-white/60 leading-relaxed">{event.description}</p>
+ <p className="text-[13px] text-foreground/60 dark:text-[#F0EFE2]/60 leading-relaxed">{event.description}</p>
  </div>
 
  {/* Node Connector Line */}
@@ -166,7 +166,7 @@ export function ObserveTimeline() {
 
  {/* Flow Arrow */}
  {index < filteredEvents.length - 1 && (
- <div className="absolute top-1/2 -right-16 -translate-y-1/2 text-foreground/20 dark:text-white/20">
+ <div className="absolute top-1/2 -right-16 -translate-y-1/2 text-foreground/20 dark:text-[#F0EFE2]/20">
  <ArrowRight className="size-5" />
  </div>
  )}
@@ -189,13 +189,13 @@ export function ObserveTimeline() {
  <EventIcon type={inspectorTarget.type} status={inspectorTarget.status} />
  <div className="flex flex-col">
  <h4 className="text-[20px] font-bold tracking-tight">{inspectorTarget.title}</h4>
- <p className="text-[14px] text-foreground/60 dark:text-white/60 mt-1">{inspectorTarget.description}</p>
+ <p className="text-[14px] text-foreground/60 dark:text-[#F0EFE2]/60 mt-1">{inspectorTarget.description}</p>
  </div>
  </div>
 
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card/50 dark:bg-[#121212]/50 space-y-4">
- <h4 className="text-[13px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40">Raw Telemetry</h4>
- <pre className="font-mono text-[12px] p-6 rounded-md bg-black text-white dark:bg-[#050505] overflow-x-auto">
+ <h4 className="text-[13px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40">Raw Telemetry</h4>
+ <pre className="font-mono text-[12px] p-6 rounded-md bg-black text-[#F0EFE2] dark:bg-[#050505] overflow-x-auto">
 {`{
  "eventId": "ev_${inspectorTarget.id}_${Date.now()}",
  "timestamp": "2026-07-26T${inspectorTarget.time}Z",

@@ -23,7 +23,7 @@ export function OrganizationTeams() {
  title="Teams" 
  description="Structure your organization into teams. Teams can be mapped to Institutions for granular AI runtime authority."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
  Create Team
  </button>
@@ -34,13 +34,13 @@ export function OrganizationTeams() {
  <div className="w-[240px] shrink-0 border-r border-border dark:border-white/10 pr-6">
  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-4 block">Hierarchy</span>
  <div className="flex flex-col gap-1 text-[13px]">
- <div className="flex items-center gap-2 font-semibold text-foreground dark:text-white mb-2">
+ <div className="flex items-center gap-2 font-semibold text-foreground dark:text-[#F0EFE2] mb-2">
  <Building className="size-4" />
  Epoch Inc.
  </div>
  
  <div className="flex flex-col ml-4 border-l border-border dark:border-white/10 pl-3 gap-2">
- <div className="flex items-center gap-2 font-medium text-foreground dark:text-white cursor-pointer hover:text-[#0f52ff] transition-colors">
+ <div className="flex items-center gap-2 font-medium text-foreground dark:text-[#F0EFE2] cursor-pointer hover:text-[#0f52ff] transition-colors">
  <ChevronRight className="size-3 text-muted-foreground" />
  Engineering
  </div>
@@ -79,8 +79,8 @@ export function OrganizationTeams() {
  >
  <div className="flex items-center justify-between mb-4">
  <div className="flex items-center gap-2">
- <Network className="size-4 text-foreground dark:text-white" />
- <span className="text-[14px] font-semibold text-foreground dark:text-white">{team.name}</span>
+ <Network className="size-4 text-foreground dark:text-[#F0EFE2]" />
+ <span className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2]">{team.name}</span>
  </div>
  <button className="text-muted-foreground hover:text-foreground transition-colors">
  <Settings className="size-4" />
@@ -122,15 +122,15 @@ export function OrganizationTeams() {
  <div className="flex flex-col gap-2 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] p-6 text-[13px]">
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2">
  <span className="text-muted-foreground">Members</span>
- <span className="font-mono text-foreground dark:text-white">{selectedTeam.members}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2]">{selectedTeam.members}</span>
  </div>
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2 pt-2">
  <span className="text-muted-foreground">Mapped Institutions</span>
- <span className="font-mono text-foreground dark:text-white">{selectedTeam.institutions}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2]">{selectedTeam.institutions}</span>
  </div>
  <div className="flex justify-between pt-2">
  <span className="text-muted-foreground">Active Missions</span>
- <span className="font-mono text-foreground dark:text-white">{selectedTeam.missions}</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2]">{selectedTeam.missions}</span>
  </div>
  </div>
  </div>
@@ -144,14 +144,14 @@ export function OrganizationTeams() {
  <div className="flex items-start gap-3">
  <Users2 className="size-4 text-muted-foreground mt-0.5" />
  <div className="flex flex-col">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Alice Chen joined the team</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Alice Chen joined the team</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">2 hours ago</span>
  </div>
  </div>
  <div className="flex items-start gap-3">
  <Building className="size-4 text-muted-foreground mt-0.5" />
  <div className="flex flex-col">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Mapped to "Platform Orchestrator" institution</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Mapped to "Platform Orchestrator" institution</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Yesterday</span>
  </div>
  </div>

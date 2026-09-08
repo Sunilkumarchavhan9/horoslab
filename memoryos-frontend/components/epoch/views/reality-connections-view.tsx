@@ -54,7 +54,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed pb-5 dark:border-[#2a2a2a] border-[#d8ddd3]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className={cn("text-2xl font-bold tracking-tight", dark ? "text-white" : "text-[#171a17]")}>
+            <h1 className={cn("text-2xl font-bold tracking-tight", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>
               <span className="bg-[#75bf00] px-2.5 py-0.5 text-black inline-block font-medium rounded-xs">
                 Reality Connections
               </span>
@@ -83,13 +83,13 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
         <div className={cn("p-3.5 border rounded-xs space-y-1", dark ? "border-[#262626] bg-[#141414]" : "border-[#e0e4dc] bg-white")}>
           <div className="text-[10px] font-mono uppercase text-[#788274]">Discovered GPUs</div>
           <div className="text-lg font-bold font-mono text-[#75bf00]">14 GPUs</div>
-          <div className="text-[10px] text-[#888]">8x H100, 4x H200, 2x L40S</div>
+          <div className="text-[10px] text-[#C8C7BA]">8x H100, 4x H200, 2x L40S</div>
         </div>
 
         <div className={cn("p-3.5 border rounded-xs space-y-1", dark ? "border-[#262626] bg-[#141414]" : "border-[#e0e4dc] bg-white")}>
           <div className="text-[10px] font-mono uppercase text-[#788274]">Active Workloads</div>
-          <div className="text-lg font-bold font-mono text-white">11 Active</div>
-          <div className="text-[10px] text-[#888]">7 Running, 4 Provisioning</div>
+          <div className="text-lg font-bold font-mono text-[#F0EFE2]">11 Active</div>
+          <div className="text-[10px] text-[#C8C7BA]">7 Running, 4 Provisioning</div>
         </div>
 
         <div className={cn("p-3.5 border rounded-xs space-y-1", dark ? "border-[#262626] bg-[#141414]" : "border-[#e0e4dc] bg-white")}>
@@ -98,19 +98,19 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
             <span className="h-2 w-2 rounded-full bg-[#75bf00] animate-pulse" />
             <span>34s ago</span>
           </div>
-          <div className="text-[10px] text-[#888]">Continuous state telemetry</div>
+          <div className="text-[10px] text-[#C8C7BA]">Continuous state telemetry</div>
         </div>
 
         <div className={cn("p-3.5 border rounded-xs space-y-1", dark ? "border-[#262626] bg-[#141414]" : "border-[#e0e4dc] bg-white")}>
           <div className="text-[10px] font-mono uppercase text-[#788274]">Monthly Spend</div>
-          <div className="text-lg font-bold font-mono text-white">$482.17</div>
+          <div className="text-lg font-bold font-mono text-[#F0EFE2]">$482.17</div>
           <div className="text-[10px] text-[#e6b800]">Proj: $731.40 / mo</div>
         </div>
 
         <div className={cn("p-3.5 border rounded-xs space-y-1", dark ? "border-[#262626] bg-[#141414]" : "border-[#e0e4dc] bg-white")}>
           <div className="text-[10px] font-mono uppercase text-[#788274]">Health Verdict</div>
           <div className="text-lg font-bold font-mono text-[#75bf00]">HEALTHY</div>
-          <div className="text-[10px] text-[#888]">Capacity: Low Risk</div>
+          <div className="text-[10px] text-[#C8C7BA]">Capacity: Low Risk</div>
         </div>
 
         <div className={cn("p-3.5 border rounded-xs space-y-1", dark ? "border-[#262626] bg-[#141414]" : "border-[#e0e4dc] bg-white")}>
@@ -140,7 +140,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               selectedProviderCategory === cat.id
                 ? "bg-[#75bf00] text-black font-bold"
                 : dark
-                ? "text-[#889084] hover:text-white hover:bg-[#202020]"
+                ? "text-[#889084] hover:text-[#F0EFE2] hover:bg-[#202020]"
                 : "text-[#555e50] hover:text-[#111] hover:bg-[#f0f4ee]"
             )}
           >
@@ -178,11 +178,11 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm text-white">RunPod</span>
+                  <span className="font-bold text-sm text-[#F0EFE2]">RunPod</span>
                   <span className="border border-[#75bf00]/40 bg-[#162916] text-[#a3e635] text-[10px] font-mono font-bold px-2 py-0.2 rounded-xs">
                     ● CONNECTED
                   </span>
-                  <span className="text-[10px] font-mono text-[#888]">THIRD-PARTY CLOUD</span>
+                  <span className="text-[10px] font-mono text-[#C8C7BA]">THIRD-PARTY CLOUD</span>
                 </div>
                 <p className="text-xs text-[#889084] mt-0.5">
                   Direct GPU control across Pods, Serverless, storage, templates, and hardware registries.
@@ -212,40 +212,40 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="border border-[#282828] bg-[#181818] p-3.5 rounded-xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-white uppercase">Discovered Compute</span>
+                    <span className="text-xs font-mono font-bold text-[#F0EFE2] uppercase">Discovered Compute</span>
                     <span className="text-[10px] font-mono text-[#75bf00]">14 GPUs</span>
                   </div>
                   <div className="space-y-1 text-xs font-mono">
-                    <div className="flex justify-between text-[#ccc]">
+                    <div className="flex justify-between text-[#C8C7BA]">
                       <span>H100 SXM5 (80GB)</span>
-                      <span className="text-white font-bold">8 units</span>
+                      <span className="text-[#F0EFE2] font-bold">8 units</span>
                     </div>
-                    <div className="flex justify-between text-[#ccc]">
+                    <div className="flex justify-between text-[#C8C7BA]">
                       <span>H200 NVL (141GB)</span>
-                      <span className="text-white font-bold">4 units</span>
+                      <span className="text-[#F0EFE2] font-bold">4 units</span>
                     </div>
-                    <div className="flex justify-between text-[#ccc]">
+                    <div className="flex justify-between text-[#C8C7BA]">
                       <span>L40S PCIe (48GB)</span>
-                      <span className="text-white font-bold">2 units</span>
+                      <span className="text-[#F0EFE2] font-bold">2 units</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="border border-[#282828] bg-[#181818] p-3.5 rounded-xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-white uppercase">Discovered Workloads</span>
+                    <span className="text-xs font-mono font-bold text-[#F0EFE2] uppercase">Discovered Workloads</span>
                     <span className="text-[10px] font-mono text-[#a3e635]">7 Active</span>
                   </div>
                   <div className="space-y-1 text-xs font-mono">
-                    <div className="flex justify-between text-[#ccc]">
+                    <div className="flex justify-between text-[#C8C7BA]">
                       <span>checkout-service</span>
                       <span className="text-[#75bf00]">vLLM / H100</span>
                     </div>
-                    <div className="flex justify-between text-[#ccc]">
+                    <div className="flex justify-between text-[#C8C7BA]">
                       <span>embedding-pipeline</span>
                       <span className="text-[#75bf00]">TEI / L40S</span>
                     </div>
-                    <div className="flex justify-between text-[#ccc]">
+                    <div className="flex justify-between text-[#C8C7BA]">
                       <span>batch-eval-worker</span>
                       <span className="text-[#e6b800]">SGLang / H200</span>
                     </div>
@@ -254,7 +254,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
 
                 <div className="border border-[#282828] bg-[#181818] p-3.5 rounded-xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-white uppercase">Capabilities Discovered</span>
+                    <span className="text-xs font-mono font-bold text-[#F0EFE2] uppercase">Capabilities Discovered</span>
                     <span className="text-[10px] font-mono text-[#75bf00]">6 Validated</span>
                   </div>
                   <div className="grid grid-cols-2 gap-1 text-[11px] font-mono text-[#aaa]">
@@ -273,19 +273,19 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Activity size={14} className="text-[#75bf00]" />
-                    <span className="text-xs font-bold font-mono uppercase text-white">Live Reality Telemetry & Risk Assessment</span>
+                    <span className="text-xs font-bold font-mono uppercase text-[#F0EFE2]">Live Reality Telemetry & Risk Assessment</span>
                   </div>
-                  <span className="text-[10px] font-mono text-[#888]">Last sync: 34s ago</span>
+                  <span className="text-[10px] font-mono text-[#C8C7BA]">Last sync: 34s ago</span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
                   <div className="border border-[#2a2a2a] bg-[#141414] p-2.5 rounded-xs">
                     <div className="text-[10px] text-[#788274]">GPU UTILIZATION</div>
-                    <div className="text-sm font-bold text-white mt-0.5">78%</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">78%</div>
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] p-2.5 rounded-xs">
                     <div className="text-[10px] text-[#788274]">VRAM FOOTPRINT</div>
-                    <div className="text-sm font-bold text-white mt-0.5">64% (51.2 GB)</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">64% (51.2 GB)</div>
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] p-2.5 rounded-xs">
                     <div className="text-[10px] text-[#788274]">TEMPERATURE</div>
@@ -293,7 +293,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] p-2.5 rounded-xs">
                     <div className="text-[10px] text-[#788274]">POWER DRAW</div>
-                    <div className="text-sm font-bold text-white mt-0.5">524 W / card</div>
+                    <div className="text-sm font-bold text-[#F0EFE2] mt-0.5">524 W / card</div>
                   </div>
                 </div>
 
@@ -303,7 +303,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
                     <span>EPOCH REALITY RECOMMENDATION</span>
                   </div>
                   <p className="text-[#c8b898] leading-relaxed">
-                    Batch workload <code className="text-white">batch-eval-worker</code> is running on H200 capacity ($3.80/hr). Moving to L40S capacity reduces monthly spend by <strong className="text-white">23%</strong> ($112/mo) with zero impact on P99 SLA.
+                    Batch workload <code className="text-[#F0EFE2]">batch-eval-worker</code> is running on H200 capacity ($3.80/hr). Moving to L40S capacity reduces monthly spend by <strong className="text-[#F0EFE2]">23%</strong> ($112/mo) with zero impact on P99 SLA.
                   </p>
                 </div>
               </div>
@@ -312,7 +312,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#222]">
                 <button
                   type="button"
-                  className="border border-[#383838] bg-[#202020] hover:bg-[#282828] text-white text-xs px-3 py-1.5 rounded-xs transition-colors cursor-pointer"
+                  className="border border-[#383838] bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] text-xs px-3 py-1.5 rounded-xs transition-colors cursor-pointer"
                 >
                   Manage API Key & Permissions
                 </button>
@@ -339,11 +339,11 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm text-white">Modal</span>
+                  <span className="font-bold text-sm text-[#F0EFE2]">Modal</span>
                   <span className="border border-[#75bf00]/40 bg-[#162916] text-[#a3e635] text-[10px] font-mono font-bold px-2 py-0.2 rounded-xs">
                     ● CONNECTED
                   </span>
-                  <span className="text-[10px] font-mono text-[#888]">SERVERLESS COMPUTATIONAL GATEWAY</span>
+                  <span className="text-[10px] font-mono text-[#C8C7BA]">SERVERLESS COMPUTATIONAL GATEWAY</span>
                 </div>
                 <p className="text-xs text-[#889084] mt-0.5">
                   Serverless GPU execution, instant cold start scaling, and Modal deployments.
@@ -374,11 +374,11 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm text-white">Hugging Face</span>
+                  <span className="font-bold text-sm text-[#F0EFE2]">Hugging Face</span>
                   <span className="border border-[#75bf00]/40 bg-[#162916] text-[#a3e635] text-[10px] font-mono font-bold px-2 py-0.2 rounded-xs">
                     TOKEN ACTIVE
                   </span>
-                  <span className="text-[10px] font-mono text-[#888]">MODEL & KNOWLEDGE REGISTRY</span>
+                  <span className="text-[10px] font-mono text-[#C8C7BA]">MODEL & KNOWLEDGE REGISTRY</span>
                 </div>
                 <p className="text-xs text-[#889084] mt-0.5">
                   Gated model access, automated architecture resolution, and weight digest verification.
@@ -407,11 +407,11 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm text-white">OpenTelemetry & Prometheus</span>
+                  <span className="font-bold text-sm text-[#F0EFE2]">OpenTelemetry & Prometheus</span>
                   <span className="border border-[#75bf00]/40 bg-[#162916] text-[#a3e635] text-[10px] font-mono font-bold px-2 py-0.2 rounded-xs">
                     CONNECTED
                   </span>
-                  <span className="text-[10px] font-mono text-[#888]">OBSERVABILITY TELEMETRY</span>
+                  <span className="text-[10px] font-mono text-[#C8C7BA]">OBSERVABILITY TELEMETRY</span>
                 </div>
                 <p className="text-xs text-[#889084] mt-0.5">
                   Distributed trace ingestion, P99 latency monitoring, queue depth, and metrics correlation.
@@ -468,7 +468,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
                     {item.category}
                   </span>
                 </div>
-                <div className="font-bold text-xs text-white">{item.name}</div>
+                <div className="font-bold text-xs text-[#F0EFE2]">{item.name}</div>
                 <p className="text-[11px] text-[#788274] leading-relaxed">{item.desc}</p>
               </div>
 
@@ -493,19 +493,19 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
         <div className="flex items-center justify-between border-b border-[#282828] pb-3">
           <div className="flex items-center gap-2">
             <Clock size={15} className="text-[#75bf00]" />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-white">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#F0EFE2]">
               Recent Discovered Reality Changes & Observed Consequences
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-[#888]">Continuous Synchronization</span>
+          <span className="text-[11px] font-mono text-[#C8C7BA]">Continuous Synchronization</span>
         </div>
 
         <div className="space-y-2.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-dashed border-[#262626] pb-2.5 text-xs font-mono">
             <div className="flex items-center gap-2">
               <span className="text-[#788274] text-[10px]">2 MIN AGO</span>
-              <span className="text-white font-bold">GPU-07 utilization increased 18%</span>
-              <span className="text-[#888]">(H100 US-East)</span>
+              <span className="text-[#F0EFE2] font-bold">GPU-07 utilization increased 18%</span>
+              <span className="text-[#C8C7BA]">(H100 US-East)</span>
             </div>
             <span className="text-[#75bf00]">Observed: Normal load surge</span>
           </div>
@@ -513,7 +513,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-dashed border-[#262626] pb-2.5 text-xs font-mono">
             <div className="flex items-center gap-2">
               <span className="text-[#788274] text-[10px]">14 MIN AGO</span>
-              <span className="text-white font-bold">workload-42 deployed</span>
+              <span className="text-[#F0EFE2] font-bold">workload-42 deployed</span>
               <span className="text-[#e6b800]">batch_size 32 → 64</span>
             </div>
             <span className="text-[#e6b800]">Observed Consequence: P99 +17% (Confidence 93%)</span>
@@ -522,8 +522,8 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
             <div className="flex items-center gap-2">
               <span className="text-[#788274] text-[10px]">31 MIN AGO</span>
-              <span className="text-white font-bold">network-02 latency increased (+14ms)</span>
-              <span className="text-[#888]">(Cross-region VPC)</span>
+              <span className="text-[#F0EFE2] font-bold">network-02 latency increased (+14ms)</span>
+              <span className="text-[#C8C7BA]">(Cross-region VPC)</span>
             </div>
             <span className="text-[#e6b800]">Bottleneck Detected</span>
           </div>
@@ -535,11 +535,11 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4">
           <div className={cn(
             "w-full max-w-lg border p-5 shadow-2xl space-y-4 text-xs rounded-xs",
-            dark ? "border-[#383838] bg-[#181818] text-white" : "border-[#a8b0a2] bg-white text-[#171a17]"
+            dark ? "border-[#383838] bg-[#181818] text-[#F0EFE2]" : "border-[#a8b0a2] bg-white text-[#171a17]"
           )}>
             <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-3">
               <div>
-                <h3 className="text-sm font-bold font-mono text-white">Connect Reality Surface: {selectedConnectProvider}</h3>
+                <h3 className="text-sm font-bold font-mono text-[#F0EFE2]">Connect Reality Surface: {selectedConnectProvider}</h3>
                 <p className="text-[11px] text-[#788274] mt-0.5">
                   Authorize Epoch to discover execution capabilities and observe system state.
                 </p>
@@ -547,7 +547,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               <button
                 type="button"
                 onClick={() => setConnectModalOpen(false)}
-                className="text-[#888] hover:text-white text-base cursor-pointer"
+                className="text-[#C8C7BA] hover:text-[#F0EFE2] text-base cursor-pointer"
               >
                 ✕
               </button>
@@ -555,7 +555,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
 
             <div className="space-y-3">
               <div className="space-y-1">
-                <label className="text-[11px] text-[#888] font-mono block">API Key or Access Token</label>
+                <label className="text-[11px] text-[#C8C7BA] font-mono block">API Key or Access Token</label>
                 <div className="relative">
                   <Key size={13} className="absolute left-3 top-2.5 text-[#666]" />
                   <input
@@ -563,7 +563,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
                     value={runpodApiKey}
                     onChange={(e) => setRunpodApiKey(e.target.value)}
                     placeholder="Enter credential..."
-                    className="w-full border border-[#383838] bg-[#121212] pl-8 pr-3 py-2 text-xs font-mono text-white outline-none rounded-xs focus:border-[#75bf00]"
+                    className="w-full border border-[#383838] bg-[#121212] pl-8 pr-3 py-2 text-xs font-mono text-[#F0EFE2] outline-none rounded-xs focus:border-[#75bf00]"
                   />
                 </div>
               </div>
@@ -573,7 +573,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
                 <span className="text-[10px] font-mono font-bold uppercase text-[#75bf00] block">
                   Epoch Permission Scope & Security Model
                 </span>
-                <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono text-[#ccc]">
+                <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono text-[#C8C7BA]">
                   <label className="flex items-center gap-2">
                     <input type="checkbox" defaultChecked className="accent-[#75bf00]" />
                     <span>Compute Discovery</span>
@@ -601,7 +601,7 @@ export function RealityConnectionsView({ dark = true }: RealityConnectionsViewPr
               <button
                 type="button"
                 onClick={() => setConnectModalOpen(false)}
-                className="border border-[#383838] bg-[#222] text-[#888] hover:text-white text-xs px-3.5 py-1.5 rounded-xs cursor-pointer"
+                className="border border-[#383838] bg-[#222] text-[#C8C7BA] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-xs cursor-pointer"
               >
                 Cancel
               </button>

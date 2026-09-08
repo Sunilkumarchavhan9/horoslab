@@ -38,10 +38,10 @@ export function EmailLinkVerification({
     () =>
       surface === "dark"
         ? {
-            shell: "min-h-svh bg-[#05070f] text-white",
-            card: "border border-white/10 bg-[#08101c] text-white shadow-[0_30px_80px_rgba(0,0,0,0.55)]",
-            body: "text-white/72",
-            button: "border border-white/12 text-white hover:bg-white/5",
+            shell: "min-h-svh bg-[#05070f] text-[#F0EFE2]",
+            card: "border border-white/10 bg-[#08101c] text-[#F0EFE2] shadow-[0_30px_80px_rgba(0,0,0,0.55)]",
+            body: "text-[#F0EFE2]/72",
+            button: "border border-white/12 text-[#F0EFE2] hover:bg-white/5",
           }
         : {
             shell: "min-h-svh bg-white text-[#09111c]",

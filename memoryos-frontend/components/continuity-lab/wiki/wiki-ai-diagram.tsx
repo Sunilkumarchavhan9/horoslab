@@ -146,8 +146,8 @@ export function WikiAiDiagram({
       <section className={cn("space-y-2", className)}>
         <header className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-sm font-semibold text-white">Generating diagram…</p>
-            <p className="mt-1 text-xs text-white/45">AI-generated from repository structure</p>
+            <p className="text-sm font-semibold text-[#F0EFE2]">Generating diagram…</p>
+            <p className="mt-1 text-xs text-[#F0EFE2]/45">AI-generated from repository structure</p>
           </div>
           <Loader2 className="size-4 animate-spin text-indigo-300/80" />
         </header>
@@ -165,16 +165,16 @@ export function WikiAiDiagram({
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-white">{diagram.title}</h3>
+            <h3 className="text-sm font-semibold text-[#F0EFE2]">{diagram.title}</h3>
             <span className="inline-flex items-center gap-1 rounded border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-indigo-200/90">
               <Sparkles className="size-3" />
               AI-generated from repository structure
             </span>
             {diagram.cached ? (
-              <span className="text-[10px] text-white/35">Cached</span>
+              <span className="text-[10px] text-[#F0EFE2]/35">Cached</span>
             ) : null}
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-white/45">
+          <p className="mt-1 text-xs leading-relaxed text-[#F0EFE2]/45">
             Grounded in the connected GitHub tree, README, package.json, and schema files.
           </p>
         </div>
@@ -182,7 +182,7 @@ export function WikiAiDiagram({
           type="button"
           onClick={() => void loadDiagram(true)}
           disabled={regenerating}
-          className="inline-flex h-8 items-center gap-1.5 rounded-md border border-[#3A3A3A] px-2.5 text-[11px] font-medium text-white/80 hover:border-[#4338CA]/50 disabled:opacity-60"
+          className="inline-flex h-8 items-center gap-1.5 rounded-md border border-[#3A3A3A] px-2.5 text-[11px] font-medium text-[#F0EFE2]/80 hover:border-[#4338CA]/50 disabled:opacity-60"
         >
           {regenerating ? (
             <Loader2 className="size-3.5 animate-spin" />
@@ -206,7 +206,7 @@ export function WikiAiDiagram({
 
       {diagram.sources.length > 0 ? (
         <footer className="space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">
             Sources
           </p>
           <div className="flex flex-wrap gap-2">

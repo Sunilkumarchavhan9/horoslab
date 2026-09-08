@@ -52,7 +52,7 @@ export function DeveloperVerifiers() {
  title="Custom Verifiers" 
  description="Write deterministic verification logic in your preferred language to evaluate autonomous mission outcomes before deployment."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
  Create Verifier
  </button>
@@ -80,18 +80,18 @@ export function DeveloperVerifiers() {
  >
  <td className="px-6 py-3">
  <div className="flex flex-col gap-1">
- <span className="text-[13px] font-medium text-foreground dark:text-white">{verifier.name}</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">{verifier.name}</span>
  <span className="text-[11px] font-mono text-muted-foreground dark:text-muted-foreground">{verifier.id}</span>
  </div>
  </td>
  <td className="px-6 py-3">
  <div className="flex items-center gap-2">
  <Code2 className="size-3.5 text-muted-foreground" />
- <span className="text-[12px] font-mono text-foreground/80 dark:text-[#ccc]">{verifier.language}</span>
+ <span className="text-[12px] font-mono text-foreground/80 dark:text-[#C8C7BA]">{verifier.language}</span>
  </div>
  </td>
  <td className="px-6 py-3">
- <span className="text-[13px] font-mono text-foreground dark:text-white">{verifier.runs}</span>
+ <span className="text-[13px] font-mono text-foreground dark:text-[#F0EFE2]">{verifier.runs}</span>
  </td>
  <td className="px-6 py-3">
  <span className="text-[13px] font-mono text-emerald-600">{verifier.passRate}</span>
@@ -109,7 +109,7 @@ export function DeveloperVerifiers() {
  <div className="flex items-center gap-3 px-6 py-6 border-b border-border dark:border-white/5 bg-muted/50 dark:bg-[#030303]">
  <ShieldCheck className="size-4 text-muted-foreground" />
  <span className="text-[13px] font-medium text-foreground dark:text-[#eee]">Configuration Inspector</span>
- <span className="ml-auto px-2 py-0.5 rounded-md bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground dark:text-white">
+ <span className="ml-auto px-2 py-0.5 rounded-md bg-muted dark:bg-white/10 text-[11px] font-mono text-foreground dark:text-[#F0EFE2]">
  {selectedVerifier.version}
  </span>
  </div>
@@ -132,21 +132,21 @@ export function DeveloperVerifiers() {
  <div className="flex items-center justify-between p-2">
  <div className="flex items-center gap-3">
  <History className="size-4 text-muted-foreground" />
- <span className="font-mono text-foreground dark:text-white font-medium">v2.1.0</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2] font-medium">v2.1.0</span>
  </div>
  <span className="text-[11px] text-muted-foreground">Current</span>
  </div>
  <div className="flex items-center justify-between p-2 border-t border-border dark:border-white/5 opacity-50 hover:opacity-100 cursor-pointer transition-opacity">
  <div className="flex items-center gap-3">
  <History className="size-4 text-muted-foreground" />
- <span className="font-mono text-foreground dark:text-white font-medium">v2.0.1</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2] font-medium">v2.0.1</span>
  </div>
  <span className="text-[11px] text-muted-foreground">Oct 14, 2025</span>
  </div>
  <div className="flex items-center justify-between p-2 border-t border-border dark:border-white/5 opacity-50 hover:opacity-100 cursor-pointer transition-opacity">
  <div className="flex items-center gap-3">
  <History className="size-4 text-muted-foreground" />
- <span className="font-mono text-foreground dark:text-white font-medium">v1.4.0</span>
+ <span className="font-mono text-foreground dark:text-[#F0EFE2] font-medium">v1.4.0</span>
  </div>
  <span className="text-[11px] text-muted-foreground">Jul 02, 2025</span>
  </div>

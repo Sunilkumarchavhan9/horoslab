@@ -19,7 +19,7 @@ export function InstitutionEvolution() {
  title="Institution Evolution" 
  description="Track how this institution adapts over time through human approvals, simulations, and automated mutations."
  action={
- <button className="px-6 py-2 bg-[#0f52ff] hover:bg-[#0042e6] text-foreground dark:text-white rounded-md text-[13px] font-medium transition-colors">
+ <button className="px-6 py-2 bg-[#0f52ff] hover:bg-[#0042e6] text-foreground dark:text-[#F0EFE2] rounded-md text-[13px] font-medium transition-colors">
  Run Simulation
  </button>
  }
@@ -34,8 +34,8 @@ export function InstitutionEvolution() {
  <div className="rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] p-6 h-[320px] flex flex-col relative overflow-hidden group">
  <div className="flex items-start justify-between mb-6 relative z-10">
  <div className="flex flex-col">
- <h3 className="text-[14px] font-semibold text-foreground dark:text-white">Fitness Score</h3>
- <span className="text-[12px] text-foreground/50 dark:text-white/50">Overall capability and safety score</span>
+ <h3 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2]">Fitness Score</h3>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Overall capability and safety score</span>
  </div>
  <div className="flex items-center gap-2">
  <span className="text-[24px] font-bold text-emerald-500">91</span>
@@ -48,7 +48,7 @@ export function InstitutionEvolution() {
  {/* Mock Chart Visualization */}
  <div className="flex-1 relative w-full mt-4 border-l border-b border-border dark:border-white/10 flex items-end">
  {/* Y Axis Labels */}
- <div className="absolute -left-6 top-0 bottom-0 flex flex-col justify-between text-[10px] text-foreground/30 dark:text-white/30 font-mono py-2">
+ <div className="absolute -left-6 top-0 bottom-0 flex flex-col justify-between text-[10px] text-foreground/30 dark:text-[#F0EFE2]/30 font-mono py-2">
  <span>100</span>
  <span>75</span>
  <span>50</span>
@@ -77,7 +77,7 @@ export function InstitutionEvolution() {
  ))}
  </div>
  </div>
- <div className="flex justify-between w-full text-[10px] text-foreground/30 dark:text-white/30 font-mono mt-2 pl-2">
+ <div className="flex justify-between w-full text-[10px] text-foreground/30 dark:text-[#F0EFE2]/30 font-mono mt-2 pl-2">
  <span>v1</span>
  <span>v3</span>
  <span>v5</span>
@@ -88,22 +88,22 @@ export function InstitutionEvolution() {
 
  <div className="grid grid-cols-2 gap-6">
  <div className="rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] p-6">
- <h3 className="text-[13px] font-semibold text-foreground dark:text-white mb-4">Top Improvements</h3>
+ <h3 className="text-[13px] font-semibold text-foreground dark:text-[#F0EFE2] mb-4">Top Improvements</h3>
  <ul className="space-y-3">
- <li className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-white/70">
+ <li className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-[#F0EFE2]/70">
  <TrendingUp className="size-4 text-emerald-500 shrink-0" />
  Reduced average mission latency by 24% in v8.
  </li>
- <li className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-white/70">
+ <li className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-[#F0EFE2]/70">
  <TrendingUp className="size-4 text-emerald-500 shrink-0" />
  Improved evidence collection coverage to 99%.
  </li>
  </ul>
  </div>
  <div className="rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] p-6">
- <h3 className="text-[13px] font-semibold text-foreground dark:text-white mb-4">Past Failures</h3>
+ <h3 className="text-[13px] font-semibold text-foreground dark:text-[#F0EFE2] mb-4">Past Failures</h3>
  <ul className="space-y-3">
- <li className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-white/70">
+ <li className="flex items-start gap-2 text-[12px] text-foreground/70 dark:text-[#F0EFE2]/70">
  <AlertTriangle className="size-4 text-amber-500 shrink-0" />
  Mutation M-452 (v7) violated budget constraints during simulation.
  </li>
@@ -115,7 +115,7 @@ export function InstitutionEvolution() {
  {/* Right Column: Evolution Timeline */}
  <div className="col-span-1 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#0a0a0a] flex flex-col h-[600px]">
  <div className="px-6 py-6 border-b border-border dark:border-white/10 shrink-0">
- <h3 className="text-[14px] font-semibold text-foreground dark:text-white">Mutation History</h3>
+ <h3 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2]">Mutation History</h3>
  </div>
  
  <div className="flex-1 p-6 overflow-y-auto custom-scrollbar relative">
@@ -135,12 +135,12 @@ export function InstitutionEvolution() {
  
  <div className="flex flex-col pt-1.5 min-w-0">
  <div className="flex items-center justify-between mb-1">
- <span className="font-mono text-[12px] font-bold text-foreground dark:text-white uppercase tracking-wider">{item.version}</span>
- <span className="text-[10px] text-foreground/40 dark:text-white/40">{item.date}</span>
+ <span className="font-mono text-[12px] font-bold text-foreground dark:text-[#F0EFE2] uppercase tracking-wider">{item.version}</span>
+ <span className="text-[10px] text-foreground/40 dark:text-[#F0EFE2]/40">{item.date}</span>
  </div>
- <span className="text-[12px] text-foreground/70 dark:text-white/70 leading-snug mb-2">{item.description}</span>
+ <span className="text-[12px] text-foreground/70 dark:text-[#F0EFE2]/70 leading-snug mb-2">{item.description}</span>
  <div className="flex items-center gap-2 text-[11px] font-mono">
- <span className="text-foreground/40 dark:text-white/40">Fitness:</span>
+ <span className="text-foreground/40 dark:text-[#F0EFE2]/40">Fitness:</span>
  <span className={item.success ? "text-emerald-500" : "text-red-500"}>{item.fitness}</span>
  </div>
  </div>

@@ -208,7 +208,7 @@ export function EvidenceWorkspace({ id, onClose }: { id: string, onClose: () => 
                 </div>
               </div>
               <div className="p-5 border-t border-black/5 bg-[#fafafa]">
-                <Button className="w-full bg-[#0f52ff] hover:bg-[#0f52ff]/90 text-white shadow-sm shadow-[#0f52ff]/20">
+                <Button className="w-full bg-[#0f52ff] hover:bg-[#0f52ff]/90 text-[#F0EFE2] shadow-sm shadow-[#0f52ff]/20">
                   View Full Object
                 </Button>
               </div>
@@ -227,7 +227,7 @@ function TraceNode({ icon, title, subtitle, isActive, onClick, isEnd }: any) {
       onClick={onClick}
     >
       <div className="flex items-center gap-4">
-        <div className={`size-12 rounded-md flex items-center justify-center shrink-0 transition-colors ${isActive ? 'bg-[#0f52ff] text-white' : 'bg-black/5 text-black/50'}`}>
+        <div className={`size-12 rounded-md flex items-center justify-center shrink-0 transition-colors ${isActive ? 'bg-[#0f52ff] text-[#F0EFE2]' : 'bg-black/5 text-black/50'}`}>
           {icon}
         </div>
         <div>

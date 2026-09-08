@@ -34,9 +34,9 @@ export function WikiDiagramPanel({
   return (
     <section className={cn("space-y-2", className)}>
       <div>
-        <h3 className="text-sm font-semibold text-white">{title}</h3>
+        <h3 className="text-sm font-semibold text-[#F0EFE2]">{title}</h3>
         {description ? (
-          <p className="mt-1 text-xs leading-relaxed text-white/45">{description}</p>
+          <p className="mt-1 text-xs leading-relaxed text-[#F0EFE2]/45">{description}</p>
         ) : null}
       </div>
       {nodes.length > 0 ? (

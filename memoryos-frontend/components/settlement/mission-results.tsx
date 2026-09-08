@@ -132,7 +132,7 @@ export function SettlementMissionResults() {
                 </div>
                 
                 <div className="pt-4 border-t border-black/5">
-                   <Button className="w-full bg-[#0f52ff] hover:bg-[#0a38b5] text-white">
+                   <Button className="w-full bg-[#0f52ff] hover:bg-[#0a38b5] text-[#F0EFE2]">
                       View Full Settlement Report <ArrowRight className="size-4 ml-2" />
                    </Button>
                 </div>

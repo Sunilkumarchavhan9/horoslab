@@ -54,7 +54,7 @@ type EnrollTab = "repositories" | "users";
 type RepoModeFilter = "all_modes" | LabReviewEnrollMode;
 
 const inputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none";
 
 const MODE_OPTIONS: { value: LabReviewEnrollMode; label: string }[] = [
   { value: "auto_review", label: "Auto review" },
@@ -342,7 +342,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -362,7 +362,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
           </button>
         </div>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -435,7 +435,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
           </SettingsFieldRow>
         </SettingsFlatPanel>
         {!github.connected ? (
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-[#F0EFE2]/40">
             Connect GitHub in{" "}
             <Link
               href="/continuity-lab/settings/connections"
@@ -504,8 +504,8 @@ export function ContinuityLabOrgReviewSettingsSection() {
 
             {settings.enrolledRepos.length === 0 ? (
               <div className="rounded-md border border-white/[0.08] bg-[#111111] px-4 py-8 text-center">
-                <p className="text-sm text-white/55">No repositories enrolled yet.</p>
-                <p className="mt-1 text-xs text-white/40">
+                <p className="text-sm text-[#F0EFE2]/55">No repositories enrolled yet.</p>
+                <p className="mt-1 text-xs text-[#F0EFE2]/40">
                   Add repos to run automatic MemoryOS Review on pull requests.
                 </p>
                 {github.connected ? (
@@ -515,13 +515,13 @@ export function ContinuityLabOrgReviewSettingsSection() {
                     </SettingsPrimaryButton>
                   </div>
                 ) : (
-                  <p className="mt-3 text-xs text-white/40">
+                  <p className="mt-3 text-xs text-[#F0EFE2]/40">
                     Connect GitHub to browse and enroll repositories.
                   </p>
                 )}
               </div>
             ) : filteredEnrolledRepos.length === 0 ? (
-              <p className="text-sm text-white/50">No enrolled repos match your filters.</p>
+              <p className="text-sm text-[#F0EFE2]/50">No enrolled repos match your filters.</p>
             ) : (
               <SettingsFlatPanel className="!px-0">
                 <ul>
@@ -538,10 +538,10 @@ export function ContinuityLabOrgReviewSettingsSection() {
                       className="flex flex-wrap items-center gap-3 border-b border-white/[0.06] px-3 py-3 last:border-b-0"
                     >
                       <div className="min-w-0 flex-1">
-                        <span className="block truncate font-mono text-sm text-white">
+                        <span className="block truncate font-mono text-sm text-[#F0EFE2]">
                           {row.repo}
                         </span>
-                        <p className="mt-0.5 text-[11px] text-white/40">
+                        <p className="mt-0.5 text-[11px] text-[#F0EFE2]/40">
                           <span
                             className={cn(
                               connected ? "text-emerald-300/80" : "text-amber-200/80",
@@ -563,7 +563,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
                       <button
                         type="button"
                         onClick={() => removeRepo(row.repo)}
-                        className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white"
+                        className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                         aria-label={`Remove ${row.repo}`}
                       >
                         <Trash2 className="size-3.5" />
@@ -574,7 +574,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
                 </ul>
               </SettingsFlatPanel>
             )}
-            <p className="text-[11px] text-white/35">
+            <p className="text-[11px] text-[#F0EFE2]/35">
               Batch PR automation on GitHub webhooks is not wired yet; enrollment and comment
               preferences sync to the server on every change.
             </p>
@@ -597,8 +597,8 @@ export function ContinuityLabOrgReviewSettingsSection() {
 
             {settings.enrolledUsers.length === 0 ? (
               <div className="rounded-md border border-white/[0.08] bg-[#111111] px-4 py-8 text-center">
-                <p className="text-sm text-white/55">No users enrolled yet.</p>
-                <p className="mt-1 text-xs text-white/40">
+                <p className="text-sm text-[#F0EFE2]/55">No users enrolled yet.</p>
+                <p className="mt-1 text-xs text-[#F0EFE2]/40">
                   Enroll yourself or teammates to trigger review on their pull requests.
                 </p>
                 {user?.id ? (
@@ -610,7 +610,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
                 ) : null}
               </div>
             ) : filteredEnrolledUsers.length === 0 ? (
-              <p className="text-sm text-white/50">No enrolled users match your search.</p>
+              <p className="text-sm text-[#F0EFE2]/50">No enrolled users match your search.</p>
             ) : (
               <SettingsFlatPanel className="!px-0">
                 <ul>
@@ -622,7 +622,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
                       className="flex items-center gap-3 border-b border-white/[0.06] px-3 py-3 last:border-b-0"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-white">
+                        <p className="text-sm font-medium text-[#F0EFE2]">
                           {row.displayName ?? row.email ?? row.id}
                           {isSelf ? (
                             <span className="ml-2 rounded bg-indigo-500/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-200/90">
@@ -631,13 +631,13 @@ export function ContinuityLabOrgReviewSettingsSection() {
                           ) : null}
                         </p>
                         {row.email && row.displayName ? (
-                          <p className="text-xs text-white/45">{row.email}</p>
+                          <p className="text-xs text-[#F0EFE2]/45">{row.email}</p>
                         ) : null}
                       </div>
                       <button
                         type="button"
                         onClick={() => removeUser(row.id)}
-                        className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white"
+                        className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                         aria-label="Remove user"
                       >
                         <Trash2 className="size-3.5" />
@@ -657,7 +657,7 @@ export function ContinuityLabOrgReviewSettingsSection() {
         description="Add context to help MemoryOS find bugs. Rule files are matched against changed paths in each pull request."
       >
         <div className="flex flex-wrap items-end gap-2">
-          <label className="min-w-0 flex-1 text-xs font-medium text-white/70">
+          <label className="min-w-0 flex-1 text-xs font-medium text-[#F0EFE2]/70">
             Files
             <input
               type="text"
@@ -682,8 +682,8 @@ export function ContinuityLabOrgReviewSettingsSection() {
         <SettingsFlatPanel className="mt-3 !px-0">
           <ul>
             <li className="flex items-center gap-2 border-b border-white/[0.06] px-3 py-2.5">
-              <span className="font-mono text-sm text-white">{DEFAULT_REVIEW_RULE_FILE.glob}</span>
-              <span className="rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/45">
+              <span className="font-mono text-sm text-[#F0EFE2]">{DEFAULT_REVIEW_RULE_FILE.glob}</span>
+              <span className="rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                 Default
               </span>
             </li>
@@ -692,13 +692,13 @@ export function ContinuityLabOrgReviewSettingsSection() {
                 key={file.id}
                 className="flex items-center gap-2 border-b border-white/[0.06] px-3 py-2.5 last:border-b-0"
               >
-                <span className="min-w-0 flex-1 truncate font-mono text-sm text-white">
+                <span className="min-w-0 flex-1 truncate font-mono text-sm text-[#F0EFE2]">
                   {file.glob}
                 </span>
                 <button
                   type="button"
                   onClick={() => removeRuleFile(file.id)}
-                  className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white"
+                  className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                   aria-label={`Remove ${file.glob}`}
                 >
                   <Trash2 className="size-3.5" />
@@ -707,9 +707,9 @@ export function ContinuityLabOrgReviewSettingsSection() {
             ))}
           </ul>
         </SettingsFlatPanel>
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-[#F0EFE2]/40">
           Rule files closest to changed files in the diff are preferred. Keep repo-specific guidance
-          in <span className="font-mono text-white/55">/REVIEW.md</span> at the repository root.
+          in <span className="font-mono text-[#F0EFE2]/55">/REVIEW.md</span> at the repository root.
         </p>
       </SettingsCard>
 

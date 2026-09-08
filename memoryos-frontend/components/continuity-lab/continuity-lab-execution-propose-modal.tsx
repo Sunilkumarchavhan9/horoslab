@@ -127,14 +127,14 @@ export function ContinuityLabExecutionProposeModal({
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6366F1]">
               Governed execution
             </p>
-            <h2 id="propose-execution-title" className="mt-1 text-lg font-semibold text-white">
+            <h2 id="propose-execution-title" className="mt-1 text-lg font-semibold text-[#F0EFE2]">
               Propose action
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414]"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -143,7 +143,7 @@ export function ContinuityLabExecutionProposeModal({
 
         <form onSubmit={(e) => void handleSubmit(e)} className="max-h-[min(70vh,520px)] overflow-y-auto px-5 py-4">
           <fieldset className="space-y-2">
-            <legend className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+            <legend className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
               Action type
             </legend>
             {actionOptions.map((opt) => (
@@ -165,15 +165,15 @@ export function ContinuityLabExecutionProposeModal({
                   className="mt-0.5"
                 />
                 <span>
-                  <span className="block text-sm font-medium text-white">{opt.label}</span>
-                  <span className="mt-0.5 block text-[11px] text-white/45">{opt.hint}</span>
+                  <span className="block text-sm font-medium text-[#F0EFE2]">{opt.label}</span>
+                  <span className="mt-0.5 block text-[11px] text-[#F0EFE2]/45">{opt.hint}</span>
                 </span>
               </label>
             ))}
           </fieldset>
 
           <label className="mt-4 block">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
               Goal
             </span>
             <textarea
@@ -182,14 +182,14 @@ export function ContinuityLabExecutionProposeModal({
               rows={3}
               required
               placeholder="What outcome should this governed action achieve?"
-              className="mt-1.5 w-full resize-none border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-white/35 focus:border-[#6366F1] focus:outline-none"
+              className="mt-1.5 w-full resize-none border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#6366F1] focus:outline-none"
             />
           </label>
 
           {actionKind === "issue_comment" ? (
             <>
               <label className="mt-3 block">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                   PR / issue number
                 </span>
                 <input
@@ -199,11 +199,11 @@ export function ContinuityLabExecutionProposeModal({
                   onChange={(e) => setIssueNumber(e.target.value)}
                   required={actionKind === "issue_comment"}
                   placeholder="e.g. 42"
-                  className="mt-1.5 w-full border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-white/35 focus:border-[#6366F1] focus:outline-none"
+                  className="mt-1.5 w-full border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#6366F1] focus:outline-none"
                 />
               </label>
               <label className="mt-3 block">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                   Comment body
                 </span>
                 <textarea
@@ -211,23 +211,23 @@ export function ContinuityLabExecutionProposeModal({
                   onChange={(e) => setCommentBody(e.target.value)}
                   rows={3}
                   placeholder="Defaults to goal text if empty"
-                  className="mt-1.5 w-full resize-none border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-white/35 focus:border-[#6366F1] focus:outline-none"
+                  className="mt-1.5 w-full resize-none border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#6366F1] focus:outline-none"
                 />
               </label>
               {repoFullName ? (
-                <p className="mt-2 text-[11px] text-white/40">Repository: {repoFullName}</p>
+                <p className="mt-2 text-[11px] text-[#F0EFE2]/40">Repository: {repoFullName}</p>
               ) : null}
             </>
           ) : null}
 
           <label className="mt-4 block">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
               Risk tier
             </span>
             <select
               value={riskTier}
               onChange={(e) => setRiskTier(e.target.value as "low" | "medium" | "high")}
-              className="mt-1.5 w-full border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-white focus:border-[#6366F1] focus:outline-none"
+              className="mt-1.5 w-full border border-[#3A3A3A] bg-[#111111] px-3 py-2 text-sm text-[#F0EFE2] focus:border-[#6366F1] focus:outline-none"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -241,7 +241,7 @@ export function ContinuityLabExecutionProposeModal({
             <button
               type="submit"
               disabled={submitting || !goal.trim()}
-              className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-[#4338CA] px-4 text-sm font-semibold text-white hover:bg-[#4f46e5] disabled:opacity-40 sm:flex-none"
+              className="inline-flex h-9 flex-1 items-center justify-center gap-2 bg-[#4338CA] px-4 text-sm font-semibold text-[#F0EFE2] hover:bg-[#4f46e5] disabled:opacity-40 sm:flex-none"
             >
               {submitting ? (
                 <>
@@ -255,7 +255,7 @@ export function ContinuityLabExecutionProposeModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex h-9 items-center border border-[#3A3A3A] px-4 text-sm text-white/70 hover:bg-[#141414]"
+              className="inline-flex h-9 items-center border border-[#3A3A3A] px-4 text-sm text-[#F0EFE2]/70 hover:bg-[#141414]"
             >
               Cancel
             </button>

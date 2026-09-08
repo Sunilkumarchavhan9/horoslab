@@ -134,7 +134,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             onClick={onBack}
             className={cn(
               "flex h-7 w-7 items-center justify-center border rounded-xs transition-colors cursor-pointer",
-              dark ? "border-[#383838] bg-[#202020] text-[#888] hover:text-white hover:border-[#555]" : "border-[#d8ddd3] bg-white text-[#687063] hover:border-[#171a17]"
+              dark ? "border-[#383838] bg-[#202020] text-[#C8C7BA] hover:text-[#F0EFE2] hover:border-[#555]" : "border-[#d8ddd3] bg-white text-[#687063] hover:border-[#171a17]"
             )}
             title="Back to Runs"
           >
@@ -145,10 +145,10 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             <div className="flex items-center gap-2 text-[11px] font-mono text-[#788274]">
               <span>Runs</span>
               <span>/</span>
-              <span className="text-white font-semibold">{run.id}</span>
+              <span className="text-[#F0EFE2] font-semibold">{run.id}</span>
             </div>
             <div className="mt-0.5 flex items-center gap-2">
-              <h1 className="text-base font-bold font-mono text-white">
+              <h1 className="text-base font-bold font-mono text-[#F0EFE2]">
                 {run.id}
               </h1>
               <span className="border border-[#384820] bg-[#1c2a12] text-[#86dc00] px-2 py-0.5 text-[10px] font-mono font-bold rounded-xs">
@@ -180,7 +180,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Model Target</span>
-          <span className="font-bold text-white truncate block">Llama-3.1-8B-Instruct</span>
+          <span className="font-bold text-[#F0EFE2] truncate block">Llama-3.1-8B-Instruct</span>
         </div>
 
         <div className={cn(
@@ -188,7 +188,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Inference Engine</span>
-          <div className="flex items-center gap-1 text-white font-bold">
+          <div className="flex items-center gap-1 text-[#F0EFE2] font-bold">
             <VLLMLogo size={11} />
             <span>vLLM</span>
           </div>
@@ -199,7 +199,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Hardware Allocated</span>
-          <span className="font-bold text-white truncate block">1x A100-40GB</span>
+          <span className="font-bold text-[#F0EFE2] truncate block">1x A100-40GB</span>
         </div>
 
         <div className={cn(
@@ -207,7 +207,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
           dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
         )}>
           <span className="text-[10px] text-[#788274] uppercase block">Duration</span>
-          <span className="font-bold text-white">{run.durationSeconds || 330}s (≈5.5m)</span>
+          <span className="font-bold text-[#F0EFE2]">{run.durationSeconds || 330}s (≈5.5m)</span>
         </div>
 
         <div className={cn(
@@ -229,7 +229,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
           )}>
             <div className="flex items-center justify-between border-b border-[#282828] pb-2.5">
-              <h3 className="font-bold text-xs text-white uppercase tracking-wider">
+              <h3 className="font-bold text-xs text-[#F0EFE2] uppercase tracking-wider">
                 5-Phase Execution Sequence
               </h3>
               <span className="text-[10px] font-mono text-[#86dc00]">5 of 5 Completed</span>
@@ -252,7 +252,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
                     )}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 font-mono font-bold text-white text-[11px]">
+                      <div className="flex items-center gap-2 font-mono font-bold text-[#F0EFE2] text-[11px]">
                         <span className="text-[#86dc00]">✓</span>
                         <span>{p.index}. {p.title}</span>
                       </div>
@@ -260,9 +260,9 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
                     </div>
 
                     <div className="text-[11px] text-[#a0a89d] pl-4 space-y-0.5">
-                      <div><strong className="text-white">Engine:</strong> {p.engine} • <strong className="text-white">Strategy:</strong> {p.strategy}</div>
+                      <div><strong className="text-[#F0EFE2]">Engine:</strong> {p.engine} • <strong className="text-[#F0EFE2]">Strategy:</strong> {p.strategy}</div>
                       <div className="text-[10px] text-[#788274]">{p.why}</div>
-                      <div className="text-white pt-1 text-[11px] font-mono bg-[#141414] p-1.5 rounded-xs border border-[#262626]">
+                      <div className="text-[#F0EFE2] pt-1 text-[11px] font-mono bg-[#141414] p-1.5 rounded-xs border border-[#262626]">
                         ↳ {p.result}
                       </div>
                     </div>
@@ -277,7 +277,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             "border rounded-xs p-4 space-y-3",
             dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
           )}>
-            <h3 className="font-bold text-xs text-white uppercase tracking-wider border-b border-[#282828] pb-2">
+            <h3 className="font-bold text-xs text-[#F0EFE2] uppercase tracking-wider border-b border-[#282828] pb-2">
               Empirical Performance &amp; Resource Deltas
             </h3>
 
@@ -285,7 +285,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
               <div className="border border-[#282828] bg-[#1a1a1a] p-3 rounded-xs space-y-1">
                 <span className="text-[10px] text-[#788274] uppercase block">p95 Latency</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-bold text-white">82.4 ms</span>
+                  <span className="text-sm font-bold text-[#F0EFE2]">82.4 ms</span>
                   <span className="text-[10px] text-[#86dc00] font-bold">-42.0%</span>
                 </div>
                 <span className="text-[10px] text-[#788274] block">Baseline: 142.1 ms</span>
@@ -294,7 +294,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
               <div className="border border-[#282828] bg-[#1a1a1a] p-3 rounded-xs space-y-1">
                 <span className="text-[10px] text-[#788274] uppercase block">Token Throughput</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-bold text-white">61.4 tok/s</span>
+                  <span className="text-sm font-bold text-[#F0EFE2]">61.4 tok/s</span>
                   <span className="text-[10px] text-[#86dc00] font-bold">+60.7%</span>
                 </div>
                 <span className="text-[10px] text-[#788274] block">Baseline: 38.2 tok/s</span>
@@ -303,7 +303,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
               <div className="border border-[#282828] bg-[#1a1a1a] p-3 rounded-xs space-y-1">
                 <span className="text-[10px] text-[#788274] uppercase block">Peak VRAM Memory</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-bold text-white">12.8 GB</span>
+                  <span className="text-sm font-bold text-[#F0EFE2]">12.8 GB</span>
                   <span className="text-[10px] text-[#86dc00] font-bold">-34.3%</span>
                 </div>
                 <span className="text-[10px] text-[#788274] block">Baseline: 19.5 GB</span>
@@ -312,7 +312,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
               <div className="border border-[#282828] bg-[#1a1a1a] p-3 rounded-xs space-y-1">
                 <span className="text-[10px] text-[#788274] uppercase block">Cost per 1M Tokens</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-bold text-white">$0.28</span>
+                  <span className="text-sm font-bold text-[#F0EFE2]">$0.28</span>
                   <span className="text-[10px] text-[#86dc00] font-bold">-33.3%</span>
                 </div>
                 <span className="text-[10px] text-[#788274] block">Baseline: $0.42</span>
@@ -329,13 +329,13 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
           )}>
             <div className="flex items-center justify-between border-b border-[#282828] pb-2">
-              <h3 className="font-bold text-xs text-white uppercase tracking-wider font-sans">
+              <h3 className="font-bold text-xs text-[#F0EFE2] uppercase tracking-wider font-sans">
                 Promoted Serving Script
               </h3>
               <button
                 type="button"
                 onClick={copyServeCommand}
-                className="text-[11px] text-[#888] hover:text-white flex items-center gap-1 cursor-pointer"
+                className="text-[11px] text-[#C8C7BA] hover:text-[#F0EFE2] flex items-center gap-1 cursor-pointer"
               >
                 {copiedCmd ? <Check size={11} className="text-[#86dc00]" /> : <Copy size={11} />}
                 <span>{copiedCmd ? "Copied" : "Copy"}</span>
@@ -349,15 +349,15 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             <div className="space-y-1.5 text-[11px] text-[#788274] pt-1">
               <div className="flex items-center justify-between">
                 <span>Base Container:</span>
-                <span className="text-white font-mono">vllm/vllm-openai:v0.6.2</span>
+                <span className="text-[#F0EFE2] font-mono">vllm/vllm-openai:v0.6.2</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Precision:</span>
-                <span className="text-white font-mono">FP16</span>
+                <span className="text-[#F0EFE2] font-mono">FP16</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Quantization:</span>
-                <span className="text-white font-mono">None (Lossless)</span>
+                <span className="text-[#F0EFE2] font-mono">None (Lossless)</span>
               </div>
             </div>
           </div>
@@ -370,7 +370,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
             <div className="flex items-center justify-between border-b border-[#242424] px-3 py-2 bg-[#181818]">
               <div className="flex items-center gap-2">
                 <Terminal size={12} className="text-[#788274]" />
-                <span className="text-[11px] font-bold text-white">Execution Logs</span>
+                <span className="text-[11px] font-bold text-[#F0EFE2]">Execution Logs</span>
               </div>
 
               <div className="flex items-center gap-1 text-[10px]">
@@ -382,8 +382,8 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
                     className={cn(
                       "px-1.5 py-0.5 rounded-xs transition-colors cursor-pointer uppercase",
                       logFilter === tag
-                        ? "bg-[#282828] text-white font-bold"
-                        : "text-[#788274] hover:text-white"
+                        ? "bg-[#282828] text-[#F0EFE2] font-bold"
+                        : "text-[#788274] hover:text-[#F0EFE2]"
                     )}
                   >
                     {tag}
@@ -401,7 +401,7 @@ export function RunDetailView({ run, onBack, dark = true }: RunDetailViewProps) 
                     log.tag === "GPU" ? "bg-[#182613] text-[#86dc00]" :
                     log.tag === "vLLM" ? "bg-[#1e3a5f] text-[#60a5fa]" :
                     log.tag === "VERIF" ? "bg-[#281a38] text-[#c084fc]" :
-                    "bg-[#202020] text-[#888]"
+                    "bg-[#202020] text-[#C8C7BA]"
                   )}>
                     {log.tag}
                   </span>

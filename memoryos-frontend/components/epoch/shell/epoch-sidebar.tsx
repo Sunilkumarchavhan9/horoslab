@@ -95,7 +95,7 @@ export function EpochSidebar({
           >
             <EpochLogo
               size="md"
-              className={dark ? "text-white" : "text-[#151515]"}
+              className={dark ? "text-[#F0EFE2]" : "text-[#151515]"}
             />
           </button>
 
@@ -154,7 +154,7 @@ export function EpochSidebar({
               onClick={onBackFromSettings || (() => onNavigate("home"))}
               className={cn(
                 "flex items-center gap-2 px-2 py-1.5 text-left font-medium transition-colors w-full",
-                dark ? "text-[#a0a89d] hover:text-white" : "text-[#4b5247] hover:text-[#171a17]"
+                dark ? "text-[#a0a89d] hover:text-[#F0EFE2]" : "text-[#4b5247] hover:text-[#171a17]"
               )}
             >
               <ArrowLeft size={13} />
@@ -174,7 +174,7 @@ export function EpochSidebar({
                   settingsTab === "workspace"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -190,7 +190,7 @@ export function EpochSidebar({
                   settingsTab === "notifications"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -206,7 +206,7 @@ export function EpochSidebar({
                   settingsTab === "billing"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -222,7 +222,7 @@ export function EpochSidebar({
                   settingsTab === "cost"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -238,7 +238,7 @@ export function EpochSidebar({
                   settingsTab === "keys"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -254,7 +254,7 @@ export function EpochSidebar({
                   settingsTab === "clouds"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -270,7 +270,7 @@ export function EpochSidebar({
                   settingsTab === "security"
                     ? "bg-[#75bf00] text-[#111] font-semibold"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -292,10 +292,10 @@ export function EpochSidebar({
                   "flex w-full items-center gap-2.5 px-2.5 py-2 transition-colors text-left font-medium rounded-xs text-xs",
                   activeRoute === "home"
                     ? dark
-                      ? "text-white font-bold bg-[#1e2719]"
+                      ? "text-[#F0EFE2] font-bold bg-[#1e2719]"
                       : "text-[#171a17] font-bold bg-[#f0f4ee]"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -317,10 +317,10 @@ export function EpochSidebar({
                   "flex w-full items-center justify-between px-2.5 py-2 transition-colors text-left font-medium rounded-xs text-xs",
                   activeRoute === "models"
                     ? dark
-                      ? "text-white font-bold bg-[#1e2719]"
+                      ? "text-[#F0EFE2] font-bold bg-[#1e2719]"
                       : "text-[#171a17] font-bold bg-[#f0f4ee]"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -347,10 +347,10 @@ export function EpochSidebar({
                   "flex w-full items-center gap-2.5 px-2.5 py-2 transition-colors text-left font-medium rounded-xs text-xs",
                   activeRoute === "analytics"
                     ? dark
-                      ? "text-white font-bold bg-[#1e2719]"
+                      ? "text-[#F0EFE2] font-bold bg-[#1e2719]"
                       : "text-[#171a17] font-bold bg-[#f0f4ee]"
                     : dark
-                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-white"
+                    ? "text-[#a0a89d] hover:bg-[#1a201a] hover:text-[#F0EFE2]"
                     : "text-[#4b5247] hover:bg-[#f3f6f0]"
                 )}
               >
@@ -380,7 +380,7 @@ export function EpochSidebar({
                   onClick={() => onSelectPipeline ? onSelectPipeline(p.id) : onNavigate("programs")}
                   className={cn(
                     "flex w-full items-center justify-between px-2.5 py-1.5 text-left transition-colors group rounded-xs",
-                    dark ? "text-[#a0a89d] hover:bg-[#202020] hover:text-white" : "text-[#555e50] hover:bg-[#f3f6f0]"
+                    dark ? "text-[#a0a89d] hover:bg-[#202020] hover:text-[#F0EFE2]" : "text-[#555e50] hover:bg-[#f3f6f0]"
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
@@ -406,7 +406,7 @@ export function EpochSidebar({
           dark ? "border-[#303030] bg-[#202020]" : "border-[#c9cec4] bg-white"
         )}>
           <div className="flex items-center justify-between">
-            <span className={cn("font-semibold", dark ? "text-white" : "text-[#171a17]")}>Free Plan</span>
+            <span className={cn("font-semibold", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Free Plan</span>
             <span className="text-[10px] text-[#75bf00] font-mono cursor-pointer hover:underline">
               Upgrade
             </span>
@@ -415,13 +415,13 @@ export function EpochSidebar({
           <div className="space-y-1 font-mono text-[10px] text-[#889084]">
             <div className="flex justify-between">
               <span>Pipelines</span>
-              <span className={dark ? "text-white" : "text-[#171a17]"}>0/3</span>
+              <span className={dark ? "text-[#F0EFE2]" : "text-[#171a17]"}>0/3</span>
             </div>
             <div className="flex justify-between">
               <span>Optimizations</span>
-              <span className={dark ? "text-white" : "text-[#171a17]"}>0/3</span>
+              <span className={dark ? "text-[#F0EFE2]" : "text-[#171a17]"}>0/3</span>
             </div>
-            <div className="flex justify-between text-[9px] text-[#999] pt-0.5">
+            <div className="flex justify-between text-[9px] text-[#C8C7BA] pt-0.5">
               <span>Resets in 22d</span>
               <span>Deployment: Core</span>
             </div>
@@ -451,7 +451,7 @@ export function EpochSidebar({
               onClick={() => onNavigate("settings")}
               className={cn(
                 "flex w-full items-center gap-2.5 px-2 py-1.5 text-left transition-colors font-medium rounded-xs",
-                dark ? "text-[#a0a89d] hover:bg-[#202020] hover:text-white" : "text-[#4b5247] hover:bg-[#f0f3ed]"
+                dark ? "text-[#a0a89d] hover:bg-[#202020] hover:text-[#F0EFE2]" : "text-[#4b5247] hover:bg-[#f0f3ed]"
               )}
             >
               <Settings size={14} />
@@ -460,11 +460,11 @@ export function EpochSidebar({
           )}
 
           <div className="flex items-center gap-2.5 px-2 py-1">
-            <div className="flex h-6 w-6 items-center justify-center bg-[#202020] border border-[#2e2e2e] dark:bg-white text-white dark:text-[#111] font-bold text-[10px] rounded-xs">
+            <div className="flex h-6 w-6 items-center justify-center bg-[#202020] border border-[#2e2e2e] dark:bg-white text-[#F0EFE2] dark:text-[#111] font-bold text-[10px] rounded-xs">
               S
             </div>
             <div className="truncate">
-              <div className={cn("font-medium truncate text-xs", dark ? "text-white" : "text-[#171a17]")}>Sunilkumar</div>
+              <div className={cn("font-medium truncate text-xs", dark ? "text-[#F0EFE2]" : "text-[#171a17]")}>Sunilkumar</div>
             </div>
           </div>
         </div>

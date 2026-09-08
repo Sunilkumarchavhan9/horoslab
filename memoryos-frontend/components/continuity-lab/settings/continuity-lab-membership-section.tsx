@@ -222,12 +222,12 @@ function MembershipTabs({
             className={cn(
               "inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold transition",
               selected
-                ? "bg-white/[0.08] text-white"
-                : "text-white/48 hover:bg-white/[0.04] hover:text-white/75",
+                ? "bg-white/[0.08] text-[#F0EFE2]"
+                : "text-[#F0EFE2]/48 hover:bg-white/[0.04] hover:text-[#F0EFE2]/75",
             )}
           >
             <span>{tab.label}</span>
-            <span className="ml-1.5 tabular-nums text-white/42">{tab.count}</span>
+            <span className="ml-1.5 tabular-nums text-[#F0EFE2]/42">{tab.count}</span>
           </button>
         );
       })}
@@ -240,12 +240,12 @@ function LoadingTable() {
     <div className="overflow-hidden rounded-md border border-white/[0.08] bg-[#171717]">
       <div className="grid grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)_180px_64px] border-b border-white/[0.08] bg-white/[0.04] text-sm">
         {["Name", "Email", "Role", ""].map((column) => (
-          <div key={column} className="px-4 py-3 font-semibold text-white/80">
+          <div key={column} className="px-4 py-3 font-semibold text-[#F0EFE2]/80">
             {column}
           </div>
         ))}
       </div>
-      <div className="px-4 py-8 text-sm text-white/45">Loading membership...</div>
+      <div className="px-4 py-8 text-sm text-[#F0EFE2]/45">Loading membership...</div>
     </div>
   );
 }
@@ -253,7 +253,7 @@ function LoadingTable() {
 function MemberAvatar({ name }: { name: string }) {
   const initial = name.trim().slice(0, 1).toUpperCase() || "M";
   return (
-    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[#8B5CF6] text-[10px] font-bold text-white">
+    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[#8B5CF6] text-[10px] font-bold text-[#F0EFE2]">
       {initial}
     </span>
   );
@@ -280,7 +280,7 @@ function EmptyMembershipTable({
         <thead>
           <tr className="border-b border-white/[0.08] bg-white/[0.04]">
             {columns.map((column) => (
-              <th key={column} className="px-4 py-3 font-semibold text-white/80">
+              <th key={column} className="px-4 py-3 font-semibold text-[#F0EFE2]/80">
                 {column}
               </th>
             ))}
@@ -288,7 +288,7 @@ function EmptyMembershipTable({
         </thead>
         <tbody>
           <tr>
-            <td colSpan={columns.length} className="px-4 py-10 text-center text-white/45">
+            <td colSpan={columns.length} className="px-4 py-10 text-center text-[#F0EFE2]/45">
               {message}
             </td>
           </tr>
@@ -304,14 +304,14 @@ function MembersTable({ members }: { members: TeamMember[] }) {
       <table className="w-full min-w-[760px] table-fixed text-left text-sm">
         <thead>
           <tr className="border-b border-white/[0.08] bg-white/[0.04]">
-            <th className="w-[34%] px-4 py-3 font-semibold text-white">
+            <th className="w-[34%] px-4 py-3 font-semibold text-[#F0EFE2]">
               <span className="inline-flex items-center gap-1">
-                Name <ArrowUp className="size-3 text-white/65" aria-hidden />
+                Name <ArrowUp className="size-3 text-[#F0EFE2]/65" aria-hidden />
               </span>
             </th>
-            <th className="w-[34%] px-4 py-3 font-semibold text-white">Email</th>
-            <th className="w-[22%] px-4 py-3 font-semibold text-white">Role</th>
-            <th className="w-[10%] px-4 py-3 text-right font-semibold text-white" aria-label="Actions" />
+            <th className="w-[34%] px-4 py-3 font-semibold text-[#F0EFE2]">Email</th>
+            <th className="w-[22%] px-4 py-3 font-semibold text-[#F0EFE2]">Role</th>
+            <th className="w-[10%] px-4 py-3 text-right font-semibold text-[#F0EFE2]" aria-label="Actions" />
           </tr>
         </thead>
         <tbody>
@@ -320,7 +320,7 @@ function MembersTable({ members }: { members: TeamMember[] }) {
               <td className="px-4 py-4">
                 <div className="flex min-w-0 items-center gap-2">
                   <MemberAvatar name={member.name} />
-                  <span className="min-w-0 truncate font-medium text-white/68">
+                  <span className="min-w-0 truncate font-medium text-[#F0EFE2]/68">
                     {member.name}
                   </span>
                   <span
@@ -332,7 +332,7 @@ function MembersTable({ members }: { members: TeamMember[] }) {
                   />
                 </div>
               </td>
-              <td className="min-w-0 px-4 py-4 text-white/68">
+              <td className="min-w-0 px-4 py-4 text-[#F0EFE2]/68">
                 <span className="block truncate">{member.email}</span>
               </td>
               <td className="px-4 py-4">
@@ -348,7 +348,7 @@ function MembersTable({ members }: { members: TeamMember[] }) {
                 <button
                   type="button"
                   disabled
-                  className="inline-flex size-8 items-center justify-center rounded-md text-white/25"
+                  className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/25"
                   aria-label={`Remove ${member.name}`}
                   title="Member removal is not available yet"
                 >
@@ -369,21 +369,21 @@ function JoinRequestsTable({ invites }: { invites: TeamInvite[] }) {
       <table className="w-full min-w-[760px] table-fixed text-left text-sm">
         <thead>
           <tr className="border-b border-white/[0.08] bg-white/[0.04]">
-            <th className="w-[34%] px-4 py-3 font-semibold text-white">Email</th>
-            <th className="w-[18%] px-4 py-3 font-semibold text-white">Role</th>
-            <th className="w-[18%] px-4 py-3 font-semibold text-white">Access</th>
-            <th className="w-[16%] px-4 py-3 font-semibold text-white">Status</th>
-            <th className="w-[14%] px-4 py-3 font-semibold text-white">Sent</th>
+            <th className="w-[34%] px-4 py-3 font-semibold text-[#F0EFE2]">Email</th>
+            <th className="w-[18%] px-4 py-3 font-semibold text-[#F0EFE2]">Role</th>
+            <th className="w-[18%] px-4 py-3 font-semibold text-[#F0EFE2]">Access</th>
+            <th className="w-[16%] px-4 py-3 font-semibold text-[#F0EFE2]">Status</th>
+            <th className="w-[14%] px-4 py-3 font-semibold text-[#F0EFE2]">Sent</th>
           </tr>
         </thead>
         <tbody>
           {invites.map((invite) => (
             <tr key={invite.id} className="border-t border-white/[0.06]">
-              <td className="min-w-0 px-4 py-4 text-white/72">
+              <td className="min-w-0 px-4 py-4 text-[#F0EFE2]/72">
                 <span className="block truncate">{invite.email}</span>
               </td>
-              <td className="px-4 py-4 text-white/60">{formatRole(invite.role)}</td>
-              <td className="px-4 py-4 text-white/60">{invite.access}</td>
+              <td className="px-4 py-4 text-[#F0EFE2]/60">{formatRole(invite.role)}</td>
+              <td className="px-4 py-4 text-[#F0EFE2]/60">{invite.access}</td>
               <td className="px-4 py-4">
                 <span
                   className={cn(
@@ -392,13 +392,13 @@ function JoinRequestsTable({ invites }: { invites: TeamInvite[] }) {
                       ? "bg-amber-500/10 text-amber-200"
                       : invite.state === "accepted"
                         ? "bg-emerald-500/10 text-emerald-200"
-                        : "bg-white/[0.06] text-white/45",
+                        : "bg-white/[0.06] text-[#F0EFE2]/45",
                   )}
                 >
                   {formatInviteState(invite.state)}
                 </span>
               </td>
-              <td className="px-4 py-4 text-white/50">{formatDate(invite.sentAt)}</td>
+              <td className="px-4 py-4 text-[#F0EFE2]/50">{formatDate(invite.sentAt)}</td>
             </tr>
           ))}
         </tbody>
@@ -444,13 +444,13 @@ function InvitePanel({
     <div className="rounded-md border border-white/[0.08] bg-[#171717] p-4">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-white">Add member</h2>
-          <p className="mt-1 text-xs text-white/45">Invite a teammate to this organization.</p>
+          <h2 className="text-sm font-semibold text-[#F0EFE2]">Add member</h2>
+          <p className="mt-1 text-xs text-[#F0EFE2]/45">Invite a teammate to this organization.</p>
         </div>
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+          className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
           aria-label="Close invite form"
         >
           <X className="size-4" aria-hidden />
@@ -458,17 +458,17 @@ function InvitePanel({
       </div>
       <div className="grid gap-3 md:grid-cols-[minmax(220px,1fr)_180px_180px_auto] md:items-end">
         <label className="block">
-          <span className="mb-1.5 block text-xs font-medium text-white/55">Email</span>
+          <span className="mb-1.5 block text-xs font-medium text-[#F0EFE2]/55">Email</span>
           <input
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="teammate@company.com"
-            className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+            className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
           />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-xs font-medium text-white/55">Role</span>
+          <span className="mb-1.5 block text-xs font-medium text-[#F0EFE2]/55">Role</span>
           <SettingsSelectDropdown
             value={role}
             onChange={setRole}
@@ -476,7 +476,7 @@ function InvitePanel({
           />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-xs font-medium text-white/55">Access</span>
+          <span className="mb-1.5 block text-xs font-medium text-[#F0EFE2]/55">Access</span>
           <SettingsSelectDropdown value={access} onChange={setAccess} options={accessOptions} />
         </label>
         <button
@@ -566,7 +566,7 @@ export function ContinuityLabMembershipSection() {
     >
       <Link
         href="/continuity-lab/settings/general"
-        className="inline-flex items-center gap-2 text-sm font-medium text-white/50 hover:text-white/75"
+        className="inline-flex items-center gap-2 text-sm font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/75"
       >
         <ArrowLeft className="size-4" aria-hidden />
         Back to organization
