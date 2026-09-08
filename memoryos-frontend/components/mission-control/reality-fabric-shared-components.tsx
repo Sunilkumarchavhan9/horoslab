@@ -65,7 +65,7 @@ export function DenseRow({
  >
  <div className="flex items-center gap-3 w-1/3 min-w-0">
  {icon && <div className="text-muted-foreground shrink-0">{icon}</div>}
- <span className={cn("text-[13px] font-medium truncate", active ? "text-foreground dark:text-white" : "text-foreground/80 dark:text-[#ccc] group-hover:text-foreground dark:group-hover:text-white")}>
+ <span className={cn("text-[13px] font-medium truncate", active ? "text-foreground dark:text-[#F0EFE2]" : "text-foreground/80 dark:text-[#C8C7BA] group-hover:text-foreground dark:group-hover:text-[#F0EFE2]")}>
  {title}
  </span>
  </div>

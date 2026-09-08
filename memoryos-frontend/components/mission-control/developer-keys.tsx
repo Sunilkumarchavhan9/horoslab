@@ -224,12 +224,12 @@ export function DeveloperKeys() {
  >
  <DialogContent
  showCloseButton={false}
- className="w-[min(600px,calc(100vw-2rem))] max-w-none rounded-[16px] border border-white/10 bg-[#0c1117] p-0 text-white shadow-[0_24px_90px_rgba(0,0,0,0.6)]"
+ className="w-[min(600px,calc(100vw-2rem))] max-w-none rounded-[16px] border border-white/10 bg-[#0c1117] p-0 text-[#F0EFE2] shadow-[0_24px_90px_rgba(0,0,0,0.6)]"
  >
  <div className="border-b border-white/10 px-6 py-6">
  <DialogHeader>
- <DialogTitle className="text-[18px] font-semibold text-white">Create runtime API key</DialogTitle>
- <DialogDescription className="text-[14px] text-white/60">
+ <DialogTitle className="text-[18px] font-semibold text-[#F0EFE2]">Create runtime API key</DialogTitle>
+ <DialogDescription className="text-[14px] text-[#F0EFE2]/60">
  Set the key name, limits, cadence, and expiration before creating it.
  </DialogDescription>
  </DialogHeader>
@@ -248,23 +248,23 @@ export function DeveloperKeys() {
  ) : null}
 
  <div className="space-y-2">
- <label className="flex items-center gap-2 text-[13px] font-medium text-white/80">
+ <label className="flex items-center gap-2 text-[13px] font-medium text-[#F0EFE2]/80">
  Name
- <Info className="size-3.5 text-white/35" />
+ <Info className="size-3.5 text-[#F0EFE2]/35" />
  </label>
  <Input
  autoFocus
  value={createName}
  onChange={(event) => setCreateName(event.target.value)}
  placeholder='e.g. "Chatbot Key"'
- className="h-12 rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-white placeholder:text-white/35 focus-visible:border-lime-500/50 focus-visible:ring-lime-500/20"
+ className="h-12 rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus-visible:border-lime-500/50 focus-visible:ring-lime-500/20"
  />
  </div>
 
  <div className="space-y-2">
- <label className="flex items-center gap-2 text-[13px] font-medium text-white/80">
+ <label className="flex items-center gap-2 text-[13px] font-medium text-[#F0EFE2]/80">
  Credit limit (optional)
- <Info className="size-3.5 text-white/35" />
+ <Info className="size-3.5 text-[#F0EFE2]/35" />
  </label>
  <Input
  type="number"
@@ -272,27 +272,27 @@ export function DeveloperKeys() {
  value={createCreditLimit}
  onChange={(event) => setCreateCreditLimit(event.target.value)}
  placeholder="Leave blank for unlimited"
- className="h-12 rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-white placeholder:text-white/35 focus-visible:border-lime-500/50 focus-visible:ring-lime-500/20"
+ className="h-12 rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus-visible:border-lime-500/50 focus-visible:ring-lime-500/20"
  />
  </div>
 
  <div className="space-y-2">
- <label className="flex items-center gap-2 text-[13px] font-medium text-white/80">
+ <label className="flex items-center gap-2 text-[13px] font-medium text-[#F0EFE2]/80">
  Reset limit every...
- <Info className="size-3.5 text-white/35" />
+ <Info className="size-3.5 text-[#F0EFE2]/35" />
  </label>
  <Select value={createResetLimitEvery} onValueChange={setCreateResetLimitEvery}>
  <SelectTrigger
- className="h-12 w-full rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-white shadow-none focus:ring-0 [&>span]:text-white"
+ className="h-12 w-full rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-[#F0EFE2] shadow-none focus:ring-0 [&>span]:text-[#F0EFE2]"
  >
  <SelectValue placeholder="N/A" />
  </SelectTrigger>
- <SelectContent className="border-white/10 bg-[#0f141b] text-white shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+ <SelectContent className="border-white/10 bg-[#0f141b] text-[#F0EFE2] shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
  {["N/A", "1 hour", "1 day", "7 days", "30 days", "90 days", "180 days", "1 year"].map((option) => (
  <SelectItem
  key={option}
  value={option}
- className="text-white/80 focus:bg-card/10 focus:text-white data-[state=checked]:bg-lime-500/15 data-[state=checked]:text-lime-300"
+ className="text-[#F0EFE2]/80 focus:bg-card/10 focus:text-[#F0EFE2] data-[state=checked]:bg-lime-500/15 data-[state=checked]:text-lime-300"
  >
  {option}
  </SelectItem>
@@ -302,22 +302,22 @@ export function DeveloperKeys() {
  </div>
 
  <div className="space-y-2">
- <label className="flex items-center gap-2 text-[13px] font-medium text-white/80">
+ <label className="flex items-center gap-2 text-[13px] font-medium text-[#F0EFE2]/80">
  Expiration
- <Info className="size-3.5 text-white/35" />
+ <Info className="size-3.5 text-[#F0EFE2]/35" />
  </label>
  <Select value={createExpiration} onValueChange={(value) => setCreateExpiration(value as ExpirationPreset)}>
  <SelectTrigger
- className="h-12 w-full rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-white shadow-none focus:ring-0 [&>span]:text-white"
+ className="h-12 w-full rounded-md border-white/10 bg-[#10161d] px-3.5 text-[14px] text-[#F0EFE2] shadow-none focus:ring-0 [&>span]:text-[#F0EFE2]"
  >
  <SelectValue placeholder="No expiration" />
  </SelectTrigger>
- <SelectContent className="border-white/10 bg-[#0f141b] text-white shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+ <SelectContent className="border-white/10 bg-[#0f141b] text-[#F0EFE2] shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
  {EXPIRATION_PRESETS.map((option) => (
  <SelectItem
  key={option.value}
  value={option.value}
- className="text-white/80 focus:bg-card/10 focus:text-white data-[state=checked]:bg-lime-500/15 data-[state=checked]:text-lime-300"
+ className="text-[#F0EFE2]/80 focus:bg-card/10 focus:text-[#F0EFE2] data-[state=checked]:bg-lime-500/15 data-[state=checked]:text-lime-300"
  >
  {option.label}
  </SelectItem>
@@ -331,7 +331,7 @@ export function DeveloperKeys() {
  type="button"
  variant="outline"
  onClick={() => setCreateOpen(false)}
- className="h-10 rounded-md border-white/10 bg-card/5 px-6 text-white hover:bg-card/10 hover:text-white"
+ className="h-10 rounded-md border-white/10 bg-card/5 px-6 text-[#F0EFE2] hover:bg-card/10 hover:text-[#F0EFE2]"
  >
  Cancel
  </Button>

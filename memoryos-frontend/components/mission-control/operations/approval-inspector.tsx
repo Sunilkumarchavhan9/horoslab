@@ -341,11 +341,11 @@ export function ApprovalInspector({ entityData }: { entityData: any }) {
 
             {/* Actions Toolbar */}
             <div className="p-4 border-t border-border bg-card flex flex-wrap gap-2 shrink-0">
-                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-emerald-500/10 text-emerald-500 text-xs font-semibold rounded border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition-colors">
+                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-emerald-500/10 text-emerald-500 text-xs font-semibold rounded border border-emerald-500/20 hover:bg-emerald-500 hover:text-[#F0EFE2] transition-colors">
                     <ThumbsUp className="size-3.5" />
                     Approve
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-500/10 text-red-500 text-xs font-semibold rounded border border-red-500/20 hover:bg-red-500 hover:text-white transition-colors">
+                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-500/10 text-red-500 text-xs font-semibold rounded border border-red-500/20 hover:bg-red-500 hover:text-[#F0EFE2] transition-colors">
                     <ThumbsDown className="size-3.5" />
                     Reject
                 </button>
@@ -358,7 +358,7 @@ export function ApprovalInspector({ entityData }: { entityData: any }) {
                     <UserPlus className="size-3.5" />
                     Delegate
                 </button>
-                <button className="flex items-center justify-center gap-2 px-3 py-2 bg-background text-purple-500 text-xs font-semibold rounded border border-border hover:bg-purple-500 hover:text-white transition-colors">
+                <button className="flex items-center justify-center gap-2 px-3 py-2 bg-background text-purple-500 text-xs font-semibold rounded border border-border hover:bg-purple-500 hover:text-[#F0EFE2] transition-colors">
                     <ShieldAlert className="size-3.5" />
                     Escalate
                 </button>

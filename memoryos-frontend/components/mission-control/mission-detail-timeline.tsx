@@ -19,7 +19,7 @@ export function MissionDetailTimeline({ mission }: { mission: EpochMissionDetail
  actor: item.stage ?? "System",
  action: item.note ?? "updated the mission",
  time: formatTimelineTime(item.timestamp),
- icon: <CheckCircle2 className="size-3.5 text-gray-500" />,
+ icon: <CheckCircle2 className="size-3.5 text-[#C8C7BA]" />,
  smallIcon: true,
  }))
  : [
@@ -29,7 +29,7 @@ export function MissionDetailTimeline({ mission }: { mission: EpochMissionDetail
  actor: "System",
  action: "created the mission",
  time: mission.updatedAt ?? "now",
- icon: <PlayCircle className="size-3.5 text-gray-500" />,
+ icon: <PlayCircle className="size-3.5 text-[#C8C7BA]" />,
  smallIcon: true,
  },
  ];

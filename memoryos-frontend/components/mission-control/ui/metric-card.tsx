@@ -20,15 +20,15 @@ export function MetricCard({
  className = "",
 }: MetricCardProps) {
  const chartData = data.map((val, i) => ({ val, i }));
- const trendColor = trend === "up" ? "text-emerald-500" : trend === "down" ? "text-red-500" : "text-foreground/40 dark:text-white/40";
+ const trendColor = trend === "up" ? "text-emerald-500" : trend === "down" ? "text-red-500" : "text-foreground/40 dark:text-[#F0EFE2]/40";
  const strokeColor = trend === "up" ? "#10b981" : trend === "down" ? "#ef4444" : "#999";
 
  return (
  <HoverLift className={`group relative w-full bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-[6px] overflow-hidden flex flex-col ${className}`}>
  <div className="p-6 flex-1">
- <h4 className="text-[12px] font-medium text-foreground/50 dark:text-white/50 mb-1">{title}</h4>
+ <h4 className="text-[12px] font-medium text-foreground/50 dark:text-[#F0EFE2]/50 mb-1">{title}</h4>
  <div className="flex items-end gap-3">
- <span className="text-2xl font-bold text-foreground dark:text-white leading-none tracking-tight">{value}</span>
+ <span className="text-2xl font-bold text-foreground dark:text-[#F0EFE2] leading-none tracking-tight">{value}</span>
  <span className={`text-[11px] font-semibold mb-0.5 ${trendColor}`}>{trendValue}</span>
  </div>
  </div>

@@ -772,7 +772,7 @@ export function MissionControlWorkspace() {
                                     <path d="M41.7274 17.228C41.7274 19.3072 42.1031 20.0003 43.6058 20.0003H41.7274V17.228Z" fill="currentColor" />
                                 </svg>
                             </div>
-                            <span className={cn("font-medium text-[14px] text-[#0f172a] dark:text-white transition-all duration-300", isSidebarExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 hidden")}>
+                            <span className={cn("font-medium text-[14px] text-[#0f172a] dark:text-[#F0EFE2] transition-all duration-300", isSidebarExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 hidden")}>
                                 Memoryostm@gmail.com
                             </span>
                         </div>
@@ -1291,7 +1291,7 @@ export function MissionControlWorkspace() {
                                                         <SelectItem
                                                             key={repo.id}
                                                             value={repo.id}
-                                                            className="px-3 py-2.5 cursor-pointer rounded-md mx-1 my-0.5 text-[14px] font-medium transition-colors focus:bg-[#0f52ff] focus:!text-white hover:bg-[#0f52ff] hover:!text-white data-[highlighted]:bg-[#0f52ff] data-[highlighted]:!text-white"
+                                                            className="px-3 py-2.5 cursor-pointer rounded-md mx-1 my-0.5 text-[14px] font-medium transition-colors focus:bg-[#0f52ff] focus:!text-[#F0EFE2] hover:bg-[#0f52ff] hover:!text-[#F0EFE2] data-[highlighted]:bg-[#0f52ff] data-[highlighted]:!text-[#F0EFE2]"
                                                         >
                                                             {repo.fullName}
                                                         </SelectItem>
@@ -1317,7 +1317,7 @@ export function MissionControlWorkspace() {
                                                         <SelectItem
                                                             key={pr.id}
                                                             value={pr.id}
-                                                            className="px-3 py-2.5 cursor-pointer rounded-md mx-1 my-0.5 text-[14px] font-medium transition-colors focus:bg-[#0f52ff] focus:!text-white hover:bg-[#0f52ff] hover:!text-white data-[highlighted]:bg-[#0f52ff] data-[highlighted]:!text-white"
+                                                            className="px-3 py-2.5 cursor-pointer rounded-md mx-1 my-0.5 text-[14px] font-medium transition-colors focus:bg-[#0f52ff] focus:!text-[#F0EFE2] hover:bg-[#0f52ff] hover:!text-[#F0EFE2] data-[highlighted]:bg-[#0f52ff] data-[highlighted]:!text-[#F0EFE2]"
                                                         >
                                                             {pr.number} - {pr.title}
                                                         </SelectItem>
@@ -1391,9 +1391,9 @@ export function MissionControlWorkspace() {
                                                                     <div className={cn(
                                                                         "relative flex items-center justify-center size-9 rounded-full border-4 border-white shadow-[0_10px_22px_rgba(0,0,0,0.08)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2",
                                                                         isComplete
-                                                                            ? "bg-[#0f52ff] text-white ring-4 ring-[#0f52ff]/10"
+                                                                            ? "bg-[#0f52ff] text-[#F0EFE2] ring-4 ring-[#0f52ff]/10"
                                                                             : isActive
-                                                                                ? "bg-[#d4af37] text-white ring-4 ring-[#d4af37]/15 animate-pulse"
+                                                                                ? "bg-[#d4af37] text-[#F0EFE2] ring-4 ring-[#d4af37]/15 animate-pulse"
                                                                                 : "bg-muted text-foreground/25"
                                                                     )}>
                                                                         {isComplete ? <Check className="size-4" /> : isActive ? <Loader2 className="size-4 animate-spin" /> : <div className="size-2.5 rounded-full bg-black/20" />}
@@ -1606,9 +1606,9 @@ export function MissionControlWorkspace() {
                                                                 <div className={cn(
                                                                     "relative flex items-center justify-center size-9 rounded-full border-4 border-white shadow-[0_10px_22px_rgba(0,0,0,0.08)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2",
                                                                     isComplete
-                                                                        ? "bg-[#0f52ff] text-white ring-4 ring-[#0f52ff]/10"
+                                                                        ? "bg-[#0f52ff] text-[#F0EFE2] ring-4 ring-[#0f52ff]/10"
                                                                         : isActive
-                                                                            ? "bg-[#d4af37] text-white ring-4 ring-[#d4af37]/15"
+                                                                            ? "bg-[#d4af37] text-[#F0EFE2] ring-4 ring-[#d4af37]/15"
                                                                             : "bg-muted text-foreground/25"
                                                                 )}>
                                                                     {isComplete ? <Check className="size-4" /> : isActive ? <CheckCircle2 className="size-4" /> : <div className="size-2.5 rounded-full bg-black/20" />}

@@ -55,7 +55,7 @@ const InstNode = ({ data }: any) => (
 const RuntimeCoreNode = ({ data }: any) => (
  <div className="flex flex-col items-center">
  <Handle type="target" position={Position.Top} className="opacity-0" />
- <div className="p-6 bg-black text-white dark:bg-white dark:text-black rounded-md shadow-xl flex items-center justify-center min-w-[240px] border border-white/20 dark:border-black/20">
+ <div className="p-6 bg-black text-[#F0EFE2] dark:bg-white dark:text-black rounded-md shadow-xl flex items-center justify-center min-w-[240px] border border-white/20 dark:border-black/20">
  <Activity className="size-5 mr-3 animate-pulse text-emerald-400 dark:text-emerald-600" />
  <span className="text-[16px] font-bold tracking-tight">{data.label}</span>
  </div>
@@ -166,7 +166,7 @@ export function ObserveRuntime() {
  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
  return (
- <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden">
+ <div className="flex flex-col h-full w-full bg-[#FBFBFB] dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden">
  <CommandBar>
  <div className="flex items-center gap-2">
  <Activity className="size-4 text-[#0f52ff]" />
@@ -214,7 +214,7 @@ export function ObserveRuntime() {
  <h3 className="text-[18px] font-bold tracking-tight mb-6">Runtime Health Grid</h3>
  <div className="border border-border dark:border-white/10 rounded-md overflow-hidden bg-card/50 dark:bg-[#121212]/50 backdrop-blur-md">
  <table className="w-full text-left text-[14px]">
- <thead className="bg-card dark:bg-[#050505] text-[12px] font-bold uppercase tracking-widest text-foreground/50 dark:text-white/50 border-b border-border dark:border-white/10">
+ <thead className="bg-card dark:bg-[#050505] text-[12px] font-bold uppercase tracking-widest text-foreground/50 dark:text-[#F0EFE2]/50 border-b border-border dark:border-white/10">
  <tr>
  <th className="p-6 font-medium">Service</th>
  <th className="p-6 font-medium">Status</th>
@@ -233,9 +233,9 @@ export function ObserveRuntime() {
  <span className={cn("text-[13px] font-bold", s.status === "Healthy" ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")}>{s.status}</span>
  </div>
  </td>
- <td className="p-6 font-mono text-[13px] text-foreground/70 dark:text-white/70">{s.workers} nodes</td>
- <td className="p-6 font-mono text-[13px] text-foreground/70 dark:text-white/70">{s.latency}</td>
- <td className="p-6 font-mono text-[13px] text-foreground/70 dark:text-white/70">{s.queue} tasks</td>
+ <td className="p-6 font-mono text-[13px] text-foreground/70 dark:text-[#F0EFE2]/70">{s.workers} nodes</td>
+ <td className="p-6 font-mono text-[13px] text-foreground/70 dark:text-[#F0EFE2]/70">{s.latency}</td>
+ <td className="p-6 font-mono text-[13px] text-foreground/70 dark:text-[#F0EFE2]/70">{s.queue} tasks</td>
  </tr>
  ))}
  </tbody>
@@ -254,14 +254,14 @@ export function ObserveRuntime() {
  <div className="space-y-6">
  <div className="grid grid-cols-2 gap-6">
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card/50 dark:bg-[#121212]/50">
- <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 block mb-2">CPU Usage</span>
+ <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 block mb-2">CPU Usage</span>
  <div className="flex items-end gap-2">
  <span className="text-[24px] font-mono font-bold">14.2%</span>
  <span className="text-[12px] font-bold text-emerald-500 mb-1">Normal</span>
  </div>
  </div>
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-card/50 dark:bg-[#121212]/50">
- <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 block mb-2">Memory</span>
+ <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 block mb-2">Memory</span>
  <div className="flex items-end gap-2">
  <span className="text-[24px] font-mono font-bold">2.4 GB</span>
  <span className="text-[12px] font-bold text-emerald-500 mb-1">Stable</span>
@@ -271,7 +271,7 @@ export function ObserveRuntime() {
 
  <div className="p-6 rounded-md border border-border dark:border-white/10 bg-muted dark:bg-white/5">
  <h4 className="text-[13px] font-bold mb-3">Recent Logs</h4>
- <div className="font-mono text-[11px] text-foreground/60 dark:text-white/60 space-y-2">
+ <div className="font-mono text-[11px] text-foreground/60 dark:text-[#F0EFE2]/60 space-y-2">
  <p>[INFO] Heartbeat synchronized across all workers (12ms latency)</p>
  <p>[INFO] Processed 42 evidence assertions in the last 60s</p>
  <p className={inspectorTarget.includes('Verification') ? "text-amber-500" : ""}>

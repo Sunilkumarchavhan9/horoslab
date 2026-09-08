@@ -55,7 +55,7 @@ export function DeveloperWebhooks() {
  title="Webhooks" 
  description="Listen for asynchronous events like mission completions, verifier verdicts, and policy violations."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
  Add Endpoint
  </button>
@@ -84,7 +84,7 @@ export function DeveloperWebhooks() {
  )}
  >
  <td className="px-6 py-3">
- <span className="text-[13px] font-mono text-foreground dark:text-white">{endpoint.url}</span>
+ <span className="text-[13px] font-mono text-foreground dark:text-[#F0EFE2]">{endpoint.url}</span>
  </td>
  <td className="px-6 py-3">
  <StatusBadge status={endpoint.status} />
@@ -131,7 +131,7 @@ export function DeveloperWebhooks() {
  <td className="px-6 py-3">
  <div className="flex items-center gap-2">
  {delivery.isRetry && <RotateCcw className="size-3 text-amber-500" />}
- <span className="text-[12px] font-mono text-foreground dark:text-white">{delivery.id}</span>
+ <span className="text-[12px] font-mono text-foreground dark:text-[#F0EFE2]">{delivery.id}</span>
  </div>
  </td>
  <td className="px-6 py-3">
@@ -141,7 +141,7 @@ export function DeveloperWebhooks() {
  <StatusBadge status={delivery.status} />
  </td>
  <td className="px-6 py-3">
- <span className="text-[13px] text-foreground/80 dark:text-[#ccc]">{delivery.time}</span>
+ <span className="text-[13px] text-foreground/80 dark:text-[#C8C7BA]">{delivery.time}</span>
  </td>
  </tr>
  ))}

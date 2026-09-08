@@ -792,7 +792,7 @@ export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: s
  {/* Connector Health Banner */}
  {displayedHealthCounts ? (
  <div className="bg-blue-50/60 border border-blue-200/80 rounded-md p-6 mb-8 flex items-start gap-3 shadow-xs">
- <div className="size-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">i</div>
+ <div className="size-5 rounded-full bg-blue-600 text-[#F0EFE2] flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">i</div>
  <div className="text-[14px] text-blue-900 leading-relaxed">
  <strong className="font-semibold">Connector health</strong>
  <p className="mt-0.5 text-blue-800 text-[13.5px]">

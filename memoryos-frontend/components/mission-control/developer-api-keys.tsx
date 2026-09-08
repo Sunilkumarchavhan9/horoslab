@@ -22,7 +22,7 @@ export function DeveloperAPIKeys() {
  title="API Keys" 
  description="Manage programmatic access to your Epoch organization. Keys should be rotated every 90 days for optimal security."
  />
- <button className="px-6 py-2 bg-[#111] dark:bg-white text-white dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
+ <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
  Create Secret Key
  </button>
@@ -51,8 +51,8 @@ export function DeveloperAPIKeys() {
  >
  <td className="px-6 py-3">
  <div className="flex items-center gap-2">
- <Key className={cn("size-3.5", apiKey.expires === "Expired" ? "text-red-500" : "text-foreground dark:text-white")} />
- <span className="text-[13px] font-medium text-foreground dark:text-white">{apiKey.name}</span>
+ <Key className={cn("size-3.5", apiKey.expires === "Expired" ? "text-red-500" : "text-foreground dark:text-[#F0EFE2]")} />
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">{apiKey.name}</span>
  </div>
  </td>
  <td className="px-6 py-3">
@@ -66,10 +66,10 @@ export function DeveloperAPIKeys() {
  </div>
  </td>
  <td className="px-6 py-3">
- <span className="text-[13px] text-foreground/80 dark:text-[#ccc]">{apiKey.created}</span>
+ <span className="text-[13px] text-foreground/80 dark:text-[#C8C7BA]">{apiKey.created}</span>
  </td>
  <td className="px-6 py-3 text-right">
- <button className="p-1.5 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-white transition-colors" title="Rotate Key">
+ <button className="p-1.5 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-[#F0EFE2] transition-colors" title="Rotate Key">
  <RotateCw className="size-4" />
  </button>
  </td>
@@ -115,15 +115,15 @@ export function DeveloperAPIKeys() {
  <div className="flex flex-col gap-2 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111] p-6 text-[13px]">
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2">
  <span className="text-muted-foreground dark:text-muted-foreground">Last Used</span>
- <span className="font-medium text-foreground dark:text-white flex items-center gap-1.5"><Clock className="size-3"/> {selectedKey.lastUsed}</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2] flex items-center gap-1.5"><Clock className="size-3"/> {selectedKey.lastUsed}</span>
  </div>
  <div className="flex justify-between border-b border-border dark:border-white/5 pb-2 pt-2">
  <span className="text-muted-foreground dark:text-muted-foreground">Expires</span>
- <span className="font-medium text-foreground dark:text-white">{selectedKey.expires}</span>
+ <span className="font-medium text-foreground dark:text-[#F0EFE2]">{selectedKey.expires}</span>
  </div>
  <div className="flex justify-between pt-2">
  <span className="text-muted-foreground dark:text-muted-foreground">IP Restrictions</span>
- <span className="font-mono text-[11px] bg-muted dark:bg-white/10 px-1.5 py-0.5 rounded text-foreground dark:text-white">0.0.0.0/0</span>
+ <span className="font-mono text-[11px] bg-muted dark:bg-white/10 px-1.5 py-0.5 rounded text-foreground dark:text-[#F0EFE2]">0.0.0.0/0</span>
  </div>
  </div>
  </div>
@@ -134,14 +134,14 @@ export function DeveloperAPIKeys() {
  <div className="flex items-start gap-3">
  <Activity className="size-4 text-muted-foreground mt-0.5" />
  <div className="flex flex-col">
- <span className="text-[13px] font-medium text-foreground dark:text-white">API Request (POST /v1/missions)</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">API Request (POST /v1/missions)</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">2 mins ago from 192.168.1.1</span>
  </div>
  </div>
  <div className="flex items-start gap-3">
  <Fingerprint className="size-4 text-muted-foreground mt-0.5" />
  <div className="flex flex-col">
- <span className="text-[13px] font-medium text-foreground dark:text-white">Key Created</span>
+ <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Key Created</span>
  <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Oct 12, 2025 by admin@epoch.ai</span>
  </div>
  </div>

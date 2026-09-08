@@ -85,7 +85,7 @@ export function DateRangePicker() {
  className={cn(
  "h-8 flex items-center justify-center text-[13px] cursor-pointer hover:bg-accent",
  isOtherMonth ? "text-foreground/20" : "text-foreground",
- isSelected && "bg-[#111827] text-white hover:bg-[#111827]",
+ isSelected && "bg-[#111827] text-[#F0EFE2] hover:bg-[#111827]",
  isFirstSelected && "rounded-l-md",
  isLastSelected && "rounded-r-md",
  !isSelected && "rounded-md"

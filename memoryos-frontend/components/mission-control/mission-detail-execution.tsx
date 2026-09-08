@@ -176,7 +176,7 @@ export function MissionDetailExecution({ mission }: { mission: EpochMissionDetai
  <div key={step.id} className="px-6 py-6 flex items-start gap-6">
  <div className={cn(
  "size-11 rounded-md flex items-center justify-center shrink-0 border",
- isComplete ? "bg-emerald-50 border-emerald-100 text-emerald-600" : isRunning ? "bg-blue-50 border-blue-100 text-blue-600" : "bg-gray-50 border-gray-100 text-gray-400",
+ isComplete ? "bg-emerald-50 border-emerald-100 text-emerald-600" : isRunning ? "bg-blue-50 border-blue-100 text-blue-600" : "bg-gray-50 border-gray-100 text-[#C8C7BA]",
  )}>
  {isComplete ? <CheckCircle2 className="size-5" /> : isRunning ? <RefreshCw className="size-5 animate-spin" /> : <CircleDashed className="size-5" />}
  </div>
@@ -193,7 +193,7 @@ export function MissionDetailExecution({ mission }: { mission: EpochMissionDetai
  </div>
  <span className={cn(
  "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
- isComplete ? "bg-emerald-50 text-emerald-700 border-emerald-200/50" : isRunning ? "bg-blue-50 text-blue-700 border-blue-200/50" : "bg-gray-50 text-gray-500 border-gray-200/50",
+ isComplete ? "bg-emerald-50 text-emerald-700 border-emerald-200/50" : isRunning ? "bg-blue-50 text-blue-700 border-blue-200/50" : "bg-gray-50 text-[#C8C7BA] border-gray-200/50",
  )}>
  {step.status}
  </span>
@@ -213,7 +213,7 @@ export function MissionDetailExecution({ mission }: { mission: EpochMissionDetai
  </div>
  </div>
  </div>
- <button className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-50 border border-transparent hover:border-gray-200 rounded-md transition-all" title="View Logs">
+ <button className="p-2 text-[#C8C7BA] hover:text-gray-700 hover:bg-gray-50 border border-transparent hover:border-gray-200 rounded-md transition-all" title="View Logs">
  <FileJson className="size-4" />
  </button>
  </div>
@@ -300,7 +300,7 @@ export function MissionDetailExecution({ mission }: { mission: EpochMissionDetai
  <div className="text-emerald-600 font-semibold">[INFO] mission {mission.id}</div>
  <div>[INFO] title: {mission.title ?? mission.objective ?? "Untitled mission"}</div>
  <div>[INFO] state: {readState(mission.state)}</div>
- <div className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Execution Logs</div>
+ <div className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-[#C8C7BA]">Execution Logs</div>
  {logs.length > 0 ? (
  logs.map((entry, index) => (
  <div key={index}>[{String(index + 1).padStart(2, "0")}] {stringifyLogEntry(entry)}</div>
@@ -354,7 +354,7 @@ export function MissionDetailExecution({ mission }: { mission: EpochMissionDetai
  <div className="text-[14px] font-semibold text-foreground">{checkpoint.label}</div>
  <div className="text-[13px] text-muted-foreground">{checkpoint.note}</div>
  </div>
- <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold", checkpoint.ready ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500")}>
+ <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold", checkpoint.ready ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-[#C8C7BA]")}>
  {checkpoint.ready ? "Captured" : "Missing"}
  </span>
  </div>

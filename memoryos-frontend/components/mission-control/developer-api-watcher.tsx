@@ -63,14 +63,14 @@ export function DeveloperAPIWatcher() {
  >
  <td className="px-6 py-3">
  <div className="flex items-center gap-2">
- <span className="text-[13px] font-mono font-medium text-foreground dark:text-white">{pkg.name}</span>
+ <span className="text-[13px] font-mono font-medium text-foreground dark:text-[#F0EFE2]">{pkg.name}</span>
  </div>
  </td>
  <td className="px-6 py-3">
  <div className="flex items-center gap-1.5 text-[12px] font-mono">
  <span className="text-muted-foreground dark:text-muted-foreground">{pkg.fromVersion}</span>
- <ArrowDownUp className="size-3 text-[#ccc] rotate-90" />
- <span className="text-foreground dark:text-white font-semibold">{pkg.toVersion}</span>
+ <ArrowDownUp className="size-3 text-[#C8C7BA] rotate-90" />
+ <span className="text-foreground dark:text-[#F0EFE2] font-semibold">{pkg.toVersion}</span>
  </div>
  </td>
  <td className="px-6 py-3">
@@ -125,10 +125,10 @@ export function DeveloperAPIWatcher() {
  <div className="p-6 rounded-md border border-[#0f52ff]/30 bg-[#0f52ff]/5 flex flex-col items-center justify-center text-center gap-3">
  <ShieldAlert className="size-6 text-[#0f52ff]" />
  <div>
- <h4 className="text-[14px] font-semibold text-foreground dark:text-white mb-1">Generate Migration Mission</h4>
+ <h4 className="text-[14px] font-semibold text-foreground dark:text-[#F0EFE2] mb-1">Generate Migration Mission</h4>
  <p className="text-[12px] text-muted-foreground dark:text-muted-foreground max-w-[250px]">Deploy Claude to automatically upgrade the package and fix type errors across impacted repositories.</p>
  </div>
- <button className="mt-2 px-6 py-2 bg-[#0f52ff] hover:bg-[#0b3ec2] text-white rounded-md text-[13px] font-medium transition-colors flex items-center gap-2">
+ <button className="mt-2 px-6 py-2 bg-[#0f52ff] hover:bg-[#0b3ec2] text-[#F0EFE2] rounded-md text-[13px] font-medium transition-colors flex items-center gap-2">
  <Play className="size-3" /> Execute Mission
  </button>
  </div>

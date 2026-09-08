@@ -54,7 +54,7 @@ export function ApprovalCard({
  <div className="flex items-center gap-3 mt-auto pt-4 border-t border-border">
  <Button 
  onClick={onApprove}
- className="flex-1 bg-[#111] hover:bg-black text-white h-8 text-[12px] font-medium rounded-[4px]"
+ className="flex-1 bg-[#111] hover:bg-black text-[#F0EFE2] h-8 text-[12px] font-medium rounded-[4px]"
  >
  <Check className="size-3.5 mr-1.5" /> Approve
  </Button>
