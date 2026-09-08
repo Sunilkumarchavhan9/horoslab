@@ -445,7 +445,7 @@ function buildRecentActivityItems(snapshot: EpochMissionControlSnapshot | null):
  ) : missionActivity.certificate ? (
  <FileCheck className="size-4 text-[#0f52ff]" />
  ) : (
- <Rocket className="size-4 text-muted-foreground dark:text-white/50" />
+ <Rocket className="size-4 text-muted-foreground dark:text-[#F0EFE2]/50" />
  ),
  tone: decision === "PASS" ? "emerald" : decision === "FAIL" ? "amber" : "slate",
  });
@@ -589,7 +589,7 @@ function InteractiveSparklineGraph({
 
  {/* Y-Axis Ticks */}
  {isExpanded && (
- <div className="absolute right-1 top-0 bottom-0 flex flex-col justify-between text-[10px] text-[#aaa] dark:text-white/20 font-mono pointer-events-none">
+ <div className="absolute right-1 top-0 bottom-0 flex flex-col justify-between text-[10px] text-[#aaa] dark:text-[#F0EFE2]/20 font-mono pointer-events-none">
  <span>{Math.round(max)}</span>
  <span>{Math.round((max + min) / 2)}</span>
  <span>{Math.round(min)}</span>
@@ -598,7 +598,7 @@ function InteractiveSparklineGraph({
 
  {/* X-Axis Timestamps */}
  {isLarge && (
- <div className="absolute left-0 right-8 -bottom-5 flex justify-between text-[10.5px] text-muted-foreground dark:text-white/30 font-mono pointer-events-none border-t border-[#f0f0f2] dark:border-white/5 dark:border-white/5 pt-1">
+ <div className="absolute left-0 right-8 -bottom-5 flex justify-between text-[10.5px] text-muted-foreground dark:text-[#F0EFE2]/30 font-mono pointer-events-none border-t border-[#f0f0f2] dark:border-white/5 dark:border-white/5 pt-1">
  <span>14:30</span>
  <span>00:30</span>
  <span>04:30</span>
@@ -627,7 +627,7 @@ function InteractiveSparklineGraph({
  top: `${(coords[hoverIdx].y / height) * 100}%`,
  }}
  >
- <div className="text-[11px] text-muted-foreground dark:text-white/60 font-medium">Live snapshot</div>
+ <div className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/60 font-medium">Live snapshot</div>
  <div className="text-[12px] font-semibold text-[#0f52ff]">
  {metricName} : {coords[hoverIdx].val}
  </div>
@@ -675,7 +675,7 @@ function DateRangePickerPopover({
  animate={{ opacity: 1, scale: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95, y: -4 }}
  transition={{ duration: 0.18, ease: "easeOut" }}
- className="absolute right-0 top-12 z-50 w-[560px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-2xl p-6 text-sm text-foreground dark:text-white"
+ className="absolute right-0 top-12 z-50 w-[560px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-2xl p-6 text-sm text-foreground dark:text-[#F0EFE2]"
  >
  <div className={cn("absolute -top-[7px] size-3.5 bg-card dark:bg-[#121212] rotate-45 border-l border-t border-border dark:border-white/10 z-10", arrowPositionClass)} />
 
@@ -701,7 +701,7 @@ function DateRangePickerPopover({
  </div>
  </div>
 
- <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-muted-foreground dark:text-white/50 mb-2">
+ <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-muted-foreground dark:text-[#F0EFE2]/50 mb-2">
  {Array.from({ length: 7 }, (_, index) => {
  const weekday = new Date(Date.UTC(2024, 0, 7 + index));
  return <span key={index}>{new Intl.DateTimeFormat(profileLocale(language), { weekday: "short", timeZone: "UTC" }).format(weekday)}</span>;
@@ -747,12 +747,12 @@ function DateRangePickerPopover({
  className={cn(
  "h-7 rounded-md flex items-center justify-center font-medium transition-colors",
  isRangeStart || isRangeEnd
- ? "bg-[#1a1a1a] dark:bg-white text-white font-bold"
+ ? "bg-[#1a1a1a] dark:bg-white text-[#F0EFE2] font-bold"
  : isSelected
  ? "bg-[#eef4ff] dark:bg-[#0f52ff]/20 text-[#0f52ff] font-semibold"
  : isCurrentMonth
- ? "hover:bg-card text-foreground/90 dark:text-white/90"
- : "text-[#ccc] dark:text-white/10"
+ ? "hover:bg-card text-foreground/90 dark:text-[#F0EFE2]/90"
+ : "text-[#C8C7BA] dark:text-[#F0EFE2]/10"
  )}
  >
  {day.getDate()}
@@ -769,7 +769,7 @@ function DateRangePickerPopover({
  onClick={() => onSelectPreset(preset)}
  className={cn(
  "w-full text-left px-3 py-2 rounded-md font-medium transition-colors block",
- selectedPreset === preset ? "bg-card dark:bg-white/10 text-foreground dark:text-white font-semibold" : "hover:bg-card dark:bg-white/10 text-muted-foreground dark:text-white/70"
+ selectedPreset === preset ? "bg-card dark:bg-white/10 text-foreground dark:text-[#F0EFE2] font-semibold" : "hover:bg-card dark:bg-white/10 text-muted-foreground dark:text-[#F0EFE2]/70"
  )}
  >
  {profileText(language, preset)}
@@ -781,36 +781,36 @@ function DateRangePickerPopover({
  <div className="space-y-3 relative z-20">
  <div className="grid grid-cols-2 gap-3 text-xs">
  <div>
- <label className="text-[11px] text-muted-foreground dark:text-white/50 font-medium block mb-1">{profileText(language, "Start")}</label>
+ <label className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/50 font-medium block mb-1">{profileText(language, "Start")}</label>
  <div className="flex items-center gap-2 h-9 px-3 bg-card dark:bg-white/5 border border-border dark:border-white/10 rounded-md">
- <CalendarIcon className="size-3.5 text-muted-foreground dark:text-white/40" />
+ <CalendarIcon className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/40" />
  <input
  type="datetime-local"
  value={draftStart}
  onChange={(event) => setDraftStart(event.target.value)}
- className="flex-1 bg-transparent outline-none font-mono text-[11px] text-foreground dark:text-white"
+ className="flex-1 bg-transparent outline-none font-mono text-[11px] text-foreground dark:text-[#F0EFE2]"
  />
  </div>
  </div>
 
  <div>
- <label className="text-[11px] text-muted-foreground dark:text-white/50 font-medium block mb-1">{profileText(language, "End")}</label>
+ <label className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/50 font-medium block mb-1">{profileText(language, "End")}</label>
  <div className="flex items-center gap-2 h-9 px-3 bg-card dark:bg-white/5 border border-border dark:border-white/10 rounded-md">
- <CalendarIcon className="size-3.5 text-muted-foreground dark:text-white/40" />
+ <CalendarIcon className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/40" />
  <input
  type="datetime-local"
  value={draftEnd}
  onChange={(event) => setDraftEnd(event.target.value)}
- className="flex-1 bg-transparent outline-none font-mono text-[11px] text-foreground dark:text-white"
+ className="flex-1 bg-transparent outline-none font-mono text-[11px] text-foreground dark:text-[#F0EFE2]"
  />
  </div>
  </div>
  </div>
 
  <div className="flex items-center justify-between pt-1">
- <div className="flex items-center gap-1 text-xs text-muted-foreground dark:text-white/70">
+ <div className="flex items-center gap-1 text-xs text-muted-foreground dark:text-[#F0EFE2]/70">
  <span>{timezone}</span>
- <ChevronDown className="size-3.5 text-muted-foreground dark:text-white/50" />
+ <ChevronDown className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/50" />
  </div>
 
  <button
@@ -822,7 +822,7 @@ function DateRangePickerPopover({
  }
  onClose();
  }}
- className="h-9 px-6 bg-[#0f52ff] hover:bg-[#0042e6] text-white text-xs font-semibold rounded-md transition-all cursor-pointer"
+ className="h-9 px-6 bg-[#0f52ff] hover:bg-[#0042e6] text-[#F0EFE2] text-xs font-semibold rounded-md transition-all cursor-pointer"
  >
  {profileText(language, "Apply")}
  </button>
@@ -892,7 +892,7 @@ const pushColumn = (newType: ColumnType) => {
  const recencyToneClasses: Record<RecentActivityItem["tone"], string> = {
  emerald: "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-500",
  blue: "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-[#0f52ff]",
- slate: "bg-slate-50 dark:bg-slate-500/10 border-slate-200 dark:border-white/10 text-muted-foreground dark:text-white/60",
+ slate: "bg-slate-50 dark:bg-slate-500/10 border-slate-200 dark:border-white/10 text-muted-foreground dark:text-[#F0EFE2]/60",
  amber: "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-500",
  };
 
@@ -1178,7 +1178,7 @@ const pushColumn = (newType: ColumnType) => {
  if (institutionsList.length === 0) {
  return (
  <div className="divide-y divide-[#f0f0f2]">
- <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-white/50">
+ <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-[#F0EFE2]/50">
  No institutions found in this workspace yet.
  </div>
  </div>
@@ -1194,12 +1194,12 @@ const pushColumn = (newType: ColumnType) => {
  className="py-2.5 flex items-center justify-between hover:bg-card dark:bg-white/5 px-2 rounded-md transition-colors cursor-pointer group"
  >
  <div className="flex items-center gap-3 min-w-0 pr-2">
- <Building className="size-4 text-muted-foreground dark:text-white/50 group-hover:text-[#0f52ff] transition-colors shrink-0" />
+ <Building className="size-4 text-muted-foreground dark:text-[#F0EFE2]/50 group-hover:text-[#0f52ff] transition-colors shrink-0" />
  <div className="min-w-0">
- <div className="text-[13.5px] font-semibold text-foreground dark:text-white group-hover:text-[#0f52ff] transition-colors truncate">
+ <div className="text-[13.5px] font-semibold text-foreground dark:text-[#F0EFE2] group-hover:text-[#0f52ff] transition-colors truncate">
  {inst.name}
  </div>
- <div className="text-[11px] text-muted-foreground dark:text-white/50 truncate">
+ <div className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/50 truncate">
  {inst.template?.name ?? inst.category ?? t("Institution")} • {relativeTime(inst.updatedAt ?? inst.createdAt)}
  </div>
  </div>
@@ -1220,7 +1220,7 @@ const pushColumn = (newType: ColumnType) => {
  if (missionsList.length === 0) {
  return (
  <div className="divide-y divide-[#f0f0f2]">
- <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-white/50">
+ <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-[#F0EFE2]/50">
  No missions found in this workspace yet.
  </div>
  </div>
@@ -1236,12 +1236,12 @@ const pushColumn = (newType: ColumnType) => {
  className="py-2.5 flex items-center justify-between hover:bg-card dark:bg-white/5 px-2 rounded-md transition-colors cursor-pointer group"
  >
  <div className="flex items-center gap-2.5 min-w-0 pr-2">
- <Briefcase className="size-4 text-muted-foreground dark:text-white/50 group-hover:text-[#0f52ff] transition-colors shrink-0" />
+ <Briefcase className="size-4 text-muted-foreground dark:text-[#F0EFE2]/50 group-hover:text-[#0f52ff] transition-colors shrink-0" />
  <div className="min-w-0">
- <div className="text-[13.5px] font-semibold text-foreground dark:text-white group-hover:text-[#0f52ff] transition-colors truncate">
+ <div className="text-[13.5px] font-semibold text-foreground dark:text-[#F0EFE2] group-hover:text-[#0f52ff] transition-colors truncate">
  {mission.title ?? mission.id}
  </div>
- <div className="text-[11px] text-muted-foreground dark:text-white/50 truncate">
+ <div className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/50 truncate">
  {mission.currentStep ?? mission.objective ?? mission.state ?? t("Running")} • {relativeTime(mission.updatedAt)}
  </div>
  </div>
@@ -1262,7 +1262,7 @@ const pushColumn = (newType: ColumnType) => {
  if (recentsList.length === 0) {
  return (
  <div className="divide-y divide-[#f0f0f2]">
- <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-white/50">
+ <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-[#F0EFE2]/50">
  No recent activity yet.
  </div>
  </div>
@@ -1278,13 +1278,13 @@ const pushColumn = (newType: ColumnType) => {
  {item.icon}
  </div>
  <div className="min-w-0">
- <span className="block text-[13px] text-muted-foreground dark:text-white/60 truncate">
+ <span className="block text-[13px] text-muted-foreground dark:text-[#F0EFE2]/60 truncate">
  {item.title}
  </span>
- <span className="block text-[11px] text-muted-foreground dark:text-white/30 truncate">{item.sub}</span>
+ <span className="block text-[11px] text-muted-foreground dark:text-[#F0EFE2]/30 truncate">{item.sub}</span>
  </div>
  </div>
- <span className="text-[11px] text-muted-foreground dark:text-white/30 font-mono shrink-0 ml-2">
+ <span className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/30 font-mono shrink-0 ml-2">
  {relativeTime(item.timestamp)}
  </span>
  </div>
@@ -1298,7 +1298,7 @@ const pushColumn = (newType: ColumnType) => {
   if (liveEvidence.length === 0) {
    return (
     <div className="divide-y divide-[#f0f0f2]">
-     <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-white/50">
+     <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-[#F0EFE2]/50">
       No evidence collected in this workspace yet.
      </div>
     </div>
@@ -1316,10 +1316,10 @@ const pushColumn = (newType: ColumnType) => {
       <div className="flex items-center gap-2.5 min-w-0 pr-2">
        <FileCheck className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
        <div className="min-w-0">
-        <div className="text-[13.5px] font-semibold text-foreground dark:text-white group-hover:text-[#0f52ff] transition-colors truncate">
+        <div className="text-[13.5px] font-semibold text-foreground dark:text-[#F0EFE2] group-hover:text-[#0f52ff] transition-colors truncate">
          {evidence.summary ?? evidence.kind ?? evidence.id}
         </div>
-        <div className="text-[11px] text-muted-foreground dark:text-white/50 truncate">
+        <div className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/50 truncate">
          {evidence.contentType ?? evidence.filePath ?? "Evidence artifact"}
         </div>
        </div>
@@ -1370,8 +1370,8 @@ const pushColumn = (newType: ColumnType) => {
     onClick={() => liveSummary.target && onNavigate?.(liveSummary.target)}
     className="w-full text-left py-6 px-2 rounded-md hover:bg-accent/40 transition-colors"
    >
-    <div className="text-3xl font-semibold text-foreground dark:text-white">{liveSummary.value}</div>
-    <div className="mt-2 text-[13px] text-muted-foreground dark:text-white/60">{liveSummary.detail}</div>
+    <div className="text-3xl font-semibold text-foreground dark:text-[#F0EFE2]">{liveSummary.value}</div>
+    <div className="mt-2 text-[13px] text-muted-foreground dark:text-[#F0EFE2]/60">{liveSummary.detail}</div>
     <div className="mt-4 text-[11px] font-medium text-[#0f52ff]">Open live details <ChevronRight className="inline size-3" /></div>
    </button>
   );
@@ -1382,7 +1382,7 @@ const pushColumn = (newType: ColumnType) => {
  // "Coming soon" surface.
  return (
  <div className="divide-y divide-[#f0f0f2]">
- <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-white/50">
+ <div className="py-8 px-2 text-[13px] text-muted-foreground dark:text-[#F0EFE2]/50">
  No live records for this view yet.
  </div>
  </div>
@@ -1390,11 +1390,11 @@ const pushColumn = (newType: ColumnType) => {
  }
 
  const predefinedTips = useMemo<SearchResult[]>(() => [
- { type: 'tip', id: 'tip-inst', label: 'inst: — Search Institutions', icon: <Building className="size-4 text-muted-foreground dark:text-white/40" /> },
- { type: 'tip', id: 'tip-mis', label: 'mis: — Search Missions', icon: <Rocket className="size-4 text-muted-foreground dark:text-white/40" /> },
- { type: 'tip', id: 'tip-evid', label: 'evid: — Search Evidence', icon: <FileCheck className="size-4 text-muted-foreground dark:text-white/40" /> },
- { type: 'tip', id: 'tip-rec', label: 'rec: — Search Memory Records', icon: <CheckCircle2 className="size-4 text-muted-foreground dark:text-white/40" /> },
- { type: 'tip', id: 'tip-gov', label: 'gov: — Search Governance Policies', icon: <Briefcase className="size-4 text-muted-foreground dark:text-white/40" /> },
+ { type: 'tip', id: 'tip-inst', label: 'inst: — Search Institutions', icon: <Building className="size-4 text-muted-foreground dark:text-[#F0EFE2]/40" /> },
+ { type: 'tip', id: 'tip-mis', label: 'mis: — Search Missions', icon: <Rocket className="size-4 text-muted-foreground dark:text-[#F0EFE2]/40" /> },
+ { type: 'tip', id: 'tip-evid', label: 'evid: — Search Evidence', icon: <FileCheck className="size-4 text-muted-foreground dark:text-[#F0EFE2]/40" /> },
+ { type: 'tip', id: 'tip-rec', label: 'rec: — Search Memory Records', icon: <CheckCircle2 className="size-4 text-muted-foreground dark:text-[#F0EFE2]/40" /> },
+ { type: 'tip', id: 'tip-gov', label: 'gov: — Search Governance Policies', icon: <Briefcase className="size-4 text-muted-foreground dark:text-[#F0EFE2]/40" /> },
  ], []);
 
  const searchResults = useMemo<SearchResult[]>(() => {
@@ -1487,11 +1487,11 @@ useEffect(() => {
 }, [searchQuery]);
 
 return (
-  <div className="-mx-8 -mt-8 p-8 md:p-12 min-h-screen bg-background dark:bg-[#0a0a0a] text-foreground dark:text-white font-sans flex flex-col relative" data-popover>
+  <div className="-mx-8 -mt-8 p-8 md:p-12 min-h-screen bg-background dark:bg-[#0a0a0a] text-foreground dark:text-[#F0EFE2] font-sans flex flex-col relative" data-popover>
 
     {/* 1. Top Greeting Header */}
     <div className="flex flex-col items-center mb-7">
- <h1 className="text-[34px] font-bold text-foreground dark:text-white tracking-tight text-center">
+ <h1 className="text-[34px] font-bold text-foreground dark:text-[#F0EFE2] tracking-tight text-center">
         {t("What are we building today?")}
       </h1>
     </div>
@@ -1512,7 +1512,7 @@ return (
  setTimeout(() => setIsSearchFocused(false), 200);
  }}
  onKeyDown={handleSearchKeyDown}
- className="flex-1 bg-transparent border-none outline-none text-[14.5px] text-foreground dark:text-white placeholder:text-muted-foreground dark:text-white/30 min-w-0"
+ className="flex-1 bg-transparent border-none outline-none text-[14.5px] text-foreground dark:text-[#F0EFE2] placeholder:text-muted-foreground dark:text-[#F0EFE2]/30 min-w-0"
  />
  <div className="flex items-center gap-2 shrink-0 ml-2">
  {searchQuery ? (
@@ -1529,8 +1529,8 @@ return (
   <X className="size-3.5" />
  </button>
  ) : null}
- <kbd className="inline-flex h-5 items-center justify-center rounded border border-border dark:border-white/10 bg-card dark:bg-white/5 px-1.5 text-[10.5px] font-medium text-muted-foreground dark:text-white/60">Ctrl</kbd>
- <kbd className="inline-flex h-5 items-center justify-center rounded border border-border dark:border-white/10 bg-card dark:bg-white/5 px-1.5 text-[10.5px] font-medium text-muted-foreground dark:text-white/60">K</kbd>
+ <kbd className="inline-flex h-5 items-center justify-center rounded border border-border dark:border-white/10 bg-card dark:bg-white/5 px-1.5 text-[10.5px] font-medium text-muted-foreground dark:text-[#F0EFE2]/60">Ctrl</kbd>
+ <kbd className="inline-flex h-5 items-center justify-center rounded border border-border dark:border-white/10 bg-card dark:bg-white/5 px-1.5 text-[10.5px] font-medium text-muted-foreground dark:text-[#F0EFE2]/60">K</kbd>
  </div>
  </div>
 
@@ -1544,12 +1544,12 @@ return (
  transition={{ duration: 0.15 }}
  className="absolute top-full left-0 right-0 bg-card dark:bg-[#121212] border border-border dark:border-white/10 border-t-0 rounded-b-xl overflow-hidden flex flex-col"
  >
- <div className="p-2 text-xs font-semibold text-muted-foreground dark:text-white/40 px-6 py-3 bg-background dark:bg-[#0a0a0a] border-b border-border dark:border-white/10">
+ <div className="p-2 text-xs font-semibold text-muted-foreground dark:text-[#F0EFE2]/40 px-6 py-3 bg-background dark:bg-[#0a0a0a] border-b border-border dark:border-white/10">
  {searchQuery.trim() === "" ? t("Search tips") : t("Suggestions")}
  </div>
  <div className="max-h-[300px] overflow-y-auto py-2">
  {searchResults.length === 0 ? (
-  <div className="px-6 py-8 text-center text-[13px] text-muted-foreground dark:text-white/50">
+  <div className="px-6 py-8 text-center text-[13px] text-muted-foreground dark:text-[#F0EFE2]/50">
    {t("No matching live records found.")}
   </div>
  ) : searchResults.map((item, index) => (
@@ -1568,7 +1568,7 @@ return (
  onMouseEnter={() => setSearchSelectedIndex(index)}
  className={cn(
  "flex items-center gap-3 px-6 py-2.5 mx-2 rounded-md cursor-pointer transition-colors",
- searchSelectedIndex === index ? "bg-card text-[#0f52ff]" : "hover:bg-card dark:bg-white/5 text-foreground/80 dark:text-white/80"
+ searchSelectedIndex === index ? "bg-card text-[#0f52ff]" : "hover:bg-card dark:bg-white/5 text-foreground/80 dark:text-[#F0EFE2]/80"
  )}
  >
  <div className={cn("shrink-0", item.type !== 'tip' && "size-6 rounded-full border flex items-center justify-center bg-card dark:bg-white/5 border-border dark:border-white/10")}>
@@ -1578,25 +1578,25 @@ return (
  <span className={cn("text-[13px] truncate", searchSelectedIndex === index ? "font-medium" : "")}>
  {item.type === 'tip' ? (
  <>
- <strong className="font-semibold text-foreground dark:text-white">{item.label.split('—')[0]}</strong>
- <span className="text-muted-foreground dark:text-white/60"> — {item.label.split('—')[1]}</span>
+ <strong className="font-semibold text-foreground dark:text-[#F0EFE2]">{item.label.split('—')[0]}</strong>
+ <span className="text-muted-foreground dark:text-[#F0EFE2]/60"> — {item.label.split('—')[1]}</span>
  </>
  ) : (
  item.label
  )}
  </span>
  {item.sub && (
- <span className="text-[11px] text-muted-foreground dark:text-white/40 truncate">{item.sub}</span>
+ <span className="text-[11px] text-muted-foreground dark:text-[#F0EFE2]/40 truncate">{item.sub}</span>
  )}
  </div>
  {item.type === 'tip' && (
- <ChevronRight className={cn("size-3.5 ml-auto", searchSelectedIndex === index ? "text-[#0f52ff]" : "text-[#aaa] dark:text-white/20")} />
+ <ChevronRight className={cn("size-3.5 ml-auto", searchSelectedIndex === index ? "text-[#0f52ff]" : "text-[#aaa] dark:text-[#F0EFE2]/20")} />
  )}
  </div>
  ))}
  </div>
 
- <div className="px-6 py-2 bg-card dark:bg-white/5 border-t border-border dark:border-white/10 flex items-center gap-6 text-[11px] text-muted-foreground dark:text-white/50">
+ <div className="px-6 py-2 bg-card dark:bg-white/5 border-t border-border dark:border-white/10 flex items-center gap-6 text-[11px] text-muted-foreground dark:text-[#F0EFE2]/50">
  <div className="flex items-center gap-1.5">
  <span className="inline-flex items-center justify-center border border-border dark:border-white/10 bg-card dark:bg-[#121212] rounded-[3px] px-1 leading-none h-4">↑</span>
  <span className="inline-flex items-center justify-center border border-border dark:border-white/10 bg-card dark:bg-[#121212] rounded-[3px] px-1 leading-none h-4">↓</span>
@@ -1669,15 +1669,15 @@ return (
             className="flex flex-col relative"
           >
             <div className="flex items-center justify-between mb-3 px-1">
-              <div className="flex items-center gap-1 text-[15px] font-semibold text-foreground dark:text-white cursor-pointer hover:text-[#0f52ff]">
+              <div className="flex items-center gap-1 text-[15px] font-semibold text-foreground dark:text-[#F0EFE2] cursor-pointer hover:text-[#0f52ff]">
                 <span>{col.type}</span>
-                <ChevronRight className="size-4 text-muted-foreground dark:text-white/40" />
+                <ChevronRight className="size-4 text-muted-foreground dark:text-[#F0EFE2]/40" />
               </div>
 
               <div className="relative">
                 <button
                   onClick={() => setActiveMenu(activeMenu === col.id ? null : col.id)}
-                  className="text-muted-foreground dark:text-white/40 hover:text-foreground dark:text-white p-1 rounded-md hover:bg-accent dark:bg-white/5 dark:hover:bg-card/5 transition-colors"
+                  className="text-muted-foreground dark:text-[#F0EFE2]/40 hover:text-foreground dark:text-[#F0EFE2] p-1 rounded-md hover:bg-accent dark:bg-white/5 dark:hover:bg-card/5 transition-colors"
                 >
                   <MoreHorizontal className="size-4" />
                 </button>
@@ -1689,7 +1689,7 @@ return (
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-7 z-50 w-[200px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-xl p-1.5 text-xs text-foreground/90 dark:text-white/90"
+                      className="absolute right-0 top-7 z-50 w-[200px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-xl p-1.5 text-xs text-foreground/90 dark:text-[#F0EFE2]/90"
                     >
                       <button onClick={addAction} className="w-full text-left px-3 py-2 rounded-md hover:bg-card dark:bg-white/10 flex items-center gap-2">
                         <Plus className="size-3.5" /> {addLabel}
@@ -1706,7 +1706,7 @@ return (
                           <span className="flex items-center gap-2">
                             <LayoutGrid className="size-3.5" /> Change column
                           </span>
-                          <ChevronRight className="size-3.5 text-muted-foreground dark:text-white/40" />
+                          <ChevronRight className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/40" />
                         </button>
                         {activeSubMenu === `${col.id}-change` && (
                           <div className="absolute left-full top-0 ml-1 z-50 w-[160px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-xl p-1.5 space-y-0.5">
@@ -1720,7 +1720,7 @@ return (
                                 }}
                                 className={cn(
                                   "w-full text-left px-3 py-1.5 rounded-md text-xs font-medium flex items-center justify-between",
-                                  col.type === t ? "bg-card dark:bg-[#0f52ff]/20 text-[#0f52ff]" : "hover:bg-card dark:bg-white/10 text-foreground/90 dark:text-white/90"
+                                  col.type === t ? "bg-card dark:bg-[#0f52ff]/20 text-[#0f52ff]" : "hover:bg-card dark:bg-white/10 text-foreground/90 dark:text-[#F0EFE2]/90"
                                 )}
                               >
                                 <span>{t}</span>
@@ -1801,7 +1801,7 @@ return (
  <div>
  {/* Card Header Row */}
  <div className="flex items-center justify-between mb-1">
- <span className="text-[13px] font-semibold text-muted-foreground dark:text-white/70 truncate pr-2">{t(card.title)}</span>
+ <span className="text-[13px] font-semibold text-muted-foreground dark:text-[#F0EFE2]/70 truncate pr-2">{t(card.title)}</span>
 
  <div className="flex items-center gap-1">
  {/* Top-Right Clean Expand/Shrink Button */}
@@ -1810,15 +1810,15 @@ return (
  whileTap={{ scale: 0.9 }}
  onClick={() => handleToggleCardSize(slotIdx)}
  title={`Toggle size: ${effectiveSpan}`}
- className="text-muted-foreground dark:text-white/40 hover:text-[#0f52ff] p-1 rounded-md hover:bg-accent dark:bg-white/5 dark:hover:bg-card/5 flex items-center justify-center transition-colors"
+ className="text-muted-foreground dark:text-[#F0EFE2]/40 hover:text-[#0f52ff] p-1 rounded-md hover:bg-accent dark:bg-white/5 dark:hover:bg-card/5 flex items-center justify-center transition-colors"
  >
- <BlueDragHandleIcon className="size-3 text-muted-foreground dark:text-white/50 hover:text-[#0f52ff]" />
+ <BlueDragHandleIcon className="size-3 text-muted-foreground dark:text-[#F0EFE2]/50 hover:text-[#0f52ff]" />
  </motion.button>
 
  <div className="relative">
  <button
  onClick={() => setActiveMenu(activeMenu === card.id ? null : card.id)}
- className="text-muted-foreground dark:text-white/40 hover:text-foreground dark:text-white p-1 rounded-md hover:bg-accent dark:bg-white/5 dark:hover:bg-card/5"
+ className="text-muted-foreground dark:text-[#F0EFE2]/40 hover:text-foreground dark:text-[#F0EFE2] p-1 rounded-md hover:bg-accent dark:bg-white/5 dark:hover:bg-card/5"
  >
  <MoreHorizontal className="size-4" />
  </button>
@@ -1830,7 +1830,7 @@ return (
  animate={{ opacity: 1, scale: 1 }}
  exit={{ opacity: 0, scale: 0.95 }}
  transition={{ duration: 0.15 }}
- className="absolute right-0 top-7 z-50 w-[190px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-xl p-1.5 text-xs text-foreground/90 dark:text-white/90"
+ className="absolute right-0 top-7 z-50 w-[190px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-xl p-1.5 text-xs text-foreground/90 dark:text-[#F0EFE2]/90"
  >
  <button
  onClick={() => handleToggleCardSize(slotIdx)}
@@ -1844,7 +1844,7 @@ return (
  onClick={triggerRefresh}
  className="w-full text-left px-3 py-2 rounded-md hover:bg-card dark:bg-white/10 flex items-center gap-2"
  >
- <RefreshCw className="size-3.5 text-muted-foreground dark:text-white/50" /> {t("Refresh")}
+ <RefreshCw className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/50" /> {t("Refresh")}
  </button>
 
  <button
@@ -1855,9 +1855,9 @@ return (
  className="w-full text-left px-3 py-2 rounded-md hover:bg-card dark:bg-white/10 flex items-center justify-between"
  >
  <span className="flex items-center gap-2">
- <CalendarIcon className="size-3.5 text-muted-foreground dark:text-white/50" /> {t("Last 24 hours")} ...
+ <CalendarIcon className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/50" /> {t("Last 24 hours")} ...
  </span>
- <ChevronRight className="size-3.5 text-muted-foreground dark:text-white/40" />
+ <ChevronRight className="size-3.5 text-muted-foreground dark:text-[#F0EFE2]/40" />
  </button>
 
  <div className="border-t border-[#f0f0f2] dark:border-white/5 dark:border-white/5 my-1" />
@@ -1940,7 +1940,7 @@ return (
  <button
  type="button"
  onClick={() => setActiveSlotMenuIndex(activeSlotMenuIndex === slotIdx ? null : slotIdx)}
- className="w-full min-h-[210px] bg-card dark:bg-white/5 border border-border dark:border-white/10 hover:border-[#0f52ff] rounded-md shadow-xs flex items-center justify-center text-[#b0b0b8] dark:text-white/30 hover:text-[#0f52ff] transition-all cursor-pointer"
+ className="w-full min-h-[210px] bg-card dark:bg-white/5 border border-border dark:border-white/10 hover:border-[#0f52ff] rounded-md shadow-xs flex items-center justify-center text-[#b0b0b8] dark:text-[#F0EFE2]/30 hover:text-[#0f52ff] transition-all cursor-pointer"
  >
  <Plus className="size-5 stroke-[1.5]" />
  </button>
@@ -1953,15 +1953,15 @@ return (
  animate={{ opacity: 1, scale: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95, y: -4 }}
  transition={{ duration: 0.15 }}
- className="absolute left-0 top-12 z-50 w-[240px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-2xl p-2.5 text-foreground dark:text-white"
+ className="absolute left-0 top-12 z-50 w-[240px] bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md shadow-2xl p-2.5 text-foreground dark:text-[#F0EFE2]"
  >
  <div className="flex items-center justify-between px-2 py-1.5 border-b border-[#f0f0f2] dark:border-white/5 mb-1">
- <span className="text-xs font-semibold text-muted-foreground dark:text-white/70">{t("Add metric")}</span>
- <button onClick={() => setActiveSlotMenuIndex(null)} className="text-muted-foreground dark:text-white/40 hover:text-foreground dark:text-white">
+ <span className="text-xs font-semibold text-muted-foreground dark:text-[#F0EFE2]/70">{t("Add metric")}</span>
+ <button onClick={() => setActiveSlotMenuIndex(null)} className="text-muted-foreground dark:text-[#F0EFE2]/40 hover:text-foreground dark:text-[#F0EFE2]">
  <X className="size-3.5" />
  </button>
  </div>
- <div className="max-h-[200px] overflow-y-auto space-y-0.5 custom-scrollbar text-xs font-medium text-foreground/90 dark:text-white/90">
+ <div className="max-h-[200px] overflow-y-auto space-y-0.5 custom-scrollbar text-xs font-medium text-foreground/90 dark:text-[#F0EFE2]/90">
  {AVAILABLE_METRICS_CATALOG.map((item) => (
  <button
  key={item.id}
