@@ -56,7 +56,7 @@ function YamlPreviewBody({
             key={index}
             className="flex h-[1.625rem] items-center justify-end px-2"
           >
-            <span className="min-w-[1.75rem] text-right text-white/20">{index + 1}</span>
+            <span className="min-w-[1.75rem] text-right text-[#F0EFE2]/20">{index + 1}</span>
           </div>
         ))}
       </div>
@@ -85,7 +85,7 @@ function PreviewToolbar({
       <button
         type="button"
         onClick={onCopy}
-        className="inline-flex size-8 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white/75"
+        className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
         aria-label={copied ? "Copied" : "Copy blueprint"}
       >
         {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
@@ -94,7 +94,7 @@ function PreviewToolbar({
         <button
           type="button"
           onClick={onExpand}
-          className="inline-flex size-8 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white/75"
+          className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
           aria-label="Expand preview"
         >
           <Maximize2 className="size-3.5" />
@@ -103,7 +103,7 @@ function PreviewToolbar({
       {editHref ? (
         <Link
           href={editHref}
-          className="inline-flex size-8 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white/75"
+          className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
           aria-label="Edit blueprint"
         >
           <Pencil className="size-3.5" />
@@ -161,10 +161,10 @@ function BlueprintExpandModal({
       >
         <div className="flex items-start justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
           <div className="min-w-0">
-            <h2 id="blueprint-preview-title" className="text-base font-semibold text-white">
+            <h2 id="blueprint-preview-title" className="text-base font-semibold text-[#F0EFE2]">
               {title}
             </h2>
-            <p className="mt-1 text-sm text-white/50">{subtitle}</p>
+            <p className="mt-1 text-sm text-[#F0EFE2]/50">{subtitle}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <PreviewToolbar
@@ -175,7 +175,7 @@ function BlueprintExpandModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white/75"
+              className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/75"
               aria-label="Close"
             >
               <X className="size-4" />
@@ -187,7 +187,7 @@ function BlueprintExpandModal({
         </div>
         {updatedLabel ? (
           <div className="border-t border-white/[0.08] px-5 py-3">
-            <p className="text-xs text-white/40">{updatedLabel}</p>
+            <p className="text-xs text-[#F0EFE2]/40">{updatedLabel}</p>
           </div>
         ) : null}
       </div>

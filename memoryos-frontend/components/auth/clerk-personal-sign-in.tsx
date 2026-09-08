@@ -71,7 +71,7 @@ function SocialButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] bg-[linear-gradient(180deg,#0a2ba7_0%,#092891_100%)] px-4 text-center text-[15px] font-semibold text-white transition hover:bg-[linear-gradient(180deg,#1135bd_0%,#0c2f9f_100%)] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
+      className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] bg-[linear-gradient(180deg,#0a2ba7_0%,#092891_100%)] px-4 text-center text-[15px] font-semibold text-[#F0EFE2] transition hover:bg-[linear-gradient(180deg,#1135bd_0%,#0c2f9f_100%)] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
     >
       {children}
     </button>
@@ -306,7 +306,7 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
         </span>
       </SocialButton>
 
-      <div className="flex items-center justify-center py-1 text-[14px] font-semibold tracking-[0.08em] text-white/90">
+      <div className="flex items-center justify-center py-1 text-[14px] font-semibold tracking-[0.08em] text-[#F0EFE2]/90">
         OR
       </div>
 
@@ -316,14 +316,14 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         placeholder="your@email.com"
-        className="h-[54px] w-full rounded-[5px] bg-[#181c22] px-4 text-[16px] text-white outline-none transition placeholder:text-[#8892a2] focus:ring-2 focus:ring-[#314bf4] sm:h-[56px] sm:px-5 sm:text-[17px]"
+        className="h-[54px] w-full rounded-[5px] bg-[#181c22] px-4 text-[16px] text-[#F0EFE2] outline-none transition placeholder:text-[#8892a2] focus:ring-2 focus:ring-[#314bf4] sm:h-[56px] sm:px-5 sm:text-[17px]"
       />
 
       <button
         type="button"
         onClick={handleMagicLink}
         disabled={pendingStrategy !== null || !authReady}
-        className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] bg-[linear-gradient(180deg,#314bf4_0%,#0a2ba7_100%)] px-4 text-center text-[15px] font-semibold text-white shadow-[0_18px_40px_rgba(49,75,244,0.36)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
+        className="flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] bg-[linear-gradient(180deg,#314bf4_0%,#0a2ba7_100%)] px-4 text-center text-[15px] font-semibold text-[#F0EFE2] shadow-[0_18px_40px_rgba(49,75,244,0.36)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[56px] sm:px-5 sm:text-[16px]"
       >
         <BrandMark />
         <span>

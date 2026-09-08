@@ -201,7 +201,7 @@ function formatFilterDayLabel(isoDay: string): string {
 function DisplayMenuSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="py-1">
-      <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/40">
+      <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#F0EFE2]/40">
         {title}
       </p>
       {children}
@@ -222,10 +222,10 @@ function DisplayMenuOption({
     <button
       type="button"
       onClick={onSelect}
-      className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-[13px] text-white/85 hover:bg-white/[0.06]"
+      className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-[13px] text-[#F0EFE2]/85 hover:bg-white/[0.06]"
     >
       <span>{label}</span>
-      {selected ? <Check className="size-3.5 shrink-0 text-white/70" /> : <span className="size-3.5" />}
+      {selected ? <Check className="size-3.5 shrink-0 text-[#F0EFE2]/70" /> : <span className="size-3.5" />}
     </button>
   );
 }
@@ -240,7 +240,7 @@ function DisplayPropertyToggle({
   onChange: (next: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 px-3 py-1 text-[13px] text-white/80 hover:bg-white/[0.04]">
+    <label className="flex cursor-pointer items-center gap-2 px-3 py-1 text-[13px] text-[#F0EFE2]/80 hover:bg-white/[0.04]">
       <input
         type="checkbox"
         checked={checked}
@@ -281,8 +281,8 @@ function DualMonthCalendar({
 
   const renderMonth = (year: number, month: number, label: string) => (
     <div key={`${year}-${month}`} className="min-w-[11.5rem] flex-1">
-      <p className="mb-2 text-center text-xs font-medium text-white/70">{label}</p>
-      <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] text-white/35">
+      <p className="mb-2 text-center text-xs font-medium text-[#F0EFE2]/70">{label}</p>
+      <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] text-[#F0EFE2]/35">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
           <span key={d}>{d}</span>
         ))}
@@ -300,8 +300,8 @@ function DualMonthCalendar({
               className={cn(
                 "size-7 rounded text-[11px] transition",
                 selected
-                  ? "bg-[#4338CA] font-medium text-white"
-                  : "text-white/75 hover:bg-white/[0.08]",
+                  ? "bg-[#4338CA] font-medium text-[#F0EFE2]"
+                  : "text-[#F0EFE2]/75 hover:bg-white/[0.08]",
               )}
             >
               {day.getDate()}
@@ -318,21 +318,21 @@ function DualMonthCalendar({
         <button
           type="button"
           onClick={() => setAnchor(new Date(leftYear, leftMonth - 1, 1))}
-          className="rounded px-2 py-1 text-xs text-white/50 hover:bg-white/[0.06] hover:text-white"
+          className="rounded px-2 py-1 text-xs text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
         >
           Prev
         </button>
         <button
           type="button"
           onClick={() => onChange(null)}
-          className="text-xs text-white/45 hover:text-white/75"
+          className="text-xs text-[#F0EFE2]/45 hover:text-[#F0EFE2]/75"
         >
           Clear
         </button>
         <button
           type="button"
           onClick={() => setAnchor(new Date(rightYear, rightMonth + 1, 1))}
-          className="rounded px-2 py-1 text-xs text-white/50 hover:bg-white/[0.06] hover:text-white"
+          className="rounded px-2 py-1 text-xs text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
         >
           Next
         </button>
@@ -764,9 +764,9 @@ export function ContinuityLabSessionsBrowser({
               exportSessionsCsv(sortedRows, prefs.displayProperties);
               setDisplayOpen(false);
             }}
-            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-white/85 hover:bg-white/[0.06]"
+            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-[#F0EFE2]/85 hover:bg-white/[0.06]"
           >
-            <Download className="size-3.5 text-white/55" />
+            <Download className="size-3.5 text-[#F0EFE2]/55" />
             Export to CSV
           </button>
         </div>
@@ -796,13 +796,13 @@ export function ContinuityLabSessionsBrowser({
         {filterChips.map((chip) => (
           <span
             key={chip.id}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.05] py-1 pl-2.5 pr-1 text-[12px] text-white/85"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.05] py-1 pl-2.5 pr-1 text-[12px] text-[#F0EFE2]/85"
           >
             {chip.label}
             <button
               type="button"
               onClick={chip.onRemove}
-              className="inline-flex size-5 items-center justify-center rounded-full text-white/45 hover:bg-white/[0.08] hover:text-white"
+              className="inline-flex size-5 items-center justify-center rounded-full text-[#F0EFE2]/45 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
               aria-label={`Remove filter ${chip.label}`}
             >
               <X className="size-3" />
@@ -813,7 +813,7 @@ export function ContinuityLabSessionsBrowser({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="inline-flex size-7 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.06] text-white/70 hover:bg-white/[0.1] hover:text-white"
+              className="inline-flex size-7 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.06] text-[#F0EFE2]/70 hover:bg-white/[0.1] hover:text-[#F0EFE2]"
               aria-label="Add filter"
             >
               <Plus className="size-3.5" />
@@ -821,29 +821,29 @@ export function ContinuityLabSessionsBrowser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="max-h-[min(24rem,70vh)] w-56 overflow-y-auto border border-white/[0.06] bg-[#1a1a1a] text-white"
+            className="max-h-[min(24rem,70vh)] w-56 overflow-y-auto border border-white/[0.06] bg-[#1a1a1a] text-[#F0EFE2]"
           >
             {FILTER_MENU_ITEMS.map((item) => (
               <DropdownMenuItem
                 key={item}
-                className="flex items-center justify-between text-white/85 focus:bg-white/[0.06]"
+                className="flex items-center justify-between text-[#F0EFE2]/85 focus:bg-white/[0.06]"
                 onSelect={() => openFilterPopover(item)}
               >
                 <span className="flex items-center gap-2">
-                  <Filter className="size-3 text-white/40" />
+                  <Filter className="size-3 text-[#F0EFE2]/40" />
                   {item}
                 </span>
-                <ChevronRight className="size-3 text-white/35" />
+                <ChevronRight className="size-3 text-[#F0EFE2]/35" />
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator className="bg-white/[0.06]" />
             <DropdownMenuItem
-              className="text-white/85 focus:bg-white/[0.06]"
+              className="text-[#F0EFE2]/85 focus:bg-white/[0.06]"
               onSelect={saveFiltersAsDefault}
             >
               Save as Default
             </DropdownMenuItem>
-            <DropdownMenuLabel className="text-[11px] font-normal text-white/40">
+            <DropdownMenuLabel className="text-[11px] font-normal text-[#F0EFE2]/40">
               {settings.defaultFilters
                 ? "Default filters saved to your account"
                 : "Filters apply client-side on loaded sessions"}
@@ -854,7 +854,7 @@ export function ContinuityLabSessionsBrowser({
           <button
             type="button"
             onClick={clearFilters}
-            className="ml-auto text-[12px] font-medium text-white/50 hover:text-white/80"
+            className="ml-auto text-[12px] font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/80"
           >
             Clear filters
           </button>
@@ -868,7 +868,7 @@ export function ContinuityLabSessionsBrowser({
         >
           {activePopover === "creator" ? (
             <div className="p-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#F0EFE2]/40">
                 Creator
               </p>
               <ul className="space-y-1">
@@ -876,7 +876,7 @@ export function ContinuityLabSessionsBrowser({
                   const checked = filters.creators.includes(name);
                   return (
                     <li key={name}>
-                      <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-white/85 hover:bg-white/[0.04]">
+                      <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-[#F0EFE2]/85 hover:bg-white/[0.04]">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -888,7 +888,7 @@ export function ContinuityLabSessionsBrowser({
                           }}
                           className="size-3.5 accent-[#6366F1]"
                         />
-                        <User className="size-3.5 text-white/40" />
+                        <User className="size-3.5 text-[#F0EFE2]/40" />
                         {name}
                       </label>
                     </li>
@@ -899,7 +899,7 @@ export function ContinuityLabSessionsBrowser({
           ) : null}
           {activePopover === "archived" ? (
             <div className="p-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#F0EFE2]/40">
                 Archived Status
               </p>
               {(
@@ -911,7 +911,7 @@ export function ContinuityLabSessionsBrowser({
               ).map((opt) => (
                 <label
                   key={opt.value}
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-white/85 hover:bg-white/[0.04]"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-[#F0EFE2]/85 hover:bg-white/[0.04]"
                 >
                   <input
                     type="radio"
@@ -927,7 +927,7 @@ export function ContinuityLabSessionsBrowser({
           ) : null}
           {activePopover === "updated" ? (
             <div>
-              <p className="border-b border-white/[0.06] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white/40">
+              <p className="border-b border-white/[0.06] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[#F0EFE2]/40">
                 Updated — after date
               </p>
               <DualMonthCalendar
@@ -941,22 +941,22 @@ export function ContinuityLabSessionsBrowser({
 
       <div className="min-h-[12rem]">
         {loading && sessions.length === 0 ? (
-          <p className="py-16 text-center text-sm text-white/45">Loading sessions…</p>
+          <p className="py-16 text-center text-sm text-[#F0EFE2]/45">Loading sessions…</p>
         ) : null}
         {!loading && fetchError && sessions.length === 0 ? (
-          <div className="py-16 text-center text-sm text-white/55">
+          <div className="py-16 text-center text-sm text-[#F0EFE2]/55">
             <p>{fetchError}</p>
             <button
               type="button"
               onClick={() => void loadSessions()}
-              className="mt-3 text-[13px] font-medium text-[#A5B4FC] hover:text-white"
+              className="mt-3 text-[13px] font-medium text-[#A5B4FC] hover:text-[#F0EFE2]"
             >
               Retry
             </button>
           </div>
         ) : null}
         {!loading && sortedRows.length === 0 && !(fetchError && sessions.length === 0) ? (
-          <p className="py-16 text-center text-sm text-white/45">
+          <p className="py-16 text-center text-sm text-[#F0EFE2]/45">
             {sessions.length === 0
               ? fetchError
                 ? "No sessions loaded. Fix the runtime error above or start a session from Continuity Lab home."
@@ -990,7 +990,7 @@ export function ContinuityLabSessionsBrowser({
                             [group.id]: !prev[group.id],
                           }))
                         }
-                        className="flex items-center gap-1.5 text-[13px] font-medium text-white/70 hover:text-white"
+                        className="flex items-center gap-1.5 text-[13px] font-medium text-[#F0EFE2]/70 hover:text-[#F0EFE2]"
                       >
                         <ChevronDown
                           className={cn("size-3.5 transition", collapsed && "-rotate-90")}
@@ -1018,7 +1018,7 @@ export function ContinuityLabSessionsBrowser({
         ) : null}
       </div>
       {settingsReady && variant === "settings" ? (
-        <p className="mt-4 text-[11px] text-white/35">
+        <p className="mt-4 text-[11px] text-[#F0EFE2]/35">
           Display and filters sync to your account. List refreshes every 30s and when you return to
           this tab. Archive state is stored locally until a server archive field exists.
         </p>
@@ -1094,14 +1094,14 @@ function SessionListRow({
           treeIndent && "pl-3",
         )}
       >
-        <Clock className="mt-0.5 size-4 shrink-0 text-white/35" aria-hidden />
+        <Clock className="mt-0.5 size-4 shrink-0 text-[#F0EFE2]/35" aria-hidden />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[14px] font-medium text-white">{row.displayTitle}</p>
+          <p className="truncate text-[14px] font-medium text-[#F0EFE2]">{row.displayTitle}</p>
           {subtitleParts.length > 0 ? (
-            <p className="mt-0.5 truncate text-[12px] text-white/40">{subtitleParts.join(" · ")}</p>
+            <p className="mt-0.5 truncate text-[12px] text-[#F0EFE2]/40">{subtitleParts.join(" · ")}</p>
           ) : null}
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-0.5 text-[11px] text-white/40">
+        <div className="flex shrink-0 flex-col items-end gap-0.5 text-[11px] text-[#F0EFE2]/40">
           {displayProperties.includes("created") ? (
             <span>
               {new Date(row.createdAt).toLocaleDateString(undefined, {
@@ -1117,7 +1117,7 @@ function SessionListRow({
           )}
           {displayProperties.includes("prs") && (row.prUrls?.length || row.repo) ? (
             <DollarSign
-              className="size-3 text-white/30"
+              className="size-3 text-[#F0EFE2]/30"
               aria-label={row.prUrls?.length ? "Linked PRs" : "Linked repository"}
             />
           ) : null}

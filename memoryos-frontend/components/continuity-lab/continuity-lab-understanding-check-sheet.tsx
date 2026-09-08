@@ -41,10 +41,10 @@ export function ContinuityLabUnderstandingCheckSheet({
           <div className="flex items-start gap-3">
             <Sparkles className="mt-0.5 size-5 shrink-0 text-indigo-300" />
             <div>
-              <h2 id="understanding-check-title" className="text-sm font-semibold text-white">
+              <h2 id="understanding-check-title" className="text-sm font-semibold text-[#F0EFE2]">
                 Understanding check
               </h2>
-              <p className="mt-1 text-xs text-white/50">
+              <p className="mt-1 text-xs text-[#F0EFE2]/50">
                 {/* Stub: bullets from your prompt — not an LLM rewrite yet */}
                 Review what MemoryOS will work on before tools run.
               </p>
@@ -54,7 +54,7 @@ export function ContinuityLabUnderstandingCheckSheet({
             <button
               type="button"
               onClick={onClose}
-              className="text-white/40 hover:text-white/70"
+              className="text-[#F0EFE2]/40 hover:text-[#F0EFE2]/70"
               aria-label="Close"
             >
               <X className="size-4" />
@@ -64,12 +64,12 @@ export function ContinuityLabUnderstandingCheckSheet({
 
         <div className="max-h-[min(50vh,320px)] overflow-y-auto px-5 py-4">
           <p className="text-xs font-medium uppercase tracking-wide text-indigo-200/80">Goal</p>
-          <p className="mt-1 text-sm leading-relaxed text-white/90">{summary.headline}</p>
+          <p className="mt-1 text-sm leading-relaxed text-[#F0EFE2]/90">{summary.headline}</p>
           <ul className="mt-4 space-y-2">
             {summary.bullets.map((bullet) => (
               <li
                 key={bullet}
-                className="flex gap-2 text-sm leading-relaxed text-white/75 before:mt-2 before:size-1.5 before:shrink-0 before:rounded-full before:bg-[#6366F1] before:content-['']"
+                className="flex gap-2 text-sm leading-relaxed text-[#F0EFE2]/75 before:mt-2 before:size-1.5 before:shrink-0 before:rounded-full before:bg-[#6366F1] before:content-['']"
               >
                 <span>{bullet}</span>
               </li>
@@ -82,7 +82,7 @@ export function ContinuityLabUnderstandingCheckSheet({
             type="button"
             disabled={loading}
             onClick={onEdit}
-            className="inline-flex h-9 items-center border border-[#3A3A3A] px-4 text-xs font-medium text-white/80 hover:bg-[#141414] disabled:opacity-40"
+            className="inline-flex h-9 items-center border border-[#3A3A3A] px-4 text-xs font-medium text-[#F0EFE2]/80 hover:bg-[#141414] disabled:opacity-40"
           >
             Edit prompt
           </button>
@@ -91,7 +91,7 @@ export function ContinuityLabUnderstandingCheckSheet({
             disabled={loading}
             onClick={() => onConfirm(summary)}
             className={cn(
-              "inline-flex h-9 items-center gap-2 border border-[#6366F1] bg-[#4338CA] px-4 text-xs font-semibold text-white hover:bg-[#4f46e5] disabled:opacity-40",
+              "inline-flex h-9 items-center gap-2 border border-[#6366F1] bg-[#4338CA] px-4 text-xs font-semibold text-[#F0EFE2] hover:bg-[#4f46e5] disabled:opacity-40",
             )}
           >
             {loading ? <Loader2 className="size-3.5 animate-spin" /> : null}

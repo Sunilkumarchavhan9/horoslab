@@ -94,7 +94,7 @@ function statusInfo(status: string) {
   }
   return {
     label: "Idle",
-    color: "text-white/45 bg-white/[0.03] border-white/10",
+    color: "text-[#F0EFE2]/45 bg-white/[0.03] border-white/10",
   };
 }
 
@@ -116,7 +116,7 @@ function MythicProvenanceList({
   const reasons = brief?.whyTheseMemoriesWereSelected ?? [];
   if (reasons.length === 0) {
     return (
-      <p className="text-[11px] text-white/45">
+      <p className="text-[11px] text-[#F0EFE2]/45">
         No reused Mythic lineage is attached to this runtime context yet.
       </p>
     );
@@ -131,10 +131,10 @@ function MythicProvenanceList({
         return (
           <div
             key={reason.memoryId}
-            className="rounded border border-white/5 bg-[#101010] px-2 py-1.5 text-[11px] text-white/75"
+            className="rounded border border-white/5 bg-[#101010] px-2 py-1.5 text-[11px] text-[#F0EFE2]/75"
           >
-            <p className="font-medium text-white">{reason.summary}</p>
-            <p className="mt-0.5 text-[10px] text-white/45">
+            <p className="font-medium text-[#F0EFE2]">{reason.summary}</p>
+            <p className="mt-0.5 text-[10px] text-[#F0EFE2]/45">
               Score {reason.finalScore.toFixed(3)}
               {reason.contractCategory ? ` · ${reason.contractCategory}` : ""}
             </p>
@@ -286,7 +286,7 @@ export function ContinuityLabMultiAgentPanel({
 
   if (loading) {
     return (
-      <div className="flex h-full min-h-[60vh] items-center justify-center bg-[#070707] text-white/70">
+      <div className="flex h-full min-h-[60vh] items-center justify-center bg-[#070707] text-[#F0EFE2]/70">
         <div className="inline-flex items-center gap-2 text-sm">
           <Loader2 className="size-4 animate-spin" />
           Loading Mythic runtime…
@@ -297,7 +297,7 @@ export function ContinuityLabMultiAgentPanel({
 
   if (!conversationId || !thread) {
     return (
-      <div className="flex h-full min-h-[60vh] items-center justify-center bg-[#070707] px-6 text-center text-white/55">
+      <div className="flex h-full min-h-[60vh] items-center justify-center bg-[#070707] px-6 text-center text-[#F0EFE2]/55">
         No runtime thread is available for this panel yet.
       </div>
     );
@@ -306,8 +306,8 @@ export function ContinuityLabMultiAgentPanel({
   if (!execution || execution.steps.length === 0) {
     return (
       <div className="flex h-full min-h-[60vh] flex-col items-center justify-center gap-3 bg-[#070707] px-6 text-center">
-        <p className="text-sm text-white/70">No Mythic task has been activated for this thread yet.</p>
-        <p className="text-xs text-white/45">
+        <p className="text-sm text-[#F0EFE2]/70">No Mythic task has been activated for this thread yet.</p>
+        <p className="text-xs text-[#F0EFE2]/45">
           Generate and activate a runtime plan to turn this session into a real multi-agent execution path.
         </p>
       </div>
@@ -315,11 +315,11 @@ export function ContinuityLabMultiAgentPanel({
   }
 
   return (
-    <div className="flex h-full min-h-[60vh] flex-col bg-[#070707] text-white">
+    <div className="flex h-full min-h-[60vh] flex-col bg-[#070707] text-[#F0EFE2]">
       <div className="flex items-center justify-between border-b border-[#1f1f1f] bg-[#0c0c0c] px-4 py-2.5">
         <div className="flex items-center gap-2">
           <Bot className="size-4 text-indigo-400" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#F0EFE2]/70">
             Multi-Agent task board
           </span>
         </div>
@@ -327,7 +327,7 @@ export function ContinuityLabMultiAgentPanel({
           <button
             type="button"
             onClick={() => void loadRuntimeState()}
-            className="inline-flex size-7 items-center justify-center rounded border border-[#2a2a2a] text-white/60 hover:bg-[#1a1a1a] hover:text-white"
+            className="inline-flex size-7 items-center justify-center rounded border border-[#2a2a2a] text-[#F0EFE2]/60 hover:bg-[#1a1a1a] hover:text-[#F0EFE2]"
             title="Refresh runtime state"
           >
             <RefreshCcw className={cn("size-3", loading && "animate-spin")} />
@@ -395,15 +395,15 @@ export function ContinuityLabMultiAgentPanel({
               <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-300">
                 Current Stage
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-white">
+              <p className="mt-0.5 text-sm font-semibold text-[#F0EFE2]">
                 {execution.currentStage.toUpperCase()} · {execution.status.toUpperCase()}
               </p>
             </div>
-            <span className="rounded-full bg-white/[0.04] px-2 py-0.5 text-[10px] text-white/60">
+            <span className="rounded-full bg-white/[0.04] px-2 py-0.5 text-[10px] text-[#F0EFE2]/60">
               {execution.taskId ?? "Task pending activation"}
             </span>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-white/75">
+          <p className="mt-2 text-xs leading-relaxed text-[#F0EFE2]/75">
             {execution.approvalBlocked
               ? "Execution is blocked on approval or revision."
               : execution.blockedReason
@@ -414,7 +414,7 @@ export function ContinuityLabMultiAgentPanel({
                   ? `${activeStep.role} is working on: ${activeStep.label}`
                   : "Execution is ready for the next stage transition."}
           </p>
-          <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-white/55">
+          <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-[#F0EFE2]/55">
             <span className="rounded-full bg-white/[0.04] px-2 py-0.5">
               Worker: {execution.workerStatus ?? "idle"}
             </span>
@@ -433,7 +433,7 @@ export function ContinuityLabMultiAgentPanel({
             <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-300/85">
               Borrowed Mythic Lineage
             </p>
-            <p className="mt-1 text-[11px] text-white/45">
+            <p className="mt-1 text-[11px] text-[#F0EFE2]/45">
               Prior successful runs that the current execution can reuse for handoff quality, verification, and PR readiness.
             </p>
             <div className="mt-2">
@@ -449,7 +449,7 @@ export function ContinuityLabMultiAgentPanel({
         </div>
 
         <div className="space-y-2">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-white/45">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
             Agent Status Flow
           </p>
           <div className="grid grid-cols-4 items-center gap-1 rounded-md border border-[#1f1f1f] bg-[#0c0c0c] p-3">
@@ -486,13 +486,13 @@ export function ContinuityLabMultiAgentPanel({
                     >
                       {agentId.substring(0, 2).toUpperCase()}
                     </div>
-                    <span className="mt-1.5 text-[11px] font-medium text-white/90">
+                    <span className="mt-1.5 text-[11px] font-medium text-[#F0EFE2]/90">
                       {details.title.split(" ")[0]}
                     </span>
                   </div>
                   {index < AGENT_ORDER.length - 1 ? (
-                    <div className="flex justify-center text-white/25" aria-hidden="true">
-                      <ArrowRight className="size-3.5 text-white/10" />
+                    <div className="flex justify-center text-[#F0EFE2]/25" aria-hidden="true">
+                      <ArrowRight className="size-3.5 text-[#F0EFE2]/10" />
                     </div>
                   ) : null}
                 </React.Fragment>
@@ -514,21 +514,21 @@ export function ContinuityLabMultiAgentPanel({
                   {selectedAgent.substring(0, 2).toUpperCase()}
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold text-white">
+                  <h4 className="text-xs font-semibold text-[#F0EFE2]">
                     {AGENT_ROLE_DETAILS[selectedAgent].title}
                   </h4>
-                  <p className="text-[10px] text-white/45">
+                  <p className="text-[10px] text-[#F0EFE2]/45">
                     Role: {AGENT_ROLE_DETAILS[selectedAgent].role}
                   </p>
                 </div>
               </div>
-              <p className="text-[11px] leading-relaxed text-white/70">
+              <p className="text-[11px] leading-relaxed text-[#F0EFE2]/70">
                 {AGENT_ROLE_DETAILS[selectedAgent].desc}
               </p>
               {selectedStep ? (
-                <div className="rounded border border-white/5 bg-[#101010] p-2 text-[11px] text-white/75">
-                  <p className="font-medium text-white">{selectedStep.label}</p>
-                  <p className="mt-1 text-white/50">
+                <div className="rounded border border-white/5 bg-[#101010] p-2 text-[11px] text-[#F0EFE2]/75">
+                  <p className="font-medium text-[#F0EFE2]">{selectedStep.label}</p>
+                  <p className="mt-1 text-[#F0EFE2]/50">
                     {selectedStep.stage} · {selectedStep.status}
                     {selectedStep.approvalStatus &&
                     selectedStep.approvalStatus !== "not_required"
@@ -650,7 +650,7 @@ export function ContinuityLabMultiAgentPanel({
                         if (!result.ok) throw new Error(result.error ?? "Could not request revision.");
                       })
                     }
-                    className="inline-flex items-center gap-1 rounded border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-white/75"
+                    className="inline-flex items-center gap-1 rounded border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-[#F0EFE2]/75"
                   >
                     <RefreshCcw className="size-3" />
                     Request revision
@@ -661,7 +661,7 @@ export function ContinuityLabMultiAgentPanel({
           </div>
 
           <div className={cn(subtlePanel(), "space-y-2 p-3.5")}>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F0EFE2]">
               <FileText className="size-3.5 text-indigo-400" />
               <span>Structured Context Inspector</span>
             </div>
@@ -670,7 +670,7 @@ export function ContinuityLabMultiAgentPanel({
               <div className="space-y-2">
                 <div className="grid grid-cols-2 gap-2 text-[10px]">
                   <div className="rounded border border-white/5 bg-[#101010] p-1.5 text-center">
-                    <span className="block text-[8px] font-bold uppercase tracking-wider text-white/45">
+                    <span className="block text-[8px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
                       Confidence
                     </span>
                     <span className="text-xs font-semibold text-indigo-300">
@@ -678,7 +678,7 @@ export function ContinuityLabMultiAgentPanel({
                     </span>
                   </div>
                   <div className="rounded border border-white/5 bg-[#101010] p-1.5 text-center">
-                    <span className="block text-[8px] font-bold uppercase tracking-wider text-white/45">
+                    <span className="block text-[8px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
                       Completeness
                     </span>
                     <span className="text-xs font-semibold text-emerald-300">
@@ -688,23 +688,23 @@ export function ContinuityLabMultiAgentPanel({
                 </div>
 
                 <div className="rounded border border-white/5 bg-[#101010] p-2">
-                  <span className="mb-1 block text-[8px] font-bold uppercase tracking-wider text-white/45">
+                  <span className="mb-1 block text-[8px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
                     Handoff Notes
                   </span>
-                  <p className="text-[11px] italic text-white/80">
+                  <p className="text-[11px] italic text-[#F0EFE2]/80">
                     {selectedHandoff.metadata.notes}
                   </p>
                 </div>
 
                 <div className="rounded border border-white/5 bg-[#101010] p-2">
-                  <span className="mb-1 block text-[8px] font-bold uppercase tracking-wider text-white/45">
+                  <span className="mb-1 block text-[8px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
                     Requirements
                   </span>
                   <ul className="space-y-1">
                     {selectedHandoff.requirements.map((requirement) => (
                       <li
                         key={requirement}
-                        className="flex items-start gap-1.5 text-[10px] text-white/80"
+                        className="flex items-start gap-1.5 text-[10px] text-[#F0EFE2]/80"
                       >
                         <CheckCircle2 className="mt-0.5 size-3 shrink-0 text-indigo-400" />
                         <span>{requirement}</span>
@@ -715,14 +715,14 @@ export function ContinuityLabMultiAgentPanel({
 
                 {resumeBrief?.mustKnowContextForAgent?.length ? (
                   <div className="rounded border border-white/5 bg-[#101010] p-2">
-                    <span className="mb-1 block text-[8px] font-bold uppercase tracking-wider text-white/45">
+                    <span className="mb-1 block text-[8px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
                       Reused Context
                     </span>
                     <ul className="space-y-1">
                       {resumeBrief.mustKnowContextForAgent.slice(0, 4).map((item) => (
                         <li
                           key={item}
-                          className="flex items-start gap-1.5 text-[10px] text-white/80"
+                          className="flex items-start gap-1.5 text-[10px] text-[#F0EFE2]/80"
                         >
                           <CheckCircle2 className="mt-0.5 size-3 shrink-0 text-emerald-400" />
                           <span>{item}</span>
@@ -734,7 +734,7 @@ export function ContinuityLabMultiAgentPanel({
               </div>
             ) : (
               <div className="flex h-32 items-center justify-center rounded border border-dashed border-white/10 p-4 text-center">
-                <p className="text-[11px] text-white/45">
+                <p className="text-[11px] text-[#F0EFE2]/45">
                   No structured handoff exists yet for {AGENT_ROLE_DETAILS[selectedAgent].title}.
                 </p>
               </div>
@@ -744,7 +744,7 @@ export function ContinuityLabMultiAgentPanel({
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className={cn(subtlePanel(), "space-y-2 p-3.5")}>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F0EFE2]">
               <Bot className="size-3.5 text-indigo-400" />
               <span>Execution Steps</span>
             </div>
@@ -759,12 +759,12 @@ export function ContinuityLabMultiAgentPanel({
                     className={cn(
                       "rounded border px-2.5 py-1.5 text-[11px] transition-all",
                       isDone
-                        ? "border-[#1f4da4]/35 bg-[#102849]/10 text-white/80"
+                        ? "border-[#1f4da4]/35 bg-[#102849]/10 text-[#F0EFE2]/80"
                         : isRunning
                           ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-200"
                           : isFailed
                             ? "border-rose-500/30 bg-rose-500/5 text-rose-200"
-                            : "border-white/5 bg-transparent text-white/55",
+                            : "border-white/5 bg-transparent text-[#F0EFE2]/55",
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -776,7 +776,7 @@ export function ContinuityLabMultiAgentPanel({
                         ) : isFailed ? (
                           <XCircle className="size-3.5 shrink-0 text-rose-400" />
                         ) : (
-                          <Circle className="size-3.5 shrink-0 text-white/30" />
+                          <Circle className="size-3.5 shrink-0 text-[#F0EFE2]/30" />
                         )}
                         <span className="truncate">{step.label}</span>
                       </div>
@@ -784,7 +784,7 @@ export function ContinuityLabMultiAgentPanel({
                         {step.role}
                       </span>
                     </div>
-                    <p className="mt-1 text-[10px] text-white/45">
+                    <p className="mt-1 text-[10px] text-[#F0EFE2]/45">
                       {step.stage}
                       {step.approvalStatus && step.approvalStatus !== "not_required"
                         ? ` · approval ${step.approvalStatus}`
@@ -799,7 +799,7 @@ export function ContinuityLabMultiAgentPanel({
           </div>
 
           <div className={cn(subtlePanel(), "flex flex-col space-y-2 p-3.5")}>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F0EFE2]">
               <Terminal className="size-3.5 text-emerald-400" />
               <span>Runtime Logs & Artifacts</span>
             </div>
@@ -807,13 +807,13 @@ export function ContinuityLabMultiAgentPanel({
               <div className="space-y-1 font-mono text-[10px] text-emerald-400/90">
                 {(thread.executionLog ?? []).slice(0, 8).map((log) => (
                   <div key={log.id} className="flex items-start gap-1 leading-relaxed">
-                    <span className="select-none text-white/20">&gt;</span>
+                    <span className="select-none text-[#F0EFE2]/20">&gt;</span>
                     <span>{log.message}</span>
                   </div>
                 ))}
               </div>
               <div className="mt-3 border-t border-white/5 pt-3">
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-white/45">
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#F0EFE2]/45">
                   Artifact Links
                 </p>
                 {resumeBrief?.nextBestAction ? (
@@ -822,16 +822,16 @@ export function ContinuityLabMultiAgentPanel({
                   </div>
                 ) : null}
                 {selectedArtifacts.length === 0 ? (
-                  <p className="text-[11px] text-white/45">No artifacts attached yet.</p>
+                  <p className="text-[11px] text-[#F0EFE2]/45">No artifacts attached yet.</p>
                 ) : (
                   <div className="space-y-1.5">
                     {selectedArtifacts.map((artifact) => (
                       <div
                         key={artifact.id}
-                        className="rounded border border-white/5 bg-[#101010] px-2 py-1.5 text-[11px] text-white/75"
+                        className="rounded border border-white/5 bg-[#101010] px-2 py-1.5 text-[11px] text-[#F0EFE2]/75"
                       >
-                        <p className="font-medium text-white">{artifact.title}</p>
-                        <p className="mt-0.5 text-white/45">
+                        <p className="font-medium text-[#F0EFE2]">{artifact.title}</p>
+                        <p className="mt-0.5 text-[#F0EFE2]/45">
                           {artifact.type} · {artifact.uri}
                         </p>
                       </div>

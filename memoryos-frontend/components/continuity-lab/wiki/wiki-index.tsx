@@ -182,10 +182,10 @@ export function WikiIndex() {
       <header className="border-b border-[#2F2F2F] bg-[#0A0A0A] px-5 py-4 sm:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
+            <h1 className="text-xl font-semibold tracking-tight text-[#F0EFE2] sm:text-2xl">
               Operational Wiki
             </h1>
-            <p className="mt-1 text-xs text-white/45">
+            <p className="mt-1 text-xs text-[#F0EFE2]/45">
               Repo-scoped memory from Company Brain — not generated prose.
               {wikiSettings.enrolledRepos.length > 0 ? (
                 <>
@@ -196,7 +196,7 @@ export function WikiIndex() {
               ) : null}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-white/40">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#F0EFE2]/40">
             <span>{github.repos.length} repos</span>
             <span>·</span>
             <span>{nodeCount} map nodes</span>
@@ -211,13 +211,13 @@ export function WikiIndex() {
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <div className="relative min-w-[12rem] flex-1 sm:max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#F0EFE2]/35" />
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search repositories…"
-              className="h-9 w-full rounded-md border border-[#3A3A3A] bg-[#111111] pl-9 pr-3 text-sm text-white placeholder:text-white/35 focus:border-[#4338CA] focus:outline-none"
+              className="h-9 w-full rounded-md border border-[#3A3A3A] bg-[#111111] pl-9 pr-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#4338CA] focus:outline-none"
             />
           </div>
 
@@ -229,7 +229,7 @@ export function WikiIndex() {
                 setFilter(next);
                 saveWikiStorage({ filter: next });
               }}
-              className="h-9 appearance-none rounded-md border border-[#3A3A3A] bg-[#111111] py-0 pl-3 pr-8 text-[11px] font-medium text-white/85 focus:border-[#4338CA] focus:outline-none"
+              className="h-9 appearance-none rounded-md border border-[#3A3A3A] bg-[#111111] py-0 pl-3 pr-8 text-[11px] font-medium text-[#F0EFE2]/85 focus:border-[#4338CA] focus:outline-none"
             >
               {FILTER_OPTIONS.map((opt) => (
                 <option key={opt.id} value={opt.id}>
@@ -237,7 +237,7 @@ export function WikiIndex() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-3.5 -translate-y-1/2 text-white/45" />
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/45" />
           </div>
 
           <div className="flex overflow-hidden rounded-md border border-[#3A3A3A]">
@@ -249,7 +249,7 @@ export function WikiIndex() {
               }}
               className={cn(
                 "inline-flex size-9 items-center justify-center",
-                viewMode === "grid" ? "bg-[#1a1a2e] text-white" : "text-white/50 hover:text-white",
+                viewMode === "grid" ? "bg-[#1a1a2e] text-[#F0EFE2]" : "text-[#F0EFE2]/50 hover:text-[#F0EFE2]",
               )}
               aria-label="Grid view"
             >
@@ -263,7 +263,7 @@ export function WikiIndex() {
               }}
               className={cn(
                 "inline-flex size-9 items-center justify-center border-l border-[#3A3A3A]",
-                viewMode === "list" ? "bg-[#1a1a2e] text-white" : "text-white/50 hover:text-white",
+                viewMode === "list" ? "bg-[#1a1a2e] text-[#F0EFE2]" : "text-[#F0EFE2]/50 hover:text-[#F0EFE2]",
               )}
               aria-label="List view"
             >
@@ -275,7 +275,7 @@ export function WikiIndex() {
             type="button"
             onClick={() => void handleRefresh()}
             disabled={refreshing || loading}
-            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#3A3A3A] px-3 text-[11px] font-medium text-white/80 hover:border-[#4A4A4A] disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#3A3A3A] px-3 text-[11px] font-medium text-[#F0EFE2]/80 hover:border-[#4A4A4A] disabled:opacity-50"
           >
             <RefreshCw className={cn("size-3.5", (refreshing || loading) && "animate-spin")} />
             Refresh
@@ -284,7 +284,7 @@ export function WikiIndex() {
           <button
             type="button"
             onClick={() => setRepoModalOpen(true)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-[#4338CA] px-3 text-[11px] font-semibold text-white hover:bg-[#4f46e5]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-[#4338CA] px-3 text-[11px] font-semibold text-[#F0EFE2] hover:bg-[#4f46e5]"
           >
             Add repo
           </button>
@@ -293,7 +293,7 @@ export function WikiIndex() {
 
       <div className="flex-1 px-5 py-6 sm:px-8">
         {!github.connected ? (
-          <div className={cn(subtlePanel(), "border-[#4338CA]/40 bg-[#4338CA]/10 px-4 py-4 text-sm text-white/70")}>
+          <div className={cn(subtlePanel(), "border-[#4338CA]/40 bg-[#4338CA]/10 px-4 py-4 text-sm text-[#F0EFE2]/70")}>
             Connect GitHub to browse repositories in the operational wiki.{" "}
             <Link
               href="/mission-control?section=connectors"
@@ -303,19 +303,19 @@ export function WikiIndex() {
             </Link>
           </div>
         ) : loading && cards.length === 0 ? (
-          <p className="flex items-center gap-2 text-sm text-white/50">
+          <p className="flex items-center gap-2 text-sm text-[#F0EFE2]/50">
             <Loader2 className="size-4 animate-spin" />
             Loading repositories…
           </p>
         ) : github.repos.length === 0 ? (
-          <div className={cn(subtlePanel(), "px-4 py-4 text-sm text-white/60")}>
+          <div className={cn(subtlePanel(), "px-4 py-4 text-sm text-[#F0EFE2]/60")}>
             Sync repo to index operational memory.{" "}
             <Link href="/mission-control?section=connectors" className="text-indigo-300 underline">
               Sync GitHub
             </Link>
           </div>
         ) : wikiSettings.enrolledRepos.length > 0 && cards.length === 0 ? (
-          <div className={cn(subtlePanel(), "px-4 py-4 text-sm text-white/60")}>
+          <div className={cn(subtlePanel(), "px-4 py-4 text-sm text-[#F0EFE2]/60")}>
             No enrolled repositories are connected yet.{" "}
             <Link
               href="/continuity-lab/settings/wiki"
@@ -325,7 +325,7 @@ export function WikiIndex() {
             </Link>
           </div>
         ) : filteredCards.length === 0 ? (
-          <p className="text-sm text-white/50">No repositories match your search or filter.</p>
+          <p className="text-sm text-[#F0EFE2]/50">No repositories match your search or filter.</p>
         ) : (
           <ul
             className={cn(
@@ -359,30 +359,30 @@ export function WikiIndex() {
                     <div className="min-w-0 flex-1">
                       {parts ? (
                         <>
-                          <p className="truncate text-[11px] text-white/45">{parts.owner}</p>
-                          <p className="truncate font-mono text-sm font-medium text-white">
+                          <p className="truncate text-[11px] text-[#F0EFE2]/45">{parts.owner}</p>
+                          <p className="truncate font-mono text-sm font-medium text-[#F0EFE2]">
                             {parts.repo}
                           </p>
                         </>
                       ) : (
-                        <p className="truncate font-mono text-sm font-medium text-white">
+                        <p className="truncate font-mono text-sm font-medium text-[#F0EFE2]">
                           {card.fullName}
                         </p>
                       )}
                       {viewMode === "grid" ? (
                         card.goal ? (
-                          <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-white/55">
+                          <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#F0EFE2]/55">
                             {card.goal}
                           </p>
                         ) : (
-                          <p className="mt-2 text-xs text-white/40">
+                          <p className="mt-2 text-xs text-[#F0EFE2]/40">
                             {card.indexed
                               ? "Indexed — open for contract sections."
                               : "Sync repo to index operational memory."}
                           </p>
                         )
                       ) : null}
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide text-white/40">
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                         <span
                           className={cn(
                             "rounded border px-1.5 py-0.5",
@@ -390,7 +390,7 @@ export function WikiIndex() {
                               ? "border-emerald-500/30 text-emerald-200/90"
                               : card.status === "generating"
                                 ? "border-amber-500/30 text-amber-100/90"
-                                : "border-[#3A3A3A] text-white/45",
+                                : "border-[#3A3A3A] text-[#F0EFE2]/45",
                           )}
                         >
                           {card.status === "indexed"
@@ -399,7 +399,7 @@ export function WikiIndex() {
                               ? "Generating"
                               : "Not indexed"}
                         </span>
-                        <span className="inline-flex items-center gap-1 normal-case text-white/45">
+                        <span className="inline-flex items-center gap-1 normal-case text-[#F0EFE2]/45">
                           <WikiGithubIcon className="size-3" />
                           {formatWikiRelativeTime(relativeAt)}
                         </span>

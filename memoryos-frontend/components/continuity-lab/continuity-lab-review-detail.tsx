@@ -281,7 +281,7 @@ export function ContinuityLabReviewDetail({ owner, repo, pr }: ContinuityLabRevi
   }, [githubConnected, owner, pr, repoFullName, repoName]);
 
   return (
-    <div className="flex min-h-full flex-col bg-[#0A0A0A] text-white">
+    <div className="flex min-h-full flex-col bg-[#0A0A0A] text-[#F0EFE2]">
       <div className="flex-1 overflow-y-auto p-3">
         <ContinuityLabPrReviewPanel
           review={review}
@@ -289,7 +289,7 @@ export function ContinuityLabReviewDetail({ owner, repo, pr }: ContinuityLabRevi
           emptyDescription="This route is waiting for live pull request data or memory-backed review context."
         />
       </div>
-      <div className="border-t border-white/10 px-4 py-2 text-[10px] text-white/35">
+      <div className="border-t border-white/10 px-4 py-2 text-[10px] text-[#F0EFE2]/35">
         Review route · {repoFullName}
       </div>
     </div>

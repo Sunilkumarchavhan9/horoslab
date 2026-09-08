@@ -70,7 +70,7 @@ export function ContinuityLabSettingsSessionsSection() {
           label="Focus mode by default"
           hint="New sessions start with the continuity rail hidden."
         >
-          <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-white/80">
+          <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-[#F0EFE2]/80">
             <input
               type="checkbox"
               checked={focusDefault}
@@ -82,7 +82,7 @@ export function ContinuityLabSettingsSessionsSection() {
             Enable on new sessions
           </label>
           {saveState === "saving" ? (
-            <p className="mt-2 text-xs text-white/45">Saving…</p>
+            <p className="mt-2 text-xs text-[#F0EFE2]/45">Saving…</p>
           ) : saveState === "error" ? (
             <p className="mt-2 text-xs text-amber-200/90">
               Could not save to the server. The local fallback was updated.
@@ -100,7 +100,7 @@ export function ContinuityLabSettingsSessionsSection() {
                 resetSessionSplitRatio();
                 setSplitResetMsg("Split ratio reset. Open or refresh a session to apply.");
               }}
-              className="border border-[#3A3A3A] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#141414]"
+              className="border border-[#3A3A3A] px-3 py-1.5 text-sm font-medium text-[#F0EFE2] hover:bg-[#141414]"
             >
               Reset split ratio
             </button>

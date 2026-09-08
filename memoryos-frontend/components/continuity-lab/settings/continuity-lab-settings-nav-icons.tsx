@@ -31,8 +31,8 @@ import { cn } from "@/lib/utils";
 type NavGroupId = "personal" | "organization";
 
 const TILE_BY_GROUP: Record<NavGroupId, string> = {
-  personal: "border-[#2F2F2F] bg-[#141414] text-white/70",
-  organization: "border-[#2F2F2F] bg-[#141414] text-white/65",
+  personal: "border-[#2F2F2F] bg-[#141414] text-[#F0EFE2]/70",
+  organization: "border-[#2F2F2F] bg-[#141414] text-[#F0EFE2]/65",
 };
 
 function ContinuityLabProductIcon({ className }: { className?: string }) {

@@ -46,7 +46,7 @@ export function ContinuityLabInstructionConfirmBar({
   }
 
   const stickyStripLayoutClass =
-    "grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center overflow-hidden text-[13px] leading-none text-white sm:text-sm";
+    "grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center overflow-hidden text-[13px] leading-none text-[#F0EFE2] sm:text-sm";
 
   if (!hydrated) {
     return (
@@ -76,7 +76,7 @@ export function ContinuityLabInstructionConfirmBar({
         )}
       >
         <ClipboardCheck
-          className={cn("size-3.5 shrink-0", isStickyStrip ? "text-white/90" : "text-white/40")}
+          className={cn("size-3.5 shrink-0", isStickyStrip ? "text-[#F0EFE2]/90" : "text-[#F0EFE2]/40")}
           aria-hidden
         />
         <p
@@ -85,13 +85,13 @@ export function ContinuityLabInstructionConfirmBar({
             isStickyStrip && "truncate text-center",
           )}
         >
-          <span className={isStickyStrip ? "text-white" : "text-white/80"}>
+          <span className={isStickyStrip ? "text-[#F0EFE2]" : "text-[#F0EFE2]/80"}>
             Confirm understanding before work
           </span>
           <span
             className={cn(
               "hidden sm:inline",
-              isStickyStrip ? "text-white/85" : "text-white/45",
+              isStickyStrip ? "text-[#F0EFE2]/85" : "text-[#F0EFE2]/45",
             )}
           >
             {" "}
@@ -105,7 +105,7 @@ export function ContinuityLabInstructionConfirmBar({
           isStickyStrip ? "justify-self-end" : undefined,
         )}
       >
-        <span className={cn("text-[11px]", isStickyStrip ? "text-white/85" : "text-white/50")}>
+        <span className={cn("text-[11px]", isStickyStrip ? "text-[#F0EFE2]/85" : "text-[#F0EFE2]/50")}>
           {enabled ? "On" : "Off"}
         </span>
         <Switch

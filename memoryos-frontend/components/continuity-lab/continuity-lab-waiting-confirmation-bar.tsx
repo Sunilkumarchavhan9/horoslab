@@ -27,7 +27,7 @@ export function ContinuityLabWaitingConfirmationBar({
         <button
           type="button"
           onClick={onReview}
-          className="font-semibold text-amber-50 underline hover:text-white"
+          className="font-semibold text-amber-50 underline hover:text-[#F0EFE2]"
         >
           Review
         </button>

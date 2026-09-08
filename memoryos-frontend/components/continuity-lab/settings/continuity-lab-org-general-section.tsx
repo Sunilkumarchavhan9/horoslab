@@ -164,7 +164,7 @@ export function ContinuityLabOrgGeneralSection() {
     >
       <Link
         href="/continuity-lab/settings"
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -176,7 +176,7 @@ export function ContinuityLabOrgGeneralSection() {
           is available.
         </p>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -201,15 +201,15 @@ export function ContinuityLabOrgGeneralSection() {
                     setEditingName(false);
                   }
                 }}
-                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none"
+                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none"
               />
             ) : (
               <div className="flex items-center gap-2">
-                <p className="min-w-0 flex-1 truncate text-sm text-white/80">{displayOrgName}</p>
+                <p className="min-w-0 flex-1 truncate text-sm text-[#F0EFE2]/80">{displayOrgName}</p>
                 <button
                   type="button"
                   onClick={() => setEditingName(true)}
-                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/60 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                   aria-label="Edit organization name"
                 >
                   <Pencil className="size-3.5" aria-hidden />

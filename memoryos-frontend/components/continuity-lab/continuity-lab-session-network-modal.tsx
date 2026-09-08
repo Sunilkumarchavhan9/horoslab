@@ -63,14 +63,14 @@ export function ContinuityLabSessionNetworkModal({
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6366F1]">
               Sandbox
             </p>
-            <h2 id="network-config-title" className="mt-1 text-lg font-semibold text-white">
+            <h2 id="network-config-title" className="mt-1 text-lg font-semibold text-[#F0EFE2]">
               Update network config
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414]"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414]"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -78,7 +78,7 @@ export function ContinuityLabSessionNetworkModal({
         </div>
 
         <div className="px-5 py-4">
-          <p className="text-[12px] leading-relaxed text-white/55">
+          <p className="text-[12px] leading-relaxed text-[#F0EFE2]/55">
             Network controls apply to the OpenHands sandbox for this session. MemoryOS stores
             your preference locally; runtime enforcement depends on the Continuity Labs agent
             image.
@@ -90,10 +90,10 @@ export function ContinuityLabSessionNetworkModal({
             )}
           >
             <span>
-              <span className="block text-sm font-medium text-white">
+              <span className="block text-sm font-medium text-[#F0EFE2]">
                 Enable network controls
               </span>
-              <span className="mt-0.5 block text-[11px] text-white/45">
+              <span className="mt-0.5 block text-[11px] text-[#F0EFE2]/45">
                 Restrict outbound traffic when enabled.
               </span>
             </span>
@@ -110,7 +110,7 @@ export function ContinuityLabSessionNetworkModal({
               access until you enable controls and the runtime applies them.
             </p>
           ) : (
-            <p className="mt-4 border border-[#2F2F2F] bg-[#111111] px-3 py-2.5 text-[11px] leading-relaxed text-white/45">
+            <p className="mt-4 border border-[#2F2F2F] bg-[#111111] px-3 py-2.5 text-[11px] leading-relaxed text-[#F0EFE2]/45">
               Controls enabled. Apply may require a new message or sandbox refresh once runtime
               support is available.
             </p>
@@ -121,7 +121,7 @@ export function ContinuityLabSessionNetworkModal({
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#3A3A3A] px-4 py-2 text-xs font-medium text-white/80 hover:bg-[#141414]"
+            className="border border-[#3A3A3A] px-4 py-2 text-xs font-medium text-[#F0EFE2]/80 hover:bg-[#141414]"
           >
             Cancel
           </button>
@@ -129,7 +129,7 @@ export function ContinuityLabSessionNetworkModal({
             type="button"
             disabled={saving}
             onClick={handleSave}
-            className="inline-flex items-center gap-2 bg-[#6366F1] px-4 py-2 text-xs font-semibold text-white hover:bg-[#4F46E5] disabled:opacity-50"
+            className="inline-flex items-center gap-2 bg-[#6366F1] px-4 py-2 text-xs font-semibold text-[#F0EFE2] hover:bg-[#4F46E5] disabled:opacity-50"
           >
             {saving ? <Loader2 className="size-3.5 animate-spin" /> : null}
             Save

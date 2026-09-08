@@ -52,7 +52,7 @@ const NODE_TYPE_STYLES: Record<string, { bg: string; border: string; text: strin
 const DEFAULT_STYLE = {
   bg: "bg-[#1a1a2e]",
   border: "border-[#3A3A3A]",
-  text: "text-white/80",
+  text: "text-[#F0EFE2]/80",
 };
 
 function nodeStyle(type: string) {
@@ -222,11 +222,11 @@ function DiagramNodeCard({
       <p className={cn("text-[9px] font-semibold uppercase tracking-wide", style.text)}>
         {node.type}
       </p>
-      <p className="mt-0.5 text-xs leading-snug text-white/90" title={node.label}>
+      <p className="mt-0.5 text-xs leading-snug text-[#F0EFE2]/90" title={node.label}>
         {truncateLabel(node.label, compact ? 32 : 42)}
       </p>
       {typeof node.confidence === "number" ? (
-        <p className="mt-1 text-[9px] tabular-nums text-white/40">
+        <p className="mt-1 text-[9px] tabular-nums text-[#F0EFE2]/40">
           {Math.round(node.confidence * 100)}% conf
         </p>
       ) : null}
@@ -330,7 +330,7 @@ function CategoryDiagram({
               <p className={cn("text-[9px] font-semibold uppercase tracking-wide", style.text)}>
                 {category.label}
               </p>
-              <p className="mt-0.5 text-lg font-semibold tabular-nums text-white">
+              <p className="mt-0.5 text-lg font-semibold tabular-nums text-[#F0EFE2]">
                 {category.count}
               </p>
             </div>
@@ -342,16 +342,16 @@ function CategoryDiagram({
           {visibleLinks.slice(0, 10).map((link) => (
             <li
               key={`${link.from}-${link.relation}-${link.to}`}
-              className="flex flex-wrap items-center gap-2 text-xs text-white/70"
+              className="flex flex-wrap items-center gap-2 text-xs text-[#F0EFE2]/70"
             >
-              <span className="rounded border border-[#3A3A3A] bg-[#111111] px-2 py-0.5 text-white/85">
+              <span className="rounded border border-[#3A3A3A] bg-[#111111] px-2 py-0.5 text-[#F0EFE2]/85">
                 {formatCategoryLabel(link.from)}
               </span>
               <span className="text-[10px] uppercase tracking-wide text-indigo-300/80">
                 {formatRelation(link.relation)}
                 {link.count > 1 ? ` ×${link.count}` : ""}
               </span>
-              <span className="rounded border border-[#3A3A3A] bg-[#111111] px-2 py-0.5 text-white/85">
+              <span className="rounded border border-[#3A3A3A] bg-[#111111] px-2 py-0.5 text-[#F0EFE2]/85">
                 {formatCategoryLabel(link.to)}
               </span>
             </li>
@@ -405,7 +405,7 @@ export function WikiGraphDiagram({
         <FlowDiagram layers={layers} edges={limited.edges} compact={compact} />
       )}
       {nodes.length > maxNodes ? (
-        <p className="mt-2 text-[10px] text-white/35">
+        <p className="mt-2 text-[10px] text-[#F0EFE2]/35">
           Showing {limited.nodes.length} of {nodes.length} nodes
         </p>
       ) : null}
@@ -416,7 +416,7 @@ export function WikiGraphDiagram({
 export function WikiGraphDiagramEmpty({ message }: { message: string }) {
   return (
     <div className="rounded-md border border-dashed border-[#3A3A3A] bg-[#0D0D0D]/60 px-4 py-6 text-center">
-      <p className="text-sm text-white/45">{message}</p>
+      <p className="text-sm text-[#F0EFE2]/45">{message}</p>
     </div>
   );
 }

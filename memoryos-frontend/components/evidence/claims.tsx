@@ -178,7 +178,7 @@ function ClaimCard({ claim, isSelected, onClick }: { claim: any, isSelected: boo
 function TraceNode({ icon, title, subtitle, active, faded, status, action, onClick }: any) {
   return (
     <div className={`flex items-start gap-4 relative z-10 ${faded ? 'opacity-40' : ''}`}>
-      <div className={`size-14 rounded-full flex items-center justify-center shrink-0 border-4 border-[#fafafa] shadow-sm ${active ? 'bg-[#0f52ff] text-white' : 'bg-white border-black/10 text-black/40'}`}>
+      <div className={`size-14 rounded-full flex items-center justify-center shrink-0 border-4 border-[#fafafa] shadow-sm ${active ? 'bg-[#0f52ff] text-[#F0EFE2]' : 'bg-white border-black/10 text-black/40'}`}>
         {icon}
       </div>
       <div className="pt-2">

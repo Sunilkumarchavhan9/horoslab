@@ -81,7 +81,7 @@ export function WikiAskBar({
       layout="floating"
       expandLabel={`Ask about ${repoFullName}`}
       header={
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/40">
           Ask about {repoFullName}
         </p>
       }

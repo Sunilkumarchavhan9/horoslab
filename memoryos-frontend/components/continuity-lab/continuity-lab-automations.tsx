@@ -205,7 +205,7 @@ export function ContinuityLabAutomations() {
   return (
     <div className="mx-auto max-w-[820px] px-5 py-12 pb-16">
       <div className="text-center">
-        <h1 className="text-xl font-semibold text-white">Automations</h1>
+        <h1 className="text-xl font-semibold text-[#F0EFE2]">Automations</h1>
       </div>
 
       <div className={cn(subtlePanel(), "mt-6 overflow-hidden")}>
@@ -221,7 +221,7 @@ export function ContinuityLabAutomations() {
           rows={5}
           disabled={submitting}
           placeholder="Fix lint errors whenever CI fails on a PR"
-          className="w-full resize-none bg-transparent px-4 pb-2 pt-4 text-sm leading-relaxed text-white placeholder:text-white/35 focus:outline-none disabled:opacity-50"
+          className="w-full resize-none bg-transparent px-4 pb-2 pt-4 text-sm leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:outline-none disabled:opacity-50"
         />
         <div className="flex justify-end border-t border-white/[0.06] px-3 py-2">
           <button
@@ -249,11 +249,11 @@ export function ContinuityLabAutomations() {
       <section className="mt-10 space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-white">Featured automations</h2>
+            <h2 className="text-sm font-semibold text-[#F0EFE2]">Featured automations</h2>
           </div>
           <Link
             href="/continuity-lab/automations/templates"
-            className="text-xs font-medium text-white/50 hover:text-white/75"
+            className="text-xs font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/75"
           >
             View all examples
           </Link>
@@ -278,8 +278,8 @@ export function ContinuityLabAutomations() {
             className={cn(
               "rounded-md px-3 py-1.5 text-xs font-semibold transition",
               tab === "automations"
-                ? "bg-[#1F1F1F] text-white"
-                : "text-white/45 hover:text-white/70",
+                ? "bg-[#1F1F1F] text-[#F0EFE2]"
+                : "text-[#F0EFE2]/45 hover:text-[#F0EFE2]/70",
             )}
           >
             Automations 1
@@ -290,8 +290,8 @@ export function ContinuityLabAutomations() {
             className={cn(
               "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold transition",
               tab === "triage"
-                ? "bg-[#1F1F1F] text-white"
-                : "text-white/45 hover:text-white/70",
+                ? "bg-[#1F1F1F] text-[#F0EFE2]"
+                : "text-[#F0EFE2]/45 hover:text-[#F0EFE2]/70",
             )}
           >
             Triage agents
@@ -300,7 +300,7 @@ export function ContinuityLabAutomations() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.04] hover:text-white/70"
+            className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.04] hover:text-[#F0EFE2]/70"
             aria-label="Search automations"
           >
             <Search className="size-4" />
@@ -314,8 +314,8 @@ export function ContinuityLabAutomations() {
 
       {tab === "triage" ? (
         <div className="mt-8 px-2 py-12 text-center">
-          <p className="text-sm font-medium text-white/70">Triage agents</p>
-          <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-white/45">
+          <p className="text-sm font-medium text-[#F0EFE2]/70">Triage agents</p>
+          <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-[#F0EFE2]/45">
             Queue and assign MemoryOS triage agents across Slack and GitHub — coming in the next
             slice. Use featured templates above to create triage agents today.
           </p>
@@ -338,8 +338,8 @@ export function ContinuityLabAutomations() {
                 )}
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">{automation.name}</p>
-                  <p className="mt-0.5 truncate text-[11px] text-white/40">
+                  <p className="truncate text-sm font-semibold text-[#F0EFE2]">{automation.name}</p>
+                  <p className="mt-0.5 truncate text-[11px] text-[#F0EFE2]/40">
                     {automation.triggers.length} trigger
                     {automation.triggers.length === 1 ? "" : "s"}
                     {automation.connectors.length
@@ -347,7 +347,7 @@ export function ContinuityLabAutomations() {
                       : ""}
                   </p>
                 </div>
-                <span className="shrink-0 text-[10px] text-white/35">
+                <span className="shrink-0 text-[10px] text-[#F0EFE2]/35">
                   {new Date(automation.updatedAt).toLocaleDateString()}
                 </span>
               </button>
@@ -367,14 +367,14 @@ function WeeklyChangelogRow({ onClick }: { onClick: () => void }) {
       className="grid w-full grid-cols-[minmax(0,1fr)_160px_80px] items-center gap-4 rounded-md px-2 py-3 text-left transition hover:bg-white/[0.03] max-sm:grid-cols-1"
     >
       <div className="min-w-0">
-        <p className="text-[11px] font-medium text-white/45">Created by you</p>
+        <p className="text-[11px] font-medium text-[#F0EFE2]/45">Created by you</p>
         <div className="mt-2 flex items-center gap-2">
-          <span className="inline-flex size-4 items-center justify-center rounded-full border border-white/25 text-[10px] text-white/60">
+          <span className="inline-flex size-4 items-center justify-center rounded-full border border-white/25 text-[10px] text-[#F0EFE2]/60">
             W
           </span>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-white">Weekly Changelog</p>
-            <p className="text-xs text-white/45">You</p>
+            <p className="truncate text-sm font-semibold text-[#F0EFE2]">Weekly Changelog</p>
+            <p className="text-xs text-[#F0EFE2]/45">You</p>
           </div>
         </div>
       </div>
@@ -383,9 +383,9 @@ function WeeklyChangelogRow({ onClick }: { onClick: () => void }) {
           <path d="M0 24 H72 L76 24 L80 24 L84 24 L88 24 L92 8 L96 24 H144" fill="none" stroke="#2563EB" strokeWidth="1.5" />
         </svg>
       </div>
-      <div className="text-right text-xs text-white/45 max-sm:text-left">
+      <div className="text-right text-xs text-[#F0EFE2]/45 max-sm:text-left">
         <p>Created</p>
-        <p className="mt-2 text-white/60">6d ago</p>
+        <p className="mt-2 text-[#F0EFE2]/60">6d ago</p>
       </div>
     </button>
   );
@@ -415,11 +415,11 @@ function FeaturedTemplateRow({
         )}
       >
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white">{template.title}</p>
-          <p className="mt-1 truncate text-xs leading-relaxed text-white/50">{template.description}</p>
+          <p className="text-sm font-semibold text-[#F0EFE2]">{template.title}</p>
+          <p className="mt-1 truncate text-xs leading-relaxed text-[#F0EFE2]/50">{template.description}</p>
         </div>
         <span
-          className="inline-flex size-7 shrink-0 items-center justify-center text-white/55 transition group-hover:text-white"
+          className="inline-flex size-7 shrink-0 items-center justify-center text-[#F0EFE2]/55 transition group-hover:text-[#F0EFE2]"
           aria-hidden
         >
           <Plus className="size-4" />

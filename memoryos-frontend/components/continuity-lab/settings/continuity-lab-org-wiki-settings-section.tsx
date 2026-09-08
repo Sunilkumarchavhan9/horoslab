@@ -300,7 +300,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -320,7 +320,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
           </button>
         </div>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -332,7 +332,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
           <button
             type="button"
             onClick={() => setReindexHint(false)}
-            className="mt-2 text-[11px] font-medium text-indigo-200 underline hover:text-white"
+            className="mt-2 text-[11px] font-medium text-indigo-200 underline hover:text-[#F0EFE2]"
           >
             Dismiss
           </button>
@@ -376,7 +376,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
             />
           </SettingsFieldRow>
         </SettingsFlatPanel>
-        <p className="mt-3 text-[11px] text-white/35">{WIKI_SCHEDULED_REGENERATION_NOTE}</p>
+        <p className="mt-3 text-[11px] text-[#F0EFE2]/35">{WIKI_SCHEDULED_REGENERATION_NOTE}</p>
       </SettingsCard>
 
       <SettingsCard
@@ -393,8 +393,8 @@ export function ContinuityLabOrgWikiSettingsSection() {
                 className={cn(
                   "flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm",
                   checked
-                    ? "border-indigo-500/40 bg-indigo-500/10 text-white"
-                    : "border-white/[0.08] bg-[#111111] text-white/70 hover:border-white/15",
+                    ? "border-indigo-500/40 bg-indigo-500/10 text-[#F0EFE2]"
+                    : "border-white/[0.08] bg-[#111111] text-[#F0EFE2]/70 hover:border-white/15",
                   isEnglish && "cursor-default",
                 )}
               >
@@ -408,7 +408,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
                 <span>
                   {lang.label}
                   {isEnglish ? (
-                    <span className="ml-1 text-[10px] text-white/40">(default)</span>
+                    <span className="ml-1 text-[10px] text-[#F0EFE2]/40">(default)</span>
                   ) : null}
                 </span>
               </label>
@@ -451,8 +451,8 @@ export function ContinuityLabOrgWikiSettingsSection() {
 
         {settings.enrolledRepos.length === 0 ? (
           <div className="mt-3 rounded-md border border-white/[0.08] bg-[#111111] px-4 py-8 text-center">
-            <p className="text-sm text-white/55">No repositories enrolled yet.</p>
-            <p className="mt-1 text-xs text-white/40">
+            <p className="text-sm text-[#F0EFE2]/55">No repositories enrolled yet.</p>
+            <p className="mt-1 text-xs text-[#F0EFE2]/40">
               Add repos to scope MemoryOS Wiki generation and the wiki home index.
             </p>
             {github.connected ? (
@@ -462,7 +462,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
                 </SettingsPrimaryButton>
               </div>
             ) : (
-              <p className="mt-3 text-xs text-white/40">
+              <p className="mt-3 text-xs text-[#F0EFE2]/40">
                 Connect GitHub in{" "}
                 <Link
                   href="/continuity-lab/settings/connections"
@@ -475,7 +475,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
             )}
           </div>
         ) : filteredEnrolledRepos.length === 0 ? (
-          <p className="mt-3 text-sm text-white/50">No enrolled repos match your search.</p>
+          <p className="mt-3 text-sm text-[#F0EFE2]/50">No enrolled repos match your search.</p>
         ) : (
           <SettingsFlatPanel className="mt-3 !px-0">
             <ul>
@@ -490,23 +490,23 @@ export function ContinuityLabOrgWikiSettingsSection() {
                   >
                     <Link
                       href={wikiRepoIndexingPath(row.repo)}
-                      className="min-w-0 flex-1 rounded-md outline-none transition hover:text-white focus-visible:ring-2 focus-visible:ring-indigo-400"
+                      className="min-w-0 flex-1 rounded-md outline-none transition hover:text-[#F0EFE2] focus-visible:ring-2 focus-visible:ring-indigo-400"
                     >
                       {parts ? (
                         <>
-                          <span className="block truncate text-[11px] text-white/45">
+                          <span className="block truncate text-[11px] text-[#F0EFE2]/45">
                             {parts.owner}
                           </span>
-                          <span className="block truncate font-mono text-sm text-white">
+                          <span className="block truncate font-mono text-sm text-[#F0EFE2]">
                             {parts.repo}
                           </span>
                         </>
                       ) : (
-                        <span className="block truncate font-mono text-sm text-white">
+                        <span className="block truncate font-mono text-sm text-[#F0EFE2]">
                           {row.repo}
                         </span>
                       )}
-                      <p className="mt-0.5 text-[11px] text-white/40">
+                      <p className="mt-0.5 text-[11px] text-[#F0EFE2]/40">
                         <span
                           className={cn(
                             connected ? "text-emerald-300/80" : "text-amber-200/80",
@@ -521,7 +521,7 @@ export function ContinuityLabOrgWikiSettingsSection() {
                     <button
                       type="button"
                       onClick={() => removeRepo(row.repo)}
-                      className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white"
+                      className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                       aria-label={`Remove ${row.repo}`}
                     >
                       <Trash2 className="size-3.5" />
@@ -532,9 +532,9 @@ export function ContinuityLabOrgWikiSettingsSection() {
             </ul>
           </SettingsFlatPanel>
         )}
-        <p className="mt-3 text-[11px] text-white/35">
+        <p className="mt-3 text-[11px] text-[#F0EFE2]/35">
           Branch counts reflect default-branch index status from{" "}
-          <code className="text-white/50">/api/connector/index-status</code>. Connector SSE
+          <code className="text-[#F0EFE2]/50">/api/connector/index-status</code>. Connector SSE
           refreshes GitHub repos and re-fetches index status for enrolled repos.
         </p>
       </SettingsCard>

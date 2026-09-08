@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils";
 const ALL_REPOS_VALUE = "__all__";
 
 const inputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none";
 
 const TYPE_OPTIONS: { value: LabScheduleType; label: string }[] = [
   { value: "recurring", label: "Recurring" },
@@ -55,7 +55,7 @@ const EMAIL_OPTIONS: { value: LabScheduleEmailNotifications; label: string }[] =
 ];
 
 const saveButtonClass =
-  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40";
+  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40";
 
 type PlaybookOption = { id: string | null; label: string };
 
@@ -209,7 +209,7 @@ export function ContinuityLabScheduleForm({
     >
       <Link
         href={settingsSectionPath("schedules")}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to schedules
@@ -240,7 +240,7 @@ export function ContinuityLabScheduleForm({
         </div>
 
         {loadError ? <p className="text-sm text-amber-200/90">{loadError}</p> : null}
-        {!loaded && !loadError ? <p className="text-sm text-white/45">Loading schedule…</p> : null}
+        {!loaded && !loadError ? <p className="text-sm text-[#F0EFE2]/45">Loading schedule…</p> : null}
         {saveState === "error" && saveError ? (
           <p className="text-sm text-amber-200/90">{saveError}</p>
         ) : null}
@@ -294,15 +294,15 @@ export function ContinuityLabScheduleForm({
                   className={cn(
                     "rounded-md px-3 py-1.5 text-sm font-medium capitalize transition",
                     promptTab === tab
-                      ? "bg-white/[0.1] text-white"
-                      : "text-white/55 hover:text-white/80",
+                      ? "bg-white/[0.1] text-[#F0EFE2]"
+                      : "text-[#F0EFE2]/55 hover:text-[#F0EFE2]/80",
                   )}
                 >
                   {tab}
                 </button>
               ))}
             </div>
-            <Maximize2 className="size-3.5 text-white/40" aria-hidden />
+            <Maximize2 className="size-3.5 text-[#F0EFE2]/40" aria-hidden />
           </div>
           {promptTab === "edit" ? (
             <textarea
@@ -310,10 +310,10 @@ export function ContinuityLabScheduleForm({
               onChange={(e) => updateDraft({ prompt: e.target.value })}
               rows={10}
               placeholder="Write your playbook here…"
-              className="min-h-[12rem] w-full resize-y bg-transparent px-4 py-3 text-sm leading-relaxed text-white placeholder:text-white/35 focus:outline-none"
+              className="min-h-[12rem] w-full resize-y bg-transparent px-4 py-3 text-sm leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:outline-none"
             />
           ) : (
-            <div className="min-h-[12rem] whitespace-pre-wrap px-4 py-3 text-sm leading-relaxed text-white/80">
+            <div className="min-h-[12rem] whitespace-pre-wrap px-4 py-3 text-sm leading-relaxed text-[#F0EFE2]/80">
               {draft.prompt.trim() ? draft.prompt : "No prompt yet."}
             </div>
           )}
@@ -375,7 +375,7 @@ export function ContinuityLabScheduleForm({
                   disabled={!github.connected}
                 />
                 {!github.connected ? (
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-[#F0EFE2]/40">
                     <Link
                       href="/continuity-lab/settings/connections"
                       className="text-[#60A5FA] hover:text-[#93C5FD]"
@@ -385,7 +385,7 @@ export function ContinuityLabScheduleForm({
                     to pick a specific repository.
                   </p>
                 ) : (
-                  <p className="text-xs text-white/40">No repositories indexed yet.</p>
+                  <p className="text-xs text-[#F0EFE2]/40">No repositories indexed yet.</p>
                 )}
               </div>
             )}

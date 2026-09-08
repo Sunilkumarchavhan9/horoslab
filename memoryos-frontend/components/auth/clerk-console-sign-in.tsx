@@ -63,7 +63,7 @@ function ActionButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex min-h-[44px] w-full items-center justify-center gap-3 border border-[#343434] bg-transparent px-3 text-center text-[11px] font-medium tracking-[0.05em] text-white transition hover:border-[#4a4a4a] hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:px-4 sm:text-[13px] lg:text-[14px]"
+      className="flex min-h-[44px] w-full items-center justify-center gap-3 border border-[#343434] bg-transparent px-3 text-center text-[11px] font-medium tracking-[0.05em] text-[#F0EFE2] transition hover:border-[#4a4a4a] hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:px-4 sm:text-[13px] lg:text-[14px]"
     >
       {children}
     </button>
@@ -311,13 +311,13 @@ export function ClerkConsoleSignIn({ redirectTo, emailLinkCompleteUrl, authError
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="Email address"
-          className="h-[44px] w-full border border-[#343434] bg-transparent px-4 text-[14px] text-white outline-none placeholder:text-[#636c77] sm:h-[46px] sm:px-5 sm:text-[16px]"
+          className="h-[44px] w-full border border-[#343434] bg-transparent px-4 text-[14px] text-[#F0EFE2] outline-none placeholder:text-[#636c77] sm:h-[46px] sm:px-5 sm:text-[16px]"
         />
         <button
           type="button"
           onClick={handleMagicLink}
           disabled={pendingStrategy !== null || !authReady}
-          className="flex min-h-[44px] w-full items-center justify-center gap-3 bg-[#1f56aa] px-4 text-center text-[11px] font-medium tracking-[0.05em] text-white transition hover:bg-[#2763c3] disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:text-[13px] lg:text-[14px]"
+          className="flex min-h-[44px] w-full items-center justify-center gap-3 bg-[#1f56aa] px-4 text-center text-[11px] font-medium tracking-[0.05em] text-[#F0EFE2] transition hover:bg-[#2763c3] disabled:cursor-not-allowed disabled:opacity-55 sm:min-h-[46px] sm:text-[13px] lg:text-[14px]"
         >
           {!authReady
             ? "PREPARING SIGN-IN..."

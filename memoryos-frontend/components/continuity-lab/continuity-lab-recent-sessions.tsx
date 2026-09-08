@@ -73,7 +73,7 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 items-center justify-between gap-1 px-0.5 pb-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/40">
           Recent
         </p>
         <div className="flex items-center gap-0.5">
@@ -81,8 +81,8 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
             type="button"
             onClick={() => setSearchOpen((v) => !v)}
             className={cn(
-              "inline-flex size-7 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white",
-              searchOpen && "bg-white/[0.06] text-white",
+              "inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]",
+              searchOpen && "bg-white/[0.06] text-[#F0EFE2]",
             )}
             aria-label="Search sessions"
           >
@@ -94,7 +94,7 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
               if (mobile) setSidebarOpen(false);
               router.push("/continuity-lab");
             }}
-            className="inline-flex size-7 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="New session"
           >
             <Plus className="size-3.5" />
@@ -103,7 +103,7 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex size-7 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+                className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                 aria-label="Recent sessions menu"
               >
                 <MoreHorizontal className="size-3.5" />
@@ -111,16 +111,16 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="min-w-[160px] border border-white/[0.06] bg-[#1a1a1a] text-white"
+              className="min-w-[160px] border border-white/[0.06] bg-[#1a1a1a] text-[#F0EFE2]"
             >
               <DropdownMenuItem
-                className="text-white/85 focus:bg-white/[0.06]"
+                className="text-[#F0EFE2]/85 focus:bg-white/[0.06]"
                 onSelect={() => setSearchOpen(true)}
               >
                 Search sessions
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-white/85 focus:bg-white/[0.06]"
+                className="text-[#F0EFE2]/85 focus:bg-white/[0.06]"
                 onSelect={() => {
                   if (mobile) setSidebarOpen(false);
                   router.push("/continuity-lab");
@@ -135,21 +135,21 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
 
       {searchOpen ? (
         <div className="relative mb-2 shrink-0">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3 -translate-y-1/2 text-white/35" />
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3 -translate-y-1/2 text-[#F0EFE2]/35" />
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search sessions"
             autoFocus
-            className="h-8 w-full rounded-md border border-white/[0.06] bg-[#1a1a1a] pl-8 pr-2 text-[11px] text-white placeholder:text-white/35 focus:border-white/15 focus:outline-none"
+            className="h-8 w-full rounded-md border border-white/[0.06] bg-[#1a1a1a] pl-8 pr-2 text-[11px] text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/15 focus:outline-none"
           />
         </div>
       ) : null}
 
       <div className="continuity-lab-sidebar-recent-scroll min-h-0 flex-1 overflow-y-auto">
         {visibleSessions.length === 0 ? (
-          <p className="px-0.5 text-[11px] leading-relaxed text-white/45">
+          <p className="px-0.5 text-[11px] leading-relaxed text-[#F0EFE2]/45">
             {sessions.length === 0
               ? "No sessions yet. Start from the home prompt."
               : "No sessions match your search."}
@@ -166,11 +166,11 @@ export function ContinuityLabRecentSessions({ mobile = false }: ContinuityLabRec
                     onClick={() => mobile && setSidebarOpen(false)}
                     className={cn(
                       "block rounded-md px-2 py-1.5 pr-8 transition",
-                      active ? labNavActive : "text-white/60 hover:bg-white/[0.04] hover:text-white",
+                      active ? labNavActive : "text-[#F0EFE2]/60 hover:bg-white/[0.04] hover:text-[#F0EFE2]",
                     )}
                   >
                     <p className="truncate text-xs font-medium">{title}</p>
-                    <p className="mt-0.5 truncate text-[10px] text-white/40">
+                    <p className="mt-0.5 truncate text-[10px] text-[#F0EFE2]/40">
                       {formatLabRelativeTime(session.updatedAt)}
                     </p>
                   </Link>

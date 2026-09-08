@@ -72,10 +72,10 @@ const ENVIRONMENT_PAGE = settingsSectionPath("environment");
 const MAX_FILE_BYTES = 512 * 1024;
 
 const saveButtonClass =
-  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40";
+  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40";
 
 const dropdownItemClass =
-  "gap-2.5 rounded-none px-3 py-2 text-xs text-white/85 focus:bg-[#141414] focus:text-white";
+  "gap-2.5 rounded-none px-3 py-2 text-xs text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2]";
 
 function formatWhen(iso: string | null | undefined): string {
   if (!iso) return "—";
@@ -347,12 +347,12 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
       >
         <Link
           href={ENVIRONMENT_PAGE}
-          className="-mt-2 mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+          className="-mt-2 mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
         >
           <ArrowLeft className="size-3.5" aria-hidden />
           Back to blueprints
         </Link>
-        <p className="text-sm text-white/55">Repository not found in your environment list.</p>
+        <p className="text-sm text-[#F0EFE2]/55">Repository not found in your environment list.</p>
       </ContinuityLabSettingsSectionFrame>
     );
   }
@@ -362,7 +362,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
       {!embedded && !panelExpanded ? (
         <Link
           href={ENVIRONMENT_PAGE}
-          className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+          className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
         >
           <ArrowLeft className="size-3.5" aria-hidden />
           Back to blueprints
@@ -370,16 +370,16 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
       ) : null}
 
       {loadError ? <p className="mb-2 text-xs text-amber-200/90">{loadError}</p> : null}
-      {!loaded ? <p className="mb-2 text-xs text-white/40">Loading blueprint…</p> : null}
+      {!loaded ? <p className="mb-2 text-xs text-[#F0EFE2]/40">Loading blueprint…</p> : null}
       {saveError ? <p className="mb-2 text-xs text-amber-200/90">{saveError}</p> : null}
 
       <SettingsFlatPanel className="!px-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-4">
           <div className="flex items-start gap-3">
-            <FolderGit2 className="mt-0.5 size-5 shrink-0 text-white/40" aria-hidden />
+            <FolderGit2 className="mt-0.5 size-5 shrink-0 text-[#F0EFE2]/40" aria-hidden />
             <div>
-              <p className="text-sm font-medium text-white">Include in environment</p>
-              <p className="mt-1 text-xs text-white/45">
+              <p className="text-sm font-medium text-[#F0EFE2]">Include in environment</p>
+              <p className="mt-1 text-xs text-[#F0EFE2]/45">
                 {included
                   ? "This repository is pre-cloned and set up for new Devin sessions."
                   : "Turn on to pre-clone and set up this repository for new Devin sessions."}
@@ -404,13 +404,13 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
             <button
               type="button"
               onClick={() => setPanelExpanded(false)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
             >
               <ArrowLeft className="size-3.5" aria-hidden />
               Back to editor
             </button>
-            <h2 className="mt-2 text-lg font-semibold text-white">{repo}</h2>
-            <p className="mt-1 text-sm text-white/45">Runs for sessions on this repository.</p>
+            <h2 className="mt-2 text-lg font-semibold text-[#F0EFE2]">{repo}</h2>
+            <p className="mt-1 text-sm text-[#F0EFE2]/45">Runs for sessions on this repository.</p>
           </div>
         ) : null}
         <div
@@ -428,8 +428,8 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
                   className={cn(
                     "inline-flex size-9 items-center justify-center rounded-md transition",
                     guideOpen
-                      ? "bg-white/[0.08] text-white/85"
-                      : "text-white/45 hover:bg-white/[0.06] hover:text-white/80",
+                      ? "bg-white/[0.08] text-[#F0EFE2]/85"
+                      : "text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/80",
                   )}
                   aria-label={guideOpen ? "Hide guide" : "Show guide"}
                 >
@@ -456,7 +456,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
               <button
                 type="button"
                 onClick={() => setPanelExpanded((prev) => !prev)}
-                className="inline-flex size-9 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white/80"
+                className="inline-flex size-9 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/80"
                 aria-label={panelExpanded ? "Collapse panel" : "Expand panel"}
               >
                 {panelExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
@@ -467,7 +467,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
                   <button
                     type="button"
                     disabled={deleting}
-                    className="inline-flex size-9 items-center justify-center rounded-md border border-white/[0.12] bg-white/[0.04] text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:opacity-50"
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-white/[0.12] bg-white/[0.04] text-[#F0EFE2]/70 transition hover:bg-white/[0.08] hover:text-[#F0EFE2] disabled:opacity-50"
                     aria-label="More options"
                   >
                     <MoreHorizontal className="size-4" />
@@ -475,7 +475,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="z-50 min-w-[200px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-white shadow-2xl"
+                  className="z-50 min-w-[200px] border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-[#F0EFE2] shadow-2xl"
                 >
                   <DropdownMenuItem asChild className={dropdownItemClass}>
                     <a
@@ -483,7 +483,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <ExternalLink className="size-3.5 shrink-0 text-white/45" />
+                      <ExternalLink className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
                       Generate with Devin
                     </a>
                   </DropdownMenuItem>
@@ -493,7 +493,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <ExternalLink className="size-3.5 shrink-0 text-white/45" />
+                      <ExternalLink className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
                       Documentation
                     </a>
                   </DropdownMenuItem>
@@ -542,7 +542,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
             <div className="grid min-h-[460px] grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)]">
               <aside className="border-b border-white/[0.06] p-3 md:border-b-0 md:border-r">
                 {versions.length === 0 ? (
-                  <p className="px-2 py-6 text-center text-xs text-white/45">
+                  <p className="px-2 py-6 text-center text-xs text-[#F0EFE2]/45">
                     No version history yet. Save the blueprint to create the first version.
                   </p>
                 ) : (
@@ -555,8 +555,8 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
                           className={cn(
                             "w-full rounded-md px-3 py-2.5 text-left transition",
                             selectedVersion?.id === version.id
-                              ? "bg-white/[0.08] text-white"
-                              : "text-white/70 hover:bg-white/[0.04] hover:text-white",
+                              ? "bg-white/[0.08] text-[#F0EFE2]"
+                              : "text-[#F0EFE2]/70 hover:bg-white/[0.04] hover:text-[#F0EFE2]",
                           )}
                         >
                           <span className="block text-xs font-medium">
@@ -570,11 +570,11 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
               </aside>
               <div className="p-4">
                 {selectedVersion ? (
-                  <pre className="min-h-[320px] overflow-auto rounded-md border border-white/[0.06] bg-[#0a0a0a] p-3 font-mono text-[11px] leading-relaxed text-white/70">
+                  <pre className="min-h-[320px] overflow-auto rounded-md border border-white/[0.06] bg-[#0a0a0a] p-3 font-mono text-[11px] leading-relaxed text-[#F0EFE2]/70">
                     {selectedVersion.content}
                   </pre>
                 ) : (
-                  <p className="text-sm text-white/45">No version history yet.</p>
+                  <p className="text-sm text-[#F0EFE2]/45">No version history yet.</p>
                 )}
               </div>
             </div>
@@ -611,16 +611,16 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
               <div className="flex flex-1 flex-col bg-black">
                 {blueprintFiles.length === 0 ? (
                   <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-                    <p className="text-sm font-semibold text-white">No files attached</p>
+                    <p className="text-sm font-semibold text-[#F0EFE2]">No files attached</p>
                   </div>
                 ) : (
                   <ul className="divide-y divide-white/[0.06] overflow-y-auto">
                     {filteredFiles.map((file: LabEnvironmentBlueprintFile) => (
                       <li key={file.id} className="flex items-center gap-3 px-4 py-3">
-                        <FileText className="size-4 shrink-0 text-white/35" aria-hidden />
+                        <FileText className="size-4 shrink-0 text-[#F0EFE2]/35" aria-hidden />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-white">{file.name}</p>
-                          <p className="mt-0.5 text-[11px] text-white/40">
+                          <p className="truncate text-sm font-medium text-[#F0EFE2]">{file.name}</p>
+                          <p className="mt-0.5 text-[11px] text-[#F0EFE2]/40">
                             {formatFileSize(file.size)} · {formatWhen(file.uploadedAt)}
                           </p>
                         </div>
@@ -647,19 +647,19 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
               <div className="flex flex-1 flex-col bg-black">
                 {blueprintSecrets.length === 0 ? (
                   <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-                    <p className="text-sm font-semibold text-white">No secrets found</p>
+                    <p className="text-sm font-semibold text-[#F0EFE2]">No secrets found</p>
                   </div>
                 ) : (
                   <ul className="divide-y divide-white/[0.06] overflow-y-auto">
                     {filteredSecrets.map((secret: LabEnvironmentBlueprintSecret) => (
                       <li key={secret.id} className="flex items-center gap-3 px-4 py-3">
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-mono text-sm font-medium text-white">
+                          <p className="truncate font-mono text-sm font-medium text-[#F0EFE2]">
                             {secret.name}
                           </p>
                         </div>
                         {secret.redacted ? (
-                          <span className="shrink-0 rounded bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                          <span className="shrink-0 rounded bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                             Redacted
                           </span>
                         ) : null}
@@ -683,14 +683,14 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
       <div className="mt-6 space-y-3">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-medium text-white">{repo}</p>
-            <p className="mt-0.5 text-xs text-white/45">
+            <p className="text-sm font-medium text-[#F0EFE2]">{repo}</p>
+            <p className="mt-0.5 text-xs text-[#F0EFE2]/45">
               Runs for sessions on this repository.{" "}
               <a
                 href={ENVIRONMENT_LEARN_MORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/55 underline-offset-2 hover:text-white/75 hover:underline"
+                className="text-[#F0EFE2]/55 underline-offset-2 hover:text-[#F0EFE2]/75 hover:underline"
               >
                 Learn more
               </a>
@@ -700,7 +700,7 @@ export function ContinuityLabRepoEnvironmentBlueprintEditor({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+              className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
               aria-label="Close repository editor"
             >
               <X className="size-4" />

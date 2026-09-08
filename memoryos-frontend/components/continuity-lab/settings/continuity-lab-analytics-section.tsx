@@ -381,8 +381,8 @@ function AnalyticsTabs({ active, onChange }: { active: AnalyticsTab; onChange: (
           className={cn(
             "inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold transition",
             active === tab.id
-              ? "bg-white/[0.08] text-white"
-              : "text-white/52 hover:bg-white/[0.04] hover:text-white/80",
+              ? "bg-white/[0.08] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/52 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80",
           )}
         >
           {tab.label}
@@ -432,12 +432,12 @@ function CalendarMonth({
 
   return (
     <div className="min-w-0 flex-1">
-      <p className="mb-4 text-center text-sm font-semibold text-white/85">
+      <p className="mb-4 text-center text-sm font-semibold text-[#F0EFE2]/85">
         {month.toLocaleString([], { month: "long", year: "numeric" })}
       </p>
       <div className="grid grid-cols-7 gap-1 text-center">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-          <p key={day} className="py-1 text-xs font-semibold text-white/45">
+          <p key={day} className="py-1 text-xs font-semibold text-[#F0EFE2]/45">
             {day}
           </p>
         ))}
@@ -452,9 +452,9 @@ function CalendarMonth({
               onClick={() => onPick(date)}
               className={cn(
                 "h-8 rounded-md text-sm font-medium transition",
-                inMonth ? "text-white/70 hover:bg-white/[0.06] hover:text-white" : "text-white/22",
-                inRange && "bg-white/[0.04] text-white/80",
-                selected && "bg-white/[0.12] text-white",
+                inMonth ? "text-[#F0EFE2]/70 hover:bg-white/[0.06] hover:text-[#F0EFE2]" : "text-[#F0EFE2]/22",
+                inRange && "bg-white/[0.04] text-[#F0EFE2]/80",
+                selected && "bg-white/[0.12] text-[#F0EFE2]",
               )}
             >
               {date.getDate()}
@@ -505,7 +505,7 @@ function CustomRangeCalendar({
         <button
           type="button"
           onClick={() => onMonthChange(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
-          className="inline-flex size-8 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white"
+          className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/55 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
           aria-label="Previous month"
         >
           <ChevronLeft className="size-4" aria-hidden />
@@ -513,7 +513,7 @@ function CustomRangeCalendar({
         <button
           type="button"
           onClick={() => onMonthChange(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
-          className="inline-flex size-8 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white"
+          className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/55 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
           aria-label="Next month"
         >
           <ChevronRight className="size-4" aria-hidden />
@@ -562,10 +562,10 @@ function AnalyticsDateRangeDropdown({
       <button
         type="button"
         onClick={() => setOpen((next) => !next)}
-        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.1] bg-[#171717] px-3 text-left text-sm font-semibold text-white hover:border-white/18"
+        className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/[0.1] bg-[#171717] px-3 text-left text-sm font-semibold text-[#F0EFE2] hover:border-white/18"
       >
         <span className="min-w-0 truncate">{selected.label}</span>
-        <ChevronDown className="size-3.5 shrink-0 text-white/35" aria-hidden />
+        <ChevronDown className="size-3.5 shrink-0 text-[#F0EFE2]/35" aria-hidden />
       </button>
       {open ? (
         <div className="absolute right-0 top-full z-50 mt-1 w-[292px] rounded-md border border-white/[0.08] bg-[#181818] p-1 shadow-2xl">
@@ -588,7 +588,7 @@ function AnalyticsDateRangeDropdown({
                 onClick={() => setMode(item)}
                 className={cn(
                   "h-7 rounded-md text-xs font-semibold capitalize transition",
-                  mode === item ? "bg-white/[0.08] text-white" : "text-white/45 hover:text-white/75",
+                  mode === item ? "bg-white/[0.08] text-[#F0EFE2]" : "text-[#F0EFE2]/45 hover:text-[#F0EFE2]/75",
                 )}
               >
                 {item}
@@ -615,11 +615,11 @@ function AnalyticsDateRangeDropdown({
                     }}
                     className={cn(
                       "flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-semibold transition hover:bg-white/[0.06]",
-                      value === item ? "text-white" : "text-white/76",
+                      value === item ? "text-[#F0EFE2]" : "text-[#F0EFE2]/76",
                     )}
                   >
                     <span>{item === "custom" ? "Custom range..." : option?.label}</span>
-                    {value === item ? <Check className="size-3.5 text-white/55" aria-hidden /> : null}
+                    {value === item ? <Check className="size-3.5 text-[#F0EFE2]/55" aria-hidden /> : null}
                   </button>
                 </div>
               );
@@ -634,8 +634,8 @@ function AnalyticsDateRangeDropdown({
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-white/[0.08] bg-[#1A1A1A] px-4 py-4">
-      <p className="text-sm font-medium text-white/55">{label}</p>
-      <p className="mt-2 text-xl font-semibold text-white">{value}</p>
+      <p className="text-sm font-medium text-[#F0EFE2]/55">{label}</p>
+      <p className="mt-2 text-xl font-semibold text-[#F0EFE2]">{value}</p>
     </div>
   );
 }
@@ -652,10 +652,10 @@ function SectionTitle({
   return (
     <div>
       <div className="flex items-center gap-2">
-        <h2 className="text-base font-semibold text-white">{title}</h2>
-        {info ? <Info className="size-3.5 text-white/35" aria-hidden /> : null}
+        <h2 className="text-base font-semibold text-[#F0EFE2]">{title}</h2>
+        {info ? <Info className="size-3.5 text-[#F0EFE2]/35" aria-hidden /> : null}
       </div>
-      {subtitle ? <p className="mt-1 text-sm text-white/55">{subtitle}</p> : null}
+      {subtitle ? <p className="mt-1 text-sm text-[#F0EFE2]/55">{subtitle}</p> : null}
     </div>
   );
 }
@@ -673,9 +673,9 @@ function AnalyticsTooltip({
   const rows = payload.filter((row) => Number(row.value ?? 0) > 0);
   return (
     <div className="rounded-md border border-white/[0.1] bg-[#181818] px-3 py-2 shadow-xl">
-      <p className="text-xs font-semibold text-white/80">{label}</p>
+      <p className="text-xs font-semibold text-[#F0EFE2]/80">{label}</p>
       {(rows.length ? rows : payload.slice(0, 1)).map((row) => (
-        <p key={row.name} className="mt-1 text-xs text-white/60">
+        <p key={row.name} className="mt-1 text-xs text-[#F0EFE2]/60">
           <span className="mr-1 inline-block size-2" style={{ backgroundColor: row.color }} />
           {row.name}: {row.value ?? 0}
         </p>
@@ -686,7 +686,7 @@ function AnalyticsTooltip({
 
 function ChartLegend({ series }: { series: readonly { key: string; label: string; color: string }[] }) {
   return (
-    <div className="flex flex-row flex-wrap gap-x-4 gap-y-2 text-xs text-white/58 lg:flex-col lg:gap-0">
+    <div className="flex flex-row flex-wrap gap-x-4 gap-y-2 text-xs text-[#F0EFE2]/58 lg:flex-col lg:gap-0">
       {series.map((item) => (
         <div key={item.key} className="flex items-center gap-2">
           <span className="size-5 shrink-0" style={{ backgroundColor: item.color }} />
@@ -715,7 +715,7 @@ function ChartPanel({
   return (
     <div className="rounded-md border border-white/[0.08] bg-[#1A1A1A] p-4">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-base font-semibold text-white">{title}</h3>
+        <h3 className="text-base font-semibold text-[#F0EFE2]">{title}</h3>
         {controls ? <div className="flex flex-wrap items-center gap-2">{controls}</div> : null}
       </div>
       <div
@@ -764,7 +764,7 @@ function ChartPanel({
               ))}
             </BarChart>
           </ResponsiveContainer>
-          <p className="-mt-3 text-center text-xs font-medium text-white/50">Date (UTC)</p>
+          <p className="-mt-3 text-center text-xs font-medium text-[#F0EFE2]/50">Date (UTC)</p>
         </div>
         {showLegend ? (
           <div className="flex items-center justify-start lg:justify-center">
@@ -779,8 +779,8 @@ function ChartPanel({
 function InfoPanel({ children }: { children: ReactNode }) {
   return (
     <div className="rounded-md border border-white/[0.08] border-l-[#3B82F6] bg-[#1A1A1A] px-4 py-3 [border-left-width:4px]">
-      <p className="text-sm font-semibold text-white">Info</p>
-      <p className="mt-2 text-sm leading-relaxed text-white/55">{children}</p>
+      <p className="text-sm font-semibold text-[#F0EFE2]">Info</p>
+      <p className="mt-2 text-sm leading-relaxed text-[#F0EFE2]/55">{children}</p>
     </div>
   );
 }
@@ -985,8 +985,8 @@ function UsageSubTabs({ active, onChange }: { active: UsageView; onChange: (view
           className={cn(
             "inline-flex h-8 items-center rounded-md px-3 text-sm font-semibold transition",
             active === view
-              ? "bg-white/[0.08] text-white"
-              : "text-white/48 hover:bg-white/[0.04] hover:text-white/80",
+              ? "bg-white/[0.08] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/48 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80",
           )}
         >
           {view === "overall" ? "Overall" : "Users"}
@@ -1013,8 +1013,8 @@ function InlineCadenceToggle({
           className={cn(
             "inline-flex h-8 items-center rounded-md px-3 text-sm font-semibold transition",
             value === item
-              ? "bg-white/[0.08] text-white"
-              : "text-white/48 hover:bg-white/[0.04] hover:text-white/80",
+              ? "bg-white/[0.08] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/48 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80",
           )}
         >
           {item}
@@ -1065,7 +1065,7 @@ function UsersTable({
           <button
             type="button"
             onClick={() => exportUsersCsv(rows)}
-            className="inline-flex h-9 items-center rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-white transition hover:bg-[#60A5FA]"
+            className="inline-flex h-9 items-center rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#60A5FA]"
           >
             Export to CSV
           </button>
@@ -1077,13 +1077,13 @@ function UsersTable({
             <tr className="bg-white/[0.05]">
               <th className="w-64 px-4 py-3" />
               <th className="w-56 px-4 py-3" />
-              <th colSpan={6} className="px-4 py-3 text-center font-semibold text-white">
+              <th colSpan={6} className="px-4 py-3 text-center font-semibold text-[#F0EFE2]">
                 Sessions
               </th>
-              <th colSpan={5} className="px-4 py-3 text-center font-semibold text-white">
+              <th colSpan={5} className="px-4 py-3 text-center font-semibold text-[#F0EFE2]">
                 Searches
               </th>
-              <th colSpan={3} className="px-4 py-3 text-center font-semibold text-white">
+              <th colSpan={3} className="px-4 py-3 text-center font-semibold text-[#F0EFE2]">
                 PRs
               </th>
             </tr>
@@ -1092,11 +1092,11 @@ function UsersTable({
                 <th
                   key={column.key}
                   className={cn(
-                    "px-4 py-3 font-semibold text-white",
+                    "px-4 py-3 font-semibold text-[#F0EFE2]",
                     column.shaded && "bg-white/[0.04]",
                   )}
                 >
-                  {column.shaded ? <span className="mr-2 text-white/45">›</span> : null}
+                  {column.shaded ? <span className="mr-2 text-[#F0EFE2]/45">›</span> : null}
                   {column.label}
                 </th>
               ))}
@@ -1109,8 +1109,8 @@ function UsersTable({
                   <td
                     key={column.key}
                     className={cn(
-                      "truncate px-4 py-3 text-white/58",
-                      column.key === "name" && "text-white/70",
+                      "truncate px-4 py-3 text-[#F0EFE2]/58",
+                      column.key === "name" && "text-[#F0EFE2]/70",
                       column.shaded && "bg-white/[0.04]",
                     )}
                     title={String(row[column.key])}
@@ -1146,8 +1146,8 @@ function InlineSegmented<T extends string>({
           className={cn(
             "inline-flex h-9 items-center rounded-md px-3 text-sm font-semibold transition",
             value === option
-              ? "bg-white/[0.08] text-white"
-              : "text-white/48 hover:bg-white/[0.04] hover:text-white/80",
+              ? "bg-white/[0.08] text-[#F0EFE2]"
+              : "text-[#F0EFE2]/48 hover:bg-white/[0.04] hover:text-[#F0EFE2]/80",
           )}
         >
           {option}
@@ -1288,7 +1288,7 @@ function UsageTab({
           <button
             type="button"
             onClick={() => exportSessionsCsv(data.sessions)}
-            className="inline-flex h-9 items-center gap-2 rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-white transition hover:bg-[#60A5FA]"
+            className="inline-flex h-9 items-center gap-2 rounded-md bg-[#3B82F6] px-3.5 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#60A5FA]"
           >
             <Download className="size-4" aria-hidden />
             Export session data
@@ -1573,13 +1573,13 @@ export function ContinuityLabAnalyticsSection() {
 
         <Link
           href="/continuity-lab/settings/general"
-          className="inline-flex items-center gap-2 text-sm font-medium text-white/50 hover:text-white/75"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/75"
         >
           <ArrowLeft className="size-4" aria-hidden />
           Back to organization
         </Link>
 
-        {loading ? <p className="text-sm text-white/45">Loading analytics...</p> : null}
+        {loading ? <p className="text-sm text-[#F0EFE2]/45">Loading analytics...</p> : null}
         {error ? <p className="text-sm text-red-300">{error}</p> : null}
 
         {!loading && activeTab === "usage" ? (

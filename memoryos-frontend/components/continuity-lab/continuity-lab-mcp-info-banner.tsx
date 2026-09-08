@@ -26,13 +26,13 @@ export function ContinuityLabMcpInfoBanner({
     <div
       className={cn(
         isStickyStrip
-          ? "flex w-full min-w-0 items-center justify-center gap-2 overflow-hidden text-[13px] leading-none text-white sm:text-sm"
+          ? "flex w-full min-w-0 items-center justify-center gap-2 overflow-hidden text-[13px] leading-none text-[#F0EFE2] sm:text-sm"
           : bannerStrip(),
         className,
       )}
     >
       <Info
-        className={cn("size-3.5 shrink-0", isStickyStrip ? "text-white/90" : "text-white/40")}
+        className={cn("size-3.5 shrink-0", isStickyStrip ? "text-[#F0EFE2]/90" : "text-[#F0EFE2]/40")}
         aria-hidden
       />
       <span
@@ -45,7 +45,7 @@ export function ContinuityLabMcpInfoBanner({
           href="/continuity-lab/settings"
           className={cn(
             "underline-offset-2 hover:underline",
-            isStickyStrip ? "text-white" : "text-white/80",
+            isStickyStrip ? "text-[#F0EFE2]" : "text-[#F0EFE2]/80",
           )}
         >
           settings

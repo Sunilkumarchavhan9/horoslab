@@ -148,8 +148,8 @@ export function ContinuityLabAsk() {
 
       <div className="mx-auto flex w-full max-w-[1040px] flex-1 flex-col px-4 py-12 sm:px-6 sm:py-16">
       <div className="flex flex-1 flex-col items-center justify-center pb-20">
-        <MemoryosLogoMark className="text-white/10" size={68} variant="mark" />
-        <h1 className="mt-7 text-center text-2xl font-semibold tracking-tight text-white">
+        <MemoryosLogoMark className="text-[#F0EFE2]/10" size={68} variant="mark" />
+        <h1 className="mt-7 text-center text-2xl font-semibold tracking-tight text-[#F0EFE2]">
           What questions do you have?
         </h1>
 
@@ -174,11 +174,11 @@ export function ContinuityLabAsk() {
           />
 
           {attachmentNote ? (
-            <p className="mt-2 text-[11px] text-white/40">{attachmentNote}</p>
+            <p className="mt-2 text-[11px] text-[#F0EFE2]/40">{attachmentNote}</p>
           ) : null}
 
           {startingSession ? (
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-white/50">
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-[#F0EFE2]/50">
               <Loader2 className="size-4 animate-spin" />
               Starting session…
             </div>

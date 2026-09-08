@@ -64,26 +64,26 @@ const SettingsSidebar = memo(function SettingsSidebar({
       <div className="shrink-0 px-3 pb-2 pt-4">
         <Link
           href="/continuity-lab"
-          className="inline-flex items-center gap-1.5 px-2 text-xs font-medium text-white/50 transition hover:text-white/80"
+          className="inline-flex items-center gap-1.5 px-2 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
         >
           <ArrowLeft className="size-3.5" />
           Back to app
         </Link>
         <div className="relative mt-3">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/30" />
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/30" />
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search settings..."
-            className="h-8 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-8 pr-2 text-xs text-white placeholder:text-white/30 focus:border-white/20 focus:outline-none"
+            className="h-8 w-full rounded-md border border-white/[0.08] bg-[#111111] pl-8 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:border-white/20 focus:outline-none"
           />
         </div>
       </div>
       <nav className="min-h-0 flex-1 overflow-y-auto px-2 pb-4">
         {groups.map((group) => (
           <div key={group.id} className="mb-4">
-            <p className="mb-1 truncate px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/30">
+            <p className="mb-1 truncate px-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/30">
               {settingsGroupLabel(group.id, group.title, orgDisplayName)}
             </p>
             <ul className="space-y-0.5">
@@ -99,14 +99,14 @@ const SettingsSidebar = memo(function SettingsSidebar({
                       className={cn(
                         "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-[13px] transition",
                         active
-                          ? "bg-white/[0.08] font-medium text-white"
-                          : "text-white/60 hover:bg-white/[0.04] hover:text-white",
+                          ? "bg-white/[0.08] font-medium text-[#F0EFE2]"
+                          : "text-[#F0EFE2]/60 hover:bg-white/[0.04] hover:text-[#F0EFE2]",
                       )}
                     >
                       <SettingsNavIcon sectionId={item.id} />
                       <span className="min-w-0 flex-1 truncate">{item.label}</span>
                       {item.badge ? (
-                        <span className="shrink-0 text-[9px] font-semibold uppercase text-white/30">
+                        <span className="shrink-0 text-[9px] font-semibold uppercase text-[#F0EFE2]/30">
                           {item.badge}
                         </span>
                       ) : null}

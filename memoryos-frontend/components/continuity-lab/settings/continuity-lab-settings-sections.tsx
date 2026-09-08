@@ -289,10 +289,10 @@ function StatRow({
   return (
     <div className="flex items-center justify-between gap-4 border-b border-white/[0.06] py-3 last:border-b-0">
       <div className="min-w-0">
-        <p className="text-sm font-medium text-white/85">{label}</p>
-        {detail ? <p className="mt-0.5 text-xs text-white/40">{detail}</p> : null}
+        <p className="text-sm font-medium text-[#F0EFE2]/85">{label}</p>
+        {detail ? <p className="mt-0.5 text-xs text-[#F0EFE2]/40">{detail}</p> : null}
       </div>
-      <p className="shrink-0 text-sm font-semibold text-white">{value}</p>
+      <p className="shrink-0 text-sm font-semibold text-[#F0EFE2]">{value}</p>
     </div>
   );
 }
@@ -304,7 +304,7 @@ function BackendStatus({
   loading: boolean;
   error?: string | null;
 }) {
-  if (loading) return <p className="text-sm text-white/45">Loading from backend...</p>;
+  if (loading) return <p className="text-sm text-[#F0EFE2]/45">Loading from backend...</p>;
   if (error) return <p className="text-sm text-red-300">{error}</p>;
   return null;
 }
@@ -322,7 +322,7 @@ function SimpleTable({
         <thead>
           <tr className="border-b border-white/[0.08] bg-white/[0.04]">
             {columns.map((col) => (
-              <th key={col} className="px-4 py-2.5 text-xs font-semibold text-white/80">
+              <th key={col} className="px-4 py-2.5 text-xs font-semibold text-[#F0EFE2]/80">
                 {col}
               </th>
             ))}
@@ -341,7 +341,7 @@ function SimpleCell({
   children: ReactNode;
   className?: string;
 }) {
-  return <td className={cn("border-t border-white/[0.06] px-4 py-3 text-white/65", className)}>{children}</td>;
+  return <td className={cn("border-t border-white/[0.06] px-4 py-3 text-[#F0EFE2]/65", className)}>{children}</td>;
 }
 
 export function ContinuityLabSettingsSection({ sectionId }: { sectionId: SettingsSectionId }) {
@@ -491,7 +491,7 @@ function PlaybooksSection() {
         <SimpleTable columns={["Name", "Macro", "Created by", "Last updated"]}>
           {rows.map((row) => (
             <tr key={row.id}>
-              <SimpleCell className="font-medium text-white">
+              <SimpleCell className="font-medium text-[#F0EFE2]">
                 <Link
                   href={`/continuity-lab/settings/playbooks/${encodeURIComponent(row.id)}`}
                   className="hover:text-[#93C5FD]"
@@ -537,9 +537,9 @@ type SecretDrawerMode = "add" | "bulk" | null;
 
 const secretNamePattern = /^[A-Za-z_][A-Za-z0-9_]*$/;
 const secretInputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#1F1F1F] px-3 text-sm text-white placeholder:text-white/35 focus:border-[#3B82F6] focus:outline-none";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#1F1F1F] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#3B82F6] focus:outline-none";
 const secretTextareaClass =
-  "w-full resize-y rounded-md border border-white/[0.08] bg-[#1F1F1F] px-3 py-2 text-sm leading-relaxed text-white placeholder:text-white/35 focus:border-[#3B82F6] focus:outline-none";
+  "w-full resize-y rounded-md border border-white/[0.08] bg-[#1F1F1F] px-3 py-2 text-sm leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#3B82F6] focus:outline-none";
 const SECRET_TYPE_OPTIONS: { value: LabEnvironmentBlueprintSecretType; label: string }[] = [
   { value: "key-value", label: "Raw secret" },
   { value: "cookie", label: "Cookie" },
@@ -653,7 +653,7 @@ function SecretsSection() {
           <button
             type="button"
             onClick={() => setDrawer("add")}
-            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6]"
+            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6]"
           >
             Add secret
           </button>
@@ -673,7 +673,7 @@ function SecretsSection() {
         <SimpleTable columns={["Name", "Type", "Note", "Updated by", "Updated at"]}>
           {rows.map((row) => (
             <tr key={`${row.scope}-${row.repo ?? "org"}-${row.id}`}>
-              <SimpleCell className="font-mono text-xs text-white">{row.name}</SimpleCell>
+              <SimpleCell className="font-mono text-xs text-[#F0EFE2]">{row.name}</SimpleCell>
               <SimpleCell>{formatSecretType(row.type)}</SimpleCell>
               <SimpleCell>{row.note ?? "—"}</SimpleCell>
               <SimpleCell>—</SimpleCell>
@@ -728,18 +728,18 @@ function SettingsSideDrawer({
       onMouseDown={onClose}
     >
       <aside
-        className="flex h-full w-full max-w-[620px] flex-col border-l border-white/[0.08] bg-[#101010] text-white shadow-2xl"
+        className="flex h-full w-full max-w-[620px] flex-col border-l border-white/[0.08] bg-[#101010] text-[#F0EFE2] shadow-2xl"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4 border-b border-white/[0.08] px-6 py-5">
           <div>
-            <h2 className="text-lg font-semibold text-white">{title}</h2>
-            <p className="mt-1 text-sm text-white/45">{description}</p>
+            <h2 className="text-lg font-semibold text-[#F0EFE2]">{title}</h2>
+            <p className="mt-1 text-sm text-[#F0EFE2]/45">{description}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-white/45 transition hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-[#F0EFE2]/45 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]"
             aria-label="Close"
           >
             <X className="size-4" aria-hidden />
@@ -797,8 +797,8 @@ function SingleSecretDrawer({
           <div className="flex items-start gap-2">
             <Info className="mt-0.5 size-4 shrink-0 text-[#3B82F6]" aria-hidden />
             <div>
-              <p className="text-sm font-semibold text-white">Notice</p>
-              <p className="mt-1 text-sm text-white/45">
+              <p className="text-sm font-semibold text-[#F0EFE2]">Notice</p>
+              <p className="mt-1 text-sm text-[#F0EFE2]/45">
                 This secret applies to sessions started after it is created.
               </p>
             </div>
@@ -806,7 +806,7 @@ function SingleSecretDrawer({
         </div>
 
         <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-white/85">Secret type</span>
+          <span className="mb-2 block text-sm font-semibold text-[#F0EFE2]/85">Secret type</span>
           <SettingsSelectDropdown<LabEnvironmentBlueprintSecretType>
             value={type}
             onChange={setType}
@@ -816,7 +816,7 @@ function SingleSecretDrawer({
         </label>
 
         <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-white/85">Secret name</span>
+          <span className="mb-2 block text-sm font-semibold text-[#F0EFE2]/85">Secret name</span>
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
@@ -829,7 +829,7 @@ function SingleSecretDrawer({
         </label>
 
         <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-white/85">Secret value</span>
+          <span className="mb-2 block text-sm font-semibold text-[#F0EFE2]/85">Secret value</span>
           <textarea
             value={value}
             onChange={(event) => setValue(event.target.value)}
@@ -846,7 +846,7 @@ function SingleSecretDrawer({
         </label>
 
         <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-white/85">Note</span>
+          <span className="mb-2 block text-sm font-semibold text-[#F0EFE2]/85">Note</span>
           <textarea
             value={note}
             onChange={(event) => setNote(event.target.value)}
@@ -858,8 +858,8 @@ function SingleSecretDrawer({
 
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-white/85">Redact value</p>
-            <p className="text-xs text-white/45">Hide the secret value in the control plane.</p>
+            <p className="text-sm font-semibold text-[#F0EFE2]/85">Redact value</p>
+            <p className="text-xs text-[#F0EFE2]/45">Hide the secret value in the control plane.</p>
           </div>
           <SettingsToggle checked={redacted} onChange={setRedacted} label="Redact value" />
         </div>
@@ -869,7 +869,7 @@ function SingleSecretDrawer({
             type="button"
             disabled={!canSave}
             onClick={() => void save()}
-            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40"
+            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40"
           >
             {saving ? "Storing..." : "Store secret"}
           </button>
@@ -943,7 +943,7 @@ function BulkSecretsDrawer({
     >
       <div className="space-y-5">
         <div>
-          <p className="mb-2 text-sm font-semibold text-white/85">Upload file</p>
+          <p className="mb-2 text-sm font-semibold text-[#F0EFE2]/85">Upload file</p>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -952,9 +952,9 @@ function BulkSecretsDrawer({
               event.preventDefault();
               void handleFile(event.dataTransfer.files[0]);
             }}
-            className="flex h-16 w-full items-center justify-center gap-3 rounded-md border border-dashed border-white/[0.12] bg-white/[0.02] px-4 text-sm font-medium text-white/75 transition hover:border-white/25"
+            className="flex h-16 w-full items-center justify-center gap-3 rounded-md border border-dashed border-white/[0.12] bg-white/[0.02] px-4 text-sm font-medium text-[#F0EFE2]/75 transition hover:border-white/25"
           >
-            <UploadCloud className="size-5 text-white/45" aria-hidden />
+            <UploadCloud className="size-5 text-[#F0EFE2]/45" aria-hidden />
             Choose a file or drag and drop
           </button>
           <input
@@ -967,8 +967,8 @@ function BulkSecretsDrawer({
         </div>
 
         <div>
-          <p className="mb-2 text-sm font-semibold text-white/85">Paste secrets</p>
-          <ul className="mb-3 list-disc space-y-1 pl-5 text-sm text-white/45">
+          <p className="mb-2 text-sm font-semibold text-[#F0EFE2]/85">Paste secrets</p>
+          <ul className="mb-3 list-disc space-y-1 pl-5 text-sm text-[#F0EFE2]/45">
             <li>Use one KEY=value secret per line.</li>
             <li>Keys can use letters, numbers, and underscores.</li>
             <li>Add notes after # on the same line.</li>
@@ -980,18 +980,18 @@ function BulkSecretsDrawer({
             placeholder={"API_KEY=value # note\nDATABASE_URL=value"}
             className={cn(secretTextareaClass, "font-mono text-xs")}
           />
-          <p className={cn("mt-2 text-xs", parsed.invalid ? "text-red-300" : "text-white/40")}>
+          <p className={cn("mt-2 text-xs", parsed.invalid ? "text-red-300" : "text-[#F0EFE2]/40")}>
             {parsed.valid} valid{parsed.invalid ? `, ${parsed.invalid} invalid` : ""}
           </p>
         </div>
 
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-white/85">Sensitive</p>
-            <p className="text-xs text-white/45">Secrets marked sensitive are redacted from the UI.</p>
+            <p className="text-sm font-semibold text-[#F0EFE2]/85">Sensitive</p>
+            <p className="text-xs text-[#F0EFE2]/45">Secrets marked sensitive are redacted from the UI.</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-white/55">Redacted</span>
+            <span className="text-xs font-semibold text-[#F0EFE2]/55">Redacted</span>
             <SettingsToggle checked={redacted} onChange={setRedacted} label="Redact imported secrets" />
           </div>
         </div>
@@ -1001,7 +1001,7 @@ function BulkSecretsDrawer({
             type="button"
             disabled={!canSave}
             onClick={() => void save()}
-            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40"
+            className="inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40"
           >
             {saving ? "Storing..." : "Store"}
           </button>
@@ -1105,7 +1105,7 @@ function RepositoriesSection() {
               <thead>
                 <tr className="border-b border-white/[0.08] bg-white/[0.04]">
                   {["Name", "Wiki", "Environment", ""].map((col) => (
-                    <th key={col} className="px-4 py-2.5 text-xs font-semibold text-white/80">
+                    <th key={col} className="px-4 py-2.5 text-xs font-semibold text-[#F0EFE2]/80">
                       {col}
                     </th>
                   ))}
@@ -1117,9 +1117,9 @@ function RepositoriesSection() {
                   const menuOpen = openMenu === repo.fullName;
                   return (
                     <tr key={repo.projectId || repo.fullName}>
-                      <SimpleCell className="font-medium text-white">
+                      <SimpleCell className="font-medium text-[#F0EFE2]">
                         <span className="block">{parts.name}</span>
-                        <span className="mt-0.5 block text-xs font-normal text-white/45">
+                        <span className="mt-0.5 block text-xs font-normal text-[#F0EFE2]/45">
                           {parts.owner}
                         </span>
                       </SimpleCell>
@@ -1134,7 +1134,7 @@ function RepositoriesSection() {
                               current === repo.fullName ? null : repo.fullName,
                             );
                           }}
-                          className="inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+                          className="inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                           aria-label={`Configure ${repo.fullName}`}
                         >
                           <MoreHorizontal className="size-4" aria-hidden />
@@ -1146,13 +1146,13 @@ function RepositoriesSection() {
                           >
                             <Link
                               href={wikiRepoIndexingPath(repo.fullName)}
-                              className="block px-3 py-2 text-sm font-medium text-white/85 hover:bg-white/[0.05]"
+                              className="block px-3 py-2 text-sm font-medium text-[#F0EFE2]/85 hover:bg-white/[0.05]"
                             >
                               Configure indexing
                             </Link>
                             <Link
                               href={repoBlueprintSettingsPath(repo.fullName)}
-                              className="block px-3 py-2 text-sm font-medium text-white/85 hover:bg-white/[0.05]"
+                              className="block px-3 py-2 text-sm font-medium text-[#F0EFE2]/85 hover:bg-white/[0.05]"
                             >
                               Configure blueprint
                             </Link>
@@ -1258,7 +1258,7 @@ function BillingBackendSection({
                 limit={billing.connectorSyncUsage.limit ?? 0}
               />
             ) : null}
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-[#F0EFE2]/40">
               Reset in {billing.usage.resetInDays} days.
             </p>
           </div>
@@ -1268,7 +1268,7 @@ function BillingBackendSection({
             <SimpleTable columns={["Invoice", "Amount", "Status", "Issued"]}>
               {billing.invoices.map((invoice) => (
                 <tr key={invoice.id}>
-                  <SimpleCell className="font-mono text-xs text-white">{invoice.id}</SimpleCell>
+                  <SimpleCell className="font-mono text-xs text-[#F0EFE2]">{invoice.id}</SimpleCell>
                   <SimpleCell>{formatMoney(invoice.amountCents, invoice.currency)}</SimpleCell>
                   <SimpleCell>{invoice.status}</SimpleCell>
                   <SimpleCell>{formatBackendDate(invoice.issuedAt)}</SimpleCell>
@@ -1300,8 +1300,8 @@ function UsageMeterRow({
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-        <p className="font-medium text-white">{label}</p>
-        <p className="text-white/55">
+        <p className="font-medium text-[#F0EFE2]">{label}</p>
+        <p className="text-[#F0EFE2]/55">
           {used.toLocaleString()} / {limit > 0 ? limit.toLocaleString() : "unlimited"}
         </p>
       </div>

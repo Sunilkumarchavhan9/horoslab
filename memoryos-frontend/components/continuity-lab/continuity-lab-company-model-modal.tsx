@@ -38,14 +38,14 @@ export function ContinuityLabCompanyModelModal() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6366F1]">
               Company model
             </p>
-            <h2 id="company-model-title" className="mt-1 text-lg font-semibold text-white">
+            <h2 id="company-model-title" className="mt-1 text-lg font-semibold text-[#F0EFE2]">
               OpenRouter for Continuity Lab
             </h2>
           </div>
           <button
             type="button"
             onClick={closeCompanyModelModal}
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414]"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414]"
             aria-label="Close"
           >
             <X className="size-4" />

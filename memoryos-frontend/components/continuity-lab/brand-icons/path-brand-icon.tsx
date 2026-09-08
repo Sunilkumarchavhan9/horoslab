@@ -19,7 +19,7 @@ export function PathBrandIcon({
   const monochrome = fill === "currentColor";
   return (
     <svg
-      className={cn("shrink-0", monochrome && "text-white/80", className)}
+      className={cn("shrink-0", monochrome && "text-[#F0EFE2]/80", className)}
       viewBox={viewBox}
       aria-hidden
       xmlns="http://www.w3.org/2000/svg"

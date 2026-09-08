@@ -309,11 +309,11 @@ function AgentModeDropdown({
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/10 bg-[#0A0A0A] px-3 text-left text-sm leading-5 text-white/90 hover:border-white/15"
+        className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-white/10 bg-[#0A0A0A] px-3 text-left text-sm leading-5 text-[#F0EFE2]/90 hover:border-white/15"
       >
         <span className="min-w-0 truncate">{agentModeOptionLabel(selected)}</span>
         <ChevronDown
-          className={cn("size-4 shrink-0 text-white/45 transition-transform", open && "rotate-180")}
+          className={cn("size-4 shrink-0 text-[#F0EFE2]/45 transition-transform", open && "rotate-180")}
         />
       </button>
       <AnimatePresence initial={false}>
@@ -346,8 +346,8 @@ function AgentModeDropdown({
                     className={cn(
                       "block w-full px-3 py-2 text-left text-sm leading-5 transition-colors",
                       isHighlighted
-                        ? "bg-[#2563EB] text-white"
-                        : "text-[#111827] hover:bg-[#2563EB] hover:text-white",
+                        ? "bg-[#2563EB] text-[#F0EFE2]"
+                        : "text-[#111827] hover:bg-[#2563EB] hover:text-[#F0EFE2]",
                     )}
                   >
                     {agentModeOptionLabel(mode)}
@@ -849,13 +849,13 @@ export function ContinuityLabAutomationCreate({
   if (templateUnavailable) {
     return (
       <div className="mx-auto max-w-2xl px-5 py-8 pb-20">
-        <nav className="text-xs text-white/45">
-          <Link href="/continuity-lab/automations" className="hover:text-white/70">
+        <nav className="text-xs text-[#F0EFE2]/45">
+          <Link href="/continuity-lab/automations" className="hover:text-[#F0EFE2]/70">
             Automations
           </Link>
         </nav>
-        <h1 className="mt-6 text-2xl font-semibold text-white">{resolvedTemplate?.title}</h1>
-        <p className="mt-4 rounded-md border border-[#2F2F2F] bg-[#111111] px-4 py-3 text-sm text-white/55">
+        <h1 className="mt-6 text-2xl font-semibold text-[#F0EFE2]">{resolvedTemplate?.title}</h1>
+        <p className="mt-4 rounded-md border border-[#2F2F2F] bg-[#111111] px-4 py-3 text-sm text-[#F0EFE2]/55">
           {resolvedTemplate?.description}
         </p>
         <p className="mt-4 text-sm text-amber-200/90">
@@ -875,12 +875,12 @@ export function ContinuityLabAutomationCreate({
   return (
     <div className={cn("mx-auto px-5 py-8 pb-20", isCreate ? "max-w-[820px]" : "max-w-2xl")}>
       <div className="flex items-center justify-between gap-4">
-        <nav className="text-xs text-white/45" aria-label="Breadcrumb">
-          <Link href="/continuity-lab/automations" className="hover:text-white/70">
+        <nav className="text-xs text-[#F0EFE2]/45" aria-label="Breadcrumb">
+          <Link href="/continuity-lab/automations" className="hover:text-[#F0EFE2]/70">
             Automations
           </Link>
-          <span className="mx-1.5 text-white/25">/</span>
-          <span className="text-white/60">{isEdit ? pageTitle : "New Automation"}</span>
+          <span className="mx-1.5 text-[#F0EFE2]/25">/</span>
+          <span className="text-[#F0EFE2]/60">{isEdit ? pageTitle : "New Automation"}</span>
         </nav>
 
         {isEdit ? (
@@ -889,7 +889,7 @@ export function ContinuityLabAutomationCreate({
               type="button"
               disabled={submitting}
               onClick={() => void handleCreate(true)}
-              className="inline-flex h-8 items-center rounded-md border border-white/10 bg-[#1A1A1A] px-3 text-xs font-semibold text-white/85 hover:bg-[#242424] disabled:opacity-40"
+              className="inline-flex h-8 items-center rounded-md border border-white/10 bg-[#1A1A1A] px-3 text-xs font-semibold text-[#F0EFE2]/85 hover:bg-[#242424] disabled:opacity-40"
             >
               Trigger now
             </button>
@@ -897,7 +897,7 @@ export function ContinuityLabAutomationCreate({
               type="button"
               disabled={submitting}
               onClick={() => void handleCreate(false)}
-              className="inline-flex h-8 items-center gap-2 rounded-md border border-white/10 bg-[#1A1A1A] px-3 text-xs font-semibold text-white/75 hover:bg-[#242424] disabled:opacity-40"
+              className="inline-flex h-8 items-center gap-2 rounded-md border border-white/10 bg-[#1A1A1A] px-3 text-xs font-semibold text-[#F0EFE2]/75 hover:bg-[#242424] disabled:opacity-40"
             >
               {submitting ? <Loader2 className="size-3.5 animate-spin" /> : null}
               Save
@@ -931,7 +931,7 @@ export function ContinuityLabAutomationCreate({
       <div className={cn(isCreate ? "mt-5" : "mt-6", "space-y-6")}>
         {!isTemplateFlow && !isCreate ? (
           <section>
-            <label className="text-xs font-semibold text-white/80">Automation name</label>
+            <label className="text-xs font-semibold text-[#F0EFE2]/80">Automation name</label>
             <input
               type="text"
               value={form.name}
@@ -939,7 +939,7 @@ export function ContinuityLabAutomationCreate({
                 setForm((p) => ({ ...p, name: e.target.value, goal: p.goal || e.target.value }))
               }
               placeholder="CI failure with continuity resume"
-              className="mt-2 h-10 w-full rounded-md border border-[#3A3A3A] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-[#6366F1] focus:outline-none"
+              className="mt-2 h-10 w-full rounded-md border border-[#3A3A3A] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#6366F1] focus:outline-none"
             />
           </section>
         ) : null}
@@ -1130,23 +1130,23 @@ function EditAutomationGraphMeta({
 
   return (
     <section className="mt-4 space-y-4">
-      <div className={cn(subtlePanel(), "px-4 py-2.5 text-[17px] font-semibold leading-6 tracking-[-0.01em] text-white/92")}>
+      <div className={cn(subtlePanel(), "px-4 py-2.5 text-[17px] font-semibold leading-6 tracking-[-0.01em] text-[#F0EFE2]/92")}>
         {name}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2.5 text-[13px] leading-5 text-white/60">
+      <div className="mt-3 flex flex-wrap items-center gap-2.5 text-[13px] leading-5 text-[#F0EFE2]/60">
         <ToggleSwitch checked onChange={() => undefined} className="h-6 w-10" />
-        <span className="rounded-full bg-[#2563EB]/20 px-2 py-0.5 text-[12px] font-medium text-white/88">
+        <span className="rounded-full bg-[#2563EB]/20 px-2 py-0.5 text-[12px] font-medium text-[#F0EFE2]/88">
           Active
         </span>
-        <span className="text-white/25">|</span>
+        <span className="text-[#F0EFE2]/25">|</span>
         <span>{createdLabel}</span>
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <p className="text-[13px] leading-5 text-white/70">
-          <span className="font-semibold text-white/90">{history.totalRuns} total runs</span>
-          <span className="mx-1 text-white/35">•</span>
+        <p className="text-[13px] leading-5 text-[#F0EFE2]/70">
+          <span className="font-semibold text-[#F0EFE2]/90">{history.totalRuns} total runs</span>
+          <span className="mx-1 text-[#F0EFE2]/35">•</span>
           <span>{history.attentionRuns} require attention</span>
         </p>
         <Link
@@ -1161,7 +1161,7 @@ function EditAutomationGraphMeta({
         <div className="grid grid-cols-[24px_1fr] gap-2">
           <div className="space-y-2.5 pt-0.5">
             {yLabels.map((label, idx) => (
-              <div key={`${label}-${idx}`} className="h-4 text-right text-[11px] text-white/40">
+              <div key={`${label}-${idx}`} className="h-4 text-right text-[11px] text-[#F0EFE2]/40">
                 {label}
               </div>
             ))}
@@ -1208,7 +1208,7 @@ function EditAutomationGraphMeta({
             ) : null}
           </div>
         </div>
-        <div className="mt-2 grid grid-cols-7 gap-2 text-center text-[12px] text-white/55">
+        <div className="mt-2 grid grid-cols-7 gap-2 text-center text-[12px] text-[#F0EFE2]/55">
           {history.points.map((point) => (
             <span key={point.label}>{point.label}</span>
           ))}
@@ -1232,7 +1232,7 @@ function CreateAutomationNameInput({
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
         placeholder="Automation name"
-        className="h-10 w-full rounded-md border border-white/10 bg-[#1D1D1D] px-3 text-lg font-semibold leading-6 text-white placeholder:text-white/45 focus:border-[#3B82F6] focus:outline-none"
+        className="h-10 w-full rounded-md border border-white/10 bg-[#1D1D1D] px-3 text-lg font-semibold leading-6 text-[#F0EFE2] placeholder:text-[#F0EFE2]/45 focus:border-[#3B82F6] focus:outline-none"
       />
     </section>
   );
@@ -1271,8 +1271,8 @@ function TriggersSection({
     <section>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold leading-5 text-white">Triggers</h2>
-          <p className="mt-1 text-xs leading-5 text-white/45">
+          <h2 className="text-base font-semibold leading-5 text-[#F0EFE2]">Triggers</h2>
+          <p className="mt-1 text-xs leading-5 text-[#F0EFE2]/45">
             Run automation when any of these conditions are met
           </p>
         </div>
@@ -1313,7 +1313,7 @@ function TriggersSection({
                       <button
                         type="button"
                         onClick={() => setSubmenu(null)}
-                        className="mb-1 flex w-full items-center gap-1 px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-white/45 hover:bg-[#141414]"
+                        className="mb-1 flex w-full items-center gap-1 px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45 hover:bg-[#141414]"
                       >
                         <ChevronLeft className="size-3.5" />
                         {activeGroup.label}
@@ -1323,7 +1323,7 @@ function TriggersSection({
                           key={option.type}
                           type="button"
                           onClick={() => onAddTrigger(option.type)}
-                          className="block w-full px-3 py-2 text-left text-xs text-white/80 hover:bg-[#141414]"
+                          className="block w-full px-3 py-2 text-left text-xs text-[#F0EFE2]/80 hover:bg-[#141414]"
                         >
                           {option.label}
                         </button>
@@ -1350,13 +1350,13 @@ function TriggersSection({
                               }
                               setSubmenu(group.id);
                             }}
-                            className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-xs text-white/85 hover:bg-[#141414]"
+                            className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-xs text-[#F0EFE2]/85 hover:bg-[#141414]"
                           >
                             <span className="inline-flex items-center gap-2">
-                              <Icon className="size-3.5 text-white/65" />
+                              <Icon className="size-3.5 text-[#F0EFE2]/65" />
                               {group.label}
                             </span>
-                            {group.options ? <ChevronRight className="size-3.5 text-white/45" /> : null}
+                            {group.options ? <ChevronRight className="size-3.5 text-[#F0EFE2]/45" /> : null}
                           </button>
                         );
                       })}
@@ -1378,7 +1378,7 @@ function TriggersSection({
           >
             Add Trigger
           </button>
-          <Trash2 className="size-3.5 text-white/35" aria-hidden />
+          <Trash2 className="size-3.5 text-[#F0EFE2]/35" aria-hidden />
         </div>
       ) : (
         <>
@@ -1392,11 +1392,11 @@ function TriggersSection({
                         <button
                           type="button"
                           onClick={() => onRemoveTrigger(trigger.id)}
-                          className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-transparent px-3 py-1.5 text-xs text-white/80 hover:border-[#6366F1]/40"
+                          className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-transparent px-3 py-1.5 text-xs text-[#F0EFE2]/80 hover:border-[#6366F1]/40"
                           title="Remove trigger"
                         >
                           {trigger.label}
-                          <span className="text-white/45">×</span>
+                          <span className="text-[#F0EFE2]/45">×</span>
                         </button>
                       </li>
                     ))}
@@ -1436,10 +1436,10 @@ function TriggersSection({
 const INSTRUCTION_PILL_CLASS =
   "inline-flex items-center gap-1 rounded-[5px] bg-[#2563EB]/20 px-2 py-0.5 text-xs font-medium text-[#60A5FA] hover:bg-[#2563EB]/30";
 
-const INSTRUCTION_STATIC_TEXT_CLASS = "text-xs text-white/70";
+const INSTRUCTION_STATIC_TEXT_CLASS = "text-xs text-[#F0EFE2]/70";
 
 const INSTRUCTION_ICON_BUTTON_CLASS =
-  "rounded p-1 text-white/40 transition hover:bg-white/[0.06] hover:text-white/75";
+  "rounded p-1 text-[#F0EFE2]/40 transition hover:bg-white/[0.06] hover:text-[#F0EFE2]/75";
 
 function useInstructionDropdownDismiss(
   open: boolean,
@@ -1499,7 +1499,7 @@ function StartSessionInstructionCard({
     <div className={cn(subtlePanel(), "mt-3 px-3 py-3")}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <MessageCircle className="size-3.5 text-white/55" />
+          <MessageCircle className="size-3.5 text-[#F0EFE2]/55" />
           <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#2563EB]/20 px-2 py-0.5 text-xs font-medium text-[#60A5FA]">
             Start session
           </span>
@@ -1529,7 +1529,7 @@ function StartSessionInstructionCard({
         onChange={(e) => onInstructionsChange(e.target.value)}
         rows={6}
         placeholder="i.e. Write a summary of the session"
-        className="mt-3 w-full resize-y bg-transparent text-sm leading-relaxed text-white placeholder:text-white/30 focus:outline-none"
+        className="mt-3 w-full resize-y bg-transparent text-sm leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/30 focus:outline-none"
       />
       <div className="mt-3 flex justify-end">
         <div ref={autoStartRef} className="relative">
@@ -1538,7 +1538,7 @@ function StartSessionInstructionCard({
             onClick={() => setAutoStartOpen((open) => !open)}
             className={cn(
               INSTRUCTION_PILL_CLASS,
-              "gap-1.5 text-white/85 hover:text-white",
+              "gap-1.5 text-[#F0EFE2]/85 hover:text-[#F0EFE2]",
             )}
             aria-expanded={autoStartOpen}
             aria-haspopup="listbox"
@@ -1574,12 +1574,12 @@ function StartSessionInstructionCard({
                         setAutoStartOpen(false);
                       }}
                       className={cn(
-                        "flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs text-white/85 hover:bg-[#141414]",
-                        selected && "text-white",
+                        "flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs text-[#F0EFE2]/85 hover:bg-[#141414]",
+                        selected && "text-[#F0EFE2]",
                       )}
                     >
                       <span>{opt.label}</span>
-                      {selected ? <Check className="size-3 text-white/85" /> : null}
+                      {selected ? <Check className="size-3 text-[#F0EFE2]/85" /> : null}
                     </button>
                   );
                 })}
@@ -1676,8 +1676,8 @@ function InstructionsSection({
     <section>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-white">Instructions</h2>
-          <p className="mt-1 text-xs text-white/45">
+          <h2 className="text-sm font-semibold text-[#F0EFE2]">Instructions</h2>
+          <p className="mt-1 text-xs text-[#F0EFE2]/45">
             What MemoryOS does when triggers are activated
           </p>
         </div>
@@ -1706,17 +1706,17 @@ function InstructionsSection({
                   <button
                     type="button"
                     onClick={() => addInstruction("message_session")}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-white/85 hover:bg-[#141414]"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-[#F0EFE2]/85 hover:bg-[#141414]"
                   >
-                    <Send className="size-3.5 text-white/70" />
+                    <Send className="size-3.5 text-[#F0EFE2]/70" />
                     Message session
                   </button>
                   <button
                     type="button"
                     onClick={() => addInstruction("email_notification")}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-white/85 hover:bg-[#141414]"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-[#F0EFE2]/85 hover:bg-[#141414]"
                   >
-                    <Bell className="size-3.5 text-white/70" />
+                    <Bell className="size-3.5 text-[#F0EFE2]/70" />
                     Email notification
                   </button>
                 </motion.div>
@@ -1808,7 +1808,7 @@ function InstructionEmailRow({
     <div className={cn(subtlePanel(), "flex items-center gap-3 px-3 py-2.5")}>
       <div className="flex flex-1 flex-col gap-1">
         <div className="flex items-center gap-2">
-          <Mail className="size-3.5 text-white/55" />
+          <Mail className="size-3.5 text-[#F0EFE2]/55" />
           <button type="button" className={INSTRUCTION_PILL_CLASS} onClick={() => undefined}>
             Email notification
           </button>
@@ -1843,12 +1843,12 @@ function InstructionEmailRow({
                           setWhenOpen(false);
                         }}
                         className={cn(
-                          "flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs text-white/85 hover:bg-[#141414]",
-                          selected && "text-white",
+                          "flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs text-[#F0EFE2]/85 hover:bg-[#141414]",
+                          selected && "text-[#F0EFE2]",
                         )}
                       >
                         <span>{labelForWhen(opt)}</span>
-                        {selected ? <Check className="size-3 text-white/85" /> : null}
+                        {selected ? <Check className="size-3 text-[#F0EFE2]/85" /> : null}
                       </button>
                     );
                   })}
@@ -1861,7 +1861,7 @@ function InstructionEmailRow({
       <button
         type="button"
         onClick={onRemove}
-        className="shrink-0 text-white/40 hover:text-white"
+        className="shrink-0 text-[#F0EFE2]/40 hover:text-[#F0EFE2]"
         aria-label="Remove email instruction"
       >
         <Trash2 className="size-3.5" />
@@ -1916,7 +1916,7 @@ function InstructionMessageRow({
       <div className="flex items-center justify-between gap-3">
         <div className="flex flex-1 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
-            <Send className="size-3.5 text-white/55" />
+            <Send className="size-3.5 text-[#F0EFE2]/55" />
             <button type="button" className={INSTRUCTION_PILL_CLASS} onClick={() => undefined}>
               Message session
             </button>
@@ -1940,13 +1940,13 @@ function InstructionMessageRow({
                     className="absolute left-0 z-20 mt-1 w-64 rounded-md border border-white/10 bg-[#0E0E10] p-2 shadow-xl"
                   >
                     <div className="relative">
-                      <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-white/40" />
+                      <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-[#F0EFE2]/40" />
                       <input
                         type="search"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search sessions"
-                        className="h-8 w-full rounded-md border border-white/10 bg-transparent pl-7 pr-2 text-xs text-white placeholder:text-white/35"
+                        className="h-8 w-full rounded-md border border-white/10 bg-transparent pl-7 pr-2 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/35"
                       />
                     </div>
                     <div className="mt-2 max-h-52 overflow-y-auto">
@@ -1961,13 +1961,13 @@ function InstructionMessageRow({
                             });
                             setSessionOpen(false);
                           }}
-                          className="block w-full truncate rounded px-2 py-1.5 text-left text-xs text-white/85 hover:bg-[#141414]"
+                          className="block w-full truncate rounded px-2 py-1.5 text-left text-xs text-[#F0EFE2]/85 hover:bg-[#141414]"
                         >
                           {session.title}
                         </button>
                       ))}
                       {filtered.length === 0 ? (
-                        <p className="px-2 py-1.5 text-xs text-white/45">No matching sessions</p>
+                        <p className="px-2 py-1.5 text-xs text-[#F0EFE2]/45">No matching sessions</p>
                       ) : null}
                     </div>
                   </motion.div>
@@ -1975,19 +1975,19 @@ function InstructionMessageRow({
               </AnimatePresence>
             </div>
           </div>
-          <p className="mt-1 text-xs text-white/45">i.e. Write a prompt</p>
+          <p className="mt-1 text-xs text-[#F0EFE2]/45">i.e. Write a prompt</p>
           <textarea
             value={instruction.messagePrompt}
             onChange={(e) => onChange({ messagePrompt: e.target.value })}
             rows={2}
             placeholder="Write a prompt"
-            className="mt-1 w-full resize-y bg-transparent text-xs leading-snug text-white placeholder:text-white/35 focus:outline-none"
+            className="mt-1 w-full resize-y bg-transparent text-xs leading-snug text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:outline-none"
           />
         </div>
         <button
           type="button"
           onClick={onRemove}
-          className="shrink-0 text-white/40 hover:text-white"
+          className="shrink-0 text-[#F0EFE2]/40 hover:text-[#F0EFE2]"
           aria-label="Remove message instruction"
         >
           <Trash2 className="size-3.5" />
@@ -2008,9 +2008,9 @@ function MemoryContinuitySection({
     <section>
       <div className="flex items-center gap-2">
         <MemoryOsBrandIcon className="size-4" />
-        <h2 className="text-sm font-semibold text-white">Memory & continuity</h2>
+        <h2 className="text-sm font-semibold text-[#F0EFE2]">Memory & continuity</h2>
       </div>
-      <p className="mt-1 text-xs text-white/45">
+      <p className="mt-1 text-xs text-[#F0EFE2]/45">
         MemoryOS-native capabilities — always honest, no fake third-party memory.
       </p>
       <ul className="mt-4 space-y-2">
@@ -2031,8 +2031,8 @@ function MemoryContinuitySection({
                 className="mt-0.5 size-4 shrink-0 accent-[#6366F1]"
               />
               <span className="min-w-0">
-                <span className="text-xs font-semibold text-white">{opt.label}</span>
-                <span className="mt-0.5 block text-[11px] leading-relaxed text-white/45">
+                <span className="text-xs font-semibold text-[#F0EFE2]">{opt.label}</span>
+                <span className="mt-0.5 block text-[11px] leading-relaxed text-[#F0EFE2]/45">
                   {opt.description}
                 </span>
               </span>
@@ -2056,14 +2056,14 @@ function SessionOptionsSection({
 }) {
   return (
     <section>
-      <h2 className="text-sm font-semibold text-white">Notifications & sessions</h2>
-      <p className="mt-1 text-xs text-white/45">
+      <h2 className="text-sm font-semibold text-[#F0EFE2]">Notifications & sessions</h2>
+      <p className="mt-1 text-xs text-[#F0EFE2]/45">
         Optional Slack, email, and child session behavior on completion
       </p>
       <ul className="mt-4 space-y-2">
         <li className={cn(subtlePanel(), "flex items-center gap-3 px-4 py-3")}>
-          <Bell className="size-4 shrink-0 text-white/35" />
-          <label className="flex flex-1 cursor-pointer items-center justify-between gap-3 text-xs text-white/70">
+          <Bell className="size-4 shrink-0 text-[#F0EFE2]/35" />
+          <label className="flex flex-1 cursor-pointer items-center justify-between gap-3 text-xs text-[#F0EFE2]/70">
             <span>Slack notification on complete</span>
             <input
               type="checkbox"
@@ -2075,8 +2075,8 @@ function SessionOptionsSection({
         </li>
         <li className={cn(subtlePanel(), "px-4 py-3")}>
           <div className="flex items-center gap-3">
-            <Mail className="size-4 shrink-0 text-white/35" />
-            <label className="flex flex-1 cursor-pointer items-center justify-between gap-3 text-xs text-white/70">
+            <Mail className="size-4 shrink-0 text-[#F0EFE2]/35" />
+            <label className="flex flex-1 cursor-pointer items-center justify-between gap-3 text-xs text-[#F0EFE2]/70">
               <span>Email notification</span>
               <input
                 type="checkbox"
@@ -2092,7 +2092,7 @@ function SessionOptionsSection({
               value={options.notificationEmail}
               onChange={(e) => onChange("notificationEmail", e.target.value)}
               placeholder="you@company.com"
-              className="mt-2 h-9 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-3 text-xs text-white placeholder:text-white/35 focus:outline-none"
+              className="mt-2 h-9 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-3 text-xs text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:outline-none"
             />
           ) : null}
         </li>
@@ -2150,8 +2150,8 @@ function ConnectorsSection({
     <section>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-white">MCPs</h2>
-          <p className="mt-1 text-xs text-white/45">
+          <h2 className="text-sm font-semibold text-[#F0EFE2]">MCPs</h2>
+          <p className="mt-1 text-xs text-[#F0EFE2]/45">
             Select which connectors you&apos;d like this automation to use
           </p>
         </div>
@@ -2166,17 +2166,17 @@ function ConnectorsSection({
       <div className={cn(subtlePanel(), "mt-4 overflow-hidden")}>
         <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-3 py-2.5">
           <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-white/35" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-[#F0EFE2]/35" />
             <input
               type="search"
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Search MCPs..."
-              className="h-8 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 text-xs leading-4 text-white placeholder:text-white/35 focus:border-white/10 focus:outline-none"
+              className="h-8 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 text-xs leading-4 text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/10 focus:outline-none"
             />
           </div>
           {selectedCount > 0 ? (
-            <span className="shrink-0 rounded-full border border-white/10 bg-transparent px-2.5 py-1 text-[11px] leading-4 text-white/55">
+            <span className="shrink-0 rounded-full border border-white/10 bg-transparent px-2.5 py-1 text-[11px] leading-4 text-[#F0EFE2]/55">
               {selectedCount} selected
             </span>
           ) : null}
@@ -2184,7 +2184,7 @@ function ConnectorsSection({
 
         <ul>
           {loading ? (
-            <li className="flex items-center gap-2 px-3 py-3 text-xs text-white/45">
+            <li className="flex items-center gap-2 px-3 py-3 text-xs text-[#F0EFE2]/45">
               <Loader2 className="size-3 animate-spin" />
               Loading MCPs...
             </li>
@@ -2217,15 +2217,15 @@ function ConnectorsSection({
                       <ConnectorBrandIcon id={row.id} className="size-4" />
                     </span>
                     <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <p className="text-sm font-medium text-white">{row.label}</p>
-                      <p className="truncate text-xs text-white/35">
+                      <p className="text-sm font-medium text-[#F0EFE2]">{row.label}</p>
+                      <p className="truncate text-xs text-[#F0EFE2]/35">
                         {statusText(row)}
                       </p>
                     </div>
                     {badge === "Setup" ? (
                       <Link
                         href={setupHref}
-                        className="rounded border border-white/10 bg-transparent px-2 py-0.5 text-[10px] font-semibold leading-4 text-white/75 hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
+                        className="rounded border border-white/10 bg-transparent px-2 py-0.5 text-[10px] font-semibold leading-4 text-[#F0EFE2]/75 hover:border-white/20 hover:bg-white/[0.04] hover:text-[#F0EFE2]"
                       >
                         Setup
                       </Link>
@@ -2235,7 +2235,7 @@ function ConnectorsSection({
                           "rounded border px-2 py-0.5 text-[10px] font-semibold leading-4",
                           badge === "Built-in"
                             ? "border-[#4338CA]/35 bg-[#4338CA]/14 text-[#60A5FA]"
-                            : "border-white/10 bg-transparent text-white/65",
+                            : "border-white/10 bg-transparent text-[#F0EFE2]/65",
                         )}
                       >
                         {badge}
@@ -2249,7 +2249,7 @@ function ConnectorsSection({
         </ul>
 
         {!loading && visibleRows.length === 0 ? (
-          <p className="px-3 py-8 text-center text-sm font-semibold text-white">
+          <p className="px-3 py-8 text-center text-sm font-semibold text-[#F0EFE2]">
             No MCPs available
           </p>
         ) : null}
@@ -2333,13 +2333,13 @@ function AdvancedSection({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between text-left text-sm font-semibold leading-5 text-white hover:text-white/85"
+        className="flex w-full items-center justify-between text-left text-sm font-semibold leading-5 text-[#F0EFE2] hover:text-[#F0EFE2]/85"
       >
         Advanced
         {open ? (
-          <ChevronDown className="size-4 text-white/55" />
+          <ChevronDown className="size-4 text-[#F0EFE2]/55" />
         ) : (
-          <ChevronRight className="size-4 text-white/55" />
+          <ChevronRight className="size-4 text-[#F0EFE2]/55" />
         )}
       </button>
       {open ? (
@@ -2347,11 +2347,11 @@ function AdvancedSection({
           <div>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-white/75">
+                <div className="flex items-center gap-2 text-xs font-semibold text-[#F0EFE2]/75">
                   <Shield className="size-3.5" />
                   Limits
                 </div>
-                <p className="mt-1 text-xs leading-5 text-white/45">
+                <p className="mt-1 text-xs leading-5 text-[#F0EFE2]/45">
                   Set cost and invocation limits for sessions this automation starts
                 </p>
               </div>
@@ -2372,7 +2372,7 @@ function AdvancedSection({
 
             {limitsEnabled ? (
               <div className={cn(subtlePanel(), "mt-3 space-y-2.5 p-3")}>
-                <label className="flex items-center justify-between gap-3 text-xs leading-5 text-white/80">
+                <label className="flex items-center justify-between gap-3 text-xs leading-5 text-[#F0EFE2]/80">
                   <span className="inline-flex flex-wrap items-center gap-1.5">
                     <span>Set limit of</span>
                     <span className="rounded bg-[#141722] px-1.5 py-0.5 text-[#60A5FA]">
@@ -2391,11 +2391,11 @@ function AdvancedSection({
                     min={1}
                     value={form.limits.costLimitUsd}
                     onChange={(e) => patchLimits("costLimitUsd", Number(e.target.value) || 10)}
-                    className="h-8 w-28 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-white"
+                    className="h-8 w-28 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-[#F0EFE2]"
                   />
                 ) : null}
 
-                <label className="flex items-center justify-between gap-3 text-xs leading-5 text-white/80">
+                <label className="flex items-center justify-between gap-3 text-xs leading-5 text-[#F0EFE2]/80">
                   <span className="inline-flex flex-wrap items-center gap-1.5">
                     <span>Set limit of</span>
                     <span className="rounded bg-[#141722] px-1.5 py-0.5 text-[#60A5FA]">
@@ -2418,7 +2418,7 @@ function AdvancedSection({
                       min={1}
                       value={form.limits.invocationLimit}
                       onChange={(e) => patchLimits("invocationLimit", Number(e.target.value) || 50)}
-                      className="h-8 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-white"
+                      className="h-8 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-[#F0EFE2]"
                       aria-label="Invocation limit"
                     />
                     <input
@@ -2432,7 +2432,7 @@ function AdvancedSection({
                           Math.max(1, Number(e.target.value) || 1),
                         )
                       }
-                      className="h-8 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-white"
+                      className="h-8 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-[#F0EFE2]"
                       aria-label="Invocation window hours"
                     />
                   </div>
@@ -2442,11 +2442,11 @@ function AdvancedSection({
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-xs font-semibold leading-4 text-white/75">
+            <label className="flex items-center gap-2 text-xs font-semibold leading-4 text-[#F0EFE2]/75">
               <Bot className="size-3.5" />
               MemoryOS mode
             </label>
-            <p className="mt-1 text-xs leading-5 text-white/45">
+            <p className="mt-1 text-xs leading-5 text-[#F0EFE2]/45">
               Select the agent mode for sessions spawned by this automation
             </p>
             <AgentModeDropdown
@@ -2458,11 +2458,11 @@ function AdvancedSection({
           <div>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="flex items-center gap-2 text-xs font-semibold leading-4 text-white/75">
-                  <WebhookTriggerIcon className="size-3.5 text-white/65" />
+                <div className="flex items-center gap-2 text-xs font-semibold leading-4 text-[#F0EFE2]/75">
+                  <WebhookTriggerIcon className="size-3.5 text-[#F0EFE2]/65" />
                   Network policy
                 </div>
-                <p className="mt-1 text-xs leading-5 text-white/45">
+                <p className="mt-1 text-xs leading-5 text-[#F0EFE2]/45">
                   Control which network destinations sessions can access
                 </p>
               </div>
@@ -2484,7 +2484,7 @@ function AdvancedSection({
                       value={domain}
                       onChange={(e) => patchDomain(idx, e.target.value)}
                       placeholder="example.com"
-                      className="h-8 flex-1 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-white placeholder:text-white/35"
+                      className="h-8 flex-1 rounded-md border border-white/10 bg-transparent px-2 text-xs leading-4 text-[#F0EFE2] placeholder:text-[#F0EFE2]/35"
                     />
                     <ToggleSwitch checked onChange={(next) => !next && removeDomain(idx)} />
                   </div>
@@ -2492,7 +2492,7 @@ function AdvancedSection({
                 <button
                   type="button"
                   onClick={addDomainRow}
-                  className="inline-flex h-9 w-full items-center gap-1 px-3 text-[11px] font-semibold leading-4 text-white/65 hover:bg-white/[0.03]"
+                  className="inline-flex h-9 w-full items-center gap-1 px-3 text-[11px] font-semibold leading-4 text-[#F0EFE2]/65 hover:bg-white/[0.03]"
                 >
                   <Plus className="size-3.5" />
                   Add domain
@@ -2504,8 +2504,8 @@ function AdvancedSection({
           <div>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold leading-4 text-white/80">Shared scratchpad</p>
-                <p className="mt-1 text-xs leading-5 text-white/45">
+                <p className="text-xs font-semibold leading-4 text-[#F0EFE2]/80">Shared scratchpad</p>
+                <p className="mt-1 text-xs leading-5 text-[#F0EFE2]/45">
                   Shared notes MemoryOS can read and write across every session this automation starts.
                 </p>
               </div>
@@ -2514,7 +2514,7 @@ function AdvancedSection({
                   <button
                     type="button"
                     onClick={cancelScratchpadEditor}
-                    className="inline-flex h-8 items-center rounded-md border border-white/10 bg-transparent px-3 text-xs font-semibold text-white/75 hover:bg-white/[0.03]"
+                    className="inline-flex h-8 items-center rounded-md border border-white/10 bg-transparent px-3 text-xs font-semibold text-[#F0EFE2]/75 hover:bg-white/[0.03]"
                   >
                     Cancel
                   </button>
@@ -2530,7 +2530,7 @@ function AdvancedSection({
                 <button
                   type="button"
                   onClick={openScratchpadEditor}
-                  className="inline-flex h-8 items-center rounded-md border border-white/10 bg-transparent px-3 text-xs font-semibold text-white/80 hover:bg-white/[0.03]"
+                  className="inline-flex h-8 items-center rounded-md border border-white/10 bg-transparent px-3 text-xs font-semibold text-[#F0EFE2]/80 hover:bg-white/[0.03]"
                 >
                   Edit
                 </button>
@@ -2546,7 +2546,7 @@ function AdvancedSection({
               />
             ) : (
               <div className={cn(subtlePanel(), "mt-3 px-3 py-4")}>
-                <p className="max-h-[84px] overflow-hidden text-xs leading-5 text-white/45">
+                <p className="max-h-[84px] overflow-hidden text-xs leading-5 text-[#F0EFE2]/45">
                   {form.sharedScratchpad.trim().length
                     ? form.sharedScratchpad
                     : "No shared content yet. Add notes MemoryOS should carry across every session - learnings, flaky tests, or anything future runs should know."}
@@ -2613,7 +2613,7 @@ function ScratchpadEditorShell({
             onClick={() => onTabChange("edit")}
             className={cn(
               "rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition",
-              tab === "edit" ? "bg-white/10 text-white" : "text-white/55 hover:text-white/80",
+              tab === "edit" ? "bg-white/10 text-[#F0EFE2]" : "text-[#F0EFE2]/55 hover:text-[#F0EFE2]/80",
             )}
           >
             Edit
@@ -2623,13 +2623,13 @@ function ScratchpadEditorShell({
             onClick={() => onTabChange("preview")}
             className={cn(
               "rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition",
-              tab === "preview" ? "bg-white/10 text-white" : "text-white/55 hover:text-white/80",
+              tab === "preview" ? "bg-white/10 text-[#F0EFE2]" : "text-[#F0EFE2]/55 hover:text-[#F0EFE2]/80",
             )}
           >
             Preview
           </button>
         </div>
-        <Maximize2 className="size-3.5 text-white/40" />
+        <Maximize2 className="size-3.5 text-[#F0EFE2]/40" />
       </div>
 
       {tab === "edit" ? (
@@ -2638,10 +2638,10 @@ function ScratchpadEditorShell({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Write your playbook here..."
-          className="min-h-[320px] w-full resize-y bg-transparent px-4 py-3 text-sm leading-6 text-white placeholder:text-white/35 focus:outline-none"
+          className="min-h-[320px] w-full resize-y bg-transparent px-4 py-3 text-sm leading-6 text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:outline-none"
         />
       ) : (
-        <div className="min-h-[320px] whitespace-pre-wrap px-4 py-3 text-sm leading-6 text-white/85">
+        <div className="min-h-[320px] whitespace-pre-wrap px-4 py-3 text-sm leading-6 text-[#F0EFE2]/85">
           {value.trim().length ? value : "No scratchpad content yet."}
         </div>
       )}
@@ -2732,13 +2732,13 @@ function TriggerEditor({
     <div className={cn(subtlePanel(), "p-3")}>
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-xs font-semibold text-white">{trigger.label}</p>
-          <p className="mt-0.5 font-mono text-[10px] text-white/40">{trigger.type}</p>
+          <p className="text-xs font-semibold text-[#F0EFE2]">{trigger.label}</p>
+          <p className="mt-0.5 font-mono text-[10px] text-[#F0EFE2]/40">{trigger.type}</p>
         </div>
         <button
           type="button"
           onClick={onRemove}
-          className="text-white/40 hover:text-white"
+          className="text-[#F0EFE2]/40 hover:text-[#F0EFE2]"
           aria-label="Remove trigger"
         >
           <Trash2 className="size-3.5" />
@@ -2754,7 +2754,7 @@ function TriggerEditor({
           <select
             value={trigger.config.channel ?? ""}
             onChange={(e) => onConfigChange("channel", e.target.value)}
-            className="h-9 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-9 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           >
             <option value="">Select channel…</option>
             <option value="#engineering-bugs">#engineering-bugs</option>
@@ -2767,9 +2767,9 @@ function TriggerEditor({
             value={trigger.config.keywords ?? ""}
             onChange={(e) => onConfigChange("keywords", e.target.value)}
             placeholder="Keywords (comma-separated)"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
-          <label className="flex items-center justify-between gap-2 text-[11px] text-white/60">
+          <label className="flex items-center justify-between gap-2 text-[11px] text-[#F0EFE2]/60">
             <span>Advanced match (thread + keywords)</span>
             <input
               type="checkbox"
@@ -2790,35 +2790,35 @@ function TriggerEditor({
             value={trigger.config.channel ?? ""}
             onChange={(e) => onConfigChange("channel", e.target.value)}
             placeholder="Channel (e.g. #incident-room)"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
           <input
             type="text"
             value={trigger.config.emoji ?? ""}
             onChange={(e) => onConfigChange("emoji", e.target.value)}
             placeholder="Reaction filter (optional)"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
         </div>
       ) : null}
 
       {isGithubTrigger ? (
         <div className="mt-3 space-y-2.5">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-white/80">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-[#F0EFE2]/80">
               <span className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1">
                 {triggerDisplayText}
               </span>
-              <span className="text-white/45">in repo</span>
+              <span className="text-[#F0EFE2]/45">in repo</span>
               <div className="relative min-w-[220px] flex-1">
                 <motion.button
                   type="button"
                   whileHover={reduceMotion ? undefined : { opacity: 0.92 }}
                   whileTap={reduceMotion ? undefined : { scale: 0.99 }}
                   onClick={() => setRepoPickerOpen((open) => !open)}
-                  className="flex h-8 w-full items-center justify-between rounded-md border border-white/10 bg-transparent px-2 text-left text-xs text-white/85"
+                  className="flex h-8 w-full items-center justify-between rounded-md border border-white/10 bg-transparent px-2 text-left text-xs text-[#F0EFE2]/85"
                 >
                   <span className="truncate">{selectedRepo || "Select repository"}</span>
-                  <ChevronDown className="size-3.5 text-white/45" />
+                  <ChevronDown className="size-3.5 text-[#F0EFE2]/45" />
                 </motion.button>
                 <AnimatePresence initial={false}>
                   {repoPickerOpen ? (
@@ -2830,13 +2830,13 @@ function TriggerEditor({
                       className="absolute z-20 mt-1 w-full rounded-md border border-white/10 bg-[#0F1013] p-2 shadow-xl"
                     >
                       <div className="relative">
-                        <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-white/40" />
+                        <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-[#F0EFE2]/40" />
                         <input
                           type="search"
                           value={repoQuery}
                           onChange={(e) => setRepoQuery(e.target.value)}
                           placeholder="Search repos"
-                          className="h-8 w-full rounded-md border border-white/10 bg-transparent pl-7 pr-2 text-xs text-white"
+                          className="h-8 w-full rounded-md border border-white/10 bg-transparent pl-7 pr-2 text-xs text-[#F0EFE2]"
                         />
                       </div>
                       <div className="mt-1 max-h-44 overflow-y-auto">
@@ -2848,13 +2848,13 @@ function TriggerEditor({
                               onConfigChange("repo", repo.fullName);
                               setRepoPickerOpen(false);
                             }}
-                            className="block w-full truncate rounded px-2 py-1.5 text-left text-xs text-white/80 hover:bg-white/[0.04]"
+                            className="block w-full truncate rounded px-2 py-1.5 text-left text-xs text-[#F0EFE2]/80 hover:bg-white/[0.04]"
                           >
                             {repo.fullName}
                           </button>
                         ))}
                         {filteredRepos.length === 0 ? (
-                          <p className="px-2 py-1.5 text-xs text-white/45">No matching repositories</p>
+                          <p className="px-2 py-1.5 text-xs text-[#F0EFE2]/45">No matching repositories</p>
                         ) : null}
                       </div>
                     </motion.div>
@@ -2871,17 +2871,17 @@ function TriggerEditor({
                   value={row.field}
                   onChange={(e) => updateCondition(row.id, { field: e.target.value })}
                   list={`field-options-${trigger.id}`}
-                  className="col-span-4 h-8 rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-white"
+                  className="col-span-4 h-8 rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
                   placeholder="field"
                 />
                 <div className="relative col-span-3">
                   <button
                     type="button"
                     onClick={() => setOperatorOpenId((open) => (open === row.id ? null : row.id))}
-                    className="flex h-8 w-full items-center justify-between rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-white"
+                    className="flex h-8 w-full items-center justify-between rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
                   >
                     {row.operator}
-                    <ChevronDown className="size-3 text-white/45" />
+                    <ChevronDown className="size-3 text-[#F0EFE2]/45" />
                   </button>
                   <AnimatePresence initial={false}>
                     {operatorOpenId === row.id ? (
@@ -2900,7 +2900,7 @@ function TriggerEditor({
                               updateCondition(row.id, { operator });
                               setOperatorOpenId(null);
                             }}
-                            className="block w-full rounded px-2 py-1 text-left text-xs text-white/80 hover:bg-white/[0.04]"
+                            className="block w-full rounded px-2 py-1 text-left text-xs text-[#F0EFE2]/80 hover:bg-white/[0.04]"
                           >
                             {operator}
                           </button>
@@ -2913,13 +2913,13 @@ function TriggerEditor({
                   type="text"
                   value={row.value}
                   onChange={(e) => updateCondition(row.id, { value: e.target.value })}
-                  className="col-span-4 h-8 rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-white"
+                  className="col-span-4 h-8 rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
                   placeholder="value"
                 />
                 <button
                   type="button"
                   onClick={() => removeCondition(row.id)}
-                  className="col-span-1 inline-flex h-8 items-center justify-center rounded-md border border-white/10 text-white/65 hover:text-white disabled:opacity-35"
+                  className="col-span-1 inline-flex h-8 items-center justify-center rounded-md border border-white/10 text-[#F0EFE2]/65 hover:text-[#F0EFE2] disabled:opacity-35"
                   disabled={conditions.length <= 1}
                   aria-label="Remove condition"
                 >
@@ -2935,13 +2935,13 @@ function TriggerEditor({
             <button
               type="button"
               onClick={addCondition}
-              className="inline-flex h-8 items-center gap-1 rounded-md border border-white/10 px-2.5 text-xs text-white/75 hover:bg-white/[0.03]"
+              className="inline-flex h-8 items-center gap-1 rounded-md border border-white/10 px-2.5 text-xs text-[#F0EFE2]/75 hover:bg-white/[0.03]"
             >
               <Plus className="size-3.5" />
               Add condition
             </button>
           </div>
-          <p className="rounded-md border border-white/[0.06] bg-[#111111] px-3 py-2 text-[11px] leading-5 text-white/65">
+          <p className="rounded-md border border-white/[0.06] bg-[#111111] px-3 py-2 text-[11px] leading-5 text-[#F0EFE2]/65">
             For security reasons, automations don&apos;t trigger for events from public GitHub
             repositories, and public repos aren&apos;t shown in the repository picker.
           </p>
@@ -2954,12 +2954,12 @@ function TriggerEditor({
             type="text"
             value={trigger.config.command ?? "/memoryos"}
             onChange={(e) => onConfigChange("command", e.target.value)}
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 font-mono text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 font-mono text-xs text-[#F0EFE2]"
           />
           <select
             value={trigger.config.repo ?? ""}
             onChange={(e) => onConfigChange("repo", e.target.value)}
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           >
             <option value="">All repos</option>
             {repos.map((r) => (
@@ -2978,14 +2978,14 @@ function TriggerEditor({
             value={trigger.config.projectKey ?? ""}
             onChange={(e) => onConfigChange("projectKey", e.target.value)}
             placeholder="Project key (e.g. ENG)"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
           <input
             type="text"
             value={trigger.config.event ?? "created,updated"}
             onChange={(e) => onConfigChange("event", e.target.value)}
             placeholder="Events: created, updated"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
         </div>
       ) : null}
@@ -2997,14 +2997,14 @@ function TriggerEditor({
             value={trigger.config.teamKey ?? ""}
             onChange={(e) => onConfigChange("teamKey", e.target.value)}
             placeholder="Linear team key"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
           <input
             type="text"
             value={trigger.config.event ?? "created,updated"}
             onChange={(e) => onConfigChange("event", e.target.value)}
             placeholder="Events: created, updated"
-            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-white"
+            className="h-8 w-full rounded-md border border-[#3A3A3A] bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
           />
         </div>
       ) : null}
@@ -3012,20 +3012,20 @@ function TriggerEditor({
       {isWebhookTrigger ? (
         <div className="mt-3 space-y-2">
           <div className="space-y-1">
-            <label className="text-[11px] text-white/55">Payload filter</label>
+            <label className="text-[11px] text-[#F0EFE2]/55">Payload filter</label>
             <input
               type="text"
               value={trigger.config.payloadFilter ?? ""}
               onChange={(e) => onConfigChange("payloadFilter", e.target.value)}
               placeholder='e.g. payload.repository.full_name equals "memoryos/repo"'
-              className="h-8 w-full rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-white"
+              className="h-8 w-full rounded-md border border-white/10 bg-[#0A0A0A] px-2 text-xs text-[#F0EFE2]"
             />
-            <p className="text-[11px] leading-4 text-white/45">
+            <p className="text-[11px] leading-4 text-[#F0EFE2]/45">
               Optional expression to filter webhook payloads before starting the automation.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-white/10 px-2 py-2">
-            <span className="font-mono text-[11px] text-white/70">
+            <span className="font-mono text-[11px] text-[#F0EFE2]/70">
               {trigger.config.webhookSecret ?? "whsec_••••••••"}
             </span>
             <button
@@ -3033,7 +3033,7 @@ function TriggerEditor({
               onClick={() =>
                 onConfigChange("webhookSecret", `whsec_${Math.random().toString(36).slice(2, 18)}`)
               }
-              className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-[11px] text-white/75 hover:bg-white/[0.04]"
+              className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/[0.04]"
             >
               <RefreshCcw className="size-3" />
               Regenerate secret
@@ -3043,7 +3043,7 @@ function TriggerEditor({
       ) : null}
 
       {trigger.type === "memoryos_handoff" ? (
-        <p className="mt-3 text-[11px] leading-relaxed text-white/45">
+        <p className="mt-3 text-[11px] leading-relaxed text-[#F0EFE2]/45">
           Fires when a continuity handoff is queued from a session or automation run.
         </p>
       ) : null}
@@ -3055,7 +3055,7 @@ function renderConnectBanner(label: string, ok: boolean | undefined, loadingConn
   if (loadingConnectors || ok) return null;
   return (
     <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-[#2F2F2F] bg-[#0A0A0A] px-3 py-2">
-      <p className="text-[11px] text-white/55">Connect {label} to use this trigger</p>
+      <p className="text-[11px] text-[#F0EFE2]/55">Connect {label} to use this trigger</p>
       <Link
         href={CONNECTORS_CONSOLE_HREF}
         className="inline-flex h-7 items-center rounded-md bg-white px-3 text-[10px] font-semibold text-[#0A0A0A]"

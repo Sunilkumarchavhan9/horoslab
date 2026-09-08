@@ -39,7 +39,7 @@ function AskFab({ expandLabel, onExpand }: { expandLabel: string; onExpand: () =
       onClick={onExpand}
       className={cn(
         "group inline-flex items-center gap-2.5 rounded-full px-4 py-2.5",
-        "border border-white/[0.06] bg-[#1a1a1a]/95 text-white backdrop-blur-sm",
+        "border border-white/[0.06] bg-[#1a1a1a]/95 text-[#F0EFE2] backdrop-blur-sm",
         "transition duration-200",
         "hover:bg-[#222]/95",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6366F1]",
@@ -58,7 +58,7 @@ function CollapseButton({ onCollapse }: { onCollapse: () => void }) {
     <button
       type="button"
       onClick={onCollapse}
-      className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-white/50 hover:bg-[#1A1A1A] hover:text-white"
+      className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-[#F0EFE2]/50 hover:bg-[#1A1A1A] hover:text-[#F0EFE2]"
       aria-label="Minimize ask"
       title="Minimize ask"
     >

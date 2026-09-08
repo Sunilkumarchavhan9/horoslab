@@ -26,14 +26,14 @@ export function ContinuityLabSession({ conversationId }: ContinuityLabSessionPro
         <div className="flex min-w-0 items-center gap-3">
           <Link
             href="/continuity-lab"
-            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-white/70 hover:bg-[#141414] hover:text-white"
+            className="inline-flex size-8 shrink-0 items-center justify-center border border-[#3A3A3A] text-[#F0EFE2]/70 hover:bg-[#141414] hover:text-[#F0EFE2]"
             aria-label="Back to Continuity Lab home"
           >
             <ArrowLeft className="size-4" />
           </Link>
           <div className="min-w-0">
-            <p className="truncate text-xs font-semibold text-white">{sessionLabel}</p>
-            <p className="truncate text-[10px] text-white/45">{repoLabel}</p>
+            <p className="truncate text-xs font-semibold text-[#F0EFE2]">{sessionLabel}</p>
+            <p className="truncate text-[10px] text-[#F0EFE2]/45">{repoLabel}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -50,7 +50,7 @@ export function ContinuityLabSession({ conversationId }: ContinuityLabSessionPro
           </button>
           <Link
             href="/mission-control"
-            className="hidden h-8 items-center border border-[#3A3A3A] px-2.5 text-[11px] font-semibold text-white sm:inline-flex"
+            className="hidden h-8 items-center border border-[#3A3A3A] px-2.5 text-[11px] font-semibold text-[#F0EFE2] sm:inline-flex"
           >
             Mission Control
           </Link>

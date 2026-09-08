@@ -46,17 +46,17 @@ function BriefSection({
 }) {
   if (items.length === 0) {
     return (
-      <p className="text-[11px] text-white/35">
-        <span className="font-semibold text-white/50">{title}:</span> {empty}
+      <p className="text-[11px] text-[#F0EFE2]/35">
+        <span className="font-semibold text-[#F0EFE2]/50">{title}:</span> {empty}
       </p>
     );
   }
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">{title}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">{title}</p>
       <ul className="mt-1 space-y-0.5">
         {items.slice(0, 6).map((item) => (
-          <li key={item} className="text-[11px] leading-snug text-white/75">
+          <li key={item} className="text-[11px] leading-snug text-[#F0EFE2]/75">
             {item}
           </li>
         ))}
@@ -68,7 +68,7 @@ function BriefSection({
 function MemoryList({ memories }: { memories: RetrievedMemoryItem[] }) {
   if (memories.length === 0) {
     return (
-      <p className="text-[11px] text-white/35">No ranked memories returned for this question.</p>
+      <p className="text-[11px] text-[#F0EFE2]/35">No ranked memories returned for this question.</p>
     );
   }
   return (
@@ -83,9 +83,9 @@ function MemoryList({ memories }: { memories: RetrievedMemoryItem[] }) {
               {memory.type}
             </span>
           ) : null}
-          <p className="mt-0.5 leading-snug text-white/80">{memory.summary}</p>
+          <p className="mt-0.5 leading-snug text-[#F0EFE2]/80">{memory.summary}</p>
           {memory.confidence != null ? (
-            <p className="mt-1 text-[9px] text-white/35">
+            <p className="mt-1 text-[9px] text-[#F0EFE2]/35">
               Confidence {Math.round(memory.confidence * 100)}%
             </p>
           ) : null}
@@ -97,7 +97,7 @@ function MemoryList({ memories }: { memories: RetrievedMemoryItem[] }) {
 
 function ExtractionList({ memories }: { memories: SessionMemoryExtraction[] }) {
   if (memories.length === 0) {
-    return <p className="text-[11px] text-white/35">No extracted session memories yet.</p>;
+    return <p className="text-[11px] text-[#F0EFE2]/35">No extracted session memories yet.</p>;
   }
   return (
     <ul className="space-y-1.5">
@@ -106,10 +106,10 @@ function ExtractionList({ memories }: { memories: SessionMemoryExtraction[] }) {
           <p className="text-[9px] font-semibold uppercase tracking-wide text-indigo-300/90">
             {memory.memoryType.replace(/_/g, " ")}
           </p>
-          <p className="mt-0.5 font-semibold text-white/85">{memory.title}</p>
-          <p className="mt-1 leading-snug text-white/70">{memory.content}</p>
+          <p className="mt-0.5 font-semibold text-[#F0EFE2]/85">{memory.title}</p>
+          <p className="mt-1 leading-snug text-[#F0EFE2]/70">{memory.content}</p>
           {memory.evidence.length > 0 ? (
-            <p className="mt-1 text-[10px] text-white/40">Evidence: {memory.evidence.slice(0, 3).join(" · ")}</p>
+            <p className="mt-1 text-[10px] text-[#F0EFE2]/40">Evidence: {memory.evidence.slice(0, 3).join(" · ")}</p>
           ) : null}
         </li>
       ))}
@@ -124,7 +124,7 @@ function WhySelectedList({
 }) {
   if (items.length === 0) {
     return (
-      <p className="text-[11px] text-white/35">No explicit provenance reasons were returned.</p>
+      <p className="text-[11px] text-[#F0EFE2]/35">No explicit provenance reasons were returned.</p>
     );
   }
 
@@ -134,8 +134,8 @@ function WhySelectedList({
         const mythicTags = (item.reasonTags ?? []).filter((tag) => tag.includes("mythic_"));
         return (
           <li key={item.memoryId} className={cn(subtlePanel(), "px-2.5 py-2 text-[11px]")}>
-            <p className="leading-snug text-white/80">{item.summary}</p>
-            <p className="mt-1 text-[9px] text-white/40">
+            <p className="leading-snug text-[#F0EFE2]/80">{item.summary}</p>
+            <p className="mt-1 text-[9px] text-[#F0EFE2]/40">
               Score {item.finalScore.toFixed(3)}
               {item.contractCategory ? ` · ${item.contractCategory}` : ""}
             </p>
@@ -282,8 +282,8 @@ export function ContinuityLabSessionContinuityPanel({
     <div className="flex min-h-0 flex-col p-3">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div>
-          <p className="text-xs font-semibold text-white">Continuity</p>
-          <p className="mt-0.5 text-[11px] text-white/45">
+          <p className="text-xs font-semibold text-[#F0EFE2]">Continuity</p>
+          <p className="mt-0.5 text-[11px] text-[#F0EFE2]/45">
             Resume brief, retrieve, and handoff from MemoryOS APIs.
           </p>
         </div>
@@ -291,7 +291,7 @@ export function ContinuityLabSessionContinuityPanel({
           type="button"
           onClick={() => void load()}
           disabled={loading}
-          className="inline-flex size-7 shrink-0 items-center justify-center text-white/50 hover:bg-[#141414] hover:text-white disabled:opacity-40"
+          className="inline-flex size-7 shrink-0 items-center justify-center text-[#F0EFE2]/50 hover:bg-[#141414] hover:text-[#F0EFE2] disabled:opacity-40"
           aria-label="Refresh continuity context"
         >
           <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
@@ -303,18 +303,18 @@ export function ContinuityLabSessionContinuityPanel({
           <p className="text-[10px] font-semibold uppercase tracking-wide text-indigo-200/80">
             Resume confidence
           </p>
-          <p className="mt-0.5 text-lg font-semibold tabular-nums text-white">{score}%</p>
+          <p className="mt-0.5 text-lg font-semibold tabular-nums text-[#F0EFE2]">{score}%</p>
         </div>
       ) : null}
 
       {launchContext?.briefSummary ? (
-        <p className={cn(subtlePanel(), "mb-3 px-2.5 py-2 text-[11px] leading-relaxed text-white/70")}>
+        <p className={cn(subtlePanel(), "mb-3 px-2.5 py-2 text-[11px] leading-relaxed text-[#F0EFE2]/70")}>
           {launchContext.briefSummary}
         </p>
       ) : null}
 
       {loading ? (
-        <div className="flex items-center gap-2 py-6 text-xs text-white/45">
+        <div className="flex items-center gap-2 py-6 text-xs text-[#F0EFE2]/45">
           <Loader2 className="size-4 animate-spin" />
           Loading continuity context…
         </div>
@@ -326,15 +326,15 @@ export function ContinuityLabSessionContinuityPanel({
             <div className="space-y-3">
               {brief.currentGoal ? (
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                     Current goal
                   </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-white/85">{brief.currentGoal}</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/85">{brief.currentGoal}</p>
                 </div>
               ) : null}
               {brief.nextBestAction ? (
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                     Next best action
                   </p>
                   <p className="mt-1 text-[11px] leading-relaxed text-indigo-100/90">
@@ -350,10 +350,10 @@ export function ContinuityLabSessionContinuityPanel({
                 empty="No recent changes in memory"
               />
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                   Why this context was selected
                 </p>
-                <p className="mt-1 text-[11px] text-white/35">
+                <p className="mt-1 text-[11px] text-[#F0EFE2]/35">
                   Ranked reasons for the loaded context, including Mythic lineage when a successful run matched this project.
                 </p>
                 <div className="mt-1.5">
@@ -365,10 +365,10 @@ export function ContinuityLabSessionContinuityPanel({
 
           <div className="space-y-4">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                 Injected Context
               </p>
-              <p className="mt-1 text-[11px] text-white/35">
+              <p className="mt-1 text-[11px] text-[#F0EFE2]/35">
                 Memory injected before the task starts, so the next agent inherits the same context.
               </p>
               <div className="mt-1.5">
@@ -377,10 +377,10 @@ export function ContinuityLabSessionContinuityPanel({
             </div>
 
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                 New Memories Created
               </p>
-              <p className="mt-1 text-[11px] text-white/35">
+              <p className="mt-1 text-[11px] text-[#F0EFE2]/35">
                 Decision memory, bug fix memory, experience learned, handoff packet, and playbook.
               </p>
               <div className="mt-1.5">
@@ -389,10 +389,10 @@ export function ContinuityLabSessionContinuityPanel({
             </div>
 
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                 Experience Learned
               </p>
-              <ul className="mt-1 space-y-1 text-[11px] leading-relaxed text-white/75">
+              <ul className="mt-1 space-y-1 text-[11px] leading-relaxed text-[#F0EFE2]/75">
                 {handoffSummary.experienceLearned.length > 0 ? (
                   handoffSummary.experienceLearned.map((item: string) => <li key={item}>{item}</li>)
                 ) : (
@@ -405,36 +405,36 @@ export function ContinuityLabSessionContinuityPanel({
               <p className="text-[10px] font-semibold uppercase tracking-wide text-indigo-300/90">
                 Reusable Skill
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-white/80">{playbookSummary.title}</p>
-              <p className="mt-1 text-[11px] leading-relaxed text-white/55">{playbookSummary.whenToUse}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/80">{playbookSummary.title}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/55">{playbookSummary.whenToUse}</p>
             </div>
 
             <div className="border border-[#2F2F2F] bg-[#111111] px-2.5 py-2">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-indigo-300/90">
                 Handoff Packet
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-white/80">{handoffSummary.summary}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/80">{handoffSummary.summary}</p>
               {handoffSummary.recommendedNextActions.length > 0 ? (
-                <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-white/65">
+                <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-[#F0EFE2]/65">
                   {handoffSummary.recommendedNextActions.slice(0, 4).map((item: string) => (
                     <li key={item}>- {item}</li>
                   ))}
                 </ul>
               ) : null}
-              <p className="mt-2 text-[10px] text-white/40">{handoffSummary.sameBugDetectionHint}</p>
+              <p className="mt-2 text-[10px] text-[#F0EFE2]/40">{handoffSummary.sameBugDetectionHint}</p>
             </div>
           </div>
 
           {handoff ? (
             <div className="border-t border-[#2F2F2F] pt-3">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
                 Handoff trace
               </p>
               {handoff.summary ? (
-                <p className="mt-1 text-[11px] leading-relaxed text-white/75">{handoff.summary}</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/75">{handoff.summary}</p>
               ) : null}
               {handoff.currentState ? (
-                <p className="mt-2 text-[11px] text-white/55">{handoff.currentState}</p>
+                <p className="mt-2 text-[11px] text-[#F0EFE2]/55">{handoff.currentState}</p>
               ) : null}
               {handoff.openLoops.length > 0 ? (
                 <BriefSection title="Open loops" items={handoff.openLoops} empty="" />
@@ -448,7 +448,7 @@ export function ContinuityLabSessionContinuityPanel({
               ) : null}
               {handoffMemories.length > 0 ? (
                 <div className="mt-2">
-                  <p className="text-[10px] text-white/40">Key memories</p>
+                  <p className="text-[10px] text-[#F0EFE2]/40">Key memories</p>
                   <div className="mt-1">
                     <MemoryList memories={handoffMemories} />
                   </div>

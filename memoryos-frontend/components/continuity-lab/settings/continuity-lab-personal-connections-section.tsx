@@ -94,7 +94,7 @@ export function ContinuityLabPersonalConnectionsSection() {
         <SettingsFlatPanel>
           <PersonalConnectionRow
             icon={
-              <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] bg-[#0A0A0A] text-white/70">
+              <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-white/[0.08] bg-[#0A0A0A] text-[#F0EFE2]/70">
                 <Laptop className="size-4" aria-hidden />
               </span>
             }
@@ -151,7 +151,7 @@ export function ContinuityLabPersonalConnectionsSection() {
             footer={actionError}
           />
         </SettingsFlatPanel>
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-[#F0EFE2]/40">
           <Link
             href={ORG_CONNECTIONS_HREF}
             className="font-medium text-indigo-300/90 hover:text-indigo-200"
@@ -166,7 +166,7 @@ export function ContinuityLabPersonalConnectionsSection() {
         description="Connect your personal accounts to use team-enabled MCPs"
       >
         {installedMcps.length === 0 ? (
-          <div className={cn(subtlePanel(), "px-4 py-8 text-center text-sm text-white/45")}>
+          <div className={cn(subtlePanel(), "px-4 py-8 text-center text-sm text-[#F0EFE2]/45")}>
             No MCPs
           </div>
         ) : (
@@ -185,15 +185,15 @@ export function ContinuityLabPersonalConnectionsSection() {
                     />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-white">{entry.name}</p>
-                    <p className="text-xs text-white/45">Installed in this browser</p>
+                    <p className="text-sm font-medium text-[#F0EFE2]">{entry.name}</p>
+                    <p className="text-xs text-[#F0EFE2]/45">Installed in this browser</p>
                   </div>
                 </li>
               ))}
             </ul>
           </SettingsFlatPanel>
         )}
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-[#F0EFE2]/40">
           Personal MCP installs are stored locally until server-side MCP accounts ship.{" "}
           <Link
             href={ORG_MCP_HREF}
@@ -226,8 +226,8 @@ function PersonalConnectionRow({
         <div className="flex min-w-0 items-start gap-3">
           {icon}
           <div className="min-w-0">
-            <p className="text-sm font-medium text-white">{title}</p>
-            <p className="mt-0.5 text-xs text-white/45">{description}</p>
+            <p className="text-sm font-medium text-[#F0EFE2]">{title}</p>
+            <p className="mt-0.5 text-xs text-[#F0EFE2]/45">{description}</p>
           </div>
         </div>
         <div className="shrink-0 sm:pl-2">{action}</div>

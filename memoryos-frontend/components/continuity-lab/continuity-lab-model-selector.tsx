@@ -57,7 +57,7 @@ export function ContinuityLabModelSelector({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       {!compact ? (
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
           Model
         </span>
       ) : null}
@@ -67,7 +67,7 @@ export function ContinuityLabModelSelector({
           disabled={loading || saving}
           onChange={(e) => void handleChange(e.target.value)}
           className={cn(
-            "appearance-none border border-[#3A3A3A] bg-[#111111] pr-8 text-white focus:border-[#6366F1] focus:outline-none",
+            "appearance-none border border-[#3A3A3A] bg-[#111111] pr-8 text-[#F0EFE2] focus:border-[#6366F1] focus:outline-none",
             compact ? "h-8 min-w-[10rem] px-2 text-[11px]" : "h-9 min-w-[12rem] px-3 text-xs",
           )}
           aria-label="Agent model"
@@ -79,11 +79,11 @@ export function ContinuityLabModelSelector({
           ))}
         </select>
         {saving ? (
-          <Loader2 className="pointer-events-none absolute right-2 top-1/2 size-3.5 -translate-y-1/2 animate-spin text-white/50" />
+          <Loader2 className="pointer-events-none absolute right-2 top-1/2 size-3.5 -translate-y-1/2 animate-spin text-[#F0EFE2]/50" />
         ) : null}
       </div>
       {!compact ? (
-        <span className="hidden max-w-[8rem] truncate text-[10px] text-white/35 sm:inline">
+        <span className="hidden max-w-[8rem] truncate text-[10px] text-[#F0EFE2]/35 sm:inline">
           {label}
         </span>
       ) : null}

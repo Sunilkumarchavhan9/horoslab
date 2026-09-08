@@ -21,10 +21,10 @@ export function WikiSectionFooter({
 
   return (
     <footer className="border-t border-[#2F2F2F] pt-6">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F0EFE2]/35">
         Sources
       </p>
-      <p className="mt-1 text-xs text-white/45">
+      <p className="mt-1 text-xs text-[#F0EFE2]/45">
         Linked from contract memories and execution lineage — not generated prose.
       </p>
       <ul className="mt-3 space-y-1.5">

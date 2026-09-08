@@ -46,10 +46,10 @@ export function ThemeSegmentedControl({
               "rounded-md px-2 py-1.5 text-xs font-medium transition",
               active
                 ? dark
-                  ? "bg-white/[0.12] text-white shadow-sm"
+                  ? "bg-white/[0.12] text-[#F0EFE2] shadow-sm"
                   : "bg-white text-[#111827] shadow-sm"
                 : dark
-                  ? "text-white/55 hover:text-white/80"
+                  ? "text-[#F0EFE2]/55 hover:text-[#F0EFE2]/80"
                   : "text-[#6B7280] hover:text-[#111827]",
             )}
           >

@@ -204,12 +204,12 @@ function PrReadyCard({ artifact }: { artifact: PrReadyArtifact }) {
         </span>
       </div>
 
-      <p className="mt-2 text-[14px] font-medium leading-6 text-white">
+      <p className="mt-2 text-[14px] font-medium leading-6 text-[#F0EFE2]">
         {artifact.title}
       </p>
 
       {artifact.branch || artifact.baseBranch ? (
-        <p className="mt-1 flex items-center gap-1.5 text-[11px] text-white/55">
+        <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#F0EFE2]/55">
           <GitBranch className="size-3 shrink-0" />
           <span className="truncate">
             {artifact.branch ?? "feature branch"}
@@ -218,7 +218,7 @@ function PrReadyCard({ artifact }: { artifact: PrReadyArtifact }) {
         </p>
       ) : null}
 
-      <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[11px] text-white/65">
+      <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[11px] text-[#F0EFE2]/65">
         {typeof artifact.filesChanged === "number" ? (
           <span className="rounded border border-white/10 px-1.5 py-0.5">
             {artifact.filesChanged} file{artifact.filesChanged === 1 ? "" : "s"}
@@ -238,7 +238,7 @@ function PrReadyCard({ artifact }: { artifact: PrReadyArtifact }) {
           target="_blank"
           rel="noreferrer"
           onClick={(event) => event.stopPropagation()}
-          className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-white hover:bg-white/[0.1]"
+          className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-[#F0EFE2] hover:bg-white/[0.1]"
         >
           View PR
           <ExternalLink className="size-3" />
@@ -299,8 +299,8 @@ function StatusCard({ text, repoFullName }: { text: string; repoFullName?: strin
               : {
                   border: "border-white/15",
                   bg: "bg-white/[0.04]",
-                  text: "text-white",
-                  muted: "text-white/55",
+                  text: "text-[#F0EFE2]",
+                  muted: "text-[#F0EFE2]/55",
                   icon: Bot,
                 };
 
@@ -334,7 +334,7 @@ function renderInlineTokens(
       out.push(
         <code
           key={`code-${idx}`}
-          className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[0.92em] text-white/95"
+          className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[0.92em] text-[#F0EFE2]/95"
         >
           {part.slice(1, -1)}
         </code>,
@@ -416,9 +416,9 @@ function renderWorkedRow(trimmed: string, key: string) {
   return (
     <div
       key={key}
-      className="flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.025] px-2 py-1 text-[12px] leading-5 text-white/68"
+      className="flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.025] px-2 py-1 text-[12px] leading-5 text-[#F0EFE2]/68"
     >
-      <Clock3 className="size-3.5 text-white/55" />
+      <Clock3 className="size-3.5 text-[#F0EFE2]/55" />
       <span>Worked for {match[1]}</span>
       {match[2] ? (
         <span className="font-medium text-emerald-400">{match[2]}</span>
@@ -436,11 +436,11 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-start gap-1.5 text-[12px] leading-5 text-white/66"
+        className="flex items-start gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/66"
       >
-        <Brain className="mt-0.5 size-3.5 shrink-0 text-white/45" />
+        <Brain className="mt-0.5 size-3.5 shrink-0 text-[#F0EFE2]/45" />
         <span className="min-w-0">
-          <span className="text-white/72">Accessed knowledge:</span>{" "}
+          <span className="text-[#F0EFE2]/72">Accessed knowledge:</span>{" "}
           <span className="text-sky-300/90">{accessedKnowledgeMatch[1]}</span>
         </span>
       </div>
@@ -452,9 +452,9 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-center gap-1.5 text-[12px] leading-5 text-white/52"
+        className="flex items-center gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/52"
       >
-        <Brain className="size-3.5 text-white/50" />
+        <Brain className="size-3.5 text-[#F0EFE2]/50" />
         <span>Thought for {thoughtMatch[1]}</span>
       </div>
     );
@@ -465,9 +465,9 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-center gap-1.5 text-[12px] leading-5 text-white/62"
+        className="flex items-center gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/62"
       >
-        <FileText className="size-3.5 text-white/50" />
+        <FileText className="size-3.5 text-[#F0EFE2]/50" />
         <span className="min-w-0 truncate">{readMatch[1]}</span>
       </div>
     );
@@ -478,9 +478,9 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-center gap-1.5 text-[12px] leading-5 text-white/72"
+        className="flex items-center gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/72"
       >
-        <PencilLine className="size-3.5 text-white/50" />
+        <PencilLine className="size-3.5 text-[#F0EFE2]/50" />
         <span className="min-w-0 truncate">{editMatch[1]}</span>
         {editMatch[2] ? (
           <span className="font-medium text-emerald-400">{editMatch[2]}</span>
@@ -497,9 +497,9 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-center gap-1.5 text-[12px] leading-5 text-white/45"
+        className="flex items-center gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/45"
       >
-        <CircleDot className="size-3.5 text-white/35" />
+        <CircleDot className="size-3.5 text-[#F0EFE2]/35" />
         <span>Stopped working</span>
       </div>
     );
@@ -522,9 +522,9 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-center gap-1.5 text-[12px] leading-5 text-white/45"
+        className="flex items-center gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/45"
       >
-        <Moon className="size-3.5 text-white/40" />
+        <Moon className="size-3.5 text-[#F0EFE2]/40" />
         <span>{trimmed}</span>
       </div>
     );
@@ -534,9 +534,9 @@ function renderActivityRow(trimmed: string, key: string) {
     return (
       <div
         key={key}
-        className="flex items-start gap-1.5 rounded-md border border-[#2A2E36] bg-[#0F1116] px-2.5 py-1.5 text-[12px] leading-5 text-white/84"
+        className="flex items-start gap-1.5 rounded-md border border-[#2A2E36] bg-[#0F1116] px-2.5 py-1.5 text-[12px] leading-5 text-[#F0EFE2]/84"
       >
-        <TerminalSquare className="mt-0.5 size-3.5 shrink-0 text-white/50" />
+        <TerminalSquare className="mt-0.5 size-3.5 shrink-0 text-[#F0EFE2]/50" />
         <code className="min-w-0 break-all font-mono text-[11.5px] tracking-tight">
           {trimmed}
         </code>
@@ -664,7 +664,7 @@ function renderReadTargets(text: string) {
       {segments.map((segment, idx) => (
         <span
           key={`read-${idx}-${segment}`}
-          className="inline-flex max-w-full items-center rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[11px] text-white/86"
+          className="inline-flex max-w-full items-center rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[11px] text-[#F0EFE2]/86"
           title={segment}
         >
           <span className="truncate">{segment}</span>
@@ -683,9 +683,9 @@ function TimelineGroupCard({
 }) {
   return (
     <details open className="group">
-      <summary className="flex cursor-pointer list-none items-center gap-2 py-1 text-[13px] text-white/76 marker:content-none">
-        <ChevronRight className="size-3.5 text-white/45 transition group-open:rotate-90" />
-        <Clock3 className="size-3.5 text-white/40" />
+      <summary className="flex cursor-pointer list-none items-center gap-2 py-1 text-[13px] text-[#F0EFE2]/76 marker:content-none">
+        <ChevronRight className="size-3.5 text-[#F0EFE2]/45 transition group-open:rotate-90" />
+        <Clock3 className="size-3.5 text-[#F0EFE2]/40" />
         <span>Worked for {group.label}</span>
         {group.plus ? (
           <span className="ml-1 text-[12px] font-semibold text-emerald-400">
@@ -704,10 +704,10 @@ function TimelineGroupCard({
             {group.rows.map((row, idx) => {
               if (row.kind === "knowledge") {
                 return (
-                  <div key={`${group.id}-knowledge-${idx}`} className="flex items-start gap-1.5 text-[12px] text-white/66">
-                    <Brain className="mt-0.5 size-3.5 shrink-0 text-white/42" />
+                  <div key={`${group.id}-knowledge-${idx}`} className="flex items-start gap-1.5 text-[12px] text-[#F0EFE2]/66">
+                    <Brain className="mt-0.5 size-3.5 shrink-0 text-[#F0EFE2]/42" />
                     <span className="min-w-0">
-                      <span className="text-white/70">Accessed knowledge:</span>{" "}
+                      <span className="text-[#F0EFE2]/70">Accessed knowledge:</span>{" "}
                       <span className="text-sky-300/90">{row.text}</span>
                     </span>
                   </div>
@@ -715,18 +715,18 @@ function TimelineGroupCard({
               }
               if (row.kind === "thought") {
                 return (
-                  <div key={`${group.id}-thought-${idx}`} className="flex items-center gap-1.5 text-[12px] text-white/56">
-                    <Brain className="size-3.5 text-white/42" />
+                  <div key={`${group.id}-thought-${idx}`} className="flex items-center gap-1.5 text-[12px] text-[#F0EFE2]/56">
+                    <Brain className="size-3.5 text-[#F0EFE2]/42" />
                     <span>Thought for {row.text}</span>
                   </div>
                 );
               }
               if (row.kind === "read") {
                 return (
-                  <div key={`${group.id}-read-${idx}`} className="flex items-start gap-1.5 text-[12px] text-white/68">
-                    <FileText className="mt-0.5 size-3.5 shrink-0 text-white/42" />
+                  <div key={`${group.id}-read-${idx}`} className="flex items-start gap-1.5 text-[12px] text-[#F0EFE2]/68">
+                    <FileText className="mt-0.5 size-3.5 shrink-0 text-[#F0EFE2]/42" />
                     <span className="inline-flex min-w-0 items-center gap-1.5">
-                      <span className="text-white/72">Read</span>
+                      <span className="text-[#F0EFE2]/72">Read</span>
                       {renderReadTargets(row.text)}
                     </span>
                   </div>
@@ -734,9 +734,9 @@ function TimelineGroupCard({
               }
               if (row.kind === "edit") {
                 return (
-                  <div key={`${group.id}-edit-${idx}`} className="flex items-center gap-1.5 text-[12px] text-white/76">
-                    <PencilLine className="size-3.5 text-white/42" />
-                    <span className="truncate text-white/82">Edited {row.text}</span>
+                  <div key={`${group.id}-edit-${idx}`} className="flex items-center gap-1.5 text-[12px] text-[#F0EFE2]/76">
+                    <PencilLine className="size-3.5 text-[#F0EFE2]/42" />
+                    <span className="truncate text-[#F0EFE2]/82">Edited {row.text}</span>
                     {row.plus ? <span className="font-medium text-emerald-400">{row.plus}</span> : null}
                     {row.minus ? <span className="font-medium text-rose-400">{row.minus}</span> : null}
                   </div>
@@ -744,8 +744,8 @@ function TimelineGroupCard({
               }
               if (row.kind === "tasks") {
                 return (
-                  <div key={`${group.id}-tasks-${idx}`} className="flex items-center gap-1.5 text-[12px] text-white/70">
-                    <Bot className="size-3.5 text-white/45" />
+                  <div key={`${group.id}-tasks-${idx}`} className="flex items-center gap-1.5 text-[12px] text-[#F0EFE2]/70">
+                    <Bot className="size-3.5 text-[#F0EFE2]/45" />
                     <span>
                       Created {row.count} task{row.count === 1 ? "" : "s"}
                     </span>
@@ -754,9 +754,9 @@ function TimelineGroupCard({
               }
               if (row.kind === "step") {
                 return (
-                  <div key={`${group.id}-step-${idx}`} className="flex items-center gap-1.5 text-[12px] text-white/72">
-                    <CircleDot className="size-3.5 text-white/38" />
-                    <span className="rounded-full border border-white/12 bg-white/[0.02] px-1.5 py-0.5 text-[10px] font-medium text-white/68">
+                  <div key={`${group.id}-step-${idx}`} className="flex items-center gap-1.5 text-[12px] text-[#F0EFE2]/72">
+                    <CircleDot className="size-3.5 text-[#F0EFE2]/38" />
+                    <span className="rounded-full border border-white/12 bg-white/[0.02] px-1.5 py-0.5 text-[10px] font-medium text-[#F0EFE2]/68">
                       {row.step}
                     </span>
                     <span className="truncate">{row.label}</span>
@@ -765,8 +765,8 @@ function TimelineGroupCard({
               }
               if (row.kind === "ci") {
                 return (
-                  <div key={`${group.id}-ci-${idx}`} className="flex items-center gap-1.5 text-[12px] text-white/72">
-                    <ShieldCheck className="size-3.5 text-white/45" />
+                  <div key={`${group.id}-ci-${idx}`} className="flex items-center gap-1.5 text-[12px] text-[#F0EFE2]/72">
+                    <ShieldCheck className="size-3.5 text-[#F0EFE2]/45" />
                     <span className="truncate">
                       Viewed CI status {renderInlineTokens(row.text, repoFullName)}
                     </span>
@@ -775,8 +775,8 @@ function TimelineGroupCard({
               }
               if (row.kind === "push") {
                 return (
-                  <div key={`${group.id}-push-${idx}`} className="flex items-center gap-1.5 text-[12px] text-white/72">
-                    <GitBranch className="size-3.5 text-white/45" />
+                  <div key={`${group.id}-push-${idx}`} className="flex items-center gap-1.5 text-[12px] text-[#F0EFE2]/72">
+                    <GitBranch className="size-3.5 text-[#F0EFE2]/45" />
                     <span className="truncate">
                       Pushed branch {renderInlineTokens(row.text, repoFullName)}
                     </span>
@@ -787,10 +787,10 @@ function TimelineGroupCard({
                 return (
                   <div
                     key={`${group.id}-cmd-${idx}`}
-                    className="flex items-start gap-1.5 text-[12px] leading-5 text-white/84"
+                    className="flex items-start gap-1.5 text-[12px] leading-5 text-[#F0EFE2]/84"
                   >
-                    <TerminalSquare className="mt-0.5 size-3.5 shrink-0 text-white/38" />
-                    <code className="break-all font-mono text-[11.5px] tracking-tight text-white/86">{row.text}</code>
+                    <TerminalSquare className="mt-0.5 size-3.5 shrink-0 text-[#F0EFE2]/38" />
+                    <code className="break-all font-mono text-[11.5px] tracking-tight text-[#F0EFE2]/86">{row.text}</code>
                   </div>
                 );
               }
@@ -798,7 +798,7 @@ function TimelineGroupCard({
                 return null;
               }
               return (
-                <div key={`${group.id}-generic-${idx}`} className="text-[12px] text-white/72">
+                <div key={`${group.id}-generic-${idx}`} className="text-[12px] text-[#F0EFE2]/72">
                   {renderInlineTokens(row.text, repoFullName)}
                 </div>
               );
@@ -837,9 +837,9 @@ function DevinReviewCard({ text }: { text: string }) {
         <span>{title}</span>
       </div>
       <p className="mt-1 text-[13px] leading-6 text-amber-100/75">{description}</p>
-      <div className="mt-2 inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-2.5 py-1 text-[12px] text-white/90">
+      <div className="mt-2 inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-2.5 py-1 text-[12px] text-[#F0EFE2]/90">
         <span>Enable auto-fix</span>
-        <ChevronRight className="size-3.5 rotate-90 text-white/65" />
+        <ChevronRight className="size-3.5 rotate-90 text-[#F0EFE2]/65" />
       </div>
     </div>
   );
@@ -847,7 +847,7 @@ function DevinReviewCard({ text }: { text: string }) {
 
 function QuotaStrip() {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-[13px] text-white/70">
+    <div className="flex items-center justify-between gap-3 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-[13px] text-[#F0EFE2]/70">
       <span>You ran out of free credits. Please subscribe to continue.</span>
       <a
         href="/pricing"
@@ -894,7 +894,7 @@ function renderRichText(text: string, repoFullName?: string | null) {
               }),
             );
           }}
-          className="inline-flex items-center gap-2 rounded border border-[#2F2F2F] bg-[#151515] px-2 py-1 text-[11px] text-white/85 hover:bg-[#1C1C1C]"
+          className="inline-flex items-center gap-2 rounded border border-[#2F2F2F] bg-[#151515] px-2 py-1 text-[11px] text-[#F0EFE2]/85 hover:bg-[#1C1C1C]"
         >
           <span className="font-mono">{filePath}</span>
           <span className="text-emerald-400">{additions}</span>
@@ -913,7 +913,7 @@ function renderRichText(text: string, repoFullName?: string | null) {
     if (bulletMatch) {
       return (
         <div key={`line-${lineIndex}`} className="flex items-start gap-2">
-          <span className="mt-1 text-white/70">•</span>
+          <span className="mt-1 text-[#F0EFE2]/70">•</span>
           <span className="min-w-0">
             {renderInlineTokens(bulletMatch[1], repoFullName)}
           </span>
@@ -924,7 +924,7 @@ function renderRichText(text: string, repoFullName?: string | null) {
     if (numberedMatch) {
       return (
         <div key={`line-${lineIndex}`} className="flex items-start gap-2">
-          <span className="mt-0.5 w-4 shrink-0 text-right tabular-nums text-white/75">
+          <span className="mt-0.5 w-4 shrink-0 text-right tabular-nums text-[#F0EFE2]/75">
             {numberedMatch[1]}.
           </span>
           <span className="min-w-0">
@@ -980,7 +980,7 @@ function ThoughtBubble({ bubble }: { bubble: ChatBubble }) {
   return (
     <li className="flex gap-2.5 py-0.5">
       <span className="size-7 shrink-0" aria-hidden />
-      <div className="flex min-w-0 max-w-[48rem] items-center gap-1.5 pl-0.5 text-[12px] leading-5 text-white/50">
+      <div className="flex min-w-0 max-w-[48rem] items-center gap-1.5 pl-0.5 text-[12px] leading-5 text-[#F0EFE2]/50">
         <ChevronRight className="size-3.5" />
         <span>{formatThoughtDuration(bubble.thoughtDurationSec)}</span>
       </div>
@@ -993,7 +993,7 @@ function LiveThinking({ elapsedSec }: { elapsedSec: number }) {
     <li className="flex gap-2.5" aria-live="polite">
       <span className="size-7 shrink-0" aria-hidden />
       <div className="max-w-[48rem] px-0.5 py-0.5">
-        <div className="flex items-center gap-2 text-xs text-white/58">
+        <div className="flex items-center gap-2 text-xs text-[#F0EFE2]/58">
           <span className="relative flex size-2">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-indigo-400/40" />
             <span className="relative inline-flex size-2 rounded-full bg-indigo-400/80" />
@@ -1067,21 +1067,21 @@ function LiveActivityRail({
     <li className="flex gap-2.5">
       <span className="size-7 shrink-0" aria-hidden />
       <div className="min-w-0 max-w-[48rem] rounded-md border border-white/10 bg-white/[0.02] px-2.5 py-2 transition hover:border-white/15">
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-white/45">
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
           Live activity
         </p>
         <div className="space-y-1">
           {recentWorklog.map(({ entry, label }) => (
             <div
               key={entry.id}
-              className="flex items-center gap-1.5 text-[11px] text-white/60"
+              className="flex items-center gap-1.5 text-[11px] text-[#F0EFE2]/60"
             >
-              <CircleDot className="size-3 text-white/35" />
+              <CircleDot className="size-3 text-[#F0EFE2]/35" />
               <span className="truncate">{label}</span>
               {entry.detail ? (
-                <span className="truncate text-white/40">· {entry.detail}</span>
+                <span className="truncate text-[#F0EFE2]/40">· {entry.detail}</span>
               ) : null}
-              <span className="ml-auto shrink-0 text-white/35">
+              <span className="ml-auto shrink-0 text-[#F0EFE2]/35">
                 {formatRelativeTime(entry.timestamp)}
               </span>
             </div>
@@ -1089,13 +1089,13 @@ function LiveActivityRail({
           {recentShell.map((entry) => (
             <div
               key={entry.id}
-              className="flex items-center gap-1.5 text-[11px] text-white/60"
+              className="flex items-center gap-1.5 text-[11px] text-[#F0EFE2]/60"
             >
-              <TerminalSquare className="size-3 text-white/35" />
-              <code className="min-w-0 truncate font-mono text-[11px] text-white/70">
+              <TerminalSquare className="size-3 text-[#F0EFE2]/35" />
+              <code className="min-w-0 truncate font-mono text-[11px] text-[#F0EFE2]/70">
                 {compactShellCommand(entry.command)}
               </code>
-              <span className="ml-auto shrink-0 text-white/35">
+              <span className="ml-auto shrink-0 text-[#F0EFE2]/35">
                 {formatRelativeTime(entry.timestamp)}
               </span>
             </div>
@@ -1201,7 +1201,7 @@ export function ContinuityLabSessionMessages({
           return (
             <li key={bubble.id} className="flex flex-row-reverse gap-2.5">
               <UserAvatar />
-              <div className="max-w-[min(82%,21rem)] rounded-md rounded-br-md border border-[#252A33] bg-[#12151B] px-3 py-2 text-[14px] leading-[1.55] text-white shadow-sm transition hover:border-[#363D4B]">
+              <div className="max-w-[min(82%,21rem)] rounded-md rounded-br-md border border-[#252A33] bg-[#12151B] px-3 py-2 text-[14px] leading-[1.55] text-[#F0EFE2] shadow-sm transition hover:border-[#363D4B]">
                 <div className="space-y-1 break-words">
                   {renderRichText(displayUserText, repoFullName)}
                 </div>
@@ -1232,7 +1232,7 @@ export function ContinuityLabSessionMessages({
                   <StatusCard text={bubble.text} repoFullName={repoFullName} />
                 </div>
               ) : (
-                <div className="min-w-0 max-w-[48rem] px-0.5 py-0.5 text-[14px] leading-[1.65] text-white/92">
+                <div className="min-w-0 max-w-[48rem] px-0.5 py-0.5 text-[14px] leading-[1.65] text-[#F0EFE2]/92">
                   {renderAgentSpecialBlocks(bubble.text) ? (
                     <div className="space-y-1.5 break-words px-1 py-0.5">
                       {renderAgentSpecialBlocks(bubble.text)}
@@ -1266,7 +1266,7 @@ export function ContinuityLabSessionMessages({
       })}
 
       {agentAsleep ? (
-        <li className="flex items-center gap-2 py-1 pl-9 text-[11px] text-white/35">
+        <li className="flex items-center gap-2 py-1 pl-9 text-[11px] text-[#F0EFE2]/35">
           <Moon className="size-3.5 shrink-0" />
           Agent went to sleep
         </li>

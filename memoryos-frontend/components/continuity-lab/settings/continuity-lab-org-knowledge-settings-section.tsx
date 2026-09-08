@@ -74,8 +74,8 @@ function KnowledgeTabButton({
       onClick={onClick}
       className={
         active
-          ? "rounded-md bg-white/[0.06] px-3 py-2 text-sm font-semibold text-white"
-          : "px-3 py-2 text-sm font-semibold text-white/45 hover:text-white/70"
+          ? "rounded-md bg-white/[0.06] px-3 py-2 text-sm font-semibold text-[#F0EFE2]"
+          : "px-3 py-2 text-sm font-semibold text-[#F0EFE2]/45 hover:text-[#F0EFE2]/70"
       }
     >
       {children}
@@ -88,7 +88,7 @@ function ModalClose({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+      className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
       aria-label="Close"
     >
       <X className="size-4" />
@@ -124,66 +124,66 @@ function SecretSidePanel({
   const canStore = name.trim().length > 0 && value.length > 0 && !storing;
 
   return (
-    <aside className="fixed bottom-0 right-0 top-0 z-[80] w-full max-w-[480px] border-l border-white/[0.08] bg-[#111111] p-6 text-white shadow-2xl">
+    <aside className="fixed bottom-0 right-0 top-0 z-[80] w-full max-w-[480px] border-l border-white/[0.08] bg-[#111111] p-6 text-[#F0EFE2] shadow-2xl">
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+        className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
         aria-label="Close"
       >
         <X className="size-4" />
       </button>
       <h2 className="text-lg font-semibold">New organization secret</h2>
-      <p className="mt-1 text-sm text-white/45">Available to all MemoryOS sessions.</p>
+      <p className="mt-1 text-sm text-[#F0EFE2]/45">Available to all MemoryOS sessions.</p>
 
       <div className="mt-7 rounded-md border border-[#3B82F6]/25 border-l-[#3B82F6] border-l-4 bg-white/[0.04] px-4 py-3">
         <p className="flex items-center gap-2 text-sm font-semibold">
           <Info className="size-4 text-[#3B82F6]" />
           Notice
         </p>
-        <p className="mt-2 text-sm text-white/50">
+        <p className="mt-2 text-sm text-[#F0EFE2]/50">
           This secret is stored through the MemoryOS environment secret API.
         </p>
       </div>
 
-      <label className="mt-5 block text-sm font-semibold text-white/80">Secret type</label>
+      <label className="mt-5 block text-sm font-semibold text-[#F0EFE2]/80">Secret type</label>
       <select
         disabled
-        className="mt-2 h-9 rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm text-white/60"
+        className="mt-2 h-9 rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm text-[#F0EFE2]/60"
       >
         <option>key-value</option>
       </select>
 
-      <label className="mt-5 flex items-center gap-1 text-sm font-semibold text-white/80">
-        Secret name <Info className="size-3.5 text-white/40" />
+      <label className="mt-5 flex items-center gap-1 text-sm font-semibold text-[#F0EFE2]/80">
+        Secret name <Info className="size-3.5 text-[#F0EFE2]/40" />
       </label>
       <input
         value={name}
         onChange={(event) => setName(event.target.value)}
         placeholder="EXAMPLE_API_KEY"
-        className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+        className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
       />
 
-      <label className="mt-5 block text-sm font-semibold text-white/80">Secret value</label>
+      <label className="mt-5 block text-sm font-semibold text-[#F0EFE2]/80">Secret value</label>
       <textarea
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder="sk-example1234"
-        className="mt-2 min-h-[160px] w-full resize-y rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+        className="mt-2 min-h-[160px] w-full resize-y rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 py-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
       />
 
-      <label className="mt-5 block text-sm font-semibold text-white/80">Note</label>
+      <label className="mt-5 block text-sm font-semibold text-[#F0EFE2]/80">Note</label>
       <textarea
         value={note}
         onChange={(event) => setNote(event.target.value)}
         placeholder="Optional. What additional info would be useful?"
-        className="mt-2 min-h-[70px] w-full resize-y rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+        className="mt-2 min-h-[70px] w-full resize-y rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 py-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
       />
 
       <div className="mt-5 flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-white/80">Redact value</p>
-          <p className="text-xs text-white/45">Hide this secret&apos;s value in the control plane.</p>
+          <p className="text-sm font-semibold text-[#F0EFE2]/80">Redact value</p>
+          <p className="text-xs text-[#F0EFE2]/45">Hide this secret&apos;s value in the control plane.</p>
         </div>
         <SettingsToggle checked={redacted} onChange={setRedacted} label="Redact value" />
       </div>
@@ -202,7 +202,7 @@ function SecretSidePanel({
               redacted,
             })
           }
-          className="h-9 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white hover:bg-[#3B82F6] disabled:opacity-45"
+          className="h-9 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#3B82F6] disabled:opacity-45"
         >
           {storing ? "Storing..." : "Store secret"}
         </button>
@@ -395,14 +395,14 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
         <button
           type="button"
           onClick={() => setSelectedId(null)}
-          className="-mt-2 text-xs font-medium text-white/50 hover:text-white/80"
+          className="-mt-2 text-xs font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/80"
         >
           Back to knowledge
         </button>
 
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-white">{selected.name}</h2>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium text-white/50">
+          <h2 className="text-lg font-semibold text-[#F0EFE2]">{selected.name}</h2>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium text-[#F0EFE2]/50">
             <span>{selected.author}</span>
             <span>•</span>
             <span>{selected.createdAt}</span>
@@ -411,8 +411,8 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
             onChange={(checked) => void toggleEnabled(selected.id, checked)}
             label="Enabled in your sessions"
           />
-            <span className="text-white">Enabled in your sessions</span>
-            <Info className="size-3.5 text-white/40" />
+            <span className="text-[#F0EFE2]">Enabled in your sessions</span>
+            <Info className="size-3.5 text-[#F0EFE2]/40" />
           </div>
         </div>
 
@@ -428,25 +428,25 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
         {detailTab === "details" ? (
           <div className="mt-6 space-y-5">
             <div className="rounded-md border border-white/[0.08] border-l-[#3B82F6] border-l-4 bg-[#1a1a1a] px-4 py-3">
-              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+              <p className="flex items-center gap-2 text-sm font-semibold text-[#F0EFE2]">
                 <Info className="size-4 text-[#3B82F6]" />
                 Stored knowledge
               </p>
-              <p className="mt-2 text-sm text-white/55">
+              <p className="mt-2 text-sm text-[#F0EFE2]/55">
                 This knowledge is loaded from the MemoryOS backend for this organization.
               </p>
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-semibold text-white">Content</p>
+              <p className="mb-2 text-sm font-semibold text-[#F0EFE2]">Content</p>
               <div className="relative">
-                <pre className="min-h-[420px] whitespace-pre-wrap rounded-md border border-white/[0.08] bg-[#1f1f1f] p-4 pb-10 font-sans text-sm leading-relaxed text-white">
+                <pre className="min-h-[420px] whitespace-pre-wrap rounded-md border border-white/[0.08] bg-[#1f1f1f] p-4 pb-10 font-sans text-sm leading-relaxed text-[#F0EFE2]">
                   {selected.content}
                 </pre>
                 <button
                   type="button"
                   onClick={() => setSecretOpen(true)}
-                  className="absolute bottom-3 left-3 inline-flex size-7 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white"
+                  className="absolute bottom-3 left-3 inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                   aria-label="Create organization secret"
                 >
                   <KeyRound className="size-4" />
@@ -455,8 +455,8 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-semibold text-white">Trigger</p>
-              <div className="min-h-[104px] rounded-md border border-white/[0.08] bg-[#1f1f1f] p-3 text-sm text-white">
+              <p className="mb-2 text-sm font-semibold text-[#F0EFE2]">Trigger</p>
+              <div className="min-h-[104px] rounded-md border border-white/[0.08] bg-[#1f1f1f] p-3 text-sm text-[#F0EFE2]">
                 {selected.trigger}
               </div>
             </div>
@@ -464,8 +464,8 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
         ) : (
           <div className="mt-10 space-y-7">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-white">Session usage by day</p>
-              <div className="flex items-center gap-4 text-sm text-white/50">
+              <p className="text-sm font-semibold text-[#F0EFE2]">Session usage by day</p>
+              <div className="flex items-center gap-4 text-sm text-[#F0EFE2]/50">
                 <span className="inline-flex items-center gap-1">
                   <span className="size-3 rounded bg-emerald-300" /> Retrieved <Info className="size-3.5" />
                 </span>
@@ -474,12 +474,12 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
                 </span>
               </div>
             </div>
-            <div className="flex min-h-[400px] items-center justify-center rounded-md border border-white/[0.08] bg-[#1f1f1f] text-sm text-white/45">
+            <div className="flex min-h-[400px] items-center justify-center rounded-md border border-white/[0.08] bg-[#1f1f1f] text-sm text-[#F0EFE2]/45">
               No usage data available for the last 30 days
             </div>
             <div>
-              <p className="mb-2 text-sm font-semibold text-white">Sessions</p>
-              <div className="flex min-h-[200px] items-center justify-center rounded-md border border-white/[0.08] bg-[#1f1f1f] text-sm text-white/45">
+              <p className="mb-2 text-sm font-semibold text-[#F0EFE2]">Sessions</p>
+              <div className="flex min-h-[200px] items-center justify-center rounded-md border border-white/[0.08] bg-[#1f1f1f] text-sm text-[#F0EFE2]/45">
                 No sessions found
               </div>
             </div>
@@ -511,19 +511,19 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 hover:text-white/80"
+        className="-mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 hover:text-[#F0EFE2]/80"
       >
         Back to organization
       </Link>
-      {!loaded ? <p className="text-sm text-white/45">Loading knowledge...</p> : null}
+      {!loaded ? <p className="text-sm text-[#F0EFE2]/45">Loading knowledge...</p> : null}
       {loadError ? <p className="text-sm text-red-300">{loadError}</p> : null}
       {saveError ? <p className="text-sm text-red-300">{saveError}</p> : null}
 
       <section className="rounded-md border border-white/[0.07] bg-[#1a1a1a] px-5 py-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-white">Admin-only knowledge suggestions</p>
-            <p className="mt-1 text-sm text-white/50">
+            <p className="text-sm font-semibold text-[#F0EFE2]">Admin-only knowledge suggestions</p>
+            <p className="mt-1 text-sm text-[#F0EFE2]/50">
               Restrict knowledge suggestion approval to admins
             </p>
           </div>
@@ -537,10 +537,10 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
 
       <div className="mt-8 flex items-center gap-2">
         <KnowledgeTabButton active={tab === "organization"} onClick={() => setTab("organization")}>
-          Organization <span className="ml-1 text-white/45">{allRows.length}</span>
+          Organization <span className="ml-1 text-[#F0EFE2]/45">{allRows.length}</span>
         </KnowledgeTabButton>
         <KnowledgeTabButton active={tab === "suggestions"} onClick={() => setTab("suggestions")}>
-          Suggestions <span className="ml-1 text-white/45">0</span>
+          Suggestions <span className="ml-1 text-[#F0EFE2]/45">0</span>
         </KnowledgeTabButton>
       </div>
 
@@ -548,19 +548,19 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
         <>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <div className="relative w-full max-w-[560px]">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#F0EFE2]/35" />
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search for knowledge..."
-                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] pl-9 pr-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-white/20"
+                className="h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] pl-9 pr-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/40 focus:border-white/20"
               />
             </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setFolderOpen(true)}
-                className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/90 hover:bg-white/[0.08]"
+                className="inline-flex h-9 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/90 hover:bg-white/[0.08]"
               >
                 New folder
               </button>
@@ -568,7 +568,7 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="inline-flex h-9 items-center gap-2 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white hover:bg-[#3B82F6]"
+                    className="inline-flex h-9 items-center gap-2 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#3B82F6]"
                   >
                     Add knowledge
                     <ChevronDown className="size-4" />
@@ -576,7 +576,7 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="min-w-[190px] rounded-md border border-white/[0.08] bg-[#1f1f1f] p-1 text-white"
+                  className="min-w-[190px] rounded-md border border-white/[0.08] bg-[#1f1f1f] p-1 text-[#F0EFE2]"
                 >
                   <DropdownMenuItem
                     className="rounded px-2 py-2 text-sm focus:bg-white/[0.06]"
@@ -593,12 +593,12 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
           </div>
 
           <div className="mt-5 overflow-hidden rounded-md border border-white/[0.07] bg-[#1a1a1a]">
-            <div className="grid grid-cols-[minmax(320px,1fr)_150px_180px_220px] bg-white/[0.06] px-5 py-3 text-sm font-semibold text-white">
+            <div className="grid grid-cols-[minmax(320px,1fr)_150px_180px_220px] bg-white/[0.06] px-5 py-3 text-sm font-semibold text-[#F0EFE2]">
               <span>Name ↑</span>
               <span>Author</span>
               <span>Created at</span>
               <span className="inline-flex items-center gap-1">
-                Enabled in your sessions <Info className="size-3.5 text-white/45" />
+                Enabled in your sessions <Info className="size-3.5 text-[#F0EFE2]/45" />
               </span>
             </div>
             {visibleRows.map((row) => (
@@ -606,8 +606,8 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
                 key={row.id}
                 className={
                   row.folder
-                    ? "border-t border-white/[0.06] bg-white/[0.03] text-sm text-white/55"
-                    : "grid grid-cols-[minmax(320px,1fr)_150px_180px_220px] items-center border-t border-white/[0.06] px-5 py-3 text-sm text-white/55"
+                    ? "border-t border-white/[0.06] bg-white/[0.03] text-sm text-[#F0EFE2]/55"
+                    : "grid grid-cols-[minmax(320px,1fr)_150px_180px_220px] items-center border-t border-white/[0.06] px-5 py-3 text-sm text-[#F0EFE2]/55"
                 }
               >
                 {row.folder ? (
@@ -619,19 +619,19 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
                     >
                       <span className="flex min-w-0 items-center gap-3">
                         {expandedFolders[row.id] ? (
-                          <ChevronDown className="size-4 text-white/45" />
+                          <ChevronDown className="size-4 text-[#F0EFE2]/45" />
                         ) : (
-                          <ChevronRight className="size-4 text-white/45" />
+                          <ChevronRight className="size-4 text-[#F0EFE2]/45" />
                         )}
-                        <Folder className="size-4 text-white/45" />
-                        <span className="truncate font-semibold text-white">{row.name}</span>
+                        <Folder className="size-4 text-[#F0EFE2]/45" />
+                        <span className="truncate font-semibold text-[#F0EFE2]">{row.name}</span>
                       </span>
                       <span>{row.author}</span>
                       <span>{row.createdAt}</span>
                       <span />
                     </button>
                     {expandedFolders[row.id] && row.description ? (
-                      <p className="px-[96px] pb-4 text-sm text-white/55">{row.description}</p>
+                      <p className="px-[96px] pb-4 text-sm text-[#F0EFE2]/55">{row.description}</p>
                     ) : null}
                   </>
                 ) : (
@@ -644,7 +644,7 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
                       }}
                       className="flex min-w-0 items-center gap-3 text-left"
                     >
-                      <KeyRound className="size-4 text-white/45" />
+                      <KeyRound className="size-4 text-[#F0EFE2]/45" />
                       <span className="truncate font-semibold">{row.name}</span>
                     </button>
                     <span>{row.author}</span>
@@ -659,7 +659,7 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
               </div>
             ))}
             {loaded && visibleRows.length === 0 ? (
-              <div className="flex min-h-[120px] items-center justify-center border-t border-white/[0.06] text-sm font-semibold text-white/45">
+              <div className="flex min-h-[120px] items-center justify-center border-t border-white/[0.06] text-sm font-semibold text-[#F0EFE2]/45">
                 {search.trim() ? "No knowledge matches your search." : "No knowledge has been added yet."}
               </div>
             ) : null}
@@ -668,16 +668,16 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
       ) : (
         <>
           <div className="mt-5 relative w-full max-w-[560px]">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#F0EFE2]/35" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search by user name or email"
-              className="h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] pl-9 pr-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-white/20"
+              className="h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] pl-9 pr-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/40 focus:border-white/20"
             />
           </div>
           <div className="mt-5 overflow-hidden rounded-md border border-white/[0.07] bg-[#1a1a1a]">
-            <div className="grid grid-cols-5 bg-white/[0.06] px-5 py-3 text-sm font-semibold text-white">
+            <div className="grid grid-cols-5 bg-white/[0.06] px-5 py-3 text-sm font-semibold text-[#F0EFE2]">
               <span>Trigger</span>
               <span>Content</span>
               <span>User</span>
@@ -685,14 +685,14 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
               <span>Suggested folder</span>
             </div>
             {settings.suggestions.length === 0 ? (
-              <div className="flex min-h-[122px] items-center justify-center border-t border-white/[0.06] text-sm font-semibold text-white/45">
+              <div className="flex min-h-[122px] items-center justify-center border-t border-white/[0.06] text-sm font-semibold text-[#F0EFE2]/45">
                 No suggestions found
               </div>
             ) : (
               settings.suggestions.map((suggestion) => (
                 <div
                   key={suggestion.id}
-                  className="grid grid-cols-5 border-t border-white/[0.06] px-5 py-3 text-sm text-white/55"
+                  className="grid grid-cols-5 border-t border-white/[0.06] px-5 py-3 text-sm text-[#F0EFE2]/55"
                 >
                   <span>{suggestion.trigger}</span>
                   <span className="truncate">{suggestion.content}</span>
@@ -709,34 +709,34 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
       <Dialog open={folderOpen} onOpenChange={setFolderOpen}>
         <DialogContent
           showCloseButton={false}
-          className="max-w-[calc(100vw-2rem)] rounded-md border border-white/[0.1] bg-[#1f1f1f] p-6 text-white shadow-2xl shadow-black/50 sm:max-w-[750px]"
+          className="max-w-[calc(100vw-2rem)] rounded-md border border-white/[0.1] bg-[#1f1f1f] p-6 text-[#F0EFE2] shadow-2xl shadow-black/50 sm:max-w-[750px]"
         >
           <ModalClose onClick={() => setFolderOpen(false)} />
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-white">Create folder</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-[#F0EFE2]">Create folder</DialogTitle>
           </DialogHeader>
-          <label className="mt-2 block text-sm font-semibold text-white/85">Name</label>
+          <label className="mt-2 block text-sm font-semibold text-[#F0EFE2]/85">Name</label>
           <input
             value={folderName}
             onChange={(event) => setFolderName(event.target.value)}
             placeholder="Folder name"
-            className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-white/[0.05] px-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+            className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-white/[0.05] px-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
           />
-          <label className="mt-4 block text-sm font-semibold text-white/85">Description</label>
+          <label className="mt-4 block text-sm font-semibold text-[#F0EFE2]/85">Description</label>
           <textarea
             value={folderDescription}
             onChange={(event) => setFolderDescription(event.target.value)}
             placeholder="Folder description"
-            className="mt-2 min-h-[108px] w-full resize-y rounded-md border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+            className="mt-2 min-h-[108px] w-full resize-y rounded-md border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
           />
-          <p className="text-sm font-semibold text-white/40">
+          <p className="text-sm font-semibold text-[#F0EFE2]/40">
             Descriptions help MemoryOS automatically organize knowledge
           </p>
           <div className="mt-4 flex justify-end gap-2">
             <button
               type="button"
               onClick={() => setFolderOpen(false)}
-              className="h-9 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/85 hover:bg-white/[0.08]"
+              className="h-9 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/85 hover:bg-white/[0.08]"
             >
               Cancel
             </button>
@@ -744,7 +744,7 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
               type="button"
               onClick={createFolder}
               disabled={!folderName.trim()}
-              className="h-9 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white hover:bg-[#3B82F6] disabled:opacity-45"
+              className="h-9 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#3B82F6] disabled:opacity-45"
             >
               Create folder
             </button>
@@ -755,57 +755,57 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
       <Dialog open={knowledgeOpen} onOpenChange={setKnowledgeOpen}>
         <DialogContent
           showCloseButton={false}
-          className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-none border-l border-white/[0.08] bg-[#111111] p-8 text-white shadow-2xl sm:max-w-[720px]"
+          className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-none border-l border-white/[0.08] bg-[#111111] p-8 text-[#F0EFE2] shadow-2xl sm:max-w-[720px]"
         >
           <ModalClose onClick={() => setKnowledgeOpen(false)} />
           <DialogHeader className="border-b border-white/[0.08] pb-6">
-            <DialogTitle className="text-xl font-semibold text-white">
+            <DialogTitle className="text-xl font-semibold text-[#F0EFE2]">
               Knowledge creation
             </DialogTitle>
           </DialogHeader>
-          <label className="mt-5 block text-sm font-semibold text-white/85">Name</label>
+          <label className="mt-5 block text-sm font-semibold text-[#F0EFE2]/85">Name</label>
           <input
             value={knowledgeName}
             onChange={(event) => setKnowledgeName(event.target.value)}
             placeholder="Name your knowledge"
-            className="mt-2 h-9 w-full rounded-md border border-white/[0.12] bg-[#1f1f1f] px-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#38BDF8]"
+            className="mt-2 h-9 w-full rounded-md border border-white/[0.12] bg-[#1f1f1f] px-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-[#38BDF8]"
           />
-          <label className="mt-6 block text-sm font-semibold text-white/85">Contents</label>
+          <label className="mt-6 block text-sm font-semibold text-[#F0EFE2]/85">Contents</label>
           <textarea
             value={knowledgeBody}
             onChange={(event) => setKnowledgeBody(event.target.value)}
             placeholder="Write your knowledge here..."
-            className="mt-2 min-h-[320px] w-full resize-y rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+            className="mt-2 min-h-[320px] w-full resize-y rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 py-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
           />
-          <label className="mt-6 flex items-center gap-1 text-sm font-semibold text-white/85">
-            Macro <span className="text-white/40">(optional)</span>
-            <Info className="size-3.5 text-white/40" />
+          <label className="mt-6 flex items-center gap-1 text-sm font-semibold text-[#F0EFE2]/85">
+            Macro <span className="text-[#F0EFE2]/40">(optional)</span>
+            <Info className="size-3.5 text-[#F0EFE2]/40" />
           </label>
           <input
             value={macro}
             onChange={(event) => setMacro(event.target.value)}
             placeholder="macro-name"
-            className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/20"
+            className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35 focus:border-white/20"
           />
-          <label className="mt-6 block text-sm font-semibold text-white/85">Folder</label>
+          <label className="mt-6 block text-sm font-semibold text-[#F0EFE2]/85">Folder</label>
           <select
             value={folder}
             onChange={(event) => setFolder(event.target.value)}
-            className="mt-2 h-9 rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm font-semibold text-white outline-none"
+            className="mt-2 h-9 rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm font-semibold text-[#F0EFE2] outline-none"
           >
             <option value="root">Root Folder</option>
             {settings.folders.map((row) => (
               <option key={row.id} value={row.id}>{row.name}</option>
             ))}
           </select>
-          <label className="mt-6 flex items-center gap-1 text-sm font-semibold text-white/85">
-            Pin to repository <span className="text-white/40">(optional)</span>
-            <Info className="size-3.5 text-white/40" />
+          <label className="mt-6 flex items-center gap-1 text-sm font-semibold text-[#F0EFE2]/85">
+            Pin to repository <span className="text-[#F0EFE2]/40">(optional)</span>
+            <Info className="size-3.5 text-[#F0EFE2]/40" />
           </label>
           <select
             value={repo}
             onChange={(event) => setRepo(event.target.value)}
-            className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm font-semibold text-white outline-none"
+            className="mt-2 h-9 w-full rounded-md border border-white/[0.08] bg-[#1f1f1f] px-3 text-sm font-semibold text-[#F0EFE2] outline-none"
           >
             <option>None</option>
             <option>All sessions</option>
@@ -818,14 +818,14 @@ export function ContinuityLabOrgKnowledgeSettingsSection() {
               type="button"
               onClick={createKnowledge}
               disabled={!knowledgeName.trim() || !knowledgeBody.trim()}
-              className="h-9 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-white hover:bg-[#3B82F6] disabled:opacity-45"
+              className="h-9 rounded-md bg-[#2F6FEA] px-3.5 text-sm font-semibold text-[#F0EFE2] hover:bg-[#3B82F6] disabled:opacity-45"
             >
               Next
             </button>
             <button
               type="button"
               onClick={() => setKnowledgeOpen(false)}
-              className="h-9 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-white/85 hover:bg-white/[0.08]"
+              className="h-9 rounded-md border border-white/[0.12] bg-white/[0.04] px-3.5 text-sm font-semibold text-[#F0EFE2]/85 hover:bg-white/[0.08]"
             >
               Cancel
             </button>

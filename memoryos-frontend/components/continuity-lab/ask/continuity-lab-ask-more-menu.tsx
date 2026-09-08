@@ -43,7 +43,7 @@ type ContinuityLabAskMoreMenuProps = {
 };
 
 const itemClass =
-  "gap-2.5 rounded-none px-3 py-2 text-xs text-white/85 focus:bg-[#141414] focus:text-white data-disabled:text-white/30";
+  "gap-2.5 rounded-none px-3 py-2 text-xs text-[#F0EFE2]/85 focus:bg-[#141414] focus:text-[#F0EFE2] data-disabled:text-[#F0EFE2]/30";
 
 export function ContinuityLabAskMoreMenu({
   prompt,
@@ -101,7 +101,7 @@ export function ContinuityLabAskMoreMenu({
         <button
           type="button"
           disabled={disabled}
-          className="inline-flex size-9 items-center justify-center rounded-full border border-[#3A3A3A] bg-[#0A0A0A] text-white/70 hover:border-[#4A4A4A] hover:text-white disabled:opacity-40"
+          className="inline-flex size-9 items-center justify-center rounded-full border border-[#3A3A3A] bg-[#0A0A0A] text-[#F0EFE2]/70 hover:border-[#4A4A4A] hover:text-[#F0EFE2] disabled:opacity-40"
           aria-label="More options"
         >
           <MoreHorizontal className="size-4" />
@@ -112,14 +112,14 @@ export function ContinuityLabAskMoreMenu({
         align="end"
         sideOffset={8}
         collisionPadding={12}
-        className="z-50 min-w-[240px] w-72 border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-white shadow-2xl !w-72"
+        className="z-50 min-w-[240px] w-72 border border-[#2F2F2F] bg-[#0A0A0A] p-1 text-[#F0EFE2] shadow-2xl !w-72"
       >
         <DropdownMenuItem asChild className={itemClass}>
           <Link
             href="/continuity-lab/settings/connections?tab=mcps"
             title="Manage MCP connectors"
           >
-            <Plug className="size-3.5 shrink-0 text-white/45" />
+            <Plug className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
             Manage MCP connectors
           </Link>
         </DropdownMenuItem>
@@ -131,12 +131,12 @@ export function ContinuityLabAskMoreMenu({
             setOpen(false);
           }}
         >
-          <Wand2 className="size-3.5 shrink-0 text-white/45" />
+          <Wand2 className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           Improve prompt
         </DropdownMenuItem>
         <DropdownMenuItem asChild className={itemClass}>
           <Link href="/continuity-lab/automations/new">
-            <Calendar className="size-3.5 shrink-0 text-white/45" />
+            <Calendar className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
             Schedule
           </Link>
         </DropdownMenuItem>
@@ -145,9 +145,9 @@ export function ContinuityLabAskMoreMenu({
           onSelect={() => void copyPromptLink()}
         >
           {copied ? (
-            <Copy className="size-3.5 shrink-0 text-white/45" />
+            <Copy className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           ) : (
-            <Link2 className="size-3.5 shrink-0 text-white/45" />
+            <Link2 className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           )}
           {copied ? "Link copied" : "Copy prompt as link"}
         </DropdownMenuItem>
@@ -156,7 +156,7 @@ export function ContinuityLabAskMoreMenu({
           disabled
           title="Coming soon"
         >
-          <Mic className="size-3.5 shrink-0 text-white/45" />
+          <Mic className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           Record voice prompt
         </DropdownMenuItem>
         <DropdownMenuSeparator className="mx-3 bg-[#2F2F2F]" />
@@ -165,7 +165,7 @@ export function ContinuityLabAskMoreMenu({
           title="Saved locally — runtime approval gate not wired yet"
           onSelect={toggleAutoApprove}
         >
-          <ToggleLeft className="size-3.5 shrink-0 text-white/45" />
+          <ToggleLeft className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           {autoApprove ? "Auto-approve child sessions (on)" : "Auto-approve child sessions"}
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -173,7 +173,7 @@ export function ContinuityLabAskMoreMenu({
           title="Restate your goal and wait for OK before the agent runs tools"
           onSelect={toggleConfirmBeforeWork}
         >
-          <ClipboardCheck className="size-3.5 shrink-0 text-white/45" />
+          <ClipboardCheck className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           {confirmBeforeWork
             ? "Confirm understanding before work (on)"
             : "Confirm understanding before work"}
@@ -183,7 +183,7 @@ export function ContinuityLabAskMoreMenu({
           disabled
           title="Coming soon — use Slack connector in settings"
         >
-          <Send className="size-3.5 shrink-0 text-white/45" />
+          <Send className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           Send to Slack Channel
         </DropdownMenuItem>
         <DropdownMenuSeparator className="mx-3 bg-[#2F2F2F]" />
@@ -194,7 +194,7 @@ export function ContinuityLabAskMoreMenu({
             setOpen(false);
           }}
         >
-          <Sparkles className="size-3.5 shrink-0 text-white/45" />
+          <Sparkles className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           Inject resume brief
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -204,7 +204,7 @@ export function ContinuityLabAskMoreMenu({
             setOpen(false);
           }}
         >
-          <BookOpen className="size-3.5 shrink-0 text-white/45" />
+          <BookOpen className="size-3.5 shrink-0 text-[#F0EFE2]/45" />
           Attach operational wiki
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -498,7 +498,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
     >
       <Link
         href={SETTINGS_INDEX_PATH}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to organization
@@ -507,7 +507,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
       {loadError ? (
         <p className="mb-2 text-xs text-amber-200/90">{loadError}</p>
       ) : !loaded ? (
-        <p className="mb-2 text-xs text-white/40">Loading settings…</p>
+        <p className="mb-2 text-xs text-[#F0EFE2]/40">Loading settings…</p>
       ) : null}
 
       {saveState === "error" ? (
@@ -524,7 +524,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
           </button>
         </div>
       ) : saveState === "saving" ? (
-        <p className="text-xs text-white/40">Saving…</p>
+        <p className="text-xs text-[#F0EFE2]/40">Saving…</p>
       ) : saveState === "saved" ? (
         <p className="text-xs text-emerald-300/90">Saved</p>
       ) : null}
@@ -538,7 +538,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
       ) : null}
 
       {!githubConnected ? (
-        <div className="mb-3 rounded-md border border-white/[0.08] bg-[#111111] px-4 py-3 text-xs text-white/55">
+        <div className="mb-3 rounded-md border border-white/[0.08] bg-[#111111] px-4 py-3 text-xs text-[#F0EFE2]/55">
           Connect GitHub in{" "}
           <Link
             href="/continuity-lab/settings/connections"
@@ -588,7 +588,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
 
       {settings.enrolledRepos.length === 0 ? (
         <SettingsFlatPanel className="py-10 text-center">
-          <p className="text-sm text-white/55">
+          <p className="text-sm text-[#F0EFE2]/55">
             No repositories yet. Add a repository to discover its skills and rules.
           </p>
           {github.connected ? (
@@ -598,7 +598,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
               </SettingsPrimaryButton>
             </div>
           ) : (
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-[#F0EFE2]/40">
               Connect GitHub in{" "}
               <Link
                 href="/continuity-lab/settings/connections"
@@ -611,7 +611,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
           )}
         </SettingsFlatPanel>
       ) : filteredEnrolledRepos.length === 0 ? (
-        <p className="text-sm text-white/50">No enrolled repos match your search.</p>
+        <p className="text-sm text-[#F0EFE2]/50">No enrolled repos match your search.</p>
       ) : (
         <SettingsFlatPanel className="!px-0">
           <ul>
@@ -633,9 +633,9 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                       onClick={() => toggleExpanded(fullName)}
                       disabled={!hasItems}
                       className={cn(
-                        "inline-flex size-7 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-white/50",
+                        "inline-flex size-7 shrink-0 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50",
                         hasItems
-                          ? "hover:bg-white/[0.06] hover:text-white"
+                          ? "hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                           : "cursor-default opacity-40",
                       )}
                       aria-expanded={expanded}
@@ -652,19 +652,19 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                     <div className="min-w-0 flex-1">
                       {parts ? (
                         <>
-                          <span className="block truncate text-[11px] text-white/45">
+                          <span className="block truncate text-[11px] text-[#F0EFE2]/45">
                             {parts.owner}
                           </span>
-                          <span className="block truncate font-mono text-sm text-white">
+                          <span className="block truncate font-mono text-sm text-[#F0EFE2]">
                             {parts.repo}
                           </span>
                         </>
                       ) : (
-                        <span className="block truncate font-mono text-sm text-white">
+                        <span className="block truncate font-mono text-sm text-[#F0EFE2]">
                           {fullName}
                         </span>
                       )}
-                      <p className="mt-0.5 text-[11px] text-white/40">
+                      <p className="mt-0.5 text-[11px] text-[#F0EFE2]/40">
                         <span
                           className={cn(connected ? "text-emerald-300/80" : "text-amber-200/80")}
                         >
@@ -672,7 +672,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                         </span>
                         {" · "}
                         {isRefreshing ? (
-                          <span className="text-white/45">Scanning…</span>
+                          <span className="text-[#F0EFE2]/45">Scanning…</span>
                         ) : (
                           formatDiscoveryLabel(summary)
                         )}
@@ -691,7 +691,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                       type="button"
                       onClick={() => void compileRepoToMemory(fullName)}
                       disabled={!githubConnected || compilingRepo === fullName}
-                      className="inline-flex h-8 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-white/90 transition hover:bg-white/[0.08] disabled:opacity-50"
+                      className="inline-flex h-8 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-[#F0EFE2]/90 transition hover:bg-white/[0.08] disabled:opacity-50"
                     >
                       {compilingRepo === fullName ? "Compiling…" : "Compile"}
                     </button>
@@ -699,7 +699,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                       type="button"
                       onClick={() => void refreshRepoDiscovery(fullName)}
                       disabled={!githubConnected || isRefreshing}
-                      className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white disabled:opacity-40"
+                      className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2] disabled:opacity-40"
                       aria-label={`Refresh ${fullName}`}
                     >
                       <RefreshCw
@@ -710,7 +710,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                     <button
                       type="button"
                       onClick={() => removeRepo(fullName)}
-                      className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-white/50 hover:bg-white/[0.06] hover:text-white"
+                      className="inline-flex size-8 items-center justify-center rounded-md border border-white/[0.08] text-[#F0EFE2]/50 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                       aria-label={`Remove ${fullName}`}
                     >
                       <Trash2 className="size-3.5" />
@@ -745,16 +745,16 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                                     "inline-flex shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
                                     item.type === "skill"
                                       ? "bg-indigo-500/20 text-indigo-200"
-                                      : "bg-white/10 text-white/60",
+                                      : "bg-white/10 text-[#F0EFE2]/60",
                                   )}
                                 >
                                   {item.type}
                                 </span>
-                                <span className="min-w-0 truncate text-sm font-medium text-white/90">
+                                <span className="min-w-0 truncate text-sm font-medium text-[#F0EFE2]/90">
                                   {item.name}
                                 </span>
                               </div>
-                              <span className="truncate pl-0.5 font-mono text-[11px] text-white/40">
+                              <span className="truncate pl-0.5 font-mono text-[11px] text-[#F0EFE2]/40">
                                 {item.path}
                               </span>
                             </button>
@@ -762,7 +762,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                               <div className="mx-2 mb-2 mt-1 rounded-md border border-white/[0.08] bg-[#0a0a0a]">
                                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] px-3 py-2">
                                   <div className="min-w-0">
-                                    <p className="font-mono text-[11px] text-white/50">{previewPath || item.path}</p>
+                                    <p className="font-mono text-[11px] text-[#F0EFE2]/50">{previewPath || item.path}</p>
                                     {previewNote ? (
                                       <p className="mt-1 text-[11px] text-indigo-200/80">{previewNote}</p>
                                     ) : null}
@@ -775,7 +775,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                                             type="button"
                                             onClick={() => void savePreviewEdit()}
                                             disabled={savePreviewState === "saving"}
-                                            className="inline-flex h-7 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-white/90 hover:bg-white/[0.08] disabled:opacity-50"
+                                            className="inline-flex h-7 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-[#F0EFE2]/90 hover:bg-white/[0.08] disabled:opacity-50"
                                           >
                                             {savePreviewState === "saving" ? "Saving…" : "Save to GitHub"}
                                           </button>
@@ -783,7 +783,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                                             type="button"
                                             onClick={cancelEditingPreview}
                                             disabled={savePreviewState === "saving"}
-                                            className="inline-flex h-7 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-white/90 hover:bg-white/[0.08] disabled:opacity-50"
+                                            className="inline-flex h-7 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-[#F0EFE2]/90 hover:bg-white/[0.08] disabled:opacity-50"
                                           >
                                             Cancel
                                           </button>
@@ -792,7 +792,7 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                                         <button
                                           type="button"
                                           onClick={startEditingPreview}
-                                          className="inline-flex h-7 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-white/90 hover:bg-white/[0.08]"
+                                          className="inline-flex h-7 items-center rounded-md border border-white/[0.12] bg-white/[0.04] px-2.5 text-[11px] font-medium text-[#F0EFE2]/90 hover:bg-white/[0.08]"
                                         >
                                           Edit
                                         </button>
@@ -807,18 +807,18 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
                                 </div>
                                 <div className="p-3">
                                   {previewLoading ? (
-                                    <p className="text-xs text-white/45">Loading preview…</p>
+                                    <p className="text-xs text-[#F0EFE2]/45">Loading preview…</p>
                                   ) : previewError ? (
                                     <p className="text-xs text-amber-200/90">{previewError}</p>
                                   ) : editingPreview ? (
                                     <textarea
                                       value={editDraft}
                                       onChange={(event) => setEditDraft(event.target.value)}
-                                      className="min-h-48 w-full rounded-md border border-white/[0.08] bg-black/40 p-2 font-mono text-[11px] leading-relaxed text-white/85 outline-none focus:border-indigo-400/40"
+                                      className="min-h-48 w-full rounded-md border border-white/[0.08] bg-black/40 p-2 font-mono text-[11px] leading-relaxed text-[#F0EFE2]/85 outline-none focus:border-indigo-400/40"
                                       spellCheck={false}
                                     />
                                   ) : (
-                                    <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-white/80">
+                                    <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-[#F0EFE2]/80">
                                       {previewContent}
                                     </pre>
                                   )}
@@ -838,14 +838,14 @@ export function ContinuityLabOrgSkillsRulesSettingsSection() {
       )}
 
       {settings.enrolledRepos.length > 0 && githubConnected ? (
-        <p className="mt-3 text-[11px] text-white/35">
+        <p className="mt-3 text-[11px] text-[#F0EFE2]/35">
           Scans{" "}
-          <code className="text-white/50">.cursor/skills/**/SKILL.md</code>,{" "}
-          <code className="text-white/50">.cursor/rules/**</code>,{" "}
-          <code className="text-white/50">AGENTS.md</code>,{" "}
-          <code className="text-white/50">CLAUDE.md</code>,{" "}
-          <code className="text-white/50">.github/copilot-instructions.md</code>, and{" "}
-          <code className="text-white/50">.memoryos/skills/**</code>. Results cache for one hour.
+          <code className="text-[#F0EFE2]/50">.cursor/skills/**/SKILL.md</code>,{" "}
+          <code className="text-[#F0EFE2]/50">.cursor/rules/**</code>,{" "}
+          <code className="text-[#F0EFE2]/50">AGENTS.md</code>,{" "}
+          <code className="text-[#F0EFE2]/50">CLAUDE.md</code>,{" "}
+          <code className="text-[#F0EFE2]/50">.github/copilot-instructions.md</code>, and{" "}
+          <code className="text-[#F0EFE2]/50">.memoryos/skills/**</code>. Results cache for one hour.
           Click a skill or rule to preview or edit file contents in GitHub. Saves re-scan and compile to memory when auto-compile is enabled.
         </p>
       ) : null}

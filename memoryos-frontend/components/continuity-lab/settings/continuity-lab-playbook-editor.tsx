@@ -25,10 +25,10 @@ import { subtlePanel } from "@/components/continuity-lab/continuity-lab-section-
 import { cn } from "@/lib/utils";
 
 const inputClass =
-  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-white placeholder:text-white/35 focus:border-white/20 focus:outline-none disabled:opacity-60";
+  "h-9 w-full rounded-md border border-white/[0.08] bg-[#111111] px-3 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-white/20 focus:outline-none disabled:opacity-60";
 
 const saveButtonClass =
-  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-white transition hover:bg-[#3B82F6] disabled:opacity-40";
+  "inline-flex h-9 items-center rounded-md bg-[#2563EB] px-3.5 text-sm font-medium text-[#F0EFE2] transition hover:bg-[#3B82F6] disabled:opacity-40";
 
 const PLAYBOOK_AGENT_MODE_OPTIONS: {
   value: LabPlaybookAgentMode;
@@ -82,10 +82,10 @@ function renderMarkdownContent(content: string) {
       const level = heading[1].length;
       const className =
         level === 1
-          ? "mt-3 text-xl font-semibold text-white first:mt-0"
+          ? "mt-3 text-xl font-semibold text-[#F0EFE2] first:mt-0"
           : level === 2
-            ? "mt-3 text-base font-semibold text-white first:mt-0"
-            : "mt-2 text-sm font-semibold text-white first:mt-0";
+            ? "mt-3 text-base font-semibold text-[#F0EFE2] first:mt-0"
+            : "mt-2 text-sm font-semibold text-[#F0EFE2] first:mt-0";
       return (
         <div key={index} className={className}>
           {renderInline(heading[2])}
@@ -95,7 +95,7 @@ function renderMarkdownContent(content: string) {
     const ordered = /^\d+\.\s+(.+)$/.exec(trimmed);
     if (ordered) {
       return (
-        <div key={index} className="ml-4 text-sm leading-6 text-white/85">
+        <div key={index} className="ml-4 text-sm leading-6 text-[#F0EFE2]/85">
           {trimmed.replace(/^(\d+\.).*$/, "$1")} {renderInline(ordered[1])}
         </div>
       );
@@ -103,13 +103,13 @@ function renderMarkdownContent(content: string) {
     const bullet = /^[-*]\s+(.+)$/.exec(trimmed);
     if (bullet) {
       return (
-        <div key={index} className="ml-4 text-sm leading-6 text-white/85">
+        <div key={index} className="ml-4 text-sm leading-6 text-[#F0EFE2]/85">
           - {renderInline(bullet[1])}
         </div>
       );
     }
     return (
-      <p key={index} className="text-sm leading-6 text-white/85">
+      <p key={index} className="text-sm leading-6 text-[#F0EFE2]/85">
         {renderInline(trimmed)}
       </p>
     );
@@ -212,7 +212,7 @@ export function ContinuityLabPlaybookEditor({
     >
       <Link
         href={settingsSectionPath("playbooks")}
-        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-white/80"
+        className="-mt-2 mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#F0EFE2]/50 transition hover:text-[#F0EFE2]/80"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         Back to playbooks
@@ -229,7 +229,7 @@ export function ContinuityLabPlaybookEditor({
               placeholder="Enter a name for your new playbook"
               className={cn(inputClass, "max-w-md text-base font-medium")}
             />
-            {author ? <p className="mt-2 text-xs text-white/45">{author}</p> : null}
+            {author ? <p className="mt-2 text-xs text-[#F0EFE2]/45">{author}</p> : null}
           </div>
           <div className="flex items-center gap-2">
             <SettingsSecondaryButton onClick={() => router.push(settingsSectionPath("playbooks"))}>
@@ -247,10 +247,10 @@ export function ContinuityLabPlaybookEditor({
         </div>
 
         {loadError ? <p className="text-sm text-amber-200/90">{loadError}</p> : null}
-        {!loaded && !loadError ? <p className="text-sm text-white/45">Loading playbook...</p> : null}
+        {!loaded && !loadError ? <p className="text-sm text-[#F0EFE2]/45">Loading playbook...</p> : null}
         {saveError ? <p className="text-sm text-amber-200/90">{saveError}</p> : null}
         {sourcePlaybook?.readonly ? (
-          <p className="text-sm text-white/45">This system playbook is read-only.</p>
+          <p className="text-sm text-[#F0EFE2]/45">This system playbook is read-only.</p>
         ) : null}
 
         <div className={cn(subtlePanel(), "overflow-hidden")}>
@@ -263,14 +263,14 @@ export function ContinuityLabPlaybookEditor({
                   onClick={() => setTab(item)}
                   className={cn(
                     "rounded-md px-3 py-1.5 text-sm font-medium capitalize transition",
-                    tab === item ? "bg-white/[0.1] text-white" : "text-white/55 hover:text-white/80",
+                    tab === item ? "bg-white/[0.1] text-[#F0EFE2]" : "text-[#F0EFE2]/55 hover:text-[#F0EFE2]/80",
                   )}
                 >
                   {item}
                 </button>
               ))}
             </div>
-            <Maximize2 className="size-3.5 text-white/40" aria-hidden />
+            <Maximize2 className="size-3.5 text-[#F0EFE2]/40" aria-hidden />
           </div>
           {tab === "edit" ? (
             <textarea
@@ -279,14 +279,14 @@ export function ContinuityLabPlaybookEditor({
               disabled={sourcePlaybook?.readonly}
               rows={18}
               placeholder="Write your playbook here..."
-              className="min-h-[26rem] w-full resize-y bg-transparent px-4 py-3 text-sm leading-relaxed text-white placeholder:text-white/35 focus:outline-none disabled:opacity-70"
+              className="min-h-[26rem] w-full resize-y bg-transparent px-4 py-3 text-sm leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:outline-none disabled:opacity-70"
             />
           ) : (
             <div className="min-h-[26rem] px-4 py-4">
               {draft.content.trim() ? (
                 <div className="space-y-1">{renderMarkdownContent(draft.content)}</div>
               ) : (
-                <p className="text-sm text-white/40">No content yet.</p>
+                <p className="text-sm text-[#F0EFE2]/40">No content yet.</p>
               )}
             </div>
           )}

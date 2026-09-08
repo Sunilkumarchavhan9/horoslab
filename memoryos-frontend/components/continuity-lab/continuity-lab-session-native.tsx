@@ -1289,7 +1289,7 @@ export function ContinuityLabSessionNative({
               <input
                 value={headerTitle}
                 onChange={(event) => setHeaderTitle(event.target.value)}
-                className="h-8 w-[220px] max-w-[58vw] rounded-md border border-[#1f4da4]/70 bg-[#101317] px-2.5 text-[21px] font-semibold text-white outline-none focus:border-[#3b82f6]"
+                className="h-8 w-[220px] max-w-[58vw] rounded-md border border-[#1f4da4]/70 bg-[#101317] px-2.5 text-[21px] font-semibold text-[#F0EFE2] outline-none focus:border-[#3b82f6]"
                 aria-label="Session title"
               />
               <span className="inline-flex items-center gap-1 rounded-md border border-[#1f4da4]/60 bg-[#102849] px-2 py-0.5 text-[11px] font-medium text-[#6ca8ff]">
@@ -1300,7 +1300,7 @@ export function ContinuityLabSessionNative({
             <div className="flex items-center gap-1">
               <button
                 type="button"
-                className="inline-flex size-6 items-center justify-center rounded-md text-white/45 hover:bg-[#141414] hover:text-white"
+                className="inline-flex size-6 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-[#141414] hover:text-[#F0EFE2]"
                 aria-label="Header menu"
               >
                 <MoreHorizontal className="size-3.5" />
@@ -1308,7 +1308,7 @@ export function ContinuityLabSessionNative({
               <button
                 type="button"
                 onClick={() => setTabsPanelVisible((visible) => !visible)}
-                className="inline-flex size-6 items-center justify-center rounded-md text-white/45 hover:bg-[#141414] hover:text-white"
+                className="inline-flex size-6 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-[#141414] hover:text-[#F0EFE2]"
                 aria-label="Toggle tabs panel"
               >
                 <Square className="size-3.5" />
@@ -1340,7 +1340,7 @@ export function ContinuityLabSessionNative({
               onClick={() => {
                 messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="absolute bottom-24 left-1/2 z-10 inline-flex h-9 w-9 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-[#1a1a1a]/95 text-white/80 shadow-lg backdrop-blur hover:bg-[#222] hover:text-white"
+              className="absolute bottom-24 left-1/2 z-10 inline-flex h-9 w-9 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-[#1a1a1a]/95 text-[#F0EFE2]/80 shadow-lg backdrop-blur hover:bg-[#222] hover:text-[#F0EFE2]"
               aria-label="Jump to latest message"
               title="Jump to latest"
             >
@@ -1447,9 +1447,9 @@ export function ContinuityLabSessionNative({
 
       {resumeToastProject ? (
         <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 flex w-[min(100%,28rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-2 border border-[#2F2F2F] bg-[#0A0A0A]/95 px-4 py-3 text-center shadow-lg">
-          <p className="pointer-events-auto text-xs text-white/80">
+          <p className="pointer-events-auto text-xs text-[#F0EFE2]/80">
             Execution saved. Resume{" "}
-            <span className="font-semibold text-white">
+            <span className="font-semibold text-[#F0EFE2]">
               {resumeToastProject}
             </span>
             ?
@@ -1460,14 +1460,14 @@ export function ContinuityLabSessionNative({
               markFunnelResumed(resumeToastProject);
               setResumeToastProject(null);
             }}
-            className="pointer-events-auto border border-[#6366F1] bg-[#4338CA] px-3 py-1 text-[11px] font-semibold text-white hover:bg-[#4f46e5]"
+            className="pointer-events-auto border border-[#6366F1] bg-[#4338CA] px-3 py-1 text-[11px] font-semibold text-[#F0EFE2] hover:bg-[#4f46e5]"
           >
             Resume project
           </Link>
           <button
             type="button"
             onClick={() => setResumeToastProject(null)}
-            className="pointer-events-auto text-white/40 hover:text-white/70"
+            className="pointer-events-auto text-[#F0EFE2]/40 hover:text-[#F0EFE2]/70"
             aria-label="Dismiss"
           >
             <X className="size-4" />

@@ -22,7 +22,7 @@ type WikiGraphPanelProps = {
 export function WikiGraphPanel({ nodes, edges }: WikiGraphPanelProps) {
   if (!nodes.length) {
     return (
-      <p className="text-sm text-white/45">
+      <p className="text-sm text-[#F0EFE2]/45">
         No operational graph nodes indexed for this repository yet.
       </p>
     );
@@ -34,7 +34,7 @@ export function WikiGraphPanel({ nodes, edges }: WikiGraphPanelProps) {
     <div className="space-y-4">
       <div className={cn(subtlePanel(), "overflow-x-auto")}>
         <table className="w-full min-w-[320px] text-left text-sm">
-          <thead className="border-b border-white/[0.06] bg-[#1a1a1a] text-[10px] uppercase tracking-wide text-white/40">
+          <thead className="border-b border-white/[0.06] bg-[#1a1a1a] text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
             <tr>
               <th className="px-4 py-2 font-semibold">Node</th>
               <th className="px-4 py-2 font-semibold">Type</th>
@@ -44,9 +44,9 @@ export function WikiGraphPanel({ nodes, edges }: WikiGraphPanelProps) {
           <tbody>
             {nodes.slice(0, 24).map((node) => (
               <tr key={node.id} className="border-b border-white/[0.06] last:border-0">
-                <td className="px-4 py-2.5 text-white/80">{node.label}</td>
-                <td className="px-4 py-2.5 text-white/55">{node.type}</td>
-                <td className="px-4 py-2.5 tabular-nums text-white/60">
+                <td className="px-4 py-2.5 text-[#F0EFE2]/80">{node.label}</td>
+                <td className="px-4 py-2.5 text-[#F0EFE2]/55">{node.type}</td>
+                <td className="px-4 py-2.5 tabular-nums text-[#F0EFE2]/60">
                   {Math.round(node.confidence * 100)}%
                 </td>
               </tr>
@@ -57,17 +57,17 @@ export function WikiGraphPanel({ nodes, edges }: WikiGraphPanelProps) {
 
       {edges.length > 0 ? (
         <div className={cn(subtlePanel(), "overflow-x-auto")}>
-          <p className="border-b border-white/[0.06] bg-[#1a1a1a] px-4 py-2 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+          <p className="border-b border-white/[0.06] bg-[#1a1a1a] px-4 py-2 text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/40">
             Relationships
           </p>
           <ul className="divide-y divide-white/[0.06]">
             {edges.slice(0, 16).map((edge) => (
-              <li key={edge.id} className="px-4 py-2.5 text-sm text-white/70">
-                <span className="text-white/85">{labelById.get(edge.from) ?? edge.from}</span>
+              <li key={edge.id} className="px-4 py-2.5 text-sm text-[#F0EFE2]/70">
+                <span className="text-[#F0EFE2]/85">{labelById.get(edge.from) ?? edge.from}</span>
                 <span className="mx-2 text-[10px] uppercase tracking-wide text-indigo-300/80">
                   {edge.relation.replace(/_/g, " ")}
                 </span>
-                <span className="text-white/85">{labelById.get(edge.to) ?? edge.to}</span>
+                <span className="text-[#F0EFE2]/85">{labelById.get(edge.to) ?? edge.to}</span>
               </li>
             ))}
           </ul>

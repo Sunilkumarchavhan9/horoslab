@@ -55,16 +55,16 @@ export function ContinuityLabSelectOrgSidebar() {
     : RECENTS_FALLBACK;
 
   return (
-    <aside className="hidden h-full w-[308px] shrink-0 flex-col border-r border-white/[0.07] bg-[#111111] text-white md:flex">
+    <aside className="hidden h-full w-[308px] shrink-0 flex-col border-r border-white/[0.07] bg-[#111111] text-[#F0EFE2] md:flex">
       <div className="flex h-[52px] shrink-0 items-center gap-2 px-6">
-        <span className="inline-flex size-5 items-center justify-center rounded bg-white/[0.08] text-[11px] font-semibold text-white/65">
+        <span className="inline-flex size-5 items-center justify-center rounded bg-white/[0.08] text-[11px] font-semibold text-[#F0EFE2]/65">
           {initial}
         </span>
         <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{displayName}</span>
-        <ChevronDown className="size-4 text-white/45" aria-hidden />
+        <ChevronDown className="size-4 text-[#F0EFE2]/45" aria-hidden />
         <button
           type="button"
-          className="ml-auto inline-flex size-8 items-center justify-center rounded-md text-white/45 hover:bg-white/[0.06] hover:text-white/70"
+          className="ml-auto inline-flex size-8 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-white/[0.06] hover:text-[#F0EFE2]/70"
           aria-label="Collapse sidebar"
         >
           <SidebarPanelToggleIcon className="size-[18px]" />
@@ -80,14 +80,14 @@ export function ContinuityLabSelectOrgSidebar() {
                 className={cn(
                   "flex h-9 items-center gap-3 rounded-md px-4 text-[14px] font-semibold",
                   "active" in item && item.active
-                    ? "bg-white/[0.045] text-white"
-                    : "text-white/58 hover:bg-white/[0.035] hover:text-white/80",
+                    ? "bg-white/[0.045] text-[#F0EFE2]"
+                    : "text-[#F0EFE2]/58 hover:bg-white/[0.035] hover:text-[#F0EFE2]/80",
                 )}
               >
                 <item.icon className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                 <span className="min-w-0 flex-1 truncate">{item.label}</span>
                 {"badge" in item && item.badge ? (
-                  <span className="rounded-md bg-white/[0.08] px-2 py-0.5 text-[11px] font-semibold text-white/55">
+                  <span className="rounded-md bg-white/[0.08] px-2 py-0.5 text-[11px] font-semibold text-[#F0EFE2]/55">
                     {item.badge}
                   </span>
                 ) : null}
@@ -99,21 +99,21 @@ export function ContinuityLabSelectOrgSidebar() {
 
       <div className="mt-6 flex min-h-0 flex-1 flex-col px-6">
         <div className="mb-4 flex items-center gap-3">
-          <p className="min-w-0 flex-1 text-[13px] font-semibold text-white/58">Recent</p>
-          <Search className="size-4 text-white/45" aria-hidden />
-          <Plus className="size-4 text-white/45" aria-hidden />
-          <MoreHorizontal className="size-4 text-white/45" aria-hidden />
+          <p className="min-w-0 flex-1 text-[13px] font-semibold text-[#F0EFE2]/58">Recent</p>
+          <Search className="size-4 text-[#F0EFE2]/45" aria-hidden />
+          <Plus className="size-4 text-[#F0EFE2]/45" aria-hidden />
+          <MoreHorizontal className="size-4 text-[#F0EFE2]/45" aria-hidden />
         </div>
         <ul className="min-h-0 flex-1 space-y-3 overflow-hidden">
           {recents.map((item) => (
             <li key={item.id}>
               <Link href="/continuity-lab" className="block">
-                <p className="truncate text-[13px] font-semibold leading-5 text-white">
+                <p className="truncate text-[13px] font-semibold leading-5 text-[#F0EFE2]">
                   {item.title}
                 </p>
                 <p
                   className={cn(
-                    "mt-0.5 truncate text-[12px] leading-4 text-white/55",
+                    "mt-0.5 truncate text-[12px] leading-4 text-[#F0EFE2]/55",
                     "accent" in item && item.accent ? "text-emerald-400" : undefined,
                   )}
                 >
@@ -133,7 +133,7 @@ export function ContinuityLabSelectOrgSidebar() {
           <Zap className="size-4" aria-hidden />
           Upgrade
         </Link>
-        <div className="flex items-center justify-between text-white/65">
+        <div className="flex items-center justify-between text-[#F0EFE2]/65">
           <Settings className="size-4" aria-hidden />
           <Download className="size-4" aria-hidden />
           <CircleHelp className="size-4" aria-hidden />

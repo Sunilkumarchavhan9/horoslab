@@ -16,14 +16,14 @@ function ContinuityLabSessionsListInner() {
     <div className={cn("flex min-h-full w-full flex-col", labMainBg)}>
       <ContinuityLabBannerStack innerClassName="mx-auto w-full max-w-5xl px-5" />
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-5 py-8 pb-20">
-        <nav className="text-xs text-white/45" aria-label="Breadcrumb">
-          <Link href="/continuity-lab" className="hover:text-white/70">
+        <nav className="text-xs text-[#F0EFE2]/45" aria-label="Breadcrumb">
+          <Link href="/continuity-lab" className="hover:text-[#F0EFE2]/70">
             Continuity Lab
           </Link>
-          <span className="mx-1.5 text-white/25">/</span>
-          <span className="text-white/88">Sessions</span>
+          <span className="mx-1.5 text-[#F0EFE2]/25">/</span>
+          <span className="text-[#F0EFE2]/88">Sessions</span>
         </nav>
-        <h1 className="mt-6 text-2xl font-semibold tracking-tight text-white">Sessions</h1>
+        <h1 className="mt-6 text-2xl font-semibold tracking-tight text-[#F0EFE2]">Sessions</h1>
         <div className="mt-6 flex-1">
           <ContinuityLabSessionsBrowser
             variant="standalone"
@@ -40,7 +40,7 @@ export function ContinuityLabSessionsList() {
   return (
     <Suspense
       fallback={
-        <div className="px-5 py-8 text-sm text-white/45">Loading sessions…</div>
+        <div className="px-5 py-8 text-sm text-[#F0EFE2]/45">Loading sessions…</div>
       }
     >
       <ContinuityLabSessionsListInner />

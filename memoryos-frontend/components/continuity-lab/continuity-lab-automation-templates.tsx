@@ -55,14 +55,14 @@ function TemplateCard({
       )}
     >
       <div className="flex items-center gap-2">
-        <span className="inline-flex size-5 shrink-0 items-center justify-center text-white/80">
+        <span className="inline-flex size-5 shrink-0 items-center justify-center text-[#F0EFE2]/80">
           {primaryIcon}
         </span>
-        <h3 className="min-w-0 truncate text-sm font-semibold leading-5 text-white">
+        <h3 className="min-w-0 truncate text-sm font-semibold leading-5 text-[#F0EFE2]">
           {template.title}
         </h3>
       </div>
-      <p className="mt-3 line-clamp-2 min-h-10 text-xs leading-5 text-white/50">
+      <p className="mt-3 line-clamp-2 min-h-10 text-xs leading-5 text-[#F0EFE2]/50">
         {template.description}
       </p>
       <AutomationIntegrationPills
@@ -116,27 +116,27 @@ export function ContinuityLabAutomationTemplates() {
   return (
     <div className="mx-auto max-w-[1024px] px-5 py-12 pb-20">
       <header>
-        <h1 className="text-xl font-semibold text-white">All templates</h1>
-        <p className="mt-1 text-sm leading-6 text-white/55">
+        <h1 className="text-xl font-semibold text-[#F0EFE2]">All templates</h1>
+        <p className="mt-1 text-sm leading-6 text-[#F0EFE2]/55">
           Browse all automation templates to get started quickly.
         </p>
       </header>
 
       <div className="relative mt-7 max-w-[448px]">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/35" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#F0EFE2]/35" />
         <input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search templates..."
-          className="h-9 w-full rounded-md border border-white/[0.08] bg-[#1F1F1F] py-2 pl-9 pr-4 text-sm text-white placeholder:text-white/40 focus:border-white/20 focus:outline-none"
+          className="h-9 w-full rounded-md border border-white/[0.08] bg-[#1F1F1F] py-2 pl-9 pr-4 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/40 focus:border-white/20 focus:outline-none"
           aria-label="Search templates"
         />
       </div>
 
       {filtered.length === 0 ? (
         <div className="px-2 py-12 text-center">
-          <p className="text-sm text-white/60">No templates match your search.</p>
+          <p className="text-sm text-[#F0EFE2]/60">No templates match your search.</p>
           <button
             type="button"
             onClick={() => setQuery("")}
@@ -152,7 +152,7 @@ export function ContinuityLabAutomationTemplates() {
             if (!items.length) return null;
             return (
               <section key={cat.id}>
-                <h2 className="text-sm font-semibold text-white">{cat.label}</h2>
+                <h2 className="text-sm font-semibold text-[#F0EFE2]">{cat.label}</h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {items.map((template) => (
                     <li key={template.id}>

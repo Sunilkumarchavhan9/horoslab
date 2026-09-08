@@ -58,7 +58,7 @@ const popoverShell =
   "absolute left-0 top-full z-40 mt-1.5 w-[min(100vw-2rem,17.5rem)] rounded-md border border-white/10 bg-[#141416] p-3 shadow-lg";
 
 const applyButtonClass =
-  "h-8 w-full rounded-md bg-[#2563EB] text-xs font-semibold text-white hover:bg-[#3B82F6]";
+  "h-8 w-full rounded-md bg-[#2563EB] text-xs font-semibold text-[#F0EFE2] hover:bg-[#3B82F6]";
 
 function SchedulePill({
   children,
@@ -94,7 +94,7 @@ function SchedulePill({
 }
 
 function ScheduleRowText({ children }: { children: ReactNode }) {
-  return <span className="text-xs text-white/50">{children}</span>;
+  return <span className="text-xs text-[#F0EFE2]/50">{children}</span>;
 }
 
 export function ScheduleTriggerRow({ trigger, onRemove, onConfigPatch }: ScheduleTriggerRowProps) {
@@ -134,7 +134,7 @@ export function ScheduleTriggerRow({ trigger, onRemove, onConfigPatch }: Schedul
 
   return (
     <div ref={rowRef} className={rowShell}>
-      <Clock className="size-4 shrink-0 text-white/50" aria-hidden />
+      <Clock className="size-4 shrink-0 text-[#F0EFE2]/50" aria-hidden />
 
       <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
         {trigger.type === "schedule_hourly" ? (
@@ -210,7 +210,7 @@ export function ScheduleTriggerRow({ trigger, onRemove, onConfigPatch }: Schedul
         onClick={onRemove}
         whileHover={reduceMotion ? undefined : { opacity: 1 }}
         whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-        className="ml-auto shrink-0 rounded p-0.5 text-white/35 transition hover:text-white/55"
+        className="ml-auto shrink-0 rounded p-0.5 text-[#F0EFE2]/35 transition hover:text-[#F0EFE2]/55"
         aria-label="Remove schedule trigger"
       >
         <Trash2 className="size-3.5" />
@@ -257,10 +257,10 @@ function WeekdayPillDropdown({
                   onSelect(day.code);
                   onOpenChange(false);
                 }}
-                className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs text-white/90 hover:bg-white/[0.06]"
+                className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs text-[#F0EFE2]/90 hover:bg-white/[0.06]"
               >
                 {day.fullLabel}
-                {selected === day.code ? <Check className="size-3.5 text-white" strokeWidth={2.5} /> : null}
+                {selected === day.code ? <Check className="size-3.5 text-[#F0EFE2]" strokeWidth={2.5} /> : null}
               </button>
             ))}
           </motion.div>
@@ -313,7 +313,7 @@ function TimePillDropdown({
             className="absolute left-0 z-30 mt-1 w-[10.5rem] rounded-md border border-white/10 bg-[#0E0E10] p-2.5 shadow-lg"
           >
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-[10px] text-white/45">
+              <label className="text-[10px] text-[#F0EFE2]/45">
                 Hour
                 <input
                   type="number"
@@ -321,10 +321,10 @@ function TimePillDropdown({
                   max={23}
                   value={draftHour}
                   onChange={(e) => setDraftHour(Number(e.target.value) || 0)}
-                  className="mt-1 h-7 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-white"
+                  className="mt-1 h-7 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-[#F0EFE2]"
                 />
               </label>
-              <label className="text-[10px] text-white/45">
+              <label className="text-[10px] text-[#F0EFE2]/45">
                 Minute
                 <input
                   type="number"
@@ -332,7 +332,7 @@ function TimePillDropdown({
                   max={59}
                   value={draftMinute}
                   onChange={(e) => setDraftMinute(Number(e.target.value) || 0)}
-                  className="mt-1 h-7 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-white"
+                  className="mt-1 h-7 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-[#F0EFE2]"
                 />
               </label>
             </div>
@@ -412,7 +412,7 @@ function ScheduleTabControl({
           onClick={() => onTabChange(id)}
           className={cn(
             "flex-1 rounded px-2 py-1 text-xs font-semibold transition",
-            tab === id ? "bg-[#2563EB] text-white" : "text-white/50 hover:text-white/70",
+            tab === id ? "bg-[#2563EB] text-[#F0EFE2]" : "text-[#F0EFE2]/50 hover:text-[#F0EFE2]/70",
           )}
         >
           {id === "rrule" ? "RRULE" : "Visual"}
@@ -496,19 +496,19 @@ function CustomSchedulePanel({
       {tab === "visual" ? (
         <div className="mt-3 space-y-3">
           <div>
-            <p className="text-xs text-white/50">Repeat every</p>
+            <p className="text-xs text-[#F0EFE2]/50">Repeat every</p>
             <div className="mt-1 flex gap-1.5">
               <input
                 type="number"
                 min={1}
                 value={interval}
                 onChange={(e) => setInterval(e.target.value)}
-                className="h-8 w-12 rounded-md border border-white/10 bg-transparent px-1.5 text-xs text-white"
+                className="h-8 w-12 rounded-md border border-white/10 bg-transparent px-1.5 text-xs text-[#F0EFE2]"
               />
               <select
                 value={intervalUnit}
                 onChange={(e) => setIntervalUnit(e.target.value as ScheduleIntervalUnit)}
-                className="h-8 min-w-0 flex-1 rounded-md border border-white/10 bg-transparent px-2 text-xs capitalize text-white"
+                className="h-8 min-w-0 flex-1 rounded-md border border-white/10 bg-transparent px-2 text-xs capitalize text-[#F0EFE2]"
               >
                 <option value="hour">Hour</option>
                 <option value="day">Day</option>
@@ -519,7 +519,7 @@ function CustomSchedulePanel({
 
           {intervalUnit === "week" ? (
             <div>
-              <p className="text-xs text-white/50">Repeat on</p>
+              <p className="text-xs text-[#F0EFE2]/50">Repeat on</p>
               <div className="mt-1.5 flex justify-between gap-0.5">
                 {CIRCLE_DAYS.map((day) => {
                   const selected = repeatDays.includes(day.code);
@@ -531,8 +531,8 @@ function CustomSchedulePanel({
                       className={cn(
                         "flex size-8 items-center justify-center rounded-full text-[11px] font-semibold transition",
                         selected
-                          ? "bg-[#2563EB] text-white"
-                          : "bg-white/[0.06] text-white/50 hover:bg-white/10",
+                          ? "bg-[#2563EB] text-[#F0EFE2]"
+                          : "bg-white/[0.06] text-[#F0EFE2]/50 hover:bg-white/10",
                       )}
                       aria-pressed={selected}
                     >
@@ -545,9 +545,9 @@ function CustomSchedulePanel({
           ) : null}
 
           <div>
-            <p className="text-xs text-white/50">Time ({timezoneLabel})</p>
+            <p className="text-xs text-[#F0EFE2]/50">Time ({timezoneLabel})</p>
             <div className="mt-1 grid grid-cols-2 gap-1.5">
-              <label className="text-[10px] text-white/45">
+              <label className="text-[10px] text-[#F0EFE2]/45">
                 Hour
                 <input
                   type="number"
@@ -555,10 +555,10 @@ function CustomSchedulePanel({
                   max={23}
                   value={hour}
                   onChange={(e) => setHour(Number(e.target.value) || 0)}
-                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-white"
+                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-[#F0EFE2]"
                 />
               </label>
-              <label className="text-[10px] text-white/45">
+              <label className="text-[10px] text-[#F0EFE2]/45">
                 Minute
                 <input
                   type="number"
@@ -566,7 +566,7 @@ function CustomSchedulePanel({
                   max={59}
                   value={minute}
                   onChange={(e) => setMinute(Number(e.target.value) || 0)}
-                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-white"
+                  className="mt-0.5 h-8 w-full rounded-md border border-white/10 bg-transparent px-2 text-xs text-[#F0EFE2]"
                 />
               </label>
             </div>
@@ -583,9 +583,9 @@ function CustomSchedulePanel({
             onChange={(e) => setRruleDraft(e.target.value)}
             rows={3}
             placeholder="FREQ=WEEKLY;BYDAY=MO;BYHOUR=3;BYMINUTE=30"
-            className="w-full resize-y rounded-md border border-white/10 bg-transparent px-2.5 py-2 font-mono text-xs leading-relaxed text-white placeholder:text-white/35 focus:border-[#2563EB]/50 focus:outline-none"
+            className="w-full resize-y rounded-md border border-white/10 bg-transparent px-2.5 py-2 font-mono text-xs leading-relaxed text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 focus:border-[#2563EB]/50 focus:outline-none"
           />
-          <p className="text-[11px] text-white/45">RFC 5545 RRULE in UTC.</p>
+          <p className="text-[11px] text-[#F0EFE2]/45">RFC 5545 RRULE in UTC.</p>
           <button type="button" onClick={applyRrule} className={applyButtonClass}>
             Apply
           </button>

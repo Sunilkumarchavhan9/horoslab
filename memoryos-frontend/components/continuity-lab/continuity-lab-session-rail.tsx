@@ -207,8 +207,8 @@ const RAIL_TABS: {
 
 function EmptyCenter({ text }: { text: string }) {
   return (
-    <div className="flex h-full min-h-[60vh] items-center justify-center px-4 text-center text-[32px] text-white/60">
-      <p className="text-lg text-white/65">{text}</p>
+    <div className="flex h-full min-h-[60vh] items-center justify-center px-4 text-center text-[32px] text-[#F0EFE2]/60">
+      <p className="text-lg text-[#F0EFE2]/65">{text}</p>
     </div>
   );
 }
@@ -226,18 +226,18 @@ function PanelIntro({
 }) {
   return (
     <div className="m-2 mb-0 rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-2.5">
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">
         {eyebrow}
       </p>
       <div className="mt-1 flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-white/90">{title}</p>
-          <p className="mt-1 text-[11px] leading-relaxed text-white/50">
+          <p className="text-sm font-medium text-[#F0EFE2]/90">{title}</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-[#F0EFE2]/50">
             {description}
           </p>
         </div>
         {meta ? (
-          <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+          <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
             {meta}
           </span>
         ) : null}
@@ -332,7 +332,7 @@ function plannerTone(step: RuntimeExecutionStep, isActive: boolean) {
   if (step.approvalStatus === "pending") {
     return "border-amber-500/25 bg-amber-500/10 text-amber-100";
   }
-  return "border-white/10 bg-white/[0.03] text-white/85";
+  return "border-white/10 bg-white/[0.03] text-[#F0EFE2]/85";
 }
 
 function LineageReasonList({
@@ -343,7 +343,7 @@ function LineageReasonList({
   const reasons = brief?.whyTheseMemoriesWereSelected ?? [];
   if (reasons.length === 0) {
     return (
-      <p className="text-[11px] text-white/45">
+      <p className="text-[11px] text-[#F0EFE2]/45">
         No reused lineage has been attached yet.
       </p>
     );
@@ -358,10 +358,10 @@ function LineageReasonList({
         return (
           <div
             key={reason.memoryId}
-            className="rounded border border-white/10 bg-white/[0.03] px-2.5 py-2 text-[11px] text-white/80"
+            className="rounded border border-white/10 bg-white/[0.03] px-2.5 py-2 text-[11px] text-[#F0EFE2]/80"
           >
             <p>{reason.summary}</p>
-            <p className="mt-1 text-[10px] text-white/45">
+            <p className="mt-1 text-[10px] text-[#F0EFE2]/45">
               Score {reason.finalScore.toFixed(3)}
               {reason.contractCategory ? ` · ${reason.contractCategory}` : ""}
             </p>
@@ -396,7 +396,7 @@ function RailSessionMenu() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="inline-flex size-6 items-center justify-center rounded-md text-white/45 hover:bg-[#141414] hover:text-white"
+          className="inline-flex size-6 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-[#141414] hover:text-[#F0EFE2]"
           aria-label="Session menu"
         >
           <MoreHorizontal className="size-3.5" />
@@ -404,16 +404,16 @@ function RailSessionMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-72 border border-[#2f2f2f] bg-[#141414] p-1 text-white shadow-2xl"
+        className="w-72 border border-[#2f2f2f] bg-[#141414] p-1 text-[#F0EFE2] shadow-2xl"
       >
         {rows.map((row) => {
           const Icon = row.icon;
           return (
             <DropdownMenuItem
               key={row.label}
-              className="gap-2 text-[14px] text-white/90 focus:bg-white/10 focus:text-white"
+              className="gap-2 text-[14px] text-[#F0EFE2]/90 focus:bg-white/10 focus:text-[#F0EFE2]"
             >
-              <Icon className="size-3.5 text-white/70" />
+              <Icon className="size-3.5 text-[#F0EFE2]/70" />
               <span>{row.label}</span>
             </DropdownMenuItem>
           );
@@ -430,32 +430,32 @@ function RailSessionMenu() {
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-white/10" />
-        <DropdownMenuItem className="justify-between gap-2 text-[14px] text-white/90 focus:bg-white/10 focus:text-white">
+        <DropdownMenuItem className="justify-between gap-2 text-[14px] text-[#F0EFE2]/90 focus:bg-white/10 focus:text-[#F0EFE2]">
           <span className="inline-flex items-center gap-2">
-            <Star className="size-3.5 text-white/70" />
+            <Star className="size-3.5 text-[#F0EFE2]/70" />
             Focus mode
           </span>
-          <span className="inline-flex items-center gap-1 text-[11px] text-white/55">
+          <span className="inline-flex items-center gap-1 text-[11px] text-[#F0EFE2]/55">
             <kbd className="rounded bg-white/10 px-1 py-0.5">Control</kbd>
             <kbd className="rounded bg-white/10 px-1 py-0.5">Shift</kbd>
             <kbd className="rounded bg-white/10 px-1 py-0.5">F</kbd>
           </span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="gap-2 text-[14px] text-white/90 focus:bg-white/10 focus:text-white">
-          <Bell className="size-3.5 text-white/70" />
+        <DropdownMenuItem className="gap-2 text-[14px] text-[#F0EFE2]/90 focus:bg-white/10 focus:text-[#F0EFE2]">
+          <Bell className="size-3.5 text-[#F0EFE2]/70" />
           <span>Knowledge suggestions</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="gap-2 text-[14px] text-white/90 focus:bg-white/10 focus:text-white">
-          <Settings className="size-3.5 text-white/70" />
+        <DropdownMenuItem className="gap-2 text-[14px] text-[#F0EFE2]/90 focus:bg-white/10 focus:text-[#F0EFE2]">
+          <Settings className="size-3.5 text-[#F0EFE2]/70" />
           <span>Session usage limits</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-white/10" />
-        <DropdownMenuItem className="gap-2 text-[14px] text-white/90 focus:bg-white/10 focus:text-white">
-          <History className="size-3.5 text-white/70" />
+        <DropdownMenuItem className="gap-2 text-[14px] text-[#F0EFE2]/90 focus:bg-white/10 focus:text-[#F0EFE2]">
+          <History className="size-3.5 text-[#F0EFE2]/70" />
           <span>View session insights</span>
         </DropdownMenuItem>
-        <div className="px-3 py-1.5 text-[12px] text-white/55">
+        <div className="px-3 py-1.5 text-[12px] text-[#F0EFE2]/55">
           <div>On-demand usage&nbsp;&nbsp;$0.53</div>
           <div>User messages&nbsp;&nbsp;1</div>
           <div>Session size&nbsp;&nbsp;XS</div>
@@ -495,7 +495,7 @@ function FeaturePickerMenu({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="inline-flex size-7 items-center justify-center rounded-md text-white/60 hover:bg-[#1a1a1a] hover:text-white"
+          className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/60 hover:bg-[#1a1a1a] hover:text-[#F0EFE2]"
           aria-label="Open tools menu"
         >
           <Plus className="size-4" />
@@ -504,20 +504,20 @@ function FeaturePickerMenu({
       <DropdownMenuContent
         align="start"
         sideOffset={6}
-        className="min-w-[220px] border border-[#2a2a2a] bg-[#121212] p-0 text-white"
+        className="min-w-[220px] border border-[#2a2a2a] bg-[#121212] p-0 text-[#F0EFE2]"
       >
         <div className="p-2">
-          <DropdownMenuLabel className="px-0 text-xs font-medium text-white/55">
+          <DropdownMenuLabel className="px-0 text-xs font-medium text-[#F0EFE2]/55">
             Search
           </DropdownMenuLabel>
           <div className="mt-1 flex items-center gap-1.5 rounded-md border border-white/10 bg-black/30 px-2 py-1.5">
-            <Search className="size-3 text-white/45" />
+            <Search className="size-3 text-[#F0EFE2]/45" />
             <input
               ref={inputRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Find tab"
-              className="w-full bg-transparent text-xs text-white outline-none placeholder:text-white/35"
+              className="w-full bg-transparent text-xs text-[#F0EFE2] outline-none placeholder:text-[#F0EFE2]/35"
               onKeyDown={(event) => event.stopPropagation()}
             />
           </div>
@@ -525,7 +525,7 @@ function FeaturePickerMenu({
         <DropdownMenuSeparator className="bg-white/10" />
         <div className="p-1">
           {filtered.length === 0 ? (
-            <p className="px-2 py-2 text-[11px] text-white/45">
+            <p className="px-2 py-2 text-[11px] text-[#F0EFE2]/45">
               No tabs available
             </p>
           ) : null}
@@ -536,14 +536,14 @@ function FeaturePickerMenu({
               <DropdownMenuItem
                 key={tab.id}
                 disabled={disabled}
-                className="gap-2 rounded-md px-2 py-2 text-white/85 focus:bg-white/10 focus:text-white data-[disabled]:opacity-40"
+                className="gap-2 rounded-md px-2 py-2 text-[#F0EFE2]/85 focus:bg-white/10 focus:text-[#F0EFE2] data-[disabled]:opacity-40"
                 onClick={() => onSelect(tab.id)}
               >
-                <Icon className="size-3.5 text-white/70" />
+                <Icon className="size-3.5 text-[#F0EFE2]/70" />
                 <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
                   <span className="text-sm">{tab.label}</span>
                   {disabled ? (
-                    <span className="shrink-0 text-[10px] uppercase tracking-wide text-white/35">
+                    <span className="shrink-0 text-[10px] uppercase tracking-wide text-[#F0EFE2]/35">
                       unavailable
                     </span>
                   ) : null}
@@ -1709,7 +1709,7 @@ export function ContinuityLabSessionRail({
         <button
           type="button"
           onClick={onToggleTabsPanel}
-          className="inline-flex size-6 items-center justify-center rounded-md text-white/45 hover:bg-[#141414] hover:text-white"
+          className="inline-flex size-6 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-[#141414] hover:text-[#F0EFE2]"
           aria-label="Toggle tabs panel"
           title="Hide tabs panel (Ctrl+Alt+B)"
         >
@@ -1732,8 +1732,8 @@ export function ContinuityLabSessionRail({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] transition",
                   active
-                    ? "bg-[#1a1a1a] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
-                    : "text-white/65 hover:bg-[#151515] hover:text-white",
+                    ? "bg-[#1a1a1a] text-[#F0EFE2] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                    : "text-[#F0EFE2]/65 hover:bg-[#151515] hover:text-[#F0EFE2]",
                 )}
                 title={tab.description}
               >
@@ -1745,7 +1745,7 @@ export function ContinuityLabSessionRail({
                 </span>
                 <span
                   className={cn(
-                    "inline-flex size-3.5 items-center justify-center rounded text-white/45 hover:bg-white/10 hover:text-white",
+                    "inline-flex size-3.5 items-center justify-center rounded text-[#F0EFE2]/45 hover:bg-white/10 hover:text-[#F0EFE2]",
                     renderedTabs.length <= 1 &&
                       "pointer-events-none opacity-30",
                     railFullscreen && "hidden",
@@ -1771,7 +1771,7 @@ export function ContinuityLabSessionRail({
           <button
             type="button"
             onClick={onToggleRailExpanded}
-            className="inline-flex size-7 items-center justify-center rounded-md text-white/60 hover:bg-[#1a1a1a] hover:text-white"
+            className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/60 hover:bg-[#1a1a1a] hover:text-[#F0EFE2]"
             aria-label={
               railExpanded ? "Restore split layout" : "Expand tools panel"
             }
@@ -1786,7 +1786,7 @@ export function ContinuityLabSessionRail({
           <button
             type="button"
             onClick={onToggleRailFullscreen}
-            className="inline-flex size-7 items-center justify-center rounded-md text-white/45 hover:bg-[#1a1a1a] hover:text-white"
+            className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/45 hover:bg-[#1a1a1a] hover:text-[#F0EFE2]"
             aria-label="Open panel in new window"
             title={railFullscreen ? "Exit fullscreen" : "Fullscreen"}
           >
@@ -1803,20 +1803,20 @@ export function ContinuityLabSessionRail({
             <div className="relative min-h-0 flex-[1.25] overflow-hidden rounded-md border border-[#242424] bg-[#0a0a0a]">
               <div className="flex items-center justify-between gap-3 border-b border-white/8 px-3 py-2">
                 <div className="flex min-w-0 items-center gap-2">
-                  <span className="rounded-md border border-white/10 bg-white/[0.06] px-2 py-1 text-[12px] text-white/90">
+                  <span className="rounded-md border border-white/10 bg-white/[0.06] px-2 py-1 text-[12px] text-[#F0EFE2]/90">
                     default
                   </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-white/55">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-[#F0EFE2]/55">
                     Shell
                   </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/65">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-[#F0EFE2]/65">
                     {desktopState.osType === "windows"
                       ? "Windows"
                       : desktopState.osType === "ubuntu"
                         ? "Ubuntu"
                         : "Ubuntu"}
                   </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/65">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-[#F0EFE2]/65">
                     {shellLiveState === "running"
                       ? "Live"
                       : shellLiveState === "starting"
@@ -1843,7 +1843,7 @@ export function ContinuityLabSessionRail({
                       scrollToEndToken={shellTerminalScrollToken}
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-white/45">
+                    <div className="flex h-full items-center justify-center text-sm text-[#F0EFE2]/45">
                       Waiting for runtime shell...
                     </div>
                   )}
@@ -1872,17 +1872,17 @@ export function ContinuityLabSessionRail({
                   </button>
                 ) : null}
 
-                <div className="absolute bottom-3 left-3 flex items-center gap-2 text-[11px] text-white/45">
+                <div className="absolute bottom-3 left-3 flex items-center gap-2 text-[11px] text-[#F0EFE2]/45">
                   <button
                     type="button"
-                    className="rounded-full border border-white/10 px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white"
+                    className="rounded-full border border-white/10 px-2.5 py-1 text-[#F0EFE2]/50 hover:bg-white/5 hover:text-[#F0EFE2]"
                     aria-label="Back"
                   >
                     ←
                   </button>
                   <button
                     type="button"
-                    className="rounded-full border border-white/10 px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white"
+                    className="rounded-full border border-white/10 px-2.5 py-1 text-[#F0EFE2]/50 hover:bg-white/5 hover:text-[#F0EFE2]"
                     aria-label="Forward"
                   >
                     →
@@ -1892,7 +1892,7 @@ export function ContinuityLabSessionRail({
                     onClick={() =>
                       setShellTerminalScrollToken((current) => current + 1)
                     }
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-white/80 hover:bg-white/[0.08] hover:text-white"
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[#F0EFE2]/80 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                   >
                     Go to end
                   </button>
@@ -1903,16 +1903,16 @@ export function ContinuityLabSessionRail({
             <div className="min-h-0 flex-[0.95] overflow-hidden rounded-md border border-[#242424] bg-[#090909]">
               <div className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2">
                 <div className="flex min-w-0 items-center gap-2">
-                  <div className="text-[10px] uppercase tracking-wide text-white/45">
+                  <div className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                     Command history
                   </div>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-[#F0EFE2]/60">
                     {desktopState.osType === "windows" ? "Windows" : "Ubuntu"}
                   </span>
                 </div>
               </div>
               <div className="border-b border-white/8 px-3 py-2">
-                <div className="flex items-center gap-2 rounded-md border border-white/10 bg-black/30 px-2 py-1.5 text-[11px] text-white/45">
+                <div className="flex items-center gap-2 rounded-md border border-white/10 bg-black/30 px-2 py-1.5 text-[11px] text-[#F0EFE2]/45">
                   <Search className="size-3.5 shrink-0" />
                   <input
                     value={shellHistoryQuery}
@@ -1920,20 +1920,20 @@ export function ContinuityLabSessionRail({
                       setShellHistoryQuery(event.target.value)
                     }
                     placeholder="Search Command History"
-                    className="w-full bg-transparent text-[11px] text-white/80 outline-none placeholder:text-white/25"
+                    className="w-full bg-transparent text-[11px] text-[#F0EFE2]/80 outline-none placeholder:text-[#F0EFE2]/25"
                   />
                   {shellHistoryQuery ? (
                     <button
                       type="button"
                       onClick={() => setShellHistoryQuery("")}
-                      className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/50 hover:bg-white/5 hover:text-white"
+                      className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/50 hover:bg-white/5 hover:text-[#F0EFE2]"
                     >
                       Clear
                     </button>
                   ) : null}
                 </div>
               </div>
-              <div className="flex items-center justify-between border-b border-white/8 px-3 py-2 text-[10px] uppercase tracking-wide text-white/35">
+              <div className="flex items-center justify-between border-b border-white/8 px-3 py-2 text-[10px] uppercase tracking-wide text-[#F0EFE2]/35">
                 <span>Command</span>
                 <div className="flex items-center gap-10">
                   <span>Status</span>
@@ -1943,7 +1943,7 @@ export function ContinuityLabSessionRail({
               </div>
               <div className="max-h-[36vh] overflow-auto">
                 {filteredShellHistoryRows.length === 0 ? (
-                  <div className="px-3 py-3 text-[11px] text-white/45">
+                  <div className="px-3 py-3 text-[11px] text-[#F0EFE2]/45">
                     {shellHistoryQuery
                       ? "No matching shell commands."
                       : "No shell commands yet. Use the live terminal above to populate this history."}
@@ -1997,11 +1997,11 @@ export function ContinuityLabSessionRail({
                             onClick={() => jumpToShellEntry(entry)}
                             className="min-w-0 text-left"
                           >
-                            <p className="truncate font-mono text-[12px] text-white/88">
+                            <p className="truncate font-mono text-[12px] text-[#F0EFE2]/88">
                               {entry.title}
                             </p>
                           </button>
-                          <div className="flex items-center gap-2 pt-0.5 text-[11px] text-white/45">
+                          <div className="flex items-center gap-2 pt-0.5 text-[11px] text-[#F0EFE2]/45">
                             <span
                               className={cn("size-2 rounded-full", statusTone)}
                             />
@@ -2009,11 +2009,11 @@ export function ContinuityLabSessionRail({
                               {duration != null ? `${duration}s` : "Live"}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 pt-0.5 text-[11px] text-white/45">
+                          <div className="flex items-center gap-2 pt-0.5 text-[11px] text-[#F0EFE2]/45">
                             <button
                               type="button"
                               onClick={() => jumpToShellEntry(entry)}
-                              className="rounded border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-white/55 hover:bg-white/[0.08] hover:text-white"
+                              className="rounded border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-[#F0EFE2]/55 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                             >
                               {startLabel}
                             </button>
@@ -2028,7 +2028,7 @@ export function ContinuityLabSessionRail({
                                   detail: entry.detail,
                                 })
                               }
-                              className="inline-flex size-6 items-center justify-center rounded-full border border-white/10 text-white/40 opacity-0 transition group-hover:opacity-100 hover:bg-white/5 hover:text-white"
+                              className="inline-flex size-6 items-center justify-center rounded-full border border-white/10 text-[#F0EFE2]/40 opacity-0 transition group-hover:opacity-100 hover:bg-white/5 hover:text-[#F0EFE2]"
                               aria-label="Copy shell command"
                               title="Copy command and output"
                             >
@@ -2062,7 +2062,7 @@ export function ContinuityLabSessionRail({
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-300/85">
                   Change Lineage
                 </p>
-                <p className="mt-1 text-[11px] text-white/45">
+                <p className="mt-1 text-[11px] text-[#F0EFE2]/45">
                   Review changed files against prior successful Mythic runs
                   before write-back and PR creation.
                 </p>
@@ -2086,7 +2086,7 @@ export function ContinuityLabSessionRail({
                     <button
                       type="button"
                       onClick={onDismissWriteBackBanner}
-                      className="rounded border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-white/70"
+                      className="rounded border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-[#F0EFE2]/70"
                     >
                       Dismiss
                     </button>
@@ -2101,19 +2101,19 @@ export function ContinuityLabSessionRail({
                   >
                     <div className="flex items-start justify-between gap-3 border-b border-white/10 px-3 py-2.5">
                       <div className="min-w-0 flex items-start gap-3">
-                        <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-md border border-white/10 bg-black/25 text-[11px] font-semibold text-white/80">
+                        <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-md border border-white/10 bg-black/25 text-[11px] font-semibold text-[#F0EFE2]/80">
                           {group.index}
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-medium text-white">
+                          <p className="truncate text-sm font-medium text-[#F0EFE2]">
                             {group.title}
                           </p>
-                          <p className="mt-0.5 text-[11px] text-white/48">
+                          <p className="mt-0.5 text-[11px] text-[#F0EFE2]/48">
                             {group.detail || group.summary}
                           </p>
                         </div>
                       </div>
-                      <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                      <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                         {group.files.length} file
                         {group.files.length === 1 ? "" : "s"}
                       </span>
@@ -2127,11 +2127,11 @@ export function ContinuityLabSessionRail({
                         return (
                           <div
                             key={`${group.id}:${file}`}
-                            className="rounded-md border border-white/8 bg-[#0a0a0a] px-3 py-2 text-[11px] text-white/76"
+                            className="rounded-md border border-white/8 bg-[#0a0a0a] px-3 py-2 text-[11px] text-[#F0EFE2]/76"
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <p className="truncate font-medium text-white/90">
+                                <p className="truncate font-medium text-[#F0EFE2]/90">
                                   {file}
                                   {focusChangePath === file ? (
                                     <span className="ml-2 rounded bg-indigo-500/15 px-1.5 py-0.5 text-[10px] text-indigo-200">
@@ -2139,7 +2139,7 @@ export function ContinuityLabSessionRail({
                                     </span>
                                   ) : null}
                                 </p>
-                                <p className="mt-0.5 text-white/45">
+                                <p className="mt-0.5 text-[#F0EFE2]/45">
                                   {matchedChange?.kind}
                                   {matchedChange?.detail
                                     ? ` · ${matchedChange.detail}`
@@ -2153,7 +2153,7 @@ export function ContinuityLabSessionRail({
                               ) : null}
                             </div>
                             {matchedChange?.content ? (
-                              <p className="mt-2 line-clamp-3 whitespace-pre-line text-white/58">
+                              <p className="mt-2 line-clamp-3 whitespace-pre-line text-[#F0EFE2]/58">
                                 {matchedChange.content}
                               </p>
                             ) : null}
@@ -2162,7 +2162,7 @@ export function ContinuityLabSessionRail({
                                 <p className="text-[10px] font-semibold uppercase tracking-wide text-indigo-200/85">
                                   Related successful run
                                 </p>
-                                <p className="mt-1 whitespace-pre-line text-[11px] text-white/75">
+                                <p className="mt-1 whitespace-pre-line text-[11px] text-[#F0EFE2]/75">
                                   {formatLineageSummary(lineage[0]!)}
                                 </p>
                               </div>
@@ -2196,7 +2196,7 @@ export function ContinuityLabSessionRail({
           timelineEntries.length === 0 && plannerSteps.length === 0 ? (
             <EmptyCenter text="No worklog events yet" />
           ) : (
-            <div className="h-full overflow-auto p-3 text-sm text-white/80">
+            <div className="h-full overflow-auto p-3 text-sm text-[#F0EFE2]/80">
               <div className="mb-3">
                 <PanelIntro
                   eyebrow="Worklog"
@@ -2212,12 +2212,12 @@ export function ContinuityLabSessionRail({
                       <p className="text-[10px] font-semibold uppercase tracking-wide text-indigo-200/85">
                         Planner DAG
                       </p>
-                      <p className="mt-1 text-[11px] text-white/45">
+                      <p className="mt-1 text-[11px] text-[#F0EFE2]/45">
                         Derived directly from runtime execution steps,
                         approvals, retries, and handoff lineage.
                       </p>
                     </div>
-                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                       {plannerSteps.length} steps
                     </span>
                   </div>
@@ -2239,17 +2239,17 @@ export function ContinuityLabSessionRail({
                             )}
                           >
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-[10px] font-semibold uppercase tracking-wide text-white/55">
+                              <span className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/55">
                                 {step.stage}
                               </span>
-                              <span className="text-[10px] text-white/60">
+                              <span className="text-[10px] text-[#F0EFE2]/60">
                                 {stateLabel}
                               </span>
                             </div>
                             <p className="mt-1 text-sm font-medium text-current">
                               {step.label}
                             </p>
-                            <p className="mt-1 text-[11px] text-white/70">
+                            <p className="mt-1 text-[11px] text-[#F0EFE2]/70">
                               {step.role}
                               {typeof step.retryCount === "number" &&
                               step.retryCount > 0
@@ -2257,30 +2257,30 @@ export function ContinuityLabSessionRail({
                                 : ""}
                             </p>
                             {reason ? (
-                              <p className="mt-1 line-clamp-3 text-[11px] text-white/65">
+                              <p className="mt-1 line-clamp-3 text-[11px] text-[#F0EFE2]/65">
                                 {reason}
                               </p>
                             ) : null}
                             <div className="mt-2 flex flex-wrap gap-1">
                               {step.proposalIds?.length ? (
-                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/60">
+                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/60">
                                   Proposal {step.proposalIds.length}
                                 </span>
                               ) : null}
                               {linkedArtifacts.length ? (
-                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/60">
+                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/60">
                                   Artifact {linkedArtifacts.length}
                                 </span>
                               ) : null}
                               {step.approvalStatus ? (
-                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/60">
+                                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/60">
                                   {step.approvalStatus.replaceAll("_", " ")}
                                 </span>
                               ) : null}
                             </div>
                           </div>
                           {index < plannerSteps.length - 1 ? (
-                            <span className="text-white/25">→</span>
+                            <span className="text-[#F0EFE2]/25">→</span>
                           ) : null}
                         </div>
                       ),
@@ -2292,7 +2292,7 @@ export function ContinuityLabSessionRail({
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-200/85">
                   End-to-End Trace
                 </p>
-                <p className="mt-1 text-[11px] text-white/45">
+                <p className="mt-1 text-[11px] text-[#F0EFE2]/45">
                   Chronological audit trail across runtime logs, handoffs,
                   approvals, retries, and reused Mythic lineage.
                 </p>
@@ -2317,19 +2317,19 @@ export function ContinuityLabSessionRail({
                     >
                       {entry.title}
                     </p>
-                    <span className="shrink-0 text-[10px] text-white/35">
+                    <span className="shrink-0 text-[10px] text-[#F0EFE2]/35">
                       {entry.at.slice(11, 19)}
                     </span>
                   </div>
                   {entry.detail ? (
-                    <p className="mt-1 whitespace-pre-line text-xs text-white/50">
+                    <p className="mt-1 whitespace-pre-line text-xs text-[#F0EFE2]/50">
                       {entry.detail}
                     </p>
                   ) : null}
                 </div>
               ))}
               {runtimeThread?.executionState?.retryCount ? (
-                <div className="mt-3 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] text-white/65">
+                <div className="mt-3 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] text-[#F0EFE2]/65">
                   Total runtime retries:{" "}
                   {runtimeThread.executionState.retryCount}
                 </div>
@@ -2373,7 +2373,7 @@ export function ContinuityLabSessionRail({
           </div>
         ) : null}
         {panel === "session" ? (
-          <div className="h-full overflow-auto p-3 text-sm text-white/80">
+          <div className="h-full overflow-auto p-3 text-sm text-[#F0EFE2]/80">
             <div className="mb-3">
               <PanelIntro
                 eyebrow="Progress"
@@ -2387,14 +2387,14 @@ export function ContinuityLabSessionRail({
               <section className="rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/45">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                       Current session
                     </p>
-                    <p className="mt-1 text-sm font-medium text-white/90">
+                    <p className="mt-1 text-sm font-medium text-[#F0EFE2]/90">
                       Progress, runtime, and surface status
                     </p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                     {runtimeThread?.executionState?.status?.replaceAll(
                       "_",
                       " ",
@@ -2404,34 +2404,34 @@ export function ContinuityLabSessionRail({
 
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <div className="rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2">
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Runtime role
                     </p>
-                    <p className="mt-1 text-sm text-white/85">
+                    <p className="mt-1 text-sm text-[#F0EFE2]/85">
                       {runtimeThread?.executionState?.activeRole ?? "manager"}
                     </p>
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2">
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Shell
                     </p>
-                    <p className="mt-1 text-sm text-white/85">
+                    <p className="mt-1 text-sm text-[#F0EFE2]/85">
                       {shellLiveState}
                     </p>
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2">
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Desktop
                     </p>
-                    <p className="mt-1 text-sm text-white/85">
+                    <p className="mt-1 text-sm text-[#F0EFE2]/85">
                       {desktopFreshness}
                     </p>
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2">
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Commands
                     </p>
-                    <p className="mt-1 text-sm text-white/85">
+                    <p className="mt-1 text-sm text-[#F0EFE2]/85">
                       {shellHistoryRows.length} tracked
                     </p>
                   </div>
@@ -2441,28 +2441,28 @@ export function ContinuityLabSessionRail({
                   <button
                     type="button"
                     onClick={() => onPanelChange("shell")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/[0.08] hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                   >
                     Open shell <ArrowRight className="size-3" />
                   </button>
                   <button
                     type="button"
                     onClick={() => onPanelChange("desktop")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/[0.08] hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                   >
                     Open desktop <ArrowRight className="size-3" />
                   </button>
                   <button
                     type="button"
                     onClick={() => onPanelChange("worklog")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/[0.08] hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                   >
                     Open worklog <ArrowRight className="size-3" />
                   </button>
                   <button
                     type="button"
                     onClick={() => onPanelChange("memory")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/[0.08] hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                   >
                     Open continuity <ArrowRight className="size-3" />
                   </button>
@@ -2472,24 +2472,24 @@ export function ContinuityLabSessionRail({
               <section className="rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/45">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                       Next best action
                     </p>
-                    <p className="mt-1 text-sm font-medium text-white/90">
+                    <p className="mt-1 text-sm font-medium text-[#F0EFE2]/90">
                       What Devin-style progress should do next
                     </p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                     {sessionMemories.length} memories
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-white/72">
+                <p className="mt-3 text-sm leading-6 text-[#F0EFE2]/72">
                   {sessionOverview.nextAction}
                 </p>
 
                 <div className="mt-4 space-y-3">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Blockers
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
@@ -2503,7 +2503,7 @@ export function ContinuityLabSessionRail({
                           </span>
                         ))
                       ) : (
-                        <span className="text-[11px] text-white/40">
+                        <span className="text-[11px] text-[#F0EFE2]/40">
                           No blockers surfaced yet.
                         </span>
                       )}
@@ -2511,7 +2511,7 @@ export function ContinuityLabSessionRail({
                   </div>
 
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Risks
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
@@ -2525,7 +2525,7 @@ export function ContinuityLabSessionRail({
                           </span>
                         ))
                       ) : (
-                        <span className="text-[11px] text-white/40">
+                        <span className="text-[11px] text-[#F0EFE2]/40">
                           No risky files or risks flagged.
                         </span>
                       )}
@@ -2533,7 +2533,7 @@ export function ContinuityLabSessionRail({
                   </div>
 
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                       Memory signal
                     </p>
                     <div className="mt-2 space-y-1.5">
@@ -2546,20 +2546,20 @@ export function ContinuityLabSessionRail({
                           className="rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2"
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-xs font-medium text-white/84">
+                            <p className="text-xs font-medium text-[#F0EFE2]/84">
                               {memory.title}
                             </p>
-                            <span className="shrink-0 text-[10px] uppercase tracking-wide text-white/35">
+                            <span className="shrink-0 text-[10px] uppercase tracking-wide text-[#F0EFE2]/35">
                               {memory.importance}
                             </span>
                           </div>
-                          <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-white/45">
+                          <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-[#F0EFE2]/45">
                             {memory.content}
                           </p>
                         </div>
                       ))}
                       {!sessionMemories.length ? (
-                        <p className="text-[11px] text-white/40">
+                        <p className="text-[11px] text-[#F0EFE2]/40">
                           No memory extraction loaded yet.
                         </p>
                       ) : null}
@@ -2572,14 +2572,14 @@ export function ContinuityLabSessionRail({
             <section className="mt-3 rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wide text-white/45">
+                  <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                     Execution steps
                   </p>
-                  <p className="mt-1 text-sm font-medium text-white/90">
+                  <p className="mt-1 text-sm font-medium text-[#F0EFE2]/90">
                     Live task progress from the runtime planner
                   </p>
                 </div>
-                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                   {plannerSteps.length} steps
                 </span>
               </div>
@@ -2606,13 +2606,13 @@ export function ContinuityLabSessionRail({
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-[10px] uppercase tracking-wide text-white/40">
+                            <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                               Step {index + 1} · {step.stage}
                             </p>
-                            <p className="mt-1 text-sm font-medium text-white/88">
+                            <p className="mt-1 text-sm font-medium text-[#F0EFE2]/88">
                               {step.label}
                             </p>
-                            <p className="mt-1 text-[11px] text-white/48">
+                            <p className="mt-1 text-[11px] text-[#F0EFE2]/48">
                               {step.role}
                               {typeof step.retryCount === "number" &&
                               step.retryCount > 0
@@ -2621,18 +2621,18 @@ export function ContinuityLabSessionRail({
                             </p>
                           </div>
                           <div className="flex shrink-0 flex-col items-end gap-1">
-                            <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                            <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                               {stateLabel}
                             </span>
                             {linkedArtifacts.length ? (
-                              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/45">
+                              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/45">
                                 {linkedArtifacts.length} artifacts
                               </span>
                             ) : null}
                           </div>
                         </div>
                         {reason ? (
-                          <p className="mt-2 text-[11px] leading-5 text-white/48">
+                          <p className="mt-2 text-[11px] leading-5 text-[#F0EFE2]/48">
                             {reason}
                           </p>
                         ) : null}
@@ -2646,14 +2646,14 @@ export function ContinuityLabSessionRail({
               <section className="rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/45">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                       Shell stream
                     </p>
-                    <p className="mt-1 text-sm font-medium text-white/90">
+                    <p className="mt-1 text-sm font-medium text-[#F0EFE2]/90">
                       Commands and output in one timeline
                     </p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                     {shellHistoryRows.length}
                   </span>
                 </div>
@@ -2666,20 +2666,20 @@ export function ContinuityLabSessionRail({
                       className="flex w-full items-start justify-between gap-3 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2 text-left hover:bg-white/[0.05]"
                     >
                       <div className="min-w-0">
-                        <p className="truncate font-mono text-xs text-white/84">
+                        <p className="truncate font-mono text-xs text-[#F0EFE2]/84">
                           {entry.title}
                         </p>
-                        <p className="mt-0.5 truncate text-[11px] text-white/42">
+                        <p className="mt-0.5 truncate text-[11px] text-[#F0EFE2]/42">
                           {entry.detail || "Shell command"}
                         </p>
                       </div>
-                      <span className="shrink-0 text-[10px] text-white/35">
+                      <span className="shrink-0 text-[10px] text-[#F0EFE2]/35">
                         {entry.at.slice(11, 19)}
                       </span>
                     </button>
                   ))}
                   {!shellHistoryRows.length ? (
-                    <p className="text-[11px] text-white/40">
+                    <p className="text-[11px] text-[#F0EFE2]/40">
                       No shell commands recorded yet.
                     </p>
                   ) : null}
@@ -2689,18 +2689,18 @@ export function ContinuityLabSessionRail({
               <section className="rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/45">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                       Desktop
                     </p>
-                    <p className="mt-1 text-sm font-medium text-white/90">
+                    <p className="mt-1 text-sm font-medium text-[#F0EFE2]/90">
                       Live viewport and control surface
                     </p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                     {desktopFreshness}
                   </span>
                 </div>
-                <p className="mt-3 text-[11px] leading-5 text-white/48">
+                <p className="mt-3 text-[11px] leading-5 text-[#F0EFE2]/48">
                   {runtimeThread?.desktopSession?.state
                     ? `Desktop session is ${runtimeThread.desktopSession.state.replaceAll("_", " ")}.`
                     : "No desktop session state yet."}
@@ -2709,7 +2709,7 @@ export function ContinuityLabSessionRail({
                   <button
                     type="button"
                     onClick={() => onPanelChange("desktop")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/[0.08] hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/[0.08] hover:text-[#F0EFE2]"
                   >
                     View desktop <ArrowRight className="size-3" />
                   </button>
@@ -2724,18 +2724,18 @@ export function ContinuityLabSessionRail({
               <section className="rounded-md border border-white/10 bg-[#0d0d0d] px-3 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-white/45">
+                    <p className="text-[10px] uppercase tracking-wide text-[#F0EFE2]/45">
                       Continuity
                     </p>
-                    <p className="mt-1 text-sm font-medium text-white/90">
+                    <p className="mt-1 text-sm font-medium text-[#F0EFE2]/90">
                       Memory and handoff trail
                     </p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                     {handoffPacket?.newMemories.length ?? 0}
                   </span>
                 </div>
-                <p className="mt-3 text-[11px] leading-5 text-white/48">
+                <p className="mt-3 text-[11px] leading-5 text-[#F0EFE2]/48">
                   {handoffPacket?.summary ??
                     playbook?.title ??
                     "No continuity packet has been generated yet."}
@@ -2744,14 +2744,14 @@ export function ContinuityLabSessionRail({
                   <button
                     type="button"
                     onClick={() => onPanelChange("memory")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/8 hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/8 hover:text-[#F0EFE2]"
                   >
                     View memory <ArrowRight className="size-3" />
                   </button>
                   <button
                     type="button"
                     onClick={() => onPanelChange("worklog")}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/75 hover:bg-white/8 hover:text-white"
+                    className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-[#F0EFE2]/75 hover:bg-white/8 hover:text-[#F0EFE2]"
                   >
                     View timeline <ArrowRight className="size-3" />
                   </button>

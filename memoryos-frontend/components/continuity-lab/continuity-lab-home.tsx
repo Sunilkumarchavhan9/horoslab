@@ -277,7 +277,7 @@ export function ContinuityLabHome() {
                 type="button"
                 onClick={forceSyncConnectors}
                 disabled={syncing}
-                className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm font-medium text-white/85 shadow-[0_0_0_1px_rgba(37,99,235,0.08)] transition hover:border-white/15 hover:bg-white/[0.06] disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm font-medium text-[#F0EFE2]/85 shadow-[0_0_0_1px_rgba(37,99,235,0.08)] transition hover:border-white/15 hover:bg-white/[0.06] disabled:opacity-50"
               >
                 <span className="relative flex size-2 items-center justify-center">
                   <span className="absolute inset-0 rounded-full bg-[#60A5FA]/70 opacity-70 blur-[3px]" />
@@ -288,12 +288,12 @@ export function ContinuityLabHome() {
             </Reveal>
             <div className="flex flex-col items-center text-center">
               <Reveal>
-                <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                <h1 className="text-3xl font-semibold tracking-tight text-[#F0EFE2] sm:text-4xl">
                   What should MemoryOS work on?
                 </h1>
               </Reveal>
               <Reveal delay={0.08}>
-                <p className="mt-3 max-w-lg text-sm text-white/50">
+                <p className="mt-3 max-w-lg text-sm text-[#F0EFE2]/50">
                   Resume work instead of restarting it — continue incidents, PR
                   reviews, and governed agent execution from company memory.
                 </p>
@@ -303,14 +303,14 @@ export function ContinuityLabHome() {
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <Link
                     href="/continuity-lab/spine"
-                    className="group inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-white/90 transition duration-200 hover:-translate-y-0.5 hover:bg-white/[0.08]"
+                    className="group inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-[#F0EFE2]/90 transition duration-200 hover:-translate-y-0.5 hover:bg-white/[0.08]"
                   >
                     Open inheritance spine
                     <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                   </Link>
                   <Link
                     href="/mission-control?view=skills"
-                    className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-white/80 transition duration-200 hover:-translate-y-0.5 hover:bg-white/[0.08]"
+                    className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium text-[#F0EFE2]/80 transition duration-200 hover:-translate-y-0.5 hover:bg-white/[0.08]"
                   >
                     Review skills
                   </Link>
@@ -346,7 +346,7 @@ export function ContinuityLabHome() {
                   />
                 </div>
                 {showConnectorDebug && connectorDebug ? (
-                  <pre className="mt-3 max-w-full overflow-auto text-xs text-white/60">
+                  <pre className="mt-3 max-w-full overflow-auto text-xs text-[#F0EFE2]/60">
                     {JSON.stringify(connectorDebug, null, 2)}
                   </pre>
                 ) : null}

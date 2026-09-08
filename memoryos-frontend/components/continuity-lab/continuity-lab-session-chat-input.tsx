@@ -90,10 +90,10 @@ export function ContinuityLabSessionChatInput({
                 applySuggestion(command);
               }}
             >
-              <span className="font-mono text-sm text-white">
+              <span className="font-mono text-sm text-[#F0EFE2]">
                 /{command.name}
               </span>
-              <span className="text-xs text-white/45">
+              <span className="text-xs text-[#F0EFE2]/45">
                 {command.description}
               </span>
             </button>
@@ -109,7 +109,7 @@ export function ContinuityLabSessionChatInput({
             rows={2}
             disabled={disabled || sending}
             placeholder={placeholder}
-            className="w-full resize-none bg-transparent px-4 pb-2 pt-3 text-[14px] leading-6 text-white placeholder:text-white/42 focus:outline-none disabled:opacity-50"
+            className="w-full resize-none bg-transparent px-4 pb-2 pt-3 text-[14px] leading-6 text-[#F0EFE2] placeholder:text-[#F0EFE2]/42 focus:outline-none disabled:opacity-50"
             onKeyDown={(e) => {
               if (suggestions.length > 0) {
                 if (e.key === "ArrowDown") {
@@ -154,19 +154,19 @@ export function ContinuityLabSessionChatInput({
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                className="inline-flex size-7 items-center justify-center rounded-md text-white/60 hover:bg-white/[0.06] hover:text-white"
+                className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/60 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                 aria-label="Add"
               >
                 <Plus className="size-4" />
               </button>
-              <span className="rounded-full border border-white/12 bg-white/[0.03] px-2.5 py-1 text-[14px] font-medium leading-4 text-white/82">
+              <span className="rounded-full border border-white/12 bg-white/[0.03] px-2.5 py-1 text-[14px] font-medium leading-4 text-[#F0EFE2]/82">
                 Agent
               </span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="inline-flex size-7 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white"
+                className="inline-flex size-7 items-center justify-center rounded-md text-[#F0EFE2]/55 hover:bg-white/[0.06] hover:text-[#F0EFE2]"
                 aria-label="Microphone"
               >
                 <Mic className="size-4" />

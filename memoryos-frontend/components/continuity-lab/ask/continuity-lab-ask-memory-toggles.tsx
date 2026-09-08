@@ -30,7 +30,7 @@ export function ContinuityLabAskMemoryToggles({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-white/55",
+        "flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-[#F0EFE2]/55",
         className,
       )}
     >

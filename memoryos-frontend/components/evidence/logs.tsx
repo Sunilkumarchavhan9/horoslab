@@ -70,13 +70,13 @@ export function EvidenceLogs({ onOpenWorkspace }: { onOpenWorkspace?: (id: strin
                 className={`flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4 p-1.5 rounded cursor-pointer transition-colors ${selectedLogId === log.id ? 'bg-[#0f52ff]/20' : 'hover:bg-white/5'}`}
               >
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-white/40 min-w-[70px]">{log.time}</span>
+                  <span className="text-[#F0EFE2]/40 min-w-[70px]">{log.time}</span>
                   <span className={`min-w-[60px] font-semibold ${log.level === 'ERROR' ? 'text-red-400' : log.level === 'WARNING' ? 'text-yellow-400' : 'text-[#4ade80]'}`}>
                     {log.level}
                   </span>
                 </div>
                 <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 truncate">
-                  <span className="text-white/90 font-medium truncate">{log.message}</span>
+                  <span className="text-[#F0EFE2]/90 font-medium truncate">{log.message}</span>
                   <div className="flex items-center gap-3 mt-1 sm:mt-0 text-[11px] opacity-60 ml-auto shrink-0">
                     <span className="truncate max-w-[100px]">{log.mission}</span>
                     <span className="truncate max-w-[100px]">{log.agent}</span>
@@ -151,7 +151,7 @@ export function EvidenceLogs({ onOpenWorkspace }: { onOpenWorkspace?: (id: strin
           </div>
           
           <div className="p-5 border-t border-black/5 bg-white mt-auto">
-            <Button className="w-full bg-black text-white hover:bg-black/80" onClick={() => onOpenWorkspace?.(selectedLog.id)}>
+            <Button className="w-full bg-black text-[#F0EFE2] hover:bg-black/80" onClick={() => onOpenWorkspace?.(selectedLog.id)}>
               View Linked Evidence
             </Button>
           </div>

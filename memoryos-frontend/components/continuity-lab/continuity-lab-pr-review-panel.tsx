@@ -54,7 +54,7 @@ function statusTone(status: string): string {
   if (status === "Checks running") {
     return "border-amber-500/30 bg-amber-500/10 text-amber-200";
   }
-  return "border-white/15 bg-white/[0.05] text-white/70";
+  return "border-white/15 bg-white/[0.05] text-[#F0EFE2]/70";
 }
 
 function severityTone(severity: string): string {
@@ -66,8 +66,8 @@ function severityTone(severity: string): string {
 function EmptyTabState({ title, description }: { title: string; description: string }) {
   return (
     <div className="rounded-md border border-dashed border-white/10 bg-[#0b0b0b] px-4 py-6 text-center">
-      <p className="text-sm font-medium text-white/85">{title}</p>
-      <p className="mt-1 text-[11px] leading-6 text-white/50">{description}</p>
+      <p className="text-sm font-medium text-[#F0EFE2]/85">{title}</p>
+      <p className="mt-1 text-[11px] leading-6 text-[#F0EFE2]/50">{description}</p>
     </div>
   );
 }
@@ -100,8 +100,8 @@ export function ContinuityLabPrReviewPanel({
       >
         <div className="max-w-xl rounded-md border border-white/10 bg-white/[0.03] px-6 py-8 text-center">
           <GitPullRequest className="mx-auto size-8 text-emerald-300" />
-          <h2 className="mt-4 text-xl font-semibold text-white">{emptyTitle}</h2>
-          <p className="mt-2 text-sm leading-6 text-white/55">{emptyDescription}</p>
+          <h2 className="mt-4 text-xl font-semibold text-[#F0EFE2]">{emptyTitle}</h2>
+          <p className="mt-2 text-sm leading-6 text-[#F0EFE2]/55">{emptyDescription}</p>
         </div>
       </div>
     );
@@ -131,28 +131,28 @@ export function ContinuityLabPrReviewPanel({
                 {review.header.statusLabel}
               </span>
             </div>
-            <p className="mt-2 text-sm font-medium text-white">{review.header.title}</p>
-            <p className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-white/50">
+            <p className="mt-2 text-sm font-medium text-[#F0EFE2]">{review.header.title}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-[#F0EFE2]/50">
               <span className="inline-flex items-center gap-1">
-                <MemoryStick className="size-3.5 text-white/40" />
+                <MemoryStick className="size-3.5 text-[#F0EFE2]/40" />
                 {review.header.repoFullName ?? "MemoryOS Review"}
               </span>
-              <span className="text-white/25">•</span>
+              <span className="text-[#F0EFE2]/25">•</span>
               <span className="inline-flex items-center gap-1">
-                <GitBranch className="size-3.5 text-white/40" />
+                <GitBranch className="size-3.5 text-[#F0EFE2]/40" />
                 {review.header.branch ?? review.header.baseBranch ?? "branch unknown"}
               </span>
               {review.header.baseBranch ? (
                 <>
-                  <span className="text-white/25">←</span>
-                  <span className="rounded-md bg-white/[0.05] px-2 py-0.5 font-mono text-white/70">
+                  <span className="text-[#F0EFE2]/25">←</span>
+                  <span className="rounded-md bg-white/[0.05] px-2 py-0.5 font-mono text-[#F0EFE2]/70">
                     {review.header.baseBranch}
                   </span>
                 </>
               ) : null}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-white/65">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#F0EFE2]/65">
             <span className="rounded-full border border-white/10 px-2 py-0.5">
               {review.header.filesChanged} file{review.header.filesChanged === 1 ? "" : "s"}
             </span>
@@ -172,7 +172,7 @@ export function ContinuityLabPrReviewPanel({
                   event.preventDefault();
                   onOpenGitHub();
                 }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-2 py-0.5 text-white/80 hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-2 py-0.5 text-[#F0EFE2]/80 hover:bg-white/[0.08]"
               >
                 Review in GitHub
                 <ExternalLink className="size-3" />
@@ -215,13 +215,13 @@ export function ContinuityLabPrReviewPanel({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[11px] font-medium transition",
                   active
-                    ? "border-white/15 bg-white/[0.08] text-white"
-                    : "border-transparent bg-transparent text-white/55 hover:border-white/10 hover:bg-white/[0.04] hover:text-white",
+                    ? "border-white/15 bg-white/[0.08] text-[#F0EFE2]"
+                    : "border-transparent bg-transparent text-[#F0EFE2]/55 hover:border-white/10 hover:bg-white/[0.04] hover:text-[#F0EFE2]",
                 )}
               >
                 <span>{entry.label}</span>
                 {typeof count === "number" ? (
-                  <span className="rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] text-white/60">
+                  <span className="rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] text-[#F0EFE2]/60">
                     {count}
                   </span>
                 ) : null}
@@ -241,17 +241,17 @@ export function ContinuityLabPrReviewPanel({
                     <ShieldAlert className="size-3.5" />
                     MemoryOS Review
                   </span>
-                  <span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-white/60">
+                  <span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-[#F0EFE2]/60">
                     Confidence {review.overview.confidence}%
                   </span>
                   <span className={cn("rounded-full border px-2.5 py-1 text-[11px] font-medium", review.overview.riskLevel === "High" ? "border-rose-500/25 bg-rose-500/10 text-rose-100" : review.overview.riskLevel === "Medium" ? "border-amber-500/25 bg-amber-500/10 text-amber-100" : "border-emerald-500/20 bg-emerald-500/10 text-emerald-100")}>
                     Risk {review.overview.riskLevel}
                   </span>
                 </div>
-                <p className="mt-3 text-[15px] leading-7 text-white/88">{review.overview.summary}</p>
+                <p className="mt-3 text-[15px] leading-7 text-[#F0EFE2]/88">{review.overview.summary}</p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
                   {review.overview.bullets.slice(0, 4).map((bullet) => (
-                    <div key={bullet} className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-[12px] leading-6 text-white/70">
+                    <div key={bullet} className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-[12px] leading-6 text-[#F0EFE2]/70">
                       {bullet}
                     </div>
                   ))}
@@ -266,9 +266,9 @@ export function ContinuityLabPrReviewPanel({
 
               {review.decisions.length > 0 ? (
                 <div className="rounded-md border border-white/10 bg-[#0b0b0b] px-4 py-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">Key decision</p>
-                  <p className="mt-2 text-sm font-medium text-white">{review.decisions[0]?.title}</p>
-                  <p className="mt-1 text-sm leading-6 text-white/58">{review.decisions[0]?.reason}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">Key decision</p>
+                  <p className="mt-2 text-sm font-medium text-[#F0EFE2]">{review.decisions[0]?.title}</p>
+                  <p className="mt-1 text-sm leading-6 text-[#F0EFE2]/58">{review.decisions[0]?.reason}</p>
                 </div>
               ) : null}
             </div>
@@ -277,7 +277,7 @@ export function ContinuityLabPrReviewPanel({
           {tab === "changes" ? (
             <div className="grid gap-3 lg:grid-cols-[16rem_minmax(0,1fr)]">
               <div className="rounded-md border border-white/10 bg-[#0b0b0b] p-3">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">Changed files</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">Changed files</p>
                 <div className="mt-3 space-y-1.5">
                   {review.changes.map((group) => (
                     <button
@@ -291,9 +291,9 @@ export function ContinuityLabPrReviewPanel({
                           : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]",
                       )}
                     >
-                      <p className="truncate text-sm font-medium text-white">{group.title}</p>
-                      <p className="mt-1 text-[11px] text-white/50">{group.detail ?? group.summary ?? ""}</p>
-                      <p className="mt-2 font-mono text-[11px] text-white/60">
+                      <p className="truncate text-sm font-medium text-[#F0EFE2]">{group.title}</p>
+                      <p className="mt-1 text-[11px] text-[#F0EFE2]/50">{group.detail ?? group.summary ?? ""}</p>
+                      <p className="mt-2 font-mono text-[11px] text-[#F0EFE2]/60">
                         {group.files.length} file{group.files.length === 1 ? "" : "s"}
                       </p>
                     </button>
@@ -304,7 +304,7 @@ export function ContinuityLabPrReviewPanel({
                 {selectedGroup ? (
                   <DiffCard group={selectedGroup} />
                 ) : (
-                  <div className="flex min-h-[24rem] items-center justify-center text-sm text-white/50">
+                  <div className="flex min-h-[24rem] items-center justify-center text-sm text-[#F0EFE2]/50">
                     No change group selected.
                   </div>
                 )}
@@ -324,13 +324,13 @@ export function ContinuityLabPrReviewPanel({
                   <div key={bug.id} className={cn("rounded-md border px-3 py-3", severityTone(bug.severity))}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-white">{bug.title}</p>
-                        <p className="mt-1 whitespace-pre-line text-[11px] leading-5 text-white/65">{bug.detail}</p>
+                        <p className="text-sm font-medium text-[#F0EFE2]">{bug.title}</p>
+                        <p className="mt-1 whitespace-pre-line text-[11px] leading-5 text-[#F0EFE2]/65">{bug.detail}</p>
                         {bug.suggestion ? (
-                          <p className="mt-2 text-[11px] text-white/50">{bug.suggestion}</p>
+                          <p className="mt-2 text-[11px] text-[#F0EFE2]/50">{bug.suggestion}</p>
                         ) : null}
                       </div>
-                      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/60">
+                      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-[#F0EFE2]/60">
                         {bug.severity}
                       </span>
                     </div>
@@ -352,13 +352,13 @@ export function ContinuityLabPrReviewPanel({
                   <div key={memory.id} className="rounded-md border border-white/10 bg-[#0b0b0b] px-3 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-white">{memory.title}</p>
-                        <p className="mt-1 text-[11px] leading-5 text-white/60">{memory.summary}</p>
-                        <p className="mt-2 text-[10px] uppercase tracking-wide text-white/40">
+                        <p className="text-sm font-medium text-[#F0EFE2]">{memory.title}</p>
+                        <p className="mt-1 text-[11px] leading-5 text-[#F0EFE2]/60">{memory.summary}</p>
+                        <p className="mt-2 text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                           Source: {memory.source} · Used for: {memory.usedFor}
                         </p>
                       </div>
-                      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/60">
+                      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/60">
                         {memory.confidence}%
                       </span>
                     </div>
@@ -380,16 +380,16 @@ export function ContinuityLabPrReviewPanel({
                   <div key={decision.id} className="rounded-md border border-white/10 bg-[#0b0b0b] px-3 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-white">{decision.title}</p>
-                        <p className="mt-1 text-[11px] leading-5 text-white/60">{decision.reason}</p>
-                        <p className="mt-2 text-[10px] uppercase tracking-wide text-white/40">
+                        <p className="text-sm font-medium text-[#F0EFE2]">{decision.title}</p>
+                        <p className="mt-1 text-[11px] leading-5 text-[#F0EFE2]/60">{decision.reason}</p>
+                        <p className="mt-2 text-[10px] uppercase tracking-wide text-[#F0EFE2]/40">
                           {decision.risk ?? "No risk noted"}
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={onSaveLearnings}
-                        className="rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[11px] text-white/80 hover:bg-white/[0.08]"
+                        className="rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[11px] text-[#F0EFE2]/80 hover:bg-white/[0.08]"
                       >
                         Save to Company Brain
                       </button>
@@ -412,11 +412,11 @@ export function ContinuityLabPrReviewPanel({
                   <div key={learning.id} className="rounded-md border border-white/10 bg-[#0b0b0b] px-3 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-white">{learning.title}</p>
-                        <p className="mt-1 text-[11px] leading-5 text-white/60">{learning.pattern}</p>
+                        <p className="text-sm font-medium text-[#F0EFE2]">{learning.title}</p>
+                        <p className="mt-1 text-[11px] leading-5 text-[#F0EFE2]/60">{learning.pattern}</p>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {learning.applyTo.map((item) => (
-                            <span key={item} className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                            <span key={item} className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                               {item}
                             </span>
                           ))}
@@ -449,11 +449,11 @@ export function ContinuityLabPrReviewPanel({
                   <div key={item.id} className="rounded-md border border-white/10 bg-[#0b0b0b] px-3 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-white">{item.author}</p>
-                        <p className="mt-1 text-[11px] uppercase tracking-wide text-white/40">{item.title}</p>
-                        <p className="mt-1 whitespace-pre-line text-[11px] leading-5 text-white/60">{item.detail}</p>
+                        <p className="text-sm font-medium text-[#F0EFE2]">{item.author}</p>
+                        <p className="mt-1 text-[11px] uppercase tracking-wide text-[#F0EFE2]/40">{item.title}</p>
+                        <p className="mt-1 whitespace-pre-line text-[11px] leading-5 text-[#F0EFE2]/60">{item.detail}</p>
                       </div>
-                      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+                      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
                         {item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Now"}
                       </span>
                     </div>
@@ -466,7 +466,7 @@ export function ContinuityLabPrReviewPanel({
 
         <div className="space-y-3">
           <div className="rounded-md border border-white/10 bg-[#0b0b0b] px-4 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">Actions</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">Actions</p>
             <div className="mt-3 space-y-2">
               <ActionButton
                 label="Approve"
@@ -495,7 +495,7 @@ export function ContinuityLabPrReviewPanel({
             </div>
           </div>
           <div className="rounded-md border border-white/10 bg-[#0b0b0b] px-4 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">Context</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">Context</p>
             <div className="mt-3 space-y-3 text-sm">
               <ContextLine label="Status" value={review.header.statusLabel} />
               <ContextLine label="PR URL" value={review.header.githubUrl ?? "Not linked"} />
@@ -512,9 +512,9 @@ export function ContinuityLabPrReviewPanel({
 function MetricCard({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
     <div className="rounded-md border border-white/10 bg-[#0b0b0b] px-3 py-3">
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-white/45">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-white">{value}</p>
-      <p className="mt-1 text-[11px] text-white/50">{detail}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-[#F0EFE2]/45">{label}</p>
+      <p className="mt-1 text-lg font-semibold text-[#F0EFE2]">{value}</p>
+      <p className="mt-1 text-[11px] text-[#F0EFE2]/50">{detail}</p>
     </div>
   );
 }
@@ -524,10 +524,10 @@ function DiffCard({ group }: { group: PrReviewChangeGroup }) {
     <div className="space-y-3">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-white">{group.title}</p>
-          <p className="mt-1 text-[11px] text-white/50">{group.detail ?? group.summary ?? ""}</p>
+          <p className="text-sm font-medium text-[#F0EFE2]">{group.title}</p>
+          <p className="mt-1 text-[11px] text-[#F0EFE2]/50">{group.detail ?? group.summary ?? ""}</p>
         </div>
-        <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55">
+        <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[#F0EFE2]/55">
           {group.files.length} file{group.files.length === 1 ? "" : "s"}
         </span>
       </div>
@@ -537,9 +537,9 @@ function DiffCard({ group }: { group: PrReviewChangeGroup }) {
             {group.files.map((file) => (
               <span
                 key={file.path}
-                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] text-white/65"
+                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] text-[#F0EFE2]/65"
               >
-                <FileDiff className="size-3 text-white/35" />
+                <FileDiff className="size-3 text-[#F0EFE2]/35" />
                 {file.path}
               </span>
             ))}
@@ -547,9 +547,9 @@ function DiffCard({ group }: { group: PrReviewChangeGroup }) {
         ) : null}
         {group.files.map((file) => (
           <div key={file.path} className="rounded-md border border-white/10 bg-black/30">
-            <div className="flex items-center justify-between border-b border-white/10 px-3 py-2 text-[11px] text-white/55">
+            <div className="flex items-center justify-between border-b border-white/10 px-3 py-2 text-[11px] text-[#F0EFE2]/55">
               <span className="inline-flex items-center gap-1.5">
-                <FileDiff className="size-3.5 text-white/40" />
+                <FileDiff className="size-3.5 text-[#F0EFE2]/40" />
                 {file.path}
               </span>
               <span className="font-mono">
@@ -557,7 +557,7 @@ function DiffCard({ group }: { group: PrReviewChangeGroup }) {
                 <span className="text-rose-300">{file.deletions != null ? `-${file.deletions}` : "-0"}</span>
               </span>
             </div>
-            <pre className="max-h-[28rem] overflow-auto px-3 py-3 font-mono text-[11px] leading-6 text-white/75">
+            <pre className="max-h-[28rem] overflow-auto px-3 py-3 font-mono text-[11px] leading-6 text-[#F0EFE2]/75">
               {(file.content && file.content.trim()) ||
                 file.detail ||
                 "No diff content available from runtime events yet."}
@@ -587,7 +587,7 @@ function ActionButton({
         ? "border-rose-500/25 bg-rose-500/10 text-rose-100"
         : tone === "indigo"
           ? "border-indigo-500/25 bg-indigo-500/10 text-indigo-100"
-          : "border-white/15 bg-white/[0.05] text-white";
+          : "border-white/15 bg-white/[0.05] text-[#F0EFE2]";
   return (
     <button
       type="button"
@@ -606,8 +606,8 @@ function ActionButton({
 function ContextLine({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-3">
-      <p className="text-white/45">{label}</p>
-      <p className="max-w-[14rem] truncate text-right text-white/75">{value}</p>
+      <p className="text-[#F0EFE2]/45">{label}</p>
+      <p className="max-w-[14rem] truncate text-right text-[#F0EFE2]/75">{value}</p>
     </div>
   );
 }

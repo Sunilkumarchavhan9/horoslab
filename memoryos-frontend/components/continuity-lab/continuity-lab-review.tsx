@@ -120,20 +120,20 @@ export function ContinuityLabReview() {
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-[#0A0A0A] text-white">
+    <div className="flex min-h-full flex-col bg-[#0A0A0A] text-[#F0EFE2]">
       <header className="flex h-16 shrink-0 items-center gap-4 border-b border-[#232323] px-6">
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-white"
+          className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-[#F0EFE2]"
         >
           All repositories
-          <span className="text-white/40">⌄</span>
+          <span className="text-[#F0EFE2]/40">⌄</span>
         </button>
         <button
           type="button"
           onClick={() => void handleRefresh()}
           disabled={refreshing}
-          className="ml-auto inline-flex size-9 items-center justify-center text-white/55 hover:text-white disabled:opacity-50"
+          className="ml-auto inline-flex size-9 items-center justify-center text-[#F0EFE2]/55 hover:text-[#F0EFE2] disabled:opacity-50"
           aria-label="Refresh pull requests"
         >
           <RefreshCw className={cn("size-4", refreshing && "animate-spin")} />
@@ -150,20 +150,20 @@ export function ContinuityLabReview() {
               if (event.key === "Enter") openParsedPr();
             }}
             placeholder="Paste pull request URL"
-            className="h-9 min-w-0 flex-1 rounded-md border border-[#2B2B2B] bg-[#161616] px-4 text-sm text-white placeholder:text-white/35 outline-none focus:border-[#3B82F6]"
+            className="h-9 min-w-0 flex-1 rounded-md border border-[#2B2B2B] bg-[#161616] px-4 text-sm text-[#F0EFE2] placeholder:text-[#F0EFE2]/35 outline-none focus:border-[#3B82F6]"
           />
           <button
             type="button"
             onClick={openParsedPr}
             disabled={!parsed}
-            className="h-9 rounded-md bg-[#2f5faf] px-4 text-sm font-semibold text-white transition hover:bg-[#3b6fc6] disabled:cursor-not-allowed disabled:opacity-45"
+            className="h-9 rounded-md bg-[#2f5faf] px-4 text-sm font-semibold text-[#F0EFE2] transition hover:bg-[#3b6fc6] disabled:cursor-not-allowed disabled:opacity-45"
           >
             Go to pull request
           </button>
         </div>
         <button
           type="button"
-          className="inline-flex size-9 items-center justify-center text-white/55 hover:text-white"
+          className="inline-flex size-9 items-center justify-center text-[#F0EFE2]/55 hover:text-[#F0EFE2]"
           aria-label="Invite reviewers"
         >
           <UserRoundPlus className="size-4" />
@@ -172,7 +172,7 @@ export function ContinuityLabReview() {
 
       <main className="min-h-0 flex-1 overflow-y-auto">
         <section className="border-b border-[#232323] px-6 py-4">
-          <div className="flex items-center gap-3 text-sm text-white/62">
+          <div className="flex items-center gap-3 text-sm text-[#F0EFE2]/62">
             <span className="inline-flex size-4 items-center justify-center rounded-full border border-white/35">
               <span className="size-1.5 rounded-full bg-white/45" />
             </span>
@@ -200,12 +200,12 @@ export function ContinuityLabReview() {
                 <GitPullRequest className="size-5 shrink-0 text-emerald-400" />
                 <div className="min-w-0 flex-1">
                   <div className="flex min-w-0 items-center gap-2">
-                    <p className="truncate text-[16px] font-semibold text-white">
+                    <p className="truncate text-[16px] font-semibold text-[#F0EFE2]">
                       {defaultPrTitle(entry)} #{entry.pr}
                     </p>
                     <Check className="size-4 shrink-0 text-emerald-400" />
                   </div>
-                  <p className="mt-1 truncate text-[13px] text-white/50">
+                  <p className="mt-1 truncate text-[13px] text-[#F0EFE2]/50">
                     22h · memoryos-github-app · {entry.fullName}
                   </p>
                 </div>
@@ -215,21 +215,21 @@ export function ContinuityLabReview() {
                   <span className="ml-2 inline-flex size-5 items-center justify-center rounded-full bg-[#132f25] text-[10px] text-emerald-300">
                     ✣
                   </span>
-                  <MoreHorizontal className="size-5 text-white/38 group-hover:text-white/70" />
+                  <MoreHorizontal className="size-5 text-[#F0EFE2]/38 group-hover:text-[#F0EFE2]/70" />
                 </div>
               </Link>
             ))
           ) : (
             <div className="flex min-h-[32rem] flex-col items-center justify-center px-6 text-center">
-              <Search className="size-9 text-white/22" />
-              <h1 className="mt-5 text-2xl font-semibold text-white">No pull requests yet</h1>
-              <p className="mt-3 max-w-md text-sm leading-6 text-white/50">
+              <Search className="size-9 text-[#F0EFE2]/22" />
+              <h1 className="mt-5 text-2xl font-semibold text-[#F0EFE2]">No pull requests yet</h1>
+              <p className="mt-3 max-w-md text-sm leading-6 text-[#F0EFE2]/50">
                 Connect GitHub, enroll repositories in Review settings, or paste a pull request URL
                 above to open the MemoryOS Review workspace.
               </p>
               <Link
                 href="/continuity-lab/settings/review"
-                className="mt-6 rounded-md border border-[#2F2F2F] bg-[#171717] px-4 py-2 text-sm font-semibold text-white hover:bg-[#202020]"
+                className="mt-6 rounded-md border border-[#2F2F2F] bg-[#171717] px-4 py-2 text-sm font-semibold text-[#F0EFE2] hover:bg-[#202020]"
               >
                 Review settings
               </Link>
@@ -238,7 +238,7 @@ export function ContinuityLabReview() {
         </section>
 
         {enrolledRepos.length > 0 ? (
-          <div className="px-6 py-5 text-xs text-white/40">
+          <div className="px-6 py-5 text-xs text-[#F0EFE2]/40">
             {enrolledRepos.length} enrolled repo{enrolledRepos.length === 1 ? "" : "s"} · governed by
             MemoryOS Review settings.
           </div>
