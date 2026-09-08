@@ -24,8 +24,8 @@ const OrgNode = ({ data }: any) => (
  <div className="flex flex-col items-center">
  <Handle type="target" position={Position.Top} className="opacity-0" />
  <div className="p-6 bg-card dark:bg-[#121212] border border-border dark:border-white/5 rounded-3xl shadow-xl flex flex-col items-center w-[360px]">
- <div className="size-16 rounded-md bg-muted dark:bg-white/5 flex items-center justify-center mb-4"><Building className="size-8 text-foreground/60 dark:text-white/60" /></div>
- <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <div className="size-16 rounded-md bg-muted dark:bg-white/5 flex items-center justify-center mb-4"><Building className="size-8 text-foreground/60 dark:text-[#F0EFE2]/60" /></div>
+ <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  </div>
  <Handle type="source" position={Position.Bottom} className="opacity-0" />
  </div>
@@ -36,7 +36,7 @@ const InstNode = ({ data }: any) => (
  <Handle type="target" position={Position.Top} className="opacity-0" />
  <div className="p-6 bg-card dark:bg-[#121212] border border-border dark:border-white/5 rounded-3xl shadow-xl flex items-center gap-6 w-[360px]">
  <div className="size-16 rounded-md bg-[#0f52ff]/10 flex items-center justify-center"><Shield className="size-8 text-[#0f52ff]" /></div>
- <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  </div>
  <Handle type="source" position={Position.Bottom} className="opacity-0" />
  </div>
@@ -49,7 +49,7 @@ const AgentNode = ({ data }: any) => (
  <div className="absolute inset-y-0 left-0 w-2 bg-[#0f52ff]" />
  <div className="size-16 rounded-md bg-[#0f52ff]/10 text-[#0f52ff] flex items-center justify-center ml-2"><Bot className="size-8" /></div>
  <div className="flex flex-col">
- <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  <span className="text-[12px] font-bold text-[#0f52ff] uppercase tracking-wider mt-1">Active Session</span>
  </div>
  </div>
@@ -64,7 +64,7 @@ const ActionNode = ({ data }: any) => (
  <div className="absolute inset-y-0 left-0 w-2 bg-amber-500" />
  <div className="size-16 rounded-md bg-amber-500/10 text-amber-500 flex items-center justify-center ml-2"><Key className="size-8" /></div>
  <div className="flex flex-col">
- <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  <span className="text-[12px] font-bold text-amber-500 uppercase tracking-wider mt-1 animate-pulse">High Risk</span>
  </div>
  </div>
@@ -75,7 +75,7 @@ const ActionNode = ({ data }: any) => (
 const TargetNode = ({ data }: any) => (
  <div className="flex flex-col items-center">
  <Handle type="target" position={Position.Top} className="opacity-0" />
- <div className="p-6 bg-[#0a0a0a] text-white dark:bg-white dark:text-black rounded-3xl shadow-2xl flex items-center gap-6 w-[360px] border border-white/10 dark:border-black/10">
+ <div className="p-6 bg-[#0a0a0a] text-[#F0EFE2] dark:bg-white dark:text-black rounded-3xl shadow-2xl flex items-center gap-6 w-[360px] border border-white/10 dark:border-black/10">
  <div className="size-16 rounded-md bg-card/10 dark:bg-black/10 flex items-center justify-center"><GitMerge className="size-8" /></div>
  <span className="text-[20px] font-bold tracking-tight">{data.label}</span>
  </div>
@@ -121,7 +121,7 @@ const AnimatedGradientEdge = ({
  {(data as any)?.label && (
  <EdgeLabelRenderer>
  <div
- className="absolute p-2 bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md text-[12px] font-mono font-bold tracking-widest text-foreground/60 dark:text-white/60 pointer-events-none "
+ className="absolute p-2 bg-card dark:bg-[#121212] border border-border dark:border-white/10 rounded-md text-[12px] font-mono font-bold tracking-widest text-foreground/60 dark:text-[#F0EFE2]/60 pointer-events-none "
  style={{
  transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
  }}
@@ -169,11 +169,11 @@ export function GovernanceAuthority() {
  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden relative">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden relative">
  <CommandBar>
  <div className="flex items-center gap-2 w-1/2">
  <Shield className="size-4 text-[#0f52ff]" />
- <span className="text-[13px] font-bold text-foreground dark:text-white tracking-wide">Authority Engine</span>
+ <span className="text-[13px] font-bold text-foreground dark:text-[#F0EFE2] tracking-wide">Authority Engine</span>
  </div>
  </CommandBar>
 
@@ -187,7 +187,7 @@ export function GovernanceAuthority() {
  />
  <button 
  onClick={() => setSelectedGrant(MOCK_AUTHORITY_GRANTS[0].id)}
- className="px-6 py-2.5 bg-[#0f52ff] hover:bg-[#0042e6] text-white rounded-md font-bold tracking-wide shadow-[0_10px_20px_rgba(15,82,255,0.2)] transition-all hover:scale-105 flex items-center gap-2"
+ className="px-6 py-2.5 bg-[#0f52ff] hover:bg-[#0042e6] text-[#F0EFE2] rounded-md font-bold tracking-wide shadow-[0_10px_20px_rgba(15,82,255,0.2)] transition-all hover:scale-105 flex items-center gap-2"
  >
  <Search className="size-4" /> Authority Ledger
  </button>
@@ -252,7 +252,7 @@ export function GovernanceAuthority() {
  <div className="flex items-center justify-between p-8 border-b border-border dark:border-white/10 shrink-0">
  <div className="flex flex-col gap-1">
  <h3 className="text-[20px] font-bold tracking-tight">Authority Ledger</h3>
- <p className="text-[13px] text-foreground/50 dark:text-white/50 mt-1">Direct agent access grants</p>
+ <p className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50 mt-1">Direct agent access grants</p>
  </div>
  <button 
  onClick={() => setSelectedGrant(null)}
@@ -279,7 +279,7 @@ export function GovernanceAuthority() {
  {grant.status === "REVOKED" && <XCircle className="size-5 text-red-500 drop-" />}
  </div>
  <div className="flex items-center justify-between text-[13px]">
- <span className="text-foreground/60 dark:text-white/60 bg-muted dark:bg-white/5 px-3 py-1.5 rounded-md font-mono">{grant.scope}</span>
+ <span className="text-foreground/60 dark:text-[#F0EFE2]/60 bg-muted dark:bg-white/5 px-3 py-1.5 rounded-md font-mono">{grant.scope}</span>
  <span className={cn(
  "font-bold px-3 py-1.5 rounded-md uppercase tracking-wider",
  grant.risk === "HIGH" || grant.risk === "CRITICAL" ? "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400" : 

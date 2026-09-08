@@ -20,11 +20,11 @@ export function GovernanceBudgets() {
  };
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden relative">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden relative">
  <CommandBar>
  <div className="flex items-center gap-2 w-1/2">
  <DollarSign className="size-4 text-emerald-500" />
- <span className="text-[13px] font-bold text-foreground dark:text-white tracking-wide">AI Cost Governance</span>
+ <span className="text-[13px] font-bold text-foreground dark:text-[#F0EFE2] tracking-wide">AI Cost Governance</span>
  </div>
  </CommandBar>
 
@@ -38,7 +38,7 @@ export function GovernanceBudgets() {
  />
  <button 
  onClick={() => setModalOpen(true)}
- className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md font-bold tracking-wide shadow-[0_10px_20px_rgba(16,185,129,0.2)] transition-all hover:scale-105 flex items-center gap-2"
+ className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-[#F0EFE2] rounded-md font-bold tracking-wide shadow-[0_10px_20px_rgba(16,185,129,0.2)] transition-all hover:scale-105 flex items-center gap-2"
  >
  <PieChart className="size-4" /> Cost Explorer
  </button>
@@ -71,11 +71,11 @@ export function GovernanceBudgets() {
  <motion.div variants={itemVariants} className="flex flex-col items-center gap-6 flex-1">
  <div 
  onClick={() => setModalOpen(true)}
- className="size-24 rounded-[1.5rem] bg-card/5 border border-white/10 flex items-center justify-center backdrop-blur-md text-white group hover:scale-110 transition-transform cursor-pointer hover:border-white/30"
+ className="size-24 rounded-[1.5rem] bg-card/5 border border-white/10 flex items-center justify-center backdrop-blur-md text-[#F0EFE2] group hover:scale-110 transition-transform cursor-pointer hover:border-white/30"
  >
  <Briefcase className="size-10 opacity-70 group-hover:opacity-100 transition-opacity" />
  </div>
- <span className="text-[14px] font-bold uppercase tracking-widest text-white/70">Acme Corp</span>
+ <span className="text-[14px] font-bold uppercase tracking-widest text-[#F0EFE2]/70">Acme Corp</span>
  <span className="text-[18px] font-mono font-bold text-emerald-400 bg-emerald-400/10 px-6 py-1.5 rounded-md border border-emerald-400/20 shadow-[0_0_15px_rgba(52,211,153,0.1)]">$25,000 Limit</span>
  </motion.div>
 
@@ -100,7 +100,7 @@ export function GovernanceBudgets() {
  <div className="absolute bottom-0 left-0 w-full bg-emerald-500/30 transition-all duration-1000 ease-in-out group-hover:h-[50%]" style={{ height: '41%' }} />
  <Network className="size-10 relative z-10 opacity-90 transition-transform" />
  </div>
- <span className="text-[14px] font-bold uppercase tracking-widest text-white/70">Engineering</span>
+ <span className="text-[14px] font-bold uppercase tracking-widest text-[#F0EFE2]/70">Engineering</span>
  <span className="text-[14px] bg-emerald-500/20 text-emerald-400 px-6 py-1.5 rounded-md border border-emerald-500/30 font-bold uppercase tracking-widest shadow-[0_0_10px_rgba(52,211,153,0.1)]">41% Used</span>
  </motion.div>
 
@@ -124,7 +124,7 @@ export function GovernanceBudgets() {
  >
  <Activity className="size-10 opacity-90 group-hover:animate-pulse" />
  </div>
- <span className="text-[14px] font-bold uppercase tracking-widest text-white/70">Mission #193</span>
+ <span className="text-[14px] font-bold uppercase tracking-widest text-[#F0EFE2]/70">Mission #193</span>
  <span className="text-[18px] font-mono font-bold text-[#0f52ff] bg-[#0f52ff]/10 px-6 py-1.5 rounded-md border border-[#0f52ff]/20 shadow-[0_0_15px_rgba(15,82,255,0.1)]">$45.20</span>
  </motion.div>
 
@@ -148,7 +148,7 @@ export function GovernanceBudgets() {
  >
  <Cpu className="size-10 opacity-90 group-hover:rotate-12 transition-transform" />
  </div>
- <span className="text-[14px] font-bold uppercase tracking-widest text-white/70">Claude 3.5</span>
+ <span className="text-[14px] font-bold uppercase tracking-widest text-[#F0EFE2]/70">Claude 3.5</span>
  <span className="text-[14px] bg-amber-500/20 text-amber-400 px-6 py-1.5 rounded-md border border-amber-500/30 font-bold font-mono tracking-widest shadow-[0_0_10px_rgba(245,158,11,0.1)]">1.2M tkns</span>
  </motion.div>
 
@@ -183,7 +183,7 @@ export function GovernanceBudgets() {
  <div className="flex items-center justify-between p-8 border-b border-border dark:border-white/10 shrink-0">
  <div className="flex flex-col gap-1">
  <h3 className="text-[20px] font-bold tracking-tight">Cost Explorer</h3>
- <p className="text-[13px] text-foreground/50 dark:text-white/50 mt-1">Real-time breakdown by AI model</p>
+ <p className="text-[13px] text-foreground/50 dark:text-[#F0EFE2]/50 mt-1">Real-time breakdown by AI model</p>
  </div>
  <button 
  onClick={() => setModalOpen(false)}
@@ -196,7 +196,7 @@ export function GovernanceBudgets() {
  <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-10">
  {/* Cost Breakdown */}
  <div>
- <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 mb-6">Model Usage (MTD)</h4>
+ <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 mb-6">Model Usage (MTD)</h4>
  <div className="space-y-6">
  <div className="flex flex-col gap-3 group">
  <div className="flex items-center justify-between text-[15px] font-bold">
@@ -234,7 +234,7 @@ export function GovernanceBudgets() {
 
  {/* Policies Triggered */}
  <div>
- <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 mb-4">Finance Policies</h4>
+ <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 mb-4">Finance Policies</h4>
  <div className="flex flex-col gap-6">
  <div className="p-6 rounded-md border border-red-500/30 bg-card/80 dark:bg-white/5 flex items-center justify-between hover: transition-shadow">
  <span className="text-[15px] font-bold text-red-500">Eng Limit Alert (92%)</span>

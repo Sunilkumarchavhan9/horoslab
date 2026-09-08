@@ -22,9 +22,9 @@ import '@xyflow/react/dist/style.css';
 const OrgNode = ({ data }: any) => (
  <div className="p-6 bg-card dark:bg-[#121212] border border-border dark:border-white/5 rounded-3xl shadow-xl flex flex-col items-center w-[280px]">
  <div className="size-16 rounded-md bg-muted dark:bg-white/5 flex items-center justify-center mb-4">
- <Building className="size-8 text-foreground/60 dark:text-white/60" />
+ <Building className="size-8 text-foreground/60 dark:text-[#F0EFE2]/60" />
  </div>
- <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <span className="text-[20px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  <Handle type="source" position={Position.Bottom} className="opacity-0" />
  </div>
 );
@@ -36,10 +36,10 @@ const InstNode = ({ data }: any) => (
  "p-6 bg-card dark:bg-[#121212] border rounded-3xl shadow-xl flex items-center gap-6 w-[320px] transition-all",
  data.active ? "border-[#0f52ff]/30 shadow-[0_10px_40px_rgba(15,82,255,0.1)]" : "border-border dark:border-white/5 opacity-50 grayscale"
  )}>
- <div className={cn("size-14 rounded-md flex items-center justify-center", data.active ? "bg-[#0f52ff]/10 text-[#0f52ff]" : "bg-muted dark:bg-white/5 text-foreground/60 dark:text-white/60")}>
+ <div className={cn("size-14 rounded-md flex items-center justify-center", data.active ? "bg-[#0f52ff]/10 text-[#0f52ff]" : "bg-muted dark:bg-white/5 text-foreground/60 dark:text-[#F0EFE2]/60")}>
  {data.active ? <Shield className="size-6" /> : <Building className="size-6" />}
  </div>
- <span className="text-[18px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <span className="text-[18px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  </div>
  <Handle type="source" position={Position.Bottom} className="opacity-0" />
  </div>
@@ -49,7 +49,7 @@ const RoleContainerNode = ({ data }: any) => (
  <div className="flex flex-col items-center">
  <Handle type="target" position={Position.Top} className="opacity-0" />
  <div className="p-6 bg-card/50 dark:bg-[#121212]/50 backdrop-blur-md border border-border dark:border-white/10 rounded-3xl flex flex-col items-center w-[320px]">
- <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 mb-5">Defined Roles</span>
+ <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 mb-5">Defined Roles</span>
  <div className="flex flex-col w-full gap-3">
  {data.roles.map((r: any, i: number) => (
  <div 
@@ -62,8 +62,8 @@ const RoleContainerNode = ({ data }: any) => (
  : "bg-card/50 dark:bg-[#121212]/50 border-border dark:border-white/10 opacity-60 hover:opacity-100"
  )}
  >
- <span className={cn("text-[15px] font-bold tracking-tight", r.active ? "text-foreground dark:text-white" : "text-foreground/60 dark:text-white/60")}>{r.name}</span>
- <Users className={cn("size-5", r.active ? "text-[#0f52ff]" : "text-foreground/40 dark:text-white/40")} />
+ <span className={cn("text-[15px] font-bold tracking-tight", r.active ? "text-foreground dark:text-[#F0EFE2]" : "text-foreground/60 dark:text-[#F0EFE2]/60")}>{r.name}</span>
+ <Users className={cn("size-5", r.active ? "text-[#0f52ff]" : "text-foreground/40 dark:text-[#F0EFE2]/40")} />
  </div>
  ))}
  </div>
@@ -81,7 +81,7 @@ const AgentNode = ({ data }: any) => (
  <Bot className="size-7" />
  </div>
  <div className="flex flex-col">
- <span className="text-[18px] font-bold tracking-tight text-foreground dark:text-white">{data.label}</span>
+ <span className="text-[18px] font-bold tracking-tight text-foreground dark:text-[#F0EFE2]">{data.label}</span>
  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mt-1">Assigned Agent</span>
  </div>
  </div>
@@ -174,11 +174,11 @@ export function GovernanceRoles() {
  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
  return (
- <div className="flex flex-col h-full w-full bg-card dark:bg-[#030303] text-foreground dark:text-white font-sans overflow-hidden relative">
+ <div className="flex flex-col h-full w-full bg-card dark:bg-[#030303] text-foreground dark:text-[#F0EFE2] font-sans overflow-hidden relative">
  <CommandBar>
  <div className="flex items-center gap-2 w-1/2">
  <Users className="size-4 text-[#0f52ff]" />
- <span className="text-[13px] font-bold text-foreground dark:text-white tracking-wide">Organization & Roles</span>
+ <span className="text-[13px] font-bold text-foreground dark:text-[#F0EFE2] tracking-wide">Organization & Roles</span>
  </div>
  <div className="flex bg-muted dark:bg-white/5 p-1 rounded-md border border-border dark:border-white/10 shadow-inner">
  {["Graph", "Matrix"].map(tab => (
@@ -187,7 +187,7 @@ export function GovernanceRoles() {
  onClick={() => setActiveTab(tab as any)}
  className={cn(
  "px-6 py-2 rounded-md text-[13px] font-bold transition-all flex items-center gap-2",
- activeTab === tab ? "bg-card dark:bg-[#121212] text-foreground dark:text-white " : "text-foreground/50 dark:text-white/50 hover:text-foreground dark:hover:text-white"
+ activeTab === tab ? "bg-card dark:bg-[#121212] text-foreground dark:text-[#F0EFE2] " : "text-foreground/50 dark:text-[#F0EFE2]/50 hover:text-foreground dark:hover:text-[#F0EFE2]"
  )}
  >
  {tab === "Graph" ? <Network className="size-4" /> : <Shield className="size-4" />}
@@ -244,13 +244,13 @@ export function GovernanceRoles() {
  
  <div className="border border-border dark:border-white/10 rounded-3xl overflow-hidden bg-card/80 dark:bg-[#121212]/80 backdrop-blur-2xl shadow-xl mt-4 max-w-6xl mx-auto w-full">
  <table className="w-full text-left text-[14px]">
- <thead className="bg-card dark:bg-[#050505] text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 border-b border-border dark:border-white/10">
+ <thead className="bg-card dark:bg-[#050505] text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 border-b border-border dark:border-white/10">
  <tr>
  <th className="p-6 border-r border-border dark:border-white/10 bg-transparent">Role \ Capability</th>
  {["Merge PR", "Deploy Prod", "Read Secrets", "Approve Budget"].map((header, colIndex) => (
  <th 
  key={header} 
- className={cn("p-6 text-center transition-colors duration-300", hoveredCol === colIndex ? "bg-muted dark:bg-white/5 text-foreground dark:text-white" : "")}
+ className={cn("p-6 text-center transition-colors duration-300", hoveredCol === colIndex ? "bg-muted dark:bg-white/5 text-foreground dark:text-[#F0EFE2]" : "")}
  >
  {header}
  </th>
@@ -294,7 +294,7 @@ export function GovernanceRoles() {
  </div>
  ) : (
  <div className="flex justify-center">
- <X className="size-4 text-foreground/10 dark:text-white/10" />
+ <X className="size-4 text-foreground/10 dark:text-[#F0EFE2]/10" />
  </div>
  )}
  </td>
@@ -336,7 +336,7 @@ export function GovernanceRoles() {
  <h3 className="text-[20px] font-bold tracking-tight">Role Inspector</h3>
  <div className="flex items-center gap-2 mt-2">
  <span className="px-3 py-1 rounded-md bg-[#0f52ff]/10 text-[#0f52ff] font-bold text-[13px] uppercase tracking-wider">Senior Reviewer</span>
- <span className="text-[14px] text-foreground/40 dark:text-white/40 font-medium">Engineering</span>
+ <span className="text-[14px] text-foreground/40 dark:text-[#F0EFE2]/40 font-medium">Engineering</span>
  </div>
  </div>
  <button 
@@ -349,7 +349,7 @@ export function GovernanceRoles() {
 
  <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-10">
  <div>
- <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 mb-5">Granted Capabilities</h4>
+ <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 mb-5">Granted Capabilities</h4>
  <div className="flex flex-col gap-6">
  <div className="flex items-center gap-6 p-6 rounded-md border border-[#0f52ff]/20 bg-card/80 dark:bg-[#121212]/80 ">
  <div className="size-12 rounded-md bg-[#0f52ff]/10 flex items-center justify-center">
@@ -357,23 +357,23 @@ export function GovernanceRoles() {
  </div>
  <div className="flex flex-col">
  <span className="text-[16px] font-bold tracking-tight">Merge PR</span>
- <span className="text-[13px] font-mono text-foreground/50 dark:text-white/50">github/core-api</span>
+ <span className="text-[13px] font-mono text-foreground/50 dark:text-[#F0EFE2]/50">github/core-api</span>
  </div>
  </div>
  <div className="flex items-center gap-6 p-6 rounded-md border border-border dark:border-white/10 bg-card/80 dark:bg-[#121212]/80 ">
  <div className="size-12 rounded-md bg-muted dark:bg-white/5 flex items-center justify-center">
- <FileCode className="size-6 text-foreground/70 dark:text-white/70" />
+ <FileCode className="size-6 text-foreground/70 dark:text-[#F0EFE2]/70" />
  </div>
  <div className="flex flex-col">
  <span className="text-[16px] font-bold tracking-tight">Code Review</span>
- <span className="text-[13px] font-mono text-foreground/50 dark:text-white/50">github/*</span>
+ <span className="text-[13px] font-mono text-foreground/50 dark:text-[#F0EFE2]/50">github/*</span>
  </div>
  </div>
  </div>
  </div>
 
  <div>
- <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-white/40 mb-5">Assigned Agents</h4>
+ <h4 className="text-[12px] font-bold uppercase tracking-widest text-foreground/40 dark:text-[#F0EFE2]/40 mb-5">Assigned Agents</h4>
  <div className="flex items-center gap-6 p-6 rounded-md border border-emerald-500/30 bg-emerald-500/5 ">
  <div className="size-12 rounded-md bg-emerald-500/20 flex items-center justify-center">
  <Bot className="size-6 text-emerald-600 dark:text-emerald-400" />

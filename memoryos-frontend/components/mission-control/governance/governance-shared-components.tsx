@@ -17,8 +17,8 @@ export function SectionHeader({ title, description, action, className }: { title
  <div className={cn("flex items-start justify-between mb-8 shrink-0 relative", className)}>
  <div className="absolute -inset-8 bg-gradient-to-b from-[#0f52ff]/5 to-transparent opacity-50 pointer-events-none" />
  <div className="flex flex-col gap-1.5 relative z-10">
- <h2 className="text-[24px] font-bold text-foreground dark:text-white tracking-tight leading-none">{title}</h2>
- {description && <p className="text-[14px] text-foreground/50 dark:text-white/50 max-w-2xl">{description}</p>}
+ <h2 className="text-[24px] font-bold text-foreground dark:text-[#F0EFE2] tracking-tight leading-none">{title}</h2>
+ {description && <p className="text-[14px] text-foreground/50 dark:text-[#F0EFE2]/50 max-w-2xl">{description}</p>}
  </div>
  {action && <div className="relative z-10">{action}</div>}
  </div>
@@ -47,21 +47,21 @@ export function KPICard({ title, value, subtext, trend, trendValue, index = 0 }:
  className="bg-card/60 dark:bg-[#121212]/60 backdrop-blur-md border border-border dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 rounded-md p-6 flex flex-col gap-2 relative overflow-hidden group hover:"
  >
  <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
- <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/50 dark:text-white/50 z-10">{title}</span>
+ <span className="text-[12px] font-bold uppercase tracking-widest text-foreground/50 dark:text-[#F0EFE2]/50 z-10">{title}</span>
  <div className="flex items-end justify-between mt-2 z-10">
- <span className="text-[32px] font-mono font-bold text-foreground dark:text-white leading-none tracking-tight">{value}</span>
+ <span className="text-[32px] font-mono font-bold text-foreground dark:text-[#F0EFE2] leading-none tracking-tight">{value}</span>
  {trend && (
  <div className={cn(
  "text-[12px] font-bold px-2.5 py-1 rounded-full border backdrop-blur-sm",
  trend === "up" ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
  trend === "down" ? "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20" :
- "text-foreground/60 dark:text-white/60 bg-muted dark:bg-white/5 border-border dark:border-white/10"
+ "text-foreground/60 dark:text-[#F0EFE2]/60 bg-muted dark:bg-white/5 border-border dark:border-white/10"
  )}>
  {trend === "up" ? "↑" : trend === "down" ? "↓" : "-"} {trendValue}
  </div>
  )}
  </div>
- {subtext && <span className="text-[12px] text-foreground/40 dark:text-white/40 mt-1 z-10">{subtext}</span>}
+ {subtext && <span className="text-[12px] text-foreground/40 dark:text-[#F0EFE2]/40 mt-1 z-10">{subtext}</span>}
  </motion.div>
  );
 }
