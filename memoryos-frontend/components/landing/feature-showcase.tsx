@@ -389,7 +389,7 @@ function RunbookDashboard() {
               <PhaseItem num="07" title="Policy & Authority" desc="Risk, cost, and safety gates" status="queued" />
               <PhaseItem num="08" title="Execution Fabric" desc="Deploy software or actuate physical" status="ready" />
               <PhaseItem num="09" title="Evidence Collection" desc="Observe and gather provenance" status="queued" />
-              <PhaseItem num="10" title="Independent Verifier" desc="Cryptographically verify claims" status="queued" />
+              <PhaseItem num="10" title="Independent Verifier" desc="Verifiably confirm claims" status="queued" />
             </div>
             <div className="space-y-2.5">
               <PhaseItem num="11" title="Experience Engine" desc="Compile verified outcome records" status="queued" />

@@ -90,7 +90,7 @@ const comparisonRows = [
       ],
       summaryBold: (
         <span>
-          <strong>PASS confirmed.</strong> The inference engine has been safely deployed with a cryptographic Correctness Certificate.
+          <strong>PASS confirmed.</strong> The inference engine has been safely deployed with an immutable Correctness Certificate.
         </span>
       ),
     },

@@ -128,7 +128,7 @@ const ICONS = {
       </defs>
       <rect x="2" y="6" width="20" height="12" rx="2" stroke="url(#steel-evi)" strokeWidth="1.6" />
       <rect x="2" y="6" width="20" height="12" rx="2" stroke="#ffffff" strokeWidth="0.5" strokeOpacity="0.4" />
-      {/* Cryptographic Green Core */}
+      {/* Verifiable Green Core */}
       <circle cx="12" cy="12" r="3" stroke="#75bf00" strokeWidth="1.6" />
       <path d="M6 9.5V14.5M18 9.5V14.5" stroke="#75bf00" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
@@ -295,7 +295,7 @@ const PILLARS_ROW_1: PillarCard[] = [
       ],
       included: [
         "Immutable World-State Graph snapshot (JSON/Arrow)",
-        "Cryptographic sensor and telemetry provenance hashes",
+        "Verifiable sensor and telemetry provenance hashes",
         "Spatial bounding boxes and physical relationship matrix",
         "Automated continuous state drift detector",
       ],
@@ -377,14 +377,14 @@ const PILLARS_ROW_1: PillarCard[] = [
     deliverableDetails: {
       categoryTag: "AUTONOMOUS POLICY",
       headline: "BOUNDED AUTHORITY CONTRACT",
-      subhead: "Cryptographic Spend & Environment Authority Envelope",
+      subhead: "Verifiable Spend & Environment Authority Envelope",
       metrics: [
         { label: "Max Spend Authorized", before: "Unrestricted", after: "$250.00 / Run (Capped)" },
         { label: "Data Residency Guard", before: "Global", after: "US-East-1 Only (Enforced)" },
         { label: "Human Approval Gates", before: "Manual", after: "Autonomous L4 (Bounded)" },
       ],
       included: [
-        "Cryptographically signed authority token",
+        "Digitally signed authority token",
         "Granular credential scope and RBAC boundary",
         "Reversibility guarantee matrix for all mutation steps",
         "Audit-ready compliance evidence log",
@@ -433,14 +433,14 @@ const PILLARS_ROW_2: PillarCard[] = [
   {
     id: "evidence",
     label: "EVIDENCE BUNDLE",
-    title: "Cryptographically proven",
+    title: "Verifiably proven",
     description: "Tamper-proof execution traces, sensor measurements, and billing receipts.",
     category: "compute",
     icon: ICONS.evidence,
     deliverableDetails: {
       categoryTag: "EVIDENCE",
       headline: "TAMPER-PROOF EVIDENCE BUNDLE",
-      subhead: "Cryptographically Verified Execution & Telemetry Signatures",
+      subhead: "Verifiably Audited Execution & Telemetry Signatures",
       metrics: [
         { label: "Signature Verification", before: "Unsigned", after: "SHA-256 / Ed25519 Valid" },
         { label: "Telemetry Chain Integrity", before: "Intermittent", after: "100% Proven" },
@@ -450,7 +450,7 @@ const PILLARS_ROW_2: PillarCard[] = [
         "Complete provenance audit bundle with hash trees",
         "Raw OpenTelemetry traces with nanosecond timestamps",
         "Cloud billing invoice line-item verification receipts",
-        "Sensor input & hardware counter cryptographic logs",
+        "Sensor input & hardware counter audit logs",
       ],
       files: [
         "evidence/bundle-manifest.json",

@@ -18,7 +18,7 @@ export function EvidenceProofStep() {
     { num: "02", title: "OpenTelemetry P95 Collector", desc: "38.2ms p95 across 10,000 trace samples", status: "verified", Icon: OpenTelemetryLogo },
     { num: "03", title: "Epoch Golden Eval Suite", desc: "98.9% accuracy with zero quality regression", status: "verified", Icon: ({ size = 14 }) => <FileCheck size={size} className="text-[#75bf00]" /> },
     { num: "04", title: "NVIDIA NVML Power Sensors", desc: "185W average sustained on L40S", status: "verified", Icon: NvidiaLogo },
-    { num: "05", title: "Audit Provenance Trace", desc: "Cryptographic SHA256 immutable receipt", status: "signed", Icon: ({ size = 14 }) => <Check size={size} className="text-[#75bf00]" /> },
+    { num: "05", title: "Audit Provenance Trace", desc: "Verifiable SHA256 immutable receipt", status: "signed", Icon: ({ size = 14 }) => <Check size={size} className="text-[#75bf00]" /> },
     { num: "06", title: "Independent Verifier Signature", desc: "Epoch-Independent-Verifier-04", status: "valid", Icon: ({ size = 14 }) => <Check size={size} className="text-[#75bf00]" /> },
   ];
 

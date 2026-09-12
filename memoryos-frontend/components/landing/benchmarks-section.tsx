@@ -13,7 +13,7 @@ function TestRunner() {
     { id: "SEC_03", name: "Contradiction Resolution", latency: "24ms" },
     { id: "VOL_04", name: "High-Noise Recall Assertion", latency: "15ms" },
     { id: "INT_05", name: "Memory Contract Integrity", latency: "9ms" },
-    { id: "CRY_06", name: "Cryptographic Verification", latency: "11ms" },
+    { id: "VER_06", name: "Mathematical Verification", latency: "11ms" },
     { id: "RES_07", name: "State Resume Fidelity", latency: "14ms" }
   ];
 

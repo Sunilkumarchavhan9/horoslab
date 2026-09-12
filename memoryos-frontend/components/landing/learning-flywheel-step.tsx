@@ -28,7 +28,7 @@ export function LearningFlywheelStep() {
               <ArrowRight size={10} />
               <span>LESSON ENGINE</span>
               <ArrowRight size={10} />
-              <span className="text-[#C8C7BA]">TEACHING DATA FACTORY</span>
+              <span className="text-[#C8C7BA]">SYNTHETIC DATA FACTORY</span>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@ export function LearningFlywheelStep() {
       {/* Extracted Lessons Grid */}
       <div className="p-5 lg:p-6">
         <div className="flex items-center justify-between mb-3">
-          <div className="text-[#C8C7BA] font-mono text-[10px] uppercase tracking-wider">TEACHING DATA FACTORY / LESSONS</div>
+          <div className="text-[#C8C7BA] font-mono text-[10px] uppercase tracking-wider">SYNTHETIC DATA FACTORY / LESSONS</div>
           <div className="text-[#666666] font-mono text-[10px] flex gap-3">
             <span className="flex items-center gap-1"><span className="w-1 h-1 bg-[#444] rounded-full" /> Software</span>
             <span className="flex items-center gap-1"><span className="w-1 h-1 bg-[#444] rounded-full" /> Cloud</span>
