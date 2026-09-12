@@ -1,541 +1,399 @@
-EPOCH — DAY -1 → FULL PRODUCT BUILD PLAN
-Reality Intelligence Infrastructure — Automation-First Edition
-Status: Master implementation blueprint
-Purpose: Define the final architecture, automation boundary, human boundary, input modalities, capability discovery, Hugging Face integration, company-wide execution surface, verification model, and continuous autonomous mission loop.
+EPOCH — FINAL CANONICAL PRODUCT ARCHITECTURE & BUILD PLAN
 
-0. EXECUTIVE PRODUCT THESIS
-Epoch is not:
+Status: Canonical engineering specification
+Product: Epoch
+North Star: Teach intelligent systems to decode reality through verified interaction with reality.
+Primary product abstraction: Reality Intelligence Runtime
+Build rule: Build the permanent domain and runtime from Day 1. Expand executable reality continuously. Never rebuild the core because a new reality surface becomes physical.
 
-an AI chatbot
-
-a model catalog
-
-a dashboard
-
-a GPU optimizer
-
-a Kubernetes replacement
-
-a FinOps dashboard
-
-an observability product
-
-a generic agent framework
-
-a coding agent
-
-a workflow automation tool
+NON-NEGOTIABLE ARCHITECTURE
 
 Epoch is a Reality Intelligence Runtime.
 
-Epoch accepts human intent and machine observations of an organization. It constructs a continuously updated representation of reality, identifies uncertainty, discovers capabilities, composes possible systems and changes, experiments, executes authorized actions, observes consequences, independently verifies outcomes, and learns from what actually happened.
-
-The long-term objective is ~90% automation of the operational loop that can safely be automated, not 90% replacement of humans.
-
-The human owns:
-
-intent
-
-organizational authority
-
-hard-to-infer goals
-
-risk tolerance
-
-exceptions
-
-irreversible/high-impact decisions
-
-accountability
-
-Epoch owns, where authorized:
-
-discovery
-
-analysis
-
-decomposition
-
-planning
-
-experimentation
-
-implementation
-
-testing
-
-deployment
-
-observation
-
-diagnosis
-
-optimization
-
-evidence collection
-
-verification
-
-rollback
-
-learning
-
-continuous adaptation
-
-The central rule:
-
-Humans define what should be true and the boundaries of authority. Epoch determines how to move reality toward that outcome, executes what is authorized, and proves what actually happened.
-
-1. THE FINAL LOOP
-                    HUMAN / SYSTEM INPUT
-                           │
-                           ▼
-                  INPUT NORMALIZATION
-                           │
-                           ▼
-                    INTENT ENGINE
-                           │
-                           ▼
-                 OUTCOME INTELLIGENCE
-                           │
-                           ▼
-                  OUTCOME CONTRACT
-                           │
-                           ▼
-                    MISSION RUNTIME
-                           │
-        ┌──────────────────┼──────────────────┐
-        ▼                  ▼                  ▼
-     REALITY          CAPABILITY          KNOWLEDGE
-        │                  │                  │
-        └──────────────────┼──────────────────┘
-                           ▼
-                    UNKNOWN ENGINE
-                           │
-                           ▼
-                  HYPOTHESIS ENGINE
-                           │
-                           ▼
-                    SYSTEM COMPOSER
-                           │
-                           ▼
-                  CANDIDATE SYSTEMS
-                           │
-                           ▼
-                  EXPERIMENT ENGINE
-                           │
-        ┌──────────────────┼──────────────────┐
-        ▼                  ▼                  ▼
-    SIMULATION           SANDBOX           BENCHMARK
-        └──────────────────┼──────────────────┘
-                           ▼
-                QUALITY + ECONOMICS
-                           │
-                           ▼
-                    DECISION ENGINE
-                           │
-                           ▼
-                  POLICY + AUTHORITY
-                           │
-                  ┌────────┴────────┐
-                  │                 │
-              AUTOMATE          HUMAN GATE
-                  │                 │
-                  └────────┬────────┘
-                           ▼
-                    STATE RECHECK
-                           │
-                           ▼
-                  EXECUTION FABRIC
-                           │
-       ┌───────────────────┼───────────────────┐
-       ▼                   ▼                   ▼
-   SOFTWARE              CLOUD            PHYSICAL/DC
-       │                   │                   │
-       └───────────────────┼───────────────────┘
-                           ▼
-                         REALITY
-                           │
-                           ▼
-                  OBSERVATION FABRIC
-                           │
-                           ▼
-                    EVIDENCE FABRIC
-                           │
-                           ▼
-                INDEPENDENT VERIFIER
-                           │
-                           ▼
-                         VERDICT
-                           │
-                           ▼
-                    LEARNING FABRIC
-                           │
-                           ▼
-                  REALITY DYNAMICS
-                           │
-                           └──────────► REALITY
-The critical property is the closed loop:
-
-INTENT
-→ OUTCOME
-→ REALITY
-→ UNKNOWN
-→ HYPOTHESIS
-→ CAPABILITY
-→ SYSTEM
-→ EXPERIMENT
-→ DECISION
-→ AUTHORITY
-→ ACTION
-→ OBSERVATION
-→ EVIDENCE
-→ VERIFICATION
-→ LEARNING
-→ UPDATED REALITY
-2. THE 90% AUTOMATION PRINCIPLE
-Epoch should not attempt to automate "everything."
-
-It should automate approximately 90% of repeatable, observable, bounded, reversible, policy-permitted operational work.
-
-2.1 Automate by default
-Epoch should automatically perform, where authorized:
-
-discovery
-
-data collection
-
-state reconstruction
-
-baseline generation
-
-anomaly detection
-
-issue classification
-
-hypothesis generation
-
-investigation
-
-task decomposition
-
-candidate generation
-
-experiment design
-
-benchmark execution
-
-test execution
-
-code generation/modification
-
-documentation updates
-
-CI/CD remediation
-
-infrastructure planning
-
-safe deployment
-
-canary rollout
-
-scaling
-
-rollback
-
-incident diagnosis
-
-routine remediation
-
-cost optimization
-
-quality evaluation
-
-evidence collection
-
-compliance checks
-
-post-change verification
-
-learning
-
-drift detection
-
-recurring optimization
-
-2.2 Human-controlled by default
-Humans remain authoritative for:
-
-ambiguous organizational goals
-
-new authority grants
-
-irreversible destructive operations
-
-large financial commitments
-
-credential expansion
-
-security-policy exceptions
-
-legal/compliance exceptions
-
-high-risk physical actions
-
-actions outside configured autonomy
-
-contradictory reality that cannot be resolved automatically
-
-decisions requiring explicit organizational judgment
-
-The objective is not fewer humans at any cost.
-
-The objective is fewer unnecessary human interruptions.
-
-3. HUMAN VS EPOCH
-Human provides
-intent
-constraints
-authority
-budget
-risk tolerance
-data permissions
-policy
-exceptions
-accountability
-Epoch provides
-understanding
-discovery
-decomposition
-hypotheses
-experiments
-candidate systems
-implementation
-testing
-deployment
-measurement
-verification
-learning
-continuous adaptation
-The user should interact primarily with:
-
-OUTCOME
-CONSTRAINTS
-AUTHORITY
-EXCEPTIONS
-rather than:
-
-TASK
-TASK
-TASK
-TASK
-TASK
-4. THE ORGANIZATION IS THE AUTOMATION SURFACE
-Epoch must not be restricted to AI infrastructure.
-
-Its first deeply instrumented environment can be:
-
-AI + software + cloud + Kubernetes + data center
-But the final automation surface includes:
-
-SOFTWARE ENGINEERING
-PRODUCT DEVELOPMENT
-INFRASTRUCTURE
-CLOUD
-DATA
-SECURITY
-SRE
-QA
-DEVOPS
-FINOPS
-CUSTOMER SUPPORT
-OPERATIONS
-DOCUMENTATION
-PROJECT EXECUTION
-COMPLIANCE
-ANALYTICS
-INTERNAL SYSTEMS
-Epoch is therefore an organizational operating runtime, with reality intelligence as the underlying abstraction.
-
-5. COMPANY-WIDE AUTOMATION
-5.1 Software engineering
-Human:
-
-"Ship enterprise SSO."
+Epoch is not fundamentally a chatbot, model catalog, dashboard, GPU optimizer, Kubernetes replacement, FinOps dashboard, observability product, generic agent framework, coding agent, or workflow automation tool.
+
+Epoch accepts human/system input and machine observations, constructs a versioned representation of reality, identifies uncertainty, discovers capabilities, composes candidate systems, experiments, decides, executes authorized changes, observes consequences, verifies claims, produces a concrete Mission Result, and turns verified experience into better intelligence.
+
+The human owns intent, organizational authority, hard-to-infer goals, risk tolerance, exceptions, irreversible/high-impact decisions, and accountability. Epoch owns discovery, analysis, decomposition, planning, experimentation, implementation, testing, deployment, observation, diagnosis, optimization, evidence collection, verification, rollback, learning, and continuous adaptation when authorized.
+
+The existing plan explicitly establishes this outcome-centered boundary and states that the user should interact primarily with outcome, constraints, authority, and exceptions rather than manually driving every task. fileciteturn94file0L29-L87
+
+FINAL CANONICAL PRODUCT DIAGRAM
+
+                                      EPOCH
+                         REALITY INTELLIGENCE RUNTIME
+                                      │
+                                      ▼
+                           HUMAN / SYSTEM INPUT
+                                      │
+                                      ▼
+                           INPUT NORMALIZATION
+                                      │
+                                      ▼
+                                INTENT ENGINE
+                                      │
+                                      ▼
+                            OUTCOME INTELLIGENCE
+                                      │
+                                      ▼
+                              OUTCOME CONTRACT
+                                      │
+                                      ▼
+                               MISSION RUNTIME
+                                      │
+                  ┌───────────────────┼───────────────────┐
+                  ▼                   ▼                   ▼
+           REALITY FABRIC      CAPABILITY FABRIC     KNOWLEDGE FABRIC
+                  │                   │                   │
+                  └───────────────────┼───────────────────┘
+                                      │
+                                      ▼
+                                UNKNOWN ENGINE
+                                      │
+                                      ▼
+                              HYPOTHESIS ENGINE
+                                      │
+                                      ▼
+                               PREDICTION ENGINE
+                                      │
+                                      ▼
+                             CAPABILITY DISCOVERY
+                                      │
+                                      ▼
+                               SYSTEM COMPOSER
+                                      │
+                                      ▼
+                              CANDIDATE SYSTEMS
+                           ┌──────────┼──────────┐
+                           ▼          ▼          ▼
+                        SYSTEM A   SYSTEM B   SYSTEM C
+                           └──────────┼──────────┘
+                                      │
+                                      ▼
+                         INTELLIGENCE OPTIMIZATION
+                                      │
+                  ┌───────────────────┼───────────────────┐
+                  ▼                   ▼                   ▼
+           MODEL OPTIMIZATION  INFERENCE OPTIMIZATION  TRAINING OPTIMIZATION
+                  │                   │                   │
+                  └───────────────────┼───────────────────┘
+                                      │
+                                      ▼
+                             COMPUTE INTELLIGENCE
+                                      │
+                  ┌───────────────────┼───────────────────┐
+                  ▼                   ▼                   ▼
+            COMPUTE SELECTION   DATA-PATH OPT.     SYSTEM CONFIGURATION
+                  └───────────────────┼───────────────────┘
+                                      │
+                                      ▼
+                            COST / LATENCY / QUALITY
+                         THROUGHPUT / POWER / SAFETY
+                                      │
+                                      ▼
+                              EXPERIMENT ENGINE
+                          ┌───────────┼───────────┐
+                          ▼           ▼           ▼
+                     SIMULATION     SANDBOX    BENCHMARK
+                          └───────────┼───────────┘
+                                      │
+                                      ▼
+                               DECISION ENGINE
+                                      │
+                                      ▼
+                              GOVERNANCE ENGINE
+                                      │
+                       ┌──────────────┼──────────────┐
+                       ▼              ▼              ▼
+                     POLICY          RISK          SAFETY
+                                      │
+                                      ▼
+                             AUTOMATION DECISION
+                                      │
+                 ┌────────────────────┼────────────────────┐
+                 ▼                    ▼                    ▼
+          AUTO-INVESTIGATE     AUTO-EXPERIMENT      AUTO-EXECUTE
+                                      │
+                                      ▼
+                                HUMAN APPROVAL
+                                  when required
+                                      │
+                                      ▼
+                                 STATE RECHECK
+                                      │
+                                      ▼
+                               EXECUTION FABRIC
+                         ┌────────────┼────────────┐
+                         ▼            ▼            ▼
+                     SOFTWARE      COMPUTE      PHYSICAL
+                         │            │            │
+                         └────────────┼────────────┘
+                                      │
+                                      ▼
+                                    REALITY
+                                      │
+                                      ▼
+                              CONSEQUENCE ENGINE
+                                      │
+                                      ▼
+                              OBSERVATION FABRIC
+                                      │
+                                      ▼
+                              MEASUREMENT ENGINE
+                                      │
+                              ┌───────┴───────┐
+                              ▼               ▼
+                        PREDICTION  ↔  OBSERVATION
+                              │
+                              ▼
+                         PREDICTION ERROR
+                              │
+                              ▼
+                            EVIDENCE
+                              │
+                              ▼
+                      INDEPENDENT VERIFIER
+                              │
+                              ▼
+                           VERDICT
+                              │
+                              ▼
+                         MISSION RESULT
+                              │
+                ┌─────────────┼─────────────┐
+                ▼             ▼             ▼
+          PRIMARY RESULT   DELIVERABLE     PROOF
+                │
+                ▼
+           NEXT ACTIONS
+          ┌─────┼──────┐
+          ▼     ▼      ▼
+       DEPLOY  APPLY   ACT
+          │     │      │
+          └─────┼──────┘
+                │
+                ▼
+            CONSEQUENCE
+                │
+                ▼
+            VERIFICATION
+                │
+                ▼
+         EXPERIENCE ENGINE
+                │
+                ▼
+           LESSON ENGINE
+                │
+                ▼
+          TEACHING FABRIC
+                │
+       ┌────────┼─────────┐
+       ▼        ▼         ▼
+   TRAIN/ADAPT ROUTE/SKILL WORLD MODEL
+       └────────┼─────────┘
+                │
+                ▼
+       INTELLIGENCE EVOLUTION
+                │
+                ▼
+      NEW INTELLIGENCE VERSION
+                │
+                ▼
+        EVALUATION FABRIC
+          ┌─────┼─────┐
+          ▼     ▼     ▼
+       SHADOW  CANARY BENCHMARK
+          └─────┼─────┘
+                │
+                ▼
+             PROMOTION
+                │
+                ▼
+       BETTER INTELLIGENCE
+                │
+                ▼
+       BETTER REALITY MODEL
+                │
+                ▼
+         REALITY DYNAMICS
+                │
+                └──────────► NEXT MISSION
+
+This final loop is aligned with the source plan's central closed loop from intent through reality, uncertainty, experiments, authorized action, observation, evidence, verification, and learning. fileciteturn94file0L89-L195
+
+FINAL REALITY-SURFACE ARCHITECTURE
+
+The following is not a product roadmap and must not be interpreted as “build computational first, then rebuild for physical.”
+
+All reality surfaces are part of the Day-1 semantic architecture. What expands is the set of connected adapters, capabilities, execution backends, sensors, models, and environments.
+
+                     PERMANENT EPOCH CORE
+                              │
+   ┌──────────────────────────┼──────────────────────────┐
+   ▼                          ▼                          ▼
+
+COMPUTATIONAL               OPERATIONAL                   EDGE
+│                          │                          │
+models                     services                    cameras
+inference                  APIs                        sensors
+GPU / CPU                   databases                   gateways
+memory                     networks                    local compute
+K8s                        telemetry                   streams
+cloud
+data center
+└──────────────────────────┼──────────────────────────┘
+▼
+PHYSICAL
+│
+machines / robots / vehicles
+│
+▼
+INDUSTRIAL
+│
+factories / warehouses / energy
+│
+▼
+SCIENTIFIC
+│
+laboratories / instruments / experiments
+│
+▼
+GENERAL
+
+These surfaces feed the same Reality Fabric. The source plan likewise defines a stable mission runtime while environments expand and states that new environments do not require changing the core runtime. fileciteturn95file7L938-L981
+
+PRODUCT THESIS
+
+Canonical statement:
+
+Epoch is the Reality Intelligence Runtime that teaches intelligent systems to decode reality, understand what is true and unknown, optimize and test possible changes, act within authority, verify what actually happened, and learn from every verified interaction.
+
+Short statement:
+
+Teach intelligence to decode reality.
+
+Operational statement:
+
+Epoch turns intent into a measurable, verified, usable Mission Result and compounds that result into better future intelligence.
+
+TWO PRIMARY FUNCTIONS: DECODE + OPTIMIZE
+
+Epoch has two inseparable intelligence functions.
+
+Decode reality
+
+Decode asks:
+
+What exists?
+
+What is happening?
+
+What changed?
+
+What relationships exist?
+
+What is unknown?
+
+What is likely to happen?
+
+Which observations support this state?
+
+Optimize reality
+
+Optimize asks:
+
+What should change?
+
+Which system should be used?
+
+Which configuration is better?
+
+Which intervention has the best outcome?
+
+What should be deployed or applied?
+
+What should be tested next?
+
+REALITY
+↓
+DECODE
+↓
+UNDERSTAND
+↓
+UNKNOWN
+↓
+HYPOTHESIS
+↓
+PREDICT / SIMULATE
+↓
+OPTIMIZE
+↓
+DECIDE
+↓
+ACT
+↓
+OBSERVE
+↓
+VERIFY
+↓
+LEARN
+
+OUTCOME-CENTERED PRODUCT
+
+The unit of automation is the outcome loop, not the task.
+
+Traditional:
+
+USER → TASK → AUTOMATION → OUTPUT
+
+Agent:
+
+USER → PROMPT → AGENT → OUTPUT
 
 Epoch:
 
-UNDERSTAND REQUIREMENT
-        ↓
-DISCOVER REPOSITORIES
-        ↓
-DISCOVER ARCHITECTURE
-        ↓
-DISCOVER DEPENDENCIES
-        ↓
-CREATE SPECIFICATION
-        ↓
-DECOMPOSE WORK
-        ↓
-IMPLEMENT
-        ↓
-RUN TESTS
-        ↓
-SECURITY CHECK
-        ↓
-PERFORMANCE CHECK
-        ↓
-CREATE PR
-        ↓
-REVIEW
-        ↓
-FIX FAILURES
-        ↓
-CI
-        ↓
-CANARY
-        ↓
-VERIFY
-        ↓
-DOCUMENT
-Coding-agent products already demonstrate parts of issue/prompt → implementation → pull request → review iteration. Epoch's differentiation is owning the larger outcome-to-proof loop rather than only code generation.
-
-5.2 QA
-CHANGE
- ↓
-UNIT
- ↓
-INTEGRATION
- ↓
-E2E
- ↓
-SECURITY
- ↓
-PERFORMANCE
- ↓
-REGRESSION
- ↓
-CANARY
- ↓
-PRODUCTION VERIFICATION
-5.3 DevOps / SRE
-DISCOVER
- ↓
-DETECT
- ↓
-DIAGNOSE
- ↓
-HYPOTHESIZE
- ↓
-TEST
- ↓
-REMEDIATE
- ↓
-DEPLOY
- ↓
-OBSERVE
- ↓
-VERIFY
-5.4 Incident response
-INCIDENT
- ↓
-CORRELATE SIGNALS
- ↓
-IDENTIFY CANDIDATE CAUSES
- ↓
-RUN LOW-RISK TESTS
- ↓
-SELECT REMEDIATION
- ↓
-CHECK AUTHORITY
- ↓
-EXECUTE
- ↓
-VERIFY RECOVERY
- ↓
-CREATE PREVENTION CHANGE
- ↓
-DEPLOY
- ↓
-VERIFY PREVENTION
-5.5 FinOps
-SPEND
- ↓
-ATTRIBUTE
- ↓
-FIND WASTE
- ↓
-GENERATE HYPOTHESES
- ↓
-SIMULATE
- ↓
-EXPERIMENT
- ↓
-CHANGE
- ↓
-MEASURE
- ↓
-VERIFY SAVINGS
-5.6 Security
-DISCOVER
- ↓
-ASSESS
- ↓
-PRIORITIZE
- ↓
-PATCH
- ↓
-TEST
- ↓
-DEPLOY
- ↓
-VERIFY
-5.7 Data operations
-DISCOVER
- ↓
-CHECK DATA QUALITY
- ↓
-IDENTIFY ANOMALY
- ↓
-DIAGNOSE
- ↓
-REPAIR
- ↓
-VALIDATE
- ↓
-VERIFY
-5.8 Documentation
-REALITY CHANGES
- ↓
-DOCUMENTATION STALE
- ↓
-GENERATE UPDATE
- ↓
-VALIDATE
- ↓
-COMMIT
-5.9 Project execution
+HUMAN
+↓
+INTENT
+↓
 OUTCOME
- ↓
-PLAN
- ↓
-DEPENDENCIES
- ↓
-TASKS
- ↓
-EXECUTION
- ↓
-VALIDATION
- ↓
-DELIVERY
- ↓
-OUTCOME VERIFICATION
-The task system is an implementation detail. The outcome is the product object.
+↓
+REALITY
+↓
+UNKNOWN
+↓
+HYPOTHESIS
+↓
+CAPABILITY
+↓
+SYSTEM
+↓
+EXPERIMENT
+↓
+DECISION
+↓
+AUTHORITY
+↓
+ACTION
+↓
+OBSERVATION
+↓
+EVIDENCE
+↓
+VERIFICATION
+↓
+LEARNING
+↓
+UPDATED REALITY
 
-6. SUPPORTED HUMAN / MACHINE INPUTS
-Epoch must accept more than a text box.
+The source blueprint makes this exact distinction and explicitly says the task system is an implementation detail while the outcome is the product object. fileciteturn95file7L982-L1048
 
-Input modalities
+USER INPUT MODEL
+
+Epoch accepts much more than a text box.
+
+Supported input modalities:
+
 TEXT
 SPEECH
 AUDIO
@@ -557,452 +415,358 @@ CLOUD STATE
 KUBERNETES STATE
 BILLING
 OBSERVABILITY
-All inputs enter through:
 
-InputEnvelope
-7. INPUT ENVELOPE
-InputEnvelope
-├── id
-├── organization_id
-├── actor
-├── source
-├── modality
-├── payload_ref
-├── timestamp
-├── context
-├── provenance
-├── trust_level
-├── sensitivity
-├── ingestion_version
-└── integrity
-The original input must always be preserved.
+All inputs enter through a common InputEnvelope. The source plan defines this explicit input envelope and requires original inputs to be preserved while derived interpretations remain separate. fileciteturn95file4L412-L455
 
-Derived interpretations must never overwrite the source.
+NATURAL-LANGUAGE COMPOSER
 
-8. TEXT INPUT
-Examples:
+The composer must accept:
 
-reduce our inference cost by 30% without hurting quality
+clean sentences
 
-serve 10x traffic without increasing p99 above 250ms
+incomplete requests
 
-find why GPU utilization dropped last week
+technical shorthand
 
-find the cheapest system that can serve this workload
+typos
 
-move batch inference from cloud to our data center
+informal language
 
-deploy this model under our security policy
+mixed model/runtime names
 
-find a better model for customer support
+pasted logs
 
-ship enterprise SSO this month
+copied deployment information
 
-why are customers abandoning onboarding?
-
-why did revenue drop?
-
-why did our API become slower?
-Text can express:
-
-goals
-
-constraints
-
-questions
-
-investigations
-
-requested actions
-
-comparisons
-
-explanations
-
-desired outcomes
-
-9. SPEECH / AUDIO INPUT
-Accept:
-
-microphone
-
-voice notes
-
-meeting recordings
-
-incident recordings
-
-support calls
-
-engineering discussions
-
-Pipeline:
-
-AUDIO
- ↓
-SPEECH RECOGNITION
- ↓
-TRANSCRIPT
- ↓
-SPEAKER / CONTEXT EXTRACTION
- ↓
-INTENT EXTRACTION
- ↓
-STRUCTURED INTENT
-The transcript remains provenance.
-
-The structured intent is derived.
+multimodal context
 
 Example:
 
-"Our inference bill jumped this month. Get it down by at least thirty percent, but don't let latency or quality get worse."
+use llama 3.1 8b on vllm
+need build more optimized capable which detect
+the physical object on was driving
 
-Becomes:
+Epoch does not require the user to transform this into a formal schema.
 
-objective = reduce inference cost
-target = >= 30% reduction
-constraints = quality non-regression
-             latency non-regression
-If important information is missing, Epoch must represent it as unknown rather than fabricate it.
+Instead:
 
-10. IMAGE INPUT
-Accept:
+USER TEXT
+↓
+LIVE PARSER
+↓
+PARTIAL STRUCTURED INTENT
+↓
+INLINE SUGGESTIONS
+↓
+USER CHOOSES / EDITS
+↓
+COMPLETE MISSION
 
-architecture diagrams
+Important rule:
 
-dashboards
+Suggestions are suggestions. User selections are authoritative unless the selection is invalid or prohibited by policy.
 
-screenshots
+INLINE COMPOSER MODEL
 
-error screenshots
+The composer should support editable tokens/chips such as:
 
-deployment diagrams
+[Model]
+[Runtime]
+[GPU / Compute]
+[Runs on]
+[Input]
+[Reality]
+[Output]
+[Mission]
+[Goal]
+[Constraints]
+[Authority]
 
-whiteboards
+For example:
 
-hardware photographs
+Optimize [Qwen3-32B] on [vLLM]
+for lower [Cost]
+while preserving [Quality] [P99]
+on [H100]
+in [Kubernetes / cluster-prod]
 
-scanned documents
+The user can change any chip.
 
-Pipeline:
+Epoch should never silently replace a selected choice.
 
-IMAGE
- ↓
-VISION UNDERSTANDING
- ↓
-ENTITY EXTRACTION
- ↓
-RELATION EXTRACTION
- ↓
-STRUCTURED OBSERVATION
- ↓
-WORLD MODEL
-Image-derived claims initially receive provenance such as:
+If Epoch recommends a different model:
 
-USER_ASSERTED
-INFERRED
-EXTERNAL
-They are not automatically verified.
+Selected:
+[Llama 3.1 8B]
 
-11. VIDEO INPUT
-Accept:
+Epoch suggestion:
+[Vision-capable model]
 
-screen recordings
+Reason:
+Mission requires visual object detection.
 
-infrastructure walkthroughs
+[Use suggestion] [Keep selected]
 
-incident recordings
+CONTEXTUAL SUGGESTION ENGINE
 
-hardware demonstrations
+Before typing:
 
-laboratory/factory video
+Optimize
+Compare
+Diagnose
+Predict
+Teach
+Discover
+Simulate
+Experiment
+Evaluate
+Decode
+Repair
+Actuate
+Adapt
 
-deployment recordings
+After typing, suggestions become contextual.
 
-Pipeline:
+Example:
 
-VIDEO
- ↓
-TEMPORAL ANALYSIS
- ↓
-SCENE / EVENT DETECTION
- ↓
-AUDIO TRANSCRIPTION
- ↓
-ENTITY + EVENT EXTRACTION
- ↓
-TEMPORAL OBSERVATIONS
- ↓
-WORLD MODEL
-Every video-derived observation must retain temporal position.
+User:
+make this model better at detecting objects while driving
 
-12. DOCUMENT INPUT
-Accept:
+Suggestions:
 
-PDF
+Teach [model] to detect [objects] from [camera/video]
+Optimize [model] for [real-time latency]
+Evaluate [model] on [driving dataset]
+Compare [candidate models]
+Simulate [vehicle environment]
 
-Markdown
+The suggestion engine must use current mission context rather than being a static list.
 
-Word
+INTENT ENGINE
 
-spreadsheets
-
-architecture specifications
-
-runbooks
-
-incident reports
-
-policies
-
-invoices
-
-cloud bills
-
-contracts
-
-benchmark reports
-
-model cards
-
-technical documentation
-
-Pipeline:
-
-DOCUMENT
- ↓
-PARSER
- ↓
-STRUCTURE
- ↓
-CLAIMS
- ↓
-FACTS
- ↓
-PROVENANCE
- ↓
-KNOWLEDGE / REALITY
-Document claims remain distinguishable from measured reality.
-
-13. TABULAR INPUT
-Accept:
-
-CSV
-
-JSON
-
-Parquet
-
-database tables
-
-billing exports
-
-benchmark results
-
-telemetry exports
-
-workload traces
-
-Epoch can automatically discover:
-
-schema
-units
-missingness
-distribution
-anomalies
-baseline
-candidate metrics
-correlations
-Correlations must not automatically become causal claims.
-
-14. STRUCTURED INPUT
-Connect:
-
-Git
-GitHub
-GitLab
-CI/CD
-Kubernetes
-AWS
-GCP
-Azure
-DigitalOcean
-Databases
-CRM
-Support
-Analytics
-Billing
-Model Registries
-OpenTelemetry
-Internal APIs
-These become machine-observable reality sources.
-
-15. TELEMETRY INPUT
-Epoch consumes low-level signals including:
-
-metrics
-traces
-logs
-events where supported
-profiles where available
-GPU telemetry
-runtime telemetry
-application metrics
-Kubernetes events
-cloud metrics
-billing
-quality evaluations
-OpenTelemetry currently documents traces, metrics, logs and baggage as supported signals, with profiles documented as well; Epoch should treat these as observation inputs, not as its final product abstraction.
-
-16. INPUT TRUST MODEL
-Every observation must have:
-
-trust_level
-source
-provenance
-observed_at
-valid_from
-valid_until
-confidence
-classification
-Classifications:
-
-OBSERVED
-MEASURED
-USER_ASSERTED
-EXTERNAL
-INFERRED
-SIMULATED
-PREDICTED
-UNKNOWN
-STALE
-CONTRADICTED
-VERIFIED
-The system must never collapse these categories.
-
-17. INTENT ENGINE
 Pipeline:
 
 INPUT
- ↓
+↓
 CLASSIFY
- ↓
+↓
 EXTRACT ENTITIES
- ↓
+↓
 EXTRACT OBJECTIVE
- ↓
+↓
 EXTRACT CONSTRAINTS
- ↓
+↓
 EXTRACT SCOPE
- ↓
+↓
 EXTRACT TIME
- ↓
+↓
 EXTRACT REQUESTED ACTION
- ↓
+↓
 EXTRACT AUTHORITY CONTEXT
- ↓
+↓
 INTENT
-Intent:
 
-Intent
-├── objective
-├── actor
-├── scope
-├── context
-├── constraints
-├── requested_action
-├── urgency
-├── time_window
-├── source_refs
-└── confidence
-18. OUTCOME INTELLIGENCE
-Epoch must convert:
+Intent schema:
 
-"make it cheaper"
-into a measurable outcome where possible.
+interface Intent {
+id: string;
+actor: ActorRef;
+objective: string;
+scope: Scope;
+context: Record<string, unknown>;
+constraints: Constraint[];
+requestedAction?: ActionIntent;
+urgency?: string;
+timeWindow?: TimeWindow;
+sourceRefs: SourceRef[];
+confidence: number;
+}
+
+OUTCOME INTELLIGENCE
+
+Intent is not executable.
+
+Epoch transforms broad intent into measurable outcome conditions where safely inferable.
 
 Example:
 
-current cost = $182K/month
-quality = 98.7%
-P99 = 214ms
-availability = 99.97%
-Candidate outcome:
+"make inference cheaper"
 
+becomes:
+
+objective = reduce inference cost
+
+baseline:
+cost = $182K/month
+quality = 98.7%
+p99 = 214ms
+
+candidate target:
 cost reduction >= 30%
-quality >= 98.7% or approved tolerance
-P99 <= 250ms
-availability >= 99.95%
-If Epoch cannot safely infer the target:
+quality >= 98.7%
+p99 <= 250ms
+
+If the target cannot safely be inferred, represent it as:
 
 UNKNOWN
-It can then:
 
-investigate historical objectives
-use organization defaults
+Then Epoch can:
+
+inspect organizational defaults
+
+inspect previous missions
+
 propose a target
+
 ask the user
+
 block
-19. OUTCOME CONTRACT
-OutcomeContract
-├── objective
-├── baseline
-├── target_metrics
-├── hard_constraints
-├── soft_objectives
-├── prohibited_tradeoffs
-├── observation_window
-├── success_criteria
-├── verification_method
-├── authority_requirements
-└── expiry
-Intent is not executable.
 
-OutcomeContract is the measurable target.
+OUTCOME CONTRACT
 
-20. MISSION RUNTIME
-A mission is the persistent execution context for an outcome.
+interface OutcomeContract {
+objective: string;
+
+baseline?: Baseline;
+
+targetMetrics: MetricTarget[];
+hardConstraints: Constraint[];
+softObjectives: Objective[];
+prohibitedTradeoffs?: Constraint[];
+
+observationWindow?: ObservationWindow;
+
+successCriteria: Condition[];
+failureCriteria: Condition[];
+
+verificationMethod: VerificationMethod;
+
+authorityRequirements: AuthorityRequirement[];
+expiry?: string;
+}
+
+The contract is the machine-readable definition of success.
+
+MISSION RUNTIME
+
+A Mission is the persistent execution context for an outcome.
 
 Responsibilities:
 
 state transitions
-dependency resolution
-workflow execution
-timeouts
-retries
-compensation
-authority checks
-state validation
-event emission
-recovery
-verification
-continuous monitoring
-AI reasoning happens only inside bounded steps.
 
-21. REALITY FABRIC
-Epoch builds a temporal company reality model.
+dependency resolution
+
+workflow execution
+
+retries
+
+timeouts
+
+compensation
+
+authority checks
+
+state validation
+
+event emission
+
+recovery
+
+verification
+
+monitoring
+
+State machine:
+
+CREATED
+↓
+NORMALIZING
+↓
+UNDERSTANDING
+↓
+DISCOVERING
+↓
+HYPOTHESIZING
+↓
+COMPOSING
+↓
+EXPERIMENTING
+↓
+DECIDING
+↓
+AUTHORIZATION_REQUIRED
+↓
+READY
+↓
+EXECUTING
+↓
+OBSERVING
+↓
+VERIFYING
+↓
+COMPLETED
+↓
+LEARNED
+
+Failure states:
+
+BLOCKED
+FAILED
+ROLLED_BACK
+INCONCLUSIVE
+EXPIRED
+
+REALITY FABRIC
+
+Reality is temporal and versioned.
 
 Reality includes:
 
 software
+
 repositories
+
 services
+
 APIs
+
 databases
+
 models
+
 runtimes
+
 hardware
+
 cloud resources
+
 Kubernetes resources
+
 users
+
 customers
+
 workloads
+
 pipelines
+
 costs
+
 incidents
+
 policies
+
 experiments
+
 deployments
+
+physical entities
+
+sensor state
+
+machine state
+
 Core properties:
 
 current state
@@ -1012,51 +776,139 @@ confidence
 validity interval
 version
 integrity
-22. WORLD STATE
-WorldState
-├── id
-├── organization_id
-├── version
-├── created_at
-├── valid_from
-├── valid_until
-├── source_set
-├── fact_refs
-└── integrity_hash
+
+WORLD STATE
+
+interface WorldState {
+id: string;
+organizationId: string;
+version: number;
+
+createdAt: string;
+validFrom: string;
+validUntil?: string;
+
+sourceSet: SourceRef[];
+factRefs: WorldFactRef[];
+
+integrityHash: string;
+}
+
 Every consequential plan references a WorldState.
 
-Before execution:
+Immediately before execution:
 
 PLANNED WORLD STATE
-        VS
+VS
 CURRENT WORLD STATE
-Material difference:
-
-STOP
- ↓
+│
+material diff?
+┌──┴──┐
+NO    YES
+│      │
+▼      ▼
+EXECUTE  STOP
+↓
 REDISCOVER
- ↓
+↓
 REPLAN
-23. UNKNOWN ENGINE
+
+REALITY GRAPH
+
+Represent reality as a graph.
+
+Example:
+
+FACILITY
+├── RACK
+│   ├── SERVER
+│   │   ├── GPU
+│   │   ├── CPU
+│   │   ├── MEMORY
+│   │   └── NIC
+│   ├── POWER
+│   └── COOLING
+├── NETWORK
+└── WORKLOAD
+├── MODEL
+├── RUNTIME
+└── SERVICE
+
+Physical:
+
+FACTORY
+├── WORKCELL
+│   ├── ROBOT
+│   ├── MACHINE
+│   ├── SENSOR
+│   └── PLC
+├── ENERGY
+└── SAFETY
+
+Relations include:
+
+owns
+contains
+depends_on
+deployed_on
+runs
+produces
+consumes
+located_in
+compatible_with
+alternative_to
+observed_by
+measured_by
+affected_by
+changed_by
+verified_by
+
+REALITY CONFLICT ENGINE
+
+Reality sources may disagree.
+
+Example:
+
+Cloud API:
+GPU available
+
+Kubernetes:
+GPU unavailable
+
+Telemetry:
+GPU unhealthy
+
+Never silently choose one source.
+
+Create:
+
+RealityConflict
+
+Resolve using:
+
+source priority
+freshness
+cross-validation
+measurement
+experiment
+human confirmation
+
+UNKNOWN ENGINE
+
 Unknown is first-class.
 
-Epoch must be able to say:
+interface Unknown {
+id: string;
+statement: string;
+importance: number;
+impact: number;
+uncertainty: number;
+decisionDependency: string[];
+resolutionCost: number;
+risk: number;
+resolutionStrategy: ResolutionStrategy;
+}
 
-UNKNOWN
-NOT_PROVEN
-UNCERTAIN
-CONTRADICTED
-Unknown:
-
-Unknown
-├── statement
-├── importance
-├── impact
-├── uncertainty
-├── decision_dependency
-├── resolution_cost
-├── risk
-└── resolution_strategy
 Resolution strategies:
 
 OBSERVE
@@ -1068,33 +920,43 @@ EXPERIMENT
 CROSS_VALIDATE
 ASK
 BLOCK
+
 Priority:
 
 decision_impact × uncertainty × risk
--------------------------------------
+
 resolution_cost
-24. HYPOTHESIS ENGINE
-For a cost increase:
+
+HYPOTHESIS ENGINE
+
+For cost increase, for example:
 
 H1 model changed
 H2 runtime changed
 H3 workload changed
 H4 batching changed
 H5 GPU utilization fell
-H6 provider pricing changed
+H6 pricing changed
 H7 traffic increased
 H8 routing changed
 H9 placement changed
 H10 quality requirement changed
-Rank by:
+
+Rank using:
 
 prior
++
 evidence
++
 decision impact
++
 test cost
++
 expected information gain
-25. CAPABILITY FABRIC
-Capability is modality/task based.
+
+CAPABILITY FABRIC
+
+Capabilities are modality/task based.
 
 TEXT
 CODE
@@ -1108,7 +970,8 @@ STRUCTURED_DATA
 SENSOR
 TELEMETRY
 MULTIMODAL
-Capabilities:
+
+Capabilities include:
 
 LLM
 VLM
@@ -1132,7 +995,12 @@ CLOUD_RESOURCE
 DATA_CENTER_RESOURCE
 SOFTWARE_SYSTEM
 BUSINESS_SYSTEM
-26. CAPABILITY INPUT / OUTPUT GRAPH
+WORLD_MODEL
+ROBOT_POLICY
+PHYSICAL_PERCEPTION
+
+CAPABILITY INPUT/OUTPUT GRAPH
+
 TEXT → TEXT
 TEXT → CODE
 TEXT → EMBEDDING
@@ -1144,13 +1012,13 @@ AUDIO → TEXT
 AUDIO → LABEL
 
 IMAGE → TEXT
-IMAGE + TEXT → TEXT
 IMAGE → LABEL
 IMAGE → STRUCTURED_DATA
 
 VIDEO → TEXT
 VIDEO → EVENTS
 VIDEO → STRUCTURED_DATA
+VIDEO → WORLD_STATE
 
 DOCUMENT → TEXT
 DOCUMENT → STRUCTURED_DATA
@@ -1160,46 +1028,33 @@ TABULAR → ANALYSIS
 
 TELEMETRY → OBSERVATION
 SENSOR → MEASUREMENT
-Eventually:
 
 ANY OBSERVABLE INPUT
-        ↓
+↓
 CAPABILITY GRAPH
-        ↓
-ANY VALID OUTPUT
-27. HUGGING FACE ADAPTER
-Hugging Face is a capability discovery and inference source, not the architecture center.
+↓
+VALID OUTPUT
 
-Current Hugging Face Hub APIs support model discovery filtered by inference provider and task, provider mappings, inference status, and provider metadata. Provider entries can expose fields such as context length, pricing, tool support, structured-output support, first-token latency, throughput, and live/error status when available.
+HUGGING FACE ADAPTER
+
+Hugging Face is a capability/model source, not Epoch's architecture center.
 
 Architecture:
 
 HUGGING FACE
-     ↓
+↓
 HF ADAPTER
-     ↓
+↓
 NORMALIZER
-     ↓
+↓
 MODEL PROFILE
-     ↓
+↓
 CAPABILITY PROFILE
-     ↓
+↓
 CAPABILITY GRAPH
-     ↓
+↓
 SYSTEM COMPOSER
-28. HUGGING FACE MODEL INGESTION
-Implement:
 
-listModels()
-searchModels()
-getModelInfo()
-getRevision()
-getProviderMappings()
-getTask()
-getMetadata()
-getLicense()
-getArtifacts()
-getProviderSignals()
 Store:
 
 repository_id
@@ -1217,6 +1072,7 @@ providers
 provider_status
 provider_signals
 retrieved_at
+
 Model identity must be pinned:
 
 repository
@@ -1226,104 +1082,47 @@ revision
 commit
 +
 artifact digest
+
 Never benchmark only a mutable model name.
 
-29. HUGGING FACE TASK / MODALITY SUPPORT
-Hugging Face documents task types as defining the shape of model APIs and supports task-oriented discovery. Current Inference Provider documentation includes tasks such as chat completion, feature extraction, text-to-image, text-to-video, audio classification, automatic speech recognition, and image classification.
+MODEL TRUTH LAYER
 
-Epoch should therefore model:
+Separate external model claims from Epoch empirical facts.
 
-task
-inputs[]
-outputs[]
-modalities[]
-rather than building a text-only model registry.
-
-30. HUGGING FACE PROVIDER SIGNALS
-External provider signals can be used for candidate discovery:
-
-provider
-status
-context_length
-pricing
-is_free
-supports_tools
-supports_structured_output
-first_token_latency_ms
-throughput
-provider-specific model ID
-These are:
-
-EXTERNAL SIGNALS
-not:
-
-EPOCH VERIFIED FACTS
-Epoch must benchmark critical claims against the real workload before treating them as verified empirical knowledge.
-
-31. HUGGING FACE INFERENCE
-Hugging Face Inference Providers expose unified access to many models through SDKs and compatible APIs.
-
-Epoch can use this as:
-
-provider capability
-for:
-
-rapid discovery
-smoke tests
-candidate evaluation
-fallback inference
-provider comparison
-But Epoch's own truth layer remains:
-
-real workload
-+
-measurement
-+
-evidence
-+
-verification
-32. MODEL TRUTH LAYER
-Separate:
-
-MODEL CLAIM
-from:
-
-EPOCH OBSERVATION
-Flow:
-
-MODEL CARD / PROVIDER
-        ↓
-EXTERNAL CLAIM
-        ↓
+MODEL CARD / PROVIDER CLAIM
+↓
 EPOCH CANDIDATE
-        ↓
+↓
 REAL WORKLOAD
-        ↓
+↓
 EXPERIMENT
-        ↓
+↓
 MEASUREMENT
-        ↓
+↓
 VERIFIED EMPIRICAL RECORD
-This distinction is a core moat.
 
-33. SYSTEM COMPOSER
-Epoch optimizes systems, not isolated components.
+This is critical for trustworthy optimization.
+
+SYSTEM COMPOSER
+
+Epoch composes systems, not isolated components.
 
 Example:
 
 VOICE AGENT
 
 STT
- ↓
+↓
 RETRIEVAL
- ↓
+↓
 RERANKER
- ↓
+↓
 LLM
- ↓
+↓
 TOOLS
- ↓
+↓
 TTS
+
 Search dimensions:
 
 models
@@ -1335,86 +1134,115 @@ storage
 configuration
 placement
 software
-User should be able to say:
+data
+
+The user can state:
 
 build a voice agent under $0.02/minute
 with <300ms median response latency
-without manually choosing every component.
 
-34. CANDIDATE SYSTEM
-CandidateSystem
-├── system_definition
-├── world_state_ref
-├── expected_outcome
-├── assumptions
-├── predicted_metrics
-├── risks
-├── compatibility_result
-├── policy_result
-└── experiment_plan
+and the system composer can discover candidate systems.
+
+CANDIDATE SYSTEM
+
+interface CandidateSystem {
+id: string;
+systemDefinition: SystemDefinition;
+worldStateRef: string;
+expectedOutcome: ExpectedOutcome;
+assumptions: Assumption[];
+predictedMetrics: MetricPrediction[];
+risks: Risk[];
+compatibilityResult: CompatibilityResult;
+policyResult: PolicyResult;
+experimentPlan: ExperimentPlan;
+}
+
 Candidate search:
 
 DISCOVER
- ↓
+↓
 GOVERNANCE FILTER
- ↓
+↓
 COMPATIBILITY FILTER
- ↓
+↓
 ANALYTICAL FILTER
- ↓
+↓
 SIMULATION
- ↓
+↓
 SMOKE TEST
- ↓
+↓
 QUALITY
- ↓
+↓
 BENCHMARK
- ↓
+↓
 LOAD TEST
- ↓
+↓
 CANARY
-35. EXPERIMENT FABRIC
-Experiment
-├── hypothesis
-├── objective
-├── candidates
-├── controls
-├── variables
-├── workload
-├── environment
-├── budget
-├── risk
-├── expected_information_gain
-├── execution
-├── measurements
-└── evidence
+
+EXPERIMENT FABRIC
+
+interface Experiment {
+id: string;
+hypothesis: HypothesisRef;
+objective: string;
+candidates: CandidateRef[];
+
+controls: Control[];
+variables: Variable[];
+
+workload: WorkloadRef;
+environment: EnvironmentRef;
+budget: Budget;
+risk: RiskAssessment;
+
+expectedInformationGain: number;
+
+execution: ExperimentExecution;
+measurements: Measurement[];
+evidence: EvidenceRef[];
+}
+
 Experiment value:
 
-expected_information_gain
-× decision_impact
-× uncertainty_reduction
---------------------------------
 cost × risk × duration
-Epoch chooses experiments that maximize useful information rather than simply running everything.
 
-36. SIMULATION
+Epoch selects experiments that maximize useful information.
+
+SIMULATION FABRIC
+
 Simulation can estimate:
 
 capacity
+
 cost
+
 traffic
+
 queueing
+
 scaling
+
 placement
+
 failure
+
 utilization
-Simulation is always labeled:
+
+physical trajectories
+
+world-model futures
+
+Every simulation result is labeled:
 
 SIMULATED
-Never:
+
+Never silently:
 
 VERIFIED
-37. SANDBOX
+
+SANDBOX FABRIC
+
 Untrusted artifacts and generated systems enter bounded environments.
 
 Controls:
@@ -1430,20 +1258,23 @@ timeout
 filesystem
 process
 artifacts
+
 Flow:
 
 CANDIDATE
- ↓
+↓
 SANDBOX
- ↓
+↓
 RUN
- ↓
+↓
 OBSERVE
- ↓
+↓
 CAPTURE
- ↓
+↓
 DESTROY
-38. BENCHMARK FABRIC
+
+BENCHMARK FABRIC
+
 Every benchmark records:
 
 model
@@ -1457,7 +1288,8 @@ workload
 dataset
 software environment
 timestamp
-Example metrics:
+
+Metrics may include:
 
 LLM
 TTFT
@@ -1469,43 +1301,60 @@ GPU utilization
 VRAM
 cost
 quality
+
 STT
 WER
 CER
 real-time factor
 latency
 cost/minute
-Image
+
+IMAGE
 quality
 latency
 cost/image
 GPU memory
-Video
+
+VIDEO
 FPS
 generation time
 quality
 temporal consistency
 cost/video
-Coding
+
+CODING
 task success
 test pass rate
 repository success
 latency
 cost/task
-39. QUALITY FABRIC
+
+PHYSICAL
+state accuracy
+trajectory error
+collision rate
+force/torque safety
+energy
+time-to-completion
+
+QUALITY FABRIC
+
 Quality is separate from infrastructure performance.
 
-QualityEvaluator
-├── task_success
-├── accuracy
-├── groundedness
-├── structured_output_validity
-├── domain_metrics
-├── human_evaluation
-└── modality_metrics
+interface QualityEvaluator {
+taskSuccess: number;
+accuracy?: number;
+groundedness?: number;
+structuredOutputValidity?: number;
+domainMetrics: Metric[];
+humanEvaluation?: HumanEvaluation;
+modalityMetrics?: Metric[];
+}
+
 Evaluator versions must be pinned.
 
-40. ECONOMIC REALITY
+ECONOMIC REALITY
+
 Normalize:
 
 $/request
@@ -1518,14 +1367,19 @@ $/successful outcome
 $/GPU-hour
 $/month
 TCO
-The most useful metric is often:
+
+Do not optimize cheap failure.
+
+Useful metric:
 
 TOTAL COST
------------------
-SUCCESSFUL OUTCOMES
-Optimization must not reward cheap failure.
 
-41. COMPANY REALITY GRAPH
+SUCCESSFUL OUTCOMES
+
+COMPANY REALITY GRAPH
+
+Epoch can eventually understand organizational reality, not only infrastructure.
+
 Entities:
 
 Organization
@@ -1550,336 +1404,695 @@ Experiment
 Mission
 Policy
 Evidence
-Relations:
 
-owns
-contains
-depends_on
-deployed_on
-runs
-produces
-consumes
-located_in
-compatible_with
-alternative_to
-observed_by
-measured_by
-affected_by
-changed_by
-verified_by
-42. REALITY CONFLICT ENGINE
-Example:
+This enables company-wide missions such as:
 
-Cloud API:
-GPU available
+ship enterprise SSO
 
-Kubernetes:
-GPU unavailable
+reduce onboarding abandonment
 
-Telemetry:
-GPU unhealthy
-Create:
+reduce cloud spend
 
-RealityConflict
-Never silently choose one source.
+patch security issue
 
-Resolution:
+repair failing pipeline
 
-source priority
-freshness
-cross-validation
-measurement
-experiment
-human confirmation
-43. SOFTWARE FABRIC
-Epoch must eventually automate:
+update documentation after architecture change
 
-repositories
-branches
-issues
-PRs
-code
-tests
-CI/CD
-dependencies
-APIs
-services
-databases
-configuration
-documentation
-deployments
-Execution:
+diagnose customer-support issue
+
+SOFTWARE FABRIC
+
+Epoch can automate software engineering:
 
 DISCOVER
- ↓
+↓
 SPECIFY
- ↓
+↓
 PLAN
- ↓
+↓
 IMPLEMENT
- ↓
+↓
 TEST
- ↓
+↓
 REVIEW
- ↓
+↓
 POLICY
- ↓
+↓
 AUTHORITY
- ↓
+↓
 DEPLOY
- ↓
+↓
 OBSERVE
- ↓
+↓
 VERIFY
-Generated code is never automatically trusted merely because an AI produced it.
 
-44. WORKER CONTRACT
-Every execution environment implements:
+Generated code is never trusted merely because an AI produced it.
 
-discover()
-validate()
-simulate()
-benchmark()
-prepare()
-execute()
-observe()
-collectEvidence()
-compensate()
-health()
-Workers:
+DATA CENTER REALITY
 
-ModelSourceWorker
-RuntimeWorker
-HardwareWorker
-SimulationWorker
-SandboxWorker
-BenchmarkWorker
-SoftwareWorker
-CloudWorker
-DataCenterWorker
-KubernetesWorker
-DatabaseWorker
-SecurityWorker
-CIWorker
-DeploymentWorker
-ObservationWorker
-VerificationWorker
-45. POLICY FABRIC
-Policies:
+Data centers are a first-class physical computational environment.
 
-maximum_spend
-allowed_models
-allowed_licenses
-allowed_regions
-allowed_hardware
-allowed_providers
-data_residency
-maximum_downtime
-required_approval
-maximum_experiment_cost
-network_permissions
-credential_permissions
-production_scope
-autonomy_level
-Result:
+Represent:
 
-ALLOW
-DENY
-REQUIRES_APPROVAL
-AI cannot override policy.
+facility
+room
+rack
+server
+GPU
+CPU
+memory
+NIC
+PCIe
+NVLink
+power
+cooling
+network
+workload
+Kubernetes
+runtime
+model
+service
+telemetry
 
-46. AUTHORITY FABRIC
-Policy asks:
+Important measurements:
 
-Is this allowed?
-Authority asks:
+power
+temperature
+PUE
+GPU throttling
+ECC errors
+PCIe contention
+NVLink bandwidth
+network jitter
+capacity
+placement
 
-Does this mission/actor have permission to do it now?
-Authority can be scoped by:
+The source plan explicitly calls out liquid-cooling temperatures, megawatt power, PUE, PCIe contention, NVLink bandwidth, ECC error rates, and bare-metal topology as Data Center reality. fileciteturn95file6L906-L915
 
-organization
-mission
-action
+PHYSICAL WORLD DECODING
+
+Epoch must extend intelligence beyond internet text.
+
+Inputs:
+
+camera
+video
+thermal
+force / torque
+IMU
+LiDAR
+audio
+pressure
+vibration
+environmental sensors
+PLC
+robot telemetry
+
+Pipeline:
+
+SENSOR
+↓
+OBSERVATION
+↓
+STATE ESTIMATION
+↓
+WORLD STATE
+↓
+RELATIONSHIPS
+↓
+DYNAMICS
+↓
+PREDICTION
+↓
+ACTION
+↓
+CONSEQUENCE
+↓
+OBSERVATION
+
+The source plan explicitly defines physical sensory decoding and the goal of adapting world models to physical causality. fileciteturn95file0L38-L48
+
+WORLD MODEL
+
+A world model represents more than detected objects.
+
+It should represent:
+
+objects
+locations
+motion
+relationships
+machine states
+environment state
+events
+causal hypotheses
+predictions
+risk
+uncertainty
+
+For physical intelligence:
+
+camera + sensors
+↓
+world state
+↓
+what is happening?
+↓
+what is unknown?
+↓
+what will happen next?
+↓
+what action changes it?
+
+TEACHING FABRIC
+
+Teaching converts verified experience into learning signals.
+
+WORLD STATE
+↓
+ACTION
+↓
+CONSEQUENCE
+↓
+OBSERVATION
+↓
+VERIFICATION
+↓
+EXPERIENCE
+↓
+LESSON
+↓
+TEACHING SIGNAL
+↓
+MODEL / POLICY / SKILL UPDATE
+↓
+EVALUATION
+↓
+PROMOTION
+
+Teaching may use:
+
+retrieval
+prompt adaptation
+memory
+tool learning
+skill learning
+fine-tuning
+LoRA
+distillation
+preference data
+evaluation data
+world-model training
+policy learning
+routing
+system optimization
+
+Epoch is not required to own foundation-model training infrastructure itself. It owns the verified experience loop.
+
+ACTION MODEL
+
+A first-class Action is required.
+
+interface Action {
+id: string;
+missionId: string;
+
+target: EntityRef;
+capability: CapabilityRef;
+
+requestedChange: ChangeSpec;
+
+preconditions: Condition[];
+authority: AuthorityRef;
+
+risk: RiskAssessment;
+
+expectedConsequences: Prediction[];
+
+rollbackPlan?: RollbackPlan;
+
+status: ActionStatus;
+}
+
+DEPLOY / APPLY / ACT
+
+These are customer-facing verbs over one backend Action primitive.
+
+Deploy
+
+Use for:
+
+model
+
+runtime
+
+software service
+
+container
+
+inference stack
+
+world-model service
+
+production package
+
+Meaning:
+
+Instantiate the verified deliverable on the user-selected, authorized execution target.
+
+Apply
+
+Use for:
+
+configuration
+
+policy
+
+scheduler
+
+infrastructure setting
+
+remediation
+
+Meaning:
+
+Change existing configuration/policy state.
+
+Act / Actuate
+
+Use for:
+
+robot
+
+machine
+
+actuator
+
+physical control
+
+Meaning:
+
+Change physical reality through an authorized action.
+
+PHYSICAL-WORLD DEPLOYMENT VS ACTUATION
+
+For:
+
+Build an optimized capability that decodes physical objects while driving.
+
+The pipeline is:
+
+BUILD / TEACH DECODER
+↓
+OPTIMIZE DECODER
+↓
+MODEL + PERCEPTION + RUNTIME + SENSOR INGESTION
+↓
+OPTIMIZED DECODING SYSTEM
+↓
+DEPLOY
+↓
+SELECTED EDGE / VEHICLE / DATA-CENTER TARGET
+↓
+LIVE OBSERVATION
+↓
+DECODE WORLD STATE
+↓
+PREDICT
+↓
+RECOMMEND ACTION
+↓
+ACT / ACTUATE
+↓
+PHYSICAL CONSEQUENCE
+↓
+OBSERVE
+↓
+VERIFY
+↓
+LEARN
+
+Deploy does not mean Act.
+
+Deploy installs the intelligence.
+
+Act uses that intelligence to change reality.
+
+EXECUTION FABRIC
+
+General execution pipeline:
+
+PLAN
+↓
+VALIDATE
+↓
+AUTHORIZE
+↓
+PREPARE
+↓
+SHADOW
+↓
+CANARY
+↓
+EXECUTE
+↓
+OBSERVE
+↓
+VERIFY
+↓
+ROLL FORWARD / ROLLBACK
+
+Action must record:
+
 target
-time
-spend
-environment
-world-state version
-autonomy level
-47. AUTOMATION DECISION
-Every consequential proposal becomes:
+parameters
+plan_version
+idempotency_key
+timeout
+retry_policy
+compensation
+authorization
+evidence_requirements
 
-AutomationDecision
-├── action
-├── required_authority
-├── autonomy_level
-├── risk
-├── reversibility
-├── policy_result
-├── confidence
-├── state_freshness
-├── budget
-├── evidence_requirements
-└── human_required
-Possible result:
+DEPLOYMENT TARGET FABRIC
 
-AUTO_INVESTIGATE
-AUTO_EXPERIMENT
-AUTO_EXECUTE
-REQUIRES_APPROVAL
-REQUIRES_CLARIFICATION
-BLOCKED
-48. HUMAN GATE
-Epoch should interrupt humans only when needed.
+Runs on in the composer determines the authorized execution destination.
 
-Gate A — Ambiguous objective
-"make it better"
-Epoch asks for the missing objective.
+Targets:
 
-Gate B — Missing critical constraint
-Data residency requirement is unknown.
-Ask only for that requirement.
+Epoch-managed compute
+Cloud provider
+Kubernetes
+Docker / container host
+On-prem
+Bare metal
+GPU provider
+Edge device
+Vehicle compute
+Robot compute
+Factory controller
 
-Gate C — High-risk action
-This affects 100% production traffic.
-Gate D — Spend authority
-Experiment requires $850.
-Mission limit is $500.
-Gate E — Destructive action
-Examples:
+Deployment flow:
 
-delete
-terminate
-irreversible migration
-destructive data modification
-Gate F — Contradictory reality
-Epoch cannot safely resolve conflicting authoritative signals.
+MISSION RESULT
+↓
+DEPLOY
+↓
+RESOLVE TARGET
+↓
+CHECK CREDENTIALS
+↓
+CHECK AUTHORITY
+↓
+CHECK CURRENT STATE
+↓
+GENERATE DEPLOYMENT
+↓
+APPLY
+↓
+HEALTH CHECK
+↓
+TRAFFIC / FUNCTIONAL TEST
+↓
+OBSERVE
+↓
+VERIFY
 
-49. WHEN EPOCH SHOULD NOT ASK
-Do not ask if:
+MISSION RESULT
 
-policy allows
-authority exists
-risk is within bounds
-budget is within bounds
-constraints are known
-state is fresh
-action is reversible
-rollback exists
-evidence requirements are known
-execution is idempotent
-Then:
+Every mission must finish in a customer-facing Mission Result.
+
+The customer should see:
+
+PRIMARY RESULT
+MEASURED CHANGE
+PRIMARY DELIVERABLE
+PROOF
+VERIFICATION
+NEXT ACTIONS
+
+The source plan already defines the final user output as outcome, baseline, current reality, unknowns, hypotheses, candidates, experiments, decision, action, observed result, evidence, verification, verdict, learning, and next action. fileciteturn95file9L1456-L1471
+
+MISSION RESULT TAXONOMY
+
+OPTIMIZE
+→ Optimized production stack
+→ benchmark receipt
+→ verifier
+→ deployment/export kit
+
+COMPARE
+→ decision winner
+→ comparison package
+→ recommendation
+
+DIAGNOSE
+→ verified diagnosis
+→ remediation package
+
+PREDICT
+→ forecast
+→ uncertainty
+→ intervention package
 
 DISCOVER
-→ EXPERIMENT
-→ DECIDE
-→ EXECUTE
-→ VERIFY
-automatically.
+→ relationship / insight package
 
-50. AUTONOMY LEVELS
-L0 — OBSERVE
+EXPERIMENT
+→ experimental conclusion
+→ methodology
+→ evidence
 
-L1 — RECOMMEND
+EVALUATE
+→ scorecard
+→ evaluation package
 
-L2 — AUTO-EXPERIMENT
+TEACH
+→ new capability
+→ adapted model/skill
+→ evaluation
 
-L3 — SANDBOX EXECUTION
+DECODE REALITY
+→ verified world-state package
 
-L4 — BOUNDED PRODUCTION
+DATA CENTER
+→ operational outcome
+→ scheduling/power/capacity policy
 
-L5 — ORGANIZATIONAL AUTONOMY
-Each action declares:
+SIMULATE
+→ future scenario
+→ predicted consequence
 
-required_autonomy_level
-The organization controls which levels are enabled.
+REPAIR
+→ patch/fix
+→ tests
+→ verification
 
-51. EXECUTION FABRIC
-PLAN
- ↓
-VALIDATE
- ↓
-AUTHORIZE
- ↓
-PREPARE
- ↓
-SHADOW
- ↓
-CANARY
- ↓
-EXECUTE
- ↓
-OBSERVE
- ↓
-VERIFY
- ↓
-ROLL FORWARD / ROLLBACK
-Every action:
+ACTUATE
+→ verified physical state change
+→ action record
 
-Action
-├── target
-├── parameters
-├── plan_version
-├── idempotency_key
-├── timeout
-├── retry_policy
-├── compensation
-├── authorization
-└── evidence_requirements
-52. STATE RECHECK
-Immediately before consequential execution:
+ADAPT
+→ updated policy
+→ verification
 
-planned_state
-      │
-      ▼
-current_state
-      │
-      ▼
-material_diff?
-   ┌──┴──┐
-   NO    YES
-   │      │
-   ▼      ▼
-EXECUTE  STOP
-          ↓
-       REDISCOVER
-          ↓
-        REPLAN
-53. CANARY ENGINE
-Default:
+This preserves the source plan's typed outcome system while adding the final customer-facing result contract. The source already lists the 14 outcome types and their concrete forms. fileciteturn95file1L64-L97
 
-SHADOW
- ↓
-1%
- ↓
-5%
- ↓
-20%
- ↓
-50%
- ↓
-100%
-At every stage:
+CUSTOMER RESULT EXAMPLE — OPTIMIZE
 
-quality
-latency
-error_rate
-availability
-cost
-resource_health
-Violation:
+VERIFIED OPTIMIZATION
 
-STOP
- ↓
-ROLLBACK
- ↓
-EVIDENCE
- ↓
-ANALYZE
- ↓
-LEARN
-54. OBSERVATION FABRIC
-Inputs:
+Qwen3-32B · vLLM · H100
+
+P99        184ms → 139ms
+Throughput 401 → 518 tok/s
+Cost       -31%
+Quality    maintained
+
+PRIMARY DELIVERABLE
+Optimized production stack
+
+INCLUDED
+✓ serving configuration
+✓ runtime version
+✓ model revision
+✓ Docker
+✓ Kubernetes
+✓ benchmark receipt
+✓ verifier
+✓ rollback
+
+NEXT ACTIONS
+[Deploy]
+[Export Stack]
+[Download Kit]
+[Run Again]
+
+CUSTOMER RESULT EXAMPLE — DECODE REALITY
+
+VERIFIED WORLD STATE
+
+VEHICLE-07
+
+Objects
+pedestrian       14.2m
+cyclist          21.1m
+vehicle          31.4m
+
+State
+speed            42 km/h
+road             wet
+visibility       moderate
+
+Predicted next state
+pedestrian likely enters path
+
+Uncertainty
+Camera-02 partially occluded
+
+PRIMARY DELIVERABLE
+Versioned World-State Package
+
+NEXT ACTIONS
+[Simulate]
+[Recommend]
+[Act]
+[Continue Observation]
+
+CUSTOMER RESULT EXAMPLE — TEACH
+
+NEW CAPABILITY
+
+factory.machine_state
+
+State understanding
+64% → 88%
+
+Anomaly detection
+51% → 79%
+
+PRIMARY DELIVERABLE
+Adapted model + capability package
+
+INCLUDED
+✓ model revision
+✓ dataset version
+✓ evaluation
+✓ failure cases
+✓ deployment package
+
+NEXT ACTIONS
+[Evaluate]
+[Promote]
+[Deploy]
+[Export]
+
+CUSTOMER RESULT EXAMPLE — DIAGNOSE
+
+VERIFIED DIAGNOSIS
+
+Root cause:
+PCIe contention
+
+Evidence:
+GPU counters
+PCIe telemetry
+controlled experiment
+
+PRIMARY DELIVERABLE
+Remediation package
+
+NEXT ACTIONS
+[Apply Fix]
+[Create PR]
+[Simulate]
+[Monitor]
+
+EXPORT STACK
+
+Export is not deployment.
+
+Export produces a reproducible system definition:
+
+epoch-mission/
+├── mission.json
+├── outcome.json
+├── model/
+├── runtime/
+├── configuration/
+├── deployment/
+├── policies/
+├── safety/
+├── benchmark/
+├── verification/
+├── rollback/
+├── provenance/
+└── README.md
+
+The exact contents vary by mission.
+
+DOWNLOAD KIT
+
+Download Kit is the complete runnable delivery bundle.
+
+For an inference system:
+
+serving configuration
+runtime configuration
+deployment manifests
+benchmark receipt
+verifier
+rollback
+provenance
+scripts
+README
+
+For physical decoding:
+
+world-state schema
+model
+sensor adapter config
+perception pipeline
+evaluation
+safety policy
+verifier
+deployment artifacts
+
+RUN AGAIN
+
+Run Again means replay/re-execute the mission.
+
+Two modes:
+
+Exact replay
+
+Same:
+
+model
+revision
+runtime
+workload
+dataset
+configuration
+world snapshot
+
+Controlled rerun
+
+User changes explicit parameters:
+
+GPU
+batch size
+runtime
+model
+quantization
+constraint
+
+Previous results remain available for comparison.
+
+OBSERVATION FABRIC
+
+Normalize:
 
 OpenTelemetry
 application metrics
@@ -1890,53 +2103,75 @@ cloud metrics
 billing
 logs
 traces
-quality evaluations
+quality evaluation
 benchmark outputs
 deployment state
 Git history
 CI results
 support signals
 business analytics
+physical sensors
+robot telemetry
+
 Pipeline:
 
 SIGNAL
- ↓
+↓
 NORMALIZATION
- ↓
+↓
 OBSERVATION
- ↓
+↓
 MEASUREMENT
- ↓
+↓
 EVIDENCE
-55. EVIDENCE FABRIC
+
+EVIDENCE FABRIC
+
 Evidence must answer:
 
 What happened?
+
 Where?
+
 When?
+
 How was it measured?
+
 Which system produced it?
+
 Which execution produced it?
+
 Which experiment produced it?
+
 Can another verifier check it?
-Evidence
-├── id
-├── type
-├── source
-├── producer
-├── timestamp
-├── checksum
-├── artifact_ref
-├── observation_ref
-├── execution_ref
-├── experiment_ref
-├── confidence
-└── provenance
-56. CLAIM ENGINE
+
+interface Evidence {
+id: string;
+type: EvidenceType;
+source: SourceRef;
+producer: ActorRef;
+timestamp: string;
+
+checksum?: string;
+
+artifactRef?: ArtifactRef;
+observationRef?: ObservationRef;
+executionRef?: ExecutionRef;
+experimentRef?: ExperimentRef;
+
+confidence?: number;
+provenance: Provenance;
+}
+
+Cryptographic hashes are used for integrity/provenance. They are not the headline product output.
+
+CLAIM ENGINE
+
 Example:
 
 CLAIM:
 This change reduced inference cost by 34%.
+
 Evidence:
 
 baseline billing
@@ -1947,6 +2182,7 @@ latency evaluation
 availability
 deployment record
 execution record
+
 Claim states:
 
 VERIFIED
@@ -1954,17 +2190,20 @@ PARTIALLY_VERIFIED
 NOT_PROVEN
 CONTRADICTED
 UNCERTAIN
-57. INDEPENDENT VERIFICATION
-The executor must not be the sole authority on its own success.
+
+INDEPENDENT VERIFICATION
+
+The executor should not be the sole authority on its own success.
 
 EXECUTOR
-   ↓
+↓
 CLAIM
-   ↓
+↓
 INDEPENDENT VERIFIER
-   ↓
+↓
 VERDICT
-Verification may use independent:
+
+Possible verifier sources:
 
 billing
 telemetry
@@ -1972,7 +2211,11 @@ quality evaluator
 deployment state
 database state
 external measurement
-58. VERIFICATION WINDOWS
+physical sensor
+independent test
+
+VERIFICATION WINDOWS
+
 Different outcomes require different observation windows.
 
 latency
@@ -1992,99 +2235,123 @@ reliability
 
 drift
 → continuous
-59. PROOF PACKAGE
-Every mission should produce:
 
-MISSION
- ↓
-OUTCOME
- ↓
-BASELINE
- ↓
-WORLD STATE
- ↓
-CANDIDATE
- ↓
-EXPERIMENT
- ↓
-MEASUREMENTS
- ↓
+A mission can be:
+
+COMPLETED
+
+while verification remains:
+
+PENDING
+
+if the observation window is still open.
+
+CONSEQUENCE ENGINE
+
+An Action is not complete when the command returns success.
+
+Record:
+
+BEFORE STATE
+↓
 ACTION
- ↓
-OBSERVATIONS
- ↓
+↓
+AFTER STATE
+
+Then:
+
+CONSEQUENCE
+↓
+OBSERVATION
+↓
 EVIDENCE
- ↓
+↓
 VERIFICATION
- ↓
-VERDICT
-User-facing result:
 
-WHAT EPOCH OBSERVED
+Unexpected consequences become learning signals.
 
-WHAT EPOCH DID NOT KNOW
+EXPERIENCE ENGINE
 
-WHAT EPOCH TESTED
+Experience is not a chat transcript.
 
-WHAT EPOCH CHANGED
+A reusable experience is:
 
-WHAT ACTUALLY HAPPENED
-
-WHAT EVIDENCE EXISTS
-
-WHAT IS VERIFIED
-
-WHAT REMAINS UNCERTAIN
-
-WHAT SHOULD HAPPEN NEXT
-60. LEARNING FABRIC
-After verified outcomes:
-
-initial_state
+context
 +
-intervention
+world state
 +
-new_state
+unknown
 +
-conditions
+hypothesis
 +
-measurements
+candidate
++
+experiment
++
+decision
++
+authority
++
+action
++
+consequence
++
+observation
++
+evidence
 +
 verification
-becomes:
 
-LearningRecord
-Store:
+LESSON ENGINE
 
-model
-runtime
-hardware
-workload
-configuration
-environment
-intervention
-measurements
-outcome
-verification
-61. REALITY DYNAMICS
+Generalize verified experience.
+
 Example:
 
-batch = 8
-      ↓
-INTERVENTION
-      ↓
-batch = 16
-      ↓
-GPU utilization +29%
-P99 +14ms
-cost/request -21%
-quality unchanged
-Store the transition.
+Experience:
+policy v7 improved workload X
+under conditions Y.
 
-Do not call it causal unless the evidence supports a causal conclusion.
+Lesson:
+for workload profile X,
+under conditions Y,
+prefer policy family V
+because measured effect Z.
 
-62. DRIFT FABRIC
-Detect:
+Lessons carry:
+
+scope
+confidence
+evidence
+applicability
+exceptions
+expiry/drift conditions
+
+TEACHING + INTELLIGENCE EVOLUTION
+
+VERIFIED EXPERIENCE
+↓
+LESSON
+↓
+TEACHING DATA
+↓
+TRAIN / ADAPT / ROUTE / UPDATE
+↓
+NEW INTELLIGENCE VERSION
+↓
+EVALUATE
+↓
+SHADOW
+↓
+CANARY
+↓
+PROMOTE
+
+Do not promote only because an LLM says the new version is better.
+
+DRIFT ENGINE
+
+Track:
 
 world drift
 model drift
@@ -2098,277 +2365,239 @@ provider drift
 hardware drift
 software drift
 business drift
+
 Material drift:
 
 DRIFT
- ↓
+↓
 REDISCOVERY
- ↓
+↓
 HYPOTHESIS
- ↓
+↓
 EXPERIMENT
- ↓
+↓
 DECISION
- ↓
+↓
 ACTION
- ↓
+↓
 VERIFY
-63. CONTINUOUS MISSION
-A mission can remain active:
+
+CONTINUOUS MISSIONS
+
+A mission may remain active:
 
 DISCOVER
- ↓
+↓
 DESIGN
- ↓
+↓
 EXECUTE
- ↓
+↓
 VERIFY
- ↓
+↓
 MONITOR
- ↓
+↓
 DRIFT?
- ↓
+↓
 REDISCOVER
+↓
+...
+
 This turns Epoch into a runtime rather than a one-shot optimizer.
 
-64. COUNTERFACTUAL ENGINE
+The source plan explicitly calls this continuous-mission behavior. fileciteturn95file9L1326-L1342
+
+COUNTERFACTUAL ENGINE
+
 Questions:
 
 What if we use another model?
 What if traffic doubles?
 What if we halve GPUs?
-What if we move to another provider?
-What if we move to our data center?
+What if we move provider?
+What if we move to the data center?
 What if we change runtime?
 What if we quantize?
 What if we change architecture?
-What if we change pricing?
-Every answer must be labeled:
+What if pricing changes?
+
+Every result is labeled:
 
 OBSERVED
 HISTORICALLY_SUPPORTED
 SIMULATED
 PREDICTED
 UNKNOWN
-65. REALITY QUESTIONS
-Epoch should answer:
 
-What is happening?
-What changed?
-Why?
-What is expensive?
-What is underutilized?
-What is failing?
-What is unknown?
-What could we change?
-What would happen if we changed it?
-What evidence supports this?
-Did the last change work?
-What should we test next?
-Each resolves into typed operations:
+Never collapse these categories.
 
-QUERY
-OBSERVATION
-ANALYSIS
-EXPERIMENT
-COUNTERFACTUAL
-EVIDENCE_REQUEST
-MISSION
-This is not merely chat.
+POLICY FABRIC
 
-66. COMPLETE INPUT → OUTPUT MODEL
-Inputs
-TEXT
-SPEECH
-AUDIO
-IMAGE
-VIDEO
-DOCUMENT
-TABULAR
-CODE
-JSON
-API DATA
-DATABASE DATA
-TELEMETRY
-EVENTS
-SENSORS
-MODEL REGISTRIES
-CLOUD STATE
-KUBERNETES STATE
-BILLING
-OBSERVABILITY
-REPOSITORIES
-BUSINESS SYSTEMS
-Human controls
-intent
-constraints
-budget
-authority
-risk tolerance
-data permissions
-approval policy
-desired outcome
-time horizon
-Epoch intermediate outputs
-InputEnvelope
-Intent
-OutcomeContract
-Mission
-WorldState
-WorldFact
-Unknown
-Hypothesis
-Capability
-System
-CandidateSystem
-Experiment
-Measurement
-Evaluation
-CostRecord
-Decision
-Policy
-Authorization
-Plan
-Action
-Execution
-Observation
-Evidence
-Claim
-Verification
-Verdict
-LearningRecord
-DynamicsRecord
-DriftEvent
-Proposal
-AutomationDecision
-HumanGate
-DomainEvent
-Final user output
-Outcome
-Baseline
-Current Reality
-Unknowns
-Hypotheses
-Candidates
-Experiments
-Decision
-Action
-Observed Result
-Evidence
-Verification
-Verdict
-Learning
-Next Action
-67. COMPLETE AUTOMATION MASTER LIST
-Epoch automatically discovers
-infrastructure
-software
-repositories
-services
-workloads
-models
-model revisions
-runtimes
-hardware
-providers
-capacity
-prices
-billing
-telemetry
-quality
-deployments
-incidents
-dependencies
-policies
-historical evidence
-Epoch automatically reasons
-intent interpretation
-outcome compilation
-baseline selection
-unknown prioritization
-hypothesis generation
-capability matching
-system composition
-candidate ranking
-experiment selection
-failure analysis
-counterfactual analysis
-decision explanation
-Epoch automatically executes
-safe discovery
-investigation
-bounded experiments
-sandbox runs
-benchmarks
-smoke tests
-code changes
-test suites
-documentation updates
-CI remediation
-shadow deployments
-authorized canaries
-authorized scaling
-authorized routing changes
-authorized runtime changes
-rollback
-compensation
-routine operational remediation
-Epoch automatically verifies
-cost
-latency
-quality
-availability
-throughput
-capacity
-error rate
-deployment state
-policy compliance
-evidence completeness
-Epoch automatically learns
-successful interventions
-failed interventions
-system dynamics
-model/runtime/hardware interactions
-cost behavior
-workload behavior
-experiment value
-drift patterns
-failure patterns
-organizational operating patterns
-68. SECURITY ARCHITECTURE
+Policies include:
+
+maximum_spend
+allowed_models
+allowed_licenses
+allowed_regions
+allowed_hardware
+allowed_providers
+data_residency
+maximum_downtime
+required_approval
+maximum_experiment_cost
+network_permissions
+credential_permissions
+production_scope
+autonomy_level
+
+Results:
+
+ALLOW
+DENY
+REQUIRES_APPROVAL
+
+AI cannot override policy.
+
+AUTHORITY FABRIC
+
+Authority asks:
+
+Does this mission/actor have permission to do this now?
+
+Scope by:
+
+organization
+mission
+action
+target
+time
+spend
+environment
+world-state version
+autonomy level
+
+Capability and authority remain separate.
+
+AUTOMATION DECISION
+
+Every consequential proposal becomes:
+
+interface AutomationDecision {
+action: ActionRef;
+requiredAuthority: AuthorityLevel;
+autonomyLevel: AutonomyLevel;
+risk: RiskAssessment;
+reversibility: Reversibility;
+policyResult: PolicyResult;
+confidence: number;
+stateFreshness: StateFreshness;
+budget: Budget;
+evidenceRequirements: EvidenceRequirement[];
+humanRequired: boolean;
+}
+
+Possible result:
+
+AUTO_INVESTIGATE
+AUTO_EXPERIMENT
+AUTO_EXECUTE
+REQUIRES_APPROVAL
+REQUIRES_CLARIFICATION
+BLOCKED
+
+AUTONOMY LEVELS
+
+L0 — OBSERVE
+L1 — RECOMMEND
+L2 — AUTO-EXPERIMENT
+L3 — SANDBOX EXECUTION
+L4 — BOUNDED PRODUCTION
+L5 — ORGANIZATIONAL AUTONOMY
+
+Each action declares required_autonomy_level.
+
+The organization controls enabled levels.
+
+AUTONOMOUS SAFETY GATES & POLICY EVALUATION
+
+Evaluate safety rules and policy boundaries autonomously:.
+
+Gate A — ambiguous objective
+
+“make it better”
+
+Gate B — missing critical constraint
+
+data residency unknown
+
+Gate C — high-risk production action
+
+Gate D — spend authority exceeded
+
+Gate E — destructive action
+
+Gate F — contradictory reality
+
+Do not ask when:
+
+policy allows
+authority exists
+risk is within bounds
+budget is within bounds
+constraints are known
+state is fresh
+action is reversible
+rollback exists
+evidence requirements are known
+execution is idempotent
+
+Then:
+
+DISCOVER
+→ EXPERIMENT
+→ DECIDE
+→ EXECUTE
+→ VERIFY
+
+automatically.
+
+SECURITY ARCHITECTURE
+
 IDENTITY
- ↓
+↓
 AUTHENTICATION
- ↓
+↓
 AUTHORIZATION
- ↓
+↓
 CREDENTIAL SCOPE
- ↓
+↓
 NETWORK POLICY
- ↓
+↓
 SANDBOX
- ↓
+↓
 RESOURCE LIMIT
- ↓
+↓
 POLICY
- ↓
+↓
 AUTHORITY
- ↓
+↓
 STATE RECHECK
- ↓
+↓
 EXECUTION
- ↓
+↓
 OBSERVATION
- ↓
+↓
 VERIFICATION
-Credentials should be:
+
+Credentials are:
 
 mission-scoped
 action-scoped
 target-scoped
 time-scoped
 spend-scoped
-69. MODEL SECURITY
+
+MODEL SECURITY
+
 Before execution:
 
 source verification
@@ -2380,10 +2609,12 @@ runtime compatibility
 sandbox
 resource limits
 network restrictions
+
 A public model repository is not automatically trusted execution code.
 
-70. FAILURE MODEL
-Test:
+FAILURE MODEL
+
+Handle:
 
 GPU failure
 runtime crash
@@ -2403,28 +2634,33 @@ database failure
 CI failure
 rollback failure
 verification failure
-Every failure becomes evidence and can become a learning record.
 
-71. COMPENSATION
+Every failure becomes evidence and may become a learning record.
+
+COMPENSATION
+
 Every consequential action defines:
 
 previous_state
 rollback_state
 compensation_action
 verification
-Compensation is itself controlled:
+
+Compensation itself is controlled:
 
 PLAN
- ↓
+↓
 POLICY
- ↓
+↓
 AUTHORITY
- ↓
+↓
 EXECUTE
- ↓
+↓
 VERIFY
-72. EVENT MODEL
-Important events:
+
+EVENT MODEL
+
+Core events:
 
 InputReceived
 IntentCreated
@@ -2459,6 +2695,7 @@ DriftDetected
 RediscoveryTriggered
 LearningRecordCreated
 DynamicsRecordCreated
+
 Events support:
 
 audit
@@ -2467,10 +2704,13 @@ debugging
 provenance
 analytics
 state reconstruction
-73. DATABASE DESIGN
+
+DATABASE DESIGN
+
 Primary transactional store:
 
 PostgreSQL
+
 Core tables:
 
 organizations
@@ -2528,7 +2768,9 @@ drift_events
 learning_records
 dynamics_records
 events
-74. STORAGE STRATEGY
+
+STORAGE STRATEGY
+
 PostgreSQL
 → authoritative domain state
 
@@ -2553,12 +2795,14 @@ Search Projection
 
 Graph Projection
 → derived relationships
-PostgreSQL remains authoritative on Day -1.
+
+PostgreSQL remains authoritative.
 
 Derived graphs must be rebuildable.
 
-75. GRAPH STRATEGY
-Do not make a graph database the source of truth initially.
+GRAPH STRATEGY
+
+Do not require a graph database as source of truth initially.
 
 Build derived:
 
@@ -2566,6 +2810,7 @@ Reality Graph
 Capability Graph
 Dynamics Graph
 Evidence Graph
+
 from:
 
 PostgreSQL
@@ -2573,7 +2818,9 @@ PostgreSQL
 event history
 +
 object storage
-76. API ARCHITECTURE
+
+API ARCHITECTURE
+
 Public groups:
 
 /intents
@@ -2604,6 +2851,7 @@ Public groups:
 /verifications
 /drift
 /learning
+
 Every write supports:
 
 request_id
@@ -2611,7 +2859,9 @@ idempotency_key
 schema_version
 actor
 organization_id
-77. REPOSITORY STRUCTURE
+
+REPOSITORY STRUCTURE
+
 epoch/
 ├── apps/
 │   ├── console/
@@ -2673,7 +2923,11 @@ epoch/
 │   ├── aws/
 │   ├── gcp/
 │   ├── azure/
-│   └── digitalocean/
+│   ├── digitalocean/
+│   ├── cameras/
+│   ├── robotics/
+│   ├── industrial/
+│   └── scientific/
 │
 ├── schemas/
 ├── migrations/
@@ -2683,8 +2937,13 @@ epoch/
 ├── datasets/
 ├── docs/
 └── scripts/
-78. TECHNOLOGY FOUNDATION
-Control plane
+
+The source blueprint already contains the corresponding modular packages and adapter structure; this version expands the physical/industrial/scientific adapter surface without changing the core. fileciteturn95file3L281-L381
+
+TECHNOLOGY FOUNDATION
+
+Control plane:
+
 TypeScript
 Next.js
 React
@@ -2692,903 +2951,3841 @@ PostgreSQL
 Redis
 REST
 typed contracts
-Evaluation
+
+Evaluation/research:
+
 Python where useful
-Infrastructure
+
+Infrastructure:
+
 Docker
 Kubernetes
-Terraform/OpenTofu
-Observability
+Terraform / OpenTofu
+
+Observability:
+
 OpenTelemetry
-Do not introduce microservices merely because the architecture contains service boundaries.
+
+Do not introduce microservices merely because the architecture has boundaries.
 
 Start as a modular control-plane monolith with strict package boundaries.
 
-Split services only when:
+Split only when:
 
 scale
 security
 isolation
 independent deployment
 failure isolation
+
 justify it.
 
-79. DOMAIN CONTRACTS
-Create:
+The source plan makes this exact implementation recommendation. fileciteturn95file3L353-L381
 
-schemas/input-envelope.schema.json
-schemas/intent.schema.json
-schemas/outcome-contract.schema.json
-schemas/mission.schema.json
-schemas/world-state.schema.json
-schemas/world-fact.schema.json
-schemas/observation.schema.json
-schemas/capability.schema.json
-schemas/system.schema.json
-schemas/candidate.schema.json
-schemas/experiment.schema.json
-schemas/measurement.schema.json
-schemas/decision.schema.json
-schemas/policy.schema.json
-schemas/authorization.schema.json
-schemas/action.schema.json
-schemas/evidence.schema.json
-schemas/claim.schema.json
-schemas/verification.schema.json
-schemas/verdict.schema.json
-schemas/automation-decision.schema.json
-schemas/human-gate.schema.json
-80. FIRST REAL END-TO-END SLICE
-Do not build a fake demo.
+WORKER CONTRACT
 
-Use:
+Each execution environment supports:
 
-"reduce inference cost by 30% without hurting quality"
-Real chain:
+interface Worker {
+discover(): Promise<Inventory>;
+validate(input: unknown): Promise<ValidationResult>;
+simulate(input: unknown): Promise<SimulationResult>;
+benchmark(input: unknown): Promise<BenchmarkResult>;
+prepare(input: unknown): Promise<PreparedExecution>;
+execute(input: AuthorizedExecution): Promise<ExecutionResult>;
+observe(executionId: string): Promise<Observation[]>;
+collectEvidence(executionId: string): Promise<Evidence[]>;
+compensate(executionId: string): Promise<CompensationResult>;
+health(): Promise<HealthStatus>;
+}
 
-INPUT
- ↓
-INTENT
- ↓
-OUTCOME CONTRACT
- ↓
-MISSION
- ↓
-WORLD STATE
- ↓
-HF MODEL DISCOVERY
- ↓
-RUNTIME DISCOVERY
- ↓
-HARDWARE DISCOVERY
- ↓
-CANDIDATE SYSTEM
- ↓
-EXPERIMENT
- ↓
-MEASUREMENT
- ↓
+Workers include:
+
+ModelSourceWorker
+RuntimeWorker
+HardwareWorker
+SimulationWorker
+SandboxWorker
+BenchmarkWorker
+SoftwareWorker
+CloudWorker
+DataCenterWorker
+KubernetesWorker
+DatabaseWorker
+SecurityWorker
+CIWorker
+DeploymentWorker
+ObservationWorker
+VerificationWorker
+RobotWorker
+IndustrialWorker
+ScientificWorker
+
+CONNECTOR CONTRACT
+
+interface RealityConnector {
+discover(): Promise<RealityInventory>;
+describe(entityId: string): Promise<EntityDescription>;
+observe(request: ObservationRequest): Promise<Observation[]>;
+query(request: RealityQuery): Promise<RealityResult>;
+stream(request: StreamRequest): AsyncIterable<Observation>;
+simulate(request: SimulationRequest): Promise<SimulationResult>;
+prepareAction(request: ActionRequest): Promise<PreparedAction>;
+executeAction(request: AuthorizedAction): Promise<ActionResult>;
+verify(request: VerificationRequest): Promise<VerificationResult>;
+}
+
+Connector-specific technologies must never become the core ontology.
+
+FRONTEND PRODUCT ARCHITECTURE
+
+Primary navigation:
+
+Home
+Missions
+Reality
+Models
+Capabilities
+Experiments
+Evidence
+Deployments
+Learning
+Policies
+Approvals
+
+Primary composer:
+
+What should become true?
+
+The composer is the front door, not a generic chat screen.
+
+COMPOSER UX FLOW
+
+USER TYPES
+↓
+LIVE UNDERSTANDING
+↓
+ENTITY / MODEL / RUNTIME / REALITY RESOLUTION
+↓
+INLINE SUGGESTIONS
+↓
+USER SELECTS / EDITS
+↓
+OUTCOME CONTRACT PREVIEW
+↓
+MISSION PREVIEW
+↓
+RUN
+
+The user sees enough structure to steer the mission without needing to understand the backend graph.
+
+MISSION WORKSPACE
+
+Show:
+
+PURPOSE
+OUTCOME
+REALITY
+KNOWN
+UNKNOWN
+HYPOTHESES
+CAPABILITIES
+CANDIDATES
+EXPERIMENTS
 DECISION
- ↓
-POLICY
- ↓
 AUTHORITY
- ↓
-STATE RECHECK
- ↓
-EXECUTION
- ↓
+ACTION
+CONSEQUENCE
 OBSERVATION
- ↓
 EVIDENCE
- ↓
-INDEPENDENT VERIFICATION
- ↓
-VERDICT
- ↓
+VERIFICATION
+RESULT
+EXPERIENCE
+LESSON
+NEXT
+
+REALITY EXPLORER
+
+Reality
+├── Software
+├── Models
+├── Compute
+├── Cloud
+├── Kubernetes
+├── Data Center
+├── Edge
+├── Machines
+├── Robots
+├── Factories
+├── Warehouses
+├── Vehicles
+├── Energy
+├── Laboratories
+└── Scientific Systems
+
+Every object should show:
+
+state
+history
+observations
+relationships
+capabilities
+missions
+actions
+evidence
+verification
+
+OUTCOME VIEW
+
+For Optimize:
+
+PRIMARY RESULT
+Optimized production stack
+
+MEASURED CHANGE
+Before → After
+
+DELIVERABLE
+Config / deployment / export
+
+PROOF
+Benchmark + telemetry + verifier
+
+NEXT
+Deploy / Export / Download / Run Again
+
+For Decode:
+
+PRIMARY RESULT
+Verified world state
+
+DELIVERABLE
+World-state package
+
+PROOF
+Sensor observations + provenance
+
+NEXT
+Simulate / Recommend / Act / Observe
+
+DEPLOYMENT UI
+
+A deploy flow must show:
+
+WHAT
+Verified deliverable
+
+WHERE
+Selected execution target
+
+HOW
+Runtime / deployment method
+
+WITH WHAT
+Compute resources
+
+AUTHORITY
+Policy + user authorization
+
+OBSERVATION
+Post-deployment verification
+
+Target selector:
+
+Epoch-managed compute
+AWS
+GCP
+Azure
+Kubernetes
+Docker
+On-prem
+Bare metal
+GPU provider
+Edge
+Vehicle
+Robot
+Factory
+
+The exact target availability is determined by connected adapters and authorization.
+
+ACTION UI
+
+Mission-specific verbs:
+
+Deploy
+Apply
+Act
+Promote
+Recommend
+Simulate
+Monitor
+Rollback
+Run Again
+Export
+Download
+
+The backend still stores these as first-class Action objects.
+
+PHYSICAL WORLD PRODUCT LOOP
+
+Example user:
+
+Understand what is happening around this vehicle.
+
+CAMERA
+VIDEO
+LiDAR
+IMU
+GPS
+VEHICLE TELEMETRY
+↓
+OBSERVATION
+↓
+WORLD STATE
+↓
+OBJECTS + RELATIONSHIPS
+↓
+PREDICTED STATE
+↓
+RECOMMENDATION
+↓
+ACT (if authorized)
+↓
+CONSEQUENCE
+↓
+OBSERVATION
+↓
+VERIFICATION
+↓
 LEARNING
-Initially:
+
+DATA CENTER PRODUCT LOOP
+
+Example:
+
+Reduce power consumption without reducing throughput.
+
+GPU
+CPU
+MEMORY
+NVLINK
+PCIe
+NETWORK
+COOLING
+POWER
+WORKLOADS
+SCHEDULER
+KUBERNETES
+TELEMETRY
+↓
+DECODE CURRENT STATE
+↓
+UNKNOWN
+↓
+HYPOTHESES
+↓
+CANDIDATE POLICIES
+↓
+BENCHMARK / SIMULATE
+↓
+DECISION
+↓
+AUTHORIZE
+↓
+APPLY SCHEDULING POLICY
+↓
+OBSERVE
+↓
+VERIFY
+↓
+LEARN
+
+SOFTWARE PRODUCT LOOP
+
+Example:
+
+Ship enterprise SSO.
+
+REQUIREMENT
+↓
+DISCOVER REPOSITORIES
+↓
+DISCOVER ARCHITECTURE
+↓
+DEPENDENCY GRAPH
+↓
+SPECIFICATION
+↓
+PLAN
+↓
+IMPLEMENT
+↓
+TEST
+↓
+SECURITY
+↓
+PERFORMANCE
+↓
+PR
+↓
+REVIEW
+↓
+CI
+↓
+CANARY
+↓
+DEPLOY
+↓
+OBSERVE
+↓
+VERIFY
+↓
+DOCUMENT
+
+The source plan explicitly defines this company-wide execution model. fileciteturn95file5L845-L885
+
+FINOPS PRODUCT LOOP
+
+SPEND
+↓
+ATTRIBUTE
+↓
+FIND WASTE
+↓
+HYPOTHESES
+↓
+SIMULATE
+↓
+EXPERIMENT
+↓
+CHANGE
+↓
+MEASURE
+↓
+VERIFY SAVINGS
+
+SECURITY PRODUCT LOOP
+
+DISCOVER
+↓
+ASSESS
+↓
+PRIORITIZE
+↓
+PATCH
+↓
+TEST
+↓
+DEPLOY
+↓
+VERIFY
+
+CONTINUOUS ORGANIZATIONAL LOOP
+
+The organization can become an automation surface:
+
+SOFTWARE ENGINEERING
+PRODUCT DEVELOPMENT
+INFRASTRUCTURE
+CLOUD
+DATA
+SECURITY
+SRE
+QA
+DEVOPS
+FINOPS
+CUSTOMER SUPPORT
+OPERATIONS
+DOCUMENTATION
+PROJECT EXECUTION
+COMPLIANCE
+ANALYTICS
+INTERNAL SYSTEMS
+
+Epoch remains one runtime.
+
+90% AUTOMATION PRINCIPLE
+
+Automate approximately 90% of repeatable, observable, bounded, reversible, policy-permitted operational work.
+
+Automate:
+
+discovery
+data collection
+state reconstruction
+baseline generation
+anomaly detection
+issue classification
+hypothesis generation
+investigation
+decomposition
+candidate generation
+experiment design
+benchmarking
+test execution
+code modification
+documentation updates
+CI/CD remediation
+infrastructure planning
+safe deployment
+canary
+scaling
+rollback
+incident diagnosis
+routine remediation
+cost optimization
+quality evaluation
+evidence collection
+compliance checks
+post-change verification
+learning
+drift detection
+recurring optimization
+
+Human-controlled by default:
+
+ambiguous goals
+new authority grants
+irreversible destruction
+large financial commitments
+credential expansion
+security exceptions
+legal/compliance exceptions
+high-risk physical action
+out-of-policy actions
+contradictory reality
+
+The source plan explicitly defines the same boundary. fileciteturn94file0L196-L294
+
+LEARNING FLYWHEEL
+
+MORE MISSIONS
+↓
+MORE EXPERIMENTS
+↓
+MORE MEASUREMENTS
+↓
+MORE VERIFIED OUTCOMES
+↓
+BETTER DYNAMICS
+↓
+BETTER CANDIDATE SEARCH
+↓
+BETTER EXPERIMENT SELECTION
+↓
+BETTER DECISIONS
+↓
+BETTER OUTCOMES
+↓
+MORE MISSIONS
+
+The source blueprint identifies reality history, interventions, experiments, measurements, verified outcomes, and system dynamics as the core moat. fileciteturn95file7L940-L981
+
+DEFINITION OF DONE
+
+Epoch is complete when an organization can provide:
+
+intent
++
+constraints
++
+authority
++
+access to reality
+
+and Epoch can autonomously:
+
+understand
+↓
+discover
+↓
+baseline
+↓
+identify unknowns
+↓
+hypothesize
+↓
+discover capabilities
+↓
+compose systems
+↓
+experiment
+↓
+measure
+↓
+evaluate
+↓
+decide
+↓
+check policy
+↓
+check authority
+↓
+execute
+↓
+observe
+↓
+prove
+↓
+learn
+↓
+monitor
+↓
+adapt
+
+with humans only where needed for ambiguity, critical constraints, authority boundaries, high-risk action, policy, irreversibility, or contradictory reality. fileciteturn95file2L136-L200
+
+DAY-1 BUILD RULE
+
+Do not ask:
+
+What is the MVP?
+
+Ask:
+
+What is the smallest real implementation of the final autonomous architecture?
+
+The first implementation may use:
 
 1 model
 1 runtime
 1 GPU
 1 cluster
 1 provider
-is acceptable.
+1 repository
+1 workload
 
-The architecture must still be final.
+but it must still use the final concepts:
 
-81. FIRST SOFTWARE AUTOMATION SLICE
-The second critical slice should prove company-wide automation.
-
-Input:
-
-"fix the checkout latency regression and ship the fix if tests pass."
-Epoch:
-
-discover services
- ↓
-inspect telemetry
- ↓
-inspect recent commits
- ↓
-identify regression
- ↓
-generate hypotheses
- ↓
-run tests / benchmarks
- ↓
-modify code
- ↓
-run unit tests
- ↓
-run integration tests
- ↓
-run performance tests
- ↓
-create PR
- ↓
-review
- ↓
-deploy canary
- ↓
-observe
- ↓
-verify latency recovery
- ↓
-merge / roll forward
- ↓
-document
- ↓
-record learning
-This demonstrates that Epoch is not only an infrastructure optimizer.
-
-82. FIRST INCIDENT AUTOMATION SLICE
-Input:
-
-"our API error rate is 8x normal."
-Epoch:
-
-detect
- ↓
-establish baseline
- ↓
-correlate logs/traces/metrics
- ↓
-inspect recent changes
- ↓
-generate hypotheses
- ↓
-run safe diagnostic experiments
- ↓
-identify likely cause
- ↓
-select remediation
- ↓
-check policy
- ↓
-check authority
- ↓
-state recheck
- ↓
-execute
- ↓
-observe
- ↓
-verify recovery
- ↓
-capture evidence
- ↓
-create prevention task
- ↓
-learn
-83. FIRST PRODUCT OUTCOME SLICE
-Input:
-
-"customers are dropping during onboarding."
-Epoch:
-
-discover analytics
- ↓
-discover funnel
- ↓
-discover product changes
- ↓
-discover support complaints
- ↓
-identify abnormal step
- ↓
-generate hypotheses
- ↓
-propose experiments
- ↓
-implement selected experiment
- ↓
-deploy
- ↓
-measure
- ↓
-verify
- ↓
-roll out winner
-This extends Reality Intelligence from infrastructure to product operations.
-
-84. FIRST FINOPS SLICE
-Input:
-
-"reduce monthly cloud spend by 20% without reducing availability."
-Epoch:
-
-discover spend
- ↓
-attribute resources
- ↓
-identify waste
- ↓
-discover utilization
- ↓
-generate opportunities
- ↓
-simulate
- ↓
-benchmark
- ↓
-rank
- ↓
-policy
- ↓
-authority
- ↓
-execute safe changes
- ↓
-observe
- ↓
-verify billing
-85. FIRST SECURITY SLICE
-Input:
-
-"fix all high-confidence dependency vulnerabilities
-without breaking production."
-Epoch:
-
-discover dependencies
- ↓
-identify vulnerabilities
- ↓
-rank risk
- ↓
-generate patches
- ↓
-test
- ↓
-security validation
- ↓
-canary
- ↓
-observe
- ↓
-verify vulnerability removal
- ↓
-verify application health
- ↓
-roll forward
-86. FIRST DOCUMENTATION SLICE
-Input:
-
-"keep architecture documentation synchronized with reality."
-Continuous mission:
-
-observe architecture
- ↓
-detect code/infrastructure drift
- ↓
-identify stale documentation
- ↓
-generate changes
- ↓
-validate against source reality
- ↓
-create PR
- ↓
-review
- ↓
-merge
- ↓
-record provenance
-87. FIRST CONTINUOUS COMPANY MISSION
-A company can define:
-
-Keep production healthy.
-Keep infrastructure within budget.
-Keep security policy compliant.
-Keep documentation current.
-Keep critical services within SLO.
-Keep deployments verified.
-Epoch continuously:
-
-OBSERVE
- ↓
-DETECT
- ↓
-PRIORITIZE
- ↓
-INVESTIGATE
- ↓
-ACT
- ↓
-VERIFY
- ↓
-LEARN
- ↓
-REPEAT
-This is the beginning of an autonomous organizational runtime.
-
-88. MISSION STATE MACHINE
-CREATED
- ↓
-INGESTING
- ↓
-UNDERSTANDING
- ↓
-DISCOVERING
- ↓
-BASELINING
- ↓
-CONTRACT_READY
- ↓
-UNKNOWN_ANALYSIS
- ↓
-HYPOTHESIZING
- ↓
-SEARCHING
- ↓
-EXPERIMENTING
- ↓
-MEASURING
- ↓
-RANKING
- ↓
-POLICY_CHECK
- ↓
-AUTHORITY_CHECK
- ├── HUMAN_GATE
- └── AUTO
-       ↓
-STATE_RECHECK
- ↓
-PLANNED
- ↓
-EXECUTING
- ↓
-OBSERVING
- ↓
-VERIFYING
- ↓
-SUCCEEDED
-Alternative states:
-
-FAILED
-UNCERTAIN
-NOT_PROVEN
-BLOCKED
-ROLLED_BACK
-CANCELLED
-EXPIRED
-REDISCOVERING
-AWAITING_USER
-89. USER EXPERIENCE
-Primary navigation:
-
-Missions
-Reality
-Systems
-Capabilities
-Experiments
+InputEnvelope
+Intent
+OutcomeContract
+WorldState
+Capability
+System
+Experiment
+Decision
+Policy
+Authority
+Execution
 Evidence
 Verification
-Policies
-History
-Home:
+Learning
+AutomationDecision
+HumanGate
 
-┌──────────────────────────────────────────────────────┐
-│                                                      │
-│              What needs to change?                   │
-│                                                      │
-│ "reduce inference cost by 30%"                       │
-│                                                      │
-│             [ Investigate ]                          │
-│                                                      │
-│  Text • Voice • Upload • Connect Data                │
-│                                                      │
-└──────────────────────────────────────────────────────┘
-90. MISSION UI
-Order:
+The capability set may begin small.
 
-OUTCOME
- ↓
-CURRENT REALITY
- ↓
-WHAT EPOCH DOES NOT KNOW
- ↓
-WHAT EPOCH IS TESTING
- ↓
-CANDIDATE SYSTEMS
- ↓
-DECISION
- ↓
-ACTION
- ↓
-OBSERVATION
- ↓
-PROOF
- ↓
-LEARNING
-91. AUTOMATION STATUS UI
-Every mission shows:
+The architecture cannot be temporary.
 
-AUTONOMY
-AUTO
+The source blueprint explicitly defines this build rule. fileciteturn95file7L1042-L1078
 
-CURRENT STEP
-Benchmarking candidates
+TEST ARCHITECTURE
 
-HUMAN INPUT REQUIRED
-No
+Every subsystem:
 
-AUTHORITY
-Within mission scope
+unit
+integration
+contract
+failure
+security
+property
+E2E
+evaluation
 
-BUDGET
-$182 / $500
+Critical paths additionally require:
 
-RISK
-Low
+idempotency
+replay
+stale-state
+authorization
+rollback
+evidence-integrity
+verification
+human-gate
+automation-decision
 
-STATE FRESHNESS
-Fresh
+ARCHITECTURE SCENARIO FIXTURES
 
-NEXT
-Quality evaluation
-Human gate:
+Create fixtures:
 
-HUMAN ACTION REQUIRED
+scenario-cost-optimization
+scenario-latency-optimization
+scenario-model-selection
+scenario-cloud-vs-datacenter
+scenario-capacity-planning
+scenario-quality-regression
+scenario-provider-outage
+scenario-stale-plan
+scenario-rollback
+scenario-verification-failure
+scenario-conflicting-reality
+scenario-code-regression
+scenario-production-incident
+scenario-security-patch
+scenario-product-dropoff
+scenario-documentation-drift
+scenario-finops-waste
+scenario-physical-world-decoding
+scenario-robot-actuation
+scenario-factory-optimization
+scenario-data-center-power
+
+Each fixture contains:
+
+initial reality
+intent
+outcome contract
+available capabilities
+unknowns
+expected decisions
+expected actions
+expected evidence
+expected verdict
+
+The source plan already defines this scenario-driven architecture approach. fileciteturn95file8L1245-L1275
+
+DOMAIN CONTRACTS
+
+Create typed schemas for:
+
+input-envelope
+intent
+outcome-contract
+mission
+world-state
+world-fact
+observation
+capability
+system
+candidate-system
+experiment
+measurement
+evaluation
+decision
+policy
+authorization
+automation-decision
+human-gate
+plan
+action
+execution
+evidence
+claim
+verification
+learning-record
+dynamics-record
+drift-event
+domain-event
+mission-result
+artifact
+
+The schema layer is the contract between UI, control plane, workers, adapters, events, storage, and verification.
+
+CONTROL-PLANE IMPLEMENTATION
+
+Recommended internal boundaries:
+
+input
+intent
+outcome
+mission
+reality
+world-model
+unknown
+hypothesis
+capability
+model
+composer
+experiment
+simulation
+decision
+policy
+authority
+automation
+execution
+observation
+evidence
+claim
+verification
+learning
+teaching
+drift
+audit
+artifact
+
+Start as one modular control-plane application with strict dependency direction.
+
+DEPENDENCY RULE
+
+Packages should depend inward toward domain contracts.
+
+Bad:
+
+domain → Kubernetes SDK
+domain → Hugging Face SDK
+domain → AWS SDK
+
+Good:
+
+domain
+↑
+adapter interface
+↑
+KubernetesAdapter
+HuggingFaceAdapter
+AWSAdapter
+RobotAdapter
+
+The permanent domain cannot depend on replaceable providers.
+
+EVENT-SOURCED PROVENANCE
+
+Every consequential transition emits a DomainEvent.
+
+Events should support:
+
+state reconstruction
+
+audit
+
+replay
+
+debugging
+
+analytics
+
+provenance
+
+learning
+
+Never rely solely on current mutable state to explain why a result occurred.
+
+REPLAY
+
+Every important mission must be replayable from:
+
+input
+world-state snapshot
+model revisions
+capabilities
+policies
+experiment configuration
+action records
+observations
+
+Replay should preserve the difference between:
+
+historical reality
+current reality
+replayed simulation
+
+PRODUCT OUTPUT CONTRACT
+
+The final customer-facing output is:
+
+MISSION RESULT
+│
+├── Primary Result
+├── Measured Change
+├── Current Reality
+├── Baseline
+├── Unknowns
+├── Hypotheses
+├── Candidates
+├── Experiments
+├── Decision
+├── Action
+├── Consequence
+├── Observed Result
+├── Primary Deliverable
+├── Evidence
+├── Verification
+├── Verdict
+├── Uncertainty
+├── Learning
+└── Next Action
+
+Evidence is support, not the headline product.
+
+The customer gets something useful:
+
+deployment package
+configuration
+decision package
+diagnosis
+forecast
+new capability
+world-state package
+simulation
+repair
+policy
+physical state change
+
+DEPLOYMENT RESULT STANDARD
+
+For infrastructure/model missions, the minimum Epoch standard should match the strongest concrete-result behavior expected from an infrastructure optimizer:
+
+verified optimization
++
+measured benchmark
++
+exact model/runtime/hardware/workload identity
++
+reproducible configuration
++
+verifier
++
+deployment/export path
++
+rollback
+
+That makes the result useful rather than merely descriptive.
+
+PHYSICAL RESULT STANDARD
+
+For physical missions, output is not forced into deployment.
+
+Possible result:
+
+verified world state
++
+predicted state
++
+uncertainty
++
+recommended action
++
+safety status
++
+sensor provenance
++
+observation plan
+
+If the user chooses an authorized actuation path:
+
+world state
+↓
+recommendation
+↓
+authority
+↓
+actuation
+↓
+consequence
+↓
+verification
+
+FINAL ENGINEERING INVARIANTS
+
+Invariant 1 — Outcome over task
+
+The product is the outcome loop.
+
+Invariant 2 — Reality over prediction
+
+Prediction is a hypothesis until reality is observed.
+
+Invariant 3 — Capability over vendor
+
+Hugging Face, vLLM, AWS, Kubernetes, robot vendors, and future providers are implementations/adapters.
+
+Invariant 4 — Evidence supports outcome
+
+Evidence is not the product headline.
+
+Invariant 5 — Verification over confidence
+
+Confidence is not proof.
+
+Invariant 6 — Authority over autonomy
+
+Capability does not imply permission.
+
+Invariant 7 — Experience over memory
+
+Experience captures what worked, when, why, and under what conditions.
+
+Invariant 8 — Reality surfaces are not sequential products
+
+Computational, operational, edge, physical, industrial, scientific, and general reality all belong to the permanent architecture.
+
+Invariant 9 — Deploy and Act are distinct
+
+Deploy installs intelligence.
+
+Act changes reality.
+
+Invariant 10 — No silent mutation
+
+Every consequential action is attributable, authorized, observable, and verifiable.
+
+Invariant 11 — No temporary MVP architecture
+
+The first implementation can be small in capability count but must use the permanent domain.
+
+Invariant 12 — Learning is downstream of verified consequence
+
+Do not teach from unsupported claims.
+
+FINAL PRODUCT NORTH STAR
+
+                 PURPOSE
+                    │
+                    ▼
+                 INTENT
+                    │
+                    ▼
+                 OUTCOME
+                    │
+                    ▼
+                  REALITY
+                    │
+                    ▼
+                UNDERSTAND
+                    │
+                    ▼
+                 UNKNOWN
+                    │
+                    ▼
+               HYPOTHESIS
+                    │
+                    ▼
+               CAPABILITY
+                    │
+                    ▼
+                  SYSTEM
+                    │
+                    ▼
+               EXPERIMENT
+                    │
+                    ▼
+                DECISION
+                    │
+                    ▼
+                AUTHORITY
+                    │
+                    ▼
+                 ACTION
+                    │
+                    ▼
+              CONSEQUENCE
+                    │
+                    ▼
+               OBSERVATION
+                    │
+                    ▼
+                 EVIDENCE
+                    │
+                    ▼
+              VERIFICATION
+                    │
+                    ▼
+               MISSION RESULT
+                    │
+                    ▼
+                EXPERIENCE
+                    │
+                    ▼
+                  LESSON
+                    │
+                    ▼
+                TEACHING
+                    │
+                    ▼
+          INTELLIGENCE EVOLUTION
+                    │
+                    ▼
+           BETTER REALITY MODEL
+                    │
+                    └──────────► REALITY
+
+FINAL BUILD DIRECTIVE FOR THE CODING MODEL
+
+Build Epoch as one permanent Reality Intelligence Runtime.
+
+Do not build:
+
+GPU optimizer first
+→ cloud platform later
+→ robotics later
+→ physical AI later
+→ scientific system later
+→ rewrite architecture
+
+Do not build separate products:
+
+Optimizer
+Diagnoser
+Predictor
+Robot tool
+Data-center tool
+Simulation tool
+Model trainer
+Coding agent
+
+Build one runtime:
+
+             EPOCH
+               │
+         REALITY FABRIC
+               │
+      CAPABILITY FABRIC
+               │
+     KNOWLEDGE FABRIC
+               │
+        MISSION RUNTIME
+               │
+   UNKNOWN → HYPOTHESIS
+               │
+         COMPOSE SYSTEM
+               │
+           EXPERIMENT
+               │
+            DECISION
+               │
+       POLICY / AUTHORITY
+               │
+             ACTION
+               │
+          CONSEQUENCE
+               │
+           OBSERVATION
+               │
+            EVIDENCE
+               │
+          VERIFICATION
+               │
+         MISSION RESULT
+               │
+          EXPERIENCE
+               │
+            LESSON
+               │
+           TEACHING
+               │
+     INTELLIGENCE EVOLUTION
+               │
+        BETTER REALITY
+
+Build every permanent primitive now.
+
+Connect more reality continuously.
+
+Never replace the core because reality becomes more physical.
+
+The permanent engineering invariant is:
+
+The runtime does not change. The reality it can decode, test, act on, observe, verify, and learn from expands.
+
+The final product invariant is:
+
+Every Epoch mission ends with a concrete, inspectable, measurable, verifiable, usable Mission Result.
+
+The final customer promise is:
+
+Epoch turns purpose into verified reality.
+
+CANONICAL SUMMARY
+
+Epoch is infrastructure for operating by outcomes instead of tasks.
+
+The permanent loop is:
+
+INPUT
+→ INTENT
+→ OUTCOME
+→ REALITY
+→ UNKNOWN
+→ HYPOTHESIS
+→ CAPABILITY
+→ SYSTEM
+→ EXPERIMENT
+→ DECISION
+→ AUTHORITY
+→ ACTION
+→ CONSEQUENCE
+→ OBSERVATION
+→ EVIDENCE
+→ VERIFICATION
+→ MISSION RESULT
+→ EXPERIENCE
+→ LESSON
+→ TEACHING
+→ INTELLIGENCE EVOLUTION
+→ BETTER REALITY
+
+And the permanent reality surface is:
+
+COMPUTATIONAL
+→ OPERATIONAL
+→ EDGE
+→ PHYSICAL
+→ INDUSTRIAL
+→ SCIENTIFIC
+→ GENERAL
+
+This is a single architecture, not a sequence of rewrites.
+
+FINAL CANONICAL PRODUCT DIAGRAM
+
+                            EPOCH
+                REALITY INTELLIGENCE RUNTIME
+                            │
+                            ▼
+                 HUMAN / SYSTEM INPUT
+                            │
+                            ▼
+                 INPUT NORMALIZATION
+                            │
+                            ▼
+                      INTENT ENGINE
+                            │
+                            ▼
+                  OUTCOME INTELLIGENCE
+                            │
+                            ▼
+                    OUTCOME CONTRACT
+                            │
+                            ▼
+                     MISSION RUNTIME
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+   REALITY FABRIC     CAPABILITY FABRIC   KNOWLEDGE FABRIC
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+                            ▼
+                      UNKNOWN ENGINE
+                            │
+                            ▼
+                    HYPOTHESIS ENGINE
+                            │
+                            ▼
+                     PREDICTION ENGINE
+                            │
+                            ▼
+                  CAPABILITY DISCOVERY
+                            │
+                            ▼
+                   SYSTEM COMPOSER
+                            │
+                            ▼
+                  CANDIDATE SYSTEMS
+               ┌────────────┼────────────┐
+               ▼            ▼            ▼
+            SYSTEM A     SYSTEM B     SYSTEM C
+               └────────────┼────────────┘
+                            │
+                            ▼
+               INTELLIGENCE OPTIMIZATION
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+   MODEL OPTIMIZATION  INFERENCE OPTIMIZATION  TRAINING OPTIMIZATION
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+                            ▼
+                   COMPUTE INTELLIGENCE
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+    COMPUTE SELECTION  DATA-PATH OPTIMIZATION SYSTEM CONFIGURATION
+          └─────────────────┼─────────────────┘
+                            │
+                            ▼
+              COST / LATENCY / QUALITY /
+            THROUGHPUT / POWER / SAFETY
+                            │
+                            ▼
+                   EXPERIMENT ENGINE
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+          SIMULATION     SANDBOX     BENCHMARK
+              └────────────┼────────────┘
+                            │
+                            ▼
+                     DECISION ENGINE
+                            │
+                            ▼
+                   GOVERNANCE ENGINE
+                            │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+            POLICY        RISK        SAFETY
+                            │
+                            ▼
+                   AUTOMATION DECISION
+                            │
+           ┌────────────────┼────────────────┐
+           ▼                ▼                ▼
+    AUTO-INVESTIGATE  AUTO-EXPERIMENT  AUTO-EXECUTE
+                            │
+                     HUMAN APPROVAL
+                      when required
+                            │
+                            ▼
+                       STATE RECHECK
+                            │
+                            ▼
+                     EXECUTION FABRIC
+                ┌───────────┼───────────┐
+                ▼           ▼           ▼
+            SOFTWARE      COMPUTE    PHYSICAL
+                └───────────┼───────────┘
+                            │
+                            ▼
+                          REALITY
+                            │
+                            ▼
+                    CONSEQUENCE ENGINE
+                            │
+                            ▼
+                    OBSERVATION FABRIC
+                            │
+                            ▼
+                    MEASUREMENT ENGINE
+                            │
+                     ┌──────┴──────┐
+                     ▼             ▼
+             PREDICTION  ↔  OBSERVATION
+                     │
+                     ▼
+                PREDICTION ERROR
+                     │
+                     ▼
+                   EVIDENCE
+                     │
+                     ▼
+             INDEPENDENT VERIFIER
+                     │
+                     ▼
+                  VERDICT
+                     │
+                     ▼
+               MISSION RESULT
+             ┌────────┼────────┐
+             ▼        ▼        ▼
+         PRIMARY   DELIVERABLE  PROOF
+           RESULT
+             │
+             ▼
+         NEXT ACTIONS
+      ┌──────┼──────┐
+      ▼      ▼      ▼
+   DEPLOY   APPLY   ACT
+      └──────┼──────┘
+             │
+             ▼
+         CONSEQUENCE
+             │
+             ▼
+         OBSERVATION
+             │
+             ▼
+         VERIFICATION
+             │
+             ▼
+      EXPERIENCE ENGINE
+             │
+             ▼
+        LESSON ENGINE
+             │
+             ▼
+       TEACHING FABRIC
+      ┌──────┼──────┐
+      ▼      ▼      ▼
+  TRAIN/ADAPT ROUTE/SKILL WORLD MODEL
+      └──────┼──────┘
+             │
+             ▼
+   INTELLIGENCE EVOLUTION
+             │
+             ▼
+  NEW INTELLIGENCE VERSION
+             │
+             ▼
+      EVALUATION FABRIC
+      ┌──────┼──────┐
+      ▼      ▼      ▼
+   SHADOW   CANARY  BENCHMARK
+      └──────┼──────┘
+             │
+             ▼
+          PROMOTION
+             │
+             ▼
+    BETTER INTELLIGENCE
+             │
+             ▼
+    BETTER REALITY MODEL
+             │
+             ▼
+      REALITY DYNAMICS
+             │
+             └──────────────► NEXT MISSION
+
+FINAL REALITY-SURFACE ARCHITECTURE
+
+The following is not a product roadmap and must not be interpreted as “build computational first, then rebuild for physical.”
+
+All reality surfaces are part of the Day-1 semantic architecture. What expands is the set of connected adapters, capabilities, execution backends, sensors, models, and environments.
+
+                 PERMANENT EPOCH CORE
+                          │
+
+┌──────────────────────────┼──────────────────────────┐
+▼                          ▼                          ▼
+
+COMPUTATIONAL               OPERATIONAL                   EDGE
+│                          │                          │
+models                     services                    cameras
+inference                  APIs                        sensors
+GPU / CPU                   databases                   gateways
+memory                     networks                    local compute
+K8s                        telemetry                   streams
+cloud
+data center
+└──────────────────────────┼──────────────────────────┘
+▼
+PHYSICAL
+│
+machines / robots / vehicles
+│
+▼
+INDUSTRIAL
+│
+factories / warehouses / energy
+│
+▼
+SCIENTIFIC
+│
+laboratories / instruments / experiments
+│
+▼
+GENERAL
+
+These surfaces feed the same Reality Fabric. The source plan likewise defines a stable mission runtime while environments expand and states that new environments do not require changing the core runtime.
+
+PRODUCT THESIS
+
+Canonical statement:
+
+Epoch is the Reality Intelligence Runtime that teaches intelligent systems to decode reality, understand what is true and unknown, optimize and test possible changes, act within authority, verify what actually happened, and learn from every verified interaction.
+
+Short statement:
+
+Teach intelligence to decode reality.
+
+Operational statement:
+
+Epoch turns intent into a measurable, verified, usable Mission Result and compounds that result into better future intelligence.
+
+TWO PRIMARY FUNCTIONS: DECODE + OPTIMIZE
+
+Epoch has two inseparable intelligence functions.
+
+Decode reality
+
+Decode asks:
+
+What exists?
+
+What is happening?
+
+What changed?
+
+What relationships exist?
+
+What is unknown?
+
+What is likely to happen?
+
+Which observations support this state?
+
+Optimize reality
+
+Optimize asks:
+
+What should change?
+
+Which system should be used?
+
+Which configuration is better?
+
+Which intervention has the best outcome?
+
+What should be deployed or applied?
+
+What should be tested next?
+
+REALITY
+↓
+DECODE
+↓
+UNDERSTAND
+↓
+UNKNOWN
+↓
+HYPOTHESIS
+↓
+PREDICT / SIMULATE
+↓
+OPTIMIZE
+↓
+DECIDE
+↓
+ACT
+↓
+OBSERVE
+↓
+VERIFY
+↓
+LEARN
+
+USER INPUT MODEL
+
+Epoch accepts much more than a text box.
+
+Supported input modalities:
+
+TEXT
+SPEECH
+AUDIO
+IMAGE
+VIDEO
+DOCUMENT
+TABULAR
+CODE
+JSON
+API
+DATABASE
+TELEMETRY
+EVENT
+SENSOR
+MODEL
+ARTIFACT
+REPOSITORY
+CLOUD STATE
+KUBERNETES STATE
+BILLING
+OBSERVABILITY
+
+All inputs enter through a common InputEnvelope. The source plan defines this explicit input envelope and requires original inputs to be preserved while derived interpretations remain separate.
+
+NATURAL-LANGUAGE COMPOSER
+
+The composer must accept:
+
+clean sentences
+
+incomplete requests
+
+technical shorthand
+
+typos
+
+informal language
+
+mixed model/runtime names
+
+pasted logs
+
+copied deployment information
+
+multimodal context
+
+Example:
+
+use llama 3.1 8b on vllm
+need build more optimized capable which detect
+the physical object on was driving
+
+Epoch does not require the user to transform this into a formal schema.
+
+Instead:
+
+USER TEXT
+↓
+LIVE PARSER
+↓
+PARTIAL STRUCTURED INTENT
+↓
+INLINE SUGGESTIONS
+↓
+USER CHOOSES / EDITS
+↓
+COMPLETE MISSION
+
+Important rule:
+
+Suggestions are suggestions. User selections are authoritative unless the selection is invalid or prohibited by policy.
+
+INLINE COMPOSER MODEL
+
+The composer should support editable tokens/chips such as:
+
+[Model]
+[Runtime]
+[GPU / Compute]
+[Runs on]
+[Input]
+[Reality]
+[Output]
+[Mission]
+[Goal]
+[Constraints]
+[Authority]
+
+For example:
+
+Optimize [Qwen3-32B] on [vLLM]
+for lower [Cost]
+while preserving [Quality] [P99]
+on [H100]
+in [Kubernetes / cluster-prod]
+
+The user can change any chip.
+
+Epoch should never silently replace a selected choice.
+
+If Epoch recommends a different model:
+
+Selected:
+[Llama 3.1 8B]
+
+Epoch suggestion:
+[Vision-capable model]
 
 Reason:
-Production policy requires approval.
+Mission requires visual object detection.
 
-Epoch recommendation:
-Candidate B
+[Use suggestion] [Keep selected]
 
-Expected impact:
--31% cost
-+8ms P99
-No observed quality regression
+CONTEXTUAL SUGGESTION ENGINE
 
-Rollback:
-Automatic
+Before typing:
 
-[Approve]
-[Reject]
-[Inspect Evidence]
-92. PROOF UI
-CLAIM
- ↓
-TARGET
- ↓
-BASELINE
- ↓
-OBSERVATIONS
- ↓
+Optimize
+Compare
+Diagnose
+Predict
+Teach
+Discover
+Simulate
+Experiment
+Evaluate
+Decode
+Repair
+Actuate
+Adapt
+
+After typing, suggestions become contextual.
+
+Example:
+
+User:
+make this model better at detecting objects while driving
+
+Suggestions:
+
+Teach [model] to detect [objects] from [camera/video]
+Optimize [model] for [real-time latency]
+Evaluate [model] on [driving dataset]
+Compare [candidate models]
+Simulate [vehicle environment]
+
+The suggestion engine must use current mission context rather than being a static list.
+
+INTENT ENGINE
+
+Pipeline:
+
+INPUT
+↓
+CLASSIFY
+↓
+EXTRACT ENTITIES
+↓
+EXTRACT OBJECTIVE
+↓
+EXTRACT CONSTRAINTS
+↓
+EXTRACT SCOPE
+↓
+EXTRACT TIME
+↓
+EXTRACT REQUESTED ACTION
+↓
+EXTRACT AUTHORITY CONTEXT
+↓
+INTENT
+
+Intent schema:
+
+interface Intent {
+id: string;
+actor: ActorRef;
+objective: string;
+scope: Scope;
+context: Record<string, unknown>;
+constraints: Constraint[];
+requestedAction?: ActionIntent;
+urgency?: string;
+timeWindow?: TimeWindow;
+sourceRefs: SourceRef[];
+confidence: number;
+}
+
+OUTCOME INTELLIGENCE
+
+Intent is not executable.
+
+Epoch transforms broad intent into measurable outcome conditions where safely inferable.
+
+Example:
+
+"make inference cheaper"
+
+becomes:
+
+objective = reduce inference cost
+
+baseline:
+cost = $182K/month
+quality = 98.7%
+p99 = 214ms
+
+candidate target:
+cost reduction >= 30%
+quality >= 98.7%
+p99 <= 250ms
+
+If the target cannot safely be inferred, represent it as:
+
+UNKNOWN
+
+Then Epoch can:
+
+inspect organizational defaults
+
+inspect previous missions
+
+propose a target
+
+ask the user
+
+block
+
+OUTCOME CONTRACT
+
+interface OutcomeContract {
+objective: string;
+
+baseline?: Baseline;
+
+targetMetrics: MetricTarget[];
+hardConstraints: Constraint[];
+softObjectives: Objective[];
+prohibitedTradeoffs?: Constraint[];
+
+observationWindow?: ObservationWindow;
+
+successCriteria: Condition[];
+failureCriteria: Condition[];
+
+verificationMethod: VerificationMethod;
+
+authorityRequirements: AuthorityRequirement[];
+expiry?: string;
+}
+
+The contract is the machine-readable definition of success.
+
+MISSION RUNTIME
+
+A Mission is the persistent execution context for an outcome.
+
+Responsibilities:
+
+state transitions
+
+dependency resolution
+
+workflow execution
+
+retries
+
+timeouts
+
+compensation
+
+authority checks
+
+state validation
+
+event emission
+
+recovery
+
+verification
+
+monitoring
+
+State machine:
+
+CREATED
+↓
+NORMALIZING
+↓
+UNDERSTANDING
+↓
+DISCOVERING
+↓
+HYPOTHESIZING
+↓
+COMPOSING
+↓
+EXPERIMENTING
+↓
+DECIDING
+↓
+AUTHORIZATION_REQUIRED
+↓
+READY
+↓
+EXECUTING
+↓
+OBSERVING
+↓
+VERIFYING
+↓
+COMPLETED
+↓
+LEARNED
+
+Failure states:
+
+BLOCKED
+FAILED
+ROLLED_BACK
+INCONCLUSIVE
+EXPIRED
+
+REALITY FABRIC
+
+Reality is temporal and versioned.
+
+Reality includes:
+
+software
+
+repositories
+
+services
+
+APIs
+
+databases
+
+models
+
+runtimes
+
+hardware
+
+cloud resources
+
+Kubernetes resources
+
+users
+
+customers
+
+workloads
+
+pipelines
+
+costs
+
+incidents
+
+policies
+
+experiments
+
+deployments
+
+physical entities
+
+sensor state
+
+machine state
+
+Core properties:
+
+current state
+historical state
+source provenance
+confidence
+validity interval
+version
+integrity
+
+WORLD STATE
+
+interface WorldState {
+id: string;
+organizationId: string;
+version: number;
+
+createdAt: string;
+validFrom: string;
+validUntil?: string;
+
+sourceSet: SourceRef[];
+factRefs: WorldFactRef[];
+
+integrityHash: string;
+}
+
+Every consequential plan references a WorldState.
+
+Immediately before execution:
+
+PLANNED WORLD STATE
+VS
+CURRENT WORLD STATE
+│
+material diff?
+┌──┴──┐
+NO    YES
+│      │
+▼      ▼
+EXECUTE  STOP
+↓
+REDISCOVER
+↓
+REPLAN
+
+REALITY GRAPH
+
+Represent reality as a graph.
+
+Example:
+
+FACILITY
+├── RACK
+│   ├── SERVER
+│   │   ├── GPU
+│   │   ├── CPU
+│   │   ├── MEMORY
+│   │   └── NIC
+│   ├── POWER
+│   └── COOLING
+├── NETWORK
+└── WORKLOAD
+├── MODEL
+├── RUNTIME
+└── SERVICE
+
+Physical:
+
+FACTORY
+├── WORKCELL
+│   ├── ROBOT
+│   ├── MACHINE
+│   ├── SENSOR
+│   └── PLC
+├── ENERGY
+└── SAFETY
+
+Relations include:
+
+owns
+contains
+depends_on
+deployed_on
+runs
+produces
+consumes
+located_in
+compatible_with
+alternative_to
+observed_by
+measured_by
+affected_by
+changed_by
+verified_by
+
+REALITY CONFLICT ENGINE
+
+Reality sources may disagree.
+
+Example:
+
+Cloud API:
+GPU available
+
+Kubernetes:
+GPU unavailable
+
+Telemetry:
+GPU unhealthy
+
+Never silently choose one source.
+
+Create:
+
+RealityConflict
+
+Resolve using:
+
+source priority
+freshness
+cross-validation
+measurement
+experiment
+human confirmation
+
+UNKNOWN ENGINE
+
+Unknown is first-class.
+
+interface Unknown {
+id: string;
+statement: string;
+importance: number;
+impact: number;
+uncertainty: number;
+decisionDependency: string[];
+resolutionCost: number;
+risk: number;
+resolutionStrategy: ResolutionStrategy;
+}
+
+Resolution strategies:
+
+OBSERVE
+QUERY
+ESTIMATE
+BENCHMARK
+SIMULATE
+EXPERIMENT
+CROSS_VALIDATE
+ASK
+BLOCK
+
+Priority:
+
+decision_impact × uncertainty × risk
+
+resolution_cost
+
+HYPOTHESIS ENGINE
+
+For cost increase, for example:
+
+H1 model changed
+H2 runtime changed
+H3 workload changed
+H4 batching changed
+H5 GPU utilization fell
+H6 pricing changed
+H7 traffic increased
+H8 routing changed
+H9 placement changed
+H10 quality requirement changed
+
+Rank using:
+
+prior
++
+evidence
++
+decision impact
++
+test cost
++
+expected information gain
+
+CAPABILITY FABRIC
+
+Capabilities are modality/task based.
+
+TEXT
+CODE
+IMAGE
+AUDIO
+VIDEO
+DOCUMENT
+TABULAR
+EMBEDDING
+STRUCTURED_DATA
+SENSOR
+TELEMETRY
+MULTIMODAL
+
+Capabilities include:
+
+LLM
+VLM
+STT
+TTS
+OCR
+IMAGE_GENERATION
+VIDEO_GENERATION
+EMBEDDING
+RERANKING
+CODE_GENERATION
+CODE_REPAIR
+RETRIEVAL
+SEARCH
+SIMULATION
+EVALUATION
+VERIFICATION
+RUNTIME
+HARDWARE
+CLOUD_RESOURCE
+DATA_CENTER_RESOURCE
+SOFTWARE_SYSTEM
+BUSINESS_SYSTEM
+WORLD_MODEL
+ROBOT_POLICY
+PHYSICAL_PERCEPTION
+
+CAPABILITY INPUT/OUTPUT GRAPH
+
+TEXT → TEXT
+TEXT → CODE
+TEXT → EMBEDDING
+TEXT → IMAGE
+TEXT → VIDEO
+TEXT → AUDIO
+
+AUDIO → TEXT
+AUDIO → LABEL
+
+IMAGE → TEXT
+IMAGE → LABEL
+IMAGE → STRUCTURED_DATA
+
+VIDEO → TEXT
+VIDEO → EVENTS
+VIDEO → STRUCTURED_DATA
+VIDEO → WORLD_STATE
+
+DOCUMENT → TEXT
+DOCUMENT → STRUCTURED_DATA
+
+TABULAR → PREDICTION
+TABULAR → ANALYSIS
+
+TELEMETRY → OBSERVATION
+SENSOR → MEASUREMENT
+
+ANY OBSERVABLE INPUT
+↓
+CAPABILITY GRAPH
+↓
+VALID OUTPUT
+
+HUGGING FACE ADAPTER
+
+Hugging Face is a capability/model source, not Epoch's architecture center.
+
+Architecture:
+
+HUGGING FACE
+↓
+HF ADAPTER
+↓
+NORMALIZER
+↓
+MODEL PROFILE
+↓
+CAPABILITY PROFILE
+↓
+CAPABILITY GRAPH
+↓
+SYSTEM COMPOSER
+
+Store:
+
+repository_id
+revision
+commit_sha
+artifact_digest
+task
+modalities
+architecture
+parameters
+precision
+context
+license
+providers
+provider_status
+provider_signals
+retrieved_at
+
+Model identity must be pinned:
+
+repository
++
+revision
++
+commit
++
+artifact digest
+
+Never benchmark only a mutable model name.
+
+MODEL TRUTH LAYER
+
+Separate external model claims from Epoch empirical facts.
+
+MODEL CARD / PROVIDER CLAIM
+↓
+EPOCH CANDIDATE
+↓
+REAL WORKLOAD
+↓
+EXPERIMENT
+↓
+MEASUREMENT
+↓
+VERIFIED EMPIRICAL RECORD
+
+This is critical for trustworthy optimization.
+
+SYSTEM COMPOSER
+
+Epoch composes systems, not isolated components.
+
+Example:
+
+VOICE AGENT
+
+STT
+↓
+RETRIEVAL
+↓
+RERANKER
+↓
+LLM
+↓
+TOOLS
+↓
+TTS
+
+Search dimensions:
+
+models
+runtimes
+hardware
+providers
+network
+storage
+configuration
+placement
+software
+data
+
+The user can state:
+
+build a voice agent under $0.02/minute
+with <300ms median response latency
+
+and the system composer can discover candidate systems.
+
+CANDIDATE SYSTEM
+
+interface CandidateSystem {
+id: string;
+systemDefinition: SystemDefinition;
+worldStateRef: string;
+expectedOutcome: ExpectedOutcome;
+assumptions: Assumption[];
+predictedMetrics: MetricPrediction[];
+risks: Risk[];
+compatibilityResult: CompatibilityResult;
+policyResult: PolicyResult;
+experimentPlan: ExperimentPlan;
+}
+
+Candidate search:
+
+DISCOVER
+↓
+GOVERNANCE FILTER
+↓
+COMPATIBILITY FILTER
+↓
+ANALYTICAL FILTER
+↓
+SIMULATION
+↓
+SMOKE TEST
+↓
+QUALITY
+↓
+BENCHMARK
+↓
+LOAD TEST
+↓
+CANARY
+
+EXPERIMENT FABRIC
+
+interface Experiment {
+id: string;
+hypothesis: HypothesisRef;
+objective: string;
+candidates: CandidateRef[];
+
+controls: Control[];
+variables: Variable[];
+
+workload: WorkloadRef;
+environment: EnvironmentRef;
+budget: Budget;
+risk: RiskAssessment;
+
+expectedInformationGain: number;
+
+execution: ExperimentExecution;
+measurements: Measurement[];
+evidence: EvidenceRef[];
+}
+
+Experiment value:
+
+cost × risk × duration
+
+Epoch selects experiments that maximize useful information.
+
+SIMULATION FABRIC
+
+Simulation can estimate:
+
+capacity
+
+cost
+
+traffic
+
+queueing
+
+scaling
+
+placement
+
+failure
+
+utilization
+
+physical trajectories
+
+world-model futures
+
+Every simulation result is labeled:
+
+SIMULATED
+
+Never silently:
+
+VERIFIED
+
+SANDBOX FABRIC
+
+Untrusted artifacts and generated systems enter bounded environments.
+
+Controls:
+
+CPU
+GPU
+memory
+storage
+network
+credentials
+spend
+timeout
+filesystem
+process
+artifacts
+
+Flow:
+
+CANDIDATE
+↓
+SANDBOX
+↓
+RUN
+↓
+OBSERVE
+↓
+CAPTURE
+↓
+DESTROY
+
+BENCHMARK FABRIC
+
+Every benchmark records:
+
+model
+revision
+artifact
+runtime
+runtime version
+hardware
+configuration
+workload
+dataset
+software environment
+timestamp
+
+Metrics may include:
+
+LLM
+TTFT
+P50
+P95
+P99
+tokens/sec
+GPU utilization
+VRAM
+cost
+quality
+
+STT
+WER
+CER
+real-time factor
+latency
+cost/minute
+
+IMAGE
+quality
+latency
+cost/image
+GPU memory
+
+VIDEO
+FPS
+generation time
+quality
+temporal consistency
+cost/video
+
+CODING
+task success
+test pass rate
+repository success
+latency
+cost/task
+
+PHYSICAL
+state accuracy
+trajectory error
+collision rate
+force/torque safety
+energy
+time-to-completion
+
+QUALITY FABRIC
+
+Quality is separate from infrastructure performance.
+
+interface QualityEvaluator {
+taskSuccess: number;
+accuracy?: number;
+groundedness?: number;
+structuredOutputValidity?: number;
+domainMetrics: Metric[];
+humanEvaluation?: HumanEvaluation;
+modalityMetrics?: Metric[];
+}
+
+Evaluator versions must be pinned.
+
+ECONOMIC REALITY
+
+Normalize:
+
+$/request
+$/token
+$/minute
+$/image
+$/video
+$/task
+$/successful outcome
+$/GPU-hour
+$/month
+TCO
+
+Do not optimize cheap failure.
+
+Useful metric:
+
+TOTAL COST
+
+SUCCESSFUL OUTCOMES
+
+COMPANY REALITY GRAPH
+
+Epoch can eventually understand organizational reality, not only infrastructure.
+
+Entities:
+
+Organization
+User
+Customer
+Repository
+Service
+API
+Database
+Model
+Runtime
+Hardware
+Node
+Cluster
+CloudResource
+DataCenter
+Workload
+Pipeline
+Deployment
+Incident
+Experiment
+Mission
+Policy
+Evidence
+
+This enables company-wide missions such as:
+
+ship enterprise SSO
+
+reduce onboarding abandonment
+
+reduce cloud spend
+
+patch security issue
+
+repair failing pipeline
+
+update documentation after architecture change
+
+diagnose customer-support issue
+
+SOFTWARE FABRIC
+
+Epoch can automate software engineering:
+
+DISCOVER
+↓
+SPECIFY
+↓
+PLAN
+↓
+IMPLEMENT
+↓
+TEST
+↓
+REVIEW
+↓
+POLICY
+↓
+AUTHORITY
+↓
+DEPLOY
+↓
+OBSERVE
+↓
+VERIFY
+
+Generated code is never trusted merely because an AI produced it.
+
+DATA CENTER REALITY
+
+Data centers are a first-class physical computational environment.
+
+Represent:
+
+facility
+room
+rack
+server
+GPU
+CPU
+memory
+NIC
+PCIe
+NVLink
+power
+cooling
+network
+workload
+Kubernetes
+runtime
+model
+service
+telemetry
+
+Important measurements:
+
+power
+temperature
+PUE
+GPU throttling
+ECC errors
+PCIe contention
+NVLink bandwidth
+network jitter
+capacity
+placement
+
+The source plan explicitly calls out liquid-cooling temperatures, megawatt power, PUE, PCIe contention, NVLink bandwidth, ECC error rates, and bare-metal topology as Data Center reality.
+
+PHYSICAL WORLD DECODING
+
+Epoch must extend intelligence beyond internet text.
+
+Inputs:
+
+camera
+video
+thermal
+force / torque
+IMU
+LiDAR
+audio
+pressure
+vibration
+environmental sensors
+PLC
+robot telemetry
+
+Pipeline:
+
+SENSOR
+↓
+OBSERVATION
+↓
+STATE ESTIMATION
+↓
+WORLD STATE
+↓
+RELATIONSHIPS
+↓
+DYNAMICS
+↓
+PREDICTION
+↓
+ACTION
+↓
+CONSEQUENCE
+↓
+OBSERVATION
+
+The source plan explicitly defines physical sensory decoding and the goal of adapting world models to physical causality.
+
+WORLD MODEL
+
+A world model represents more than detected objects.
+
+It should represent:
+
+objects
+locations
+motion
+relationships
+machine states
+environment state
+events
+causal hypotheses
+predictions
+risk
+uncertainty
+
+For physical intelligence:
+
+camera + sensors
+↓
+world state
+↓
+what is happening?
+↓
+what is unknown?
+↓
+what will happen next?
+↓
+what action changes it?
+
+TEACHING FABRIC
+
+Teaching converts verified experience into learning signals.
+
+WORLD STATE
+↓
+ACTION
+↓
+CONSEQUENCE
+↓
+OBSERVATION
+↓
+VERIFICATION
+↓
+EXPERIENCE
+↓
+LESSON
+↓
+TEACHING SIGNAL
+↓
+MODEL / POLICY / SKILL UPDATE
+↓
+EVALUATION
+↓
+PROMOTION
+
+Teaching may use:
+
+retrieval
+prompt adaptation
+memory
+tool learning
+skill learning
+fine-tuning
+LoRA
+distillation
+preference data
+evaluation data
+world-model training
+policy learning
+routing
+system optimization
+
+Epoch is not required to own foundation-model training infrastructure itself. It owns the verified experience loop.
+
+ACTION MODEL
+
+A first-class Action is required.
+
+interface Action {
+id: string;
+missionId: string;
+
+target: EntityRef;
+capability: CapabilityRef;
+
+requestedChange: ChangeSpec;
+
+preconditions: Condition[];
+authority: AuthorityRef;
+
+risk: RiskAssessment;
+
+expectedConsequences: Prediction[];
+
+rollbackPlan?: RollbackPlan;
+
+status: ActionStatus;
+}
+
+DEPLOY / APPLY / ACT
+
+These are customer-facing verbs over one backend Action primitive.
+
+Deploy
+
+Use for:
+
+model
+
+runtime
+
+software service
+
+container
+
+inference stack
+
+world-model service
+
+production package
+
+Meaning:
+
+Instantiate the verified deliverable on the user-selected, authorized execution target.
+
+Apply
+
+Use for:
+
+configuration
+
+policy
+
+scheduler
+
+infrastructure setting
+
+remediation
+
+Meaning:
+
+Change existing configuration/policy state.
+
+Act / Actuate
+
+Use for:
+
+robot
+
+machine
+
+actuator
+
+physical control
+
+Meaning:
+
+Change physical reality through an authorized action.
+
+PHYSICAL-WORLD DEPLOYMENT VS ACTUATION
+
+For:
+
+Build an optimized capability that decodes physical objects while driving.
+
+The pipeline is:
+
+BUILD / TEACH DECODER
+↓
+OPTIMIZE DECODER
+↓
+MODEL + PERCEPTION + RUNTIME + SENSOR INGESTION
+↓
+OPTIMIZED DECODING SYSTEM
+↓
+DEPLOY
+↓
+SELECTED EDGE / VEHICLE / DATA-CENTER TARGET
+↓
+LIVE OBSERVATION
+↓
+DECODE WORLD STATE
+↓
+PREDICT
+↓
+RECOMMEND ACTION
+↓
+ACT / ACTUATE
+↓
+PHYSICAL CONSEQUENCE
+↓
+OBSERVE
+↓
+VERIFY
+↓
+LEARN
+
+Deploy does not mean Act.
+
+Deploy installs the intelligence.
+
+Act uses that intelligence to change reality.
+
+EXECUTION FABRIC
+
+General execution pipeline:
+
+PLAN
+↓
+VALIDATE
+↓
+AUTHORIZE
+↓
+PREPARE
+↓
+SHADOW
+↓
+CANARY
+↓
+EXECUTE
+↓
+OBSERVE
+↓
+VERIFY
+↓
+ROLL FORWARD / ROLLBACK
+
+Action must record:
+
+target
+parameters
+plan_version
+idempotency_key
+timeout
+retry_policy
+compensation
+authorization
+evidence_requirements
+
+DEPLOYMENT TARGET FABRIC
+
+Runs on in the composer determines the authorized execution destination.
+
+Targets:
+
+Epoch-managed compute
+Cloud provider
+Kubernetes
+Docker / container host
+On-prem
+Bare metal
+GPU provider
+Edge device
+Vehicle compute
+Robot compute
+Factory controller
+
+Deployment flow:
+
+MISSION RESULT
+↓
+DEPLOY
+↓
+RESOLVE TARGET
+↓
+CHECK CREDENTIALS
+↓
+CHECK AUTHORITY
+↓
+CHECK CURRENT STATE
+↓
+GENERATE DEPLOYMENT
+↓
+APPLY
+↓
+HEALTH CHECK
+↓
+TRAFFIC / FUNCTIONAL TEST
+↓
+OBSERVE
+↓
+VERIFY
+
+MISSION RESULT
+
+Every mission must finish in a customer-facing Mission Result.
+
+The customer should see:
+
+PRIMARY RESULT
+MEASURED CHANGE
+PRIMARY DELIVERABLE
+PROOF
+VERIFICATION
+NEXT ACTIONS
+
+The source plan already defines the final user output as outcome, baseline, current reality, unknowns, hypotheses, candidates, experiments, decision, action, observed result, evidence, verification, verdict, learning, and next action.
+
+MISSION RESULT TAXONOMY
+
+OPTIMIZE
+→ Optimized production stack
+→ benchmark receipt
+→ verifier
+→ deployment/export kit
+
+COMPARE
+→ decision winner
+→ comparison package
+→ recommendation
+
+DIAGNOSE
+→ verified diagnosis
+→ remediation package
+
+PREDICT
+→ forecast
+→ uncertainty
+→ intervention package
+
+DISCOVER
+→ relationship / insight package
+
+EXPERIMENT
+→ experimental conclusion
+→ methodology
+→ evidence
+
+EVALUATE
+→ scorecard
+→ evaluation package
+
+TEACH
+→ new capability
+→ adapted model/skill
+→ evaluation
+
+DECODE REALITY
+→ verified world-state package
+
+DATA CENTER
+→ operational outcome
+→ scheduling/power/capacity policy
+
+SIMULATE
+→ future scenario
+→ predicted consequence
+
+REPAIR
+→ patch/fix
+→ tests
+→ verification
+
+ACTUATE
+→ verified physical state change
+→ action record
+
+ADAPT
+→ updated policy
+→ verification
+
+This preserves the source plan's typed outcome system while adding the final customer-facing result contract. The source already lists the 14 outcome types and their concrete forms.
+
+CUSTOMER RESULT EXAMPLE — OPTIMIZE
+
+VERIFIED OPTIMIZATION
+
+Qwen3-32B · vLLM · H100
+
+P99        184ms → 139ms
+Throughput 401 → 518 tok/s
+Cost       -31%
+Quality    maintained
+
+PRIMARY DELIVERABLE
+Optimized production stack
+
+INCLUDED
+✓ serving configuration
+✓ runtime version
+✓ model revision
+✓ Docker
+✓ Kubernetes
+✓ benchmark receipt
+✓ verifier
+✓ rollback
+
+NEXT ACTIONS
+[Deploy]
+[Export Stack]
+[Download Kit]
+[Run Again]
+
+CUSTOMER RESULT EXAMPLE — DECODE REALITY
+
+VERIFIED WORLD STATE
+
+VEHICLE-07
+
+Objects
+pedestrian       14.2m
+cyclist          21.1m
+vehicle          31.4m
+
+State
+speed            42 km/h
+road             wet
+visibility       moderate
+
+Predicted next state
+pedestrian likely enters path
+
+Uncertainty
+Camera-02 partially occluded
+
+PRIMARY DELIVERABLE
+Versioned World-State Package
+
+NEXT ACTIONS
+[Simulate]
+[Recommend]
+[Act]
+[Continue Observation]
+
+CUSTOMER RESULT EXAMPLE — TEACH
+
+NEW CAPABILITY
+
+factory.machine_state
+
+State understanding
+64% → 88%
+
+Anomaly detection
+51% → 79%
+
+PRIMARY DELIVERABLE
+Adapted model + capability package
+
+INCLUDED
+✓ model revision
+✓ dataset version
+✓ evaluation
+✓ failure cases
+✓ deployment package
+
+NEXT ACTIONS
+[Evaluate]
+[Promote]
+[Deploy]
+[Export]
+
+CUSTOMER RESULT EXAMPLE — DIAGNOSE
+
+VERIFIED DIAGNOSIS
+
+Root cause:
+PCIe contention
+
+Evidence:
+GPU counters
+PCIe telemetry
+controlled experiment
+
+PRIMARY DELIVERABLE
+Remediation package
+
+NEXT ACTIONS
+[Apply Fix]
+[Create PR]
+[Simulate]
+[Monitor]
+
+EXPORT STACK
+
+Export is not deployment.
+
+Export produces a reproducible system definition:
+
+epoch-mission/
+├── mission.json
+├── outcome.json
+├── model/
+├── runtime/
+├── configuration/
+├── deployment/
+├── policies/
+├── safety/
+├── benchmark/
+├── verification/
+├── rollback/
+├── provenance/
+└── README.md
+
+The exact contents vary by mission.
+
+DOWNLOAD KIT
+
+Download Kit is the complete runnable delivery bundle.
+
+For an inference system:
+
+serving configuration
+runtime configuration
+deployment manifests
+benchmark receipt
+verifier
+rollback
+provenance
+scripts
+README
+
+For physical decoding:
+
+world-state schema
+model
+sensor adapter config
+perception pipeline
+evaluation
+safety policy
+verifier
+deployment artifacts
+
+RUN AGAIN
+
+Run Again means replay/re-execute the mission.
+
+Two modes:
+
+Exact replay
+
+Same:
+
+model
+revision
+runtime
+workload
+dataset
+configuration
+world snapshot
+
+Controlled rerun
+
+User changes explicit parameters:
+
+GPU
+batch size
+runtime
+model
+quantization
+constraint
+
+Previous results remain available for comparison.
+
+OBSERVATION FABRIC
+
+Normalize:
+
+OpenTelemetry
+application metrics
+runtime metrics
+GPU metrics
+Kubernetes events
+cloud metrics
+billing
+logs
+traces
+quality evaluation
+benchmark outputs
+deployment state
+Git history
+CI results
+support signals
+business analytics
+physical sensors
+robot telemetry
+
+Pipeline:
+
+SIGNAL
+↓
+NORMALIZATION
+↓
+OBSERVATION
+↓
+MEASUREMENT
+↓
 EVIDENCE
- ↓
-VERIFICATION WINDOW
- ↓
-VERIFIER
- ↓
+
+EVIDENCE FABRIC
+
+Evidence must answer:
+
+What happened?
+
+Where?
+
+When?
+
+How was it measured?
+
+Which system produced it?
+
+Which execution produced it?
+
+Which experiment produced it?
+
+Can another verifier check it?
+
+interface Evidence {
+id: string;
+type: EvidenceType;
+source: SourceRef;
+producer: ActorRef;
+timestamp: string;
+
+checksum?: string;
+
+artifactRef?: ArtifactRef;
+observationRef?: ObservationRef;
+executionRef?: ExecutionRef;
+experimentRef?: ExperimentRef;
+
+confidence?: number;
+provenance: Provenance;
+}
+
+Cryptographic hashes are used for integrity/provenance. They are not the headline product output.
+
+CLAIM ENGINE
+
+Example:
+
+CLAIM:
+This change reduced inference cost by 34%.
+
+Evidence:
+
+baseline billing
+new billing
+telemetry
+quality evaluation
+latency evaluation
+availability
+deployment record
+execution record
+
+Claim states:
+
+VERIFIED
+PARTIALLY_VERIFIED
+NOT_PROVEN
+CONTRADICTED
+UNCERTAIN
+
+INDEPENDENT VERIFICATION
+
+The executor should not be the sole authority on its own success.
+
+EXECUTOR
+↓
+CLAIM
+↓
+INDEPENDENT VERIFIER
+↓
 VERDICT
- ↓
-PROVENANCE
-This should become a major product differentiator.
 
-93. FIVE QUESTIONS
-Every mission must make these visible:
+Possible verifier sources:
 
-1. WHAT IS TRUE?
-2. WHAT DO WE WANT TO BE TRUE?
-3. WHAT DON'T WE KNOW?
-4. WHAT SHOULD WE CHANGE?
-5. DID IT ACTUALLY WORK?
-These are the core product mental model.
+billing
+telemetry
+quality evaluator
+deployment state
+database state
+external measurement
+physical sensor
+independent test
 
-94. OBSERVABILITY OF EPOCH ITSELF
-Epoch must observe itself.
+VERIFICATION WINDOWS
+
+Different outcomes require different observation windows.
+
+latency
+→ immediate / short
+
+quality
+→ evaluation window
+
+cost
+→ billing window
+
+availability
+→ long window
+
+reliability
+→ long window
+
+drift
+→ continuous
+
+A mission can be:
+
+COMPLETED
+
+while verification remains:
+
+PENDING
+
+if the observation window is still open.
+
+CONSEQUENCE ENGINE
+
+An Action is not complete when the command returns success.
+
+Record:
+
+BEFORE STATE
+↓
+ACTION
+↓
+AFTER STATE
+
+Then:
+
+CONSEQUENCE
+↓
+OBSERVATION
+↓
+EVIDENCE
+↓
+VERIFICATION
+
+Unexpected consequences become learning signals.
+
+EXPERIENCE ENGINE
+
+Experience is not a chat transcript.
+
+A reusable experience is:
+
+context
++
+world state
++
+unknown
++
+hypothesis
++
+candidate
++
+experiment
++
+decision
++
+authority
++
+action
++
+consequence
++
+observation
++
+evidence
++
+verification
+
+LESSON ENGINE
+
+Generalize verified experience.
+
+Example:
+
+Experience:
+policy v7 improved workload X
+under conditions Y.
+
+Lesson:
+for workload profile X,
+under conditions Y,
+prefer policy family V
+because measured effect Z.
+
+Lessons carry:
+
+scope
+confidence
+evidence
+applicability
+exceptions
+expiry/drift conditions
+
+TEACHING + INTELLIGENCE EVOLUTION
+
+VERIFIED EXPERIENCE
+↓
+LESSON
+↓
+TEACHING DATA
+↓
+TRAIN / ADAPT / ROUTE / UPDATE
+↓
+NEW INTELLIGENCE VERSION
+↓
+EVALUATE
+↓
+SHADOW
+↓
+CANARY
+↓
+PROMOTE
+
+Do not promote only because an LLM says the new version is better.
+
+DRIFT ENGINE
 
 Track:
 
-mission latency
-experiment duration
-decision latency
-verification latency
-worker failures
-adapter failures
-policy denials
-authorization latency
-queue depth
-evidence ingestion
-telemetry freshness
-world-state freshness
-automation rate
-human interruption rate
-human-gate causes
-rollback rate
-verification failure rate
-Critical product metrics:
+world drift
+model drift
+runtime drift
+workload drift
+quality drift
+cost drift
+capacity drift
+policy drift
+provider drift
+hardware drift
+software drift
+business drift
 
-automation_rate
-human_interruption_rate
-verified_outcome_rate
-mean_time_to_outcome
-mean_time_to_recovery
-rollback_rate
-false_automation_rate
-policy_violation_rate
-evidence_completeness
-The goal is not simply:
+Material drift:
 
-more automation
-The goal is:
+DRIFT
+↓
+REDISCOVERY
+↓
+HYPOTHESIS
+↓
+EXPERIMENT
+↓
+DECISION
+↓
+ACTION
+↓
+VERIFY
 
-more safe verified autonomy
-95. AUTOMATION QUALITY METRICS
-Measure:
+CONTINUOUS MISSIONS
 
-% missions completed without human intervention
-% actions executed within authority
-% automated actions successfully verified
-% automated actions rolled back
-% human gates that were actually necessary
-% unnecessary human interruptions
-% false-positive automation decisions
-% stale-state prevention rate
-% evidence completeness
-% verification independence
-A mature Epoch should optimize:
+A mission may remain active:
 
-SAFE_AUTOMATION_RATE
-rather than raw automation percentage.
+DISCOVER
+↓
+DESIGN
+↓
+EXECUTE
+↓
+VERIFY
+↓
+MONITOR
+↓
+DRIFT?
+↓
+REDISCOVER
+↓
+...
 
-96. MULTI-TENANCY
-Tenant isolation:
+This turns Epoch into a runtime rather than a one-shot optimizer.
 
-database
-object storage
-credentials
-execution
-telemetry
-evidence
-events
-policies
-models
-learning
-Organization owns:
+The source plan explicitly calls this continuous-mission behavior.
 
-world
-policies
-credentials
-missions
-experiments
-evidence
-learning
-authority
-97. AUDIT
-Every consequential operation records:
+COUNTERFACTUAL ENGINE
 
-who
-what
-when
-why
-under which policy
-under which authority
-against which world state
-using which plan
-with which evidence
-with which result
-98. REPLAY ENGINE
-Every mission must be replayable:
+Questions:
 
-EVENT LOG
- ↓
-RECONSTRUCT WORLD
- ↓
-REPLAY MISSION
- ↓
-REPRODUCE DECISION
-Critical for:
+What if we use another model?
+What if traffic doubles?
+What if we halve GPUs?
+What if we move provider?
+What if we move to the data center?
+What if we change runtime?
+What if we quantize?
+What if we change architecture?
+What if pricing changes?
 
-debugging
-audit
-incident review
-verification
-research
-99. IDEMPOTENCY
-All consequential operations require:
+Every result is labeled:
 
-idempotency_key
-Especially:
+OBSERVED
+HISTORICALLY_SUPPORTED
+SIMULATED
+PREDICTED
+UNKNOWN
 
-deploy
-scale
-delete
-migrate
-route
-rollback
-credential changes
-configuration changes
-Duplicate events must not create duplicate real-world actions.
+Never collapse these categories.
 
-100. DATA RETENTION
-Separate:
+POLICY FABRIC
 
-hot operational data
-warm experiment data
-cold evidence/archive
-Never silently delete evidence required for verification.
+Policies include:
 
-Retention is organization-configurable.
+maximum_spend
+allowed_models
+allowed_licenses
+allowed_regions
+allowed_hardware
+allowed_providers
+data_residency
+maximum_downtime
+required_approval
+maximum_experiment_cost
+network_permissions
+credential_permissions
+production_scope
+autonomy_level
 
-101. EXPERIMENT REPRODUCIBILITY
-Record:
+Results:
 
-model identity
-artifact identity
-runtime identity
-hardware identity
-configuration
-dataset
-workload
+ALLOW
+DENY
+REQUIRES_APPROVAL
+
+AI cannot override policy.
+
+AUTHORITY FABRIC
+
+Authority asks:
+
+Does this mission/actor have permission to do this now?
+
+Scope by:
+
+organization
+mission
+action
+target
+time
+spend
 environment
-software versions
-seed where relevant
-network conditions where relevant
-timestamp
-Without reproducibility, empirical memory becomes weak.
+world-state version
+autonomy level
 
-102. CAPABILITY VERSIONING
-Version:
+Capability and authority remain separate.
 
-Capability
-Capability implementation
-Runtime
-Model
-Provider
-Adapter
-Evaluator
-Policy
-Historical missions reference the versions that existed at that time.
+AUTOMATION DECISION
 
-103. PROVIDER ABSTRACTION
-ProviderAdapter
-├── discover
-├── capabilities
-├── pricing
-├── availability
-├── execute
-├── observe
-├── health
-└── evidence
-Provider-specific logic stays inside adapters.
+Every consequential proposal becomes:
 
-104. ADAPTER RULE
-Bad:
+interface AutomationDecision {
+action: ActionRef;
+requiredAuthority: AuthorityLevel;
+autonomyLevel: AutonomyLevel;
+risk: RiskAssessment;
+reversibility: Reversibility;
+policyResult: PolicyResult;
+confidence: number;
+stateFreshness: StateFreshness;
+budget: Budget;
+evidenceRequirements: EvidenceRequirement[];
+humanRequired: boolean;
+}
 
-Mission → HuggingFace-specific object
-Good:
+Possible result:
 
-HuggingFace Adapter
-       ↓
-Epoch ModelProfile
-       ↓
-Domain
-Same principle for:
+AUTO_INVESTIGATE
+AUTO_EXPERIMENT
+AUTO_EXECUTE
+REQUIRES_APPROVAL
+REQUIRES_CLARIFICATION
+BLOCKED
 
-AWS
-GCP
-Kubernetes
-vLLM
-NVIDIA
-OpenTelemetry
-GitHub
-Databases
-105. FRONTEND ARCHITECTURE
-Pages:
+AUTONOMY LEVELS
 
-/dashboard
-/missions
-/missions/:id
-/reality
-/reality/entities/:id
-/capabilities
-/capabilities/models
-/systems
-/systems/:id
-/experiments
-/experiments/:id
-/evidence
-/evidence/:id
-/verifications
-/policies
-/authorizations
-/automation
-/history
-Components:
+L0 — OBSERVE
+L1 — RECOMMEND
+L2 — AUTO-EXPERIMENT
+L3 — SANDBOX EXECUTION
+L4 — BOUNDED PRODUCTION
+L5 — ORGANIZATIONAL AUTONOMY
 
-OutcomeComposer
-InputComposer
-RealityInspector
-MissionTimeline
-WorldStateViewer
-UnknownPanel
-HypothesisPanel
-CapabilityExplorer
-SystemGraph
-CandidateTable
-ExperimentRunner
-ExperimentResult
-DecisionPanel
-PolicyPanel
-AuthorizationPanel
-HumanGatePanel
-AutomationStatus
-ExecutionTimeline
-EvidenceGraph
-VerificationReport
-DriftPanel
-106. BUILD ORDER
-This is dependency order, not a calendar estimate.
+Each action declares required_autonomy_level.
 
-Track A — Foundation
-A1 Repository
-A2 Type system
-A3 Database
-A4 Migrations
-A5 Schema contracts
-A6 Event model
-A7 Configuration
-A8 Secrets
-A9 Logging
-A10 Testing
-Track B — Input + Intent
-B1 Input envelope
-B2 Text ingestion
-B3 Speech ingestion
-B4 Audio ingestion
-B5 Image ingestion
-B6 Video ingestion
-B7 Document ingestion
-B8 Tabular ingestion
-B9 API ingestion
-B10 Telemetry ingestion
-B11 Intent extraction
-B12 Intent validation
-Track C — Domain
-C1 OutcomeContract
-C2 Mission
-C3 WorldState
-C4 Capability
-C5 System
-C6 Experiment
-C7 Decision
-C8 Policy
-C9 Authority
-C10 Execution
-C11 Evidence
-C12 Verification
-C13 Learning
-C14 AutomationDecision
-C15 HumanGate
-Track D — Reality
-D1 World facts
-D2 Entities
-D3 Relationships
-D4 Temporal state
-D5 Observations
-D6 Conflicts
-D7 Provenance
-D8 Drift
-Track E — Capability
-E1 Capability graph
-E2 Model registry
-E3 Hugging Face adapter
-E4 Runtime registry
-E5 Hardware registry
-E6 Cloud registry
-E7 Kubernetes registry
-E8 Provider registry
-E9 Software capability registry
-E10 Business-system capability registry
-Track F — Intelligence
-F1 Outcome Intelligence
-F2 Outcome Compiler
-F3 Unknown Engine
-F4 Hypothesis Engine
-F5 Capability Search
-F6 System Composer
-F7 Candidate Compiler
-F8 Experiment Selection
-F9 Decision Engine
-F10 Counterfactual Engine
-F11 Failure Diagnosis
-F12 Task Decomposition
-Track G — Experimentation
-G1 Sandbox
-G2 Benchmark runner
-G3 Evaluation runner
-G4 Simulation
-G5 Economics
-G6 Experiment orchestration
-G7 Result ingestion
-Track H — Execution
-H1 Worker protocol
-H2 Kubernetes worker
-H3 Cloud workers
-H4 Runtime workers
-H5 Software worker
-H6 Database worker
-H7 Security worker
-H8 CI worker
-H9 Deployment planner
-H10 Canary engine
-H11 Rollback
-H12 Compensation
-H13 State recheck
-Track I — Proof
-I1 Observation pipeline
-I2 Evidence store
-I3 Claim engine
-I4 Independent verification
-I5 Verification engine
-I6 Provenance
-I7 Proof UI
-Track J — Learning
-J1 Experiment memory
-J2 Outcome memory
-J3 Dynamics records
-J4 Empirical knowledge graph
-J5 Experiment-selection learning
-J6 Counterfactual learning
-J7 Drift-driven rediscovery
-Track K — Product
-K1 Console
-K2 Input UX
-K3 Mission UX
-K4 Reality UX
-K5 Capability UX
-K6 Experiment UX
-K7 Evidence UX
-K8 Verification UX
-K9 Policy UX
-K10 Human approval UX
-K11 Automation status UX
-107. FIRST DATABASE MIGRATIONS
-Dependency order:
+The organization controls enabled levels.
+
+AUTONOMOUS SAFETY GATES & POLICY EVALUATION
+
+Evaluate safety rules and policy boundaries autonomously:.
+
+Gate A — ambiguous objective
+
+“make it better”
+
+Gate B — missing critical constraint
+
+data residency unknown
+
+Gate C — high-risk production action
+
+Gate D — spend authority exceeded
+
+Gate E — destructive action
+
+Gate F — contradictory reality
+
+Do not ask when:
+
+policy allows
+authority exists
+risk is within bounds
+budget is within bounds
+constraints are known
+state is fresh
+action is reversible
+rollback exists
+evidence requirements are known
+execution is idempotent
+
+Then:
+
+DISCOVER
+→ EXPERIMENT
+→ DECIDE
+→ EXECUTE
+→ VERIFY
+
+automatically.
+
+SECURITY ARCHITECTURE
+
+IDENTITY
+↓
+AUTHENTICATION
+↓
+AUTHORIZATION
+↓
+CREDENTIAL SCOPE
+↓
+NETWORK POLICY
+↓
+SANDBOX
+↓
+RESOURCE LIMIT
+↓
+POLICY
+↓
+AUTHORITY
+↓
+STATE RECHECK
+↓
+EXECUTION
+↓
+OBSERVATION
+↓
+VERIFICATION
+
+Credentials are:
+
+mission-scoped
+action-scoped
+target-scoped
+time-scoped
+spend-scoped
+
+MODEL SECURITY
+
+Before execution:
+
+source verification
+revision identity
+artifact digest
+license
+governance
+runtime compatibility
+sandbox
+resource limits
+network restrictions
+
+A public model repository is not automatically trusted execution code.
+
+FAILURE MODEL
+
+Handle:
+
+GPU failure
+runtime crash
+network timeout
+provider outage
+model loading failure
+capacity shortage
+partial deployment
+duplicate execution
+stale state
+telemetry loss
+quality regression
+latency regression
+cost regression
+dependency failure
+database failure
+CI failure
+rollback failure
+verification failure
+
+Every failure becomes evidence and may become a learning record.
+
+COMPENSATION
+
+Every consequential action defines:
+
+previous_state
+rollback_state
+compensation_action
+verification
+
+Compensation itself is controlled:
+
+PLAN
+↓
+POLICY
+↓
+AUTHORITY
+↓
+EXECUTE
+↓
+VERIFY
+
+EVENT MODEL
+
+Core events:
+
+InputReceived
+IntentCreated
+OutcomeCompiled
+WorldStateCreated
+WorldFactObserved
+UnknownCreated
+HypothesisCreated
+CapabilityDiscovered
+SystemComposed
+CandidateGenerated
+CandidateRejected
+ExperimentCreated
+ExperimentStarted
+ExperimentCompleted
+MeasurementCaptured
+EvaluationCompleted
+DecisionCreated
+PolicyEvaluated
+AuthorizationGranted
+HumanGateCreated
+HumanGateResolved
+PlanCreated
+ExecutionStarted
+ExecutionCompleted
+ObservationCaptured
+EvidenceCreated
+ClaimCreated
+VerificationStarted
+VerificationCompleted
+DriftDetected
+RediscoveryTriggered
+LearningRecordCreated
+DynamicsRecordCreated
+
+Events support:
+
+audit
+replay
+debugging
+provenance
+analytics
+state reconstruction
+
+DATABASE DESIGN
+
+Primary transactional store:
+
+PostgreSQL
+
+Core tables:
 
 organizations
 users
-
 input_envelopes
-
-entities
-relationships
-
 intents
 outcome_contracts
 missions
 
+entities
+relationships
 world_states
 world_facts
 observations
 signals
 
+unknowns
+hypotheses
 capabilities
 capability_edges
 
@@ -3627,9 +6824,821 @@ verifications
 drift_events
 learning_records
 dynamics_records
-
 events
-108. TEST ARCHITECTURE
+
+STORAGE STRATEGY
+
+PostgreSQL
+→ authoritative domain state
+
+Object Storage
+→ artifacts
+→ benchmark outputs
+→ logs
+→ evidence bundles
+→ large documents
+
+Redis
+→ cache
+→ ephemeral state
+→ locks
+→ short-lived queues
+
+Telemetry Backend
+→ high-volume telemetry
+
+Search Projection
+→ investigation/discovery
+
+Graph Projection
+→ derived relationships
+
+PostgreSQL remains authoritative.
+
+Derived graphs must be rebuildable.
+
+GRAPH STRATEGY
+
+Do not require a graph database as source of truth initially.
+
+Build derived:
+
+Reality Graph
+Capability Graph
+Dynamics Graph
+Evidence Graph
+
+from:
+
+PostgreSQL
++
+event history
++
+object storage
+
+API ARCHITECTURE
+
+Public groups:
+
+/intents
+/outcomes
+/missions
+/inputs
+/world
+/capabilities
+/models
+/runtimes
+/hardware
+/workloads
+/systems
+/candidates
+/experiments
+/evaluations
+/economics
+/decisions
+/policies
+/authorizations
+/automation
+/human-gates
+/plans
+/executions
+/observations
+/evidence
+/claims
+/verifications
+/drift
+/learning
+
+Every write supports:
+
+request_id
+idempotency_key
+schema_version
+actor
+organization_id
+
+REPOSITORY STRUCTURE
+
+epoch/
+├── apps/
+│   ├── console/
+│   ├── api/
+│   └── control-plane/
+│
+├── packages/
+│   ├── domain/
+│   ├── input/
+│   ├── intent/
+│   ├── outcome/
+│   ├── mission/
+│   ├── reality/
+│   ├── world-model/
+│   ├── graph/
+│   ├── observations/
+│   ├── unknowns/
+│   ├── hypotheses/
+│   ├── capabilities/
+│   ├── systems/
+│   ├── models/
+│   ├── runtimes/
+│   ├── hardware/
+│   ├── workloads/
+│   ├── pipelines/
+│   ├── candidates/
+│   ├── simulation/
+│   ├── sandbox/
+│   ├── experiments/
+│   ├── benchmarks/
+│   ├── evaluations/
+│   ├── economics/
+│   ├── decisions/
+│   ├── policy/
+│   ├── authority/
+│   ├── automation/
+│   ├── human-gates/
+│   ├── plans/
+│   ├── execution/
+│   ├── evidence/
+│   ├── claims/
+│   ├── verification/
+│   ├── drift/
+│   ├── learning/
+│   ├── dynamics/
+│   ├── events/
+│   └── workers/
+│
+├── adapters/
+│   ├── huggingface/
+│   ├── github/
+│   ├── gitlab/
+│   ├── kubernetes/
+│   ├── opentelemetry/
+│   ├── vllm/
+│   ├── sglang/
+│   ├── tensorrt-llm/
+│   ├── nvidia-nim/
+│   ├── aws/
+│   ├── gcp/
+│   ├── azure/
+│   ├── digitalocean/
+│   ├── cameras/
+│   ├── robotics/
+│   ├── industrial/
+│   └── scientific/
+│
+├── schemas/
+├── migrations/
+├── policies/
+├── evals/
+├── experiments/
+├── datasets/
+├── docs/
+└── scripts/
+
+The source blueprint already contains the corresponding modular packages and adapter structure; this version expands the physical/industrial/scientific adapter surface without changing the core.
+
+TECHNOLOGY FOUNDATION
+
+Control plane:
+
+TypeScript
+Next.js
+React
+PostgreSQL
+Redis
+REST
+typed contracts
+
+Evaluation/research:
+
+Python where useful
+
+Infrastructure:
+
+Docker
+Kubernetes
+Terraform / OpenTofu
+
+Observability:
+
+OpenTelemetry
+
+Do not introduce microservices merely because the architecture has boundaries.
+
+Start as a modular control-plane monolith with strict package boundaries.
+
+Split only when:
+
+scale
+security
+isolation
+independent deployment
+failure isolation
+
+justify it.
+
+The source plan makes this exact implementation recommendation.
+
+WORKER CONTRACT
+
+Each execution environment supports:
+
+interface Worker {
+discover(): Promise<Inventory>;
+validate(input: unknown): Promise<ValidationResult>;
+simulate(input: unknown): Promise<SimulationResult>;
+benchmark(input: unknown): Promise<BenchmarkResult>;
+prepare(input: unknown): Promise<PreparedExecution>;
+execute(input: AuthorizedExecution): Promise<ExecutionResult>;
+observe(executionId: string): Promise<Observation[]>;
+collectEvidence(executionId: string): Promise<Evidence[]>;
+compensate(executionId: string): Promise<CompensationResult>;
+health(): Promise<HealthStatus>;
+}
+
+Workers include:
+
+ModelSourceWorker
+RuntimeWorker
+HardwareWorker
+SimulationWorker
+SandboxWorker
+BenchmarkWorker
+SoftwareWorker
+CloudWorker
+DataCenterWorker
+KubernetesWorker
+DatabaseWorker
+SecurityWorker
+CIWorker
+DeploymentWorker
+ObservationWorker
+VerificationWorker
+RobotWorker
+IndustrialWorker
+ScientificWorker
+
+CONNECTOR CONTRACT
+
+interface RealityConnector {
+discover(): Promise<RealityInventory>;
+describe(entityId: string): Promise<EntityDescription>;
+observe(request: ObservationRequest): Promise<Observation[]>;
+query(request: RealityQuery): Promise<RealityResult>;
+stream(request: StreamRequest): AsyncIterable<Observation>;
+simulate(request: SimulationRequest): Promise<SimulationResult>;
+prepareAction(request: ActionRequest): Promise<PreparedAction>;
+executeAction(request: AuthorizedAction): Promise<ActionResult>;
+verify(request: VerificationRequest): Promise<VerificationResult>;
+}
+
+Connector-specific technologies must never become the core ontology.
+
+FRONTEND PRODUCT ARCHITECTURE
+
+Primary navigation:
+
+Home
+Missions
+Reality
+Models
+Capabilities
+Experiments
+Evidence
+Deployments
+Learning
+Policies
+Approvals
+
+Primary composer:
+
+What should become true?
+
+The composer is the front door, not a generic chat screen.
+
+COMPOSER UX FLOW
+
+USER TYPES
+↓
+LIVE UNDERSTANDING
+↓
+ENTITY / MODEL / RUNTIME / REALITY RESOLUTION
+↓
+INLINE SUGGESTIONS
+↓
+USER SELECTS / EDITS
+↓
+OUTCOME CONTRACT PREVIEW
+↓
+MISSION PREVIEW
+↓
+RUN
+
+The user sees enough structure to steer the mission without needing to understand the backend graph.
+
+MISSION WORKSPACE
+
+Show:
+
+PURPOSE
+OUTCOME
+REALITY
+KNOWN
+UNKNOWN
+HYPOTHESES
+CAPABILITIES
+CANDIDATES
+EXPERIMENTS
+DECISION
+AUTHORITY
+ACTION
+CONSEQUENCE
+OBSERVATION
+EVIDENCE
+VERIFICATION
+RESULT
+EXPERIENCE
+LESSON
+NEXT
+
+REALITY EXPLORER
+
+Reality
+├── Software
+├── Models
+├── Compute
+├── Cloud
+├── Kubernetes
+├── Data Center
+├── Edge
+├── Machines
+├── Robots
+├── Factories
+├── Warehouses
+├── Vehicles
+├── Energy
+├── Laboratories
+└── Scientific Systems
+
+Every object should show:
+
+state
+history
+observations
+relationships
+capabilities
+missions
+actions
+evidence
+verification
+
+OUTCOME VIEW
+
+For Optimize:
+
+PRIMARY RESULT
+Optimized production stack
+
+MEASURED CHANGE
+Before → After
+
+DELIVERABLE
+Config / deployment / export
+
+PROOF
+Benchmark + telemetry + verifier
+
+NEXT
+Deploy / Export / Download / Run Again
+
+For Decode:
+
+PRIMARY RESULT
+Verified world state
+
+DELIVERABLE
+World-state package
+
+PROOF
+Sensor observations + provenance
+
+NEXT
+Simulate / Recommend / Act / Observe
+
+DEPLOYMENT UI
+
+A deploy flow must show:
+
+WHAT
+Verified deliverable
+
+WHERE
+Selected execution target
+
+HOW
+Runtime / deployment method
+
+WITH WHAT
+Compute resources
+
+AUTHORITY
+Policy + user authorization
+
+OBSERVATION
+Post-deployment verification
+
+Target selector:
+
+Epoch-managed compute
+AWS
+GCP
+Azure
+Kubernetes
+Docker
+On-prem
+Bare metal
+GPU provider
+Edge
+Vehicle
+Robot
+Factory
+
+The exact target availability is determined by connected adapters and authorization.
+
+ACTION UI
+
+Mission-specific verbs:
+
+Deploy
+Apply
+Act
+Promote
+Recommend
+Simulate
+Monitor
+Rollback
+Run Again
+Export
+Download
+
+The backend still stores these as first-class Action objects.
+
+PHYSICAL WORLD PRODUCT LOOP
+
+Example user:
+
+Understand what is happening around this vehicle.
+
+CAMERA
+VIDEO
+LiDAR
+IMU
+GPS
+VEHICLE TELEMETRY
+↓
+OBSERVATION
+↓
+WORLD STATE
+↓
+OBJECTS + RELATIONSHIPS
+↓
+PREDICTED STATE
+↓
+RECOMMENDATION
+↓
+ACT (if authorized)
+↓
+CONSEQUENCE
+↓
+OBSERVATION
+↓
+VERIFICATION
+↓
+LEARNING
+
+DATA CENTER PRODUCT LOOP
+
+Example:
+
+Reduce power consumption without reducing throughput.
+
+GPU
+CPU
+MEMORY
+NVLINK
+PCIe
+NETWORK
+COOLING
+POWER
+WORKLOADS
+SCHEDULER
+KUBERNETES
+TELEMETRY
+↓
+DECODE CURRENT STATE
+↓
+UNKNOWN
+↓
+HYPOTHESES
+↓
+CANDIDATE POLICIES
+↓
+BENCHMARK / SIMULATE
+↓
+DECISION
+↓
+AUTHORIZE
+↓
+APPLY SCHEDULING POLICY
+↓
+OBSERVE
+↓
+VERIFY
+↓
+LEARN
+
+SOFTWARE PRODUCT LOOP
+
+Example:
+
+Ship enterprise SSO.
+
+REQUIREMENT
+↓
+DISCOVER REPOSITORIES
+↓
+DISCOVER ARCHITECTURE
+↓
+DEPENDENCY GRAPH
+↓
+SPECIFICATION
+↓
+PLAN
+↓
+IMPLEMENT
+↓
+TEST
+↓
+SECURITY
+↓
+PERFORMANCE
+↓
+PR
+↓
+REVIEW
+↓
+CI
+↓
+CANARY
+↓
+DEPLOY
+↓
+OBSERVE
+↓
+VERIFY
+↓
+DOCUMENT
+
+The source plan explicitly defines this company-wide execution model.
+
+FINOPS PRODUCT LOOP
+
+SPEND
+↓
+ATTRIBUTE
+↓
+FIND WASTE
+↓
+HYPOTHESES
+↓
+SIMULATE
+↓
+EXPERIMENT
+↓
+CHANGE
+↓
+MEASURE
+↓
+VERIFY SAVINGS
+
+SECURITY PRODUCT LOOP
+
+DISCOVER
+↓
+ASSESS
+↓
+PRIORITIZE
+↓
+PATCH
+↓
+TEST
+↓
+DEPLOY
+↓
+VERIFY
+
+CONTINUOUS ORGANIZATIONAL LOOP
+
+The organization can become an automation surface:
+
+SOFTWARE ENGINEERING
+PRODUCT DEVELOPMENT
+INFRASTRUCTURE
+CLOUD
+DATA
+SECURITY
+SRE
+QA
+DEVOPS
+FINOPS
+CUSTOMER SUPPORT
+OPERATIONS
+DOCUMENTATION
+PROJECT EXECUTION
+COMPLIANCE
+ANALYTICS
+INTERNAL SYSTEMS
+
+Epoch remains one runtime.
+
+90% AUTOMATION PRINCIPLE
+
+Automate approximately 90% of repeatable, observable, bounded, reversible, policy-permitted operational work.
+
+Automate:
+
+discovery
+data collection
+state reconstruction
+baseline generation
+anomaly detection
+issue classification
+hypothesis generation
+investigation
+decomposition
+candidate generation
+experiment design
+benchmarking
+test execution
+code modification
+documentation updates
+CI/CD remediation
+infrastructure planning
+safe deployment
+canary
+scaling
+rollback
+incident diagnosis
+routine remediation
+cost optimization
+quality evaluation
+evidence collection
+compliance checks
+post-change verification
+learning
+drift detection
+recurring optimization
+
+Human-controlled by default:
+
+ambiguous goals
+new authority grants
+irreversible destruction
+large financial commitments
+credential expansion
+security exceptions
+legal/compliance exceptions
+high-risk physical action
+out-of-policy actions
+contradictory reality
+
+The source plan explicitly defines the same boundary.
+
+LEARNING FLYWHEEL
+
+MORE MISSIONS
+↓
+MORE EXPERIMENTS
+↓
+MORE MEASUREMENTS
+↓
+MORE VERIFIED OUTCOMES
+↓
+BETTER DYNAMICS
+↓
+BETTER CANDIDATE SEARCH
+↓
+BETTER EXPERIMENT SELECTION
+↓
+BETTER DECISIONS
+↓
+BETTER OUTCOMES
+↓
+MORE MISSIONS
+
+The source blueprint identifies reality history, interventions, experiments, measurements, verified outcomes, and system dynamics as the core moat.
+
+DEFINITION OF DONE
+
+Epoch is complete when an organization can provide:
+
+intent
++
+constraints
++
+authority
++
+access to reality
+
+and Epoch can autonomously:
+
+understand
+↓
+discover
+↓
+baseline
+↓
+identify unknowns
+↓
+hypothesize
+↓
+discover capabilities
+↓
+compose systems
+↓
+experiment
+↓
+measure
+↓
+evaluate
+↓
+decide
+↓
+check policy
+↓
+check authority
+↓
+execute
+↓
+observe
+↓
+prove
+↓
+learn
+↓
+monitor
+↓
+adapt
+
+with humans only where needed for ambiguity, critical constraints, authority boundaries, high-risk action, policy, irreversibility, or contradictory reality.
+
+DAY-1 BUILD RULE
+
+Do not create a reduced product architecture, disposable prototype path, or temporary subsystem boundary.
+
+Build the permanent Epoch domain, contracts, runtime, storage model, event model, security boundaries, evaluation system, adapter interfaces, execution interfaces, learning loop, and user-facing product structure from Day 1.
+
+Implementation order may begin with a limited set of connected environments and capabilities so that each permanent primitive can be exercised end-to-end, but every primitive must be designed for the final system.
+
+The first connected environment may contain a small number of concrete instances, while the permanent architecture contains the complete semantic surface:
+
+multiple model identities
+multiple runtime identities
+multiple compute types
+multiple execution targets
+multiple observation sources
+multiple capability classes
+multiple policy and authority levels
+multiple experiment modes
+multiple learning paths
+
+The complete contracts are required immediately:
+
+InputEnvelope
+Intent
+OutcomeContract
+WorldState
+Capability
+System
+Experiment
+Decision
+Policy
+Authority
+Execution
+Evidence
+Verification
+Learning
+AutomationDecision
+HumanGate
+
+The capability set may begin small.
+
+The architecture cannot be temporary.
+
+The source blueprint explicitly defines this build rule.
+
+TEST ARCHITECTURE
+
 Every subsystem:
 
 unit
@@ -3640,6 +7649,7 @@ security
 property
 E2E
 evaluation
+
 Critical paths additionally require:
 
 idempotency
@@ -3651,8 +7661,10 @@ evidence-integrity
 verification
 human-gate
 automation-decision
-109. ARCHITECTURE SCENARIO FIXTURES
-Build:
+
+ARCHITECTURE SCENARIO FIXTURES
+
+Create fixtures:
 
 scenario-cost-optimization
 scenario-latency-optimization
@@ -3671,7 +7683,12 @@ scenario-security-patch
 scenario-product-dropoff
 scenario-documentation-drift
 scenario-finops-waste
-Each scenario:
+scenario-physical-world-decoding
+scenario-robot-actuation
+scenario-factory-optimization
+scenario-data-center-power
+
+Each fixture contains:
 
 initial reality
 intent
@@ -3682,350 +7699,913 @@ expected decisions
 expected actions
 expected evidence
 expected verdict
-110. DAY -1 CHECKLIST
-Architecture
-[ ] Product thesis frozen
-[ ] 90% automation principle frozen
-[ ] Human/automation boundary frozen
-[ ] Core vocabulary frozen
-[ ] Architecture frozen
-[ ] Domain boundaries defined
-[ ] Event strategy defined
-[ ] Provenance strategy defined
-[ ] Security boundaries defined
-[ ] Worker contract defined
-[ ] Adapter contract defined
-Inputs
-[ ] Text
-[ ] Speech
-[ ] Audio
-[ ] Image
-[ ] Video
-[ ] Document
-[ ] Tabular
-[ ] Code
-[ ] API
-[ ] Database
-[ ] Telemetry
-[ ] Repository
-[ ] Cloud
-[ ] Kubernetes
-[ ] Business systems
-Intelligence
-[ ] Intent engine
-[ ] Outcome compiler
-[ ] Unknown engine
-[ ] Hypothesis engine
-[ ] Capability graph
-[ ] System composer
-[ ] Experiment selector
-[ ] Decision engine
-[ ] Counterfactual engine
-[ ] Failure diagnosis
-[ ] Task decomposition
-Automation
-[ ] AutomationDecision
-[ ] Autonomy levels
-[ ] Policy gates
-[ ] Authority gates
-[ ] Human gates
-[ ] State recheck
-[ ] Idempotency
-[ ] Rollback
-[ ] Compensation
-[ ] Continuous missions
-Proof
-[ ] Observation model
-[ ] Evidence model
-[ ] Claim model
-[ ] Verification model
-[ ] Independent verifier
-[ ] Provenance chain
-[ ] Verification windows
-Learning
-[ ] Learning records
-[ ] Dynamics records
-[ ] Empirical graph
-[ ] Drift detection
-[ ] Rediscovery
-[ ] Replay
-111. DEFINITION OF DONE
-Epoch is complete when an organization can provide:
 
+The source plan already defines this scenario-driven architecture approach.
+
+DOMAIN CONTRACTS
+
+Create typed schemas for:
+
+input-envelope
 intent
-+
-constraints
-+
-authority
-+
-access to reality
-and Epoch can autonomously:
-
-understand
- ↓
-discover
- ↓
-baseline
- ↓
-identify unknowns
- ↓
-hypothesize
- ↓
-discover capabilities
- ↓
-compose systems
- ↓
+outcome-contract
+mission
+world-state
+world-fact
+observation
+capability
+system
+candidate-system
 experiment
- ↓
-measure
- ↓
-evaluate
- ↓
-decide
- ↓
-check policy
- ↓
-check authority
- ↓
-execute
- ↓
-observe
- ↓
-prove
- ↓
-learn
- ↓
-monitor
- ↓
-adapt
-while involving humans only when:
+measurement
+evaluation
+decision
+policy
+authorization
+automation-decision
+human-gate
+plan
+action
+execution
+evidence
+claim
+verification
+learning-record
+dynamics-record
+drift-event
+domain-event
+mission-result
+artifact
 
-ambiguity
-OR
-missing critical constraints
-OR
-authority boundary
-OR
-high-risk action
-OR
-policy requirement
-OR
-irreversible consequence
-OR
-contradictory reality
-requires them.
+The schema layer is the contract between UI, control plane, workers, adapters, events, storage, and verification.
 
-112. THE LONG-TERM ARCHITECTURE
-                         EPOCH
-                           │
-                           ▼
-                        REALITY
-                           │
-          ┌────────────────┼────────────────┐
-          ▼                ▼                ▼
-   COMPUTATIONAL        PHYSICAL        SCIENTIFIC
-      REALITY            REALITY          REALITY
-          │                │                │
-   software/cloud       sensors         instruments
-   AI models            cameras         laboratories
-   data centers         robots           equipment
-          └────────────────┼────────────────┘
-                           ▼
-                  OBSERVATION FABRIC
-                           ▼
-                      WORLD MODEL
-                           ▼
-                     REALITY GRAPH
-                           ▼
-                   DYNAMICS MODEL
-                           ▼
-              UNKNOWN / HYPOTHESIS / CAPABILITY
-                           │
-                           ▼
-                        SYSTEM
-                           │
-                           ▼
-                      EXPERIMENT
-                           │
-                           ▼
-                         ACTION
-                           │
-                           ▼
-                     MEASUREMENT
-                           │
-                           ▼
-                         PROOF
-                           │
-                           ▼
-                       LEARNING
-                           │
-                           └──────────► REALITY
-The Mission Runtime remains stable while new environments are added.
+CONTROL-PLANE IMPLEMENTATION
 
-113. THE MOAT
-The moat is not:
+Recommended internal boundaries:
 
-number of connectors
-number of models
-number of GPUs
-number of dashboards
-number of agents
-The moat is:
+input
+intent
+outcome
+mission
+reality
+world-model
+unknown
+hypothesis
+capability
+model
+composer
+experiment
+simulation
+decision
+policy
+authority
+automation
+execution
+observation
+evidence
+claim
+verification
+learning
+teaching
+drift
+audit
+artifact
 
-REALITY HISTORY
+Start as one modular control-plane application with strict dependency direction.
+
+DEPENDENCY RULE
+
+Packages should depend inward toward domain contracts.
+
+Bad:
+
+domain → Kubernetes SDK
+domain → Hugging Face SDK
+domain → AWS SDK
+
+Good:
+
+domain
+↑
+adapter interface
+↑
+KubernetesAdapter
+HuggingFaceAdapter
+AWSAdapter
+RobotAdapter
+
+The permanent domain cannot depend on replaceable providers.
+
+EVENT-SOURCED PROVENANCE
+
+Every consequential transition emits a DomainEvent.
+
+Events should support:
+
+state reconstruction
+
+audit
+
+replay
+
+debugging
+
+analytics
+
+provenance
+
+learning
+
+Never rely solely on current mutable state to explain why a result occurred.
+
+REPLAY
+
+Every important mission must be replayable from:
+
+input
+world-state snapshot
+model revisions
+capabilities
+policies
+experiment configuration
+action records
+observations
+
+Replay should preserve the difference between:
+
+historical reality
+current reality
+replayed simulation
+
+PRODUCT OUTPUT CONTRACT
+
+The final customer-facing output is:
+
+MISSION RESULT
+│
+├── Primary Result
+├── Measured Change
+├── Current Reality
+├── Baseline
+├── Unknowns
+├── Hypotheses
+├── Candidates
+├── Experiments
+├── Decision
+├── Action
+├── Consequence
+├── Observed Result
+├── Primary Deliverable
+├── Evidence
+├── Verification
+├── Verdict
+├── Uncertainty
+├── Learning
+└── Next Action
+
+Evidence is support, not the headline product.
+
+The customer gets something useful:
+
+deployment package
+configuration
+decision package
+diagnosis
+forecast
+new capability
+world-state package
+simulation
+repair
+policy
+physical state change
+
+PHYSICAL RESULT STANDARD
+
+For physical missions, output is not forced into deployment.
+
+Possible result:
+
+verified world state
 +
-INTERVENTIONS
+predicted state
 +
-EXPERIMENTS
+uncertainty
 +
-MEASUREMENTS
+recommended action
 +
-VERIFIED OUTCOMES
+safety status
 +
-SYSTEM DYNAMICS
-Compounding loop:
+sensor provenance
++
+observation plan
 
-more missions
- ↓
-more experiments
- ↓
-more measurements
- ↓
-more verified outcomes
- ↓
-better dynamics
- ↓
-better candidate search
- ↓
-better experiment selection
- ↓
-better decisions
- ↓
-better outcomes
- ↓
-more missions
-114. FINAL PRODUCT MENTAL MODEL
-Traditional automation:
+If the user chooses an authorized actuation path:
 
-USER
- ↓
-TASK
- ↓
-AUTOMATION
- ↓
-OUTPUT
-AI agent:
+world state
+↓
+recommendation
+↓
+authority
+↓
+actuation
+↓
+consequence
+↓
+verification
 
-USER
- ↓
-PROMPT
- ↓
-AGENT
- ↓
-OUTPUT
-Epoch:
+FINAL ENGINEERING INVARIANTS
 
-HUMAN
- ↓
-INTENT
- ↓
-OUTCOME
- ↓
-REALITY
- ↓
-UNKNOWN
- ↓
-HYPOTHESIS
- ↓
-CAPABILITY
- ↓
-SYSTEM
- ↓
+Invariant 1 — Outcome over task
+
+The product is the outcome loop.
+
+Invariant 2 — Reality over prediction
+
+Prediction is a hypothesis until reality is observed.
+
+Invariant 3 — Capability over vendor
+
+Hugging Face, vLLM, AWS, Kubernetes, robot vendors, and future providers are implementations/adapters.
+
+Invariant 4 — Evidence supports outcome
+
+Evidence is not the product headline.
+
+Invariant 5 — Verification over confidence
+
+Confidence is not proof.
+
+Invariant 6 — Authority over autonomy
+
+Capability does not imply permission.
+
+Invariant 7 — Experience over memory
+
+Experience captures what worked, when, why, and under what conditions.
+
+Invariant 8 — Reality surfaces are not sequential products
+
+Computational, operational, edge, physical, industrial, scientific, and general reality all belong to the permanent architecture.
+
+Invariant 9 — Deploy and Act are distinct
+
+Deploy installs intelligence.
+
+Act changes reality.
+
+Invariant 10 — No silent mutation
+
+Every consequential action is attributable, authorized, observable, and verifiable.
+
+Invariant 11 — No temporary MVP architecture
+
+The first implementation can be small in capability count but must use the permanent domain.
+
+Invariant 12 — Learning is downstream of verified consequence
+
+Do not teach from unsupported claims.
+
+FINAL PRODUCT NORTH STAR
+
+             PURPOSE
+                │
+                ▼
+             INTENT
+                │
+                ▼
+             OUTCOME
+                │
+                ▼
+              REALITY
+                │
+                ▼
+            UNDERSTAND
+                │
+                ▼
+             UNKNOWN
+                │
+                ▼
+           HYPOTHESIS
+                │
+                ▼
+           CAPABILITY
+                │
+                ▼
+              SYSTEM
+                │
+                ▼
+           EXPERIMENT
+                │
+                ▼
+            DECISION
+                │
+                ▼
+            AUTHORITY
+                │
+                ▼
+             ACTION
+                │
+                ▼
+          CONSEQUENCE
+                │
+                ▼
+           OBSERVATION
+                │
+                ▼
+             EVIDENCE
+                │
+                ▼
+          VERIFICATION
+                │
+                ▼
+           MISSION RESULT
+                │
+                ▼
+            EXPERIENCE
+                │
+                ▼
+              LESSON
+                │
+                ▼
+            TEACHING
+                │
+                ▼
+      INTELLIGENCE EVOLUTION
+                │
+                ▼
+       BETTER REALITY MODEL
+                │
+                └──────────► REALITY
+
+FINAL BUILD DIRECTIVE FOR THE CODING MODEL
+
+Build Epoch as one permanent Reality Intelligence Runtime.
+
+Do not build:
+
+GPU optimizer first
+→ cloud platform later
+→ robotics later
+→ physical AI later
+→ scientific system later
+→ rewrite architecture
+
+Do not build separate products:
+
+Optimizer
+Diagnoser
+Predictor
+Robot tool
+Data-center tool
+Simulation tool
+Model trainer
+Coding agent
+
+Build one runtime:
+
+         EPOCH
+           │
+     REALITY FABRIC
+           │
+  CAPABILITY FABRIC
+           │
+ KNOWLEDGE FABRIC
+           │
+    MISSION RUNTIME
+           │
+
+UNKNOWN → HYPOTHESIS
+│
+COMPOSE SYSTEM
+│
 EXPERIMENT
- ↓
+│
 DECISION
- ↓
-AUTHORITY
- ↓
+│
+POLICY / AUTHORITY
+│
 ACTION
- ↓
+│
+CONSEQUENCE
+│
 OBSERVATION
- ↓
+│
 EVIDENCE
- ↓
+│
 VERIFICATION
- ↓
-LEARNING
- ↓
-UPDATED REALITY
- ↓
-CONTINUOUS AUTONOMY
-The unit of automation is therefore not the task.
+│
+MISSION RESULT
+│
+EXPERIENCE
+│
+LESSON
+│
+TEACHING
+│
+INTELLIGENCE EVOLUTION
+│
+BETTER REALITY
 
-The unit of automation is the outcome loop.
+Build every permanent primitive now.
 
-115. THE SINGLE MOST IMPORTANT BUILD RULE
-Do not ask:
+Connect more reality continuously.
 
-"What is the MVP?"
-Ask:
+Never replace the core because reality becomes more physical.
 
-"What is the smallest real implementation of the final autonomous architecture?"
-The first implementation may have:
+The permanent engineering invariant is:
 
-1 model
-1 runtime
-1 GPU
-1 cluster
-1 provider
-1 repository
-1 workload
-But it must still use the final concepts:
+The runtime does not change. The reality it can decode, test, act on, observe, verify, and learn from expands.
+
+The final product invariant is:
+
+Every Epoch mission ends with a concrete, inspectable, measurable, verifiable, usable Mission Result.
+
+The final customer promise is:
+
+Epoch turns purpose into verified reality.
+
+CANONICAL SUMMARY
+
+Epoch is infrastructure for operating by outcomes instead of tasks.
+
+The permanent loop is:
+
+INPUT
+→ INTENT
+→ OUTCOME
+→ REALITY
+→ UNKNOWN
+→ HYPOTHESIS
+→ CAPABILITY
+→ SYSTEM
+→ EXPERIMENT
+→ DECISION
+→ AUTHORITY
+→ ACTION
+→ CONSEQUENCE
+→ OBSERVATION
+→ EVIDENCE
+→ VERIFICATION
+→ MISSION RESULT
+→ EXPERIENCE
+→ LESSON
+→ TEACHING
+→ INTELLIGENCE EVOLUTION
+→ BETTER REALITY
+
+And the permanent reality surface is:
+
+COMPUTATIONAL
+→ OPERATIONAL
+→ EDGE
+→ PHYSICAL
+→ INDUSTRIAL
+→ SCIENTIFIC
+→ GENERAL
+
+This is a single architecture, not a sequence of rewrites.
+
+Purpose
+
+Build the complete Epoch architecture as one permanent system. The sequence below is an implementation dependency order only. It does not define separate product generations.
+
+A. FOUNDATION — DAY -1
+
+Monorepo and workspace configuration.
+
+TypeScript strict mode and shared configuration.
+
+Python evaluation/research environment.
+
+PostgreSQL migrations and transaction conventions.
+
+Redis configuration.
+
+Object storage abstraction.
+
+Telemetry abstraction.
+
+Search projection abstraction.
+
+Graph projection abstraction.
+
+OpenTelemetry instrumentation.
+
+CI/CD and release pipeline.
+
+Secrets and credential-management boundary.
+
+Containerization.
+
+Local multi-process development environment.
+
+Contract-test harness.
+
+Scenario fixture harness.
+
+Event serialization and replay harness.
+
+Artifact hashing and provenance utilities.
+
+Acceptance gate:
+
+all domain packages compile;
+
+migrations run cleanly;
+
+events are persisted and replayable;
+
+adapters can be mocked through interfaces;
+
+one end-to-end synthetic mission can traverse the permanent domain contracts.
+
+B. PERMANENT DOMAIN KERNEL
+
+Implement the canonical entities and state transitions before feature-specific logic:
 
 InputEnvelope
 Intent
 OutcomeContract
+Mission
 WorldState
+WorldFact
+Observation
 Capability
 System
+CandidateSystem
+Prediction
 Experiment
+Measurement
+Evaluation
 Decision
 Policy
-Authority
-Execution
-Evidence
-Verification
-Learning
+Authorization
 AutomationDecision
 HumanGate
-The capability set can start small.
+Plan
+Action
+Execution
+Consequence
+Evidence
+Claim
+Verification
+LearningRecord
+DynamicsRecord
+DriftEvent
+DomainEvent
+MissionResult
+Artifact
 
-The architecture cannot be temporary.
+Acceptance gate:
 
-116. FINAL PRODUCT THESIS
-Epoch turns organizational intent into verified changes in reality.
+every object has stable identity;
 
-More technically:
+every cross-object reference is typed;
 
-Epoch compiles intent and reality into experiments, decisions, authorized actions, evidence, verified outcomes, and learned system dynamics — then continuously adapts reality toward the desired outcome within explicit organizational authority.
+schema versions are explicit;
 
-117. FINAL ONE-LINE ARCHITECTURE
-EPOCH = INPUT → INTENT → OUTCOME → REALITY → EXPERIMENT → ACTION → MEASUREMENT → PROOF → LEARNING → AUTONOMOUS ADAPTATION
-118. FINAL ONE-LINE COMPANY VISION
-EPOCH = THE RUNTIME THAT LETS AN ORGANIZATION OPERATE BY OUTCOMES INSTEAD OF TASKS.
-Research / implementation notes
-The following external facts were verified during this revision:
+organization and actor context is explicit;
 
-Hugging Face's current Hub API supports inference-provider and task filtering, provider mappings, inference status, and provider metadata such as pricing, context length, tool/structured-output support, first-token latency, and throughput where available.
+idempotency semantics are defined;
 
-Hugging Face documents task types as defining the shape of model APIs and provides task-oriented discovery.
+event emission exists for every consequential transition.
 
-Hugging Face Inference Providers provide unified access to many models through supported clients and providers.
+C. INPUT + COMPOSER
 
-OpenTelemetry currently documents traces, metrics, logs and baggage as supported signals, with profiles documented as well.
+Implement:
 
-GitHub currently documents coding-agent workflows that can take an issue or prompt, implement changes, create a pull request, and iterate through review. Epoch should treat this class of capability as an execution primitive inside its larger outcome → reality → proof loop.
+input ingestion
 
-These sources support the adapter/integration decisions in this document; they do not constitute Epoch verification of external performance claims.
+multimodal normalization
 
-END
+attachment handling
+
+source preservation
+
+entity resolution
+
+intent extraction
+
+contextual suggestions
+
+editable structured tokens
+
+outcome-contract preview
+
+mission preview
+
+execution request creation
+
+Acceptance gate:
+A natural-language request can become a validated Intent and OutcomeContract without losing the original input or provenance.
+
+D. OUTCOME + MISSION RUNTIME
+
+Implement:
+
+baseline discovery
+
+target inference
+
+unknown creation
+
+success/failure criteria
+
+observation windows
+
+verification plans
+
+authority requirements
+
+mission state machine
+
+retries
+
+timeouts
+
+dependency resolution
+
+compensation
+
+mission recovery
+
+mission cancellation
+
+mission expiration
+
+Acceptance gate:
+A mission can pause, resume, fail, recover, expire, and reach a verified terminal state without corrupting state.
+
+E. REALITY FABRIC
+
+Implement:
+
+temporal entity model
+
+versioned WorldState
+
+WorldFact ingestion
+
+Reality Graph projection
+
+source provenance
+
+validity intervals
+
+confidence
+
+integrity hashes
+
+history reconstruction
+
+state-diff engine
+
+planned-vs-current state check
+
+Acceptance gate:
+Epoch can reconstruct what it believed to be true at a specific point in time and compare that state with current reality.
+
+F. CONFLICT + UNKNOWN + HYPOTHESIS
+
+Implement:
+
+RealityConflict
+
+source ranking
+
+freshness ranking
+
+cross-validation
+
+unknown prioritization
+
+hypothesis generation
+
+hypothesis ranking
+
+expected information gain
+
+experiment cost estimation
+
+Acceptance gate:
+Epoch can represent disagreement explicitly and select the next investigation step using evidence, uncertainty, risk and cost.
+
+G. PREDICTION ENGINE
+
+Implement:
+
+prediction objects
+
+predicted metrics
+
+predicted WorldState
+
+predicted consequences
+
+uncertainty representation
+
+assumptions
+
+calibration tracking
+
+prediction lineage
+
+prediction comparison
+
+Acceptance gate:
+Every prediction can be traced to a hypothesis, world state, assumptions and prediction source.
+
+H. CAPABILITY + MODEL FABRIC
+
+Implement:
+
+capability registry
+
+modality/task ontology
+
+capability graph
+
+model registry
+
+immutable model identity
+
+artifact identity
+
+runtime identity
+
+compatibility model
+
+licensing model
+
+empirical model truth records
+
+Acceptance gate:
+A model or tool can be discovered, identified, tested, benchmarked and referenced without relying on a mutable display name.
+
+I. SYSTEM COMPOSER
+
+Implement:
+
+system definitions
+
+component graphs
+
+compatibility filtering
+
+candidate generation
+
+candidate ranking
+
+system-level constraints
+
+system-level predicted metrics
+
+system-level risk
+
+Acceptance gate:
+Epoch can construct complete candidate systems rather than only selecting individual components.
+
+J. INTELLIGENCE OPTIMIZATION
+
+Implement three permanent branches:
+
+Model Optimization
+
+architecture
+
+quantization
+
+prompting
+
+routing
+
+tool use
+
+perception
+
+context management
+
+Inference Optimization
+
+latency
+
+throughput
+
+batching
+
+serving
+
+scheduling
+
+kernels
+
+memory
+
+parallelism
+
+placement
+
+Training Optimization
+
+fine-tuning
+
+LoRA
+
+distillation
+
+adaptation
+
+data selection
+
+evaluation data
+
+training configuration
+
+resource allocation
+
+Acceptance gate:
+An intelligence system can be improved while preserving explicitly declared quality and safety constraints.
+
+K. COMPUTE INTELLIGENCE
+
+Implement:
+
+Compute Selection
+
+GPU / CPU / accelerator inventory
+
+capacity
+
+power
+
+availability
+
+topology
+
+placement
+
+execution target selection
+
+Data-Path Optimization
+
+memory
+
+data movement
+
+interconnect
+
+network
+
+storage
+
+communication
+
+locality
+
+System Configuration
+
+runtime
+
+kernel
+
+batching
+
+scheduling
+
+placement
+
+topology
+
+resource limits
+
+Acceptance gate:
+Compute choices and system configuration are selected as part of the same optimization problem as intelligence quality and latency.
+
+L. EXPERIMENT FABRIC
+
+Implement:
+
+Experiment definition
+
+controlled variables
+
+controls
+
+budgets
+
+risk
+
+information gain
+
+Simulation Worker
+
+Sandbox Worker
+
+Benchmark Worker
+
+experiment orchestration
+
+experiment result storage
+
+Acceptance gate:
+Every candidate experiment is reproducible and all outputs carry execution identity and provenance.
