@@ -502,8 +502,46 @@ export default function EmbeddingsPage() {
       </div>
 
       <main className="flex-1 flex flex-col relative z-10">
+        
+        {/* SVG Filter for recoloring the image to brand colors */}
+        <svg width="0" height="0" className="absolute pointer-events-none">
+          <filter id="brand-duotone">
+            {/* Convert to grayscale using luminance */}
+            <feColorMatrix
+              type="matrix"
+              values="0.2126 0.7152 0.0722 0 0
+                      0.2126 0.7152 0.0722 0 0
+                      0.2126 0.7152 0.0722 0 0
+                      0 0 0 1 0"
+            />
+            {/* Map grayscale values to #151515, #75BF00, and #E2EFC1 */}
+            <feComponentTransfer colorInterpolationFilters="sRGB">
+              <feFuncR type="table" tableValues="0.082 0.458 0.886" />
+              <feFuncG type="table" tableValues="0.082 0.749 0.937" />
+              <feFuncB type="table" tableValues="0.082 0.000 0.757" />
+            </feComponentTransfer>
+          </filter>
+        </svg>
+
+        {/* Background Image touching nav bottom dashed line */}
+        <div className="absolute top-0 inset-x-0 z-0 overflow-hidden pointer-events-none flex justify-center opacity-70">
+          <div className="relative w-[700px] h-[700px]">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#151515] via-transparent to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#151515] via-transparent to-transparent z-10" />
+            <img 
+              src="https://a2-us.storyblok.com/f/1019538/1236x1236/9561ddb94e/hands.png/m/1080x0/filters:quality(85):format(webp)"
+              alt="Hero Background"
+              className="w-full h-full object-contain object-top mix-blend-screen"
+              style={{ 
+                maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
+                filter: 'url(#brand-duotone)'
+              }}
+            />
+          </div>
+        </div>
+
         {/* Hero Section Container */}
-        <div className="w-full relative mt-20 mb-20">
+        <div className="w-full relative mt-20 mb-20 min-h-[600px] flex items-center">
           {/* Infinite Horizontal Lines bounding the hero section */}
           <div className="absolute bottom-0 left-0 w-full h-px border-t border-dashed border-[#333] z-0" />
 
@@ -556,7 +594,12 @@ export default function EmbeddingsPage() {
 
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
-                  <RagSearchGrid />
+                  <RagSearchGrid 
+                    label1="Vector Search"
+                    label2="Citations"
+                    label3="Reranking"
+                    label4="Knowledge Base"
+                  />
                 </div>
               </div>
             </div>
