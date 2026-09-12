@@ -164,52 +164,63 @@ export function LandingNavbar({
                   {
                     title: "Transcription",
                     desc: "Whisper plus diarization and PII redaction.",
-                    icons: [OpenAILogo, NvidiaLogo]
+                    icons: [OpenAILogo, NvidiaLogo],
+                    href: "/use-cases/transcription"
                   },
                   {
-                    title: "Teaching Data Factory",
-                    desc: "Auto-generate synthetic data and active learning loops to fine-tune bespoke models.",
-                    icons: [MetaLogo, HuggingFaceLogo]
+                    title: "Synthetic Data Factory",
+                    desc: "Auto-generate data to fine-tune models.",
+                    icons: [MetaLogo, HuggingFaceLogo],
+                    href: "/use-cases/teaching-data-factory"
                   },
                   {
                     title: "Simulation & World Models",
-                    desc: "Replay counterfactuals and predict physical dynamics using temporal representations.",
-                    icons: [TeslaLogo, NvidiaLogo]
+                    desc: "Replay and predict physical dynamics.",
+                    icons: [GoogleLogo, NvidiaLogo],
+                    href: "/use-cases/simulation-world-models"
                   },
                   {
                     title: "Continuous Auto-Diagnosis",
-                    desc: "Deploy agents that continuously discover system anomalies and self-heal infrastructure.",
-                    icons: [GithubLogo, K8sFaviconLogo]
+                    desc: "Deploy agents to self-heal infrastructure.",
+                    icons: [GithubLogo, K8sFaviconLogo],
+                    href: "/use-cases/continuous-auto-diagnosis"
                   },
                   {
                     title: "Autonomous Software Engineers",
-                    desc: "Sandboxed agents that autonomously write code, run tests, and fix their own bugs.",
-                    icons: [GithubLogo, MetaLogo]
+                    desc: "Agents that autonomously write and test code.",
+                    icons: [GithubLogo, MetaLogo],
+                    href: "/use-cases/autonomous-software-engineers"
                   },
                   {
                     title: "Verifiable Legal Agents",
-                    desc: "Generate deterministic cryptographic proofs so your AI never hallucinates in enterprise.",
-                    icons: [OpenAILogo, NvidiaLogo]
+                    desc: "Verifiable proofs for zero-hallucination AI.",
+                    icons: [OpenAILogo, NvidiaLogo],
+                    href: "/use-cases/verifiable-legal-agents"
                   },
                   {
                     title: "Automated Scientific Discoverers",
-                    desc: "Agents that generate hypotheses and run millions of counterfactual physics simulations.",
-                    icons: [HuggingFaceLogo, MetaLogo]
+                    desc: "Agents that run massive physics simulations.",
+                    icons: [HuggingFaceLogo, MetaLogo],
+                    href: "/use-cases/automated-scientific-discoverers"
                   },
                   {
                     title: "Decoding Physical Reality",
-                    desc: "Process live sensor streams to teach AI models about the physical world, then instantly deploy them back to the edge.",
-                    icons: [OneXLogo, NvidiaLogo]
+                    desc: "Process sensor streams to teach AI models.",
+                    icons: [DeepSeekLogo, NvidiaLogo],
+                    href: "/use-cases/decoding-physical-reality"
                   },
                   {
                     title: "Generative Video & Physics",
-                    desc: "Synthesize highly accurate physical worlds and future states to safely train models.",
-                    icons: [TeslaLogo, MetaLogo]
+                    desc: "Synthesize physical worlds to train models.",
+                    icons: [GoogleLogo, MetaLogo],
+                    href: "/use-cases/generative-video-and-physics"
                   },
+
                   {
                     title: "Embodied Humanoid Robots",
-                    desc: "Build the ultra-low latency brains for humanoid robots interacting with the physical world.",
-                    icons: [OneXLogo, TeslaLogo]
+                    desc: "Low-latency brains for humanoid robots.",
+                    icons: [NvidiaLogo, MetaLogo],
+                    href: "/use-cases/embodied-humanoid-robots"
                   }
                 ].map((uc, i) => {
                   const content = (
@@ -285,7 +296,7 @@ export function LandingNavbar({
                   {
                     title: "Embodied AI & Robotics",
                     desc: "LiDAR, IMU, and vehicle sensor perception on the edge.",
-                    icons: [OneXLogo, TeslaLogo]
+                    icons: [DeepSeekLogo, NvidiaLogo]
                   },
                   {
                     title: "Datacenter Automation",

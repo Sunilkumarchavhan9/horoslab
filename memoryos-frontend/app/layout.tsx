@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono, JetBrains_Mono } from "next/font/google";
 import { isClerkEnabled } from "@/lib/clerk";
 import { DatadogRumInitLoader } from "@/components/observability/datadog-rum-init-loader";
 import { GlobalPixelButtonLoader } from "@/components/ui/global-pixel-button-loader";
@@ -10,21 +10,15 @@ import { GlobalScrollbar } from "@/components/ui/global-scrollbar";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
-  display: "swap",
-});
-
-const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
-  display: "swap",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
   display: "swap",
 });
 
@@ -54,7 +48,7 @@ export default function RootLayout({
   const clerkEnabled = isClerkEnabled();
 
   return (
-    <html lang="en" className={cn(sora.variable, spaceGrotesk.variable, plexMono.variable, jetbrainsMono.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn(inter.variable, inter.className, plexMono.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <body>
         {process.env.NODE_ENV !== "development" ? (
           <DatadogRumInitLoader />
