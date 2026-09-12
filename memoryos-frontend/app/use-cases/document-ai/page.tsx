@@ -9,117 +9,119 @@ import { DocumentAIGrid } from "@/components/landing/document-ai-grid";
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
 import { EpochLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, EpochWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/epoch/primitives/brand-icons";
-import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
+import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText } from "lucide-react";
 
 const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "Launch",
-    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly with IntentEngine and keep the production path open." },
-    closed: { title: "Call provider endpoint", desc: "Fast first demo, but the generative runtime stays rented." },
-    diy: { title: "Build serving stack first", desc: "Infrastructure work for generation and retrieval comes before product learning." }
+    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly and keep the production path open." },
+    closed: { title: "Call provider endpoint", desc: "Fast first demo, but the runtime stays rented." },
+    diy: { title: "Build serving stack first", desc: "Infrastructure work comes before product learning." }
   },
   {
     num: "0 2",
     label: "Model control",
-    runInfra: { title: "Bring the model ID", desc: "Keep LLM and embedding choice visible in CapabilityFabric." },
-    closed: { title: "Provider catalog", desc: "You use what the LLM provider exposes for generation." },
-    diy: { title: "Your model", desc: "Full control if your team maintains the generation runtime." }
+    runInfra: { title: "Bring the model ID", desc: "Keep model choice and serving decisions visible." },
+    closed: { title: "Provider catalog", desc: "You use what the provider exposes." },
+    diy: { title: "Your model", desc: "Full control if your team maintains the runtime." }
   },
   {
     num: "0 3",
     label: "Tuning",
-    runInfra: { title: "Measured latency and GPU cost", desc: "Compare RAG serving choices before deployment." },
-    closed: { title: "Opaque", desc: "TTFT, token generation speed, and batching stay behind the API." },
-    diy: { title: "Manual profiling", desc: "Your team owns KV cache tuning and model regressions." }
+    runInfra: { title: "Measured latency and GPU cost", desc: "Compare serving choices before deployment." },
+    closed: { title: "Opaque", desc: "Latency and batching stay behind the API." },
+    diy: { title: "Manual profiling", desc: "Your team owns tuning and regressions." }
   },
   {
     num: "0 4",
     label: "Export",
-    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first, take the KnowledgeTier container later." },
-    closed: { title: "Locked endpoint", desc: "You keep calling the provider for every RAG query." },
-    diy: { title: "Already owned", desc: "Export exists because you built the entire RAG stack yourself." }
+    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first and take the deploy package later." },
+    closed: { title: "Locked endpoint", desc: "You keep calling the provider." },
+    diy: { title: "Already owned", desc: "Export exists because you built everything yourself." }
   },
   {
     num: "0 5",
     label: "Operations",
     runInfra: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, less generative production control." },
-    diy: { title: "High", desc: "You own vector DBs, LLM failures, upgrades, and serving changes." }
+    closed: { title: "Low, with lock-in", desc: "Less infra work, less production control." },
+    diy: { title: "High", desc: "You own infra, failures, upgrades, and serving changes." }
   },
   {
     num: "0 6",
     label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across KnowledgeTier access, logging, and incident response." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in your query path." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls for all data." }
+    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across access, logging, and incident response." },
+    closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in the request path." },
+    diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls." }
   }
 ];
 
 
-const RETRIEVE_CODE = `# Hybrid retrieval (dense + BM25), rerank, grounded answer with citations.
+const EXTRACT_CODE = `# Schema-driven document extraction with response_format passthrough.
 from openai import OpenAI
-from qdrant_client import QdrantClient
-from tantivy import Index as BM25
+from pydantic import BaseModel
  
-llm = OpenAI(base_url="http://localhost:8000/v1")
-qdr = QdrantClient(host="qdrant", port=6333)
-bm25 = BM25.open("/index/docs.tantivy")
+class Invoice(BaseModel):
+    vendor: str
+    invoice_no: str
+    date: str
+    total_usd: float
+    line_items: list[dict]
  
-def answer(query: str) -> dict:
-    """Return grounded answer plus citation spans per claim."""
-    q_vec = llm.embeddings.create(model="bge-large-en-v1.5", input=query).data[0].embedding
-    dense = qdr.search("docs", q_vec, limit=20)
-    sparse = bm25.search(query, limit=20)
-    fused = reciprocal_rank_fusion(dense, sparse, k=60)
-    ranked = llm.rerank.score(model="bge-reranker-v2-m3", query=query, documents=fused)[:5]
-    ctx = build_grounded_prompt(query, ranked)
-    out = llm.chat.completions.create(model="llama-3.1-8b", messages=ctx)
-    return {"answer": out.choices[0].message.content, "citations": getattr(out.choices[0].message, "citations", [])}`;
+client = OpenAI(base_url="http://localhost:8000/v1")
+ 
+def extract(image_b64: str) -> Invoice:
+    res = client.chat.completions.create(
+        model="Qwen/Qwen2.5-VL-7B-Instruct",
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "Invoice",
+                "schema": Invoice.model_json_schema(),
+                "strict": True,
+            },
+        },
+        messages=[{"role": "user", "content": [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_b64}"}}, {"type": "text", "text": "Extract."}]}],
+    )
+    return Invoice.model_validate_json(res.choices[0].message.content)`;
 
 const SERVE_CODE = `#!/usr/bin/env bash
-# Embed + rerank + LLM on one vLLM process
+# Core vLLM fallback behind the generated RunInfra auth proxy
 set -euo pipefail
  
-EMBED="BAAI/bge-large-en-v1.5"
-RERANK="BAAI/bge-reranker-v2-m3"
-LLM="meta-llama/Llama-3.1-8B-Instruct"
+MODEL_ID="Qwen/Qwen2.5-VL-7B-Instruct"
+HOST="\${HOST:-0.0.0.0}"
+PORT="\${PORT:-8000}"
+MAX_MODEL_LEN="\${MAX_MODEL_LEN:-8192}"
  
-python -m vllm.entrypoints.openai.api_server \\
-  --model "$LLM" \\
-  --served-model-name "llama-3.1-8b" \\
-  --quantization "awq" \\
-  --enable-prefix-caching
- 
-# Sibling processes serve the encoder + reranker:
-#   vllm serve $EMBED  --task=embedding --port 8001
-#   vllm serve $RERANK --task=score`;
+exec "\${RUNINFRA_PYTHON:-python3}" -m vllm.entrypoints.openai.api_server \\
+  --model "$MODEL_ID" \\
+  --tensor-parallel-size 1 \\
+  --max-model-len "$MAX_MODEL_LEN" \\
+  --port "$PORT" \\
+  --gpu-memory-utilization 0.70 \\
+  --host "$HOST"`;
 
 const PIPELINE_CODE = `{
-  "name": "rag-search",
-  "target_p95_ms": 620,
-  "eval_set": "evals/gold.json",
-  "retrieval": "hybrid",
-  "embed_model":  "bge-large-en-v1.5",
-  "rerank_model": "bge-reranker-v2-m3",
-  "llm_model":    "llama-3.1-8b",
-  "engine":       "vllm",
-  "gpu":          "nvidia-l40s",
-  "top_k": 20, "rerank_to": 5
+  "name": "document-ai",
+  "target_seconds_per_page": 0.4,
+  "model":   "qwen2.5-vl-7b",
+  "engine":  "vllm",
+  "gpu":     "nvidia-l40s",
+  "quant":   "awq-int4",
+  "schemas": ["invoice", "contract", "form"]
 }`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS base
  
-RUN apt-get update && apt-get install -y python3.11 python3-pip
+RUN apt-get update && apt-get install -y python3.11 python3-pip poppler-utils
  
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
  
-COPY adapters/ /app/adapters/
-COPY corpus/ /app/corpus/
-COPY evals/ /app/evals/
-COPY eval.py serve.sh pipeline.json .
+COPY schemas/ /app/schemas/
+COPY extract.py serve.sh pipeline.json .
  
 EXPOSE 8000
 ENTRYPOINT ["/app/serve.sh"]`;
@@ -141,7 +143,7 @@ def run_eval(gold_path: str) -> dict:
     n = len(items)
     return {k: v / n for k, v in scores.items()}`;
 
-type RagSearchFile = string;
+type DocumentAIFile = string;
 
 function highlightCode(code: string, lang: string, isComplete: boolean = false) {
   if (!code) return null;
@@ -226,15 +228,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B", author: "Meta", downloads: "70B", tag: "LLM" },
-  { id: "meta-llama/Llama-3.1-8B-Instruct", name: "Llama 3.1 8B", author: "Meta", downloads: "8B", tag: "LLM" },
-  { id: "meta-llama/Llama-3.2-3B-Instruct", name: "Llama 3.2 3B", author: "Meta", downloads: "3B", tag: "Edge LLM" },
-  { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen 2.5 72B", author: "Alibaba", downloads: "72B", tag: "LLM" },
-  { id: "Qwen/Qwen2.5-32B-Instruct", name: "Qwen 2.5 32B", author: "Alibaba", downloads: "32B", tag: "LLM" },
-  { id: "Qwen/Qwen2.5-7B-Instruct", name: "Qwen 2.5 7B", author: "Alibaba", downloads: "7B", tag: "LLM" },
-  { id: "Qwen/QwQ-32B-Preview", name: "QwQ 32B", author: "Alibaba", downloads: "32B", tag: "Reasoning" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", name: "DeepSeek R1 Distill 70B", author: "DeepSeek", downloads: "70B", tag: "Reasoning" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Llama-8B", name: "DeepSeek R1 Distill 8B", author: "DeepSeek", downloads: "8B", tag: "Reasoning" }
+  { id: "Qwen/Qwen2.5-VL-7B-Instruct", name: "Qwen2.5-VL 7B", author: "Alibaba", downloads: "7B", tag: "Vision" },
+  { id: "Qwen/Qwen2.5-VL-72B-Instruct", name: "Qwen2.5-VL 72B", author: "Alibaba", downloads: "72B", tag: "Vision" },
+  { id: "meta-llama/Llama-3.2-11B-Vision-Instruct", name: "Llama 3.2 11B Vision", author: "Meta", downloads: "11B", tag: "Vision" },
+  { id: "meta-llama/Llama-3.2-90B-Vision-Instruct", name: "Llama 3.2 90B Vision", author: "Meta", downloads: "90B", tag: "Vision" },
+  { id: "mistralai/Pixtral-12B-2409", name: "Pixtral 12B", author: "Mistral AI", downloads: "12B", tag: "Vision" },
+  { id: "microsoft/Phi-3.5-vision-instruct", name: "Phi-3.5 Vision", author: "Microsoft", downloads: "4.2B", tag: "Vision" },
+  { id: "OpenGVLab/InternVL2_5-8B", name: "InternVL2.5 8B", author: "Shanghai AI Lab", downloads: "8B", tag: "Vision" },
+  { id: "OpenGVLab/InternVL2_5-26B", name: "InternVL2.5 26B", author: "Shanghai AI Lab", downloads: "26B", tag: "Vision" },
+  { id: "deepseek-ai/deepseek-vl2", name: "DeepSeek-VL2", author: "DeepSeek", downloads: "27B MoE", tag: "Vision" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -274,12 +276,13 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('mixedbread')) return <MixedbreadLogo size={20} />;
   if (a.includes('snowflake')) return <SnowflakeLogo size={20} />;
   if (a.includes('nomic')) return <NomicLogo size={20} />;
+  if (a.includes('shanghai') || m.includes('internvl')) return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64006c09330a45b03605bba3/FvdxiTkTqH8rKDOzGZGUE.jpeg" alt="Shanghai AI Lab" className="w-5 h-5 rounded-sm object-cover" />;
 
   return <HuggingFaceLogo size={20} />;
 };
 
 const getBorderClasses = (index: number, total: number) => {
-  let classes = "p-8 border-dashed border-[#333] flex flex-col gap-6 group hover:bg-[#1a1a1a] transition-colors cursor-pointer relative";
+  let classes = "p-8 border-dashed border-[#333] flex flex-col gap-6 group hover:bg-[#1a1a1a]/50 transition-colors cursor-pointer relative overflow-hidden";
 
   if (index % 3 !== 2) classes += " md:border-r";
 
@@ -313,12 +316,12 @@ export default function DocumentAIPage() {
   const [activeTab, setActiveTab] = useState("EpochInfra");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<RagSearchFile>("retrieve.py");
+  const [activeFile, setActiveFile] = useState<DocumentAIFile>("extract.py");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "retrieve.py": RETRIEVE_CODE,
+    "extract.py": EXTRACT_CODE,
     "eval.py": EVAL_CODE,
     "serve.sh": SERVE_CODE,
     "pipeline.json": PIPELINE_CODE,
@@ -326,8 +329,8 @@ export default function DocumentAIPage() {
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll wire dense plus BM25 plus rerank plus grounded Llama on one L40S, then score against your gold set for recall, faithfulness, and citation coverage.";
-  const AGENT_MSG_2 = "Recipe is ready. Targeting p95 620ms on L40S at $1.40/hr, citations resolve back to source spans. Recall depends on your corpus, run the eval harness on your gold set. Want me to deploy?";
+  const AGENT_MSG_1 = "On it. I'll profile Qwen2.5-VL on the L40S, wire the JSON schema into the OpenAI-compatible request, then prepare a 500-page eval harness for your gold set.";
+  const AGENT_MSG_2 = "Recipe is ready. Targeting 0.4s/page at $0.018/page on L40S. The endpoint forwards the response_format field to vLLM, and the client validates returned JSON. Field accuracy depends on your schema and forms, run the eval harness on your gold set. Want me to deploy?";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -337,7 +340,7 @@ export default function DocumentAIPage() {
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
-  const selectFileManually = (file: RagSearchFile) => {
+  const selectFileManually = (file: DocumentAIFile) => {
     setIsAutoPlay(false);
     setActiveFile(file);
     setActiveMainTab("code");
@@ -345,7 +348,7 @@ export default function DocumentAIPage() {
 
   // Code character-by-character real-time streaming typewriter effect when activeFile changes
   useEffect(() => {
-    const fullCode = FILE_CODE_MAP[activeFile] || RETRIEVE_CODE;
+    const fullCode = FILE_CODE_MAP[activeFile] || EXTRACT_CODE;
 
     setTypedCodeText("");
     setIsTypingCode(true);
@@ -469,6 +472,22 @@ export default function DocumentAIPage() {
         .chat-scroll::-webkit-scrollbar-track { background: transparent; }
         .chat-scroll::-webkit-scrollbar-thumb { background-color: transparent; border-radius: 4px; }
         .chat-scroll:hover::-webkit-scrollbar-thumb { background-color: #666666; }
+        
+        @keyframes noise-shift {
+          0%, 100% { background-position: 0 0; }
+          10% { background-position: -5% -10%; }
+          20% { background-position: -15% 5%; }
+          30% { background-position: 7% -25%; }
+          40% { background-position: 20% 25%; }
+          50% { background-position: -25% 10%; }
+          60% { background-position: 15% 5%; }
+          70% { background-position: 0% 15%; }
+          80% { background-position: 25% 35%; }
+          90% { background-position: -10% 10%; }
+        }
+        .animate-noise-shift {
+          animation: noise-shift 0.2s steps(2) infinite;
+        }
       ` }} />
 
       {/* GLOBAL VERTICAL DASHED LINES */}
@@ -502,8 +521,46 @@ export default function DocumentAIPage() {
       </div>
 
       <main className="flex-1 flex flex-col relative z-10">
+        
+        {/* SVG Filter for recoloring the image to brand colors */}
+        <svg width="0" height="0" className="absolute pointer-events-none">
+          <filter id="brand-duotone">
+            {/* Convert to grayscale using luminance */}
+            <feColorMatrix
+              type="matrix"
+              values="0.2126 0.7152 0.0722 0 0
+                      0.2126 0.7152 0.0722 0 0
+                      0.2126 0.7152 0.0722 0 0
+                      0 0 0 1 0"
+            />
+            {/* Map grayscale values to #151515, #75BF00, and #E2EFC1 */}
+            <feComponentTransfer colorInterpolationFilters="sRGB">
+              <feFuncR type="table" tableValues="0.082 0.458 0.886" />
+              <feFuncG type="table" tableValues="0.082 0.749 0.937" />
+              <feFuncB type="table" tableValues="0.082 0.000 0.757" />
+            </feComponentTransfer>
+          </filter>
+        </svg>
+
+        {/* Background Image touching nav bottom dashed line */}
+        <div className="absolute top-0 inset-x-0 z-0 overflow-hidden pointer-events-none flex justify-center opacity-70">
+          <div className="relative w-[700px] h-[700px]">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#151515] via-transparent to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#151515] via-transparent to-transparent z-10" />
+            <img 
+              src="https://a2-us.storyblok.com/f/1019538/1810x1810/75781443b9/hero-hands.png/m/1080x0/filters:quality(85):format(webp)"
+              alt="Hero Background"
+              className="w-full h-full object-contain object-top mix-blend-screen"
+              style={{ 
+                maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
+                filter: 'url(#brand-duotone)'
+              }}
+            />
+          </div>
+        </div>
+
         {/* Hero Section Container */}
-        <div className="w-full relative mt-20 mb-20">
+        <div className="w-full relative mt-20 mb-20 min-h-[600px] flex items-center">
           {/* Infinite Horizontal Lines bounding the hero section */}
           <div className="absolute bottom-0 left-0 w-full h-px border-t border-dashed border-[#333] z-0" />
 
@@ -573,7 +630,7 @@ export default function DocumentAIPage() {
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The IntentEngine routing, the KnowledgeTier configuration, the CapabilityFabric model choice. None of it locked away.
+                  The optimization knobs, the codebase, the model choice. None of it locked away.
                 </p>
               </div>
             </div>
@@ -630,27 +687,27 @@ export default function DocumentAIPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Citations you can<br/>audit.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Per million tokens,<br/>not per page.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Every answer carries source-doc spans per claim. When legal or finance asks for the source, you have it. Hallucinations stop being invisible.
+                      Closed document AI charges per page. RunInfra bills compute on your GPU. Long documents become cheap.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Hybrid retrieval<br/>beats pure vector.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Your documents<br/>never leave.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Dense embeddings miss jargon, codes, and rare terms. Dense plus BM25 plus rerank lifts recall on the queries that actually fail in production.
+                      Contracts, invoices, and forms stay on your runtime. No third-party retention windows.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Eval on your gold<br/>set, not theirs.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Tune the schema<br/>on your real forms.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Built-in eval harness scores recall, faithfulness, and citation coverage against your own Q&A. Compare two stacks side by side before you deploy.
+                      Bring your schemas and ground-truth labels. The model fine-tunes on your specific layouts.
                     </p>
                   </div>
                 </div>
@@ -668,12 +725,10 @@ export default function DocumentAIPage() {
             
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to ship cited Q&A
+                Three ways to deploy Document AI
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
                 Most teams pick between speed and control. EpochInfra keeps both in one workflow.
-                <br /><br />
-                Deployment comparison for RAG pipelines across EpochInfra, closed APIs, and DIY self-hosting.
               </p>
             </div>
 
@@ -887,12 +942,11 @@ export default function DocumentAIPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Build cited Q&A over our internal docs. Hybrid retrieval with
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><BAAILogo size={11} /> BGE-Large-en-v1.5</span>
-                        plus BM25, cross-encoder reranker,
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><MetaLogo size={11} /> Llama-3.1-8B</span>
-                        grounded with citation spans. Score against our gold set on a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> L40S</span>.
+                        Parse invoices and contracts to JSON.
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><QwenLogo size={11} /> Qwen2.5-VL-7B</span>
+                        with our extraction schema on a single
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> L40S</span>. 
+                        Pass the schema through response_format and validate returned JSON in the client.
                       </p>
                     </div>
 
@@ -929,10 +983,10 @@ export default function DocumentAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ingested 10k docs, hybrid index</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen2.5-VL 7B on L40S</span>
+                            <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">BGE-Large to Qdrant, BM25 to Tantivy sidecar</span>
+                          <span className="text-[#666] text-[12px]">0.4s/page, FP16 vision encoder</span>
                         </div>
                       </div>
 
@@ -947,10 +1001,10 @@ export default function DocumentAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned dense vs sparse weights</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tiled patch embeddings</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">fused recall up on jargon and codes</span>
+                          <span className="text-[#75bf00] text-[12px]">fused with the LLM step</span>
                         </div>
                       </div>
 
@@ -965,10 +1019,10 @@ export default function DocumentAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Reranker over both retrievers</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned AWQ INT4 on the LLM head</span>
+                            <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">k=20 each, rerank to top-5</span>
+                          <span className="text-[#666] text-[12px]">FP16 stays on the vision encoder</span>
                         </div>
                       </div>
 
@@ -983,10 +1037,10 @@ export default function DocumentAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Compiled grounded Llama 3.1 8B</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.3s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Wired JSON schema into response_format</span>
+                            <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">AWQ INT4, citation-span decoder</span>
+                          <span className="text-[#666] text-[12px]">response_format forwarded to vLLM</span>
                         </div>
                       </div>
 
@@ -1001,10 +1055,10 @@ export default function DocumentAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran gold-set eval, 500 queries</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Prepared reference 500-page harness</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">p95 620ms, faithfulness scored per claim</span>
+                          <span className="text-[#75bf00] text-[12px]">$0.018/page target, client validation included</span>
                         </div>
                       </div>
                     </div>
@@ -1056,53 +1110,47 @@ export default function DocumentAIPage() {
                 {/* Files Content */}
                 <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col gap-4 overflow-y-auto pointer-events-auto thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">RAG ADAPTERS</span>
+                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SCHEMAS</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      qdrant.py
+                      invoice.json
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      weaviate.py
+                      contract.json
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      pgvector.py
+                      form.json
                     </div>
 
                     {/* Project Tree Folder */}
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> epoch-rag-search/
+                        <ChevronDown size={14} className="text-[#777]" /> runinfra-document-ai/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
-                          onClick={() => selectFileManually("retrieve.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "retrieve.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("extract.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "extract.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          retrieve.py
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("eval.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          eval.py
+                          extract.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("serve.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           serve.sh
                         </button>
                         <button 
                           onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           pipeline.json
                         </button>
                         <button 
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           Dockerfile
                         </button>
@@ -1131,10 +1179,10 @@ export default function DocumentAIPage() {
                   {/* Editor top tabs */}
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
-                      onClick={() => selectFileManually("retrieve.py")}
-                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "retrieve.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("extract.py")}
+                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "extract.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      retrieve.py
+                      extract.py
                     </button>
                     <button
                       onClick={() => selectFileManually("eval.py")}
@@ -1253,10 +1301,10 @@ export default function DocumentAIPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  Supported HF retrieval models work
+                  Supported HF vision-language models work
                 </h2>
                 <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
-                  Supported retrieval-compatible models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
+                  Supported vision-language models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1268,7 +1316,7 @@ export default function DocumentAIPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any voice-compatible model on Hugging Face"
+                    placeholder="Search any vision-language model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[15px] pl-11 pr-14 py-3.5 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -1290,15 +1338,20 @@ export default function DocumentAIPage() {
                     ) : (
                       models.map((model, index) => (
                         <div key={model.id} className={getBorderClasses(index, models.length)}>
-                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                          {/* Hover Noise Overlay */}
+                          <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay">
+                            <div className="absolute -inset-[100%] opacity-[0.25] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] animate-noise-shift" />
+                          </div>
+
+                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
+                          <div className="relative z-10 w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                             {getLogo(model.author, model.name)}
                           </div>
-                          <div className="flex flex-col gap-1">
+                          <div className="relative z-10 flex flex-col gap-1">
                             <h3 className="text-[20px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>{model.name}</h3>
                             <span className="text-[#C8C7BA] text-[15px] line-clamp-1" title={model.author}>{model.author}</span>
                           </div>
-                          <div className="flex justify-between items-center mt-auto pt-4">
+                          <div className="relative z-10 flex justify-between items-center mt-auto pt-4">
                             <span className="text-[#F0EFE2] font-medium">{model.downloads}</span>
                             <span className="text-[#75bf00] text-[12px] font-medium border border-[#2a381a] px-2 py-1 rounded-sm tracking-wide">{model.tag}</span>
                           </div>
@@ -1334,62 +1387,62 @@ export default function DocumentAIPage() {
                     {/* Row 1 */}
                     <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <ImageIcon size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Hybrid retrieval</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Vision encoder fusion</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Dense embeddings plus BM25 lexical, fused. Catches jargon and rare terms that pure vector misses.
+                        Tiled patch embeddings fused with the LLM step. Page-shape preserved.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <ScanSearch size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Reranker fusion</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Schema-request passthrough</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Cross-encoder reranks dense and sparse hits together in one server. No extra API hop.
+                        Send your JSON schema with response_format, then validate the returned JSON in your application.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Layers size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Citation spans</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">VLM quantization</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Every claim resolves back to source-doc spans. Hallucinations stay traceable, audits stay cheap.
+                        AWQ INT4 on the LLM head, FP16 preserved on the vision encoder.
                       </p>
                     </div>
 
                     {/* Row 2 */}
                     <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Cpu size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Eval harness</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Page-aware batching</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in eval against your gold-set Q&A. Recall, faithfulness, citation coverage, all measured before deploy.
+                        Variable-page batches with PagedAttention. No padding waste on long contracts.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <FileText size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Grounded LLM</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Multi-page reasoning</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Llama 3.1 8B with retrieval-augmented prompts. FlashAttention v2 plus PagedAttention KV.
+                        KV cache shared across pages so the model sees the full document.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <Sliders size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Vector and lexical store</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Pipeline scheduling</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Qdrant for dense, BM25 sidecar for sparse, pgvector or Weaviate also wired. No network hop.
+                        Render and extract interleaved per page, with client-side validation and backpressure on overload.
                       </p>
                     </div>
 

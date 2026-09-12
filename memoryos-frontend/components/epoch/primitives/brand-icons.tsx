@@ -583,69 +583,6 @@ export function QdrantLogo({ className, size = 15 }: BrandIconProps) {
     >
       <circle cx="12" cy="12" r="10" fill="#DC2626" />
       <circle cx="12" cy="12" r="5" fill="#FFFFFF" />
-      <circle cx="12" cy="12" r="2" fill="#DC2626" />
-    </svg>
-  );
-}
-
-// 24. Official Microsoft Brand Logo (4-Square Grid)
-export const MICROSOFT_ICON_URL = "https://imgs.search.brave.com/gZrD5eqR2RtdATDgWM_L81IIsAOU6J7j4L8LlnZ91YI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTM5NmUzZTBm/Y2I4YTEzZDI1Mzll/NmM2MmU4NzlhMGVh/NjdjMmQwZjQ0OTMx/MGRhYTVkNjk1MDNi/M2VkYThkZC93d3cu/bWljcm9zb2Z0LmNv/bS8";
-
-export function MicrosoftLogo({ className, size = 13 }: BrandIconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle rounded-xs", className)}
-    >
-      <rect x="1" y="1" width="10.5" height="10.5" fill="#F25022" />
-      <rect x="12.5" y="1" width="10.5" height="10.5" fill="#7FBA00" />
-      <rect x="1" y="12.5" width="10.5" height="10.5" fill="#00A4EF" />
-      <rect x="12.5" y="12.5" width="10.5" height="10.5" fill="#FFB900" />
-    </svg>
-  );
-}
-
-
-export function OneXLogo({ className, size = 14 }: BrandIconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-    </svg>
-  );
-}
-
-export function TeslaLogo({ className, size = 14 }: BrandIconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M12 4v16M4 4h16M8 8h8" />
-    </svg>
-  );
-}
-
-export function K8sFaviconLogo({ className, size = 14 }: BrandIconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93" />
-    </svg>
-  );
-}
-
-
-import { EpochLogo as OriginalEpochLogo } from "./epoch-logo";
-
-export const EpochLogo = (props: any) => <OriginalEpochLogo {...props} />;
-export const EpochWordmarkLogo = (props: any) => <OriginalEpochLogo variant="wordmark" {...props} />;
-
-
-export function RunPodLogo({ className, size = 14 }: BrandIconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <polygon points="12 2 2 7 12 12 22 7 12 2" />
       <polyline points="2 17 12 22 22 17" />
       <polyline points="2 12 12 17 22 12" />
     </svg>
@@ -722,6 +659,64 @@ export function NomicLogo({ className, size = 13 }: BrandIconProps) {
       className={cn("shrink-0 inline-block align-middle rounded-[20%] object-contain", className)}
       referrerPolicy="no-referrer"
     />
+  );
+}
+
+export function MicrosoftLogo({ className, size = 13 }: BrandIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle rounded-xs", className)}
+    >
+      <rect x="1" y="1" width="10.5" height="10.5" fill="#F25022" />
+      <rect x="12.5" y="1" width="10.5" height="10.5" fill="#7FBA00" />
+      <rect x="1" y="12.5" width="10.5" height="10.5" fill="#00A4EF" />
+      <rect x="12.5" y="12.5" width="10.5" height="10.5" fill="#FFB900" />
+    </svg>
+  );
+}
+
+export function OneXLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M4 4h4v16H4V4zm6 0h4v7h2V4h4v16h-4v-7h-2v7h-4V4z" />
+    </svg>
+  );
+}
+
+export function TeslaLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 4.6c2.7 0 5.4.5 7.8 1.4L21 2c-2.7-1-5.7-1.5-9-1.5S5.7 1 3 2l1.2 4c2.4-.9 5.1-1.4 7.8-1.4zM12 7c-1.5 0-3 .2-4.4.6l.8 3.5c1.1-.3 2.3-.5 3.6-.5s2.5.2 3.6.5l.8-3.5C15 7.2 13.5 7 12 7zm0 5.8c-1.1 0-2.1.2-3.1.5l1.6 7.7h3l1.6-7.7c-1-.3-2-.5-3.1-.5z" />
+    </svg>
+  );
+}
+
+export function RunPodLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  );
+}
+
+import { EpochLogo as OriginalEpochLogo } from "./epoch-logo";
+
+export const EpochLogo = (props: any) => <OriginalEpochLogo {...props} />;
+export const EpochWordmarkLogo = (props: any) => <OriginalEpochLogo variant="wordmark" {...props} />;
+
+export function K8sFaviconLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93" />
+    </svg>
   );
 }
 

@@ -34,7 +34,7 @@ export function IsometricStack() {
     { 
       id: 4, leftText: "PASS", rightText: "FAIL", z: 0,
       title: "DETERMINISTIC OUTCOME",
-      desc: "The final cryptographic verdict deciding if the candidate is mathematically safe to merge."
+      desc: "The final mathematical verdict deciding if the candidate is safe to merge."
     },
   ];
 

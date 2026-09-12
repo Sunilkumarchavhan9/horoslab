@@ -17,7 +17,19 @@ import {
   AnthropicLogo
 } from "@/components/epoch/primitives/brand-icons";
 
-export function RagSearchGrid() {
+export interface RagSearchGridProps {
+  label1?: string;
+  label2?: string;
+  label3?: string;
+  label4?: string;
+}
+
+export function RagSearchGrid({
+  label1 = "Q&A",
+  label2 = "Citations",
+  label3 = "Audits",
+  label4 = "Briefs"
+}: RagSearchGridProps = {}) {
   return (
     <div className="w-full mx-auto relative flex justify-center items-center select-none" style={{ aspectRatio: '1054/740' }}>
       
@@ -79,13 +91,13 @@ export function RagSearchGrid() {
           </div>
 
           {/* Row 2 (y=17.4%) */}
-          {/* Text: Q&A */}
+          {/* Text: label1 */}
           <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '7.6%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
-            Q&A
+            {label1}
           </div>
-          {/* Text: Citations */}
+          {/* Text: label2 */}
           <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '78.3%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
-            Citations
+            {label2}
           </div>
           {/* Col 6: Nomic Ghost (x=92.5%) */}
           <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '92.5%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
@@ -112,9 +124,9 @@ export function RagSearchGrid() {
             <KimiLogo size={24} />
           </div>
           
-          {/* Text: Audits */}
+          {/* Text: label3 */}
           <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '50%', top: '65.7%', transform: 'translate(-50%, -50%)' }}>
-            Audits
+            {label3}
           </div>
 
           {/* Col 5: Meta (x=78.3%) */}
@@ -132,9 +144,9 @@ export function RagSearchGrid() {
           <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '78.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
             <VLLMLogo size={24} />
           </div>
-          {/* Text: Briefs */}
+          {/* Text: label4 */}
           <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '92.5%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
-            Briefs
+            {label4}
           </div>
           
         </div>

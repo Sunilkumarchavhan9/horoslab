@@ -412,6 +412,24 @@ export const MULTI_DOMAIN_SUGGESTIONS: ComposerSuggestion[] = [
       MULTI_REALITY_ENTITIES["@vLLM-Omni"],
     ],
   },
+  {
+    id: "sug-13",
+    action: "Simulate",
+    text: "Simulate @factory-01 using @Cosmos-World-Model on @B200 to predict collision states",
+    fullPrompt: "Simulate @factory-01 using @Cosmos-World-Model on @B200 to predict collision states",
+    intent: "SIMULATE",
+    domain: "simulation",
+    executionDomain: "simulation",
+    modelBadge: { iconType: "nvidia", text: "Cosmos-World-Model" },
+    engineBadge: { text: "Genesis" },
+    hardwareBadge: { text: "8x B200" },
+    rest: "to predict collision states and temporal dynamics",
+    entities: [
+      MULTI_REALITY_ENTITIES["@factory-01"],
+      MULTI_REALITY_ENTITIES["@Cosmos-World-Model"],
+      MULTI_REALITY_ENTITIES["@B200"],
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------

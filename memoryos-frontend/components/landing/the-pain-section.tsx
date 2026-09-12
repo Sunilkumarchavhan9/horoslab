@@ -211,7 +211,7 @@ const IssuesView = () => {
       status: "QUARANTINED",
       risk: "HIGH RISK",
       riskColor: "text-red-400 bg-red-950/40 border-red-800/60",
-      reason: "Agent requested DROP TABLE authority without cryptographic token signature",
+      reason: "Agent requested DROP TABLE authority without valid token signature",
       timestamp: "2 mins ago"
     },
     {
@@ -231,7 +231,7 @@ const IssuesView = () => {
       status: "VERIFIED",
       risk: "VERIFIED",
       riskColor: "text-blue-400 bg-blue-950/40 border-blue-800/60",
-      reason: "Cryptographic state proof signed with key 0x9F8B...A72E",
+      reason: "Verifiable state proof signed with key 0x9F8B...A72E",
       timestamp: "45 mins ago"
     }
   ];
@@ -354,7 +354,7 @@ const GitAutomationsView = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px] font-mono pt-2 border-t border-[#1a1a1e]">
           <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
-            <span>Cryptographic Commit Signature: <span className="text-[#F0EFE2]">VALID (0x8F...4B)</span></span>
+            <span>Commit Verification Signature: <span className="text-[#F0EFE2]">VALID (0x8F...4B)</span></span>
           </div>
           <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
