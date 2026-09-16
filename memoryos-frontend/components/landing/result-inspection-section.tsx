@@ -777,15 +777,15 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           className="relative max-w-4xl mx-auto text-center px-4 z-20"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-normal tracking-tight leading-[1.12] mb-3.5 text-[#F0EFE2]">
-            Every mission ends with a{" "}
+            Decode reality into a{" "}
             <span className="inline-block bg-[#75bf00] text-black px-2.5 py-0.5 rounded-[3px] font-medium tracking-tight shadow-[0_0_20px_rgba(117,191,0,0.35)]">
-              result
+              unified
             </span>{" "}
-            you can inspect, verify, and run.
+            execution layer.
           </h2>
 
           <p className="text-xs sm:text-sm text-[#C8C7BA] font-sans pt-1 max-w-xl mx-auto leading-relaxed">
-            Every mission produces a Primary Result, Measured Change, Deliverable, Proof, Verification, and Next Actions. Nothing hidden.
+            Epoch connects models, runtimes, telemetry, cameras, and physical world state into a single verifiable reality graph.
           </p>
         </div>
 

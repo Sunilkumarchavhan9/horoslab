@@ -121,16 +121,18 @@ export function EpochInferenceControlPlane({
   // Keep the control plane synchronized with live backend state while it is open.
   const loadData = useCallback(async () => {
     try {
-      setDataError(null);
-      const [o, p, m, r, d, reg, ev] = await Promise.all([
-        epochAdapter.getOverview(workspaceId),
-        epochAdapter.getPrograms(workspaceId),
-        epochAdapter.getModels(workspaceId),
-        epochAdapter.getRuns(workspaceId),
-        epochAdapter.getDeployments(workspaceId),
-        epochAdapter.getRegistry(workspaceId),
-        epochAdapter.getEvidence(workspaceId),
-      ]);
+      // Clear data error on new attempt
+      if (dataError) setDataError(null);
+
+      // Fetch sequentially to avoid backend 429 rate limits on 7 simultaneous requests
+      const o = await epochAdapter.getOverview(workspaceId);
+      const p = await epochAdapter.getPrograms(workspaceId);
+      const m = await epochAdapter.getModels(workspaceId);
+      const r = await epochAdapter.getRuns(workspaceId);
+      const d = await epochAdapter.getDeployments(workspaceId);
+      const reg = await epochAdapter.getRegistry(workspaceId);
+      const ev = await epochAdapter.getEvidence(workspaceId);
+
       setOverview(o);
       setPrograms(p);
       setModels(m);
@@ -138,6 +140,7 @@ export function EpochInferenceControlPlane({
       setDeployments(d);
       setRegistry(reg);
       setEvidence(ev);
+      setDataError(null);
     } catch (err) {
       setDataError(err instanceof Error ? err.message : "Epoch runtime data could not be loaded.");
       console.error("Failed to fetch Epoch runtime data:", err);
@@ -149,11 +152,12 @@ export function EpochInferenceControlPlane({
   useEffect(() => {
     void loadData();
     const refreshTimer = window.setInterval(() => {
-      if (document.visibilityState === "visible") void loadData();
+      // Don't poll if we're encountering backend errors (like 429 or 404) to avoid getting blocked
+      if (document.visibilityState === "visible" && !dataError) void loadData();
     }, 10_000);
 
     return () => window.clearInterval(refreshTimer);
-  }, [loadData]);
+  }, [loadData, dataError]);
 
   const loadProgramRuns = useCallback(async (programId: string) => {
     try {

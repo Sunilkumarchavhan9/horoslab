@@ -463,7 +463,7 @@ export default function EmbodiedHumanoidsPage() {
   };
 
   useEffect(() => {
-    const fullCode = FILE_CODE_MAP[activeFile] || RUN_SIMULATION_CODE;
+    const fullCode = FILE_CODE_MAP[activeFile] || "";
 
     setTypedCodeText("");
     setIsTypingCode(true);

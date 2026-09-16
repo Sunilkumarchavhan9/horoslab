@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronDown, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+import { ChevronDown, ArrowRight, ArrowUpRight, Menu, X, Box, Calculator, BookOpen, Clock, Rocket, Newspaper } from "lucide-react";
 import { EpochLogo } from "@/components/epoch/primitives/epoch-logo";
 import { 
   QwenLogo, 
@@ -42,9 +42,22 @@ export function LandingNavbar({
   const [infrastructureOpen, setInfrastructureOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-[100] border-b border-dashed border-[#333333] bg-[#151515]/90 backdrop-blur-md font-mono text-xs text-[#F0EFE2]">
+    <header className={`fixed left-0 right-0 z-[100] font-mono text-xs text-[#F0EFE2] transition-all duration-500 ease-out ${
+      isScrolled 
+        ? "top-4 mx-auto w-[96%] max-w-[1600px] border border-dashed border-[#555] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] bg-[#151515]/95 backdrop-blur-xl" 
+        : "top-0 w-full border-b border-dashed border-[#333333] bg-[#151515]/90 backdrop-blur-md"
+    }`}>
       
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -55,7 +68,7 @@ export function LandingNavbar({
       `}} />
 
       {/* Animated Marquee Background */}
-      <div className="absolute inset-0 z-0 flex items-center overflow-hidden pointer-events-none opacity-60">
+      <div className={`absolute inset-0 z-0 flex items-center pointer-events-none opacity-60 transition-all duration-500 overflow-hidden`}>
         <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#151515] to-transparent z-10" />
         <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#151515] to-transparent z-10" />
         
@@ -253,7 +266,7 @@ export function LandingNavbar({
                       <Link 
                         key={uc.title} 
                         href={uc.href} 
-                        onClick={() => setUseCasesOpen(false)}
+                        onClick={() => setTimeout(() => setUseCasesOpen(false), 100)}
                         className={commonClasses}
                       >
                         {content}
@@ -264,7 +277,7 @@ export function LandingNavbar({
                   return (
                     <div
                       key={uc.title}
-                      onClick={() => setUseCasesOpen(false)}
+                      onClick={() => setTimeout(() => setUseCasesOpen(false), 100)}
                       className={commonClasses}
                     >
                       {content}
@@ -275,88 +288,7 @@ export function LandingNavbar({
             )}
           </div>
 
-          {/* Infrastructure/Platform dropdown */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setInfrastructureOpen(!infrastructureOpen);
-                setUseCasesOpen(false);
-                setResourcesOpen(false);
-              }}
-              className="flex items-center gap-1 hover:text-[#F0EFE2] transition-colors cursor-pointer py-1 whitespace-nowrap"
-            >
-              <span>Platform</span>
-              <ChevronDown size={11} className="text-[#666]" />
-            </button>
 
-            {infrastructureOpen && (
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[720px] border border-dashed border-[#333] bg-[#151515] shadow-2xl z-50 text-left font-sans grid grid-cols-3 whitespace-normal">
-                {[
-                  {
-                    title: "Embodied AI & Robotics",
-                    desc: "LiDAR, IMU, and vehicle sensor perception on the edge.",
-                    icons: [DeepSeekLogo, NvidiaLogo]
-                  },
-                  {
-                    title: "Datacenter Automation",
-                    desc: "Liquid cooling, power states, and PUE optimization at scale.",
-                    icons: [NvidiaLogo, K8sFaviconLogo]
-                  },
-                  {
-                    title: "Multi-Model Inference",
-                    desc: "Seamlessly route between Llama 3, Qwen 2, and DeepSeek.",
-                    icons: [MetaLogo, QwenLogo, DeepSeekLogo]
-                  },
-                  {
-                    title: "Agentic System Repair",
-                    desc: "Auto-remediating cloud pipelines and self-healing infrastructure.",
-                    icons: [GithubLogo, HuggingFaceLogo]
-                  },
-                  {
-                    title: "Video & Telemetry",
-                    desc: "Process Cosmos and NV-Embed streams for continuous observation.",
-                    icons: [MicrosoftLogo, NvidiaLogo]
-                  },
-                  {
-                    title: "Hardware Scheduling",
-                    desc: "Dynamic GPU/XPU binpacking for TRT-LLM and vLLM runtimes.",
-                    icons: [VLLMLogo, NvidiaLogo]
-                  },
-                ].map((uc, i) => (
-                  <div
-                    key={uc.title}
-                    onClick={() => setInfrastructureOpen(false)}
-                    className={`relative min-h-[140px] p-5 hover:bg-[#161616] cursor-pointer transition-colors group flex flex-col gap-3 ${i % 3 !== 2 ? "border-r border-dashed border-[#333]" : ""} ${i < 3 ? "border-b border-dashed border-[#333]" : ""}`}
-                  >
-                    <div className="flex items-center w-fit border border-dashed border-[#333] p-[3px] gap-[3px] rounded-sm group-hover:border-[#555] transition-colors relative z-10">
-                      {uc.icons.map((Icon, idx) => (
-                        <div key={idx} className="flex items-center justify-center border border-dashed border-[#333] bg-[#0a0a0a] p-[5px] rounded-sm group-hover:border-[#555] transition-colors">
-                          <Icon size={14} />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowUpRight size={16} className="text-[#75bf00]" />
-                    </div>
-                    <div className="flex flex-col gap-1 mt-auto relative z-10">
-                      <div className="font-medium text-[14px] text-[#F0EFE2] tracking-tight w-fit px-1 -ml-1 group-hover:bg-[#75bf00] group-hover:text-black transition-colors">
-                        {uc.title}
-                      </div>
-                      <div className="text-[12px] text-[#C8C7BA] group-hover:text-[#e5e5e5] transition-colors leading-snug pr-2">{uc.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <Link href="#model-apis" className="flex items-center gap-1.5 hover:text-[#F0EFE2] transition-colors whitespace-nowrap">
-            <span>Model APIs</span>
-            <span className="bg-[#75bf00] text-black text-[9px] font-black px-1.5 py-0.2 rounded-xs tracking-tight whitespace-nowrap">
-              NEW
-            </span>
-          </Link>
 
           <Link href="#pricing" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap">
             Pricing
@@ -373,6 +305,7 @@ export function LandingNavbar({
               onClick={() => {
                 setResourcesOpen(!resourcesOpen);
                 setUseCasesOpen(false);
+                setInfrastructureOpen(false);
               }}
               className="flex items-center gap-1 hover:text-[#F0EFE2] transition-colors cursor-pointer py-1 whitespace-nowrap"
             >
@@ -381,24 +314,74 @@ export function LandingNavbar({
             </button>
 
             {resourcesOpen && (
-              <div className="absolute left-0 top-full mt-2 w-56 border border-[#2a2a2a] bg-[#141414] p-2 rounded-xs shadow-2xl space-y-1 z-50 text-left font-sans">
+              <div className="absolute left-1/2 -translate-x-1/2 xl:left-0 xl:translate-x-0 top-full mt-2 w-[720px] xl:-ml-48 border border-dashed border-[#333] bg-[#151515] shadow-2xl z-50 text-left font-sans grid grid-cols-3 whitespace-normal">
                 {[
-                  { title: "Documentation", desc: "Architecture & API references" },
-                  { title: "Benchmarks", desc: "Empirical latency & throughput data" },
-                  { title: "OpenTelemetry", desc: "Trace ingestion & metrics" },
-                ].map((res) => (
-                  <div
+                  {
+                    title: "Capabilities Graph",
+                    desc: "Discover supported models, runtimes, and physical sensors.",
+                    icon: <Box size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
+                    href: "/capabilities"
+                  },
+                  {
+                    title: "Economics & Cost",
+                    desc: "Analyze TCO, $/request, and data center power projections.",
+                    icon: <Calculator size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
+                    href: "/economics"
+                  },
+                  {
+                    title: "Documentation",
+                    desc: "Core architecture, execution APIs, and adapter schemas.",
+                    icon: <BookOpen size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
+                    href: "#documentation"
+                  },
+                  {
+                    title: "Changelog",
+                    desc: "Continuous updates to the Reality Intelligence Runtime.",
+                    icon: <Clock size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
+                    href: "#changelog"
+                  },
+                  {
+                    title: "Startups & Scaleups",
+                    desc: "Execution credits, plus hands-on integration engineering.",
+                    icon: <Rocket size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
+                    href: "#startups-scaleups"
+                  },
+                  {
+                    title: "Research & Evidence",
+                    desc: "Empirical benchmarks and intelligence evolution papers.",
+                    icon: <Newspaper size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
+                    href: "#research-evidence"
+                  },
+                ].map((res, i) => (
+                  <Link
                     key={res.title}
-                    onClick={() => setResourcesOpen(false)}
-                    className="p-2 hover:bg-[#202020] rounded-xs cursor-pointer transition-colors"
+                    href={res.href}
+                    onClick={() => setTimeout(() => setResourcesOpen(false), 150)}
+                    className={`relative min-h-[140px] p-6 hover:bg-[#1a1a1a] cursor-pointer transition-colors group flex flex-col gap-4 ${i % 3 !== 2 ? "border-r border-dashed border-[#333]" : ""} ${i < 3 ? "border-b border-dashed border-[#333]" : ""}`}
                   >
-                    <div className="font-bold text-xs text-[#F0EFE2]">{res.title}</div>
-                    <div className="text-[10px] text-[#788274] mt-0.5">{res.desc}</div>
-                  </div>
+                    <div className="flex items-center justify-center w-8 h-8 border border-dashed border-[#444] rounded-[2px] bg-[#111] group-hover:border-[#666] transition-colors">
+                      {res.icon}
+                    </div>
+                    <div className="flex flex-col gap-1.5 mt-auto">
+                      <div className="font-bold text-[14px] text-[#F0EFE2] tracking-tight group-hover:text-[#75bf00] transition-colors">
+                        {res.title}
+                      </div>
+                      <div className="text-[12px] text-[#999] leading-snug group-hover:text-[#ccc] transition-colors">
+                        {res.desc}
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
           </div>
+
+          <Link href="/epochinfra" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap flex items-center gap-1.5">
+            EpochInfra
+            <span className="bg-[#75bf00] text-black text-[9px] font-black px-1.5 py-0.2 rounded-xs tracking-tight whitespace-nowrap">
+              NEW
+            </span>
+          </Link>
 
           <Link href="#contact" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap">
             Contact
@@ -442,31 +425,33 @@ export function LandingNavbar({
           <div className="flex flex-col space-y-2.5">
             <Link
               href="#use-cases"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => setTimeout(() => setMobileMenuOpen(false), 150)}
               className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2]"
             >
               Use cases
             </Link>
-            <Link
-              href="#model-apis"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2] flex items-center justify-between"
-            >
-              <span>Model APIs</span>
-              <span className="bg-[#75bf00] text-black text-[9px] font-black px-1.5 py-0.2 rounded-xs">
-                NEW
-              </span>
-            </Link>
+
             <Link
               href="#pricing"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => setTimeout(() => setMobileMenuOpen(false), 150)}
               className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2]"
             >
               Pricing
             </Link>
             <Link
+              href="/epochinfra"
+              onClick={() => setTimeout(() => setMobileMenuOpen(false), 150)}
+              className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2] flex items-center justify-between"
+            >
+              <span>EpochInfra</span>
+              <span className="bg-[#75bf00] text-black text-[9px] font-black px-1.5 py-0.2 rounded-xs">
+                NEW
+              </span>
+            </Link>
+
+            <Link
               href="#research"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => setTimeout(() => setMobileMenuOpen(false), 150)}
               className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2]"
             >
               Research

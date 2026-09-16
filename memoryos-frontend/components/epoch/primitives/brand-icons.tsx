@@ -86,9 +86,9 @@ export function MetaLogo({ className, size = 13 }: BrandIconProps) {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="#0081FB"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-[#0081FB]", className)}
+      className={cn("shrink-0 inline-block align-middle", className)}
     >
       <path
         fillRule="evenodd"
@@ -128,9 +128,9 @@ export function QwenLogo({ className, size = 13 }: BrandIconProps) {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="#8B5CF6"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-[#8B5CF6]", className)}
+      className={cn("shrink-0 inline-block align-middle", className)}
     >
       <path
         fillRule="evenodd"
@@ -190,9 +190,9 @@ export function OpenAILogo({ className, size = 13 }: BrandIconProps) {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="#10A37F"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-[#10A37F]", className)}
+      className={cn("shrink-0 inline-block align-middle", className)}
     >
       <path
         fillRule="evenodd"
@@ -250,9 +250,9 @@ export function NvidiaLogo({ className, size = 14 }: BrandIconProps) {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="#76B900"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-[#76B900]", className)}
+      className={cn("shrink-0 inline-block align-middle", className)}
     >
       <path
         d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.398 0-.787-.062-1.158-.185v-4.346c1.528.185 1.837.857 2.747 2.385l2.04-1.714s-1.492-1.952-4-1.952a6.016 6.016 0 0 0-.796.035m0-4.735v2.138l.424-.027c5.45-.185 9.01 4.47 9.01 4.47s-4.08 4.964-8.33 4.964c-.37 0-.733-.035-1.095-.097v1.325c.3.035.61.062.91.062 3.957 0 6.82-2.023 9.593-4.408.459.371 2.34 1.263 2.73 1.652-2.633 2.208-8.772 3.984-12.253 3.984-.335 0-.653-.018-.971-.053v1.864H24V4.063zm0 10.326v1.131c-3.657-.654-4.673-4.46-4.673-4.46s1.758-1.944 4.673-2.262v1.237H8.94c-1.528-.186-2.73 1.245-2.73 1.245s.68 2.412 2.739 3.11M2.456 10.9s2.164-3.197 6.5-3.533V6.201C4.153 6.59 0 10.653 0 10.653s2.35 6.802 8.948 7.42v-1.237c-4.84-.6-6.492-5.936-6.492-5.936z"
@@ -363,9 +363,9 @@ export function DeepSeekLogo({ className, size = 18 }: BrandIconProps) {
       width={size}
       height={Math.round(size * (42 / 56))}
       viewBox="0 0 57 42"
-      fill="currentColor"
+      fill="#4D6BFE"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 inline-block align-middle text-[#4D6BFE]", className)}
+      className={cn("shrink-0 inline-block align-middle", className)}
     >
       <path
         fillRule="evenodd"
@@ -584,24 +584,6 @@ export function QdrantLogo({ className, size = 15 }: BrandIconProps) {
       <circle cx="12" cy="12" r="10" fill="#DC2626" />
       <circle cx="12" cy="12" r="5" fill="#FFFFFF" />
       <polyline points="2 17 12 22 22 17" />
-      <polyline points="2 12 12 17 22 12" />
-    </svg>
-  );
-}
-
-export function ModalLogo({ className, size = 14 }: BrandIconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-      <line x1="8" y1="21" x2="16" y2="21" />
-      <line x1="12" y1="17" x2="12" y2="21" />
-    </svg>
-  );
-}
-
-export function OpenTelemetryLogo({ className, size = 14 }: BrandIconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <circle cx="12" cy="12" r="10" />
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
       <path d="M2 12h20" />
@@ -720,3 +702,138 @@ export function K8sFaviconLogo({ className, size = 14 }: BrandIconProps) {
   );
 }
 
+const getFaviconUrl = (url: string) => `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=256`;
+
+// Missing Integration Logos
+export function ClaudeLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src="https://imgs.search.brave.com/GWjaTV9oDpq1Je9ium8eyNBhR4UvPfZUchUjSllz4rI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTczMzdhMjk1/MjZkMGQ0YWFmNzE1/NjZhM2U4MDQzMjc5/OThlZDkyNTlhOGVh/Zjg4Mzk2MTIxOGFh/ZjkxYjdmYy9jbGF1/ZGUuYWkv" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Claude" />;
+}
+
+export function PiLogo({ className, size = 24 }: BrandIconProps) {
+  return (
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 800 800" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle", className)}
+    >
+      <path fill="#fff" fillRule="evenodd" d="
+        M165.29 165.29
+        H517.36
+        V400
+        H400
+        V517.36
+        H282.65
+        V634.72
+        H165.29
+        Z
+        M282.65 282.65
+        V400
+        H400
+        V282.65
+        Z
+      "/>
+      <path fill="#fff" d="M517.36 400 H634.72 V634.72 H517.36 Z"/>
+    </svg>
+  );
+}
+export function AiderLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src="https://imgs.search.brave.com/YXH3gT6RewEP7XjeYr3WV9JuLpcR7qYXFdF0eJL0RTg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMTA5ZjNhOGYy/NDg0NmI2YmQ5MTZh/ZDRiNThiNTY5N2Nm/ZjJhNzZiZjM1YjEw/ZWI0MGIwZDVlNmRl/YTc2YjJjMC9haWRl/ci5jaGF0Lw" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Aider" />;
+}
+export function ContinueLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://continue.dev/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Continue" />;
+}
+export function ClineLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://cline.bot/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Cline" />;
+}
+export function ZedLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://zed.dev/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Zed" />;
+}
+export function CursorLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://cursor.com/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Cursor" />;
+}
+export function GrokLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://x.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Grok" />;
+}
+export function HermesLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://nousresearch.com/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Hermes" />;
+}
+export function GooseLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://block.github.io/goose/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Goose" />;
+}
+
+// Fallbacks for the rest:
+export function OpenCodeLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://github.com/features/copilot")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="OpenCode" />;
+}
+export function KiloCodeLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src="https://avatars.githubusercontent.com/u/201822503?s=60&v=4" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Kilo Code" />;
+}
+export function DroidLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src="https://imgs.search.brave.com/xW0NrxpSMeg101jtp7pbV5dw_YhIl8e0eo1dCSmxXOM/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGJiMzliMTU0/ZGMyZTVmNDdiNTJj/MTY5ZWUyY2ViNTU3/MGU5ZjY2YmFjMTFh/ZDJlYjk4OTA0N2U5/OGY3YjBjYS9kb2Nz/LmZhY3RvcnkuYWkv" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Droid" />;
+}
+export function OpenClawLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src="https://imgs.search.brave.com/9HABCLLoPhAIRPZxDlSujum0p8IyKqkzzkbLURSbgmI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYzcxZjgxYjg2/NGEyNmM3ZGY2N2Q2/YjVkY2NmYzBlMGY5/NWVkZGViMjQ5MTRk/MzY3YmJkOWRkY2Y4/ZDVlOGZmMS9vcGVu/Y2xhdy5haS8" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="OpenClaw" />;
+}
+export function CrushLogo({ className, size = 24 }: BrandIconProps) {
+  return <div style={{width: size, height: size}} className={cn("bg-[#1a1a1a] border border-[#333] text-[#aaa] font-mono text-[10px] flex items-center justify-center rounded-[4px]", className)}>{">_"}</div>;
+}
+export function FxLogo({ className, size = 24 }: BrandIconProps) {
+  return <div style={{width: size, height: size}} className={cn("bg-[#1a1a1a] border border-[#333] text-[#aaa] font-mono text-[10px] flex items-center justify-center rounded-[4px]", className)}>{"fx"}</div>;
+}
+
+// Compute Providers
+export function AnyscaleLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.anyscale.com/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Anyscale" />;
+}
+export function PrimeIntellectLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.primeintellect.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Prime Intellect" />;
+}
+export function BasetenLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.baseten.co/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Baseten" />;
+}
+export function TogetherAILogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.together.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Together AI" />;
+}
+export function FireworksAILogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://fireworks.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Fireworks AI" />;
+}
+
+// Robotics / Physical Intelligence
+export function PhysicalIntelligenceLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.physicalintelligence.company/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Physical Intelligence" />;
+}
+export function SkildAILogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://skild.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Skild AI" />;
+}
+export function DexterityLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.dexterity.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Dexterity" />;
+}
+export function CovariantLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://covariant.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Covariant" />;
+}
+export function GeminiRoboticsLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://www.gemini.com/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Gemini Robotics" />;
+}
+export function TelekinesisLogo({ className, size = 24 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://telekinesis.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Telekinesis" />;
+}
+
+export function ModalLogo({ className, size = 14 }: BrandIconProps) {
+  return <img src={getFaviconUrl("https://modal.com/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Modal" />;
+}
+
+export function OpenTelemetryLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      <path d="M2 12h20" />
+    </svg>
+  );
+}
+
+export function OrnithLogo({ className, size = 14 }: BrandIconProps) {
+  return <img src="https://ornith.ai/assets/webp/header-logo-Bjk6zmTF.webp" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Ornith" />;
+}

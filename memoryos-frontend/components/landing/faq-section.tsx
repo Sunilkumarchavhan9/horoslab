@@ -5,24 +5,24 @@ import { MemoryOSFullLogo } from "@/components/landing/memoryos-full-logo";
 
 const FAQ_ITEMS = [
   {
-    question: "What is RunInfra?",
-    answer: "Describe what you want to run. RunInfra picks compatible open models, benchmarks GPUs, tunes the runtime, and gives you a deploy-ready stack.",
+    question: "What is Epoch?",
+    answer: "Epoch is the Reality Intelligence Runtime. We teach intelligent systems to decode reality, explore unknowns, autonomously experiment across hardware, and deliver verified production results.",
   },
   {
-    question: "What are RunInfra Model APIs?",
-    answer: "RunInfra Model APIs provide drop-in compatible endpoints (like OpenAI's format) powered by optimized open-source models running on managed or dedicated infrastructure.",
+    question: "How does Intelligence Routing work?",
+    answer: "Instead of manually calling specific model APIs, you send intent to the Epoch runtime. It continuously adapts models to your physical environment and routes tasks to the best adapted intelligence for the job.",
   },
   {
-    question: "How do I build my first pipeline?",
-    answer: "Simply enter your prompt and target constraints in the Composer. RunInfra will automatically select the best model, serve it, and generate a fully optimized pipeline.",
+    question: "How do I deploy my first Reality stack?",
+    answer: "Simply enter your intent and constraints in the Composer. Epoch will automatically discover the necessary capabilities, simulate hypotheses, and deploy a verified stack.",
   },
   {
-    question: "Which AI models are supported?",
-    answer: "We support all major open models including Llama 3, Mistral, Qwen, DeepSeek, and Gemma, continuously updated as new state-of-the-art models are released.",
+    question: "Which open models are supported?",
+    answer: "We support all major open models including Llama 3.1, Mistral, Qwen, DeepSeek, and specialized physical models, continuously updating as new state-of-the-art weights are released.",
   },
   {
-    question: "How does GPU kernel optimization work?",
-    answer: "Our engine profiles your specific workload against multiple inference backends (like vLLM, SGLang, TensorRT-LLM) to automatically select the optimal batching and kernel strategy.",
+    question: "How does deployment optimization work?",
+    answer: "Epoch explores your specific environment against multiple execution runtimes to automatically build the perfect stack, optimizing for latency, cost, and safety boundaries.",
   },
   {
     question: "Can I deploy pipelines as APIs?",
@@ -68,11 +68,10 @@ export const FaqSection = () => {
             <button
               key={idx}
               onClick={() => setActiveFaq(idx)}
-              className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${
-                activeFaq === idx
+              className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
                   ? "bg-[#75bf00] text-black"
                   : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
-              }`}
+                }`}
             >
               {faq.question}
             </button>
@@ -86,7 +85,7 @@ export const FaqSection = () => {
         <div className="flex items-start gap-5 max-w-5xl w-full text-left px-4 md:px-12">
           <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-md flex items-center justify-center h-10 w-10">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-               <path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
+              <path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
             </svg>
           </div>
           <div>

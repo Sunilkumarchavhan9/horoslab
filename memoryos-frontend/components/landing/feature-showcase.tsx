@@ -387,14 +387,14 @@ function RunbookDashboard() {
             <div className="space-y-2.5">
               <PhaseItem num="06" title="Autonomous Decision" desc="Quality and economics ranking" status="queued" />
               <PhaseItem num="07" title="Policy & Authority" desc="Risk, cost, and safety gates" status="queued" />
-              <PhaseItem num="08" title="Execution Fabric" desc="Deploy software or actuate physical" status="ready" />
+              <PhaseItem num="08" title="Execution Layer" desc="Deploy software or actuate physical" status="ready" />
               <PhaseItem num="09" title="Evidence Collection" desc="Observe and gather provenance" status="queued" />
               <PhaseItem num="10" title="Independent Verifier" desc="Verifiably confirm claims" status="queued" />
             </div>
             <div className="space-y-2.5">
               <PhaseItem num="11" title="Experience Engine" desc="Compile verified outcome records" status="queued" />
               <PhaseItem num="12" title="Lesson Engine" desc="Generalize into teaching signals" status="queued" />
-              <PhaseItem num="13" title="Teaching Fabric" desc="Train, adapt, and route models" status="queued" />
+              <PhaseItem num="13" title="Teaching System" desc="Train, adapt, and route models" status="queued" />
               <PhaseItem num="14" title="Intelligence Evolution" desc="Evaluate, canary, and promote" status="queued" />
               <PhaseItem num="15" title="Better Reality Model" desc="Continuously adapt world state" status="queued" />
             </div>
@@ -646,7 +646,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
             </div>
           </div>
 
-          {/* Block 8: Teaching Fabric & Compounding Intelligence */}
+          {/* Block 8: Teaching System & Compounding Intelligence */}
           <div
             className="scroll-spy-trigger min-h-[85vh] flex flex-col justify-start p-8 lg:p-12 pt-12 lg:pt-16 border-t border-dashed border-[#333333]"
             data-section="8"

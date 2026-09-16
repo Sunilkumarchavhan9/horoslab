@@ -161,7 +161,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
                 <div className="space-y-4">
                   <PhaseItem num="06" title="Autonomous Decision" desc="Quality and economics ranking" status="queued" />
                   <PhaseItem num="07" title="Policy & Authority" desc="Risk, cost, and safety gates" status="queued" />
-                  <PhaseItem num="08" title="Execution Fabric" desc="Deploy software or actuate physical" status="ready" />
+                  <PhaseItem num="08" title="Execution Layer" desc="Deploy software or actuate physical" status="ready" />
                   <PhaseItem num="09" title="Evidence Collection" desc="Observe and gather provenance" status="queued" />
                   <PhaseItem num="10" title="Independent Verifier" desc="Verifiably confirm claims" status="queued" />
                 </div>

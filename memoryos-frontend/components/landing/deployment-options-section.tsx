@@ -48,7 +48,7 @@ export function DeploymentOptionsSection() {
         <div className="w-full text-center py-20 relative z-10">
           <HorizontalDivider position="top" infinite={true} />
           <h2 className="text-3xl lg:text-4xl font-medium text-[#F0EFE2] tracking-tight">
-            Our cloud, your cloud, or your own <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">hardware</span>
+            Our cloud, your cloud, or the physical <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">edge</span>
           </h2>
         </div>
 
@@ -65,7 +65,7 @@ export function DeploymentOptionsSection() {
               The Constant
             </div>
             <div className="text-[#e0e0e0] text-[14px] font-medium">
-              Every paid optimization ships a deployment kit, so the exit is free.
+              Intelligence runs everywhere identically. You own the verified outcomes.
             </div>
           </div>
 
@@ -112,7 +112,7 @@ export function DeploymentOptionsSection() {
                 RunPod, Modal, Vast & CoreWeave
               </h3>
               <p className="text-[#C8C7BA] text-[13px] leading-relaxed mb-6 relative z-10">
-                Bring your account, your endpoint URL, and your key. The Execution Fabric seamlessly bridges to your preferred GPU cloud.
+                Bring your account, your endpoint URL, and your key. The Execution Layer seamlessly bridges to your preferred GPU cloud.
               </p>
               <p className="text-[#666] text-[12px] leading-relaxed mb-6 relative z-10">
                 We manage the complexity of deploying models and tools into these environments, orchestrating the nodes and scaling the stack securely within your own infrastructure boundary.
