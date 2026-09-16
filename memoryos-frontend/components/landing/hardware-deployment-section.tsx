@@ -234,10 +234,10 @@ export function HardwareDeploymentSection() {
       {/* Header Section */}
       <div className="w-full relative px-[14%] mb-32 text-center">
         <h2 className="text-4xl sm:text-5xl font-medium tracking-tight mb-4 z-10 relative">
-          Deploy models to any <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">reality surface</span>
+          Deploy and <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">verify</span> anywhere
         </h2>
         <p className="text-[#C8C7BA] max-w-2xl mx-auto text-[15px] z-10 relative">
-          Pull any model from Hugging Face, compose it through the Epoch Reality Runtime, and deploy instantly to cloud infrastructure, edge devices, or physical robotics.
+          Epoch deploys intelligence into software, compute clusters, edge devices, and physical robotics. Actuate when authorized, and verify the physical consequences.
         </p>
       </div>
 

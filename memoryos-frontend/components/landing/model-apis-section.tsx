@@ -33,7 +33,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
           {/* Header Section (Spans the 72% inner area) */}
           <h2 className="text-4xl sm:text-5xl font-medium tracking-tight text-center py-24 z-10 relative">
-            Decode physical reality, or build your own <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">stack</span>
+            Teach intelligence to decode your <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">reality</span>
           </h2>
 
           {/* Main 2-Column Grid Area */}
@@ -48,24 +48,24 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                 {/* --- ROW 1 --- */}
                 <div className="flex flex-col p-6 lg:p-8 xl:p-10 border-b border-dashed border-[#333] relative overflow-hidden group">
                   <div className="text-[#75bf00] text-[10px] font-mono font-bold uppercase tracking-widest mb-6 relative z-10">
-                    BUILD OR EXPORT
+                    TEACH CONTINUOUSLY
                   </div>
                   <h3 className="text-2xl font-semibold text-[#F0EFE2] mb-2 tracking-tight relative z-10">
-                    Optimize models for reality
+                    Adapt models to your physics
                   </h3>
                   <p className="text-[#C8C7BA] text-[13px] relative z-10 max-w-[90%]">
-                    Upload any Hugging Face model or dataset repository. Let Epoch auto-optimize it for your physical reality and constraints.
+                    Provide Epoch with open models and physical telemetry. The runtime continually adapts weights, state, and rules to match your environment.
                   </p>
                 </div>
                 <div className="flex flex-col p-6 lg:p-8 xl:p-10 border-b border-dashed border-[#333] relative overflow-hidden group">
                   <div className="text-[#75bf00] text-[10px] font-mono font-bold uppercase tracking-widest mb-6 relative z-10">
-                    MODEL APIS
+                    INTELLIGENCE ROUTING
                   </div>
                   <h3 className="text-2xl font-semibold text-[#F0EFE2] mb-2 tracking-tight relative z-10">
-                    Serverless capability routing
+                    Route intent, not inference
                   </h3>
                   <p className="text-[#C8C7BA] text-[13px] max-w-sm leading-relaxed relative z-10">
-                    Or skip the infra entirely. Hit one universal endpoint that seamlessly routes your intent to the best hardware and models behind the scenes.
+                    Stop manually calling model APIs. Send intent to the runtime, and it routes tasks to the best adapted intelligence for the job.
                   </p>
                 </div>
 

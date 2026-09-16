@@ -115,10 +115,10 @@ export function LeftFeedStrip() {
     <aside
       onMouseEnter={() => tlRef.current?.pause()}
       onMouseLeave={() => tlRef.current?.play()}
-      className="hidden lg:flex flex-col w-[14vw] border-r border-dashed border-[#333333] bg-[#151515] p-3 font-mono text-xs select-none shrink-0 h-[540px] overflow-hidden relative"
+      className="hidden lg:flex flex-col w-[14vw] border-r border-dashed border-[#333333] bg-[#151515] p-3 mt-20 font-mono text-xs select-none shrink-0 h-[540px] overflow-hidden relative"
     >
       {/* Top Label */}
-      <div className="space-y-0.5 pb-2.5 border-b border-dashed border-[#333333] mb-2 text-left z-10 bg-[#151515]">
+      <div className="shrink-0 space-y-0.5 pb-2.5 border-b border-dashed border-[#333333] mb-2 text-left z-10 bg-[#151515]">
         <div className="text-[10px] uppercase font-bold text-[#666666] tracking-wider font-mono">
           GOES IN
         </div>
@@ -220,10 +220,10 @@ export function RightFeedStrip() {
     <aside
       onMouseEnter={() => tlRef.current?.pause()}
       onMouseLeave={() => tlRef.current?.play()}
-      className="hidden lg:flex flex-col w-[14vw] border-l border-dashed border-[#333333] bg-[#151515] p-3 font-mono text-xs select-none shrink-0 h-[540px] overflow-hidden relative"
+      className="hidden lg:flex flex-col w-[14vw] border-l border-dashed border-[#333333] bg-[#151515] p-3 mt-20 font-mono text-xs select-none shrink-0 h-[540px] overflow-hidden relative"
     >
       {/* Top Label */}
-      <div className="space-y-0.5 pb-2.5 border-b border-dashed border-[#333333] mb-2 text-left z-10 bg-[#151515]">
+      <div className="shrink-0 space-y-0.5 pb-2.5 border-b border-dashed border-[#333333] mb-2 text-left z-10 bg-[#151515]">
         <div className="text-[10px] uppercase font-bold text-[#666666] tracking-wider font-mono">
           COMES OUT
         </div>
