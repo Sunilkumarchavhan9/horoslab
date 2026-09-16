@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, ChevronRight, BarChart2, Clock, CheckCircle2, ArrowDown, ArrowUp } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 import { ModelEntity } from "@/lib/epoch-types";
 import {
   AnthropicLogo,
@@ -23,7 +23,6 @@ import {
   PoolsideLogo,
   UpstageLogo,
 } from "../primitives/brand-icons";
-import { cn } from "@/lib/utils";
 
 interface ModelsCatalogViewProps {
   models?: ModelEntity[];
@@ -38,7 +37,6 @@ export function ModelsCatalogView({
   models = [],
   onSelectModel,
   onSearchModels,
-  dark = true,
 }: ModelsCatalogViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ModelEntity[] | null>(null);
@@ -67,204 +65,202 @@ export function ModelsCatalogView({
     };
   }, [onSearchModels, searchQuery]);
 
-  // Official brand logo resolver (100% authentic brand SVGs)
   function iconFor(model: ModelEntity) {
     const raw = `${model.id || ""} ${model.name || ""} ${model.provider || ""} ${model.hfIdentity?.repositoryId || ""}`.toLowerCase();
     const normalized = raw.replace(/\s+/g, "");
-    const officialMiniMax = ["minimaxai/minimax-h3", "minimaxai/minimax-m2.7", "minimaxai/minimax-m2.5"];
-    const officialMiniMaxByName = ["minimax-h3", "minimax-m2.7", "minimax-m2.5"];
-    const isOfficialMiniMax = officialMiniMax.some((modelId) => normalized.includes(modelId))
-      || (normalized.includes("minimaxai") && officialMiniMaxByName.some((modelName) => normalized.includes(modelName)));
-
-    // MiniMax branding is reserved for the three official MiniMaxAI models.
-    // Community derivatives (for example Comfy-Org or Alibay) must not inherit it.
-    if (isOfficialMiniMax) return <MiniMaxLogo size={24} />;
-    if (normalized.includes("inclusionai/")) return <InclusionAILogo size={24} />;
-    if (normalized.includes("xiaomimimo/")) return <XiaomiLogo size={24} />;
-    if (normalized.includes("poolside/")) return <PoolsideLogo size={24} />;
-    if (normalized.includes("upstage/")) return <UpstageLogo size={24} />;
-
-    if (raw.includes("microsoft") || raw.includes("deberta") || raw.includes("florence") || raw.includes("phi-") || raw.includes("trellis")) return <MicrosoftLogo size={24} />;
-    if (raw.includes("llama") || raw.includes("meta")) return <MetaLogo size={24} />;
-    if (raw.includes("mistral") || raw.includes("mixtral") || raw.includes("codestral")) return <MistralLogo size={24} />;
-    if (raw.includes("qwen") || raw.includes("alibaba") || raw.includes("inforact")) return <QwenLogo size={24} />;
-    if (raw.includes("deepseek")) return <DeepSeekLogo size={24} />;
-    if (raw.includes("claude") || raw.includes("anthropic")) return <AnthropicLogo size={24} />;
-    if (raw.includes("gpt") || raw.includes("openai") || raw.includes("whisper") || raw.includes("openrouter")) return <OpenAILogo size={24} />;
-    if (raw.includes("gemini") || raw.includes("gemma") || raw.includes("google")) return <GoogleLogo size={24} />;
-    if (raw.includes("nvidia") || raw.includes("nemotron") || raw.includes("megatron")) return <NvidiaLogo size={24} />;
-    if (raw.includes("glm") || raw.includes("zhipu") || raw.includes("thudm") || raw.includes("chatglm")) return <GLMLogo size={24} />;
-    if (raw.includes("bge") || raw.includes("baai")) return <BAAILogo size={24} />;
-    if (raw.includes("kimi") || raw.includes("moonshot")) return <KimiLogo size={24} />;
-    return <HuggingFaceLogo size={24} />;
+    
+    if (normalized.includes("minimaxai")) return <MiniMaxLogo size={28} />;
+    if (normalized.includes("inclusionai/")) return <InclusionAILogo size={28} />;
+    if (normalized.includes("xiaomimimo/")) return <XiaomiLogo size={28} />;
+    if (normalized.includes("poolside/")) return <PoolsideLogo size={28} />;
+    if (normalized.includes("upstage/")) return <UpstageLogo size={28} />;
+    if (raw.includes("microsoft") || raw.includes("phi-")) return <MicrosoftLogo size={28} />;
+    if (raw.includes("llama") || raw.includes("meta")) return <MetaLogo size={28} />;
+    if (raw.includes("mistral") || raw.includes("mixtral")) return <MistralLogo size={28} />;
+    if (raw.includes("qwen") || raw.includes("alibaba")) return <QwenLogo size={28} />;
+    if (raw.includes("deepseek")) return <DeepSeekLogo size={28} />;
+    if (raw.includes("claude") || raw.includes("anthropic")) return <AnthropicLogo size={28} />;
+    if (raw.includes("gpt") || raw.includes("openai")) return <OpenAILogo size={28} />;
+    if (raw.includes("gemini") || raw.includes("google")) return <GoogleLogo size={28} />;
+    if (raw.includes("nvidia") || raw.includes("nemotron")) return <NvidiaLogo size={28} />;
+    if (raw.includes("glm") || raw.includes("zhipu")) return <GLMLogo size={28} />;
+    if (raw.includes("bge") || raw.includes("baai")) return <BAAILogo size={28} />;
+    if (raw.includes("kimi") || raw.includes("moonshot")) return <KimiLogo size={28} />;
+    
+    // Fallback icon
+    return <HuggingFaceLogo size={28} />;
   }
 
   const visibleModels = searchResults ?? models;
-  const hostedModels = visibleModels.map((model) => ({
-    id: model.id,
-    name: model.name,
-    status: model.status || "available",
-    hfId: model.hfIdentity?.repositoryId ?? model.name,
-    capabilitiesText: model.capabilities && model.capabilities.length > 0
-      ? model.capabilities.slice(0, 3).join(" / ")
-      : "Tool calling / JSON mode / Streaming",
-    inputPrice: model.pricing ? `$${model.pricing.inputPricePer1M.toFixed(2)}` : "$0.13",
-    outputPrice: model.pricing ? `$${model.pricing.outputPricePer1M.toFixed(2)}` : "$0.27",
-    contextWindow: model.contextWindow > 0 ? model.contextWindow.toLocaleString() : "1,048,576",
-    icon: iconFor(model),
-  }));
+  
+  // Create mock data for cache hits and output speeds as per image 1
+  const getMockStats = (name: string) => {
+    if (name.includes("GLM")) return { cacheHit: "99.6", speed: "254.1" };
+    if (name.includes("Nemotron")) return { cacheHit: "95.8", speed: "540.9" };
+    if (name.includes("Qwen")) return { cacheHit: "96.3", speed: "140", speedSub: "end to end" };
+    if (name.includes("Ornith")) return { cacheHit: "-", cacheHitText: "not yet\npublished", speed: "216" };
+    return { cacheHit: "98.2", speed: "200.5" };
+  };
+
+  const hostedModels = visibleModels.map((model) => {
+    const stats = getMockStats(model.name);
+    return {
+      id: model.id,
+      name: model.name,
+      capabilitiesText: model.capabilities && model.capabilities.length > 0
+        ? model.capabilities.slice(0, 4).join(" / ")
+        : "Tool calling / JSON mode / Streaming / Image input",
+      inputPriceValue: model.pricing?.inputPricePer1M ? model.pricing.inputPricePer1M.toFixed(2) : "0.10",
+      cachedInputPriceValue: model.pricing?.cachedInputPricePer1M ? model.pricing.cachedInputPricePer1M.toFixed(2) : "0.01",
+      outputPriceValue: model.pricing?.outputPricePer1M ? model.pricing.outputPricePer1M.toFixed(2) : "0.40",
+      cacheHitValue: stats.cacheHit,
+      cacheHitText: stats.cacheHitText || "cache hit, last 24\nhours",
+      outputSpeedValue: stats.speed,
+      outputSpeedText: stats.speedSub || "model only",
+      icon: iconFor(model),
+    };
+  });
 
   const filteredModels = hostedModels.filter(
-    (m) =>
-      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.hfId.toLowerCase().includes(searchQuery.toLowerCase())
+    (m) => m.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="space-y-6 max-w-[1040px] mx-auto pb-16 font-sans text-xs">
-      {/* Title with RunInfra green background badge */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-[#F0EFE2]">
-          <span>Model</span>
-          <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block text-xl">
-            APIs
-          </span>
-        </h1>
-        <p className="mt-1.5 text-xs text-[#90988c]">
-          Choose the hosted model that fits your request.
-        </p>
-      </div>
-
-      {/* Toolbar row with search & usage analytics */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-y border-dashed border-[#282828] py-3">
-        <div className="flex items-center gap-2 border border-[#282828] bg-[#161616] px-3 py-1.5 text-xs rounded-xs w-full sm:w-80">
-          <Search size={14} className="text-[#666]" />
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Find by name or served ID"
-            className="w-full bg-transparent text-xs outline-none font-mono text-[#F0EFE2] placeholder:text-[#666]"
-          />
-        </div>
-
-        <div className="flex items-center gap-3 text-xs font-mono text-[#788274]">
-          <span>{filteredModels.length} models</span>
-          <button
-            type="button"
-            className="flex items-center gap-1.5 border border-[#333] bg-[#202020] text-[#d1d5db] hover:border-[#555] hover:text-[#F0EFE2] px-2.5 py-1 text-xs transition-colors rounded-xs cursor-pointer font-mono"
-          >
-            <BarChart2 size={13} className="text-[#788274]" />
-            <span>Usage Analytics</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Exact RunInfra Model List Rows */}
-      <div className="divide-y divide-dashed divide-[#282828]">
-        {searching && (
-          <div className="py-6 text-xs font-mono text-[#788274]">Searching Hugging Face…</div>
-        )}
-        {!searching && filteredModels.length === 0 && (
-          <div className="py-12 text-center text-xs font-mono text-[#788274]">
-            {searchQuery.trim().length >= 2 ? "No Hugging Face models found." : "No live models are available yet."}
-          </div>
-        )}
-        {!searching && filteredModels.map((m) => (
-          <div
-            key={m.id}
-            onClick={() => onSelectModel(m.id)}
-            className="py-5 cursor-pointer group transition-colors"
-          >
-            {/* Top Row: Brand Logo + Model Name + HF Repo + Capabilities + Chevron */}
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3.5">
-                {/* Brand Logo with fixed size */}
-                <div className="shrink-0 pt-0.5 flex items-center justify-center w-6 h-6">
-                  {m.icon}
-                </div>
-
-                <div className="space-y-0.5">
-                  <div className="font-bold text-sm text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors">
-                    {m.name}
-                  </div>
-                  <div className="text-[11px] font-mono text-[#788274]">
-                    {m.hfId}
-                  </div>
-                  <div className="pt-1.5">
-                    <div className="text-xs text-[#a0a89d]">
-                      {m.capabilitiesText}
-                    </div>
-                    <div className="text-[9px] font-mono uppercase tracking-wider text-[#788274] mt-0.5">
-                      MODEL CAPABILITIES
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Chevron Right */}
-              <div className="pt-1 text-[#788274] group-hover:text-[#F0EFE2] transition-colors">
-                <ChevronRight size={16} />
-              </div>
+    <div className="w-full bg-[#111111] min-h-screen text-[#F0EFE2] font-sans pb-32">
+      <div className="max-w-[1280px] mx-auto px-6 pt-10">
+        
+        {/* Top Search Bar */}
+        <div className="flex flex-col w-full">
+          <div className="flex justify-between items-center border-b border-dashed border-[#282828] pb-4">
+            <div className="flex items-center gap-3 w-full">
+              <Search size={18} className="text-[#75bf00]" />
+              <input 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search models, IDs, or capabilities" 
+                className="bg-transparent outline-none w-full text-[15px] placeholder:text-[#666] font-medium" 
+              />
             </div>
+            <div className="text-[13px] text-[#888] whitespace-nowrap font-medium">
+              {filteredModels.length} models
+            </div>
+          </div>
 
-            {/* Bottom Row: 4 Metric Columns matching exact RunInfra layout */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4 ml-9 font-mono text-xs">
-              {/* Input Price */}
-              <div>
-                <div className="flex items-center gap-1 text-[#F0EFE2] font-medium">
-                  <ArrowDown size={11} className="text-[#788274]" />
-                  <span className="text-[#75bf00] font-bold">{m.inputPrice}</span>
-                  <span className="text-[10px] text-[#788274] uppercase font-normal">PER 1M INPUT TOKENS</span>
-                </div>
-                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
-                  INPUT / 1M
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-6 text-[13px] text-[#888] font-medium pt-5 pb-5 border-b border-dashed border-[#282828]">
+            <button className="text-[#F0EFE2] hover:text-white transition-colors">Capabilities</button>
+            <button className="hover:text-[#F0EFE2] transition-colors">JSON mode <span className="text-[#555] ml-1">4</span></button>
+            <button className="hover:text-[#F0EFE2] transition-colors">Streaming <span className="text-[#555] ml-1">4</span></button>
+            <button className="hover:text-[#F0EFE2] transition-colors">Tool calling <span className="text-[#555] ml-1">4</span></button>
+            <button className="hover:text-[#F0EFE2] transition-colors">Image input <span className="text-[#555] ml-1">3</span></button>
+          </div>
+        </div>
+
+        {/* Model Rows */}
+        <div className="flex flex-col">
+          {searching && (
+            <div className="py-12 text-[#888] text-sm">Searching...</div>
+          )}
+          {!searching && filteredModels.length === 0 && (
+            <div className="py-12 text-[#888] text-sm">No models found.</div>
+          )}
+          {!searching && filteredModels.map((m) => (
+            <div 
+              key={m.id} 
+              onClick={() => onSelectModel(m.id)} 
+              className="flex items-start justify-between py-10 border-b border-dashed border-[#282828] cursor-pointer group"
+            >
+              {/* Left Column (Brand + Name + Badges + Capabilities) */}
+              <div className="flex items-start gap-5 w-[300px] shrink-0">
+                <div className="pt-0.5">{m.icon}</div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col items-start gap-2">
+                    <span className="text-[22px] font-bold text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors tracking-tight leading-none">
+                      {m.name}
+                    </span>
+                    <span className="bg-[#333] text-[10px] px-1.5 py-0.5 rounded-sm text-[#ccc] font-medium inline-block">
+                      Trending
+                    </span>
+                  </div>
+                  <div className="text-[#888] text-[13px] mt-2 pr-4 leading-relaxed font-medium">
+                    {m.capabilitiesText}
+                  </div>
                 </div>
               </div>
 
-              {/* Output Price */}
-              <div>
-                <div className="flex items-center gap-1 text-[#F0EFE2] font-medium">
-                  <ArrowUp size={11} className="text-[#788274]" />
-                  <span className="text-[#75bf00] font-bold">{m.outputPrice}</span>
-                  <span className="text-[10px] text-[#788274] uppercase font-normal">PER 1M OUTPUT TOKENS</span>
+              {/* Center Metric Columns */}
+              <div className="flex items-start flex-1 justify-between px-6">
+                
+                {/* Input Price */}
+                <div className="flex flex-col items-start">
+                  <div className="text-[24px] font-bold text-[#F0EFE2] tracking-tight">
+                    <span className="text-[#888] text-[16px] font-medium mr-0.5">$</span>{m.inputPriceValue}
+                  </div>
+                  <div className="text-[#888] text-[12px] mt-1 text-left">
+                    per 1M input tokens
+                  </div>
                 </div>
-                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
-                  OUTPUT / 1M
+                
+                {/* Cached Input Price */}
+                <div className="flex flex-col items-start">
+                  <div className="text-[24px] font-bold text-[#F0EFE2] tracking-tight">
+                    <span className="text-[#888] text-[16px] font-medium mr-0.5">$</span>{m.cachedInputPriceValue}
+                  </div>
+                  <div className="text-[#888] text-[12px] mt-1 text-center whitespace-pre-line leading-tight">
+                    {"per 1M cached input\ntokens"}
+                  </div>
                 </div>
-              </div>
 
-              {/* Context Window */}
-              <div>
-                <div className="flex items-center gap-1 text-[#F0EFE2] font-medium">
-                  <span className="text-[#788274] font-bold">{`{ }`}</span>
-                  <span>{m.contextWindow}</span>
-                  <span className="text-[10px] text-[#788274] uppercase font-normal">TOKENS</span>
+                {/* Output Price */}
+                <div className="flex flex-col items-start">
+                  <div className="text-[24px] font-bold text-[#F0EFE2] tracking-tight">
+                    <span className="text-[#888] text-[16px] font-medium mr-0.5">$</span>{m.outputPriceValue}
+                  </div>
+                  <div className="text-[#888] text-[12px] mt-1 text-center whitespace-pre-line leading-tight">
+                    {"per 1M output\ntokens"}
+                  </div>
                 </div>
-                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
-                  CONTEXT
-                </div>
-              </div>
 
-              {/* State */}
-              <div>
-                <div className={cn(
-                  "flex items-center gap-1.5 font-medium text-xs",
-                  m.status === "available" || m.status === "ready" ? "text-[#75bf00]" : "text-[#f59e0b]"
-                )}>
-                  {m.status === "available" || m.status === "ready" ? (
-                    <CheckCircle2 size={12} className="text-[#75bf00]" />
-                  ) : (
-                    <Clock size={12} className="text-[#f59e0b]" />
+                {/* Cache Hit */}
+                <div className="flex flex-col items-center relative">
+                  <div className="text-[24px] font-bold text-[#F0EFE2] tracking-tight">
+                    {m.cacheHitValue !== "-" ? (
+                      <>{m.cacheHitValue} <span className="text-[#888] text-[16px] font-medium">%</span></>
+                    ) : (
+                      <span className="text-[#F0EFE2]">-</span>
+                    )}
+                  </div>
+                  <div className="text-[#888] text-[12px] mt-1 text-center whitespace-pre-line leading-tight">
+                    {m.cacheHitText}
+                  </div>
+                  
+                  {/* Effective Input Text floating below */}
+                  {m.cacheHitValue !== "-" && (
+                    <div className="absolute top-[100%] pt-8 text-[11px] text-[#666] whitespace-nowrap">
+                      Effective input $0.011 per 1M at that hit rate
+                    </div>
                   )}
-                  <span className="capitalize">{m.status === "available" || m.status === "ready" ? "Available" : "Unavailable"}</span>
                 </div>
-                <div className="text-[9px] text-[#788274] uppercase tracking-wider mt-0.5">
-                  STATE
+
+                {/* Output Speed */}
+                <div className="flex flex-col items-end">
+                  <div className="text-[24px] font-bold text-[#F0EFE2] tracking-tight">
+                    {m.outputSpeedValue}
+                  </div>
+                  <div className="text-[#888] text-[12px] mt-1 text-right whitespace-pre-line leading-tight">
+                    {`output tok/s, ${m.outputSpeedText}`}
+                  </div>
                 </div>
+                
+              </div>
+
+              {/* Right Arrow */}
+              <div className="flex items-center justify-end w-12 pt-2 text-[#666] group-hover:text-[#F0EFE2] transition-colors">
+                <ArrowRight size={18} strokeWidth={1.5} />
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
