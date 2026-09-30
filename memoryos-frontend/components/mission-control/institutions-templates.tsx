@@ -3,50 +3,50 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, LayoutTemplate, ShieldCheck, Scale, FileText, Workflow, Layers, Sparkles, Search } from "lucide-react";
 import {
- createEpochInstitution,
- createEpochTemplate,
- getEpochTemplate,
- listEpochTemplates,
- readActiveEpochWorkspaceId,
- type EpochTemplate,
-} from "@/lib/epoch-api";
+ createDhyraInstitution,
+ createDhyraTemplate,
+ getDhyraTemplate,
+ listDhyraTemplates,
+ readActiveDhyraWorkspaceId,
+ type DhyraTemplate,
+} from "@/lib/dhyra-api";
 
 type TemplatesProps = {
  onViewInstitution?: (id: string) => void;
 };
 
-function defaultTemplateSummary(template: EpochTemplate): string {
+function defaultTemplateSummary(template: DhyraTemplate): string {
  return template.description?.trim() || "Reusable blueprint for instantiating a new institution.";
 }
 
-function missionsCount(template: EpochTemplate): number {
+function missionsCount(template: DhyraTemplate): number {
  const definition = template.definition as { missions?: unknown } | undefined;
  const missions = definition?.missions;
  return Array.isArray(missions) ? missions.length : 0;
 }
 
-function authorityLabel(template: EpochTemplate): string {
+function authorityLabel(template: DhyraTemplate): string {
  const definition = template.definition as { authority?: { level?: unknown } } | undefined;
  const level = definition?.authority?.level;
  if (typeof level === "string" && level.trim()) return level;
  return template.category?.trim() || "General";
 }
 
-function policiesLabel(template: EpochTemplate): string {
+function policiesLabel(template: DhyraTemplate): string {
  const definition = template.definition as { policies?: unknown } | undefined;
  const policies = definition?.policies;
  if (Array.isArray(policies) && policies.length > 0) return String(policies[0]);
  return "Standard";
 }
 
-function evidenceLabel(template: EpochTemplate): string {
+function evidenceLabel(template: DhyraTemplate): string {
  const definition = template.definition as { evidence?: unknown } | undefined;
  const evidence = definition?.evidence;
  if (typeof evidence === "string" && evidence.trim()) return evidence;
  return "Evidence Trail";
 }
 
-function approvalLabel(template: EpochTemplate): string {
+function approvalLabel(template: DhyraTemplate): string {
  const definition = template.definition as { approval?: unknown } | undefined;
  const approval = definition?.approval;
  if (typeof approval === "string" && approval.trim()) return approval;
@@ -54,19 +54,19 @@ function approvalLabel(template: EpochTemplate): string {
 }
 
 export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
- const [templates, setTemplates] = useState<EpochTemplate[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+ const [templates, setTemplates] = useState<DhyraTemplate[]>([]);
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState<string | null>(null);
  const [creating, setCreating] = useState(false);
  const [instantiatingId, setInstantiatingId] = useState<string | null>(null);
- const [blueprintTemplate, setBlueprintTemplate] = useState<EpochTemplate | null>(null);
+ const [blueprintTemplate, setBlueprintTemplate] = useState<DhyraTemplate | null>(null);
  const [blueprintLoading, setBlueprintLoading] = useState(false);
  const [query, setQuery] = useState("");
  const [searchInput, setSearchInput] = useState("");
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -86,7 +86,7 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  setLoading(true);
  setError(null);
  try {
- const liveTemplates = await listEpochTemplates(workspaceId, {
+ const liveTemplates = await listDhyraTemplates(workspaceId, {
  search: query.trim() || undefined,
  });
  setTemplates(liveTemplates);
@@ -112,7 +112,7 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  setCreating(true);
  setError(null);
  try {
- await createEpochTemplate(workspaceId, {
+ await createDhyraTemplate(workspaceId, {
  name: "New Template",
  category: "general",
  description: "New reusable template for an institution.",
@@ -134,12 +134,12 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  }, [refresh, workspaceId]);
 
  const handleInstantiate = useCallback(
- async (template: EpochTemplate) => {
+ async (template: DhyraTemplate) => {
  if (!workspaceId) return;
  setInstantiatingId(template.id);
  setError(null);
  try {
- const created = await createEpochInstitution(workspaceId, {
+ const created = await createDhyraInstitution(workspaceId, {
  name: `${template.name} Institution`,
  category: template.category ?? "general",
  version: template.version ?? "1.0.0",
@@ -164,12 +164,12 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  );
 
  const handleViewBlueprint = useCallback(
- async (template: EpochTemplate) => {
+ async (template: DhyraTemplate) => {
  if (!workspaceId) return;
  setBlueprintLoading(true);
  setError(null);
  try {
- const liveTemplate = await getEpochTemplate(workspaceId, template.id);
+ const liveTemplate = await getDhyraTemplate(workspaceId, template.id);
  setBlueprintTemplate(liveTemplate);
  } catch (viewError) {
  setError(viewError instanceof Error ? viewError.message : "Failed to load blueprint.");

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArrowRight, Box, Cloud, Radio, Server } from "lucide-react";
-import { VLLMLogo, NvidiaLogo, DeepSeekLogo, EpochLogo, RunPodLogo, TeslaLogo, OneXLogo, OpenTelemetryLogo, ModalLogo, K8sFaviconLogo, SGLangLogo } from "../epoch/primitives/brand-icons";
+import { VLLMLogo, NvidiaLogo, DeepSeekLogo, DhyraLogo, RunPodLogo, TeslaLogo, OneXLogo, OpenTelemetryLogo, ModalLogo, K8sFaviconLogo, SGLangLogo } from "../dhyra/primitives/brand-icons";
 
 interface ModelApisSectionProps {
   dark?: boolean;
@@ -14,10 +14,10 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
       {/* Background Dashed Lines - Global Layout */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
 
         {/* Top horizontal line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
@@ -28,7 +28,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
           {/* Small floating logo element exactly centered on the 50% line at top-0 */}
           <div className="absolute top-0 left-[50%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-10 bg-[#151515] px-2 text-[#75bf00]">
-            <EpochLogo size={18} />
+            <DhyraLogo size={18} />
           </div>
 
           {/* Header Section (Spans the 72% inner area) */}
@@ -38,7 +38,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
           {/* Main 2-Column Grid Area */}
           <div className="w-full relative">
-            <div className="w-full grid grid-cols-[14%_72%_14%] relative z-10">
+            <div className="w-full grid grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] relative z-10">
               {/* Empty Left Margin */}
               <div />
 
@@ -54,7 +54,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                     Adapt models to your physics
                   </h3>
                   <p className="text-[#C8C7BA] text-[13px] relative z-10 max-w-[90%]">
-                    Provide Epoch with open models and physical telemetry. The runtime continually adapts weights, state, and rules to match your environment.
+                    Provide Dhyra with open models and physical telemetry. The runtime continually adapts weights, state, and rules to match your environment.
                   </p>
                 </div>
                 <div className="flex flex-col p-6 lg:p-8 xl:p-10 border-b border-dashed border-[#333] relative overflow-hidden group">
@@ -171,7 +171,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
             </div>
 
             {/* Footer Logos Row */}
-            <div className="w-full grid grid-cols-[14%_72%_14%] relative z-10">
+            <div className="w-full grid grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] relative z-10">
               <div />
               <div className="py-8 border-y border-x border-dashed border-[#333] flex flex-wrap items-center justify-center gap-12 lg:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 px-8 lg:px-12">
                 <div className="text-[11px] font-mono font-bold text-[#444] tracking-widest uppercase">

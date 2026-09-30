@@ -3,7 +3,7 @@ import { ShieldCheck, FileCheck, Code2, Play, Lock, ChevronRight, CheckCircle2 }
 import Editor from "@monaco-editor/react";
 import { cn } from "@/lib/utils";
 
-const MOCK_VERIFIER_CODE = `import { Verifier, Evidence, VerificationResult } from '@epoch/sdk/verify';
+const MOCK_VERIFIER_CODE = `import { Verifier, Evidence, VerificationResult } from '@dhyra/sdk/verify';
 
 export class FinancialTransactionVerifier extends Verifier {
   

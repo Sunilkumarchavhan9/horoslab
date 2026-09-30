@@ -6,7 +6,7 @@ import { Search, Filter, ShieldCheck, Download, Fingerprint, Lock, ArrowDown, Da
 import { Button } from "@/components/ui/button"
 
 const MOCK_LEDGER = [
-  { id: "L-9005", time: "11:45:02", action: "Settlement Complete", actor: "Epoch Network", type: "SYSTEM", hash: "0x7a8b...3e4f", prevHash: "0x2c1d...8a9b", signature: "VALID" },
+  { id: "L-9005", time: "11:45:02", action: "Settlement Complete", actor: "Dhyra Network", type: "SYSTEM", hash: "0x7a8b...3e4f", prevHash: "0x2c1d...8a9b", signature: "VALID" },
   { id: "L-9004", time: "11:44:18", action: "Verifier PASS", actor: "Security AI v2", type: "AI", hash: "0x2c1d...8a9b", prevHash: "0x9f8e...7d6c", signature: "VALID" },
   { id: "L-9003", time: "11:32:05", action: "Human Approved", actor: "sarah.connor@eng", type: "HUMAN", hash: "0x9f8e...7d6c", prevHash: "0x5b4a...3c2d", signature: "VALID" },
   { id: "L-9002", time: "11:28:40", action: "Claude Generated PR", actor: "Worker-Claude-3.5", type: "AI", hash: "0x5b4a...3c2d", prevHash: "0x1a2b...3c4d", signature: "VALID" },
@@ -173,11 +173,11 @@ export function SettlementAudit() {
                       <div className="text-[10px] bg-[#2da44e]/10 text-[#2da44e] px-2 py-1 rounded font-bold">VERIFIED</div>
                    </div>
                    <div className="p-4 text-[10px] text-[#F0EFE2]/40 leading-relaxed break-all bg-black/50">
-                      -----BEGIN EPOCH SIGNATURE-----<br/>
+                      -----BEGIN DHYRA SIGNATURE-----<br/>
                       MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy8DbvCG...<br/>
                       e3T9yHn9Q/bH4W8V4V4V4V4V4V4V4V4V4V4V4V4V4V4V4V4V4V...<br/>
                       w0BAQEFAAOCAQ8AMIIBCgKCAQEAy8DbvCGMIIBIjANBgkqhkiG...<br/>
-                      -----END EPOCH SIGNATURE-----
+                      -----END DHYRA SIGNATURE-----
                    </div>
                 </div>
 

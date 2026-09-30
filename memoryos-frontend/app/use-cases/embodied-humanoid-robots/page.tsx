@@ -7,8 +7,8 @@ import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 import { EmbodiedHumanoidBgAnimation } from "@/components/landing/embodied-humanoid-bg-animation";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { EpochLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, EpochWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/epoch/primitives/brand-icons";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { DhyraLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, DhyraWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/dhyra/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -67,7 +67,7 @@ Low-latency brains for physical embodiment. Deploy Vision-Language-Action (VLA) 
 - Perception: Multi-modal fusion (cameras, proprioception, tactile)
 
 ## Local Edge Deployment
-$ epoch-robot-agent deploy \\
+$ dhyra-robot-agent deploy \\
     --robot-id humanoid-01 \\
     --vla-model google-rt-2 \\
     --kinematics-verifier strict`;
@@ -146,7 +146,7 @@ class SafetyAuditor:
 
 const RUN_EMBODIED_AGENT_CODE = `# VLA Control Loop with Kinematics Verification
 import torch
-from epoch_robotics import EmbodiedAgent, KinematicsVerifier, HumanoidASTEngine, SafetyAuditor
+from dhyra_robotics import EmbodiedAgent, KinematicsVerifier, HumanoidASTEngine, SafetyAuditor
 
 # Initialize Vision-Language-Action agent with Google RT-2
 agent = EmbodiedAgent.from_pretrained("google/rt-2-vla-model")
@@ -186,11 +186,11 @@ set -euo pipefail
 SENSOR_TOPIC="ros2://humanoid-01/sensors"
 VLA_MODEL="Google-RT-2"
 
-echo "[Epoch Robotics] Initializing NVIDIA Jetson Thor Edge cluster..."
-echo "[Epoch Robotics] Starting 1000Hz Vision-Language-Action control loop..."
+echo "[Dhyra Robotics] Initializing NVIDIA Jetson Thor Edge cluster..."
+echo "[Dhyra Robotics] Starting 1000Hz Vision-Language-Action control loop..."
 
 # Execute verifiable robotic policy with TensorRT acceleration
-epoch-robot-agent deploy \\
+dhyra-robot-agent deploy \\
   --sensor-stream $SENSOR_TOPIC \\
   --vla-model $VLA_MODEL \\
   --kinematics-guards enabled \\
@@ -203,7 +203,7 @@ const ROBOT_PIPELINE_CODE = `{
   "agent": "humanoid-control-v1",
   "vla_model": "google-rt-2-vla",
   "edge_runtime": "TensorRT-LLM-CUDA-12.4",
-  "safety_engine": "Epoch-Kinematics-Verifier",
+  "safety_engine": "Dhyra-Kinematics-Verifier",
   "kinematics_guards": true,
   "max_torque_nm": 120.0,
   "sensor_inputs": [
@@ -251,12 +251,12 @@ const REQUIREMENTS_CODE = `torch>=2.4.0
 tensorrt>=10.0.0
 numpy>=1.26.0
 opencv-python-headless>=4.9.0
-epoch-physical-agent>=2.4.0
+dhyra-physical-agent>=2.4.0
 rospy2>=0.5.0
 av>=12.0.0`;
 
 const EVAL_POLICY_CODE = `# Evaluation harness: measuring physical dexterity and task success
-from epoch_eval import PolicyEvaluator, KinematicsSafetyGate
+from dhyra_eval import PolicyEvaluator, KinematicsSafetyGate
 
 def evaluate_embodied_policy(task_definition: str, execution_log: dict) -> dict:
     """Verify physical execution accuracy and collision-free guarantees."""
@@ -413,8 +413,8 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How does EpochInfra deploy models to physical robots?",
-    answer: "EpochInfra compiles massive VLA models down into optimized TensorRT-LLM binaries that run directly on local edge nodes like the NVIDIA Jetson Thor, allowing for sub-10ms inference loops without network dependencies.",
+    question: "How does Dhyra deploy models to physical robots?",
+    answer: "Dhyra compiles massive VLA models down into optimized TensorRT-LLM binaries that run directly on local edge nodes like the NVIDIA Jetson Thor, allowing for sub-10ms inference loops without network dependencies.",
   },
   {
     question: "How do you prevent AI hallucinations from causing physical damage?",
@@ -789,7 +789,7 @@ export default function EmbodiedHumanoidsPage() {
               Three ways to decode physical reality
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across EpochInfra, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+              Workflow comparison for physical intelligence agents across Dhyra, closed visual LLM APIs, and DIY C++ ROS2 scripts.
             </p>
           </div>
 
@@ -834,9 +834,9 @@ export default function EmbodiedHumanoidsPage() {
                     </div>
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                        <EpochLogo size={28} />
+                        <DhyraLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">EpochInfra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Verified sensor telemetry & 0 spatial drift.</p>
                   </div>
@@ -1395,7 +1395,7 @@ export default function EmbodiedHumanoidsPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What EpochInfra tunes
+                  What Dhyra tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
@@ -1552,7 +1552,7 @@ export default function EmbodiedHumanoidsPage() {
 
             <div className="flex items-start gap-4 max-w-4xl w-full text-left">
               <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <EpochLogo size={20} />
+                <DhyraLogo size={20} />
               </div>
               <div>
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
@@ -1594,7 +1594,7 @@ export default function EmbodiedHumanoidsPage() {
 
             <div className="relative z-20 flex flex-col items-center text-center max-w-4xl px-4 mt-8 pointer-events-auto">
               <div className="mb-12">
-                <EpochLogo size={40} />
+                <DhyraLogo size={40} />
               </div>
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
@@ -1604,7 +1604,7 @@ export default function EmbodiedHumanoidsPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the sensor stream ingestion or spatial perception task. EpochInfra builds and optimizes the edge physical stack.
+                Describe the sensor stream ingestion or spatial perception task. Dhyra builds and optimizes the edge physical stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
@@ -1673,7 +1673,7 @@ export default function EmbodiedHumanoidsPage() {
                 <line x1="0" y1="32.5" x2="100%" y2="32.5" stroke="url(#paint3_linear_55_3)" strokeDasharray="3 3" />
               </svg>
               <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-                <EpochLogo size={25} />
+                <DhyraLogo size={25} />
               </div>
             </div>
 
@@ -1681,9 +1681,9 @@ export default function EmbodiedHumanoidsPage() {
               <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
                 <div className="flex flex-col">
                   <div className="mb-2 text-[#F0EFE2]">
-                    <EpochWordmarkLogo className="h-[24px] w-auto" />
+                    <DhyraWordmarkLogo className="h-[24px] w-auto" />
                   </div>
-                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 epochInfra. All rights reserved.</p>
+                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
                   <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
                     <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="GitHub">
@@ -1731,7 +1731,7 @@ export default function EmbodiedHumanoidsPage() {
                   </div>
 
                   <div className="flex flex-col items-end">
-                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Epoch</span>
+                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
                     <div className="flex items-center gap-4 text-[#C8C7BA]">
                       <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                       <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -1749,11 +1749,11 @@ export default function EmbodiedHumanoidsPage() {
             </div>
 
             <div className="w-full border-t border-dashed border-[#333] relative">
-              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">EPOCH</div>
+              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
               <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><EpochLogo size={12} /> Part of  causis</span>
+                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo size={12} /> Part of  causis</span>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

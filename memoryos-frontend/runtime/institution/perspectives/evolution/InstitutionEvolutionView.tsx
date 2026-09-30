@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Activity, Target, Dna, Box, ShieldCheck, Flag, GitCommit, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getEpochInstitutionHistory, listEpochInstitutions, readActiveEpochWorkspaceId, type EpochInstitutionHistory } from "@/lib/epoch-api";
+import { getDhyraInstitutionHistory, listDhyraInstitutions, readActiveDhyraWorkspaceId, type DhyraInstitutionHistory } from "@/lib/dhyra-api";
 
 function historyIcon(type?: string) {
   const normalized = (type ?? "").toLowerCase();
@@ -32,29 +32,29 @@ function formatDate(value?: string): string {
 }
 
 export function InstitutionEvolutionView() {
-  const [history, setHistory] = useState<EpochInstitutionHistory | null>(null);
+  const [history, setHistory] = useState<DhyraInstitutionHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveEpochWorkspaceId();
+  const workspaceId = readActiveDhyraWorkspaceId();
 
   const loadHistory = useCallback(async () => {
     if (!workspaceId) {
       setHistory(null);
       setLoading(false);
-      setError("No active Epoch workspace is available.");
+      setError("No active Dhyra workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const institutions = await listEpochInstitutions(workspaceId);
+      const institutions = await listDhyraInstitutions(workspaceId);
       const firstInstitution = institutions[0];
       if (!firstInstitution) {
         setHistory(null);
         return;
       }
-      setHistory(await getEpochInstitutionHistory(workspaceId, firstInstitution.id));
+      setHistory(await getDhyraInstitutionHistory(workspaceId, firstInstitution.id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load institution evolution.");
     } finally {

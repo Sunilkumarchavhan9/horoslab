@@ -24,7 +24,7 @@ export function ApiInspector({ entityData }: { entityData: any }) {
         window.setTimeout(() => setCopied(null), 1500);
     };
     const apiEndpoint = String(entityData.endpoint ?? "");
-    const browserEndpoint = apiEndpoint.replace(/^\/api\/epoch/, "/api/v1/epoch");
+    const browserEndpoint = apiEndpoint.replace(/^\/api\/dhyra/, "/api/v1/dhyra");
     const runRequest = async () => {
         setRequestResult(null);
         try {
@@ -120,17 +120,17 @@ export function ApiInspector({ entityData }: { entityData: any }) {
                                     </div>
                                     <BookOpen className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 </button>
-                                <button type="button" onClick={() => void copy(`epoch.missions.${String(entityData.method).toLowerCase()}()`, "sdk")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                <button type="button" onClick={() => void copy(`dhyra.missions.${String(entityData.method).toLowerCase()}()`, "sdk")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
                                     <div className="flex flex-col">
                                         <span className="text-xs text-muted-foreground">Related SDK Method</span>
-                                        <span className="text-sm font-medium text-foreground font-mono">epoch.missions.create()</span>
+                                        <span className="text-sm font-medium text-foreground font-mono">dhyra.missions.create()</span>
                                     </div>
                                     <Code className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 </button>
-                                <button type="button" onClick={() => void copy(`epoch-v12 missions ${String(entityData.method).toLowerCase()} ${apiEndpoint}`, "cli")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                <button type="button" onClick={() => void copy(`dhyra-v12 missions ${String(entityData.method).toLowerCase()} ${apiEndpoint}`, "cli")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
                                     <div className="flex flex-col">
                                         <span className="text-xs text-muted-foreground">Related CLI Command</span>
-                                        <span className="text-sm font-medium text-foreground font-mono">epoch run [mission]</span>
+                                        <span className="text-sm font-medium text-foreground font-mono">dhyra run [mission]</span>
                                     </div>
                                     <Terminal className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Code, MessageSquare, Globe, Database, ExternalLink, Image as ImageIcon, FileText, Link2, Layers3 } from "lucide-react";
-import { type EpochMissionDetail } from "@/lib/epoch-api";
+import { type DhyraMissionDetail } from "@/lib/dhyra-api";
 
 function formatDate(value?: string | null): string {
  if (!value) return "Unknown";
@@ -20,7 +20,7 @@ function evidenceIcon(kind?: string | null) {
  return <Code className="size-5 text-foreground" />;
 }
 
-export function MissionDetailEvidence({ mission }: { mission: EpochMissionDetail }) {
+export function MissionDetailEvidence({ mission }: { mission: DhyraMissionDetail }) {
  const items = mission.evidence ?? [];
  const typeCounts = items.reduce<Record<string, number>>((counts, item) => {
  const type = item.kind ?? "evidence";

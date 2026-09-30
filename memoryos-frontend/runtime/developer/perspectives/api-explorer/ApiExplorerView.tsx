@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { getEpochOpenApiContract } from "@/lib/epoch-api";
+import { getDhyraOpenApiContract } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 
@@ -37,7 +37,7 @@ export function ApiExplorerView({ workspaceId: _workspaceId }: { workspaceId?: s
     const loadContract = async () => {
         setIsLoading(true);
         try {
-            const contract = await getEpochOpenApiContract();
+            const contract = await getDhyraOpenApiContract();
             const paths = contract.paths && typeof contract.paths === "object" ? contract.paths as Record<string, unknown> : {};
             const rows: ApiEndpointRow[] = [];
             Object.entries(paths).forEach(([endpoint, operations]) => {
@@ -49,7 +49,7 @@ export function ApiExplorerView({ workspaceId: _workspaceId }: { workspaceId?: s
                         id: `${method}-${endpoint}-${index}`,
                         endpoint,
                         method: method.toUpperCase() as ApiEndpointRow["method"],
-                        service: String(data.tags && Array.isArray(data.tags) ? data.tags[0] ?? "Epoch Runtime" : "Epoch Runtime"),
+                        service: String(data.tags && Array.isArray(data.tags) ? data.tags[0] ?? "Dhyra Runtime" : "Dhyra Runtime"),
                         version: "V12",
                         authentication: data.security ? "Bearer Token" : "Public",
                         status: "Active",
@@ -93,10 +93,10 @@ export function ApiExplorerView({ workspaceId: _workspaceId }: { workspaceId?: s
                             <TerminalSquare className="size-5 text-indigo-500" />
                             API Explorer
                         </h1>
-                        <span className="text-xs text-muted-foreground mt-1">Manage and explore the Epoch Runtime API.</span>
+                        <span className="text-xs text-muted-foreground mt-1">Manage and explore the Dhyra Runtime API.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("epoch-api-contract.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-api-contract.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

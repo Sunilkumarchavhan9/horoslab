@@ -63,13 +63,13 @@ export function CliInspector({ entityData }: { entityData: any }) {
                                     <div className="flex items-center gap-3">
                                         <Terminal className="size-4 text-muted-foreground" />
                                         <span className="text-sm font-mono text-[#c9d1d9]">
-                                            {entityData.platform === "macOS" ? `brew install epoch-cli@${entityData.version}` : 
-                                             entityData.platform === "Linux" ? `curl -sL https://epoch.ai/install.sh | bash` :
-                                             entityData.platform === "Windows" ? `winget install Epoch.CLI` :
-                                             `docker pull epoch/cli:${entityData.version}`}
+                                            {entityData.platform === "macOS" ? `brew install dhyra-cli@${entityData.version}` : 
+                                             entityData.platform === "Linux" ? `curl -sL https://dhyra.ai/install.sh | bash` :
+                                             entityData.platform === "Windows" ? `winget install Dhyra.CLI` :
+                                             `docker pull dhyra/cli:${entityData.version}`}
                                         </span>
                                     </div>
-                                    <button type="button" onClick={() => void navigator.clipboard?.writeText(entityData.installCommand ?? `npm install -g @epochtm/v12-cli@${entityData.version}`)} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Copy CLI install command">
+                                    <button type="button" onClick={() => void navigator.clipboard?.writeText(entityData.installCommand ?? `npm install -g @dhyratm/v12-cli@${entityData.version}`)} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Copy CLI install command">
                                         <Copy className="size-4" />
                                     </button>
                                 </div>
@@ -80,7 +80,7 @@ export function CliInspector({ entityData }: { entityData: any }) {
                             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Release Notes</span>
                             <div className="bg-card border border-border rounded-md p-4 flex flex-col gap-3">
                                 <p className="text-sm text-foreground/80 leading-relaxed">
-                                    The {entityData.version} release introduces enhanced mission tracking natively in the CLI, allowing you to stream execution logs directly to stdout via `epoch mission watch &lt;id&gt;`.
+                                    The {entityData.version} release introduces enhanced mission tracking natively in the CLI, allowing you to stream execution logs directly to stdout via `dhyra mission watch &lt;id&gt;`.
                                 </p>
                                 <div className="flex items-center gap-2 text-xs font-medium text-[#0f52ff] cursor-pointer hover:underline">
                                     View full changelog &rarr;
@@ -95,15 +95,15 @@ export function CliInspector({ entityData }: { entityData: any }) {
                             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mission Commands</span>
                             <div className="flex flex-col divide-y divide-border/50 border border-border rounded-md bg-card">
                                 <div className="flex flex-col gap-1 p-3">
-                                    <span className="text-sm font-mono font-bold text-emerald-400">epoch mission launch</span>
+                                    <span className="text-sm font-mono font-bold text-emerald-400">dhyra mission launch</span>
                                     <span className="text-xs text-muted-foreground">Deploys a mission plan to the runtime and begins execution.</span>
                                 </div>
                                 <div className="flex flex-col gap-1 p-3">
-                                    <span className="text-sm font-mono font-bold text-emerald-400">epoch mission watch</span>
+                                    <span className="text-sm font-mono font-bold text-emerald-400">dhyra mission watch</span>
                                     <span className="text-xs text-muted-foreground">Streams live execution logs and state transitions for an active mission.</span>
                                 </div>
                                 <div className="flex flex-col gap-1 p-3">
-                                    <span className="text-sm font-mono font-bold text-emerald-400">epoch mission abort</span>
+                                    <span className="text-sm font-mono font-bold text-emerald-400">dhyra mission abort</span>
                                     <span className="text-xs text-muted-foreground">Forcefully halts an active mission and initiates recovery protocols.</span>
                                 </div>
                             </div>
@@ -113,11 +113,11 @@ export function CliInspector({ entityData }: { entityData: any }) {
                             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Runtime Commands</span>
                             <div className="flex flex-col divide-y divide-border/50 border border-border rounded-md bg-card">
                                 <div className="flex flex-col gap-1 p-3">
-                                    <span className="text-sm font-mono font-bold text-blue-400">epoch runtime status</span>
+                                    <span className="text-sm font-mono font-bold text-blue-400">dhyra runtime status</span>
                                     <span className="text-xs text-muted-foreground">Checks the health and availability of all institutional runtime services.</span>
                                 </div>
                                 <div className="flex flex-col gap-1 p-3">
-                                    <span className="text-sm font-mono font-bold text-blue-400">epoch policy validate</span>
+                                    <span className="text-sm font-mono font-bold text-blue-400">dhyra policy validate</span>
                                     <span className="text-xs text-muted-foreground">Locally validates a mission plan against institutional governance rules.</span>
                                 </div>
                             </div>
@@ -129,15 +129,15 @@ export function CliInspector({ entityData }: { entityData: any }) {
                             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Authentication</span>
                             <div className="bg-card border border-border rounded-md p-4 flex flex-col gap-3">
                                 <p className="text-sm text-foreground/80 leading-relaxed mb-2">
-                                    The CLI requires a governed API Key to interact with the Epoch Runtime. You can authenticate interactively or via environment variables.
+                                    The CLI requires a governed API Key to interact with the Dhyra Runtime. You can authenticate interactively or via environment variables.
                                 </p>
                                 <div className="flex flex-col gap-1 p-3 rounded bg-[#0d1117] border border-border/50 font-mono text-[11px] text-[#c9d1d9]">
-                                    <span>$ epoch login</span>
+                                    <span>$ dhyra login</span>
                                     <span className="text-emerald-500">✔ Authenticated as Alice Chen (ep_live_94x2...)</span>
                                 </div>
                                 <div className="flex flex-col gap-1 p-3 rounded bg-[#0d1117] border border-border/50 font-mono text-[11px] text-[#c9d1d9] mt-2">
                                     <span className="text-muted-foreground"># Non-interactive / CI environments</span>
-                                    <span>export EPOCH_API_KEY="ep_live_94x2..."</span>
+                                    <span>export DHYRA_API_KEY="ep_live_94x2..."</span>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +147,7 @@ export function CliInspector({ entityData }: { entityData: any }) {
                             <div className="flex flex-col bg-card border border-border rounded-md p-4 gap-3 text-sm">
                                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                                     <span className="text-muted-foreground">Config Location</span>
-                                    <span className="font-mono text-xs">~/.epoch/config.json</span>
+                                    <span className="font-mono text-xs">~/.dhyra/config.json</span>
                                 </div>
                                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                                     <span className="text-muted-foreground">Default Environment</span>
@@ -165,20 +165,20 @@ export function CliInspector({ entityData }: { entityData: any }) {
 
             {/* Actions Bar */}
             <div className="flex items-center gap-2 p-4 border-t border-border bg-muted/10 shrink-0 overflow-x-auto custom-scrollbar">
-                <button type="button" onClick={() => void navigator.clipboard?.writeText(entityData.installCommand ?? `npm install -g @epochtm/v12-cli@${entityData.version}`)} className="flex items-center justify-center gap-2 px-3 py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors rounded-md text-xs font-medium whitespace-nowrap shadow-sm">
+                <button type="button" onClick={() => void navigator.clipboard?.writeText(entityData.installCommand ?? `npm install -g @dhyratm/v12-cli@${entityData.version}`)} className="flex items-center justify-center gap-2 px-3 py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors rounded-md text-xs font-medium whitespace-nowrap shadow-sm">
                     <Copy className="size-3.5" />
                     Copy Install
                 </button>
-                <button type="button" onClick={() => void navigator.clipboard?.writeText("epoch-v12 --help")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+                <button type="button" onClick={() => void navigator.clipboard?.writeText("dhyra-v12 --help")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
                     <Download className="size-3.5" />
                     Download Binary
                 </button>
                 <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
-                <button type="button" onClick={() => void navigator.clipboard?.writeText("epoch-v12 missions enqueue --workspace=<workspace> --mission=<mission> --type=execute")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+                <button type="button" onClick={() => void navigator.clipboard?.writeText("dhyra-v12 missions enqueue --workspace=<workspace> --mission=<mission> --type=execute")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
                     <Code2 className="size-3.5" />
                     Copy Example
                 </button>
-                <button type="button" onClick={() => window.open("https://www.npmjs.com/package/@epochtm/v12-cli", "_blank", "noopener,noreferrer")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm ml-auto">
+                <button type="button" onClick={() => window.open("https://www.npmjs.com/package/@dhyratm/v12-cli", "_blank", "noopener,noreferrer")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm ml-auto">
                     <BookOpen className="size-3.5" />
                     View Docs
                 </button>

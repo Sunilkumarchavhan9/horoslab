@@ -1,4 +1,4 @@
-import { EpochMissionDetail } from "@/lib/epoch-api";
+import { DhyraMissionDetail } from "@/lib/dhyra-api";
 
 export type MissionRow = {
  id: string;
@@ -29,19 +29,19 @@ export function formatRelativeTime(value?: string): string {
  return `${absDays}d ago`;
 }
 
-export function missionRisk(mission: EpochMissionDetail): string {
+export function missionRisk(mission: DhyraMissionDetail): string {
  const policy = mission.authorityPolicies?.[0];
  if (policy?.blocked) return "High";
  if (policy?.needsApproval) return "Medium";
  return "Low";
 }
 
-export function missionPlanner(mission: EpochMissionDetail): string {
+export function missionPlanner(mission: DhyraMissionDetail): string {
  const planner = mission.executionRun?.planner as { planner?: unknown; model?: unknown; stage?: unknown } | undefined;
- return typeof planner?.planner === "string" ? planner.planner : "Epoch Planner";
+ return typeof planner?.planner === "string" ? planner.planner : "Dhyra Planner";
 }
 
-export function missionProgress(mission: EpochMissionDetail): number {
+export function missionProgress(mission: DhyraMissionDetail): number {
  switch ((mission.state ?? "").toLowerCase()) {
  case "completed": return 100;
  case "waiting_review": return 85;

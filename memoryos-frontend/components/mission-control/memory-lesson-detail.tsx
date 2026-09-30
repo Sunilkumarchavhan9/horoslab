@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, FileText, Target, Building, ShieldCheck, Download, Archive, Edit3, ArrowUpRight, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
- applyEpochMemoryLesson,
- listEpochMemoryLessons,
- readActiveEpochWorkspaceId,
- rejectEpochMemoryLesson,
- type EpochMemoryLesson,
-} from "@/lib/epoch-api";
+ applyDhyraMemoryLesson,
+ listDhyraMemoryLessons,
+ readActiveDhyraWorkspaceId,
+ rejectDhyraMemoryLesson,
+ type DhyraMemoryLesson,
+} from "@/lib/dhyra-api";
 
 function lessonTitle(slug: string): string {
  return slug
@@ -22,20 +22,20 @@ function formatConfidence(value?: number | null): string {
  return `${Math.max(0, Math.min(100, Math.round(value)))}%`;
 }
 
-function sourceLabel(lesson: EpochMemoryLesson): string {
+function sourceLabel(lesson: DhyraMemoryLesson): string {
  const source = lesson.sourceRecords?.[0];
  return source?.summary || source?.institutionId || lesson.workspaceId || "Live workspace";
 }
 
 export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
- const [lesson, setLesson] = useState<EpochMemoryLesson | null>(null);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+ const [lesson, setLesson] = useState<DhyraMemoryLesson | null>(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
  const [actionState, setActionState] = useState<"apply" | "reject" | null>(null);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -59,7 +59,7 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  setLoading(true);
  setError(null);
  try {
- const result = await listEpochMemoryLessons(workspaceId);
+ const result = await listDhyraMemoryLessons(workspaceId);
  if (canceled) return;
  const all = result.lessons ?? [];
  const normalizedId = id.toLowerCase();
@@ -74,7 +74,7 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  setLesson(match);
  } else {
  setLesson(null);
- setError("No matching lesson was found in live Epoch memory records.");
+ setError("No matching lesson was found in live Dhyra memory records.");
  }
  } catch (loadError) {
  if (!canceled) {
@@ -98,14 +98,14 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  { label: "Lesson", value: lesson?.title ?? lessonTitle(id) },
  { label: "Summary", value: lesson?.content ?? error ?? "No live lesson data is available for this workspace." },
  { label: "Created From", value: lesson?.sourceRecords?.[0]?.summary ?? "No matching mission found" },
- { label: "Institution", value: sourceLabel(lesson ?? { id, title: id } as EpochMemoryLesson) },
+ { label: "Institution", value: sourceLabel(lesson ?? { id, title: id } as DhyraMemoryLesson) },
  { label: "Used By", value: lesson ? `${lesson.count ?? 0} Records` : "0 Records" },
  { label: "Confidence", value: formatConfidence(lesson?.confidence) },
  ];
 
  async function refreshLesson() {
  if (!workspaceId) return;
- const result = await listEpochMemoryLessons(workspaceId);
+ const result = await listDhyraMemoryLessons(workspaceId);
  const updated = result.lessons?.find((item) => item.id === lesson?.id) ?? lesson;
  setLesson(updated ?? null);
  }
@@ -114,7 +114,7 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  if (!workspaceId || !lesson) return;
  setActionState("apply");
  try {
- await applyEpochMemoryLesson(workspaceId, lesson.id);
+ await applyDhyraMemoryLesson(workspaceId, lesson.id);
  await refreshLesson();
  } finally {
  setActionState(null);
@@ -125,7 +125,7 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  if (!workspaceId || !lesson) return;
  setActionState("reject");
  try {
- await rejectEpochMemoryLesson(workspaceId, lesson.id);
+ await rejectDhyraMemoryLesson(workspaceId, lesson.id);
  await refreshLesson();
  } finally {
  setActionState(null);
@@ -195,7 +195,7 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  <tbody className="divide-y divide-[#e2e2e2]">
  <tr key="lesson-empty-source-row">
  <td className="px-6 py-6 text-[13px] text-muted-foreground" colSpan={2}>
- No matching lesson was found in live Epoch memory records.
+ No matching lesson was found in live Dhyra memory records.
  </td>
  </tr>
  </tbody>
@@ -346,6 +346,6 @@ export function MemoryLessonDetail({ id, onBack }: { id: string; onBack: () => v
  );
 }
 
-function lessonLabelFallback(lesson: EpochMemoryLesson): string {
+function lessonLabelFallback(lesson: DhyraMemoryLesson): string {
  return lesson.title?.trim() || lesson.content?.trim() || lesson.id;
 }

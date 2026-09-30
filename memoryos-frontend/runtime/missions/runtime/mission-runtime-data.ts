@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  createEpochInstitution,
-  createEpochMission,
-  getEpochMission,
-  listEpochInstitutions,
-  listEpochMissions,
-  listEpochTemplates,
-  readActiveEpochWorkspaceId,
-  resolveActiveEpochWorkspaceId,
-  runEpochMission,
-  decideEpochMissionCandidates,
-  sendEpochMissionTelemetry,
-  verifyEpochMissionWindow,
-  type EpochInstitution,
-  type EpochMissionDetail,
-  type EpochMissionRunResult,
-  type EpochTemplate,
-} from "@/lib/epoch-api";
+  createDhyraInstitution,
+  createDhyraMission,
+  getDhyraMission,
+  listDhyraInstitutions,
+  listDhyraMissions,
+  listDhyraTemplates,
+  readActiveDhyraWorkspaceId,
+  resolveActiveDhyraWorkspaceId,
+  runDhyraMission,
+  decideDhyraMissionCandidates,
+  sendDhyraMissionTelemetry,
+  verifyDhyraMissionWindow,
+  type DhyraInstitution,
+  type DhyraMissionDetail,
+  type DhyraMissionRunResult,
+  type DhyraTemplate,
+} from "@/lib/dhyra-api";
 import {
   formatRelativeTime,
   missionPlanner,
@@ -68,7 +68,7 @@ export type MissionTemplateCard = {
   roles: string[];
   policies: string[];
   authority: string;
-  template: EpochTemplate;
+  template: DhyraTemplate;
 };
 
 export type MissionHistoryCard = {
@@ -80,10 +80,10 @@ export type MissionHistoryCard = {
   duration: string;
   status: "PASS" | "FAIL";
   nodes: { label: string; time: string; status: "success" | "error" | "pending" }[];
-  mission: EpochMissionDetail;
+  mission: DhyraMissionDetail;
 };
 
-export function buildMissionRow(mission: EpochMissionDetail): MissionRow {
+export function buildMissionRow(mission: DhyraMissionDetail): MissionRow {
   const planner = mission.executionRun?.planner as
     | {
         planner?: unknown;
@@ -109,13 +109,13 @@ export function buildMissionRow(mission: EpochMissionDetail): MissionRow {
   };
 }
 
-export function buildMissionTemplateCard(template: EpochTemplate): MissionTemplateCard {
+export function buildMissionTemplateCard(template: DhyraTemplate): MissionTemplateCard {
   const definition = (template.definition ?? {}) as Record<string, unknown>;
   const category = template.category ?? "General";
   const runtime = firstString(definition.runtime, template.version ? `v${template.version}` : null) ?? "Live";
   const roles = asStringArray(definition.roles ?? definition.agents ?? definition.requiredRoles);
   const policies = asStringArray(definition.policies ?? definition.checks ?? definition.rules);
-  const authority = firstString(definition.authority, template.proof && typeof template.proof === "object" ? (template.proof as Record<string, unknown>).authority : null) ?? "Epoch Planner";
+  const authority = firstString(definition.authority, template.proof && typeof template.proof === "object" ? (template.proof as Record<string, unknown>).authority : null) ?? "Dhyra Planner";
 
   return {
     id: template.id,
@@ -130,7 +130,7 @@ export function buildMissionTemplateCard(template: EpochTemplate): MissionTempla
   };
 }
 
-export function buildMissionHistoryCard(mission: EpochMissionDetail): MissionHistoryCard | null {
+export function buildMissionHistoryCard(mission: DhyraMissionDetail): MissionHistoryCard | null {
   const status = (mission.verificationRun?.finalDecision ?? "").toUpperCase();
   const finalStatus: "PASS" | "FAIL" | null =
     status === "PASS" ? "PASS" : status === "FAIL" ? "FAIL" : mission.state === "completed" ? "PASS" : mission.state === "failed" ? "FAIL" : null;
@@ -178,22 +178,22 @@ export function buildMissionHistoryCard(mission: EpochMissionDetail): MissionHis
 }
 
 export function useMissionRuntimeData() {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
-  const [missions, setMissions] = useState<EpochMissionDetail[]>([]);
-  const [institutions, setInstitutions] = useState<EpochInstitution[]>([]);
-  const [templates, setTemplates] = useState<EpochTemplate[]>([]);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+  const [missions, setMissions] = useState<DhyraMissionDetail[]>([]);
+  const [institutions, setInstitutions] = useState<DhyraInstitution[]>([]);
+  const [templates, setTemplates] = useState<DhyraTemplate[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const syncWorkspace = () => {
-      const cachedWorkspaceId = readActiveEpochWorkspaceId();
+      const cachedWorkspaceId = readActiveDhyraWorkspaceId();
       if (cachedWorkspaceId) {
         setWorkspaceId(cachedWorkspaceId);
         return;
       }
 
-      void resolveActiveEpochWorkspaceId()
+      void resolveActiveDhyraWorkspaceId()
         .then(setWorkspaceId)
         .catch(() => setWorkspaceId(null));
     };
@@ -204,7 +204,7 @@ export function useMissionRuntimeData() {
 
   const refresh = useCallback(async () => {
     if (!workspaceId) {
-      setError("No active Epoch workspace is available.");
+      setError("No active Dhyra workspace is available.");
       setMissions([]);
       setInstitutions([]);
       setTemplates([]);
@@ -215,8 +215,8 @@ export function useMissionRuntimeData() {
     setError(null);
     try {
       const [missionRows, institutionRows] = await Promise.all([
-        listEpochMissions(workspaceId),
-        listEpochInstitutions(workspaceId),
+        listDhyraMissions(workspaceId),
+        listDhyraInstitutions(workspaceId),
       ]);
       setMissions(missionRows);
       setInstitutions(institutionRows);
@@ -227,7 +227,7 @@ export function useMissionRuntimeData() {
     }
 
     try {
-      const templateRows = await listEpochTemplates(workspaceId).catch(() => []);
+      const templateRows = await listDhyraTemplates(workspaceId).catch(() => []);
       setTemplates(templateRows);
     } catch {
       setTemplates([]);
@@ -254,9 +254,9 @@ export function useMissionRuntimeData() {
       proof?: Record<string, unknown>;
     }) => {
       if (!workspaceId) {
-        throw new Error("No active Epoch workspace is available.");
+        throw new Error("No active Dhyra workspace is available.");
       }
-      const mission = await createEpochMission(workspaceId, input);
+      const mission = await createDhyraMission(workspaceId, input);
       await refresh();
       return mission;
     },
@@ -267,10 +267,10 @@ export function useMissionRuntimeData() {
     const existing = institutions[0];
     if (existing) return existing;
     if (!workspaceId) {
-      throw new Error("No active Epoch workspace is available.");
+      throw new Error("No active Dhyra workspace is available.");
     }
 
-    const created = await createEpochInstitution(workspaceId, {
+    const created = await createDhyraInstitution(workspaceId, {
       name: "Software Release",
       category: "Engineering",
       version: "1.0",
@@ -302,11 +302,11 @@ export function useMissionRuntimeData() {
         approvals?: string[];
         notes?: string;
       },
-    ): Promise<EpochMissionRunResult> => {
+    ): Promise<DhyraMissionRunResult> => {
       if (!workspaceId) {
-        throw new Error("No active Epoch workspace is available.");
+        throw new Error("No active Dhyra workspace is available.");
       }
-      const result = await runEpochMission(workspaceId, missionId, input);
+      const result = await runDhyraMission(workspaceId, missionId, input);
       await refresh();
       return result;
     },
@@ -316,26 +316,26 @@ export function useMissionRuntimeData() {
   const getMission = useCallback(
     async (missionId: string) => {
       if (!workspaceId) return null;
-      return getEpochMission(workspaceId, missionId);
+      return getDhyraMission(workspaceId, missionId);
     },
     [workspaceId],
   );
 
   const decideMission = useCallback(async (missionId: string, input: { evaluations: Array<Record<string, unknown>>; objectives?: Array<{ metric: string; direction: "minimize" | "maximize"; weight: number }> }) => {
-    if (!workspaceId) throw new Error("No active Epoch workspace is available.");
-    const decision = await decideEpochMissionCandidates(workspaceId, missionId, input);
+    if (!workspaceId) throw new Error("No active Dhyra workspace is available.");
+    const decision = await decideDhyraMissionCandidates(workspaceId, missionId, input);
     await refresh();
     return decision;
   }, [refresh, workspaceId]);
 
   const sendMissionTelemetry = useCallback(async (missionId: string, input: { workerId: string; measurements: Record<string, number>; evidenceIds?: string[]; observedAt?: string }) => {
-    if (!workspaceId) throw new Error("No active Epoch workspace is available.");
-    return sendEpochMissionTelemetry(workspaceId, missionId, input);
+    if (!workspaceId) throw new Error("No active Dhyra workspace is available.");
+    return sendDhyraMissionTelemetry(workspaceId, missionId, input);
   }, [workspaceId]);
 
   const verifyMissionWindow = useCallback(async (missionId: string, input: { measurements: Record<string, number>; constraints: Array<Record<string, unknown>>; evidenceIds: string[]; requiredWindowSeconds: number; observedWindowSeconds: number }) => {
-    if (!workspaceId) throw new Error("No active Epoch workspace is available.");
-    const result = await verifyEpochMissionWindow(workspaceId, missionId, input);
+    if (!workspaceId) throw new Error("No active Dhyra workspace is available.");
+    const result = await verifyDhyraMissionWindow(workspaceId, missionId, input);
     await refresh();
     return result;
   }, [refresh, workspaceId]);

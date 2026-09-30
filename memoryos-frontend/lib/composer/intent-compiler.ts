@@ -1,7 +1,7 @@
-// Epoch Reality Intelligence Runtime - Intent Compiler & Multi-Reality Intent System
-// Canonical implementation based on EPOCH_FINAL_SOFTWARE_CLOUD_SIMULATION_EDGE_AUTOMATION_DATACENTER_BUILD_PLAN.md
+// Dhyra Reality Intelligence Runtime - Intent Compiler & Multi-Reality Intent System
+// Canonical implementation based on DHYRA_FINAL_SOFTWARE_CLOUD_SIMULATION_EDGE_AUTOMATION_DATACENTER_BUILD_PLAN.md
 
-export type EpochIntent =
+export type DhyraIntent =
   | "OPTIMIZE"
   | "COMPARE"
   | "DIAGNOSE"
@@ -56,7 +56,7 @@ export interface EntityReference {
 
 export interface CompiledOutcomeContract {
   objective: string;
-  intent: EpochIntent;
+  intent: DhyraIntent;
   domain: RealityDomain;
   executionDomain: ExecutionDomain;
   targetMetric?: string;
@@ -73,7 +73,7 @@ export interface CompiledOutcomeContract {
 export interface CompiledMissionIntent {
   id: string;
   rawInput: string;
-  intent: EpochIntent;
+  intent: DhyraIntent;
   domain: RealityDomain;
   executionDomain: ExecutionDomain;
   actionButtonLabel: string;
@@ -97,7 +97,7 @@ export interface ComposerSuggestion {
   text: string;
   fullPrompt: string;
   action: string;
-  intent: EpochIntent;
+  intent: DhyraIntent;
   domain: RealityDomain;
   executionDomain: ExecutionDomain;
   modelBadge?: { iconType: string; text: string };
@@ -163,7 +163,7 @@ export const MULTI_REALITY_ENTITIES: Record<string, EntityReference> = {
   "@payment-service": { id: "svc-payment", label: "payment-service", type: "service" },
 
   // Agents & Workflows
-  "@agent-01": { id: "agent-01", label: "Epoch Agent 01", type: "agent" },
+  "@agent-01": { id: "agent-01", label: "Dhyra Agent 01", type: "agent" },
   "@deployment-mission": { id: "mission-deploy", label: "Deployment Workflow", type: "workload" },
   "@incident-response": { id: "incident-resp", label: "Incident Response", type: "workload" },
 
@@ -445,7 +445,7 @@ export function compileIntent(
   const lower = text.toLowerCase();
 
   // 1. Detect Intent Family
-  let intent: EpochIntent = "OPTIMIZE";
+  let intent: DhyraIntent = "OPTIMIZE";
   if (lower.startsWith("teach") || lower.includes("teach ") || lower.includes("learn ")) {
     intent = "TEACH";
   } else if (lower.startsWith("compare") || lower.includes(" vs ") || lower.includes(" against ") || lower.includes("compare ")) {
@@ -564,7 +564,7 @@ export function compileIntent(
     verificationMethod: domain === "ai" ? "independent cost + telemetry verifier" : domain === "physical" ? "sensor feedback vs predicted state" : "OTel trace validator",
   };
 
-  const actionLabels: Record<EpochIntent, string> = {
+  const actionLabels: Record<DhyraIntent, string> = {
     OPTIMIZE: "Optimize",
     COMPARE: "Compare",
     DIAGNOSE: "Diagnose",

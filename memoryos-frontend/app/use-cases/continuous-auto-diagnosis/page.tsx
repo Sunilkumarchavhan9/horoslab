@@ -6,8 +6,8 @@ import { LiveLatencyPipeline } from "@/components/landing/live-latency-pipeline"
 import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { EpochLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, EpochWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/epoch/primitives/brand-icons";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { DhyraLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, DhyraWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/dhyra/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -57,7 +57,7 @@ const COMPARISON_ROWS = [
 
 const DIAGNOSE_CODE = `# Continuous Auto-Diagnosis Agent for Kubernetes Infrastructure
 import torch
-from epoch_sre import AutoDiagnosisAgent, TelemetryStream
+from dhyra_sre import AutoDiagnosisAgent, TelemetryStream
 
 # Initialize SRE reasoning model with eBPF telemetry hooks
 agent = AutoDiagnosisAgent.from_pretrained("kubernetes/k8s-sre-agent")
@@ -88,7 +88,7 @@ CLUSTER_CONTEXT="k8s-prod-us-east"
 TARGET_NAMESPACE="billing-services"
 
 # Execute real-time eBPF diagnosis and canary patch rollout
-epoch-agent diagnose \\
+dhyra-agent diagnose \\
   --cluster $CLUSTER_CONTEXT \\
   --namespace $TARGET_NAMESPACE \\
   --ebpf-tracing enabled \\
@@ -125,7 +125,7 @@ EXPOSE 8080
 ENTRYPOINT ["/agent/remediate.sh"]`;
 
 const EVAL_CODE = `# Evaluation harness: measuring MTTR and RCA accuracy
-from epoch_eval import IncidentEvaluator, SafetyGate
+from dhyra_eval import IncidentEvaluator, SafetyGate
 
 def evaluate_remediation_safety(incident_log: dict, generated_patch: dict) -> dict:
     """Verify safety and efficacy of autonomous infrastructure patches."""
@@ -292,7 +292,7 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "How does Continuous Auto-Diagnosis prevent dangerous automated changes?",
-    answer: "EpochInfra uses strict safety guardrails including canary dry-runs, policy gate checks, and configurable auto-rollback rules to ensure no patch causes downtime.",
+    answer: "Dhyra uses strict safety guardrails including canary dry-runs, policy gate checks, and configurable auto-rollback rules to ensure no patch causes downtime.",
   },
   {
     question: "Does it support custom Kubernetes clusters and eBPF observability?",
@@ -656,7 +656,7 @@ export default function ContinuousAutoDiagnosisPage() {
               Three ways to manage infrastructure health
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for auto-diagnosis across EpochInfra, closed monitoring APIs, and DIY scripts.
+              Workflow comparison for auto-diagnosis across Dhyra, closed monitoring APIs, and DIY scripts.
             </p>
           </div>
 
@@ -701,9 +701,9 @@ export default function ContinuousAutoDiagnosisPage() {
                     </div>
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                        <EpochLogo size={28} />
+                        <DhyraLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">EpochInfra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Autonomous RCA & self-healing.</p>
                   </div>
@@ -1258,7 +1258,7 @@ export default function ContinuousAutoDiagnosisPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What EpochInfra tunes
+                  What Dhyra tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and cluster.
@@ -1415,7 +1415,7 @@ export default function ContinuousAutoDiagnosisPage() {
 
             <div className="flex items-start gap-4 max-w-4xl w-full text-left">
               <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <EpochLogo size={20} />
+                <DhyraLogo size={20} />
               </div>
               <div>
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
@@ -1457,7 +1457,7 @@ export default function ContinuousAutoDiagnosisPage() {
 
             <div className="relative z-20 flex flex-col items-center text-center max-w-4xl px-4 mt-8 pointer-events-auto">
               <div className="mb-12">
-                <EpochLogo size={40} />
+                <DhyraLogo size={40} />
               </div>
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
@@ -1467,7 +1467,7 @@ export default function ContinuousAutoDiagnosisPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the incident scope. EpochInfra builds and optimizes the diagnosis stack.
+                Describe the incident scope. Dhyra builds and optimizes the diagnosis stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
@@ -1536,7 +1536,7 @@ export default function ContinuousAutoDiagnosisPage() {
                 <line x1="0" y1="32.5" x2="100%" y2="32.5" stroke="url(#paint3_linear_55_3)" strokeDasharray="3 3" />
               </svg>
               <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-                <EpochLogo size={25} />
+                <DhyraLogo size={25} />
               </div>
             </div>
 
@@ -1544,9 +1544,9 @@ export default function ContinuousAutoDiagnosisPage() {
               <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
                 <div className="flex flex-col">
                   <div className="mb-2 text-[#F0EFE2]">
-                    <EpochWordmarkLogo className="h-[24px] w-auto" />
+                    <DhyraWordmarkLogo className="h-[24px] w-auto" />
                   </div>
-                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 epochInfra. All rights reserved.</p>
+                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
                   <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
                     <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="GitHub">
@@ -1594,7 +1594,7 @@ export default function ContinuousAutoDiagnosisPage() {
                   </div>
 
                   <div className="flex flex-col items-end">
-                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Epoch</span>
+                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
                     <div className="flex items-center gap-4 text-[#C8C7BA]">
                       <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                       <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -1612,11 +1612,11 @@ export default function ContinuousAutoDiagnosisPage() {
             </div>
 
             <div className="w-full border-t border-dashed border-[#333] relative">
-              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">EPOCH</div>
+              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
               <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><EpochLogo size={12} /> Part of  causis</span>
+                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo size={12} /> Part of  causis</span>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

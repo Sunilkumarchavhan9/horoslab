@@ -7,10 +7,10 @@ import { OrganizationLayout, OrganizationHeader, StatusBadge } from "./organizat
 
 // --- Mock Data ---
 const MEMBERS = [
- { id: "mem_1", name: "Sunil Kumar", email: "sunil@epoch.ai", role: "Platform Admin", team: "Engineering", status: "Online", lastActive: "Just now", institutions: 3, missions: 18 },
- { id: "mem_2", name: "Alice Chen", email: "alice@epoch.ai", role: "Engineer", team: "Engineering", status: "Offline", lastActive: "2 hours ago", institutions: 1, missions: 42 },
- { id: "mem_3", name: "Bob Smith", email: "bob@epoch.ai", role: "Viewer", team: "Product", status: "Online", lastActive: "5 mins ago", institutions: 0, missions: 0 },
- { id: "mem_4", name: "Charlie Davis", email: "charlie@epoch.ai", role: "Finance", team: "Operations", status: "Invited", lastActive: "Never", institutions: 0, missions: 0 }
+ { id: "mem_1", name: "Sunil Kumar", email: "sunil@dhyra.ai", role: "Platform Admin", team: "Engineering", status: "Online", lastActive: "Just now", institutions: 3, missions: 18 },
+ { id: "mem_2", name: "Alice Chen", email: "alice@dhyra.ai", role: "Engineer", team: "Engineering", status: "Offline", lastActive: "2 hours ago", institutions: 1, missions: 42 },
+ { id: "mem_3", name: "Bob Smith", email: "bob@dhyra.ai", role: "Viewer", team: "Product", status: "Online", lastActive: "5 mins ago", institutions: 0, missions: 0 },
+ { id: "mem_4", name: "Charlie Davis", email: "charlie@dhyra.ai", role: "Finance", team: "Operations", status: "Invited", lastActive: "Never", institutions: 0, missions: 0 }
 ];
 
 export function OrganizationMembers() {

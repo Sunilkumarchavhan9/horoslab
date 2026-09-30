@@ -16,7 +16,7 @@ export function VerificationAssuranceCaseSection() {
               grade its own outcome.
             </h2>
             <p className="text-[16px] leading-relaxed text-slate-600 max-w-2xl mx-auto">
-              Epoch separates execution from verification. Every material claim is challenged,
+              Dhyra separates execution from verification. Every material claim is challenged,
               evidence-linked, and packaged into an inspectable certificate before it can be trusted.
             </p>
           </Reveal>
@@ -68,7 +68,7 @@ export function VerificationAssuranceCaseSection() {
 
                 {/* CLI Mock */}
                 <div className="font-mono text-[12px] leading-loose text-slate-500">
-                  <div className="text-emerald-600">$ epoch verify \</div>
+                  <div className="text-emerald-600">$ dhyra verify \</div>
                   <div className="pl-4">--claim output.accuracy \</div>
                   <div className="pl-4">--evidence ./red_team_logs \</div>
                   <div className="pl-4">--signature crypt_key</div>

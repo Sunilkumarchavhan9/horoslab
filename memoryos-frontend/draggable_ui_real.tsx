@@ -34,13 +34,13 @@ import {
   Layers,
 } from "lucide-react";
 import {
-  getEpochMissionControlSnapshot,
-  readActiveEpochWorkspaceId,
-  resolveActiveEpochWorkspaceId,
-  type EpochMissionControlSnapshot,
-  type EpochInstitution,
-  type EpochMission,
-} from "@/lib/epoch-api";
+  getDhyraMissionControlSnapshot,
+  readActiveDhyraWorkspaceId,
+  resolveActiveDhyraWorkspaceId,
+  type DhyraMissionControlSnapshot,
+  type DhyraInstitution,
+  type DhyraMission,
+} from "@/lib/dhyra-api";
 import { cn } from "@/lib/utils";
 
 type ColumnType = "Institutions" | "Missions" | "Recents" | "Domains" | "Workers";
@@ -365,8 +365,8 @@ function DateRangePickerPopover({
 }
 
 export function AccountHomeDashboard() {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
-  const [snapshot, setSnapshot] = useState<EpochMissionControlSnapshot | null>(null);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+  const [snapshot, setSnapshot] = useState<DhyraMissionControlSnapshot | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -410,7 +410,7 @@ export function AccountHomeDashboard() {
 
   // Sync workspace ID
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
     syncWorkspace();
     window.addEventListener("focus", syncWorkspace);
     window.addEventListener("storage", syncWorkspace);
@@ -428,11 +428,11 @@ export function AccountHomeDashboard() {
       try {
         let wid = workspaceId;
         if (!wid) {
-          wid = await resolveActiveEpochWorkspaceId();
+          wid = await resolveActiveDhyraWorkspaceId();
           if (wid) setWorkspaceId(wid);
         }
         if (wid) {
-          const snap = await getEpochMissionControlSnapshot(wid);
+          const snap = await getDhyraMissionControlSnapshot(wid);
           if (!canceled && snap) {
             setSnapshot(snap);
 
@@ -448,7 +448,7 @@ export function AccountHomeDashboard() {
           }
         }
       } catch (err) {
-        console.error("Failed to fetch live epoch snapshot", err);
+        console.error("Failed to fetch live dhyra snapshot", err);
       } finally {
         if (!canceled) {
           setTimeout(() => setIsLoading(false), 400);

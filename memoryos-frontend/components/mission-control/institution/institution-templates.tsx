@@ -113,7 +113,7 @@ export function InstitutionTemplates() {
  <ShieldCheck className="size-4" /> Pre-verified
  </h3>
  <p className="text-[13px] text-foreground/70 dark:text-[#F0EFE2]/70 leading-relaxed">
- This template has been officially verified by the Epoch team. It contains no unsafe syscalls and complies with standard AI safety bounds.
+ This template has been officially verified by the Dhyra team. It contains no unsafe syscalls and complies with standard AI safety bounds.
  </p>
  </div>
  </div>

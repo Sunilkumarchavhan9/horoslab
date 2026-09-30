@@ -93,7 +93,7 @@ export function IntelligenceClusters({ workspaceId }: { workspaceId?: string | n
                 <div className="flex items-center justify-between px-6 py-4">
                     <h1 className="text-xl font-bold tracking-tight text-foreground">Failure Clusters</h1>
                     <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => exportLiveRows("epoch-failure-clusters.json", visibleClusters)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-failure-clusters.json", visibleClusters)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

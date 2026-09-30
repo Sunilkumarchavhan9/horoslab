@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
 import { Progress } from "@/components/ui/progress";
-import { createEpochMission, decideEpochMissionApproval, listEpochInstitutions, listEpochMissions, queueEpochMission, type EpochInstitution, type EpochMissionDetail } from "@/lib/epoch-api";
+import { createDhyraMission, decideDhyraMissionApproval, listDhyraInstitutions, listDhyraMissions, queueDhyraMission, type DhyraInstitution, type DhyraMissionDetail } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
 type MissionRow = {
@@ -58,7 +58,7 @@ function PriorityBadge({ priority }: { priority: MissionRow["priority"] }) {
     }
 }
 
-function toMissionRow(mission: EpochMissionDetail | null | undefined): MissionRow | null {
+function toMissionRow(mission: DhyraMissionDetail | null | undefined): MissionRow | null {
     if (!mission || typeof mission !== "object" || !mission.id) return null;
     const normalizedState = (mission.state || "queued").toLowerCase();
     const state: MissionRow["state"] = normalizedState === "draft" ? "Draft" : normalizedState === "completed" ? "Success" : normalizedState === "failed" ? "Failed" : normalizedState === "cancelled" ? "Cancelled" : normalizedState === "recovering" ? "Recovering" : normalizedState === "running" ? "Running" : normalizedState === "waiting_review" ? "Waiting Review" : "Queued";
@@ -98,7 +98,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
     const { openInspector } = useInspector();
     const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
     const [missions, setMissions] = useState<MissionRow[]>([]);
-    const [institutions, setInstitutions] = useState<EpochInstitution[]>([]);
+    const [institutions, setInstitutions] = useState<DhyraInstitution[]>([]);
     const [institutionsLoading, setInstitutionsLoading] = useState(Boolean(workspaceId));
     const [loading, setLoading] = useState(Boolean(workspaceId));
     const [error, setError] = useState<string | null>(null);
@@ -132,7 +132,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `epoch-missions-${new Date().toISOString().slice(0, 10)}.json`;
+        link.download = `dhyra-missions-${new Date().toISOString().slice(0, 10)}.json`;
         link.click();
         URL.revokeObjectURL(url);
     };
@@ -165,7 +165,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
         setCreating(true);
         setCreateError(null);
         try {
-            const mission = await createEpochMission(workspaceId, {
+            const mission = await createDhyraMission(workspaceId, {
                 institutionId: newInstitutionId.trim(),
                 title: newTitle.trim(),
                 objective: newObjective.trim(),
@@ -231,7 +231,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
         setActingMissionId(missionId);
         setActionError(null);
         try {
-            const result = await decideEpochMissionApproval(workspaceId, missionId, "approved", "Approved by Mission Control operator.");
+            const result = await decideDhyraMissionApproval(workspaceId, missionId, "approved", "Approved by Mission Control operator.");
             const row = toMissionRow(result);
             if (row) setMissions((current) => [row, ...current.filter((item) => item.id !== missionId)]);
         } catch (reason) {
@@ -246,8 +246,8 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
         setActingMissionId(missionId);
         setActionError(null);
         try {
-            await queueEpochMission(workspaceId, missionId);
-            const refreshed = await listEpochMissions(workspaceId);
+            await queueDhyraMission(workspaceId, missionId);
+            const refreshed = await listDhyraMissions(workspaceId);
             setMissions(refreshed.map(toMissionRow).filter((row): row is MissionRow => row !== null));
         } catch (reason) {
             setActionError(reason instanceof Error ? reason.message : "Could not queue mission.");
@@ -263,7 +263,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
             return;
         }
 
-        const load = () => listEpochMissions(workspaceId)
+        const load = () => listDhyraMissions(workspaceId)
             .then((items) => {
                 if (!cancelled) {
                     setMissions(items.map(toMissionRow).filter((row): row is MissionRow => row !== null));
@@ -278,7 +278,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
             });
         void load();
         setInstitutionsLoading(true);
-        void listEpochInstitutions(workspaceId)
+        void listDhyraInstitutions(workspaceId)
             .then((items) => {
                 if (!cancelled) {
                     setInstitutions(items);
@@ -419,7 +419,7 @@ export function WorkspaceMissions({ workspaceId }: { workspaceId?: string | null
                         </label>
                         <label className="flex min-w-0 flex-col gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                             Working branch
-                            <input value={newWorkingBranch} onChange={(event) => setNewWorkingBranch(event.target.value)} placeholder="epoch/fix-auth" className="h-8 border border-border bg-background px-3 text-xs font-normal normal-case tracking-normal text-foreground" />
+                            <input value={newWorkingBranch} onChange={(event) => setNewWorkingBranch(event.target.value)} placeholder="dhyra/fix-auth" className="h-8 border border-border bg-background px-3 text-xs font-normal normal-case tracking-normal text-foreground" />
                         </label>
                         <div className="border-t border-border pt-3 md:col-span-4">
                             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Execution specification</p>

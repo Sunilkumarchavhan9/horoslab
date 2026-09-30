@@ -34,7 +34,7 @@ type DeveloperSurfaceRun = {
 const RUNS: DeveloperSurfaceRun[] = [
   { id: "API-1041", title: "REST API", detail: "Institution run accepted · 202 queued", time: "22s", brand: "openapi", needsReview: false },
   { id: "SDK-1040", title: "SDK", detail: "Institution context attached", time: "48s", brand: "typescript", needsReview: false },
-  { id: "CLI-1039", title: "CLI", detail: "epoch verify deploy.yaml", time: "1m", brand: "cli", needsReview: true },
+  { id: "CLI-1039", title: "CLI", detail: "dhyra verify deploy.yaml", time: "1m", brand: "cli", needsReview: true },
   { id: "MCP-1038", title: "MCP", detail: "Tool authority lease active", time: "2m", brand: "mcp", needsReview: false },
   { id: "WHK-1037", title: "Signed webhooks", detail: "Outcome delivered · verified", time: "3m", brand: "webhook", needsReview: false },
   { id: "ART-1036", title: "Artifact export", detail: "Proof bundle ready to download", time: "5m", brand: "artifact", needsReview: false },
@@ -72,7 +72,7 @@ function McpExchangePanel({ source, reducedMotion }: { source: McpSourceCard; re
           <span className="text-[9px] text-[#356acc]">6s ago</span>
         </div>
         <p className="mt-3 max-w-[560px] text-[9.5px] leading-[1.7] text-[#5b6f88]">
-          Epoch pulled {source.signal} from {source.name}, resolved entities and timestamps, removed duplicates, then applied tenant isolation, capability limits, and the active mission lease.
+          Dhyra pulled {source.signal} from {source.name}, resolved entities and timestamps, removed duplicates, then applied tenant isolation, capability limits, and the active mission lease.
         </p>
 
         <div className="mt-4 border border-white/75 bg-white/55 backdrop-blur-md" style={{ borderRadius: 10 }}>
@@ -105,7 +105,7 @@ function SdkPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
   return (
     <motion.div className="flex h-full flex-col" initial={reducedMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
       <div className="flex items-center justify-between border-b border-[#e0e6ed] pb-4">
-        <div className="flex items-center gap-3"><MemoryStarLogo tone="black" className="!h-[22px]" /><span className="h-5 w-px bg-[#d9e0e8]" /><div><h4 className="text-[11px] font-semibold">Epoch SDK runtime</h4><p className="mt-1 text-[8px] text-[#7e8ea0]">Give every agent mission, authority, evidence duties, and settlement after work.</p></div></div>
+        <div className="flex items-center gap-3"><MemoryStarLogo tone="black" className="!h-[22px]" /><span className="h-5 w-px bg-[#d9e0e8]" /><div><h4 className="text-[11px] font-semibold">Dhyra SDK runtime</h4><p className="mt-1 text-[8px] text-[#7e8ea0]">Give every agent mission, authority, evidence duties, and settlement after work.</p></div></div>
         <span className="border border-[#cfd9e4] px-2 py-1 font-mono text-[7px] text-[#58708b]" style={{ borderRadius: 999 }}>NODE SDK</span>
       </div>
 
@@ -127,18 +127,18 @@ function SdkPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
           <div className="flex items-center justify-between border-b border-white/10 px-3 py-2 font-mono text-[7px] text-[#90a2b7]"><span>agent-runtime.ts</span><span className="text-[#70b687]">CONNECTED</span></div>
           <pre className="whitespace-pre-wrap px-4 py-3 font-mono text-[7.5px] leading-[1.8] text-[#cad5e1]"><code>{`import { createMemoryOSClient } from "@memoryostm/sdk";
 
-const epoch = createMemoryOSClient({
-  workspace: "epoch-prod"
+const dhyra = createMemoryOSClient({
+  workspace: "dhyra-prod"
 });
 
-const context = await epoch.beforeModel({
+const context = await dhyra.beforeModel({
   mission: "deploy inference-api",
   sources: ["github", "sentry", "datadog"]
 });
 
 const result = await agent.run(context);
 
-await epoch.afterModel({
+await dhyra.afterModel({
   result,
   evidence: result.artifacts
 });`}</code></pre>
@@ -181,7 +181,7 @@ function RestApiPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
         <div className="grid h-[calc(100%-24px)] min-h-0 grid-cols-2 gap-3">
         <div className="overflow-hidden border border-[#273547] bg-[#111923]/95 backdrop-blur-md" style={{ borderRadius: 10 }}><div className="border-b border-white/10 px-3 py-2 font-mono text-[7px] uppercase text-[#91a3b8]">Request</div><pre className="whitespace-pre-wrap px-3 py-3 font-mono text-[7.5px] leading-[1.8] text-[#cbd6e3]"><code>{`{
   "agent_id": "deploy-agent",
-  "workspace": "epoch-prod",
+  "workspace": "dhyra-prod",
   "mission": "deploy inference-api",
   "sources": ["github", "sentry"],
   "risk": "medium"
@@ -191,7 +191,7 @@ function RestApiPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
   "context": { "facts": 24 },
   "authority": { "tools": 3 },
   "required_checks": 18,
-  "trace_proof": "epoch://trace/7d2"
+  "trace_proof": "dhyra://trace/7d2"
 }`}</code></pre></div>
         </div>
       </div>
@@ -203,7 +203,7 @@ function RestApiPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
 
 const CLI_COMMANDS = [
   { step: "01", label: "Install CLI", command: "npm install -g @memoryos/cli" },
-  { step: "02", label: "Authenticate workspace", command: "memoryos auth login --workspace epoch-prod" },
+  { step: "02", label: "Authenticate workspace", command: "memoryos auth login --workspace dhyra-prod" },
   { step: "03", label: "Connect a source", command: "memoryos sources connect github --scope repo,issues,pulls" },
 ] as const;
 
@@ -222,7 +222,7 @@ function CliSetupPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
         <div className="flex items-center gap-3">
           <MemoryStarLogo tone="black" className="!h-[22px]" />
           <span className="h-5 w-px bg-[#d9e0e8]" />
-          <div><h4 className="text-[11px] font-semibold">Epoch CLI setup</h4><p className="mt-1 text-[8px] text-[#7e8ea0]">Install once. Connect every approved company source.</p></div>
+          <div><h4 className="text-[11px] font-semibold">Dhyra CLI setup</h4><p className="mt-1 text-[8px] text-[#7e8ea0]">Install once. Connect every approved company source.</p></div>
         </div>
         <span className="border border-[#cfe0d2] bg-[#f4faf5] px-2 py-1 font-mono text-[7px] text-[#3d7b50]" style={{ borderRadius: 999 }}>CLI READY</span>
       </div>
@@ -248,16 +248,16 @@ function CliSetupPanel({ reducedMotion }: { reducedMotion: boolean | null }) {
           <div className="flex items-center justify-between"><h5 className="text-[8.5px] font-semibold">Source commands</h5><span className="font-mono text-[7px] text-[#7d8da0]">200 available</span></div>
           <div className="mt-3 space-y-2 font-mono text-[7px] text-[#55708e]">
             <button type="button" onClick={() => void copyCommand("memoryos sources connect datadog --scope traces,metrics")} className="block w-full border border-white/80 bg-white/40 px-2 py-2 text-left hover:bg-white/70" style={{ borderRadius: 6 }}>connect datadog --scope traces,metrics</button>
-            <button type="button" onClick={() => void copyCommand("memoryos sources connect aws --role epoch-readonly")} className="block w-full border border-white/80 bg-white/40 px-2 py-2 text-left hover:bg-white/70" style={{ borderRadius: 6 }}>connect aws --role epoch-readonly</button>
+            <button type="button" onClick={() => void copyCommand("memoryos sources connect aws --role dhyra-readonly")} className="block w-full border border-white/80 bg-white/40 px-2 py-2 text-left hover:bg-white/70" style={{ borderRadius: 6 }}>connect aws --role dhyra-readonly</button>
             <button type="button" onClick={() => void copyCommand("memoryos sources connect sentry --scope issues,releases")} className="block w-full border border-white/80 bg-white/40 px-2 py-2 text-left hover:bg-white/70" style={{ borderRadius: 6 }}>connect sentry --scope issues,releases</button>
             <button type="button" onClick={() => void copyCommand("memoryos sources list --health")} className="block w-full border border-white/80 bg-white/40 px-2 py-2 text-left hover:bg-white/70" style={{ borderRadius: 6 }}>sources list --health</button>
           </div>
         </div>
 
         <div className="overflow-hidden border border-[#273547] bg-[#101722]/95 text-[#cbd6e3] backdrop-blur-md" style={{ borderRadius: 10 }}>
-          <div className="flex items-center justify-between border-b border-white/10 px-3 py-2"><span className="font-mono text-[7px] uppercase tracking-[0.12em] text-[#91a3b8]">epoch-cli.log</span><span className="font-mono text-[7px] text-[#68b780]">connected</span></div>
+          <div className="flex items-center justify-between border-b border-white/10 px-3 py-2"><span className="font-mono text-[7px] uppercase tracking-[0.12em] text-[#91a3b8]">dhyra-cli.log</span><span className="font-mono text-[7px] text-[#68b780]">connected</span></div>
           <div className="space-y-2 px-3 py-3 font-mono text-[7px] leading-4">
-            <p><span className="text-[#6f8196]">12:04:18</span> authenticated workspace <span className="text-[#8bb7ef]">epoch-prod</span></p>
+            <p><span className="text-[#6f8196]">12:04:18</span> authenticated workspace <span className="text-[#8bb7ef]">dhyra-prod</span></p>
             <p><span className="text-[#6f8196]">12:04:21</span> github permissions resolved <span className="text-[#73bd8b]">PASS</span></p>
             <p><span className="text-[#6f8196]">12:04:23</span> source contract created <span className="text-[#8bb7ef]">src_github_842</span></p>
             <p><span className="text-[#6f8196]">12:04:24</span> indexed 18 repositories · 342 decisions</p>
@@ -281,13 +281,13 @@ export function WatchtowerModal({ mcpSource }: { mcpSource: McpSourceCard }) {
   const selected = RUNS[selectedIndex];
   const visibleRuns = RUNS.map((run, index) => ({ run, index })).filter(({ run }) => !reviewOnly || run.needsReview);
   const inspector = selected.brand === "mcp"
-    ? { title: "MCP session", labels: ["Client", "Tenant", "Authority", "Lease"], values: ["Claude Code", "epoch-prod", "3 tools", "14m · revocable"], links: "Live sources" }
+    ? { title: "MCP session", labels: ["Client", "Tenant", "Authority", "Lease"], values: ["Claude Code", "dhyra-prod", "3 tools", "14m · revocable"], links: "Live sources" }
     : selected.brand === "cli"
-      ? { title: "CLI workspace", labels: ["Version", "Workspace", "Authority", "Sources"], values: ["v2.18.4", "epoch-prod", "source:write", "3 connected"], links: "Connected sources" }
+      ? { title: "CLI workspace", labels: ["Version", "Workspace", "Authority", "Sources"], values: ["v2.18.4", "dhyra-prod", "source:write", "3 connected"], links: "Connected sources" }
       : selected.brand === "typescript"
-        ? { title: "SDK runtime", labels: ["Package", "Workspace", "Hooks", "Sources"], values: ["@memoryostm/sdk", "epoch-prod", "before + after", "3 inherited"], links: "Runtime context" }
+        ? { title: "SDK runtime", labels: ["Package", "Workspace", "Hooks", "Sources"], values: ["@memoryostm/sdk", "dhyra-prod", "before + after", "3 inherited"], links: "Runtime context" }
         : selected.brand === "openapi"
-          ? { title: "API request", labels: ["Protocol", "Workspace", "Auth", "Latency"], values: ["HTTPS · JSON", "epoch-prod", "Bearer token", "84ms"], links: "API resources" }
+          ? { title: "API request", labels: ["Protocol", "Workspace", "Auth", "Latency"], values: ["HTTPS · JSON", "dhyra-prod", "Bearer token", "84ms"], links: "API resources" }
           : { title: "Mission context", labels: ["Service", "Owner", "Authority", "Budget"], values: ["inference-api", "Platform team", "deploy:prod", "$500 · 14m"], links: "Links" };
 
   return (
@@ -401,14 +401,14 @@ export function WatchtowerModal({ mcpSource }: { mcpSource: McpSourceCard }) {
                 <span className="text-[9px] text-[#356acc]">18s ago</span>
               </div>
               <p className="mt-3 max-w-[540px] text-[10px] leading-[1.7] text-[#5b6f88]">
-                Epoch evaluated policy, authority, budget, security, and rollback readiness. No unresolved risk was found above the execution threshold.
+                Dhyra evaluated policy, authority, budget, security, and rollback readiness. No unresolved risk was found above the execution threshold.
               </p>
               <div className="mt-4 border border-white/75 bg-white/55 backdrop-blur-md" style={{ borderRadius: 10 }}>
                 <div className="flex items-center gap-3 border-b border-[#e2e8ef] px-4 py-3">
                   <span className="flex h-7 w-7 items-center justify-center border border-[#c7d8c8] bg-[#f1f8f1] text-[#34734a]"><FileCheck2 className="h-4 w-4" /></span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-semibold">Epoch verification agent</p>
-                    <p className="text-[8.5px] text-[#7b8999]">verify@epoch.ai · certificate 9F2A</p>
+                    <p className="text-[10px] font-semibold">Dhyra verification agent</p>
+                    <p className="text-[8.5px] text-[#7b8999]">verify@dhyra.ai · certificate 9F2A</p>
                   </div>
                   <span className="flex items-center gap-1 text-[9px] font-semibold text-[#34734a]"><Check className="h-3.5 w-3.5" /> PASS</span>
                 </div>

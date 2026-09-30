@@ -7,8 +7,8 @@ import { LiveLatencyPipeline } from "@/components/landing/live-latency-pipeline"
 import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { EpochLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, EpochWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/epoch/primitives/brand-icons";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { DhyraLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, DhyraWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/dhyra/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -304,7 +304,7 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "Do I need to maintain my own physics engines?",
-    answer: "No. EpochInfra handles the heavy lifting of orchestrating Genesis, Mujoco, and Isaac Gym across massive GPU clusters using MPI, abstracting away the complex interconnects.",
+    answer: "No. Dhyra handles the heavy lifting of orchestrating Genesis, Mujoco, and Isaac Gym across massive GPU clusters using MPI, abstracting away the complex interconnects.",
   },
   {
     question: "How do you evaluate hallucinated physics?",
@@ -319,7 +319,7 @@ const FAQ_DATA = [
 
 
 export default function SimulationWorldModelsPage() {
-  const [activeTab, setActiveTab] = useState("EpochInfra");
+  const [activeTab, setActiveTab] = useState("Dhyra");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [activeFile, setActiveFile] = useState<DataFactoryFile>("rollout.py" as any);
@@ -727,7 +727,7 @@ export default function SimulationWorldModelsPage() {
                 Three ways to build physical simulations
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Workflow comparison for simulation engines across EpochInfra, closed APIs, and DIY clusters.
+                Workflow comparison for simulation engines across Dhyra, closed APIs, and DIY clusters.
               </p>
             </div>
 
@@ -790,9 +790,9 @@ export default function SimulationWorldModelsPage() {
                       </div>
                       <div className="flex items-center gap-3 mb-2">
                         <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                          <EpochLogo size={28} />
+                          <DhyraLogo size={28} />
                         </div>
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">EpochInfra</span>
+                        <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
                       </div>
                       <p className="text-[#C8C7BA] text-[20px]">Fast path with model control and export.</p>
                     </div>
@@ -1384,7 +1384,7 @@ export default function SimulationWorldModelsPage() {
             <div />
             <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What EpochInfra tunes
+                  What Dhyra tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and GPU.
@@ -1552,7 +1552,7 @@ export default function SimulationWorldModelsPage() {
 
             <div className="flex items-start gap-4 max-w-4xl w-full text-left">
               <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <EpochLogo size={20} />
+                <DhyraLogo size={20} />
               </div>
               <div>
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
@@ -1600,7 +1600,7 @@ export default function SimulationWorldModelsPage() {
 
             <div className="relative z-20 flex flex-col items-center text-center max-w-4xl px-4 mt-8 pointer-events-auto">
               <div className="mb-12">
-                <EpochLogo size={40} />
+                <DhyraLogo size={40} />
               </div>
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
@@ -1610,7 +1610,7 @@ export default function SimulationWorldModelsPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the goal. EpochInfra builds and optimizes the stack.
+                Describe the goal. Dhyra builds and optimizes the stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
@@ -1683,7 +1683,7 @@ export default function SimulationWorldModelsPage() {
               </svg>
               {/* Center Logo Cutout */}
               <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-                <EpochLogo size={25} />
+                <DhyraLogo size={25} />
               </div>
             </div>
 
@@ -1694,9 +1694,9 @@ export default function SimulationWorldModelsPage() {
                 {/* Left Column */}
                 <div className="flex flex-col">
                   <div className="mb-2 text-[#F0EFE2]">
-                    <EpochWordmarkLogo className="h-[24px] w-auto" />
+                    <DhyraWordmarkLogo className="h-[24px] w-auto" />
                   </div>
-                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 epochInfra. All rights reserved.</p>
+                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
                   {/* Social Icons */}
                   <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
@@ -1747,9 +1747,9 @@ export default function SimulationWorldModelsPage() {
                     </div>
                   </div>
 
-                  {/* Ask AI about Epoch */}
+                  {/* Ask AI about Dhyra */}
                   <div className="flex flex-col items-end">
-                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Epoch</span>
+                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
                     <div className="flex items-center gap-4 text-[#C8C7BA]">
                       <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                       <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -1768,12 +1768,12 @@ export default function SimulationWorldModelsPage() {
 
             {/* Bottom Legal / Theme Row */}
             <div className="w-full border-t border-dashed border-[#333] relative">
-              {/* Tiny EPOCH text aligned to the left of the 14% grid line */}
-              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">EPOCH</div>
+              {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
+              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
               <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><EpochLogo size={12} /> Part of  causis</span>
+                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo size={12} /> Part of  causis</span>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

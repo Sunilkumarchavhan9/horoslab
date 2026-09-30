@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { getEpochSdkSnapshot } from "@/lib/epoch-api";
+import { getDhyraSdkSnapshot } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 
@@ -35,7 +35,7 @@ export function DeveloperSdkView({ workspaceId }: { workspaceId?: string | null 
         if (!workspaceId) return;
         let active = true;
         setIsLoading(true);
-        const load = () => getEpochSdkSnapshot(workspaceId).then((snapshot) => {
+        const load = () => getDhyraSdkSnapshot(workspaceId).then((snapshot) => {
             if (!active) return;
             const sdk = snapshot.sdk && typeof snapshot.sdk === "object" ? snapshot.sdk as Record<string, unknown> : snapshot;
             const sourceRecords = Array.isArray(sdk.releases)
@@ -48,10 +48,10 @@ export function DeveloperSdkView({ workspaceId }: { workspaceId?: string | null 
                 const language = String(row.language ?? row.runtime ?? "TypeScript");
                 return {
                     id: String(row.id ?? `sdk-${index}`),
-                    sdkName: String(row.name ?? row.package ?? row.packageName ?? "Epoch SDK"),
+                    sdkName: String(row.name ?? row.package ?? row.packageName ?? "Dhyra SDK"),
                     language: (["TypeScript", "Python", "Go", "Rust"] as const).includes(language as "TypeScript" | "Python" | "Go" | "Rust") ? language as SdkRow["language"] : "TypeScript",
                     version: String(row.version ?? "-"),
-                    compatibility: String(row.compatibility ?? row.runtime ?? "Epoch V12"),
+                    compatibility: String(row.compatibility ?? row.runtime ?? "Dhyra V12"),
                     published: String(row.publishedAt ?? row.createdAt ?? "-"),
                     status: (["Active", "Beta", "Deprecated"] as const).includes(String(row.status ?? "Active") as SdkRow["status"]) ? String(row.status ?? "Active") as SdkRow["status"] : "Active",
                 } satisfies SdkRow;
@@ -90,7 +90,7 @@ export function DeveloperSdkView({ workspaceId }: { workspaceId?: string | null 
                         <span className="text-xs text-muted-foreground mt-1">Manage SDK versions and worker contracts.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("epoch-sdk-catalog.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-sdk-catalog.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

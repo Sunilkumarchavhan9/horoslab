@@ -81,7 +81,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
       </div>
 
       {/* Main Grid Layout (aligned with master vertical lines) */}
-      <div className="relative z-10 w-full grid grid-cols-[14%_34%_38%_14%] border-t border-dashed border-[#333333]">
+      <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_17fr_19fr_calc(14%_+_120px)] border-t border-dashed border-[#333333]">
         {/* Column 1: Left Margin Cell */}
         <div className="relative p-4 min-h-[580px]" />
 
@@ -114,7 +114,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="text-[#F0EFE2] font-medium text-[14px]">Mission Runtime Execution Plan</div>
-                  <div className="text-[#666666] font-mono text-[11px]">Epoch Reality Intelligence Loop</div>
+                  <div className="text-[#666666] font-mono text-[11px]">Dhyra Reality Intelligence Loop</div>
                 </div>
               </div>
               <div className="border border-[#333] bg-[#1a1a1a] text-[#C8C7BA] font-mono text-[10px] px-2 py-0.5 rounded-[1px]">
@@ -176,7 +176,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
                 Review the mission contract, then authorize.
               </div>
               <div className="text-[#555555] font-mono text-[10px] uppercase tracking-wider">
-                EPOCH CANONICAL_V4
+                DHYRA CANONICAL_V4
               </div>
             </div>
 

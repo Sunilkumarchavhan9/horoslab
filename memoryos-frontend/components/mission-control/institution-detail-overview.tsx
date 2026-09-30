@@ -1,7 +1,7 @@
 "use client";
 
 import { Activity, CheckCircle2, Clock, Play, ShieldCheck, Workflow } from "lucide-react";
-import { type EpochInstitutionDetail } from "@/lib/epoch-api";
+import { type DhyraInstitutionDetail } from "@/lib/dhyra-api";
 
 function formatRuntime(startedAt?: string | null, finishedAt?: string | null): string {
  if (!startedAt) return "—";
@@ -23,7 +23,7 @@ function readState(missionState?: string | null): string {
  return (missionState ?? "draft").replace(/_/g, " ");
 }
 
-function getHealthLabel(institution: EpochInstitutionDetail): string {
+function getHealthLabel(institution: DhyraInstitutionDetail): string {
  const latestMission = institution.missions?.[0] ?? null;
  const status = (institution.status ?? institution.currentState ?? "").toLowerCase();
  const latestDecision = latestMission?.verificationRun?.finalDecision?.toUpperCase?.() ?? "";
@@ -60,7 +60,7 @@ export function InstitutionDetailOverview({
  onLaunchMission,
  launching = false,
 }: {
- institution: EpochInstitutionDetail;
+ institution: DhyraInstitutionDetail;
  onLaunchMission?: () => void;
  launching?: boolean;
 }) {

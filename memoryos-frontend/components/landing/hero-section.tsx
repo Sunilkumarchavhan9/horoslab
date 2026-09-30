@@ -46,7 +46,7 @@ export function HeroSection() {
 
           <div className="mx-auto mt-6 max-w-[800px] text-[16px] leading-relaxed text-[#F0EFE2] sm:text-[18px] space-y-4">
             <p>
-              Epoch is the institution runtime for the autonomous enterprise: mission-scoped authority, governed execution, independent proof, settlement, and institutional evolution for AI workforces.
+              Dhyra is the institution runtime for the autonomous enterprise: mission-scoped authority, governed execution, independent proof, settlement, and institutional evolution for AI workforces.
             </p>
           </div>
 

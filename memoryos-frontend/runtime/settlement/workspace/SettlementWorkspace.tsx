@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getEpochMissionSettlement, listEpochCertificates, listEpochMemoryLessons, listEpochMemoryRecords, listEpochMissions } from "@/lib/epoch-api";
+import { getDhyraMissionSettlement, listDhyraCertificates, listDhyraMemoryLessons, listDhyraMemoryRecords, listDhyraMissions } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { useInspector } from "@/components/mission-control/universal-inspector";
 
@@ -24,20 +24,20 @@ export function SettlementWorkspace({ activeSection, workspaceId }: { activeSect
     const load = async () => {
       try {
         setLoading(true);
-        const missions = await listEpochMissions(workspaceId);
+        const missions = await listDhyraMissions(workspaceId);
         let next: Row[] = [];
         if (view === "memory-preflight" || view === "mission-outcomes") {
-          const result = await listEpochMemoryRecords(workspaceId);
+          const result = await listDhyraMemoryRecords(workspaceId);
           next = result.memoryRecords as unknown as Row[];
         } else if (view === "learning-handoff") {
-          const result = await listEpochMemoryLessons(workspaceId);
+          const result = await listDhyraMemoryLessons(workspaceId);
           next = result.lessons as unknown as Row[];
         } else if (view === "certificates") {
-          const result = await listEpochCertificates(workspaceId, { limit: 100 });
+          const result = await listDhyraCertificates(workspaceId, { limit: 100 });
           next = result.certificates as unknown as Row[];
         } else {
           next = (await Promise.all(missions.map(async (mission) => {
-            try { return await getEpochMissionSettlement(workspaceId, mission.id); } catch { return null; }
+            try { return await getDhyraMissionSettlement(workspaceId, mission.id); } catch { return null; }
           }))).filter(Boolean) as Row[];
         }
         if (!cancelled) { setRows(next); setError(null); }
@@ -71,7 +71,7 @@ export function SettlementWorkspace({ activeSection, workspaceId }: { activeSect
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `epoch-${view}.json`;
+    anchor.download = `dhyra-${view}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
   };

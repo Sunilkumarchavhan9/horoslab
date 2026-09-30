@@ -13,7 +13,7 @@ export function DeveloperWatcherView() {
               External API Watcher
             </h1>
             <p className="text-[15px] text-muted-foreground leading-relaxed max-w-3xl">
-              Epoch automatically tracks changes to external third-party APIs used by your Institution. When a breaking change is detected, it automatically identifies affected missions and suggests code migrations.
+              Dhyra automatically tracks changes to external third-party APIs used by your Institution. When a breaking change is detected, it automatically identifies affected missions and suggests code migrations.
             </p>
          </div>
 
@@ -73,7 +73,7 @@ export function DeveloperWatcherView() {
                      <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Affected SDKs / Extensions</span>
                      <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2 text-[13px] text-foreground font-mono">
-                           <FileCode2 className="size-3.5 text-emerald-400" /> @epoch/ext-stripe
+                           <FileCode2 className="size-3.5 text-emerald-400" /> @dhyra/ext-stripe
                         </div>
                         <span className="text-[11px] text-orange-400">Uses deprecated charges.create endpoint.</span>
                      </div>
@@ -84,7 +84,7 @@ export function DeveloperWatcherView() {
                      <button className="bg-foreground text-background text-[12px] font-medium px-4 py-2 rounded-sm hover:bg-neutral-200 transition-colors">
                         View Auto-Generated PR
                      </button>
-                     <span className="text-[11px] text-muted-foreground">Epoch has generated a migration PR replacing Charges with PaymentIntents.</span>
+                     <span className="text-[11px] text-muted-foreground">Dhyra has generated a migration PR replacing Charges with PaymentIntents.</span>
                   </div>
                </div>
             </div>
@@ -120,7 +120,7 @@ export function DeveloperWatcherView() {
                   <div className="p-5 flex flex-col gap-3">
                      <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Affected SDKs / Extensions</span>
                      <div className="flex items-center gap-2 text-[13px] text-foreground font-mono">
-                        <FileCode2 className="size-3.5 text-emerald-400" /> @epoch/ext-github
+                        <FileCode2 className="size-3.5 text-emerald-400" /> @dhyra/ext-github
                      </div>
                   </div>
 

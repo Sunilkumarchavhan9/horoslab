@@ -4,17 +4,17 @@ import { useCallback, useEffect, useState } from "react";
 import { GitBranch, GitCommit, FileText, Activity, Dna, CheckCircle2, ChevronRight, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  getEpochInstitution,
-  listEpochInstitutions,
-  listEpochInstitutionVersions,
-  readActiveEpochWorkspaceId,
-  type EpochInstitution,
-  type EpochInstitutionVersion,
-} from "@/lib/epoch-api";
+  getDhyraInstitution,
+  listDhyraInstitutions,
+  listDhyraInstitutionVersions,
+  readActiveDhyraWorkspaceId,
+  type DhyraInstitution,
+  type DhyraInstitutionVersion,
+} from "@/lib/dhyra-api";
 
 type VersionGroup = {
-  institution: EpochInstitution;
-  versions: EpochInstitutionVersion[];
+  institution: DhyraInstitution;
+  versions: DhyraInstitutionVersion[];
 };
 
 function formatDate(value?: string): string {
@@ -23,7 +23,7 @@ function formatDate(value?: string): string {
   return Number.isNaN(date.getTime()) ? "Unknown" : date.toLocaleString();
 }
 
-function snapshotSummary(version: EpochInstitutionVersion): string {
+function snapshotSummary(version: DhyraInstitutionVersion): string {
   if (!version.snapshot || typeof version.snapshot !== "object") return "No snapshot payload";
   const keys = Object.keys(version.snapshot).slice(0, 4);
   return keys.length > 0 ? `Snapshot fields: ${keys.join(", ")}` : "Empty snapshot";
@@ -33,24 +33,24 @@ export function InstitutionVersionsView() {
   const [groups, setGroups] = useState<VersionGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveEpochWorkspaceId();
+  const workspaceId = readActiveDhyraWorkspaceId();
 
   const loadVersions = useCallback(async () => {
     if (!workspaceId) {
       setGroups([]);
       setLoading(false);
-      setError("No active Epoch workspace is available.");
+      setError("No active Dhyra workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const institutions = await listEpochInstitutions(workspaceId);
+      const institutions = await listDhyraInstitutions(workspaceId);
       const liveGroups = await Promise.all(
         institutions.slice(0, 4).map(async (institution) => {
-          const detail = await getEpochInstitution(workspaceId, institution.id).catch(() => institution);
-          const versionRows = await listEpochInstitutionVersions(workspaceId, institution.id).catch(() => ({ versions: [] as EpochInstitutionVersion[] }));
+          const detail = await getDhyraInstitution(workspaceId, institution.id).catch(() => institution);
+          const versionRows = await listDhyraInstitutionVersions(workspaceId, institution.id).catch(() => ({ versions: [] as DhyraInstitutionVersion[] }));
           return { institution: detail, versions: versionRows.versions };
         }),
       );

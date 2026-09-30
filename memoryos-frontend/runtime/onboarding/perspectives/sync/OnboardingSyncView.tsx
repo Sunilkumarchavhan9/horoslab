@@ -5,7 +5,7 @@ import { Activity, ArrowRight, CheckCircle2, Network, RefreshCw } from "lucide-r
 import { useOnboardingStore } from "../../store";
 import { ConnectorBrandAvatar } from "@/components/continuity-lab/connector-brand-icons";
 import { listSources, isLiveCompanySource, type CompanySource } from "@/lib/company-sources-api";
-import { resolveActiveEpochWorkspaceId } from "@/lib/epoch-api";
+import { resolveActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
 
 type SyncConnector = {
   id: "github" | "slack" | "notion" | "jira";
@@ -71,7 +71,7 @@ export function OnboardingSyncView() {
 
     async function loadWorkspace() {
       try {
-        const nextWorkspaceId = await resolveActiveEpochWorkspaceId();
+        const nextWorkspaceId = await resolveActiveDhyraWorkspaceId();
         if (mounted) {
           setWorkspaceId(nextWorkspaceId);
         }
@@ -180,7 +180,7 @@ export function OnboardingSyncView() {
     setRefreshTick((tick) => tick + 1);
   }
 
-  async function handleEnterEpoch() {
+  async function handleEnterDhyra() {
     setCompleting(true);
     try {
       completeOnboarding();
@@ -198,7 +198,7 @@ export function OnboardingSyncView() {
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Building the Mission Control Graph</h1>
         <p className="text-muted-foreground text-[15px] max-w-md">
-          Epoch now reads live source state from your connected systems. This screen tracks the actual backend sync
+          Dhyra now reads live source state from your connected systems. This screen tracks the actual backend sync
           status instead of a local animation.
         </p>
       </div>
@@ -355,7 +355,7 @@ export function OnboardingSyncView() {
         {complete ? (
           <button
             type="button"
-            onClick={handleEnterEpoch}
+            onClick={handleEnterDhyra}
             disabled={completing || loading}
             className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-400 text-white font-medium px-6 py-2.5 rounded-md transition-colors animate-in fade-in"
           >

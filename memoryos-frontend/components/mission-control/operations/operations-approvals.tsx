@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { listEpochMissions, type EpochMissionDetail } from "@/lib/epoch-api";
+import { listDhyraMissions, type DhyraMissionDetail } from "@/lib/dhyra-api";
 import { exportLiveRows } from "../export-live-rows";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
@@ -35,7 +35,7 @@ const MOCK_OPS_APPROVALS: OpsApprovalRow[] = [
     { id: "APP-5015", missionId: "MSN-8996", missionName: "Log Archival", requester: "Archive Agent", approver: "Security Officer", reason: "Security Gate Review", risk: "Critical", confidence: 12, requiredPolicies: 5, deadline: "08:00:00", status: "Escalated" },
 ];
 
-function toApprovalRows(missions: EpochMissionDetail[]): OpsApprovalRow[] {
+function toApprovalRows(missions: DhyraMissionDetail[]): OpsApprovalRow[] {
     return missions.flatMap((mission) => (mission.authorityPolicies || []).filter((policy) => policy.needsApproval).map((policy) => ({
         id: policy.id,
         missionId: mission.id,
@@ -73,7 +73,7 @@ export function OperationsApprovals({ workspaceId }: { workspaceId?: string | nu
         let cancelled = false;
         const load = async () => {
             try {
-                const missions = await listEpochMissions(workspaceId);
+                const missions = await listDhyraMissions(workspaceId);
                 if (!cancelled) setApprovals(toApprovalRows(missions));
             } catch {
                 if (!cancelled) setApprovals([]);
@@ -113,7 +113,7 @@ export function OperationsApprovals({ workspaceId }: { workspaceId?: string | nu
                         <span className="text-xs text-muted-foreground mt-1">Which decisions require humans?</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => exportLiveRows("epoch-approvals.json", visibleApprovals)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-approvals.json", visibleApprovals)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

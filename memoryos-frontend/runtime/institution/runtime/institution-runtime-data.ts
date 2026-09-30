@@ -2,15 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  getEpochInstitution,
-  listEpochInstitutions,
-  readActiveEpochWorkspaceId,
-  type EpochInstitution,
-  type EpochInstitutionDetail,
-  type EpochInstitutionVersion,
-  type EpochMemoryRecordDetail,
-  type EpochMission,
-} from "@/lib/epoch-api";
+  getDhyraInstitution,
+  listDhyraInstitutions,
+  readActiveDhyraWorkspaceId,
+  type DhyraInstitution,
+  type DhyraInstitutionDetail,
+  type DhyraInstitutionVersion,
+  type DhyraMemoryRecordDetail,
+  type DhyraMission,
+} from "@/lib/dhyra-api";
 import { useInstitutionStore } from "../store";
 
 export type InstitutionCapability = {
@@ -64,7 +64,7 @@ export type InstitutionIdentity = {
   dependencies: InstitutionDependency[];
 };
 
-export type InstitutionIntegration = NonNullable<EpochInstitutionDetail["integrations"]>[number];
+export type InstitutionIntegration = NonNullable<DhyraInstitutionDetail["integrations"]>[number];
 
 function formatCountLabel(value: number, label: string): string {
   return `${value} ${label}${value === 1 ? "" : "s"}`;
@@ -77,11 +77,11 @@ function firstString(...values: unknown[]): string | null {
   return null;
 }
 
-function getInstitutionSummary(institution: EpochInstitutionDetail | EpochInstitution): string {
+function getInstitutionSummary(institution: DhyraInstitutionDetail | DhyraInstitution): string {
   return firstString(institution.summary, institution.template?.name, institution.status) ?? "Live institution record";
 }
 
-function deriveOwners(institution: EpochInstitutionDetail): string[] {
+function deriveOwners(institution: DhyraInstitutionDetail): string[] {
   const metadata = institution.metadata && typeof institution.metadata === "object" ? institution.metadata : null;
   const owners = metadata && Array.isArray((metadata as Record<string, unknown>).owners)
     ? ((metadata as Record<string, unknown>).owners as unknown[]).filter((owner): owner is string => typeof owner === "string" && owner.trim().length > 0)
@@ -90,7 +90,7 @@ function deriveOwners(institution: EpochInstitutionDetail): string[] {
   return institution.integrations?.slice(0, 2).map((integration) => integration.provider ?? integration.id) ?? [];
 }
 
-function deriveCapabilities(institution: EpochInstitutionDetail, missions: EpochMission[], integrations: InstitutionIntegration[], memoryRecords: EpochMemoryRecordDetail[]): InstitutionCapability[] {
+function deriveCapabilities(institution: DhyraInstitutionDetail, missions: DhyraMission[], integrations: InstitutionIntegration[], memoryRecords: DhyraMemoryRecordDetail[]): InstitutionCapability[] {
   return [
     {
       id: "cap-missions",
@@ -123,7 +123,7 @@ function deriveCapabilities(institution: EpochInstitutionDetail, missions: Epoch
   ];
 }
 
-function deriveDependencies(integrations: InstitutionIntegration[], versions: EpochInstitutionVersion[]): InstitutionDependency[] {
+function deriveDependencies(integrations: InstitutionIntegration[], versions: DhyraInstitutionVersion[]): InstitutionDependency[] {
   const dependencies: InstitutionDependency[] = integrations.map((integration) => ({
     id: integration.id,
     name: integration.provider ?? integration.id ?? "Integration",
@@ -143,7 +143,7 @@ function deriveDependencies(integrations: InstitutionIntegration[], versions: Ep
   return dependencies;
 }
 
-function deriveGenome(institution: EpochInstitutionDetail, versions: EpochInstitutionVersion[], missions: EpochMission[], integrations: InstitutionIntegration[], memoryRecords: EpochMemoryRecordDetail[]): GenomeTrait[] {
+function deriveGenome(institution: DhyraInstitutionDetail, versions: DhyraInstitutionVersion[], missions: DhyraMission[], integrations: InstitutionIntegration[], memoryRecords: DhyraMemoryRecordDetail[]): GenomeTrait[] {
   const templateName = institution.template?.name ?? "Unknown template";
   const latestVersion = versions[0]?.version ?? institution.version ?? "n/a";
   return [
@@ -158,7 +158,7 @@ function deriveGenome(institution: EpochInstitutionDetail, versions: EpochInstit
   ];
 }
 
-function derivePolicies(institution: EpochInstitutionDetail): GovernancePolicy[] {
+function derivePolicies(institution: DhyraInstitutionDetail): GovernancePolicy[] {
   return (institution.authorityPolicies ?? []).map((policy, index) => ({
     id: policy.id,
     name: policy.name ?? `Policy ${index + 1}`,
@@ -174,11 +174,11 @@ function derivePolicies(institution: EpochInstitutionDetail): GovernancePolicy[]
 }
 
 function buildHierarchy(
-  institution: EpochInstitutionDetail,
-  versions: EpochInstitutionVersion[],
-  missions: EpochMission[],
+  institution: DhyraInstitutionDetail,
+  versions: DhyraInstitutionVersion[],
+  missions: DhyraMission[],
   integrations: InstitutionIntegration[],
-  memoryRecords: EpochMemoryRecordDetail[],
+  memoryRecords: DhyraMemoryRecordDetail[],
 ): HierarchyNode {
   return {
     id: institution.id,
@@ -240,18 +240,18 @@ function buildHierarchy(
 
 export function useInstitutionRuntimeData() {
   const { selectedEntity, selectEntity } = useInstitutionStore();
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
-  const [institutions, setInstitutions] = useState<EpochInstitution[]>([]);
-  const [institution, setInstitution] = useState<EpochInstitutionDetail | null>(null);
-  const [versions, setVersions] = useState<EpochInstitutionVersion[]>([]);
-  const [missions, setMissions] = useState<EpochMission[]>([]);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+  const [institutions, setInstitutions] = useState<DhyraInstitution[]>([]);
+  const [institution, setInstitution] = useState<DhyraInstitutionDetail | null>(null);
+  const [versions, setVersions] = useState<DhyraInstitutionVersion[]>([]);
+  const [missions, setMissions] = useState<DhyraMission[]>([]);
   const [integrations, setIntegrations] = useState<InstitutionIntegration[]>([]);
-  const [memoryRecords, setMemoryRecords] = useState<EpochMemoryRecordDetail[]>([]);
+  const [memoryRecords, setMemoryRecords] = useState<DhyraMemoryRecordDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
     window.addEventListener("focus", syncWorkspace);
     syncWorkspace();
     return () => window.removeEventListener("focus", syncWorkspace);
@@ -260,7 +260,7 @@ export function useInstitutionRuntimeData() {
   const refresh = useCallback(async () => {
     if (!workspaceId) {
       setLoading(false);
-      setError("No active Epoch workspace is available.");
+      setError("No active Dhyra workspace is available.");
       setInstitutions([]);
       setInstitution(null);
       setVersions([]);
@@ -273,7 +273,7 @@ export function useInstitutionRuntimeData() {
     setLoading(true);
     setError(null);
     try {
-      const liveInstitutions = await listEpochInstitutions(workspaceId);
+      const liveInstitutions = await listDhyraInstitutions(workspaceId);
       setInstitutions(liveInstitutions);
 
       const activeInstitutionId = liveInstitutions[0]?.id ?? null;
@@ -286,7 +286,7 @@ export function useInstitutionRuntimeData() {
         return;
       }
 
-      const detail = await getEpochInstitution(workspaceId, activeInstitutionId);
+      const detail = await getDhyraInstitution(workspaceId, activeInstitutionId);
       setInstitution(detail);
       setVersions(detail.versions ?? []);
       setMissions(detail.missions ?? []);

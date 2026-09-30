@@ -13,7 +13,7 @@ import {
   QwenLogo,
   SGLangLogo,
   VLLMLogo
-} from "@/components/epoch/primitives/brand-icons";
+} from "@/components/dhyra/primitives/brand-icons";
 import { VoiceOrb } from "@/components/ui/voice-orb";
 
 export function EcosystemGrid() {

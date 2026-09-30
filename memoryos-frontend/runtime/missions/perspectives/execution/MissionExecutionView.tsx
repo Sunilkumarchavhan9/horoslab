@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useThemePreference } from "@/lib/continuity-lab/use-theme-preference";
 import { useMissionStore } from "../../runtime/store";
 import { useMissionRuntimeData } from "../../runtime/mission-runtime-data";
-import type { EpochMissionDetail } from "@/lib/epoch-api";
+import type { DhyraMissionDetail } from "@/lib/dhyra-api";
 
 type MissionTimelineEvent = {
   id?: string;
@@ -16,14 +16,14 @@ type MissionTimelineEvent = {
   timestamp?: string;
 };
 
-function pickMissionState(mission?: EpochMissionDetail | null): string {
+function pickMissionState(mission?: DhyraMissionDetail | null): string {
   return (mission?.state ?? "draft").toLowerCase();
 }
 
 export function MissionExecutionView() {
   const { selection, setSelection } = useMissionStore();
   const { missions, getMission } = useMissionRuntimeData();
-  const [mission, setMission] = useState<EpochMissionDetail | null>(null);
+  const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

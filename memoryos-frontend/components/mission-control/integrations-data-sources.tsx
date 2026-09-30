@@ -15,9 +15,9 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
- readActiveEpochWorkspaceId,
- listEpochIntegrations,
-} from "@/lib/epoch-api";
+ readActiveDhyraWorkspaceId,
+ listDhyraIntegrations,
+} from "@/lib/dhyra-api";
 import { authorizeConnector, disconnectConnector, syncConnector } from "@/lib/continuity-lab/connector-actions";
 import { fetchConnectorList } from "@/lib/continuity-lab/connector-list";
 import {
@@ -159,7 +159,7 @@ const SOURCE_CARDS = [
 ] as const;
 
 export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: string) => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
  const [companySources, setCompanySources] = useState<CompanySource[]>([]);
  const [sourceProviders, setSourceProviders] = useState<SourceProvider[]>([]);
  const [healthCounts, setHealthCounts] = useState<Record<string, number> | null>(null);
@@ -194,7 +194,7 @@ export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: s
  }, []);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -224,17 +224,17 @@ export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: s
  setLoading(true);
  setError(null);
  try {
- const [sourcesResult, providersResult, epochResult, connectorRows] = await Promise.all([
+ const [sourcesResult, providersResult, dhyraResult, connectorRows] = await Promise.all([
  listSources(),
  listSourceProviders(),
- listEpochIntegrations(workspaceId, { limit: 100 }),
+ listDhyraIntegrations(workspaceId, { limit: 100 }),
   fetchConnectorList(),
  ]);
  const connectorByProvider = new Map(
   connectorRows.map((connector) => [connector.type.toLowerCase(), connector]),
  );
- const epochByProvider = new Map(
-  (epochResult.integrations ?? []).map((integration) => {
+ const dhyraByProvider = new Map(
+  (dhyraResult.integrations ?? []).map((integration) => {
    const liveConnector = connectorByProvider.get(integration.provider.toLowerCase());
    return [
     integration.provider.toLowerCase(),
@@ -244,7 +244,7 @@ export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: s
  );
  const sourceByProvider = new Set((sourcesResult ?? []).map((source) => source.provider.toLowerCase()));
   const normalizedSources = (sourcesResult ?? []).map((source) => {
-  const integration = epochByProvider.get(source.provider.toLowerCase());
+  const integration = dhyraByProvider.get(source.provider.toLowerCase());
   const liveConnector = connectorByProvider.get(source.provider.toLowerCase());
    return integration
    ? { ...source, status: normalizeIntegrationStatus(liveConnector?.status ?? integration.status), lastSyncedAt: integration.lastSyncAt ?? source.lastSyncedAt, itemCount: liveConnector?.sourceItemCount ?? source.itemCount, syncError: liveConnector?.lastFailureReason ?? null }
@@ -252,7 +252,7 @@ export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: s
     ? { ...source, status: normalizeIntegrationStatus(liveConnector.status) }
    : source;
  });
- const missingEpochSources = (epochResult.integrations ?? [])
+ const missingDhyraSources = (dhyraResult.integrations ?? [])
   .filter((integration) => !sourceByProvider.has(integration.provider.toLowerCase()))
   .map((integration) => ({
    id: integration.id,
@@ -270,7 +270,7 @@ export function IntegrationsDataSources({ onViewDetail }: { onViewDetail: (id: s
   } satisfies CompanySource));
  if (!canceled) {
  setCompanySources((current) =>
- mergeCompanySourcesWithSticky(workspaceId, [...normalizedSources, ...missingEpochSources], current),
+ mergeCompanySourcesWithSticky(workspaceId, [...normalizedSources, ...missingDhyraSources], current),
  );
  setSourceProviders(providersResult ?? []);
  }

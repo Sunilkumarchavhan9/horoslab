@@ -92,7 +92,7 @@ export function SplitPane({ left, right, rightWidth = "400px" }: { left: React.R
 }
 
 export const MOCK_EXECUTION_NODES = [
- { id: "node_1", type: "planner", name: "Epoch Planner", status: "COMPLETED", duration: "12s", agent: "GPT-4o", deps: [] },
+ { id: "node_1", type: "planner", name: "Dhyra Planner", status: "COMPLETED", duration: "12s", agent: "GPT-4o", deps: [] },
  { id: "node_2", type: "research", name: "Research Agent", status: "COMPLETED", duration: "45s", agent: "Claude 3.5 Sonnet", deps: ["node_1"] },
  { id: "node_3", type: "coding", name: "Coding Agent", status: "RUNNING", duration: "3m 12s", agent: "Claude 3.5 Sonnet", deps: ["node_2"] },
  { id: "node_4", type: "review", name: "Security Review", status: "WAITING", duration: "-", agent: "o1-preview", deps: ["node_3"] },

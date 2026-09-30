@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, LayoutDashboard, Play, FileText, ShieldCheck, Award, Database, AlertTriangle, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getEpochMission, readActiveEpochWorkspaceId, type EpochMissionDetail } from "@/lib/epoch-api";
+import { getDhyraMission, readActiveDhyraWorkspaceId, type DhyraMissionDetail } from "@/lib/dhyra-api";
 import { MissionDetailOverview } from "./mission-detail-overview";
 import { MissionDetailExecution } from "./mission-detail-execution";
 import { MissionDetailEvidence } from "./mission-detail-evidence";
@@ -27,8 +27,8 @@ export function MissionDetailLayout({
  onBack: () => void;
 }) {
  const [localActiveTab, setLocalActiveTab] = useState(activeTab);
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
- const [mission, setMission] = useState<EpochMissionDetail | null>(null);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+ const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +37,7 @@ export function MissionDetailLayout({
  }, [activeTab]);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -61,7 +61,7 @@ export function MissionDetailLayout({
  setLoading(true);
  setError(null);
  try {
- const detail = await getEpochMission(workspaceId, missionId);
+ const detail = await getDhyraMission(workspaceId, missionId);
  if (!canceled) setMission(detail);
  } catch (loadError) {
  if (!canceled) {
@@ -159,7 +159,7 @@ export function MissionDetailLayout({
  {loading ? (
  <div className="bg-card border border-border rounded-md p-12 flex flex-col items-center justify-center text-center h-[400px]">
  <h2 className="text-[20px] font-semibold text-foreground mb-2">Loading mission</h2>
- <p className="text-[15px] text-muted-foreground max-w-md">Fetching live mission data from Epoch.</p>
+ <p className="text-[15px] text-muted-foreground max-w-md">Fetching live mission data from Dhyra.</p>
  </div>
  ) : isMissingMission ? (
  <div className="bg-card border border-border rounded-md p-12 flex flex-col items-center justify-center text-center h-[400px]">

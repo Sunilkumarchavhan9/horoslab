@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Code, Link2, CheckCircle2, RefreshCw, Box, Shield, Building, AlertTriangle, DatabaseZap, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { readActiveEpochWorkspaceId } from "@/lib/epoch-api";
+import { readActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
 import {
  clearStickyCompanySource,
  disconnectSource,
@@ -37,7 +37,7 @@ function summarizeConfig(config?: Record<string, unknown> | null): string {
 }
 
 export function IntegrationsConnectionDetail({ id, onBack }: { id: string; onBack: () => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
  const [connection, setConnection] = useState<CompanySource | null>(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function IntegrationsConnectionDetail({ id, onBack }: { id: string; onBac
  const [reconnecting, setReconnecting] = useState(false);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);

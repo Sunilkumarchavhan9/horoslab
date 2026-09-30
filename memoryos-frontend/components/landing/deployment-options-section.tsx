@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { EpochLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo } from "../epoch/primitives/brand-icons";
+import { DhyraLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo } from "../dhyra/primitives/brand-icons";
 
 // Helper component for the horizontal borders with corner intersection dots
 function HorizontalDivider({ position = "top", infinite = false }: { position?: "top" | "bottom", infinite?: boolean }) {
@@ -28,12 +28,12 @@ export function DeploymentOptionsSection() {
       
       {/* Outer Global Lines to match the Hardware section (6% and 94%) */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
-      {/* Main Blueprint Container (72% width perfectly centers at 14% left and 86% right) */}
-      <div className="relative z-10 w-[72%] flex flex-col pb-12 lg:pb-16">
+      {/* Main Blueprint Container (aligned with the 120px inward margin on both sides) */}
+      <div className="relative z-10 w-[calc(72%_-_240px)] flex flex-col pb-12 lg:pb-16">
         
         {/* Absolute Bottom Infinite Horizontal Line */}
         <HorizontalDivider position="bottom" infinite={true} />
@@ -74,30 +74,30 @@ export function DeploymentOptionsSection() {
             <HorizontalDivider position="top" />
 
             {/* Column 1: Managed */}
-            <div className="p-5 lg:p-10 relative group">
+            <div className="p-5 lg:p-10 relative group hover:bg-white/[0.03] transition-colors duration-300">
               {/* Inner vertical alignment dashed line */}
-              <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] rounded-[1px]" />
+              <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333] group-hover:border-[#75bf00] transition-colors duration-300" />
+              <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] group-hover:bg-[#75bf00] rounded-[1px] transition-colors duration-300" />
               
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Managed
               </div>
               <div className="mb-6 flex items-center gap-3 text-[#F0EFE2] relative z-10">
-                <EpochLogo size={28} />
+                <DhyraLogo className="h-[28px]" />
               </div>
               <h3 className="text-[#F0EFE2] text-lg font-semibold mb-3 relative z-10">
-                Epoch Cloud
+                Dhyra Cloud
               </h3>
               <p className="text-[#C8C7BA] text-[13px] leading-relaxed relative z-10">
-                A fully managed Reality Intelligence Runtime. Epoch handles node provisioning, container orchestration, and continuous state synchronization. You simply provide the authorized intent, and we scale the capabilities securely, billed purely on verified usage.
+                A fully managed Reality Intelligence Runtime. Dhyra handles node provisioning, container orchestration, and continuous state synchronization. You simply provide the authorized intent, and we scale the capabilities securely, billed purely on verified usage.
               </p>
             </div>
 
             {/* Column 2: Your Cloud */}
-            <div className="p-5 lg:p-10 relative group">
+            <div className="p-5 lg:p-10 relative group hover:bg-white/[0.03] transition-colors duration-300">
               {/* Inner vertical alignment dashed line */}
-              <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] rounded-[1px]" />
+              <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333] group-hover:border-[#75bf00] transition-colors duration-300" />
+              <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] group-hover:bg-[#75bf00] rounded-[1px] transition-colors duration-300" />
               
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Your Cloud
@@ -126,10 +126,10 @@ export function DeploymentOptionsSection() {
             </div>
 
             {/* Column 3: Your Hardware */}
-            <div className="p-5 lg:p-10 relative group">
+            <div className="p-5 lg:p-10 relative group hover:bg-white/[0.03] transition-colors duration-300">
               {/* Inner vertical alignment dashed line */}
-              <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] rounded-[1px]" />
+              <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333] group-hover:border-[#75bf00] transition-colors duration-300" />
+              <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] group-hover:bg-[#75bf00] rounded-[1px] transition-colors duration-300" />
               
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Your Hardware

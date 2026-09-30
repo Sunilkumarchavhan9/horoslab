@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { listEpochExecutions, type EpochExecutionRun } from "@/lib/epoch-api";
+import { listDhyraExecutions, type DhyraExecutionRun } from "@/lib/dhyra-api";
 import { exportLiveRows } from "../export-live-rows";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
@@ -56,8 +56,8 @@ function StatusBadge({ status }: { status: ExecutionRow["status"] }) {
     }
 }
 
-function toExecutionRow(execution: EpochExecutionRun): ExecutionRow {
-    const raw = execution as EpochExecutionRun & Record<string, unknown>;
+function toExecutionRow(execution: DhyraExecutionRun): ExecutionRow {
+    const raw = execution as DhyraExecutionRun & Record<string, unknown>;
     const status = execution.status?.toLowerCase();
     const normalizedStatus: ExecutionRow["status"] = status === "completed" || status === "done" ? "Completed" : status === "failed" ? "Failed" : status === "queued" ? "Queued" : status === "paused" ? "Paused" : "Running";
     return {
@@ -96,7 +96,7 @@ export function OperationsExecutions({ workspaceId }: { workspaceId?: string | n
         let cancelled = false;
         const load = async () => {
             try {
-                const items = await listEpochExecutions(workspaceId);
+                const items = await listDhyraExecutions(workspaceId);
                 if (!cancelled) setExecutions(items.map(toExecutionRow));
             } catch {
                 if (!cancelled) setExecutions([]);
@@ -140,7 +140,7 @@ export function OperationsExecutions({ workspaceId }: { workspaceId?: string | n
                 <div className="flex items-center justify-between px-6 py-4">
                     <h1 className="text-xl font-bold tracking-tight text-foreground">Mission Executions</h1>
                     <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => exportLiveRows("epoch-executions.json", visibleExecutions)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-executions.json", visibleExecutions)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

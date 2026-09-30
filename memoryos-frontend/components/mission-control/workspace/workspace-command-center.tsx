@@ -10,15 +10,15 @@ import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { useInspector } from "../universal-inspector";
 import {
-    getEpochAuditTrail,
-    getEpochMissionControlSnapshot,
-    listEpochWorkers,
-    type EpochMissionControlSnapshot,
-} from "@/lib/epoch-api";
+    getDhyraAuditTrail,
+    getDhyraMissionControlSnapshot,
+    listDhyraWorkers,
+    type DhyraMissionControlSnapshot,
+} from "@/lib/dhyra-api";
 
 export function CommandCenterDashboard({ workspaceId, onCreateMission }: { workspaceId?: string | null; onCreateMission?: () => void }) {
     const { openInspector } = useInspector();
-    const [snapshot, setSnapshot] = useState<EpochMissionControlSnapshot | null>(null);
+    const [snapshot, setSnapshot] = useState<DhyraMissionControlSnapshot | null>(null);
     const [runningMissions, setRunningMissions] = useState<Array<Record<string, any>>>([]);
     const [workerFleet, setWorkerFleet] = useState<Array<Record<string, any>>>([]);
     const [liveActivity, setLiveActivity] = useState<Array<Record<string, any>>>([]);
@@ -41,9 +41,9 @@ export function CommandCenterDashboard({ workspaceId, onCreateMission }: { works
         setIsRefreshing(true);
         const load = async () => {
             const [nextSnapshot, workers, audit] = await Promise.all([
-                getEpochMissionControlSnapshot(workspaceId, { range: ranges[rangeIndex].value }),
-                listEpochWorkers(workspaceId),
-                getEpochAuditTrail(workspaceId),
+                getDhyraMissionControlSnapshot(workspaceId, { range: ranges[rangeIndex].value }),
+                listDhyraWorkers(workspaceId),
+                getDhyraAuditTrail(workspaceId),
             ]);
             if (cancelled) return;
             setLastUpdated(new Date());

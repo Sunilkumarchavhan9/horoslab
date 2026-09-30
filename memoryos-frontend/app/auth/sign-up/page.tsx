@@ -29,9 +29,9 @@ export default async function AuthSignUpPage({
 
   return (
     <ConsoleAuthShell
-      title="Create your Epoch account"
+      title="Create your Dhyra account"
       subtitle="Join the workspace, connect your tools, and continue to Mission Control."
-      footerLabel="Epoch"
+      footerLabel="Dhyra"
     >
       {clerkEnabled ? (
         <ClerkConsoleSignUp

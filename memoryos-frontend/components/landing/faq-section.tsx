@@ -1,40 +1,42 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { MemoryOSFullLogo } from "@/components/landing/memoryos-full-logo";
+import { DhyraAnimatedLogo } from "@/components/landing/dhyra-animated-logo";
 
 const FAQ_ITEMS = [
   {
-    question: "What is Epoch?",
-    answer: "Epoch is the Reality Intelligence Runtime. We teach intelligent systems to decode reality, explore unknowns, autonomously experiment across hardware, and deliver verified production results.",
+    question: "What is Dhyra?",
+    answer: "Dhyra is a Frontier Intelligence Engineering System. It connects models, data, context, runtime, compute, workloads, and real-world evidence into one continuous loop for building, testing, verifying, deploying, and evolving intelligence against reality.",
   },
   {
     question: "How does Intelligence Routing work?",
-    answer: "Instead of manually calling specific model APIs, you send intent to the Epoch runtime. It continuously adapts models to your physical environment and routes tasks to the best adapted intelligence for the job.",
+    answer: "Instead of manually orchestrating APIs, Dhyra routes your mission through a comprehensive intelligence loop—from capability discovery and simulation to physical world deployment. It automatically composes the best model, data, and compute stack for your specific environment.",
   },
   {
     question: "How do I deploy my first Reality stack?",
-    answer: "Simply enter your intent and constraints in the Composer. Epoch will automatically discover the necessary capabilities, simulate hypotheses, and deploy a verified stack.",
+    answer: "You define your mission and constraints. Dhyra searches the intelligence graph to compose a candidate system, runs it through experimental verification, and upon reaching the required assurance level, deploys the verified pipeline directly to your reality.",
   },
   {
     question: "Which open models are supported?",
-    answer: "We support all major open models including Llama 3.1, Mistral, Qwen, DeepSeek, and specialized physical models, continuously updating as new state-of-the-art weights are released.",
+    answer: "Dhyra integrates with any frontier open model (Llama 3.1, Mistral, Qwen, DeepSeek) through optimized runtimes like vLLM and SGLang. Models are continuously adapted based on real-world evidence and settlement feedback from your deployments.",
   },
   {
     question: "How does deployment optimization work?",
-    answer: "Epoch explores your specific environment against multiple execution runtimes to automatically build the perfect stack, optimizing for latency, cost, and safety boundaries.",
+    answer: "Dhyra explores your environment against multiple execution paths to automatically build the perfect stack. It optimizes models, caching, and routing across heterogeneous GPU clusters to meet strict latency, cost, and safety boundaries.",
   },
   {
     question: "Can I deploy pipelines as APIs?",
-    answer: "Yes, every optimized pipeline can be instantly deployed as a scalable REST API or exported as a containerized stack for your own infrastructure.",
+    answer: "Yes. Every verified intelligence pipeline can be deployed as a high-performance, scalable API. Dhyra manages the entire lifecycle, from traffic routing and continuous telemetry to capturing real-world evidence for the next learning cycle.",
   },
   {
     question: "How is this different from using closed-source APIs?",
-    answer: "You get the same effortless developer experience as closed APIs, but with complete ownership of the model, transparent pricing, and no vendor lock-in.",
+    answer: "Unlike closed APIs that treat your workloads as a black box, Dhyra gives you a transparent engineering system. You own the models, the context, and the execution trace—allowing your intelligence to continuously learn and evolve from its own mistakes.",
   },
   {
     question: "Is my data secure?",
-    answer: "Absolutely. We offer isolated GPU infrastructure, end-to-end encryption, and guarantee that your data is never used for training.",
+    answer: "Absolutely. Dhyra is designed for true data sovereignty. Your reality stack can be deployed entirely on-premise or within isolated VPCs. Your private data, context, and telemetry never leave your boundary and are used exclusively to teach your own systems.",
   }
 ];
 
@@ -45,10 +47,10 @@ export const FaqSection = () => {
     <section className="relative w-full py-32 bg-[#151515] overflow-hidden flex flex-col items-center border-t border-dashed border-[#333]">
       {/* Vertical Grid Lines */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       <div className="w-full flex flex-col items-center relative z-10 px-4">
@@ -83,18 +85,45 @@ export const FaqSection = () => {
 
         {/* Answer Content */}
         <div className="flex items-start gap-5 max-w-5xl w-full text-left px-4 md:px-12">
-          <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-md flex items-center justify-center h-10 w-10">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
-            </svg>
+          <div className="mt-2 flex-shrink-0 text-[#C8C7BA] flex items-start justify-center">
+            <DhyraAnimatedLogo />
           </div>
           <div>
-            <h3 className="text-[17px] font-bold text-[#f2efe8] mb-3">
+            <motion.h3 
+              key={`q-${activeFaq}`}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-[17px] font-bold text-[#f2efe8] mb-3"
+            >
               {FAQ_ITEMS[activeFaq].question}
-            </h3>
-            <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
-              {FAQ_ITEMS[activeFaq].answer}
-            </p>
+            </motion.h3>
+            <motion.p
+              key={`a-${activeFaq}`}
+              initial="hidden"
+              animate="visible"
+              variants={{
+                visible: { transition: { staggerChildren: 0.03 } },
+                hidden: {},
+              }}
+              className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl"
+            >
+              {FAQ_ITEMS[activeFaq].answer.split(" ").map((word, i) => (
+                <span key={i}>
+                  <motion.span
+                    variants={{
+                      visible: { opacity: 1, x: 0 },
+                      hidden: { opacity: 0, x: -6 },
+                    }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                  {" "}
+                </span>
+              ))}
+            </motion.p>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ export function OnboardingIdentityView() {
       <div className="hidden md:flex flex-col w-1/2 h-full relative border-r border-slate-300 bg-[#0c1875]">
         <img
           src="/images/sv1.png"
-          alt="Epoch Temple"
+          alt="Dhyra Temple"
           className="w-full h-full object-contain object-top absolute inset-0 z-0"
         />
 
@@ -46,16 +46,16 @@ export function OnboardingIdentityView() {
 
         <div className="relative z-10 max-w-xl w-full mx-auto">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-6">
-            Initialize Epoch workspace
+            Initialize Dhyra workspace
           </h1>
           <p className="text-slate-800 text-[15px] mb-12 font-medium leading-relaxed max-w-sm">
-            Define the identity and genome of your Epoch workspace. This establishes the foundation for Mission Control, agents, and policies.
+            Define the identity and genome of your Dhyra workspace. This establishes the foundation for Mission Control, agents, and policies.
           </p>
 
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-2">
               <label className="text-[14px] font-bold text-slate-800">
-                Epoch Workspace Name
+                Dhyra Workspace Name
               </label>
               <input
                 type="text"

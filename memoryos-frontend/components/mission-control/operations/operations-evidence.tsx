@@ -8,7 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
 import { Badge } from "@/components/ui/badge";
-import { listEpochEvidence, type EpochEvidence } from "@/lib/epoch-api";
+import { listDhyraEvidence, type DhyraEvidence } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 import { exportLiveRows } from "../export-live-rows";
 
@@ -53,8 +53,8 @@ function VerificationBadge({ status }: { status: EvidenceRow["verificationStatus
     }
 }
 
-function toEvidenceRow(evidence: EpochEvidence): EvidenceRow {
-    const raw = evidence as EpochEvidence & Record<string, unknown>;
+function toEvidenceRow(evidence: DhyraEvidence): EvidenceRow {
+    const raw = evidence as DhyraEvidence & Record<string, unknown>;
     const kind = String(raw.kind || raw.contentType || "Log");
     const artifactType: EvidenceRow["artifactType"] = kind.toLowerCase().includes("json") ? "JSON" : kind.toLowerCase().includes("code") ? "Code" : kind.toLowerCase().includes("image") ? "Screenshot" : kind.toLowerCase().includes("database") ? "Database Dump" : "Log";
     return {
@@ -94,7 +94,7 @@ export function OperationsEvidence({ workspaceId }: { workspaceId?: string | nul
         let cancelled = false;
         const load = async () => {
             try {
-                const result = await listEpochEvidence(workspaceId);
+                const result = await listDhyraEvidence(workspaceId);
                 if (!cancelled) setEvidence(result.items.map(toEvidenceRow));
             } catch {
                 if (!cancelled) setEvidence([]);
@@ -128,7 +128,7 @@ export function OperationsEvidence({ workspaceId }: { workspaceId?: string | nul
                 <div className="flex items-center justify-between px-6 py-4">
                     <h1 className="text-xl font-bold tracking-tight text-foreground">Mission Evidence</h1>
                     <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => exportLiveRows("epoch-evidence.json", visibleEvidence)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-evidence.json", visibleEvidence)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export Package
                         </button>

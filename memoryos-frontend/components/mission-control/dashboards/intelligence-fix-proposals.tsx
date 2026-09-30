@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useInspector } from "../universal-inspector";
 import { useProductionIntelligence } from "./use-production-intelligence";
-import { approveEpochFixProposal } from "@/lib/epoch-api";
+import { approveDhyraFixProposal } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
 const MOCK_PROPOSALS = [
@@ -58,7 +58,7 @@ export function IntelligenceFixProposals({ workspaceId }: { workspaceId?: string
         if (!workspaceId || approving) return;
         setApproving(proposalId);
         try {
-            await approveEpochFixProposal(workspaceId, proposalId);
+            await approveDhyraFixProposal(workspaceId, proposalId);
         } finally {
             setApproving(null);
         }

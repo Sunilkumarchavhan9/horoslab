@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { resolveActiveEpochWorkspaceId } from "@/lib/epoch-api";
-import { EpochInferenceControlPlane } from "./epoch-inference-control-plane";
+import { resolveActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
+import { DhyraInferenceControlPlane } from "./dhyra-inference-control-plane";
 
 export function InferencePageClient() {
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
@@ -11,16 +11,16 @@ export function InferencePageClient() {
   useEffect(() => {
     let cancelled = false;
 
-    void resolveActiveEpochWorkspaceId()
+    void resolveActiveDhyraWorkspaceId()
       .then((resolvedWorkspaceId) => {
         if (!cancelled) {
           if (resolvedWorkspaceId) setWorkspaceId(resolvedWorkspaceId);
-          else setError("Unable to resolve an Epoch workspace for this account.");
+          else setError("Unable to resolve an Dhyra workspace for this account.");
         }
       })
       .catch((reason: unknown) => {
         if (!cancelled) {
-          setError(reason instanceof Error ? reason.message : "Failed to resolve the Epoch workspace.");
+          setError(reason instanceof Error ? reason.message : "Failed to resolve the Dhyra workspace.");
         }
       });
 
@@ -36,10 +36,10 @@ export function InferencePageClient() {
   if (!workspaceId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#fbfbfa] text-xs font-mono text-[#788274]">
-        Loading Epoch Control Plane...
+        Loading Dhyra Control Plane...
       </div>
     );
   }
 
-  return <EpochInferenceControlPlane workspaceId={workspaceId} />;
+  return <DhyraInferenceControlPlane workspaceId={workspaceId} />;
 }

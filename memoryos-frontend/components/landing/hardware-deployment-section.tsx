@@ -2,10 +2,11 @@
 
 import React from "react";
 import { Cloud, Cpu, Box, Anchor, Bot } from "lucide-react";
-import { EpochLogo, ModalLogo, RunPodLogo, MetaLogo, AnthropicLogo, BAAILogo, GLMLogo, GoogleLogo, K8sFaviconLogo, OneXLogo, TeslaLogo, QwenLogo, MistralLogo, HuggingFaceLogo } from "../epoch/primitives/brand-icons";
+import { DhyraLogo, ModalLogo, RunPodLogo, MetaLogo, AnthropicLogo, BAAILogo, GLMLogo, GoogleLogo, K8sFaviconLogo, OneXLogo, TeslaLogo, QwenLogo, MistralLogo, HuggingFaceLogo } from "../dhyra/primitives/brand-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import epochChipImg from "./epoch-chip.png";
+import dhyraChipImg from "./dhyra-chip.png";
+import { DhyraAnimatedLogo } from "./dhyra-animated-logo";
 
 const PREM_EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -126,8 +127,8 @@ const PARTICLES = Array.from({ length: NUM_PARTICLES }).map((_, i) => {
   return { id: i, logoIndex: i % 6, targetIndex, delay };
 });
 
-function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'epoch' }) {
-  const spineX = hoveredNode === 'epoch' ? 784 : (hoveredNode === 'hf' ? 634 : 484);
+function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'dhyra' }) {
+  const spineX = hoveredNode === 'dhyra' ? 784 : (hoveredNode === 'hf' ? 634 : 484);
 
   return (
     <div className="absolute left-[192px] top-1/2 w-0 h-0 z-0 pointer-events-none">
@@ -158,7 +159,7 @@ function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'e
 }
 
 export function HardwareDeploymentSection() {
-  const [hoveredNode, setHoveredNode] = React.useState<'none' | 'hf' | 'epoch'>('none');
+  const [hoveredNode, setHoveredNode] = React.useState<'none' | 'hf' | 'dhyra'>('none');
 
   return (
     <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden py-24 border-t border-dashed border-[#333]">
@@ -225,25 +226,25 @@ export function HardwareDeploymentSection() {
 
       {/* Background Dashed Lines - Global Layout */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       {/* Header Section */}
-      <div className="w-full relative px-[14%] mb-32 text-center">
+      <div className="w-full relative px-[calc(14%_+_120px)] mb-32 text-center">
         <h2 className="text-4xl sm:text-5xl font-medium tracking-tight mb-4 z-10 relative">
           Deploy and <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">verify</span> anywhere
         </h2>
         <p className="text-[#C8C7BA] max-w-2xl mx-auto text-[15px] z-10 relative">
-          Epoch deploys intelligence into software, compute clusters, edge devices, and physical robotics. Actuate when authorized, and verify the physical consequences.
+          Dhyra deploys intelligence into software, compute clusters, edge devices, and physical robotics. Actuate when authorized, and verify the physical consequences.
         </p>
       </div>
 
       {/* Diagram Container */}
       <div className="w-full relative z-10 flex justify-center items-center py-10 overflow-x-auto">
-        <div className="flex items-center min-w-max px-[14%] transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
+        <div className="flex items-center min-w-max px-[calc(14%_+_120px)] transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
 
           {/* Main Horizontal Spine passing through everything */}
           <div className="flex items-center relative">
@@ -280,7 +281,7 @@ export function HardwareDeploymentSection() {
             {/* Conditionally Rendered Left Connector */}
             <div
               className="flex items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] -mx-1"
-              style={{ width: hoveredNode === 'hf' || hoveredNode === 'epoch' ? '308px' : '158px' }}
+              style={{ width: hoveredNode === 'hf' || hoveredNode === 'dhyra' ? '308px' : '158px' }}
             >
               {hoveredNode === 'none' ? (
                 /* Default direct connection */
@@ -335,7 +336,7 @@ export function HardwareDeploymentSection() {
                   </div>
                 </div>
               ) : (
-                /* Expanded branches for Epoch hover */
+                /* Expanded branches for Dhyra hover */
                 <div className="flex items-center w-full min-w-[308px]">
                   <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00] relative">
                   </div>
@@ -376,37 +377,23 @@ export function HardwareDeploymentSection() {
             {/* 2. Center Node (RunInfra) */}
             <motion.div
               whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-              className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'epoch' ? 'border-[#555]' : 'border-[#333]'}`}
-              onMouseEnter={() => setHoveredNode('epoch')}
+              className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'dhyra' ? 'border-[#555]' : 'border-[#333]'}`}
+              onMouseEnter={() => setHoveredNode('dhyra')}
               onMouseLeave={() => setHoveredNode('none')}
             >
               <div className="flex-1 flex items-center justify-center mb-1 rounded-sm overflow-hidden">
-                <svg width="64" height="40" viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="64" height="40" />
-                  <path d="M53.6688 3.16846H59.9748C60.473 3.16846 60.9508 3.46054 61.3031 3.98044C61.6553 4.50034 61.8532 5.20548 61.8532 5.94073V15.2477C61.8532 15.9829 61.6553 16.6881 61.3031 17.208C60.9508 17.7279 60.473 18.0199 59.9748 18.0199H53.6688C53.1706 18.0199 52.6928 17.7279 52.3405 17.208C51.9882 16.6881 51.7903 15.9829 51.7903 15.2477V5.94073C51.7903 5.20548 51.9882 4.50034 52.3405 3.98044C52.6928 3.46054 53.1706 3.16846 53.6688 3.16846Z" fill="white" />
-                  <path d="M22.2725 20.9902H32.3354V33.0694C32.3354 33.8047 32.1375 34.5098 31.7852 35.0297C31.433 35.5496 30.9552 35.8417 30.457 35.8417H24.1509C23.6527 35.8417 23.175 35.5496 22.8227 35.0297C22.4704 34.5098 22.2725 33.8047 22.2725 33.0694V20.9902Z" fill="white" />
-                  <path d="M14.7589 6.13867H21.065C21.5632 6.13867 22.0409 6.43075 22.3932 6.95065C22.7455 7.47056 22.9434 8.1757 22.9434 8.91095V20.9902H14.7589C14.2607 20.9902 13.7829 20.6981 13.4307 20.1782C13.0784 19.6583 12.8805 18.9531 12.8805 18.2179V8.91095C12.8805 8.1757 13.0784 7.47056 13.4307 6.95065C13.7829 6.43075 14.2607 6.13867 14.7589 6.13867Z" fill="white" />
-                  <path d="M41.7274 20H49.9119C50.4101 20 50.8879 20.2921 51.2401 20.812C51.5924 21.3319 51.7903 22.037 51.7903 22.7723V32.0792C51.7903 32.8145 51.5924 33.5196 51.2401 34.0395C50.8879 34.5594 50.4101 34.8515 49.9119 34.8515H43.6058C43.1076 34.8515 42.6299 34.5594 42.2776 34.0395C41.9253 33.5196 41.7274 32.8145 41.7274 32.0792V20Z" fill="white" />
-                  <path d="M4.02514 21.9805H10.3312C10.8294 21.9805 11.3072 22.2725 11.6594 22.7924C12.0117 23.3124 12.2096 24.0175 12.2096 24.7527V34.0597C12.2096 34.7949 12.0117 35.5001 11.6594 36.02C11.3072 36.5399 10.8294 36.832 10.3312 36.832H4.02514C3.52695 36.832 3.04917 36.5399 2.6969 36.02C2.34463 35.5001 2.14673 34.7949 2.14673 34.0597V24.7527C2.14673 24.0175 2.34463 23.3124 2.6969 22.7924C3.04917 22.2725 3.52695 21.9805 4.02514 21.9805Z" fill="white" />
-                  <path d="M33.543 6.13867H39.849C40.3472 6.13867 40.825 6.43075 41.1773 6.95065C41.5295 7.47056 41.7274 8.1757 41.7274 8.91095V20.9902H31.6646V8.91095C31.6646 8.1757 31.8625 7.47056 32.2147 6.95065C32.567 6.43075 33.0448 6.13867 33.543 6.13867Z" fill="white" />
-                  <path d="M22.9434 18.2178C22.9434 20.297 23.319 20.9901 24.8218 20.9901H22.9434V18.2178Z" fill="white" />
-                  <path d="M31.6645 18.2178C31.6645 20.297 31.2889 20.9901 29.7861 20.9901H31.6645V18.2178Z" fill="white" />
-                  <path d="M22.2725 23.7625C22.2725 21.6833 21.8968 20.9902 20.3941 20.9902H22.2725V23.7625Z" fill="white" />
-                  <path d="M41.7275 23.7625C41.7275 21.6833 41.3518 20.9902 39.8491 20.9902H41.7275V23.7625Z" fill="white" />
-                  <path d="M32.3354 23.7625C32.3354 21.6833 32.7111 20.9902 34.2138 20.9902H32.3354V23.7625Z" fill="white" />
-                  <path d="M41.7274 17.228C41.7274 19.3072 42.1031 20.0003 43.6058 20.0003H41.7274V17.228Z" fill="white" />
-                </svg>
+                <DhyraAnimatedLogo />
               </div>
-              <span className="font-semibold text-[#F0EFE2] text-[15px] tracking-tight">epochInfra</span>
+              <span className="font-semibold text-[#F0EFE2] text-[15px] tracking-tight">dhyra</span>
             </motion.div>
 
             {/* Conditionally Rendered Right Connector */}
             <div
               className="flex items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] -mx-1"
-              style={{ width: hoveredNode === 'epoch' ? '308px' : '158px' }}
+              style={{ width: hoveredNode === 'dhyra' ? '308px' : '158px' }}
             >
-              {hoveredNode === 'epoch' ? (
-                /* Expanded branches for Epoch hover */
+              {hoveredNode === 'dhyra' ? (
+                /* Expanded branches for Dhyra hover */
                 <div className="flex items-center w-full min-w-[308px]">
                   <div className="w-9 h-[1px] border-t border-dashed border-[#75bf00] relative">
                   </div>
@@ -459,7 +446,7 @@ export function HardwareDeploymentSection() {
 
               <div className="relative">
                 <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<EpochLogo size={36} />} title="Epoch Cloud" />
+                <TargetNode icon={<DhyraLogo size={36} />} title="Dhyra Cloud" />
               </div>
 
               <div className="relative">
@@ -482,15 +469,7 @@ export function HardwareDeploymentSection() {
                 <TargetNode title="Local hardware" />
               </div>
 
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<K8sFaviconLogo size={36} />} title="Kubernetes" />
-              </div>
 
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<Bot size={36} />} title="Robotic Systems" />
-              </div>
             </div>
 
           </div>

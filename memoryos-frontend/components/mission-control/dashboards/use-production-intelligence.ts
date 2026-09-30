@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getEpochProductionIntelligence, type EpochProductionIntelligence } from "@/lib/epoch-api";
+import { getDhyraProductionIntelligence, type DhyraProductionIntelligence } from "@/lib/dhyra-api";
 
-const EMPTY: EpochProductionIntelligence = {
+const EMPTY: DhyraProductionIntelligence = {
   interactions: [], signals: [], clusters: [], rootCauses: [], evaluations: [],
   replays: [], fixes: [], reliability: [], improvements: [],
 };
 
-export function useProductionIntelligence(workspaceId?: string | null): EpochProductionIntelligence {
-  const [data, setData] = useState<EpochProductionIntelligence>(EMPTY);
+export function useProductionIntelligence(workspaceId?: string | null): DhyraProductionIntelligence {
+  const [data, setData] = useState<DhyraProductionIntelligence>(EMPTY);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -19,8 +19,8 @@ export function useProductionIntelligence(workspaceId?: string | null): EpochPro
     let cancelled = false;
     const load = async () => {
       try {
-        const next = await getEpochProductionIntelligence(workspaceId);
-        const payload = next as Partial<EpochProductionIntelligence>;
+        const next = await getDhyraProductionIntelligence(workspaceId);
+        const payload = next as Partial<DhyraProductionIntelligence>;
         if (!cancelled) {
           setData({
             interactions: Array.isArray(payload.interactions) ? payload.interactions : [],

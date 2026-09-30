@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Cable, CheckCircle2, ExternalLink, RefreshCw, Search, Unplug } from "lucide-react";
 import { authorizeConnector, disconnectConnector } from "@/lib/continuity-lab/connector-actions";
-import { listEpochIntegrations, type EpochIntegrationConnection } from "@/lib/epoch-api";
+import { listDhyraIntegrations, type DhyraIntegrationConnection } from "@/lib/dhyra-api";
 import { fetchConnectorList, type ConnectorListRow } from "@/lib/continuity-lab/connector-list";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
@@ -20,7 +20,7 @@ const supported = [
 ];
 
 export function DeveloperIntegrationsView({ workspaceId }: { workspaceId?: string | null }) {
-  const [rows, setRows] = useState<EpochIntegrationConnection[]>([]);
+  const [rows, setRows] = useState<DhyraIntegrationConnection[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -32,11 +32,11 @@ export function DeveloperIntegrationsView({ workspaceId }: { workspaceId?: strin
     try {
       setError(null);
       const [result, connectorRows] = await Promise.all([
-        listEpochIntegrations(workspaceId, { limit: 100 }),
+        listDhyraIntegrations(workspaceId, { limit: 100 }),
         fetchConnectorList(),
       ]);
 
-      // The connector vault is authoritative for OAuth state. Epoch rows are
+      // The connector vault is authoritative for OAuth state. Dhyra rows are
       // the workspace projection used for mission policy and sync metadata.
       // Merge them here so the UI cannot show a stale shadow row as disconnected.
       const merged = new Map(
@@ -65,7 +65,7 @@ export function DeveloperIntegrationsView({ workspaceId }: { workspaceId?: strin
 function connectorRowToIntegration(
   connector: ConnectorListRow,
   workspaceId: string,
-): EpochIntegrationConnection {
+): DhyraIntegrationConnection {
   return {
     id: `connector-${connector.type}`,
     workspaceId,
@@ -111,7 +111,7 @@ function connectorRowToIntegration(
     }
   };
 
-  const disconnect = async (row: EpochIntegrationConnection) => {
+  const disconnect = async (row: DhyraIntegrationConnection) => {
     try {
       setBusy(row.provider);
       await disconnectConnector(row.provider);
@@ -130,7 +130,7 @@ function connectorRowToIntegration(
         <h1 className="flex items-center gap-2 text-xl font-bold text-foreground"><Cable className="size-5 text-primary" /> Integration Gateway</h1>
         <p className="mt-1 text-xs text-muted-foreground">Connect approved external systems that missions may use. Credentials stay in the connector vault and are never exposed to workers.</p>
       </div>
-      <div className="flex gap-2"><button type="button" onClick={() => exportLiveRows("epoch-integrations.json", visible)} className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">Export</button><button type="button" onClick={() => void load()} className="rounded-md border border-border p-2 hover:bg-muted" aria-label="Refresh integrations"><RefreshCw className="size-3.5" /></button></div>
+      <div className="flex gap-2"><button type="button" onClick={() => exportLiveRows("dhyra-integrations.json", visible)} className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">Export</button><button type="button" onClick={() => void load()} className="rounded-md border border-border p-2 hover:bg-muted" aria-label="Refresh integrations"><RefreshCw className="size-3.5" /></button></div>
     </div>
     <div className="flex shrink-0 items-center gap-2 border-b border-border/50 bg-muted/20 px-6 py-3">
       <div className="relative w-72"><Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search integrations..." className="h-8 w-full rounded-md border border-border bg-background pl-9 pr-3 text-xs" /></div>

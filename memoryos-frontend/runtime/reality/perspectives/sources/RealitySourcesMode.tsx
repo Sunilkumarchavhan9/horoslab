@@ -26,7 +26,7 @@ const EXPLORER_TREE = [
     children: [
       { id: "repo_1", name: "memoryos-core", type: "repository" },
       { id: "repo_2", name: "memoryos-web", type: "repository" },
-      { id: "repo_3", name: "epoch-docs", type: "repository" },
+      { id: "repo_3", name: "dhyra-docs", type: "repository" },
     ]
   },
   {

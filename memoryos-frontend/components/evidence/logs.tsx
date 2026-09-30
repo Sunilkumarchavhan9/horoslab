@@ -5,8 +5,8 @@ import { Search, Filter, MoreHorizontal, Play, Pause, Terminal, AlertTriangle, I
 import { Button } from "@/components/ui/button"
 
 const MOCK_LOGS = [
-  { id: "log-1", time: "12:21:05", level: "INFO", message: "Mission Created", mission: "MISSION-241", agent: "System", runtime: "Epoch Core", traceId: "tr-92f8a1" },
-  { id: "log-2", time: "12:22:12", level: "INFO", message: "Planner Started", mission: "MISSION-241", agent: "Planner Agent", runtime: "Epoch Core", traceId: "tr-92f8a1" },
+  { id: "log-1", time: "12:21:05", level: "INFO", message: "Mission Created", mission: "MISSION-241", agent: "System", runtime: "Dhyra Core", traceId: "tr-92f8a1" },
+  { id: "log-2", time: "12:22:12", level: "INFO", message: "Planner Started", mission: "MISSION-241", agent: "Planner Agent", runtime: "Dhyra Core", traceId: "tr-92f8a1" },
   { id: "log-3", time: "12:23:45", level: "INFO", message: "Claude Running", mission: "MISSION-241", agent: "Claude Reviewer", runtime: "Agent Runtime", traceId: "tr-92f8a1" },
   { id: "log-4", time: "12:24:02", level: "WARNING", message: "Rate limit approaching", mission: "MISSION-241", agent: "Claude Reviewer", runtime: "API Gateway", traceId: "tr-92f8a1" },
   { id: "log-5", time: "12:24:30", level: "INFO", message: "GitHub PR Opened", mission: "MISSION-241", agent: "GitOps Bot", runtime: "Integration", traceId: "tr-92f8a1" },

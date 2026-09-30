@@ -7,7 +7,7 @@ import { OrganizationLayout, OrganizationHeader, SectionTitle, StatusBadge } fro
 
 // --- Mock Data ---
 const ORG_META = {
- name: "Epoch Inc.",
+ name: "Dhyra Inc.",
  plan: "Enterprise",
  created: "Jan 12, 2026",
  members: 42,
@@ -20,8 +20,8 @@ const ORG_META = {
 };
 
 const DOMAINS = [
- { id: "epoch.ai", status: "Verified", sso: "Enforced" },
- { id: "epoch-corp.com", status: "Pending TXT", sso: "Optional" }
+ { id: "dhyra.ai", status: "Verified", sso: "Enforced" },
+ { id: "dhyra-corp.com", status: "Pending TXT", sso: "Optional" }
 ];
 
 export function OrganizationProfile() {

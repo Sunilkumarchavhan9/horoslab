@@ -27,7 +27,7 @@ export async function fetchConnectorList(): Promise<ConnectorListRow[]> {
   try {
     // The connector proxy resolves the authenticated Clerk user server-side.
     // Do not send the legacy MemoryOS token here: in local development it can
-    // belong to user-demo and overwrite the real user's Epoch status.
+    // belong to user-demo and overwrite the real user's Dhyra status.
     const res = await fetch("/api/connector", {
       headers: {
         accept: "application/json",

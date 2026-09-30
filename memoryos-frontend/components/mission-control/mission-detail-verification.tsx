@@ -2,7 +2,7 @@
 
 import { ShieldCheck, CheckCircle2, AlertTriangle, Eye, ShieldAlert, BadgeCheck, FileCheck2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type EpochMissionDetail } from "@/lib/epoch-api";
+import { type DhyraMissionDetail } from "@/lib/dhyra-api";
 
 function toStringList(value: unknown): string[] {
  if (!Array.isArray(value)) return [];
@@ -13,7 +13,7 @@ function formatPercent(value?: number | null): string {
  return typeof value === "number" && Number.isFinite(value) ? `${value}%` : "—";
 }
 
-export function MissionDetailVerification({ mission }: { mission: EpochMissionDetail }) {
+export function MissionDetailVerification({ mission }: { mission: DhyraMissionDetail }) {
  const decision = (mission.verificationRun?.finalDecision ?? "REVIEW").toUpperCase();
  const isVerified = decision === "PASS";
  const checklist = toStringList(mission.verificationRun?.checklist);

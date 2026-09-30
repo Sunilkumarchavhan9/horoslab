@@ -40,7 +40,7 @@ export function ObserveWorkspace({ activeSection }: { activeSection: string }) {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-muted-foreground" />
-            <span className="text-[12px] font-bold uppercase tracking-wider text-foreground">Epoch Telemetry</span>
+            <span className="text-[12px] font-bold uppercase tracking-wider text-foreground">Dhyra Telemetry</span>
           </div>
           
           <div className="h-4 w-px bg-border" />

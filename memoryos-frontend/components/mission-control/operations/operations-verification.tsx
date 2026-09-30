@@ -8,7 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
 import { Progress } from "@/components/ui/progress";
-import { listEpochVerificationRuns, type EpochVerificationRunHistoryItem } from "@/lib/epoch-api";
+import { listDhyraVerificationRuns, type DhyraVerificationRunHistoryItem } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 import { exportLiveRows } from "../export-live-rows";
 
@@ -27,7 +27,7 @@ type VerificationRow = {
     updated: string;
 };
 
-function toVerificationRow(run: EpochVerificationRunHistoryItem): VerificationRow {
+function toVerificationRow(run: DhyraVerificationRunHistoryItem): VerificationRow {
     const decision = String(run.finalDecision || "UNKNOWN").toUpperCase();
     const evidenceSummary = run.evidenceSummary ?? {};
     const evidenceCount = Number(evidenceSummary.count ?? evidenceSummary.evidenceCount ?? 0);
@@ -77,7 +77,7 @@ export function OperationsVerification({ workspaceId }: { workspaceId?: string |
         let cancelled = false;
         const load = async () => {
             try {
-                const result = await listEpochVerificationRuns(workspaceId);
+                const result = await listDhyraVerificationRuns(workspaceId);
                 if (!cancelled) setVerifications(result.verifications.map(toVerificationRow));
             } catch {
                 if (!cancelled) setVerifications([]);
@@ -111,7 +111,7 @@ export function OperationsVerification({ workspaceId }: { workspaceId?: string |
                 <div className="flex items-center justify-between px-6 py-4">
                     <h1 className="text-xl font-bold tracking-tight text-foreground">Verification & Validation</h1>
                     <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => exportLiveRows("epoch-verifications.json", visibleVerifications)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-verifications.json", visibleVerifications)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export Report
                         </button>
