@@ -192,7 +192,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
             />
           </div>
 
-          <div className="w-full max-w-4xl space-y-6 sm:space-y-8 px-2 sm:px-4 relative z-20">
+          <div className="w-full max-w-[840px] mx-auto space-y-6 sm:space-y-8 px-2 sm:px-4 relative z-20">
             <FloatingBrandGrid pattern="top-left" className="top-0 right-full mr-6 xl:mr-10 hidden lg:block opacity-60" />
             <FloatingBrandGrid pattern="bottom-right" className="bottom-22 left-full ml-6 xl:ml-18 hidden lg:block opacity-60" />
 

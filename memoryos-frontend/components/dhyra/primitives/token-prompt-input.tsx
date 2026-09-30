@@ -1908,10 +1908,10 @@ export function TokenPromptInput({
           className={cn(
             "main-input-card relative border p-4 transition-all rounded-xs",
             isFocused || flyoutOpen || modeDropdownOpen || attachMenuOpen
-              ? "border-[#75bf00] bg-[#141414] shadow-[0_12px_40px_rgba(117,191,0,0.1)]"
+              ? "border-[#75bf00] bg-[#141414]"
               : dark
-                ? "border-[#282828] bg-[#141414] hover:border-[#383838] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
-                : "border-[#d8ddd3] bg-white hover:border-[#b0b8aa] shadow-[0_8px_30px_rgba(0,0,0,0.04)]",
+                ? "border-[#282828] bg-[#141414] hover:border-[#383838]"
+                : "border-[#d8ddd3] bg-white hover:border-[#b0b8aa]",
             cardClassName
           )}
         >
