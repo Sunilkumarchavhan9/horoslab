@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { ChevronDown, ExternalLink, Play, ClipboardList, GitBranch, ListChecks } from "lucide-react";
-import { MetaLogo, VLLMLogo, QwenLogo } from "@/components/epoch/primitives/brand-icons";
+import { MetaLogo, VLLMLogo, QwenLogo } from "@/components/dhyra/primitives/brand-icons";
 
 interface ProductionStackSectionProps {
   onOpenSignIn?: () => void;
   dark?: boolean;
 }
 
-// Master alignment lines: Outer & Inner Margins only
-export const MARGIN_VERTICAL_POSITIONS = ["6%", "14%", "86%", "94%"];
+// Master alignment lines: Outer (14%), Inner (pushed 120px inside)
+export const MARGIN_VERTICAL_POSITIONS = ["14%", "calc(14% + 120px)", "calc(86% - 120px)", "86%"];
 
 const GemmaLogo = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +79,7 @@ export function ProductionStackSection({ onOpenSignIn, dark = true }: Production
       </div>
 
       {/* Row 1: Centered Header Block */}
-      <div className="relative z-10 w-full grid grid-cols-[14%_72%_14%]">
+      <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)]">
         <div className="relative p-4 min-h-[140px]" />
 
         <div className="p-8 sm:p-12 lg:py-16 text-center flex flex-col items-center justify-center space-y-6">
@@ -92,7 +92,7 @@ export function ProductionStackSection({ onOpenSignIn, dark = true }: Production
             </div>
           </h2>
           <p className="text-xs sm:text-[13px] text-[#C8C7BA] font-mono leading-relaxed max-w-2xl mx-auto">
-            Epoch observes reality, discovers capabilities, runs experiments, and verifies outcomes.
+            Dhyra observes reality, discovers capabilities, runs experiments, and verifies outcomes.
             Deploy live changes or export fully reproducible system packages. <br className="hidden sm:inline" />
             Illustrative mock values shown for visualization. Verification receipts and actual telemetry are stored securely in the Evidence Fabric.
           </p>
@@ -102,11 +102,11 @@ export function ProductionStackSection({ onOpenSignIn, dark = true }: Production
       </div>
 
       {/* Row 2: Split Simulator Grid Layout (aligned with master vertical lines) */}
-      <div className="relative z-10 w-full grid grid-cols-[14%_34%_38%_14%] border-t border-dashed border-[#333333]">
+      <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_17fr_19fr_calc(14%_+_120px)] border-t border-dashed border-[#333333]">
         {/* Column 1: Left Margin Cell with Watermark */}
         <div className="relative p-4 min-h-[460px]">
           <span className="absolute bottom-4 right-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
-            EPOCH
+            DHYRA
           </span>
         </div>
 

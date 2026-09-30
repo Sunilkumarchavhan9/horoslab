@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { LayoutTemplate, Network, Shield, Target, Plus, ChevronRight, RefreshCw } from "lucide-react";
-import { listEpochTemplates, readActiveEpochWorkspaceId, type EpochTemplate } from "@/lib/epoch-api";
+import { listDhyraTemplates, readActiveDhyraWorkspaceId, type DhyraTemplate } from "@/lib/dhyra-api";
 
 function formatDate(value?: string): string {
   if (!value) return "Unknown";
@@ -11,24 +11,24 @@ function formatDate(value?: string): string {
 }
 
 export function InstitutionTemplatesView() {
-  const [templates, setTemplates] = useState<EpochTemplate[]>([]);
+  const [templates, setTemplates] = useState<DhyraTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveEpochWorkspaceId();
+  const workspaceId = readActiveDhyraWorkspaceId();
 
   const loadTemplates = useCallback(async () => {
     if (!workspaceId) {
       setTemplates([]);
       setLoading(false);
-      setError("No active Epoch workspace is available.");
+      setError("No active Dhyra workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const dbTemplates = await listEpochTemplates(workspaceId);
-      const mockTemplates: EpochTemplate[] = [
+      const dbTemplates = await listDhyraTemplates(workspaceId);
+      const mockTemplates: DhyraTemplate[] = [
         { id: "tmpl_release", name: "Release Institution", category: "software", description: "Standard software release template", version: "1.0", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), definition: {} },
         { id: "tmpl_inspection", name: "Inspection Institution", category: "physical", description: "Warehouse physical inspection model", version: "1.0", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), definition: {} },
         { id: "tmpl_security", name: "Security Institution", category: "hybrid", description: "Cyber-physical security operations", version: "1.2", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), definition: {} },

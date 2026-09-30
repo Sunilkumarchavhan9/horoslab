@@ -2,7 +2,7 @@ import React from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { ResourceCalculatorSection } from "@/components/landing/resource-calculator-section";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { PixelFilter } from "@/components/epoch/primitives/pixel-filter";
+import { PixelFilter } from "@/components/dhyra/primitives/pixel-filter";
 
 export default function EconomicsPage() {
   return (

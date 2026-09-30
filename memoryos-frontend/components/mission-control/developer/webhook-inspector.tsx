@@ -8,14 +8,14 @@ import {
     RefreshCw, RotateCw, Copy, FileJson
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { testEpochDeveloperWebhook } from "@/lib/epoch-api";
+import { testDhyraDeveloperWebhook } from "@/lib/dhyra-api";
 
 export function WebhookInspector({ entityData }: { entityData: any }) {
     const [testing, setTesting] = useState(false);
     const testWebhook = async () => {
         if (!entityData.workspaceId || !entityData.id) return;
         setTesting(true);
-        try { await testEpochDeveloperWebhook(entityData.workspaceId, entityData.id); } finally { setTesting(false); }
+        try { await testDhyraDeveloperWebhook(entityData.workspaceId, entityData.id); } finally { setTesting(false); }
     };
     return (
         <Tabs defaultValue="overview" className="flex-1 flex flex-col w-full h-full">
@@ -159,8 +159,8 @@ export function WebhookInspector({ entityData }: { entityData: any }) {
                             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Webhook Headers</span>
                             <div className="flex flex-col bg-[#0d1117] border border-border/50 rounded-md p-4 gap-2 font-mono text-[11px] overflow-x-auto text-[#c9d1d9]">
                                 <div><span className="text-blue-400">Content-Type:</span> application/json</div>
-                                <div><span className="text-blue-400">Epoch-Signature:</span> t=1690909200,v1=a3b4c5...</div>
-                                <div><span className="text-blue-400">Epoch-Event-Id:</span> evt_mission_completed_9a8b</div>
+                                <div><span className="text-blue-400">Dhyra-Signature:</span> t=1690909200,v1=a3b4c5...</div>
+                                <div><span className="text-blue-400">Dhyra-Event-Id:</span> evt_mission_completed_9a8b</div>
                             </div>
                         </div>
 

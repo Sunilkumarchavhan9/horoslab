@@ -36,8 +36,8 @@ export function DashedSection({
           <div className="relative h-full">
             {/* Masking strip to hide single global background line under the border */}
             <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
-            {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
-            <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+            {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 120px) */}
+            <div className="absolute top-[10px] bottom-[10px] right-[-120px] w-[120px] border-l border-r border-dashed border-[#333] z-20" />
 
             {/* Top Crosshairs */}
             {borderTop && (
@@ -62,8 +62,8 @@ export function DashedSection({
           <div className="relative h-full">
             {/* Masking strip to hide single global background line under the border */}
             <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
-            {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
-            <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+            {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 120px) */}
+            <div className="absolute top-[10px] bottom-[10px] left-[-120px] w-[120px] border-l border-r border-dashed border-[#333] z-20" />
 
             {/* Top Crosshairs */}
             {borderTop && (
@@ -87,7 +87,7 @@ export function DashedSection({
       {/* Main Content Area */}
       <div className="w-full grid grid-cols-[14%_72%_14%] relative z-10">
         <div />
-        <div className={`min-w-0 ${bgClass} mx-[10px] border-l border-r border-dashed border-[#333]`}>
+        <div className={`min-w-0 ${bgClass} mx-[120px] border-l border-r border-dashed border-[#333]`}>
           {children}
         </div>
         <div />

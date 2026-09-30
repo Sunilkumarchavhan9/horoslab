@@ -8,8 +8,8 @@ import { AIAssistantGrid } from "@/components/landing/ai-assistant-grid";
 import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { EpochLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, AuthorMonogram, KimiLogo, EpochWordmarkLogo, AnthropicLogo, GithubLogo } from "@/components/epoch/primitives/brand-icons";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { DhyraLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, AuthorMonogram, KimiLogo, DhyraWordmarkLogo, AnthropicLogo, GithubLogo } from "@/components/dhyra/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2 } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -58,7 +58,7 @@ const COMPARISON_ROWS = [
 ];
 
 
-const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@epoch/runtime";
+const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@dhyra/runtime";
 
 export const PersonalAssistantOutcome = new OutcomeContract({
   name: "PersonalAssistant",
@@ -76,7 +76,7 @@ export const PersonalAssistantOutcome = new OutcomeContract({
   onSuccess: (result) => console.log(\`Task completed securely: \${result}\`)
 });`;
 
-const CAPABILITY_CODE = `import { CapabilityFabric } from "@epoch/runtime";
+const CAPABILITY_CODE = `import { CapabilityFabric } from "@dhyra/runtime";
 
 export const LocalContextAPI = CapabilityFabric.register({
   name: "LocalContextAPI",
@@ -134,8 +134,8 @@ __global__ void flash_attention_kernel(
 const SERVE_CODE = `#!/bin/bash
 # serve.sh
 
-# Start the Epoch serving engine
-epoch serve \\
+# Start the Dhyra serving engine
+dhyra serve \\
   --model Qwen/Qwen2.5-Coder-32B-Instruct \\
   --port 8080 \\
   --tensor-parallel-size 1 \\
@@ -522,7 +522,7 @@ outlines==0.0.46`;
     "Dockerfile": DOCKERFILE_CODE,
     "docker-compose.yml": DOCKER_COMPOSE_CODE,
     "requirements.txt": REQUIREMENTS_CODE,
-    "README.md": "# Epoch Infra AI Assistant\\n\\nProduction deployment manifest."
+    "README.md": "# Dhyra Infra AI Assistant\\n\\nProduction deployment manifest."
   };
 
   const [activeFile, setActiveFile] = useState<AIAssistantFile>("tool_definitions.py");
@@ -952,9 +952,9 @@ outlines==0.0.46`;
                   </div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-md">
-                      <EpochLogo size={28} />
+                      <DhyraLogo size={28} />
                     </div>
-                    <span className="text-[28px] font-medium text-[#F0EFE2]">Epoch</span>
+                    <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
                   </div>
                   <p className="text-[#C8C7BA] text-[20px]">OpenAI-compatible endpoints with bare-metal model control.</p>
                 </div>
@@ -1258,7 +1258,7 @@ outlines==0.0.46`;
                     {/* Project Tree Folder */}
                     <div className="mt-6 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> epoch-infra-ai-assistant/
+                        <ChevronDown size={14} className="text-[#777]" /> dhyra-ai-assistant/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button onClick={() => { selectFileManually("serve.sh" as any); }} className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}>
@@ -1460,14 +1460,14 @@ outlines==0.0.46`;
           </div>
         </div>
 
-        {/* What epochInfra tunes Section */}
+        {/* What dhyraInfra tunes Section */}
         <div className="w-full relative z-10 pt-24 pb-16">
           <div className="absolute top-0 left-0 w-full h-px border-t border-dashed border-[#333]" />
           <div className="w-full grid grid-cols-[14%_72%_14%]">
             <div />
             <div className="flex flex-col items-center">
               <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                What epochInfra tunes
+                What dhyraInfra tunes
               </h2>
               <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mb-16">
                 Every stage of the pipeline, retuned per model and GPU.
@@ -1671,7 +1671,7 @@ outlines==0.0.46`;
           </svg>
           {/* Center Logo Cutout */}
           <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-            <EpochLogo size={25} />
+            <DhyraLogo size={25} />
           </div>
         </div>
 
@@ -1682,9 +1682,9 @@ outlines==0.0.46`;
             {/* Left Column */}
             <div className="flex flex-col">
               <div className="mb-2 text-[#F0EFE2]">
-                <EpochWordmarkLogo className="h-[24px] w-auto" />
+                <DhyraWordmarkLogo className="h-[24px] w-auto" />
               </div>
-              <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 epochInfra. All rights reserved.</p>
+              <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
               {/* Social Icons */}
               <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
@@ -1735,9 +1735,9 @@ outlines==0.0.46`;
                 </div>
               </div>
 
-              {/* Ask AI about Epoch */}
+              {/* Ask AI about Dhyra */}
               <div className="flex flex-col items-end">
-                <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Epoch</span>
+                <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
                 <div className="flex items-center gap-4 text-[#C8C7BA]">
                   <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                   <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -1756,12 +1756,12 @@ outlines==0.0.46`;
 
         {/* Bottom Legal / Theme Row */}
         <div className="w-full border-t border-dashed border-[#333] relative">
-          {/* Tiny EPOCH text aligned to the left of the 14% grid line */}
-          <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">EPOCH</div>
+          {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
+          <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
           <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
             <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-              <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><EpochLogo size={12} /> Part of  causis</span>
+              <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo size={12} /> Part of  causis</span>
               <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
               <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
               <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

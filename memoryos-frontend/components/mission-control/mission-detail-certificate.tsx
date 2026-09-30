@@ -1,7 +1,7 @@
 "use client";
 
 import { Award, Download, ExternalLink, Hash, Calendar, ShieldCheck, CheckCircle2, FileJson, BadgeCheck } from "lucide-react";
-import { type EpochMissionDetail } from "@/lib/epoch-api";
+import { type DhyraMissionDetail } from "@/lib/dhyra-api";
 
 function formatDate(value?: string | null): string {
  if (!value) return "Pending";
@@ -10,7 +10,7 @@ function formatDate(value?: string | null): string {
  return parsed.toLocaleString();
 }
 
-export function MissionDetailCertificate({ mission }: { mission: EpochMissionDetail }) {
+export function MissionDetailCertificate({ mission }: { mission: DhyraMissionDetail }) {
  const certificate = mission.certificate;
  const summary = certificate?.summary ?? "No certificate summary recorded yet.";
 

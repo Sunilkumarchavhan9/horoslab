@@ -4,12 +4,12 @@ import React from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { CornerDownLeft } from "lucide-react";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { CellularRevealBackground } from "@/components/epoch/primitives/cellular-reveal-background";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { CellularRevealBackground } from "@/components/dhyra/primitives/cellular-reveal-background";
 import { LeftFeedStrip, RightFeedStrip } from "./side-feed-strips";
 import { HeroGlitchImage } from "./hero-glitch-image";
 import { FloatingBrandGrid } from "./floating-brand-grid";
-import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo } from "@/components/epoch/primitives/brand-icons";
+import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
 
 interface LandingHeroProps {
   onLaunchPrompt?: (params: any) => void;
@@ -17,15 +17,14 @@ interface LandingHeroProps {
 }
 
 const HEADLINES = [
-  { prefix: "The Reality Intelligence ", highlight: "Runtime." },
-  { prefix: "Teach intelligence to ", highlight: "decode reality." },
-  { prefix: "Verify outcomes with ", highlight: "empirical evidence." },
-  { prefix: "Turn verified experience into ", highlight: "better intelligence." },
-  { prefix: "Optimize systems for ", highlight: "physical environments." },
-  { prefix: "Actuate reality with ", highlight: "authorized decisions." },
+  { prefix: "Frontier Reality ", highlight: "Infrastructure." },
+  { prefix: "Build, Adapt, and ", highlight: "Evaluate." },
+  { prefix: "Optimize, Experiment, and ", highlight: "Decide." },
+  { prefix: "Deploy, Observe, and ", highlight: "Verify." },
+  { prefix: "Learn, Teach, and ", highlight: "Evolve." },
 ];
 
-// 14 Canonical Workloads representing Epoch's Reality Intelligence Architecture
+// 14 Canonical Workloads representing Dhyra's Reality Intelligence Architecture
 const ALL_14_WORKLOADS = [
   {
     label: "Compare engines",
@@ -160,7 +159,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
     { dependencies: [index], scope: containerRef }
   );
 
-  const currentHeadline = HEADLINES[index];
+  const currentHeadline = HEADLINES[index] || HEADLINES[0];
 
   // Pick 4 cards based on workloadOffset
   const visibleCards = React.useMemo(() => {
@@ -188,7 +187,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
           <div className="w-full relative mb-0">
             <HeroGlitchImage
               src="/hero-rack.jpg"
-              alt="Epoch NVIDIA Rack"
+              alt="Dhyra NVIDIA Rack"
               className="w-full relative z-10"
             />
           </div>
@@ -277,8 +276,8 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
                   </span>
                 </h1>
               </div>
-              <p className="text-sm sm:text-base text-[#90988c] font-mono max-w-2xl mx-auto leading-relaxed pt-1 pb-4">
-                Turn intent into a verified Mission Result. Epoch helps intelligent systems decode reality, understand what is unknown, optimize possible changes, act within authority, and learn from every verified interaction.
+              <p className="text-sm sm:text-base text-[#90988c] font-mono max-w-3xl mx-auto leading-relaxed pt-1 pb-4">
+                Dhyra builds frontier intelligence systems that learn from real-world evidence—discovering gaps, adapting models, running experiments, verifying outcomes, and evolving continuously.
               </p>
             </div>
 

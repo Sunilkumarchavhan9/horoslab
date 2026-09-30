@@ -22,9 +22,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useMissionStore } from "../../../missions/runtime/store";
 import { useMissionRuntimeData } from "../../../missions/runtime/mission-runtime-data";
-import type { EpochMissionDetail } from "@/lib/epoch-api";
+import type { DhyraMissionDetail } from "@/lib/dhyra-api";
 
-type MissionTimelineEvent = NonNullable<EpochMissionDetail["timeline"]>[number];
+type MissionTimelineEvent = NonNullable<DhyraMissionDetail["timeline"]>[number];
 
 type MissionLogEntry = {
   id: string;
@@ -49,7 +49,7 @@ function mapExecutionLog(entry: unknown, index: number, missionId: string): Miss
     return {
       id: `log-${index + 1}`,
       time: formatTime(null),
-      worker: "Epoch Mission Runtime",
+      worker: "Dhyra Mission Runtime",
       mission: missionId,
       action: entry,
       evidence: missionId,
@@ -69,7 +69,7 @@ function mapExecutionLog(entry: unknown, index: number, missionId: string): Miss
       time: formatTime(
         typeof record.timestamp === "string" ? record.timestamp : typeof record.createdAt === "string" ? record.createdAt : null,
       ),
-      worker: typeof record.worker === "string" ? record.worker : typeof record.actor === "string" ? record.actor : "Epoch Mission Runtime",
+      worker: typeof record.worker === "string" ? record.worker : typeof record.actor === "string" ? record.actor : "Dhyra Mission Runtime",
       mission: typeof record.mission === "string" ? record.mission : missionId,
       action: action ?? "Mission runtime log entry",
       evidence: typeof record.evidence === "string" ? record.evidence : missionId,
@@ -81,7 +81,7 @@ function mapExecutionLog(entry: unknown, index: number, missionId: string): Miss
   return {
     id: `log-${index + 1}`,
     time: formatTime(null),
-    worker: "Epoch Mission Runtime",
+    worker: "Dhyra Mission Runtime",
     mission: missionId,
     action: "Mission runtime log entry",
     evidence: missionId,
@@ -118,7 +118,7 @@ function mapTimelineLog(entry: MissionTimelineEvent, index: number, missionId: s
 export function EvidenceLogsView() {
   const { selection } = useMissionStore();
   const { missions, loading, error, getMission } = useMissionRuntimeData();
-  const [mission, setMission] = useState<EpochMissionDetail | null>(null);
+  const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
   const [missionLoading, setMissionLoading] = useState(false);
   const [missionError, setMissionError] = useState<string | null>(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);

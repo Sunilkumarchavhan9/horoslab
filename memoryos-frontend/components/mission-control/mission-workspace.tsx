@@ -97,7 +97,7 @@ export function MissionWorkspace({
  </div>
  <div className="flex items-center gap-6 mt-1 text-[12px]">
  <span className={textMuted}>Institution: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>Engineering</strong></span>
- <span className={textMuted}>Owner: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>Epoch Planner</strong></span>
+ <span className={textMuted}>Owner: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>Dhyra Planner</strong></span>
  <span className={textMuted}>Priority: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>P1</strong></span>
  <span className={textMuted}>Risk: <strong className="text-amber-500">Medium</strong></span>
  <span className={textMuted}>Runtime: <strong className={isDark ? "text-[#F0EFE2]/90" : "text-foreground/90"}>14m 23s</strong></span>
@@ -316,7 +316,7 @@ export function MissionWorkspace({
  id: id || "miss_8f9a2b",
  status: "RUNNING",
  institutionId: "inst_eng_01",
- planner: "Epoch Planner",
+ planner: "Dhyra Planner",
  workers: [
  "wrk_research_1",
  "wrk_coding_2"

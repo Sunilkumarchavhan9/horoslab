@@ -6,7 +6,7 @@ import { redirect } from "next/navigation"
 import { MissionControlClient } from "./mission-control-client"
 
 export const metadata: Metadata = {
-  title: "Epoch Mission Control",
+  title: "Dhyra Mission Control",
   description: "Launch software-change missions, verify outcomes, and review the evidence trail in one workspace.",
 }
 
@@ -22,7 +22,7 @@ export default async function MissionControlPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-[#151515] text-xs font-mono text-[#788274]">
-          Loading Epoch Control Plane...
+          Loading Dhyra Control Plane...
         </div>
       }
     >

@@ -3,15 +3,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ShieldCheck, Target, Shield, ServerCog, BarChart4, RefreshCw, AlertTriangle } from "lucide-react";
 import { getExperienceSummary, listExperienceOutcomes, type ExperienceSummary } from "@/lib/experience-api";
-import { listEpochCertificates, listEpochVerificationRuns, readActiveEpochWorkspaceId, type EpochCertificate, type EpochVerificationRunHistoryItem } from "@/lib/epoch-api";
+import { listDhyraCertificates, listDhyraVerificationRuns, readActiveDhyraWorkspaceId, type DhyraCertificate, type DhyraVerificationRunHistoryItem } from "@/lib/dhyra-api";
 
 export function VerificationAssuranceView() {
   const [summary, setSummary] = useState<ExperienceSummary | null>(null);
-  const [verifications, setVerifications] = useState<EpochVerificationRunHistoryItem[]>([]);
-  const [certificates, setCertificates] = useState<EpochCertificate[]>([]);
+  const [verifications, setVerifications] = useState<DhyraVerificationRunHistoryItem[]>([]);
+  const [certificates, setCertificates] = useState<DhyraCertificate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveEpochWorkspaceId();
+  const workspaceId = readActiveDhyraWorkspaceId();
 
   const loadAssurance = useCallback(async () => {
     setLoading(true);
@@ -19,8 +19,8 @@ export function VerificationAssuranceView() {
     try {
       const [experienceSummary, verificationPage, certificatePage, outcomes] = await Promise.all([
         getExperienceSummary().catch(() => null),
-        workspaceId ? listEpochVerificationRuns(workspaceId, { limit: 20 }) : Promise.resolve({ verifications: [] as EpochVerificationRunHistoryItem[], page: { nextCursor: null, hasMore: false, total: 0 } }),
-        workspaceId ? listEpochCertificates(workspaceId, { limit: 20 }) : Promise.resolve({ certificates: [] as EpochCertificate[], page: { nextCursor: null, hasMore: false, total: 0 } }),
+        workspaceId ? listDhyraVerificationRuns(workspaceId, { limit: 20 }) : Promise.resolve({ verifications: [] as DhyraVerificationRunHistoryItem[], page: { nextCursor: null, hasMore: false, total: 0 } }),
+        workspaceId ? listDhyraCertificates(workspaceId, { limit: 20 }) : Promise.resolve({ certificates: [] as DhyraCertificate[], page: { nextCursor: null, hasMore: false, total: 0 } }),
         listExperienceOutcomes().catch(() => []),
       ]);
 

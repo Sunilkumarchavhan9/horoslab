@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createEpochAuthorityPolicy, getEpochAuditTrail, listEpochMissions, listEpochRecoveryEscalations } from "@/lib/epoch-api";
+import { createDhyraAuthorityPolicy, getDhyraAuditTrail, listDhyraMissions, listDhyraRecoveryEscalations } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { useInspector } from "@/components/mission-control/universal-inspector";
 
@@ -38,9 +38,9 @@ export function LiveGovernanceView({ workspaceId, view }: { workspaceId: string;
     const load = async () => {
       try {
         const [missionRows, auditRows, recoveryRows] = await Promise.all([
-          listEpochMissions(workspaceId),
-          getEpochAuditTrail(workspaceId),
-          listEpochRecoveryEscalations(workspaceId),
+          listDhyraMissions(workspaceId),
+          getDhyraAuditTrail(workspaceId),
+          listDhyraRecoveryEscalations(workspaceId),
         ]);
         if (cancelled) return;
         setMissions(missionRows as unknown as Row[]);
@@ -67,7 +67,7 @@ export function LiveGovernanceView({ workspaceId, view }: { workspaceId: string;
     setCreating(true);
     setCreateError(null);
     try {
-      await createEpochAuthorityPolicy(workspaceId, policyMissionId, {
+      await createDhyraAuthorityPolicy(workspaceId, policyMissionId, {
         name: policyName.trim(),
         canExecute: false,
         needsApproval: true,

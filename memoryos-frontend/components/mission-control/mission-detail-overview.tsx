@@ -1,7 +1,7 @@
 "use client";
 
 import { Target, Building, User, BrainCircuit, Calendar, DollarSign, Wrench, AlertTriangle } from "lucide-react";
-import { type EpochMissionDetail } from "@/lib/epoch-api";
+import { type DhyraMissionDetail } from "@/lib/dhyra-api";
 
 function asRecord(value: unknown): Record<string, unknown> | null {
  return value && typeof value === "object" ? (value as Record<string, unknown>) : null;
@@ -26,7 +26,7 @@ function budgetEntries(budgets?: Record<string, unknown> | null): Array<[string,
  return Object.entries(budgets).map(([label, value]) => [label, typeof value === "string" ? value : JSON.stringify(value)] as [string, string]);
 }
 
-export function MissionDetailOverview({ mission }: { mission: EpochMissionDetail }) {
+export function MissionDetailOverview({ mission }: { mission: DhyraMissionDetail }) {
  const institutionName = mission.institution?.name ?? "Unknown";
  const missionRecord = asRecord(mission);
  const executionPlanner = asRecord(mission.executionRun?.planner);
@@ -59,7 +59,7 @@ export function MissionDetailOverview({ mission }: { mission: EpochMissionDetail
  executionPlanner?.name,
  executionPlanner?.role,
  executionPlanner?.stage,
- ) ?? "Epoch Planner";
+ ) ?? "Dhyra Planner";
 
  const deadline =
  firstString(

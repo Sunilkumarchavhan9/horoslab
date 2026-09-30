@@ -38,7 +38,7 @@ export function OrganizationRoles() {
  <div className="flex items-start justify-between mb-8">
  <OrganizationHeader 
  title="Roles & Permissions" 
- description="Manage human access control for the Epoch workspace. Runtime capabilities for AI agents are managed separately under Governance."
+ description="Manage human access control for the Dhyra workspace. Runtime capabilities for AI agents are managed separately under Governance."
  />
  <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />

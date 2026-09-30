@@ -96,7 +96,7 @@ export function EmailLinkVerification({
             href={signInUrl}
             className={`mt-8 inline-flex min-h-[46px] items-center justify-center px-5 text-[14px] font-medium transition sm:text-[15px] ${styles.button}`}
           >
-            Back to Epoch sign in
+            Back to Dhyra sign in
           </Link>
         ) : null}
       </div>

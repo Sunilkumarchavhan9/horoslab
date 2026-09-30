@@ -4,9 +4,9 @@ import React from "react";
 import { Box, Cpu, Cloud, Settings, Layers, Code, Zap, HardDrive, Database, Server } from "lucide-react";
 import {
   QwenLogo, NvidiaLogo, HuggingFaceLogo, MicrosoftLogo, MistralLogo, DeepSeekLogo,
-  MetaLogo, OpenAILogo, VLLMLogo, SGLangLogo, ModalLogo, RunPodLogo, EpochLogo, AWSLogo, GoogleLogo,
+  MetaLogo, OpenAILogo, VLLMLogo, SGLangLogo, ModalLogo, RunPodLogo, DhyraLogo, AWSLogo, GoogleLogo,
   OneXLogo, TeslaLogo
-} from "@/components/epoch/primitives/brand-icons";
+} from "@/components/dhyra/primitives/brand-icons";
 
 export function SupportedStackSection() {
   const models = [
@@ -47,7 +47,7 @@ export function SupportedStackSection() {
   const clouds = [
     { category: "H100", name: "Modal", icon: ModalLogo },
     { category: "A100", name: "RunPod", icon: RunPodLogo },
-    { category: "B200", name: "Epoch Cloud", icon: EpochLogo },
+    { category: "B200", name: "Dhyra Cloud", icon: DhyraLogo },
     { category: "L40S", name: "AWS", icon: AWSLogo },
     { category: "H200", name: "Azure", icon: MicrosoftLogo },
     { category: "RTX 4090", name: "CoreWeave", icon: ({ size }: { size?: number }) => <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.coreweave.com/&size=256" width={size} height={size} alt="CoreWeave" className="rounded-[4px] object-contain" referrerPolicy="no-referrer" /> },
@@ -81,7 +81,7 @@ export function SupportedStackSection() {
   const renderRow = (title: string, items: any[], reverse = false) => {
     return (
       <div className="flex items-center w-full relative mb-4">
-        <div className="w-[100px] shrink-0 text-[#C8C7BA] text-[10px] font-mono tracking-widest pl-4 md:pl-8 z-10 bg-[#151515]">
+        <div className="w-[160px] shrink-0 text-[#C8C7BA] text-[10px] font-mono tracking-widest pl-8 md:pl-12 z-10">
           {title}
         </div>
         <div className="flex-1 overflow-hidden relative flex">
@@ -117,12 +117,12 @@ export function SupportedStackSection() {
   return (
     <section className="relative w-full bg-[#151515] py-24 font-sans overflow-hidden flex flex-col items-center">
 
-      {/* Architectural Grid Lines (Aligned with the 6% and 72% centered containers above) */}
+      {/* Architectural Grid Lines (Aligned with the new 14% and 120px borders) */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       {/* CSS Animation defined inline to ensure it works without tailwind config changes */}
@@ -148,12 +148,12 @@ export function SupportedStackSection() {
       <div className="text-center mb-10 px-4 relative z-10">
         <h3 className="text-[#F0EFE2] text-lg font-semibold mb-2">Supported across the stack</h3>
         <p className="text-[#666] text-[19px] font-medium max-w-xl mx-auto leading-relaxed">
-          Open models, serving engines, GPUs, and the clouds you deploy to. Epoch supports every layer of the inference stack.
+          Open models, serving engines, GPUs, and the clouds you deploy to. Dhyra supports every layer of the inference stack.
         </p>
       </div>
 
       {/* Scrolling Rows */}
-      <div className="w-[72%] mx-auto relative z-10 mt-6 flex flex-col gap-1">
+      <div className="w-[calc(72%_-_240px)] mx-auto relative z-10 mt-6 flex flex-col gap-1">
         {renderRow("MODELS", models, false)}
         {renderRow("ENGINES", engines, true)}
         {renderRow("GPUS", gpus, false)}

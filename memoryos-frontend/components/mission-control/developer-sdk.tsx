@@ -8,19 +8,19 @@ import { SplitViewLayout, DeveloperHeader, CodeBlock } from "./developer-shared-
 // --- Mock Data ---
 const TABS = ["Overview", "Installation", "Authentication", "Examples", "API Reference", "Changelog"];
 
-const INSTALL_NPM = `npm i @epoch/sdk`;
-const INSTALL_PY = `pip install epoch-sdk`;
-const INSTALL_GO = `go get github.com/epoch/sdk-go`;
+const INSTALL_NPM = `npm i @dhyra/sdk`;
+const INSTALL_PY = `pip install dhyra-sdk`;
+const INSTALL_GO = `go get github.com/dhyra/sdk-go`;
 
-const INIT_CODE = `import { Epoch } from '@epoch/sdk';
+const INIT_CODE = `import { Dhyra } from '@dhyra/sdk';
 
-const epoch = new Epoch({
- apiKey: process.env.EPOCH_API_KEY,
+const dhyra = new Dhyra({
+ apiKey: process.env.DHYRA_API_KEY,
  environment: 'production'
 });
 
 // Initialize the reality fabric connection
-await epoch.connect();`;
+await dhyra.connect();`;
 
 const RESPONSE_JSON = `{
  "status": "connected",
@@ -42,7 +42,7 @@ export function DeveloperSDK() {
  <div className="flex flex-col w-full px-6 py-8">
  <div className="flex items-center gap-2 px-3 mb-6">
  <Box className="size-5 text-foreground dark:text-[#F0EFE2]" />
- <span className="font-semibold text-foreground dark:text-[#F0EFE2]">Epoch SDK</span>
+ <span className="font-semibold text-foreground dark:text-[#F0EFE2]">Dhyra SDK</span>
  </div>
  
  <div className="flex flex-col gap-1">
@@ -68,7 +68,7 @@ export function DeveloperSDK() {
  <div className="flex flex-col w-full max-w-[800px]">
  <DeveloperHeader 
  title="Installation" 
- description="Integrate the Epoch runtime directly into your codebase. The SDK provides type-safe access to Missions, Reality Fabric, and Verification endpoints."
+ description="Integrate the Dhyra runtime directly into your codebase. The SDK provides type-safe access to Missions, Reality Fabric, and Verification endpoints."
  badge="v1.2.4 (Latest)"
  />
 

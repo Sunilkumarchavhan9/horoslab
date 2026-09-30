@@ -8,14 +8,14 @@ import {
     Network, Server, Activity, StopCircle, RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { connectEpochMcpConnection } from "@/lib/epoch-api";
+import { connectDhyraMcpConnection } from "@/lib/dhyra-api";
 
 export function McpInspector({ entityData }: { entityData: any }) {
     const [connecting, setConnecting] = useState(false);
     const reconnect = async () => {
         if (!entityData.workspaceId || !entityData.id) return;
         setConnecting(true);
-        try { await connectEpochMcpConnection(entityData.workspaceId, entityData.id); } finally { setConnecting(false); }
+        try { await connectDhyraMcpConnection(entityData.workspaceId, entityData.id); } finally { setConnecting(false); }
     };
     return (
         <Tabs defaultValue="overview" className="flex-1 flex flex-col w-full h-full">

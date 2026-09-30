@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, ChevronDown, ArrowRight, ArrowUpRight, Sun, Monitor, Moon, SearchCode, Database, Zap, ArrowRightCircle } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { EpochLogo } from "@/components/epoch/primitives/epoch-logo";
+import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
 import { 
   QwenLogo, 
   DeepSeekLogo, 
@@ -14,7 +14,7 @@ import {
   HuggingFaceLogo,
   TeslaLogo,
   GithubLogo
-} from "@/components/epoch/primitives/brand-icons";
+} from "@/components/dhyra/primitives/brand-icons";
 
 import { CAPABILITIES } from "@/lib/capabilities-data";
 

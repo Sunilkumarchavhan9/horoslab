@@ -132,7 +132,7 @@ const LinearMCPView = () => {
         <div className="pt-4 border-t border-[#18181b] flex items-center justify-between text-[11px] text-[#71717a]">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#22c55e]" />
-            <span>Epoch Audit: <span className="text-[#22c55e] font-semibold">Active</span></span>
+            <span>Dhyra Audit: <span className="text-[#22c55e] font-semibold">Active</span></span>
           </div>
           <div className="font-mono text-[#52525b]">
             Assignee: <span className="text-[#F0EFE2] font-medium">{activeAgentObj.name}</span>
@@ -358,7 +358,7 @@ const GitAutomationsView = () => {
           </div>
           <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
-                <span>Epoch Policy Check: <span className="text-[#F0EFE2]">APPROVED (Rule #7)</span></span>
+                <span>Dhyra Policy Check: <span className="text-[#F0EFE2]">APPROVED (Rule #7)</span></span>
           </div>
           <div className="flex items-center gap-2 text-[#C8C7BA]">
             <Check className="w-4 h-4 text-[#22c55e]" />
@@ -377,7 +377,7 @@ const GitAutomationsView = () => {
 const CyclesView = () => {
   const steps = [
     { num: "01", name: "Mission Contract", detail: "Intent becomes a mission with success criteria, institution owner, and evidence duties." },
-    { num: "02", name: "Authority Lease", detail: "Epoch grants only the scoped capability required for this mission and role." },
+    { num: "02", name: "Authority Lease", detail: "Dhyra grants only the scoped capability required for this mission and role." },
     { num: "03", name: "Institution Run", detail: "Agents and humans execute inside an isolated institutional boundary." },
     { num: "04", name: "Proof Result", detail: "Independent verification checks claims and returns PASS, FAIL, or UNKNOWN." },
     { num: "05", name: "Settlement & Inheritance", detail: "Outcome, cost, and fitness are recorded for the next institution version." }

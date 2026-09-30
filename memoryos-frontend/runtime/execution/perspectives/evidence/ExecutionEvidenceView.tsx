@@ -5,9 +5,9 @@ import { FileText, ShieldCheck, Database, Camera, Box, Fingerprint, Lock, ArrowD
 import { cn } from "@/lib/utils";
 import { useMissionStore } from "../../../missions/runtime/store";
 import { useMissionRuntimeData } from "../../../missions/runtime/mission-runtime-data";
-import type { EpochMissionDetail } from "@/lib/epoch-api";
+import type { DhyraMissionDetail } from "@/lib/dhyra-api";
 
-type MissionEvidence = NonNullable<EpochMissionDetail["evidence"]>[number];
+type MissionEvidence = NonNullable<DhyraMissionDetail["evidence"]>[number];
 
 function evidenceIcon(kind?: string) {
   const normalized = (kind ?? "").toLowerCase();
@@ -43,7 +43,7 @@ function formatTime(value?: string | null): string {
 export function ExecutionEvidenceView() {
   const { selection } = useMissionStore();
   const { missions, loading, error, getMission } = useMissionRuntimeData();
-  const [mission, setMission] = useState<EpochMissionDetail | null>(null);
+  const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
   const [missionError, setMissionError] = useState<string | null>(null);
   const [missionLoading, setMissionLoading] = useState(false);
 

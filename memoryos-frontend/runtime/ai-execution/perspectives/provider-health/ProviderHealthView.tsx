@@ -5,7 +5,7 @@ import { Search, RefreshCw, Activity, AlertCircle, CheckCircle2 } from "lucide-r
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
 import { useAiExecutionOverview } from "../../use-ai-execution-overview";
-import { probeEpochAiProviderHealth } from "@/lib/epoch-api";
+import { probeDhyraAiProviderHealth } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 
 type ProviderHealthRow = {
@@ -88,7 +88,7 @@ export function ProviderHealthView({ workspaceId }: { workspaceId?: string | nul
         if (!workspaceId || isProbing) return;
         setIsProbing(true);
         try {
-            const result = await probeEpochAiProviderHealth(workspaceId, ["openrouter"]);
+            const result = await probeDhyraAiProviderHealth(workspaceId, ["openrouter"]);
             setLastProbeAt(result.probedAt);
             setHealthChecks(result.health.map((item) => ({
                 id: String(item.provider ?? "provider"),

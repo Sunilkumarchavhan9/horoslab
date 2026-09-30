@@ -88,7 +88,7 @@ export function OrganizationSettings() {
  </div>
  <div className="flex items-center justify-between p-6 border-b border-border dark:border-white/5">
  <span className="font-medium text-foreground dark:text-[#F0EFE2] w-1/3">Slack</span>
- <span className="text-muted-foreground dark:text-muted-foreground w-1/2">#epoch-alerts</span>
+ <span className="text-muted-foreground dark:text-muted-foreground w-1/2">#dhyra-alerts</span>
  <button className="text-[#0f52ff] hover:underline font-medium">Edit</button>
  </div>
  <div className="flex items-center justify-between p-6 border-b border-border dark:border-white/5">

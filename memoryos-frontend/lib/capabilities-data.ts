@@ -8,7 +8,7 @@ import {
   MetaLogo,
   MistralLogo,
   PhysicalIntelligenceLogo
-} from "@/components/epoch/primitives/brand-icons";
+} from "@/components/dhyra/primitives/brand-icons";
 
 export const CAPABILITIES = [
   {
@@ -28,7 +28,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.011 per 1M at that hit rate",
-    description: "GLM 5.3 Flash is an outcome intelligence runtime listed in the EpochInfra Capability Graph. EpochInfra serves it as zai-org/GLM-5.3-Flash at $0.10 per 1M sensory context tokens and $0.40 per 1M output action tokens. Its maximum context window is 1,048,576 tokens. The runtime provides Mission API-compatible intents and Anthropic-compatible system messages.",
+    description: "GLM 5.3 Flash is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as zai-org/GLM-5.3-Flash at $0.10 per 1M sensory context tokens and $0.40 per 1M output action tokens. Its maximum context window is 1,048,576 tokens. The runtime provides Mission API-compatible intents and Anthropic-compatible system messages.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -63,7 +63,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.015 per 1M at that hit rate",
-    description: "Nemotron 3.5 Lightning is an outcome intelligence runtime listed in the EpochInfra Capability Graph. EpochInfra serves it as nvidia-ai/nemotron-3-5-lightning-30b. The runtime provides high-speed execution for complex automation tasks.",
+    description: "Nemotron 3.5 Lightning is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as nvidia-ai/nemotron-3-5-lightning-30b. The runtime provides high-speed execution for complex automation tasks.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -98,7 +98,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, end to end",
     effectiveCost: "Effective input $0.014 per 1M at that hit rate",
-    description: "Qwen3.8 27B is an outcome intelligence runtime listed in the EpochInfra Capability Graph. EpochInfra serves it as alibaba/qwen3-8-27b.",
+    description: "Qwen3.8 27B is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as alibaba/qwen3-8-27b.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -133,7 +133,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.013 per 1M at that hit rate",
-    description: "Ornith 1.5 35B is an outcome intelligence runtime listed in the EpochInfra Capability Graph.",
+    description: "Ornith 1.5 35B is an outcome intelligence runtime listed in the Dhyra Capability Graph.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -168,7 +168,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "hz control loop, edge",
     effectiveCost: "Effective physical execution $0.02 per 1M at that hit rate",
-    description: "Physical Intelligence pi0 provides general-purpose physical edge automation and spatial reasoning capabilities. EpochInfra integrates this runtime into the physical reality fabric.",
+    description: "Physical Intelligence pi0 provides general-purpose physical edge automation and spatial reasoning capabilities. Dhyra integrates this runtime into the physical reality fabric.",
     specs: {
       apiCompatibility: "Physical Action Intent API",
       anthropicCompatibility: "Not applicable (Physical Control)",
@@ -238,7 +238,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.12 per 1M at that hit rate",
-    description: "Llama 3.1 405B is an outcome intelligence runtime listed in the EpochInfra Capability Graph. EpochInfra serves it as meta/llama-3-1-405b.",
+    description: "Llama 3.1 405B is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as meta/llama-3-1-405b.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -273,7 +273,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.53 per 1M at that hit rate",
-    description: "Mistral Large 2 is an outcome intelligence runtime listed in the EpochInfra Capability Graph. EpochInfra serves it as mistral/mistral-large-2.",
+    description: "Mistral Large 2 is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as mistral/mistral-large-2.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Calculator, Gauge, ChevronDown, ChevronRight, Cpu, RefreshCw, BarChart2, Shield, Download, Heart, ExternalLink } from "lucide-react";
-import { HuggingFaceLogo, EpochLogo, QwenLogo, OpenAILogo, MetaLogo, MistralLogo, AnthropicLogo, GoogleLogo, MicrosoftLogo, DeepSeekLogo, NvidiaLogo, BAAILogo } from "@/components/epoch/primitives/brand-icons";
+import { HuggingFaceLogo, DhyraLogo, QwenLogo, OpenAILogo, MetaLogo, MistralLogo, AnthropicLogo, GoogleLogo, MicrosoftLogo, DeepSeekLogo, NvidiaLogo, BAAILogo } from "@/components/dhyra/primitives/brand-icons";
 
 function getModelBrandLogo(modelId: string) {
   if (!modelId) return HuggingFaceLogo;
@@ -267,7 +267,7 @@ export function ResourceCalculatorSection() {
         
         {/* Center Logo Divider on the horizontal line */}
         <div className="absolute left-1/2 top-0 -translate-y-1/2 -translate-x-1/2 z-20 bg-[#151515] p-2 hidden md:block">
-          <EpochLogo variant="icon" size="sm" className="w-5 h-auto text-[#F0EFE2]" />
+          <DhyraLogo variant="icon" size="sm" className="w-5 h-auto text-[#F0EFE2]" />
         </div>
       </div>
 

@@ -133,7 +133,7 @@ export function VerificationCertificates() {
                             <ShieldCheck className="size-6 text-[#F0EFE2]" />
                          </div>
                          <div>
-                            <div className="text-[#F0EFE2]/70 text-xs font-bold uppercase tracking-widest mb-1">Epoch Network</div>
+                            <div className="text-[#F0EFE2]/70 text-xs font-bold uppercase tracking-widest mb-1">Dhyra Network</div>
                             <h2 className="text-2xl font-bold tracking-tight">Verification Certificate</h2>
                          </div>
                       </div>
@@ -180,9 +180,9 @@ export function VerificationCertificates() {
                          <div className="bg-black/5 rounded-md p-3 font-mono text-[10px] text-black/60 break-all">
                             0x7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b
                             <br/>
-                            -----BEGIN EPOCH SIGNATURE-----<br/>
+                            -----BEGIN DHYRA SIGNATURE-----<br/>
                             MIICXAIBAAKBgQC4...<br/>
-                            -----END EPOCH SIGNATURE-----
+                            -----END DHYRA SIGNATURE-----
                          </div>
                       </div>
                       
@@ -190,14 +190,14 @@ export function VerificationCertificates() {
                       {selectedCert.status === 'VALID' ? (
                          <div className="absolute bottom-6 right-6 size-16 rounded-full border-2 border-[#2da44e] flex items-center justify-center opacity-80 transform rotate-12">
                             <div className="text-center">
-                               <div className="text-[8px] font-bold text-[#2da44e] uppercase tracking-widest">Epoch</div>
+                               <div className="text-[8px] font-bold text-[#2da44e] uppercase tracking-widest">Dhyra</div>
                                <div className="text-[10px] font-bold text-[#2da44e] uppercase tracking-widest">Valid</div>
                             </div>
                          </div>
                       ) : (
                          <div className="absolute bottom-6 right-6 size-16 rounded-full border-2 border-[#cf222e] flex items-center justify-center opacity-80 transform rotate-12">
                             <div className="text-center">
-                               <div className="text-[8px] font-bold text-[#cf222e] uppercase tracking-widest">Epoch</div>
+                               <div className="text-[8px] font-bold text-[#cf222e] uppercase tracking-widest">Dhyra</div>
                                <div className="text-[9px] font-bold text-[#cf222e] uppercase tracking-widest">Revoked</div>
                             </div>
                          </div>

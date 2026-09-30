@@ -203,7 +203,7 @@ export function PersonalMemorySection() {
             Agents are workers.<br className="md:hidden" /> <span className="italic font-light">Institutions are the <span className="text-[#0015FF]">runtime.</span></span>
           </h2>
           <p className="text-slate-600 text-[15px] md:text-[17px] max-w-[920px] mx-auto leading-relaxed text-center">
-            Epoch turns repeatable agent work into programmable institutions with mission, authority, roles, budgets, policies, communication, evidence contracts, verification, settlement, memory, fitness, and evolution.
+            Dhyra turns repeatable agent work into programmable institutions with mission, authority, roles, budgets, policies, communication, evidence contracts, verification, settlement, memory, fitness, and evolution.
           </p>
         </div>
 
@@ -293,7 +293,7 @@ export function PersonalMemorySection() {
                 {/* Column 3: Official Navbar Logo Badge Tab (lg:col-span-6) */}
                 <div className="lg:col-span-6 p-6 md:p-10 flex flex-col items-center justify-center relative pt-10">
 
-                  {/* Floating Trapezoid Notch Badge Tab for Epoch Navbar Logo extending DOWN */}
+                  {/* Floating Trapezoid Notch Badge Tab for Dhyra Navbar Logo extending DOWN */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center justify-center z-10 w-[180px] h-[28px]">
                     {/* Dither Background Clipped to Trapezoid */}
                     <div 

@@ -28,7 +28,7 @@ export function CertificatesView() {
     const fetchCertificates = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch("/api/epoch/settlement/certificates");
+            const res = await fetch("/api/dhyra/settlement/certificates");
             if (res.ok) {
                 const { data } = await res.json();
                 setCertificates(data.map((c: any) => ({
@@ -36,7 +36,7 @@ export function CertificatesView() {
                     mission: c.mission?.title || c.missionId || "Unknown Mission",
                     institution: "System",
                     issued: c.issuedAt ? new Date(c.issuedAt).toLocaleString() : new Date(c.createdAt).toLocaleString(),
-                    issuer: c.issuerId || "Epoch Core Authority",
+                    issuer: c.issuerId || "Dhyra Core Authority",
                     version: "v1.0",
                     status: c.status === "active" ? "Active" : c.status === "revoked" ? "Revoked" : "Expired"
                 })));

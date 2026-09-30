@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
-import { getEpochAuditTrail } from "@/lib/epoch-api";
+import { getDhyraAuditTrail } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
 type EventRow = {
@@ -49,16 +49,16 @@ export function WorkspaceActivity({ workspaceId }: { workspaceId?: string | null
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement("a");
         anchor.href = url;
-        anchor.download = "epoch-activity.json";
+        anchor.download = "dhyra-activity.json";
         anchor.click();
         URL.revokeObjectURL(url);
     };
     useEffect(() => {
         if (!workspaceId) return;
         let cancelled = false;
-        const load = () => getEpochAuditTrail(workspaceId).then((payload) => {
+        const load = () => getDhyraAuditTrail(workspaceId).then((payload) => {
             if (cancelled) return;
-            setEvents([...payload.runtimeEvents, ...payload.auditLogs, ...payload.deadLetters].map((item, index) => ({ id: String(item.id ?? `event-${index}`), timestamp: item.createdAt || item.timestamp ? new Date(String(item.createdAt ?? item.timestamp)).toLocaleString() : "-", severity: (String(item.severity ?? "INFO").toUpperCase()) as EventRow["severity"], message: String(item.message ?? item.label ?? item.description ?? "Runtime event"), eventType: String(item.type ?? item.kind ?? "audit"), missionId: String(item.missionId ?? "-"), workerId: String(item.workerId ?? "-"), executionId: String(item.executionId ?? "-"), institutionId: String(item.institutionId ?? "-"), actor: String(item.actor ?? "Epoch runtime"), state: String(item.status ?? "Completed") as EventRow["state"], result: String(item.status ?? "Recorded"), correlationId: String(item.correlationId ?? "-"), source: String(item.source ?? "Epoch") })));
+            setEvents([...payload.runtimeEvents, ...payload.auditLogs, ...payload.deadLetters].map((item, index) => ({ id: String(item.id ?? `event-${index}`), timestamp: item.createdAt || item.timestamp ? new Date(String(item.createdAt ?? item.timestamp)).toLocaleString() : "-", severity: (String(item.severity ?? "INFO").toUpperCase()) as EventRow["severity"], message: String(item.message ?? item.label ?? item.description ?? "Runtime event"), eventType: String(item.type ?? item.kind ?? "audit"), missionId: String(item.missionId ?? "-"), workerId: String(item.workerId ?? "-"), executionId: String(item.executionId ?? "-"), institutionId: String(item.institutionId ?? "-"), actor: String(item.actor ?? "Dhyra runtime"), state: String(item.status ?? "Completed") as EventRow["state"], result: String(item.status ?? "Recorded"), correlationId: String(item.correlationId ?? "-"), source: String(item.source ?? "Dhyra") })));
         }).catch(() => undefined);
         void load();
         const interval = window.setInterval(() => void load(), 5000);

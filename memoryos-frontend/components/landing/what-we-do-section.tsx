@@ -103,7 +103,7 @@ export function WhatWeDoSection() {
               className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-slate-900 leading-[1.1] mb-6 max-w-4xl"
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
             >
-              Epoch turns agent work into an autonomous <span className="text-[#0015FF]">organization.</span>
+              Dhyra turns agent work into an autonomous <span className="text-[#0015FF]">organization.</span>
             </motion.h2>
             <motion.p
               className="text-lg md:text-[19px] text-slate-500 leading-relaxed max-w-3xl"

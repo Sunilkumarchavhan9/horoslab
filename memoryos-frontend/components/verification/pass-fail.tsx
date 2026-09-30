@@ -204,7 +204,7 @@ export function VerificationPassFail() {
                             <div className="absolute -right-6 -top-6 opacity-10"><Fingerprint className="size-32" /></div>
                             <ShieldCheck className="size-10 text-[#F0EFE2] mx-auto mb-3" />
                             <h4 className="text-[#F0EFE2] font-bold text-lg mb-1">Cryptographic Certificate</h4>
-                            <div className="text-[#F0EFE2]/70 text-sm mb-4">Issued and signed by Epoch Network</div>
+                            <div className="text-[#F0EFE2]/70 text-sm mb-4">Issued and signed by Dhyra Network</div>
                             <button className="bg-white text-[#0f52ff] px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-white/90 transition-colors">
                                View Certificate
                             </button>

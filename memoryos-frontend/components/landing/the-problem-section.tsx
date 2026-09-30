@@ -160,7 +160,7 @@ export function TheProblemSection() {
           </h2>
 
           <p className="text-slate-500 text-[16px] max-w-[800px] leading-relaxed mb-8 mx-auto">
-            The agent-native internet gives agents access. Epoch gives them institutions: mission runtime, authority runtime, execution runtime, verification runtime, settlement runtime, and evolution runtime.
+            The agent-native internet gives agents access. Dhyra gives them institutions: mission runtime, authority runtime, execution runtime, verification runtime, settlement runtime, and evolution runtime.
           </p>
         </div>
 

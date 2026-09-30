@@ -197,7 +197,7 @@ export function EvidenceWorkspace({ id, onClose }: { id: string, onClose: () => 
                   </div>
                   <div className="flex justify-between py-2 border-b border-black/5">
                     <span className="text-black/50">Source</span>
-                    <span className="text-black">Epoch Runtime</span>
+                    <span className="text-black">Dhyra Runtime</span>
                   </div>
                 </div>
                 

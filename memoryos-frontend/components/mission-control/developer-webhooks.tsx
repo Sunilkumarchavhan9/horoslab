@@ -7,8 +7,8 @@ import { SplitViewLayout, DeveloperHeader, StatusBadge, CodeBlock } from "./deve
 
 // --- Mock Data ---
 const ENDPOINTS = [
- { id: "wh_1", url: "https://api.acme.com/epoch/webhooks", status: "Healthy", events: ["mission.completed", "mission.failed"], retries: 0, latency: "42ms" },
- { id: "wh_2", url: "https://staging.acme.com/epoch/hooks", status: "Warning", events: ["*"], retries: 14, latency: "890ms" }
+ { id: "wh_1", url: "https://api.acme.com/dhyra/webhooks", status: "Healthy", events: ["mission.completed", "mission.failed"], retries: 0, latency: "42ms" },
+ { id: "wh_2", url: "https://staging.acme.com/dhyra/hooks", status: "Warning", events: ["*"], retries: 14, latency: "890ms" }
 ];
 
 const DELIVERIES = [
@@ -34,9 +34,9 @@ const PAYLOAD_JSON = `{
 
 const HEADERS_JSON = `{
  "content-type": "application/json",
- "user-agent": "Epoch-Webhook/1.0",
- "epoch-signature": "t=1756555200,v1=98f82b...",
- "epoch-event-id": "evt_991"
+ "user-agent": "Dhyra-Webhook/1.0",
+ "dhyra-signature": "t=1756555200,v1=98f82b...",
+ "dhyra-event-id": "evt_991"
 }`;
 
 const RESPONSE_JSON = `{
@@ -171,7 +171,7 @@ export function DeveloperWebhooks() {
  <div className="size-8 rounded-full bg-muted dark:bg-white/10 flex items-center justify-center">
  <Box className="size-4" />
  </div>
- <span className="text-[10px] font-bold tracking-wider uppercase">Epoch</span>
+ <span className="text-[10px] font-bold tracking-wider uppercase">Dhyra</span>
  </div>
  
  <div className="flex-1 flex flex-col items-center relative">

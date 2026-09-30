@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { resolveActiveEpochWorkspaceId } from "@/lib/epoch-api";
+import { resolveActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
 
-const EpochInferenceControlPlane = dynamic(
+const DhyraInferenceControlPlane = dynamic(
   () =>
-    import("@/components/inference-control/epoch-inference-control-plane").then(
-      (mod) => mod.EpochInferenceControlPlane
+    import("@/components/inference-control/dhyra-inference-control-plane").then(
+      (mod) => mod.DhyraInferenceControlPlane
     ),
   {
     ssr: false,
     loading: () => (
       <div className="flex min-h-screen items-center justify-center bg-[#151515] text-xs font-mono text-[#788274]">
-        Loading Epoch Control Plane...
+        Loading Dhyra Control Plane...
       </div>
     ),
   }
@@ -29,14 +29,14 @@ export function MissionControlClient() {
 
     const bootstrapWorkspace = async () => {
       try {
-        const workspaceId = await resolveActiveEpochWorkspaceId();
+        const workspaceId = await resolveActiveDhyraWorkspaceId();
         if (workspaceId && !cancelled) setWorkspaceId(workspaceId);
         if (!workspaceId && !cancelled) {
-          setWorkspaceError("Unable to resolve an Epoch workspace for this account.");
+          setWorkspaceError("Unable to resolve an Dhyra workspace for this account.");
         }
       } catch (error) {
         if (!cancelled) {
-          setWorkspaceError(error instanceof Error ? error.message : "Failed to resolve the Epoch workspace.");
+          setWorkspaceError(error instanceof Error ? error.message : "Failed to resolve the Dhyra workspace.");
         }
       } finally {
         if (!cancelled) {
@@ -63,10 +63,10 @@ export function MissionControlClient() {
   if (workspaceError || !workspaceId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#151515] p-8 text-xs font-mono text-red-500">
-        {workspaceError || "No active Epoch workspace is available."}
+        {workspaceError || "No active Dhyra workspace is available."}
       </div>
     );
   }
 
-  return <EpochInferenceControlPlane workspaceId={workspaceId} />;
+  return <DhyraInferenceControlPlane workspaceId={workspaceId} />;
 }

@@ -198,9 +198,9 @@ export function ClerkConsoleSignUp({ redirectTo, emailLinkCompleteUrl, authError
     let cancelled = false;
 
     function buildUsernameFromEmail(inputEmail: string): string {
-      const localPart = inputEmail.split("@")[0] ?? "epoch";
+      const localPart = inputEmail.split("@")[0] ?? "dhyra";
       const sanitized = localPart.toLowerCase().replace(/[^a-z0-9_]/g, "_").replace(/_+/g, "_");
-      const base = sanitized.length > 0 ? sanitized : "epoch";
+      const base = sanitized.length > 0 ? sanitized : "dhyra";
       const suffix = Date.now().toString().slice(-6);
       const candidate = `${base}_${suffix}`.slice(0, 30);
       return candidate.replace(/^_+/, "mem_");
@@ -353,7 +353,7 @@ export function ClerkConsoleSignUp({ redirectTo, emailLinkCompleteUrl, authError
         await redirectSignedInUser();
         return;
       }
-      console.error("[Epoch Auth] Developer OAuth sign-up failed", error);
+      console.error("[Dhyra Auth] Developer OAuth sign-up failed", error);
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {

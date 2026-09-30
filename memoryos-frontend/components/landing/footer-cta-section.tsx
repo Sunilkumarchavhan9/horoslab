@@ -3,9 +3,9 @@
 import React from "react";
 import { Lock, Shield, Server, FileCheck, ArrowRight, MessageSquare, Activity, Sun, Monitor, Moon, EyeOff, ShieldCheck } from "lucide-react";
 import {
-  EpochLogo, EpochWordmarkLogo, MetaLogo, DeepSeekLogo, GoogleLogo, NvidiaLogo, MistralLogo,
+  DhyraLogo, DhyraWordmarkLogo, MetaLogo, DeepSeekLogo, GoogleLogo, NvidiaLogo, MistralLogo,
   SGLangLogo, HuggingFaceLogo, OpenAILogo, AnthropicLogo, GithubLogo, QwenLogo
-} from "@/components/epoch/primitives/brand-icons";
+} from "@/components/dhyra/primitives/brand-icons";
 
 export function FooterCtaSection() {
   return (
@@ -14,19 +14,19 @@ export function FooterCtaSection() {
       {/* All Vertical Grid Lines */}
       <div className="absolute inset-0 pointer-events-none z-0">
         {/* Outer Lines (Mobile & Desktop) */}
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
 
         {/* Inner Lines (Desktop Only) */}
-        <div className="hidden md:block absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
 
         {/* Top Infinite Horizontal Line to separate from FAQ section */}
         <div className="absolute top-0 left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
       </div>
 
       {/* --- CTA SECTION --- */}
-      <div className="relative w-[88%] md:w-[72%] mx-auto pt-32 pb-24 flex flex-col items-center">
+      <div className="relative w-[88%] md:w-[calc(72%_-_240px)] mx-auto pt-32 pb-24 flex flex-col items-center">
 
         {/* Faint Blueprint Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#222_1px,transparent_1px),linear-gradient(to_bottom,#222_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-40 z-0" />
@@ -48,7 +48,7 @@ export function FooterCtaSection() {
 
         {/* Center Icon */}
         <div className="mb-8 relative z-10 flex items-center justify-center text-[#F0EFE2]">
-          <EpochLogo size={40} />
+          <DhyraLogo size={40} />
         </div>
 
         {/* Text Content */}
@@ -61,7 +61,7 @@ export function FooterCtaSection() {
             before you act
           </h2>
           <p className="text-[#a0a0a0] text-[16px] md:text-[18px] font-medium">
-            Define the intent. Epoch discovers, builds, and verifies the capability stack.
+            Define the intent. Dhyra discovers, builds, and verifies the capability stack.
           </p>
         </div>
 
@@ -131,22 +131,23 @@ export function FooterCtaSection() {
 
         {/* Center Logo Cutout */}
         <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-          <EpochLogo size={25} />
+          <DhyraLogo size={25} />
         </div>
       </div>
 
       {/* --- FOOTER CONTENT --- */}
-      <div className="w-[88%] md:w-[72%] mx-auto py-16 flex flex-col relative z-10">
+      <div className="w-[88%] md:w-[calc(72%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
 
         {/* Top Footer Row */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
 
           {/* Left Column */}
           <div className="flex flex-col">
-            <div className="mb-2 text-[#F0EFE2]">
-              <EpochWordmarkLogo className="h-[24px] w-auto" />
+            <div className="mb-2 flex items-center gap-2 text-[#F0EFE2]">
+              <DhyraWordmarkLogo className="h-[40px] w-auto" />
+              <span className="text-3xl font-normal tracking-tight">Dhyra</span>
             </div>
-            <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 epochInfra. All rights reserved.</p>
+            <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
             {/* Social Icons */}
             <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
@@ -199,9 +200,9 @@ export function FooterCtaSection() {
             </div>
 
 
-            {/* Ask AI about Epoch */}
+            {/* Ask AI about Dhyra */}
             <div className="flex flex-col items-end">
-              <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Epoch</span>
+              <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
               <div className="flex items-center gap-4 text-[#C8C7BA]">
                 <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                 <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -223,13 +224,13 @@ export function FooterCtaSection() {
       {/* Bottom Legal / Theme Row */}
       <div className="w-full border-t border-dashed border-[#333] relative">
 
-        {/* Tiny EPOCH text aligned to the left of the 14% grid line */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">EPOCH</div>
+        {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
+        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
-        <div className="w-[88%] md:w-[72%] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+        <div className="w-[88%] md:w-[calc(72%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
 
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-            <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><EpochLogo size={12} /> Part of  causis</span>
+            <span className="flex items-center gap-2 text-[#F0EFE2] font-bold mr-12"><DhyraLogo className="w-7 h-7" /> Part of causis</span>
             <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
             <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
             <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

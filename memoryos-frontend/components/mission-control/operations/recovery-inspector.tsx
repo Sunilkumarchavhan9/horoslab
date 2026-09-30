@@ -71,7 +71,7 @@ export function RecoveryInspector({ entityData }: { entityData: any }) {
                 <RefreshCcw className="size-5 text-orange-500" />
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">Recovery {entityData.id ?? "record"}</h2>
-                    <p className="text-xs text-muted-foreground">Live recovery escalation from the Epoch API</p>
+                    <p className="text-xs text-muted-foreground">Live recovery escalation from the Dhyra API</p>
                 </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

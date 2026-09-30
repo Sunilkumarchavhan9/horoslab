@@ -29,9 +29,9 @@ export default async function AuthSignInPage({
 
   return (
     <ConsoleAuthShell
-      title="Sign in to Epoch"
+      title="Sign in to Dhyra"
       subtitle="Sign in and continue to your workspace."
-      footerLabel="Epoch"
+      footerLabel="Dhyra"
     >
       {clerkEnabled ? (
         <ClerkConsoleSignIn

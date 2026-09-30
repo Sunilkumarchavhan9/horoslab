@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { createEpochDeveloperWebhook, listEpochDeveloperWebhooks } from "@/lib/epoch-api";
+import { createDhyraDeveloperWebhook, listDhyraDeveloperWebhooks } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 
@@ -36,9 +36,9 @@ export function DeveloperWebhooksView({ workspaceId }: { workspaceId?: string | 
     const [url, setUrl] = useState("");
     const [events, setEvents] = useState("mission.completed,mission.failed");
     const [creating, setCreating] = useState(false);
-    const loadWebhooks = async () => { if (!workspaceId) return; try { setError(null); const items = await listEpochDeveloperWebhooks(workspaceId); setWebhooks(items.map((item) => ({ id: item.id, endpoint: item.url, events: item.events ?? [], status: item.status === "active" ? "Active" : item.status === "disabled" ? "Disabled" : "Failing", successRate: "-", lastDelivery: item.deliveries?.[0]?.createdAt ?? "-", retryQueue: item.deliveries?.filter((delivery) => delivery.status === "pending").length ?? 0, environment: "Workspace", lastDeliveryId: item.deliveries?.[0]?.id }))); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load webhooks."); } finally { setLoading(false); } };
+    const loadWebhooks = async () => { if (!workspaceId) return; try { setError(null); const items = await listDhyraDeveloperWebhooks(workspaceId); setWebhooks(items.map((item) => ({ id: item.id, endpoint: item.url, events: item.events ?? [], status: item.status === "active" ? "Active" : item.status === "disabled" ? "Disabled" : "Failing", successRate: "-", lastDelivery: item.deliveries?.[0]?.createdAt ?? "-", retryQueue: item.deliveries?.filter((delivery) => delivery.status === "pending").length ?? 0, environment: "Workspace", lastDeliveryId: item.deliveries?.[0]?.id }))); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load webhooks."); } finally { setLoading(false); } };
     useEffect(() => { void loadWebhooks(); const timer = window.setInterval(() => void loadWebhooks(), 5000); return () => window.clearInterval(timer); }, [workspaceId]);
-    const createWebhook = async (event: React.FormEvent) => { event.preventDefault(); if (!workspaceId || !url.trim()) return; try { setCreating(true); await createEpochDeveloperWebhook(workspaceId, { url: url.trim(), events: events.split(",").map((item) => item.trim()).filter(Boolean) }); setUrl(""); setCreateOpen(false); await loadWebhooks(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to create webhook."); } finally { setCreating(false); } };
+    const createWebhook = async (event: React.FormEvent) => { event.preventDefault(); if (!workspaceId || !url.trim()) return; try { setCreating(true); await createDhyraDeveloperWebhook(workspaceId, { url: url.trim(), events: events.split(",").map((item) => item.trim()).filter(Boolean) }); setUrl(""); setCreateOpen(false); await loadWebhooks(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to create webhook."); } finally { setCreating(false); } };
 
     const visibleWebhooks = webhooks.filter((webhook) =>
         (statusFilter === "All" || webhook.status === statusFilter) &&
@@ -72,7 +72,7 @@ export function DeveloperWebhooksView({ workspaceId }: { workspaceId?: string | 
                         <span className="text-xs text-muted-foreground mt-1">Manage outbound event delivery to external systems.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("epoch-webhooks.json", visibleWebhooks)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("dhyra-webhooks.json", visibleWebhooks)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>
@@ -82,7 +82,7 @@ export function DeveloperWebhooksView({ workspaceId }: { workspaceId?: string | 
                         </button>
                     </div>
                 </div>
-                {createOpen && <form onSubmit={createWebhook} className="mx-6 mb-4 grid gap-2 rounded-md border border-border bg-card p-3 md:grid-cols-[2fr_1fr_auto]"><input value={url} onChange={(event) => setUrl(event.target.value)} type="url" placeholder="https://your-service.example/epoch-events" className="h-9 rounded border border-border bg-background px-3 text-xs" required /><input value={events} onChange={(event) => setEvents(event.target.value)} placeholder="mission.completed,mission.failed" className="h-9 rounded border border-border bg-background px-3 text-xs" /><button disabled={creating} className="rounded bg-primary px-4 text-xs font-semibold text-primary-foreground">{creating ? "Creating..." : "Create"}</button></form>}
+                {createOpen && <form onSubmit={createWebhook} className="mx-6 mb-4 grid gap-2 rounded-md border border-border bg-card p-3 md:grid-cols-[2fr_1fr_auto]"><input value={url} onChange={(event) => setUrl(event.target.value)} type="url" placeholder="https://your-service.example/dhyra-events" className="h-9 rounded border border-border bg-background px-3 text-xs" required /><input value={events} onChange={(event) => setEvents(event.target.value)} placeholder="mission.completed,mission.failed" className="h-9 rounded border border-border bg-background px-3 text-xs" /><button disabled={creating} className="rounded bg-primary px-4 text-xs font-semibold text-primary-foreground">{creating ? "Creating..." : "Create"}</button></form>}
                 {error && <p className="mx-6 mb-3 text-xs text-red-500">{error}</p>}
 
                 <div className="flex items-center justify-between px-6 py-3 bg-muted/20 overflow-visible">

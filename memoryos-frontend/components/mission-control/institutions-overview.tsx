@@ -36,14 +36,14 @@ import {
  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
- archiveEpochInstitution,
- cloneEpochInstitution,
- createEpochInstitution,
- listEpochInstitutions,
- readActiveEpochWorkspaceId,
- type EpochInstitution,
- type EpochMission,
-} from "@/lib/epoch-api";
+ archiveDhyraInstitution,
+ cloneDhyraInstitution,
+ createDhyraInstitution,
+ listDhyraInstitutions,
+ readActiveDhyraWorkspaceId,
+ type DhyraInstitution,
+ type DhyraMission,
+} from "@/lib/dhyra-api";
 import { cn } from "@/lib/utils";
 
 type SpanSize = "1x1" | "2x1" | "2x2";
@@ -64,7 +64,7 @@ type InstitutionRow = {
  totalMissions: number;
  verification: string;
  activity: string;
- rawMissions?: EpochMission[];
+ rawMissions?: DhyraMission[];
 };
 
 function formatRelativeTime(value?: string): string {
@@ -84,12 +84,12 @@ function formatRelativeTime(value?: string): string {
  return `${deltaDays < 0 ? "" : "in "}${absDays} day${absDays === 1 ? "" : "s"}${deltaDays < 0 ? " ago" : ""}`.trim();
 }
 
-function getLatestMission(institution: EpochInstitution) {
+function getLatestMission(institution: DhyraInstitution) {
  const missions = institution.missions ?? [];
  return missions[0] ?? null;
 }
 
-function getInstitutionHealth(institution: EpochInstitution): string {
+function getInstitutionHealth(institution: DhyraInstitution): string {
  const latestMission = getLatestMission(institution);
  const status = (institution.status ?? institution.currentState ?? "").toLowerCase();
  const latestDecision = latestMission?.verificationRun?.finalDecision?.toUpperCase?.() ?? "";
@@ -141,7 +141,7 @@ function getHealthBadge(health: string) {
  }
 }
 
-function mapInstitutionRows(institutions: EpochInstitution[]): InstitutionRow[] {
+function mapInstitutionRows(institutions: DhyraInstitution[]): InstitutionRow[] {
  return institutions.map((institution) => {
  const missions = institution.missions ?? [];
  const latestMission = missions[0] ?? null;
@@ -187,7 +187,7 @@ const AVAILABLE_METRICS_CATALOG = [
 ];
 
 export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?: (id: string) => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
  const [institutions, setInstitutions] = useState<InstitutionRow[]>([]);
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState<string | null>(null);
@@ -217,7 +217,7 @@ export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?
 
  // Sync workspace ID
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -230,14 +230,14 @@ export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?
  const refresh = useCallback(async () => {
  if (!workspaceId) {
  setInstitutions([]);
- setError("Select a workspace to load Epoch institutions.");
+ setError("Select a workspace to load Dhyra institutions.");
  return;
  }
 
  setLoading(true);
  setError(null);
  try {
- const liveInstitutions = await listEpochInstitutions(workspaceId, {
+ const liveInstitutions = await listDhyraInstitutions(workspaceId, {
  search: query.trim() || undefined,
  });
  setInstitutions(mapInstitutionRows(liveInstitutions ?? []));
@@ -262,7 +262,7 @@ export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?
  setCreating(true);
  setError(null);
  try {
- const created = await createEpochInstitution(workspaceId, {
+ const created = await createDhyraInstitution(workspaceId, {
  name: "New Institution",
  category: "general",
  });
@@ -280,7 +280,7 @@ export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?
  if (!workspaceId) return;
  setError(null);
  try {
- await cloneEpochInstitution(workspaceId, institutionId);
+ await cloneDhyraInstitution(workspaceId, institutionId);
  await refresh();
  } catch (cloneError) {
  setError(cloneError instanceof Error ? cloneError.message : "Failed to clone institution.");
@@ -294,7 +294,7 @@ export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?
  if (!workspaceId) return;
  setError(null);
  try {
- await archiveEpochInstitution(workspaceId, institutionId);
+ await archiveDhyraInstitution(workspaceId, institutionId);
  await refresh();
  } catch (archiveError) {
  setError(archiveError instanceof Error ? archiveError.message : "Failed to archive institution.");
@@ -637,7 +637,7 @@ export function InstitutionsOverview({ onViewInstitution }: { onViewInstitution?
  <h1 className="text-[28px] font-medium text-foreground tracking-tight">Institutions</h1>
  </div>
  <p className="text-[15px] text-muted-foreground">
- Live Epoch institutions for the active workspace.
+ Live Dhyra institutions for the active workspace.
  </p>
  </div>
  <div className="flex items-center gap-3">

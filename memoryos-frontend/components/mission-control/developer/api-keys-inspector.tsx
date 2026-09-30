@@ -8,14 +8,14 @@ import {
     Copy, Download, Ban, Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { revokeEpochRuntimeApiKey } from "@/lib/epoch-api";
+import { revokeDhyraRuntimeApiKey } from "@/lib/dhyra-api";
 
 export function ApiKeysInspector({ entityData }: { entityData: any }) {
     const [revoking, setRevoking] = useState(false);
     const revoke = async () => {
         if (!entityData.workspaceId || !entityData.id) return;
         setRevoking(true);
-        try { await revokeEpochRuntimeApiKey(entityData.workspaceId, entityData.id); } finally { setRevoking(false); }
+        try { await revokeDhyraRuntimeApiKey(entityData.workspaceId, entityData.id); } finally { setRevoking(false); }
     };
     return (
         <Tabs defaultValue="overview" className="flex-1 flex flex-col w-full h-full">

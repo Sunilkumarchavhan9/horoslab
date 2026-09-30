@@ -61,7 +61,7 @@ export function ApprovalInspector({ entityData }: { entityData: any }) {
                 <ShieldCheck className="size-5 text-amber-500" />
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">Approval {entityData.id ?? "record"}</h2>
-                    <p className="text-xs text-muted-foreground">Live approval request from the Epoch API</p>
+                    <p className="text-xs text-muted-foreground">Live approval request from the Dhyra API</p>
                 </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

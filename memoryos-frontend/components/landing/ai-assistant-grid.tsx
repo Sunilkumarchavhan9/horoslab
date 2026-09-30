@@ -15,7 +15,7 @@ import {
   DeepSeekLogo,
   VLLMLogo,
   AnthropicLogo
-} from "@/components/epoch/primitives/brand-icons";
+} from "@/components/dhyra/primitives/brand-icons";
 import { AiOrb } from "@/components/orb/ai-orb";
 
 export function AIAssistantGrid() {

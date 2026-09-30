@@ -7,7 +7,7 @@ import { CommandBar, SectionHeader, SplitPane } from "./agent-shared-components"
 
 const MOCK_LEASES = [
  { id: "lease_01", agent: "Claude Reviewer", institution: "Engineering", capability: "Deploy Production", budget: "$15.00", expires: "5 min", status: "ACTIVE" },
- { id: "lease_02", agent: "Epoch Planner", institution: "Architecture", capability: "Read IAM Roles", budget: "Unlimited", expires: "2 hrs", status: "ACTIVE" },
+ { id: "lease_02", agent: "Dhyra Planner", institution: "Architecture", capability: "Read IAM Roles", budget: "Unlimited", expires: "2 hrs", status: "ACTIVE" },
  { id: "lease_03", agent: "Security Verifier", institution: "Red Team", capability: "Pen Test Core", budget: "$100.00", expires: "Expired", status: "EXPIRED" },
  { id: "lease_04", agent: "Onboarding Coordinator", institution: "People", capability: "Send Emails", budget: "500 ops", expires: "45 min", status: "REVOKED" },
 ];

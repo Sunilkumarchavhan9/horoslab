@@ -27,7 +27,7 @@ export function VerificationRuns() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-black">Verifier Runs</h1>
-              <p className="text-sm text-black/50 mt-1">Every verification executed by Epoch.</p>
+              <p className="text-sm text-black/50 mt-1">Every verification executed by Dhyra.</p>
             </div>
             <div className="flex items-center gap-3">
                <Button className="bg-black hover:bg-black/80 text-[#F0EFE2] rounded-md shadow-sm h-9 px-4 text-sm font-medium">

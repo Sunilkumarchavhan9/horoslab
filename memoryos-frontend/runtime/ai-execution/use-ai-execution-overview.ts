@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getEpochAiExecutionOverview, type EpochAiExecutionOverview } from "@/lib/epoch-api";
+import { getDhyraAiExecutionOverview, type DhyraAiExecutionOverview } from "@/lib/dhyra-api";
 
-const EMPTY: EpochAiExecutionOverview = { catalog: [], endpoints: [], health: [], providerHealth: [], executions: [], costs: {} };
+const EMPTY: DhyraAiExecutionOverview = { catalog: [], endpoints: [], health: [], providerHealth: [], executions: [], costs: {} };
 
-export function useAiExecutionOverview(workspaceId?: string | null): EpochAiExecutionOverview {
-  const [overview, setOverview] = useState<EpochAiExecutionOverview>(EMPTY);
+export function useAiExecutionOverview(workspaceId?: string | null): DhyraAiExecutionOverview {
+  const [overview, setOverview] = useState<DhyraAiExecutionOverview>(EMPTY);
   useEffect(() => {
     if (!workspaceId) return;
     let cancelled = false;
-    const load = () => getEpochAiExecutionOverview(workspaceId).then((next) => {
+    const load = () => getDhyraAiExecutionOverview(workspaceId).then((next) => {
       if (!cancelled) {
         setOverview({
           catalog: Array.isArray(next.catalog) ? next.catalog : [],

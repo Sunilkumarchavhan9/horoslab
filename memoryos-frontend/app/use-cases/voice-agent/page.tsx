@@ -10,8 +10,8 @@ import { EcosystemGrid } from "@/components/landing/ecosystem-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { VoiceOrb } from "@/components/ui/voice-orb";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { EpochLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, AuthorMonogram, KimiLogo, EpochWordmarkLogo, AnthropicLogo, GithubLogo } from "@/components/epoch/primitives/brand-icons";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { DhyraLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, AuthorMonogram, KimiLogo, DhyraWordmarkLogo, AnthropicLogo, GithubLogo } from "@/components/dhyra/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2 } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -53,7 +53,7 @@ const COMPARISON_ROWS = [
 ];
 
 
-const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@epoch/runtime"
+const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@dhyra/runtime"
 
 export const RealTimeVoiceAgentOutcome = new OutcomeContract({
   name: "VoiceAgentPipeline",
@@ -147,7 +147,7 @@ __global__ void streaming_audio_decode_kernel(
 }`;
 
 const SERVE_CODE = `#!/bin/bash
-# serve.sh - High-Performance Epoch Voice Agent Runner
+# serve.sh - High-Performance Dhyra Voice Agent Runner
 # Environment variables for sub-600ms duplex latency
 export CUDA_VISIBLE_DEVICES=0
 export VLLM_ATTENTION_BACKEND=FLASH_ATTN
@@ -155,7 +155,7 @@ export WEBRTC_AUDIO_CODEC=OPUS_48KHZ
 export VAD_SILENCE_THRESHOLD_MS=250
 
 # Launch unified multi-modal serving stack
-exec python3 -m epoch.voice_agent.serve \\
+exec python3 -m dhyra.voice_agent.serve \\
   --stt-model "openai/whisper-large-v3-turbo" \\
   --llm-model "meta-llama/Llama-3.3-70B-Instruct-FP8" \\
   --tts-model "coqui/XTTS-v2" \\
@@ -217,7 +217,7 @@ const DOCKER_COMPOSE_CODE = `version: "3.8"
 services:
   voice-agent-runtime:
     build: .
-    container_name: epoch-voice-agent
+    container_name: dhyra-voice-agent
     deploy:
       resources:
         reservations:
@@ -233,7 +233,7 @@ services:
       - LOG_LEVEL=INFO
     restart: always`;
 
-const REQUIREMENTS_CODE = `# Production requirements for Epoch Voice Agent Runtime
+const REQUIREMENTS_CODE = `# Production requirements for Dhyra Voice Agent Runtime
 torch==2.4.0+cu124
 vllm==0.6.2
 faster-whisper==1.0.3
@@ -243,7 +243,7 @@ silero-vad==5.1
 numpy==1.26.4
 pydantic==2.9.2`;
 
-const README_CODE = `# Epoch Voice Agent Runtime
+const README_CODE = `# Dhyra Voice Agent Runtime
 
 Sub-600ms end-to-end interactive voice agent pipeline optimized for CUDA.
 
@@ -873,7 +873,7 @@ export default function RagSearchPage() {
               Three ways to ship voice agents
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Most teams pick between speed and control. Epoch keeps both in one workflow.
+              Most teams pick between speed and control. Dhyra keeps both in one workflow.
             </p>
           </div>
           <div className="w-full relative z-10">
@@ -903,9 +903,9 @@ export default function RagSearchPage() {
                     <span className="absolute top-4 right-4 text-[#75bf00] font-bold text-[8px] tracking-[0.2em] uppercase">Recommended</span>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="bg-[#1a1a1a] p-1 border border-[#333] rounded">
-                        <EpochLogo size={14} />
+                        <DhyraLogo size={14} />
                       </div>
-                      <span className="text-[#F0EFE2] text-[19px] font-medium tracking-tight">Epoch</span>
+                      <span className="text-[#F0EFE2] text-[19px] font-medium tracking-tight">Dhyra</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] leading-relaxed">WebRTC edge streaming with bare-metal model control.</p>
                   </div>
@@ -1295,7 +1295,7 @@ export default function RagSearchPage() {
                     {/* Project Folder */}
                     <div className="mt-4 flex flex-col gap-1">
                       <div className="flex items-center gap-2 px-2 py-1 text-[#aaa] font-semibold text-[12px]">
-                        <ChevronDown size={14} className="text-[#777]" /> epochinfra-voice-agent/
+                        <ChevronDown size={14} className="text-[#777]" /> dhyra-voice-agent/
                       </div>
                       <div className="pl-3 flex flex-col gap-1 border-l border-[#252525] ml-3 mt-0.5">
                         <button
@@ -1810,7 +1810,7 @@ export default function RagSearchPage() {
           </svg>
           {/* Center Logo Cutout */}
           <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-            <EpochLogo size={25} />
+            <DhyraLogo size={25} />
           </div>
         </div>
 
@@ -1821,9 +1821,9 @@ export default function RagSearchPage() {
             {/* Left Column */}
             <div className="flex flex-col">
               <div className="mb-2 text-[#F0EFE2]">
-                <EpochWordmarkLogo className="h-[24px] w-auto" />
+                <DhyraWordmarkLogo className="h-[24px] w-auto" />
               </div>
-              <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 epochInfra. All rights reserved.</p>
+              <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
               {/* Social Icons */}
               <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
@@ -1874,9 +1874,9 @@ export default function RagSearchPage() {
                 </div>
               </div>
 
-              {/* Ask AI about Epoch */}
+              {/* Ask AI about Dhyra */}
               <div className="flex flex-col items-end">
-                <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Epoch</span>
+                <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
                 <div className="flex items-center gap-4 text-[#C8C7BA]">
                   <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                   <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -1895,12 +1895,12 @@ export default function RagSearchPage() {
 
         {/* Bottom Legal / Theme Row */}
         <div className="w-full border-t border-dashed border-[#333] relative">
-          {/* Tiny EPOCH text aligned to the left of the 14% grid line */}
-          <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">EPOCH</div>
+          {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
+          <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
           <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
             <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-              <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><EpochLogo size={12} /> Part of  causis</span>
+              <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo size={12} /> Part of  causis</span>
               <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
               <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
               <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

@@ -11,9 +11,9 @@ import { DeploymentOptionsSection } from "@/components/landing/deployment-option
 import { SupportedStackSection } from "@/components/landing/supported-stack-section";
 import { FaqSection } from "@/components/landing/faq-section";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { AuthModal } from "@/components/epoch/modals/auth-modal";
-import { TokenPromptInput } from "@/components/epoch/primitives/token-prompt-input";
-import { PixelFilter } from "@/components/epoch/primitives/pixel-filter";
+import { AuthModal } from "@/components/dhyra/modals/auth-modal";
+import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
+import { PixelFilter } from "@/components/dhyra/primitives/pixel-filter";
 import { X } from "lucide-react";
 import gsap from "gsap";
 

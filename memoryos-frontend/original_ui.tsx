@@ -19,10 +19,10 @@ import {
   Zap,
 } from "lucide-react";
 import {
-  getEpochMissionControlSnapshot,
-  readActiveEpochWorkspaceId,
-  type EpochMissionControlSnapshot,
-} from "@/lib/epoch-api";
+  getDhyraMissionControlSnapshot,
+  readActiveDhyraWorkspaceId,
+  type DhyraMissionControlSnapshot,
+} from "@/lib/dhyra-api";
 import { cn } from "@/lib/utils";
 
 type LoadState<T> =
@@ -100,12 +100,12 @@ function BlueSparklineGraph({ points }: { points: number[] }) {
 }
 
 export function AccountHomeDashboard() {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveEpochWorkspaceId());
-  const [state, setState] = useState<LoadState<EpochMissionControlSnapshot>>(loadingState);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+  const [state, setState] = useState<LoadState<DhyraMissionControlSnapshot>>(loadingState);
   const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveEpochWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
     syncWorkspace();
     window.addEventListener("focus", syncWorkspace);
     window.addEventListener("storage", syncWorkspace);
@@ -126,7 +126,7 @@ export function AccountHomeDashboard() {
 
       setState(loadingState());
       try {
-        const result = await getEpochMissionControlSnapshot(workspaceId);
+        const result = await getDhyraMissionControlSnapshot(workspaceId);
         if (!canceled) {
           setState({ status: "ready", data: result, error: null });
         }

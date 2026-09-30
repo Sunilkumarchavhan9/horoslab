@@ -2,7 +2,7 @@
 
 import { PlayCircle, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type EpochMissionDetail } from "@/lib/epoch-api";
+import { type DhyraMissionDetail } from "@/lib/dhyra-api";
 
 function formatTimelineTime(value?: string | null): string {
  if (!value) return "now";
@@ -11,7 +11,7 @@ function formatTimelineTime(value?: string | null): string {
  return parsed.toLocaleString();
 }
 
-export function MissionDetailTimeline({ mission }: { mission: EpochMissionDetail }) {
+export function MissionDetailTimeline({ mission }: { mission: DhyraMissionDetail }) {
  const feed = mission.timeline?.length
  ? mission.timeline.map((item, index) => ({
  id: item.id ?? `${index}`,

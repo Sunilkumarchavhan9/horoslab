@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
-import { createEpochWorker, listEpochAiCatalog, listEpochWorkers } from "@/lib/epoch-api";
+import { createDhyraWorker, listDhyraAiCatalog, listDhyraWorkers } from "@/lib/dhyra-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
 type WorkerRow = {
@@ -126,7 +126,7 @@ export function WorkspaceWorkers({ workspaceId }: { workspaceId?: string | null 
         if (!registerOpen) return;
         let cancelled = false;
         setModelCatalogLoading(true);
-        void listEpochAiCatalog().then((catalog) => {
+        void listDhyraAiCatalog().then((catalog) => {
             if (cancelled) return;
             const provider = workerProvider.toLowerCase().replace(/\s+/g, "_");
             const models = catalog.models
@@ -147,14 +147,14 @@ export function WorkspaceWorkers({ workspaceId }: { workspaceId?: string | null 
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement("a");
         anchor.href = url;
-        anchor.download = "epoch-workers.json";
+        anchor.download = "dhyra-workers.json";
         anchor.click();
         URL.revokeObjectURL(url);
     };
     useEffect(() => {
         if (!workspaceId) return;
         let cancelled = false;
-        const load = () => listEpochWorkers(workspaceId).then((items) => {
+        const load = () => listDhyraWorkers(workspaceId).then((items) => {
             if (cancelled) return;
             setLoadError(null);
             setWorkers(items.map((item) => toWorkerRow(item as unknown as Record<string, unknown>)));
@@ -220,7 +220,7 @@ export function WorkspaceWorkers({ workspaceId }: { workspaceId?: string | null 
                 setRegisterError("AI agents must include the verification capability.");
                 return;
             }
-            await createEpochWorker(workspaceId, {
+            await createDhyraWorker(workspaceId, {
                 kind: workerKind,
                 name: workerName.trim(),
                 capabilities,
@@ -230,7 +230,7 @@ export function WorkspaceWorkers({ workspaceId }: { workspaceId?: string | null 
                     ...(workerModel.trim() ? { model: workerModel.trim() } : {}),
                 },
             });
-            const items = await listEpochWorkers(workspaceId);
+            const items = await listDhyraWorkers(workspaceId);
             setWorkers(items.map((item) => toWorkerRow(item as unknown as Record<string, unknown>)));
             setWorkerName("");
             setWorkerKind("ai_agent");

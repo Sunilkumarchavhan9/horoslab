@@ -20,7 +20,7 @@ export function OrganizationBilling() {
  <div className="flex items-start justify-between mb-8">
  <OrganizationHeader 
  title="Billing & Usage" 
- description="Manage your Epoch subscription, view usage limits, and download invoices."
+ description="Manage your Dhyra subscription, view usage limits, and download invoices."
  />
  <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <CreditCard className="size-4" />
