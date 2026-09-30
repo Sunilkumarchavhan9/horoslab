@@ -14,7 +14,7 @@ export function PolicyAuthorityStep() {
   ];
 
   return (
-    <div className="w-full h-[580px] flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono select-none">
       {/* Header */}
       <div className="flex items-start justify-between p-5 lg:p-6 border-b border-dashed border-[#333333]">
         <div className="flex items-start gap-4">

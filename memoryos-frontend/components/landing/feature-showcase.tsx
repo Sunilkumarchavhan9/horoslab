@@ -70,8 +70,8 @@ function ModelScroller() {
       >
         {MODELS.map((m, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
-            <m.Icon size={32} />
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none" style={{ color: m.color }}>
+            <m.Icon size={32} className="shrink-0" />
+            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap" style={{ color: m.color }}>
               {m.name}
             </span>
           </div>
@@ -100,7 +100,7 @@ function EngineScroller() {
         {ENGINES.map((e, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <e.Icon size={28} />
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none" style={{ color: e.color }}>
+            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: e.color }}>
               {e.name}
             </span>
           </div>
@@ -129,7 +129,7 @@ function GPUScroller() {
         {GPUS.map((g, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <g.Icon size={28} />
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none" style={{ color: g.color }}>
+            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: g.color }}>
               {g.name}
             </span>
           </div>
@@ -158,7 +158,7 @@ function SurfaceScroller() {
         {SURFACES.map((s, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#75bf00] animate-pulse"></span>
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none" style={{ color: s.color }}>
+            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: s.color }}>
               {s.name}
             </span>
           </div>
@@ -171,7 +171,7 @@ function SurfaceScroller() {
 // --- Inner Right-Side Components ---
 function SimulatorConsole({ isSpacer = false }: { isSpacer?: boolean }) {
   return (
-    <div className="w-full h-[580px] flex flex-col justify-between border border-dashed border-[#333333] p-5 lg:p-6 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-5 lg:p-6 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
       <div>
         {/* Console Header Bar */}
         <div className="flex items-center justify-start gap-3 py-1 mb-2.5 text-[#aaa]">
@@ -328,7 +328,7 @@ function SimulatorConsole({ isSpacer = false }: { isSpacer?: boolean }) {
 
 function RunbookDashboard() {
   return (
-    <div className="w-full h-[580px] flex flex-col justify-between border border-dashed border-[#333333] bg-[#151515] rounded-[1px] p-6 lg:p-8 font-mono text-sm select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
       <div>
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-dashed border-[#333333]">
@@ -470,8 +470,8 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
       </div>
 
       {/* Row 1: Centered Header Block (Scrolls away naturally) */}
-      <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] pt-16">
-        <div className="relative p-4 min-h-[140px]" />
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] pt-16">
+        <div className="relative p-4 min-h-[140px] hidden lg:block" />
 
         {/* Main Center Header Content */}
         <div className="relative flex flex-col items-center justify-center p-8 text-center">
@@ -493,21 +493,21 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
           </p>
         </div>
 
-        <div className="p-4 min-h-[140px]" />
+        <div className="p-4 min-h-[140px] hidden lg:block" />
       </div>
 
       {/* Row 2: Sticky Scroll Arena */}
-      <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_7fr_11fr_calc(14%_+_120px)] border-t border-dashed border-[#333333]">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(14%_+_120px)_6fr_12fr_calc(14%_+_120px)] border-t border-dashed border-[#333333]">
 
         {/* Column 1: Left Margin Cell */}
-        <div className="relative border-r border-dashed border-[#333333]">
+        <div className="relative border-r border-dashed border-[#333333] hidden lg:block">
           <span className="sticky top-[80vh] ml-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
             DHYRA
           </span>
         </div>
 
         {/* Column 2: Left Typography (Scrolling Blocks) */}
-        <div className="relative flex flex-col border-r border-dashed border-[#333333] pb-[80vh]">
+        <div className="relative flex flex-col lg:border-r border-dashed border-[#333333] pb-[80vh]">
 
           {/* Block 1 */}
           <div
@@ -722,8 +722,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
               </div>
 
               {/* Invisible canonical spacer that locks the EXACT width and height for all cards */}
-              <div className="opacity-0 pointer-events-none">
-                <SimulatorConsole isSpacer={true} />
+              <div className="opacity-0 pointer-events-none h-[750px] lg:h-[650px] xl:h-[600px] w-full">
               </div>
             </div>
 
@@ -733,7 +732,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
         </div>
 
         {/* Column 4: Right Margin Cell */}
-        <div className="relative pt-12 lg:pt-16">
+        <div className="relative pt-12 lg:pt-16 hidden lg:block">
           <div className="sticky top-32 w-full">
             <div className="absolute left-[4vw] -translate-x-1/2 flex flex-col items-center gap-6 opacity-60 hover:opacity-100 transition-opacity">
               <DhyraLogo className="w-14 h-14 text-[#F0EFE2]" />

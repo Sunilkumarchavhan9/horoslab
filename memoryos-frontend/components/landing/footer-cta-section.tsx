@@ -143,9 +143,8 @@ export function FooterCtaSection() {
 
           {/* Left Column */}
           <div className="flex flex-col">
-            <div className="mb-2 flex items-center gap-2 text-[#F0EFE2]">
-              <DhyraWordmarkLogo className="h-[40px] w-auto" />
-              <span className="text-3xl font-normal tracking-tight">Dhyra</span>
+            <div className="mb-2 flex items-center text-[#F0EFE2]">
+              <DhyraWordmarkLogo className="h-[64px] w-auto" />
             </div>
             <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
 
@@ -230,7 +229,7 @@ export function FooterCtaSection() {
         <div className="w-[88%] md:w-[calc(72%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
 
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-            <span className="flex items-center gap-2 text-[#F0EFE2] font-bold mr-12"><DhyraLogo className="w-7 h-7" /> Part of causis</span>
+            <span className="flex items-center gap-2 text-[#F0EFE2] font-bold mr-12"><DhyraLogo className="h-[40px] w-auto" /></span>
             <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
             <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
             <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

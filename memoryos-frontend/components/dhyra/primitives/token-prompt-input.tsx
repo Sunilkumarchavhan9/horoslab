@@ -573,7 +573,7 @@ export const SERVING_ENGINES = {
 export const GPU_OPTIONS = [
   {
     id: "Auto",
-    name: "Auto (Recommended)",
+    name: "Auto",
     vram: "Auto",
     desc: "Agent picks cheapest viable GPU tier.",
   },
@@ -1347,7 +1347,7 @@ export function TokenPromptInput({
   >(null);
 
   // Bottom tool rail state
-  const [selectedGpu, setSelectedGpu] = useState<string>("Auto (recommended)");
+  const [selectedGpu, setSelectedGpu] = useState<string>("Auto");
   const [selectedRunsOn, setSelectedRunsOn] = useState<string>("Managed cloud");
   const [selectedOutputFormat, setSelectedOutputFormat] =
     useState<string>("Managed endpoint");
@@ -2911,7 +2911,7 @@ export function TokenPromptInput({
                       <div className="flex items-center gap-2">
                         <Sparkles size={14} className="text-[#75bf00]" />
                         <span className="font-semibold text-[#F0EFE2] text-xs">
-                          Auto (recommended)
+                          Auto
                         </span>
                       </div>
                       <Check size={14} className="text-[#75bf00]" />
@@ -3034,7 +3034,7 @@ export function TokenPromptInput({
                 <div className="space-y-3">
                   <div
                     onClick={() => {
-                      setSelectedGpu("Auto (recommended)");
+                      setSelectedGpu("Auto");
                       setFlyoutOpen(false);
                     }}
                     className={cn(
@@ -3048,7 +3048,7 @@ export function TokenPromptInput({
                       <div className="flex items-center gap-2">
                         <Cpu size={14} className="text-[#75bf00]" />
                         <span className="font-semibold text-[#F0EFE2] text-xs">
-                          Auto (recommended)
+                          Auto
                         </span>
                       </div>
                       <Check size={14} className="text-[#75bf00]" />
@@ -3112,12 +3112,12 @@ export function TokenPromptInput({
                 <div className="space-y-3">
                   <div
                     onClick={() => {
-                      setSelectedRunsOn("Auto (recommended)");
+                      setSelectedRunsOn("Auto");
                       setFlyoutOpen(false);
                     }}
                     className={cn(
                       "p-3 border rounded-xs cursor-pointer transition-colors text-xs",
-                      selectedRunsOn === "Auto (recommended)"
+                      selectedRunsOn === "Auto"
                         ? dark
                           ? "border-[#444] bg-[#222222] text-[#F0EFE2]"
                           : "border-[#171a17] bg-[#f0f4ee] text-[#111]"
@@ -3130,10 +3130,10 @@ export function TokenPromptInput({
                       <div className="flex items-center gap-2">
                         <Sparkles size={14} className="text-[#aaa]" />
                         <span className="font-semibold text-[#F0EFE2] text-xs">
-                          Auto (recommended)
+                          Auto
                         </span>
                       </div>
-                      {selectedRunsOn === "Auto (recommended)" && (
+                      {selectedRunsOn === "Auto" && (
                         <Check size={14} className="text-[#F0EFE2]" />
                       )}
                     </div>

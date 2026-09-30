@@ -317,7 +317,10 @@ export default function RealTimePage() {
     | "outcome.ts"
     | "capability.ts"
     | "mission.json"
-    | "flash_attention.cu";
+    | "flash_attention.cu"
+    | "tool_definitions.py"
+    | "memory.py"
+    | "policies.py";
 
   const TOOL_DEFINITIONS_CODE = `import json
 from typing import Dict, Any, Callable
@@ -1772,7 +1775,7 @@ aiohttp==3.10.5`;
 
           <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
             <div className="flex flex-wrap items-center gap-5 text-[9px] md:text-[10px] lg:text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-              <span className="flex items-center gap-1.5 text-[#C8C7BA] font-medium mr-12"><DhyraLogo size={12} /> Part of  causis</span>
+              <span className="flex items-center gap-1.5 text-[#C8C7BA] font-medium mr-12"><DhyraLogo className="h-[40px] w-auto" /></span>
               <a href="#" className="hover:text-[#C8C7BA] transition-colors">Security</a>
               <a href="#" className="hover:text-[#C8C7BA] transition-colors">DPA</a>
               <a href="#" className="hover:text-[#C8C7BA] transition-colors">AUP</a>

@@ -113,12 +113,12 @@ export function LandingNavbar({
         </div>
       </div>
 
-      <div className="w-full flex justify-center h-11 relative z-10 pointer-events-none">
+      <div className="w-full flex justify-center h-14 relative z-10 pointer-events-none">
         <div className="flex items-center justify-between lg:justify-center lg:gap-12 xl:gap-20 w-[96%] sm:w-[72%] lg:w-auto bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 lg:px-8">
           {/* Left: Official Vector Brand Logo */}
-          <div className="flex items-center shrink-0 h-11 pl-3 pr-2">
+          <div className="flex items-center shrink-0 h-14 pl-3 pr-2">
             <Link href="/" className="flex items-center group shrink-0 whitespace-nowrap">
-              <DhyraLogo variant="full" size="xl" className="h-[36px] w-auto text-[#F0EFE2]" />
+              <DhyraLogo variant="full" size="xl" className="h-[48px] w-auto text-[#F0EFE2]" />
             </Link>
           </div>
 
@@ -395,7 +395,7 @@ export function LandingNavbar({
           </nav>
 
           {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
-          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-11 pr-3">
+          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pr-3">
             <button
               type="button"
               onClick={onOpenSignIn || onOpenDashboard}

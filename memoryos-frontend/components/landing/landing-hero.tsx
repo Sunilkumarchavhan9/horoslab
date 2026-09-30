@@ -197,7 +197,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
             <FloatingBrandGrid pattern="bottom-right" className="bottom-22 left-full ml-6 xl:ml-18 hidden lg:block opacity-60" />
 
             {/* Natural Language Token Composer Box */}
-            <div id="hero-composer-wrapper" className="text-left w-full mx-auto">
+            <div id="hero-composer-wrapper" className="text-left w-full max-w-[840px] mx-auto">
               <TokenPromptInput
                 onSubmit={(prompt) => {
                   if (onLaunchPrompt) onLaunchPrompt({ prompt });
@@ -211,7 +211,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
 
             {/* 14 Canonical Workloads Grid (Cycling one-by-one with 14 Heading) */}
             <div
-              className="space-y-2 text-left font-mono"
+              className="space-y-2 text-left font-mono w-full max-w-[840px] mx-auto"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
