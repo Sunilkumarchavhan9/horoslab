@@ -83,7 +83,7 @@ export function DeploymentOptionsSection() {
                 Managed
               </div>
               <div className="mb-6 flex items-center gap-3 text-[#F0EFE2] relative z-10">
-                <DhyraLogo className="h-[28px]" />
+                <DhyraLogo className="h-[48px]" />
               </div>
               <h3 className="text-[#F0EFE2] text-lg font-semibold mb-3 relative z-10">
                 Dhyra Cloud

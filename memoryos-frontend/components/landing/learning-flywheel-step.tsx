@@ -14,7 +14,7 @@ export function LearningFlywheelStep() {
   ];
 
   return (
-    <div className="w-full h-[580px] flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono select-none">
       {/* Header */}
       <div className="flex items-start justify-between p-5 lg:p-6 border-b border-dashed border-[#333333]">
         <div className="flex items-start gap-4">
@@ -87,12 +87,12 @@ export function LearningFlywheelStep() {
       </div>
 
       {/* Footer Bar */}
-      <div className="border-t border-dashed border-[#333333] p-4 lg:px-6 lg:py-4 flex items-center justify-between">
-        <div className="text-[#666666] font-mono text-[10px] flex items-center gap-2">
+      <div className="border-t border-dashed border-[#333333] p-4 lg:px-6 lg:py-4 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4">
+        <div className="text-[#666666] font-mono text-[10px] flex items-center gap-2 shrink-0">
           <span className="w-[3px] h-[3px] bg-[#75bf00]" />
-          <span>Drift Monitor: <strong className="text-[#F0EFE2]">0 material drift events</strong></span>
+          <span className="whitespace-nowrap">Drift Monitor: <strong className="text-[#F0EFE2]">0 material drift events</strong></span>
         </div>
-        <div className="text-[#555555] font-mono text-[8px] sm:text-[9px] uppercase tracking-wider flex items-center gap-1.5 sm:gap-2">
+        <div className="text-[#555555] font-mono text-[8px] sm:text-[9px] uppercase tracking-wider flex flex-wrap items-center gap-1.5 sm:gap-2">
           <span>EVALUATE</span>
           <ArrowRight size={10} className="text-[#444]" />
           <span>SHADOW</span>

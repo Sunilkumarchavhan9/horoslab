@@ -1753,7 +1753,7 @@ export default function EmbeddingsPage() {
 
               <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo size={12} /> Part of  causis</span>
+                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo className="h-[40px] w-auto" /></span>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>

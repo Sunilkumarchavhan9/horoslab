@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { DhyraAnimatedLogo } from "./dhyra-animated-logo";
+import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
 
 interface ResultInspectionSectionProps {
   onOpenSignIn?: () => void;
@@ -709,7 +709,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
 
           <div className="relative z-20 flex justify-center">
             <div className="bg-[#151515] px-3 flex items-center justify-center">
-              <DhyraAnimatedLogo />
+              <DhyraLogo className="w-[52px] h-[65px]" />
             </div>
           </div>
         </div>
@@ -752,8 +752,8 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
-          <div className="min-h-[220px]" />
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
+          <div className="min-h-[220px] hidden lg:block" />
 
           {PILLARS_ROW_1.map((item) => (
             <div
@@ -774,7 +774,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             </div>
           ))}
 
-          <div className="min-h-[220px]" />
+          <div className="min-h-[220px] hidden lg:block" />
         </div>
 
         <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
@@ -800,8 +800,8 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
-          <div className="relative min-h-[220px]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
+          <div className="relative min-h-[220px] hidden lg:block">
             <span className="absolute bottom-2 right-2.5 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
               DHYRA
             </span>
@@ -826,7 +826,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             </div>
           ))}
 
-          <div className="min-h-[220px]" />
+          <div className="min-h-[220px] hidden lg:block" />
         </div>
 
         <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
@@ -852,8 +852,8 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
-          <div className="relative min-h-[220px]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
+          <div className="relative min-h-[220px] hidden lg:block">
             <span className="absolute bottom-2 right-2.5 text-[9px] font-mono tracking-[0.25em] text-[#444444] font-semibold select-none pointer-events-none uppercase">
               DELIVERABLE
             </span>
@@ -878,7 +878,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             </div>
           ))}
 
-          <div className="min-h-[220px]" />
+          <div className="min-h-[220px] hidden lg:block" />
         </div>
 
         <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">

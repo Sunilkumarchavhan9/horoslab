@@ -5,7 +5,7 @@ import { Radio, Eye, AlertTriangle, ShieldCheck, Activity, Compass, Navigation }
 
 export function PhysicalWorldStep() {
   return (
-    <div className="w-full h-[580px] flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
       
       {/* Header Section */}
       <div className="space-y-1">

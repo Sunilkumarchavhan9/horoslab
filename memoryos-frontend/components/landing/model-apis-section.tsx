@@ -38,9 +38,9 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
           {/* Main 2-Column Grid Area */}
           <div className="w-full relative">
-            <div className="w-full grid grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] relative z-10">
               {/* Empty Left Margin */}
-              <div />
+              <div className="hidden lg:block" />
 
               {/* The 72% inner container with 2 columns */}
               <div className="grid grid-cols-2 w-full border-t border-x border-dashed border-[#333] divide-x divide-dashed divide-[#333]">
