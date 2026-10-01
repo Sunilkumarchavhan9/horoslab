@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MemoryOSFullLogo } from "@/components/landing/memoryos-full-logo";
-import { DhyraAnimatedLogo } from "@/components/landing/dhyra-animated-logo";
+import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
 
 const FAQ_ITEMS = [
   {
@@ -83,10 +83,9 @@ export const FaqSection = () => {
         {/* Dotted line */}
         <div className="w-full max-w-5xl h-px border-t border-dashed border-[#333] mb-12" />
 
-        {/* Answer Content */}
         <div className="flex items-start gap-5 max-w-5xl w-full text-left px-4 md:px-12">
           <div className="mt-2 flex-shrink-0 text-[#C8C7BA] flex items-start justify-center">
-            <DhyraAnimatedLogo />
+            <DhyraLogo variant="icon" className="h-6 w-auto" />
           </div>
           <div>
             <motion.h3 

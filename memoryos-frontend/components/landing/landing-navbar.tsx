@@ -54,8 +54,8 @@ export function LandingNavbar({
 
   return (
     <header className={`fixed left-0 right-0 z-[100] font-sans antialiased tracking-tight text-sm text-[#F0EFE2] transition-all duration-500 ease-out ${isScrolled
-        ? "top-4 mx-auto w-[96%] max-w-[1600px] border border-dashed border-[#555] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] bg-[#151515]/95 backdrop-blur-xl"
-        : "top-0 w-full border-b border-dashed border-[#333333] bg-[#151515]/90 backdrop-blur-md"
+      ? "top-4 mx-auto w-[96%] max-w-[1600px] border border-dashed border-[#555] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] bg-[#151515]/95 backdrop-blur-xl"
+      : "top-0 w-full border-b border-dashed border-[#333333] bg-[#151515]/90 backdrop-blur-md"
       }`}>
 
       <style dangerouslySetInnerHTML={{
@@ -118,12 +118,12 @@ export function LandingNavbar({
           {/* Left: Official Vector Brand Logo */}
           <div className="flex items-center shrink-0 h-14 pl-3 pr-2">
             <Link href="/" className="flex items-center group shrink-0 whitespace-nowrap">
-              <DhyraLogo variant="full" size="xl" className="h-[48px] w-auto text-[#F0EFE2]" />
+              <DhyraLogo variant="stacked" size="md" className="text-[#F0EFE2]" />
             </Link>
           </div>
 
           {/* Center: Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-7 text-[#cccccc] font-medium whitespace-nowrap">
+          <nav className="hidden lg:flex items-center gap-7 text-[#F0EFE2] font-medium whitespace-nowrap">
             {/* Use cases dropdown */}
             <div
               className="relative"
@@ -137,7 +137,7 @@ export function LandingNavbar({
                   setInfrastructureOpen(false);
                   setResourcesOpen(false);
                 }}
-                className="flex items-center gap-1 hover:text-[#F0EFE2] transition-colors cursor-pointer py-1 whitespace-nowrap"
+                className="flex items-center gap-1 transition-colors cursor-pointer py-1 whitespace-nowrap"
               >
                 <span>Use cases</span>
                 <ChevronDown size={11} className="text-[#666]" />
@@ -292,11 +292,11 @@ export function LandingNavbar({
 
 
 
-            <Link href="#pricing" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap">
+            <Link href="#pricing" className="transition-colors whitespace-nowrap">
               Pricing
             </Link>
 
-            <Link href="#research" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap">
+            <Link href="#research" className="transition-colors whitespace-nowrap">
               Research
             </Link>
 
@@ -313,7 +313,7 @@ export function LandingNavbar({
                   setUseCasesOpen(false);
                   setInfrastructureOpen(false);
                 }}
-                className="flex items-center gap-1 hover:text-[#F0EFE2] transition-colors cursor-pointer py-1 whitespace-nowrap"
+                className="flex items-center gap-1 transition-colors cursor-pointer py-1 whitespace-nowrap"
               >
                 <span>Resources</span>
                 <ChevronDown size={11} className="text-[#666]" />
@@ -382,14 +382,14 @@ export function LandingNavbar({
               )}
             </div>
 
-            <Link href="/dhyra" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap flex items-center gap-1.5">
+            <Link href="/dhyra" className="transition-colors whitespace-nowrap flex items-center gap-1.5">
               Dhyra
-              <span className="bg-[#75bf00] text-black text-[9px] font-medium px-1.5 py-0.2 rounded-xs tracking-tight whitespace-nowrap">
+              <span className="bg-[#C3C2B6] text-black text-[9px] font-medium px-1.5 py-0.2 rounded-xs tracking-tight whitespace-nowrap">
                 NEW
               </span>
             </Link>
 
-            <Link href="#contact" className="hover:text-[#F0EFE2] transition-colors whitespace-nowrap">
+            <Link href="#contact" className="transition-colors whitespace-nowrap">
               Contact
             </Link>
           </nav>
@@ -450,7 +450,7 @@ export function LandingNavbar({
               className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2] flex items-center justify-between"
             >
               <span>Dhyra</span>
-              <span className="bg-[#75bf00] text-black text-[9px] font-medium px-1.5 py-0.2 rounded-xs">
+              <span className="bg-[#C3C2B6] text-black text-[9px] font-medium px-1.5 py-0.2 rounded-xs">
                 NEW
               </span>
             </Link>

@@ -734,8 +734,8 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
         {/* Column 4: Right Margin Cell */}
         <div className="relative pt-12 lg:pt-16 hidden lg:block">
           <div className="sticky top-32 w-full">
-            <div className="absolute left-[4vw] -translate-x-1/2 flex flex-col items-center gap-6 opacity-60 hover:opacity-100 transition-opacity">
-              <DhyraLogo className="w-14 h-14 text-[#F0EFE2]" />
+            <div className="absolute left-[4vw] -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+              <DhyraLogo className="w-16 h-auto text-[#F0EFE2]" />
               <div className="text-[11px] text-[#F0EFE2] font-sans font-medium leading-[1.8]" style={{ writingMode: 'vertical-rl' }}>
                 <p>Frontier Intelligence</p>
                 <p>Engineering</p>

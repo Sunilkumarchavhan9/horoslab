@@ -18,11 +18,10 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, x: -12, filter: 'blur(8px)', scale: 0.96 },
+  hidden: { opacity: 0, x: -12, scale: 0.96 },
   visible: {
     opacity: 1,
     x: 0,
-    filter: 'blur(0px)',
     scale: 1,
     transition: { duration: 0.7, ease: PREM_EASE }
   }
@@ -131,7 +130,7 @@ function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'd
   const spineX = hoveredNode === 'dhyra' ? 784 : (hoveredNode === 'hf' ? 634 : 484);
 
   return (
-    <div className="absolute left-[192px] top-1/2 w-0 h-0 z-0 pointer-events-none">
+    <div className={`absolute left-[192px] top-1/2 w-0 h-0 z-0 pointer-events-none transition-opacity duration-300 ${hoveredNode !== 'none' ? 'opacity-0' : 'opacity-100'}`}>
       <style>{generateKeyframes(spineX)}</style>
       {PARTICLES.map(p => {
         const logo = FLOWING_LOGOS[p.logoIndex];
@@ -243,8 +242,9 @@ export function HardwareDeploymentSection() {
       </div>
 
       {/* Diagram Container */}
-      <div className="w-full relative z-10 flex justify-center items-center py-10 overflow-x-auto">
-        <div className="flex items-center min-w-max px-[calc(14%_+_120px)] transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
+      <div className="w-full relative z-10 py-10 overflow-x-auto text-center no-scrollbar">
+        <div className="inline-block transform scale-[0.65] sm:scale-75 md:scale-90 lg:scale-100 origin-center transition-transform">
+          <div className="flex items-center text-left min-w-max px-8 transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
 
           {/* Main Horizontal Spine passing through everything */}
           <div className="flex items-center relative">
@@ -278,11 +278,8 @@ export function HardwareDeploymentSection() {
               </div>
             </motion.div>
 
-            {/* Conditionally Rendered Left Connector */}
-            <div
-              className="flex items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] -mx-1"
-              style={{ width: hoveredNode === 'hf' || hoveredNode === 'dhyra' ? '308px' : '158px' }}
-            >
+            {/* Left Connector (Fixed Width to prevent layout shift) */}
+            <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
               {hoveredNode === 'none' ? (
                 /* Default direct connection */
                 <div className="flex items-center w-full min-w-[158px] relative">
@@ -290,8 +287,8 @@ export function HardwareDeploymentSection() {
                 </div>
               ) : hoveredNode === 'hf' ? (
                 /* Expanded branches for HF hover */
-                <div className="flex items-center w-full min-w-[308px]">
-                  <div className="w-7 h-[1px] border-t border-dashed border-[#75bf00]" />
+                <div className="flex items-center justify-center w-full">
+                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
                   <motion.div
                     variants={containerVariants}
@@ -337,9 +334,8 @@ export function HardwareDeploymentSection() {
                 </div>
               ) : (
                 /* Expanded branches for Dhyra hover */
-                <div className="flex items-center w-full min-w-[308px]">
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00] relative">
-                  </div>
+                <div className="flex items-center justify-center w-full">
+                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
                   <motion.div
                     variants={containerVariants}
@@ -369,7 +365,7 @@ export function HardwareDeploymentSection() {
                       </div>
                     ))}
                   </motion.div>
-                  <div className="w-9 h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
                 </div>
               )}
             </div>
@@ -382,21 +378,16 @@ export function HardwareDeploymentSection() {
               onMouseLeave={() => setHoveredNode('none')}
             >
               <div className="flex-1 flex items-center justify-center mb-1 rounded-sm overflow-hidden">
-                <DhyraAnimatedLogo />
+                <DhyraLogo variant="stacked" size="2xl" className="text-[#F0EFE2]" />
               </div>
-              <span className="font-semibold text-[#F0EFE2] text-[15px] tracking-tight">dhyra</span>
             </motion.div>
 
-            {/* Conditionally Rendered Right Connector */}
-            <div
-              className="flex items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] -mx-1"
-              style={{ width: hoveredNode === 'dhyra' ? '308px' : '158px' }}
-            >
+            {/* Right Connector (Fixed Width to prevent layout shift) */}
+            <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
               {hoveredNode === 'dhyra' ? (
                 /* Expanded branches for Dhyra hover */
-                <div className="flex items-center w-full min-w-[308px]">
-                  <div className="w-9 h-[1px] border-t border-dashed border-[#75bf00] relative">
-                  </div>
+                <div className="flex items-center justify-center w-full">
+                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
                   <motion.div
                     variants={containerVariants}
@@ -427,7 +418,6 @@ export function HardwareDeploymentSection() {
                     ))}
                   </motion.div>
 
-                  <div className="w-8 h-[1px] border-t border-dashed border-[#75bf00]" />
                   <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
                 </div>
               ) : (
@@ -471,10 +461,9 @@ export function HardwareDeploymentSection() {
 
 
             </div>
-
           </div>
-
         </div>
+      </div>
       </div>
     </section>
   );
