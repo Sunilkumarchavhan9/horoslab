@@ -288,6 +288,7 @@ export function DhyraHero() {
   // Hover states
   const [hoveredMain, setHoveredMain] = useState(false);
   const [hoveredDotIdx, setHoveredDotIdx] = useState<number | null>(null);
+  const [hoveredTrendLine, setHoveredTrendLine] = useState(false);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -353,15 +354,27 @@ export function DhyraHero() {
             <svg className="absolute inset-0 w-full h-full pointer-events-none transition-all duration-500 ease-in-out" preserveAspectRatio="none">
               {/* Small dotted line connecting cluster of points */}
               {model.trendLine && (
-                <line
-                  x1={model.trendLine.x1}
-                  y1={`calc(100% - ${model.trendLine.y1})`}
-                  x2={model.trendLine.x2}
-                  y2={`calc(100% - ${model.trendLine.y2})`}
-                  stroke="#888"
-                  strokeWidth="1.5"
-                  strokeDasharray="3 3"
-                />
+                <g className="cursor-help" style={{ pointerEvents: 'auto' }} onMouseEnter={() => setHoveredTrendLine(true)} onMouseLeave={() => setHoveredTrendLine(false)}>
+                  <line
+                    x1={model.trendLine.x1}
+                    y1={`calc(100% - ${model.trendLine.y1})`}
+                    x2={model.trendLine.x2}
+                    y2={`calc(100% - ${model.trendLine.y2})`}
+                    stroke={hoveredTrendLine ? "#fff" : "#888"}
+                    strokeWidth="1.5"
+                    strokeDasharray="3 3"
+                    className="transition-colors duration-200"
+                  />
+                  {/* Invisible thicker line for easier hovering */}
+                  <line
+                    x1={model.trendLine.x1}
+                    y1={`calc(100% - ${model.trendLine.y1})`}
+                    x2={model.trendLine.x2}
+                    y2={`calc(100% - ${model.trendLine.y2})`}
+                    stroke="transparent"
+                    strokeWidth="20"
+                  />
+                </g>
               )}
 
               {/* Background Scatter Dots */}
@@ -382,10 +395,23 @@ export function DhyraHero() {
                 );
               })}
             </svg>
+
+            {/* Premium Tech Element: Ambient Volumetric Glow behind active model */}
+            <div 
+              className="absolute pointer-events-none transition-all duration-700 ease-in-out mix-blend-screen"
+              style={{ 
+                top: model.yPos, 
+                left: model.xPos, 
+                width: '300px',
+                height: '300px',
+                transform: 'translate(-50%, -50%)',
+                background: 'radial-gradient(circle, rgba(117,191,0,0.15) 0%, rgba(117,191,0,0) 70%)'
+              }}
+            />
           </div>
 
           {/* Competitor Hover Tooltip */}
-          {hoveredDotIdx !== null && model.bgDots[hoveredDotIdx] && (
+          {hoveredDotIdx !== null && model.bgDots[hoveredDotIdx] && !hoveredTrendLine && (
             <div
               className="absolute z-50 bg-[#F0EFE2] text-[#111] p-3 rounded-[2px] shadow-xl text-[12px] leading-relaxed w-[260px] pointer-events-none transition-opacity duration-200"
               style={{
@@ -398,6 +424,22 @@ export function DhyraHero() {
               <div className="mb-2">{model.bgDots[hoveredDotIdx].speed} tok/s, {model.bgDots[hoveredDotIdx].cost} per 1M cached input tokens</div>
               <div className="text-[#333] mb-2">{model.bgDots[hoveredDotIdx].cacheHit} cache hit. Provider-reported cache rate; aggregation and window unspecified, lacks verified Reality Fabric context.</div>
               <div className="text-[#444] text-[11px]">Standard Cloud, 2026-09-05. Static environment, no continuous Verified Mission Results.</div>
+            </div>
+          )}
+
+          {/* Trend Line Hover Tooltip */}
+          {hoveredTrendLine && model.trendLine && (
+            <div
+              className="absolute z-50 bg-[#F0EFE2] text-[#111] p-3 rounded-[2px] shadow-xl text-[12px] leading-relaxed w-[260px] pointer-events-none transition-opacity duration-200"
+              style={{
+                left: `calc((${model.trendLine.x1} + ${model.trendLine.x2}) / 2)`,
+                bottom: `calc((${model.trendLine.y1} + ${model.trendLine.y2}) / 2 + 15px)`,
+                transform: 'translateX(-50%)'
+              }}
+            >
+              <div className="font-bold mb-1">Optimization Trajectory</div>
+              <div className="text-[#333] mb-2">Shows the performance delta between standard API routing and Dhyra's Reality Fabric.</div>
+              <div className="text-[#444] text-[11px]">Yields higher speed & lower cost via optimal cache tiering.</div>
             </div>
           )}
 
@@ -457,8 +499,20 @@ export function DhyraHero() {
               <div className="absolute inset-0 rounded-full bg-[#75bf00]/10 blur-md"></div>
               {/* Middle transparent dark ring */}
               <div className="absolute inset-1 rounded-full bg-black/40 border border-[#75bf00]/30 backdrop-blur-sm"></div>
-              {/* Thick Green Segment Ring (approximated with border) */}
-              <div className={`absolute inset-3 rounded-full border-[3px] border-[#75bf00] transition-opacity ${hoveredMain ? 'opacity-100' : 'opacity-80'}`}></div>
+              {/* Thick Green Segment Ring (Progress Ring based on Cache Hits) */}
+              <svg className={`absolute inset-0 w-full h-full -rotate-90 transition-opacity ${hoveredMain ? 'opacity-100' : 'opacity-80'}`} viewBox="0 0 100 100" style={{ overflow: 'visible' }}>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#222" strokeWidth="3" />
+                <circle 
+                  cx="50" cy="50" r="38" 
+                  fill="none" 
+                  stroke="#75bf00" 
+                  strokeWidth="3" 
+                  strokeDasharray="100 100"
+                  strokeDashoffset={100 - parseFloat(model.cacheHit)}
+                  pathLength="100"
+                  strokeLinecap="round" 
+                />
+              </svg>
               {/* Inner solid dark circle for icon */}
               <div className="absolute inset-[18px] rounded-full bg-[#111] border border-[#333] flex items-center justify-center shadow-lg">
                 {model.icon}

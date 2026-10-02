@@ -182,14 +182,16 @@ for await (const measurement of mission.observe()) {
           <pre className="font-mono text-[13px] leading-loose text-[#D4D4D4]">
             <code>
               {getCodeSnippet().split('\n').map((line, i) => {
-                // Extremely basic syntax coloring
+                // Basic syntax coloring that avoids breaking HTML tags
+                // We use single quotes for our HTML classes so the regex doesn't match them
                 let coloredLine = line
-                  .replace(/from|import|const|new|async|function|await|export|if|throw/g, '<span class="text-[#569CD6]">$&</span>')
-                  .replace(/("|'.*?'|")/g, '<span class="text-[#CE9178]">$&</span>')
-                  .replace(/https:\/\/api\.dhyra\.com\/v1|https:\/\/api\.dhyra\.com/g, '<span class="text-[#75bf00] font-bold">$&</span>')
-                  .replace(/\$DHYRA_GATEWAY_KEY|process\.env\.DHYRA_GATEWAY_KEY/g, '<span class="text-[#9CDCFE]">$&</span>')
-                  .replace(/# .*/g, '<span class="text-[#6A9955]">$&</span>')
-                  .replace(/\/\/ .*/g, '<span class="text-[#6A9955]">$&</span>');
+                  .replace(/("[^"]*")/g, "<span class='text-[#CE9178]'>$&</span>") // Match double quoted strings first
+                  .replace(/('[^']*')/g, "<span class='text-[#CE9178]'>$&</span>") // Match single quoted strings
+                  .replace(/\b(from|import|const|new|async|function|await|export|if|throw)\b/g, "<span class='text-[#569CD6]'>$&</span>")
+                  .replace(/https:\/\/api\.dhyra\.com\/v1|https:\/\/api\.dhyra\.com/g, "<span class='text-[#75bf00] font-bold'>$&</span>")
+                  .replace(/\$DHYRA_GATEWAY_KEY|process\.env\.DHYRA_GATEWAY_KEY|\$MISSION_ID|process\.env\.DHYRA_API_KEY/g, "<span class='text-[#9CDCFE]'>$&</span>")
+                  .replace(/(# .*)/g, "<span class='text-[#6A9955]'>$&</span>")
+                  .replace(/(\/\/ .*)/g, "<span class='text-[#6A9955]'>$&</span>");
                 
                 return (
                   <div key={i} className="flex group">
