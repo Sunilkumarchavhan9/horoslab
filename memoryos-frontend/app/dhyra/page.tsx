@@ -16,15 +16,15 @@ const GridDivider = () => (
     <div className="absolute left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
     
     {/* Crosses at intersections */}
-    <div className="absolute left-[6%] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute left-[14%] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute left-[86%] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="absolute left-[94%] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute left-[14%] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute left-[86%] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="hidden md:block absolute left-[calc(14%_+_120px)] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="hidden md:block absolute left-[calc(86%_-_120px)] text-[#666] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
   </div>
 );
 
 const SectionWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full grid grid-cols-[6%_88%_6%] md:grid-cols-[14%_72%_14%] relative z-10">
+  <div className="w-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] relative z-10">
     <div /> {/* Left Gutter */}
     <div className="w-full flex flex-col min-w-0 py-16 lg:py-24 px-6 lg:px-12 xl:px-16">
       {children}
@@ -60,10 +60,10 @@ export default function DhyraPage() {
       <main className="pb-32 w-full relative z-10 flex flex-col">
         {/* Global Vertical Grid Lines */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="hidden md:block absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         </div>
 
         <GridDivider />

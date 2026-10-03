@@ -98,7 +98,7 @@ export function FooterCtaSection() {
       </div>
 
       {/* --- DIVIDER --- */}
-      <div className="w-full relative flex items-center justify-center my-8 z-10 overflow-hidden" style={{ height: "38px" }}>
+      <div className="w-full relative flex items-center justify-center my-8 z-10" style={{ height: "38px" }}>
 
         {/* Custom SVG 5-Line Divider from User */}
         <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
@@ -130,8 +130,8 @@ export function FooterCtaSection() {
         </svg>
 
         {/* Center Logo Cutout */}
-        <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-          <DhyraLogo size={25} />
+        <div className="px-8 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
+          <DhyraLogo variant="icon" className="w-[60px] h-auto text-[#F0EFE2]" />
         </div>
       </div>
 

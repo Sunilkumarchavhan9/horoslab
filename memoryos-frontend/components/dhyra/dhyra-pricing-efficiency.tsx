@@ -12,7 +12,7 @@ const MODELS = [
     id: "glm-5-3-flash",
     name: "GLM 5.3 Flash",
     brand: <GLMLogo size={28} />,
-    
+
     // Cost
     listPrice: 0.10,
     effectivePrice: 0.011,
@@ -20,7 +20,7 @@ const MODELS = [
     cacheHit: 98.9,
     cachedInputPrice: 0.01,
     outputPrice: 0.40,
-    
+
     // Latency (TTFT)
     standardLatency: 650,
     optimizedLatency: 85,
@@ -30,7 +30,7 @@ const MODELS = [
     standardThroughput: 35,
     optimizedThroughput: 254.1,
     throughputMultiplier: "7.2x",
-    
+
     tags: ["Tool calling", "JSON mode", "Streaming", "Image input"],
     trending: true
   },
@@ -38,7 +38,7 @@ const MODELS = [
     id: "nemotron-3-5-lightning-30b",
     name: "Nemotron 3.5 Lightning 30B",
     brand: <NvidiaLogo size={28} />,
-    
+
     // Cost
     listPrice: 0.05,
     effectivePrice: 0.015,
@@ -46,7 +46,7 @@ const MODELS = [
     cacheHit: 87.7,
     cachedInputPrice: 0.01,
     outputPrice: 0.15,
-    
+
     // Latency
     standardLatency: 480,
     optimizedLatency: 62,
@@ -64,14 +64,14 @@ const MODELS = [
     id: "qwen3-8-27b",
     name: "Qwen3.8 27B",
     brand: <QwenLogo size={28} />,
-    
+
     listPrice: 0.10,
     effectivePrice: 0.014,
     multiplier: "6.8x",
     cacheHit: 96.1,
     cachedInputPrice: 0.01,
     outputPrice: 0.40,
-    
+
     standardLatency: 520,
     optimizedLatency: 75,
     latencyMultiplier: "6.9x",
@@ -87,14 +87,14 @@ const MODELS = [
     id: "deepseek-v3",
     name: "DeepSeek-V3",
     brand: <DeepSeekLogo size={28} />,
-    
+
     listPrice: 0.10,
     effectivePrice: 0.012,
     multiplier: "8.6x",
     cacheHit: 98.3,
     cachedInputPrice: 0.01,
     outputPrice: 0.40,
-    
+
     standardLatency: 600,
     optimizedLatency: 70,
     latencyMultiplier: "8.5x",
@@ -110,14 +110,14 @@ const MODELS = [
     id: "llama-3-1-405b",
     name: "Llama 3.1 405B",
     brand: <MetaLogo size={28} />,
-    
+
     listPrice: 0.80,
     effectivePrice: 0.12,
     multiplier: "6.6x",
     cacheHit: 91.2,
     cachedInputPrice: 0.08,
     outputPrice: 2.00,
-    
+
     standardLatency: 1200,
     optimizedLatency: 185,
     latencyMultiplier: "6.4x",
@@ -133,14 +133,14 @@ const MODELS = [
     id: "mistral-large-2",
     name: "Mistral Large 2",
     brand: <MistralLogo size={28} />,
-    
+
     listPrice: 2.00,
     effectivePrice: 0.53,
     multiplier: "3.7x",
     cacheHit: 82.4,
     cachedInputPrice: 0.20,
     outputPrice: 6.00,
-    
+
     standardLatency: 850,
     optimizedLatency: 220,
     latencyMultiplier: "3.8x",
@@ -156,14 +156,14 @@ const MODELS = [
     id: "pi0-robotics",
     name: "Physical Intelligence pi0",
     brand: <PhysicalIntelligenceLogo size={28} />,
-    
+
     listPrice: 0.15,
     effectivePrice: 0.02,
     multiplier: "7.5x",
     cacheHit: 88.5,
     cachedInputPrice: 0.01,
     outputPrice: 0.50,
-    
+
     standardLatency: 450,
     optimizedLatency: 45,
     latencyMultiplier: "10.0x",
@@ -179,14 +179,14 @@ const MODELS = [
     id: "nvidia-cosmos",
     name: "Nvidia Cosmos 1.0",
     brand: <NvidiaLogo size={28} />,
-    
+
     listPrice: 0.25,
     effectivePrice: 0.04,
     multiplier: "6.2x",
     cacheHit: 84.1,
     cachedInputPrice: 0.02,
     outputPrice: 0.80,
-    
+
     standardLatency: 380,
     optimizedLatency: 35,
     latencyMultiplier: "10.8x",
@@ -248,7 +248,7 @@ export function DhyraPricingEfficiency() {
   const filteredModels = MODELS.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) || m.id.toLowerCase().includes(search.toLowerCase());
     if (!matchesSearch) return false;
-    
+
     if (activeFilter === "all") return true;
     return m.tags.includes(activeFilter);
   });
@@ -361,7 +361,7 @@ export function DhyraPricingEfficiency() {
         {/* Chart Rows */}
         <div className="flex flex-col">
           {MODELS.map((model, i) => {
-            
+
             // Calculate offsets based on current dimension
             let val1 = 0, val2 = 0;
             let labelOptimized = "", labelStandard = "";
@@ -475,7 +475,7 @@ export function DhyraPricingEfficiency() {
           <div className="flex items-center gap-3">
             <span className="text-[11px] text-[#666] whitespace-nowrap font-medium">{filteredModels.length} models</span>
             {(search || activeFilter !== "all") && (
-              <button 
+              <button
                 onClick={() => { setSearch(""); setActiveFilter("all"); }}
                 className="text-[12px] text-[#A0A0A0] hover:text-[#F0EFE2] transition-colors font-medium"
               >
@@ -487,17 +487,17 @@ export function DhyraPricingEfficiency() {
 
         {/* Table Headers */}
         <div className="flex items-center gap-6 text-[12px] font-medium text-[#A0A0A0] mb-4 overflow-x-auto px-4">
-          <button 
-            onClick={() => setActiveFilter("all")} 
+          <button
+            onClick={() => setActiveFilter("all")}
             className={`whitespace-nowrap font-medium transition-colors ${activeFilter === "all" ? "text-[#F0EFE2]" : "text-[#888] hover:text-[#F0EFE2]"}`}
           >
             Capabilities
           </button>
-          
+
           {UNIQUE_TAGS.map(([tag, count]) => (
-            <button 
+            <button
               key={tag}
-              onClick={() => setActiveFilter(tag)} 
+              onClick={() => setActiveFilter(tag)}
               className={`whitespace-nowrap flex items-center gap-1.5 transition-colors ${activeFilter === tag ? "bg-[#75bf00] text-[#151515] px-2 py-0.5 rounded-[2px]" : "hover:text-[#F0EFE2]"}`}
             >
               {tag} <span className={activeFilter === tag ? "text-[#2a4500] font-bold" : "text-[#555]"}>{count}</span>
@@ -512,75 +512,75 @@ export function DhyraPricingEfficiency() {
           {filteredModels.map((model, i) => {
             const capabilityData = CAPABILITIES.find(c => c.id === model.id);
             return (
-            <Link href={`/capabilities/${model.id}`} key={model.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-4 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
-              
-              {/* Left: Identity */}
-              <div className="flex items-start gap-4 flex-1 min-w-[320px]">
-                <div className="mt-1 w-10 h-10 flex items-center justify-center shrink-0">
-                  {model.brand}
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-[20px] font-semibold text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors">{model.name}</h3>
+              <Link href={`/capabilities/${model.id}`} key={model.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-4 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+
+                {/* Left: Identity */}
+                <div className="flex items-start gap-4 flex-1 min-w-[320px]">
+                  <div className="mt-1 w-10 h-10 flex items-center justify-center shrink-0">
+                    {model.brand}
                   </div>
-                  <div className="text-[13px] text-[#777] mb-2">{model.id}</div>
-                  
-                  <div className="flex items-center gap-2 flex-wrap mt-1">
-                    {model.trending && (
-                      <span className="bg-[#2a2a2a] text-[#C8C7BA] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-[2px]">Trending</span>
-                    )}
-                    <span className="text-[12px] text-[#888]">{model.tags.join(" / ")}</span>
-                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3 className="text-[20px] font-semibold text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors">{model.name}</h3>
+                    </div>
+                    <div className="text-[13px] text-[#777] mb-2">{model.id}</div>
+
+                    <div className="flex items-center gap-2 flex-wrap mt-1">
+                      {model.trending && (
+                        <span className="bg-[#2a2a2a] text-[#C8C7BA] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-[2px]">Trending</span>
+                      )}
+                      <span className="text-[12px] text-[#888]">{model.tags.join(" / ")}</span>
+                    </div>
 
 
-                </div>
-              </div>
-
-              {/* Right: Metrics */}
-              <div className="flex items-start lg:items-center justify-between w-full lg:w-auto mt-6 lg:mt-0 gap-6 lg:gap-10 shrink-0">
-                
-                {/* Input Tokens */}
-                <div className="flex flex-col items-start lg:items-end w-20">
-                  <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.listPrice.toFixed(2)}</div>
-                  <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M input<br/>tokens</div>
-                </div>
-
-                {/* Cached Input */}
-                <div className="flex flex-col items-start lg:items-end w-24">
-                  <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.cachedInputPrice.toFixed(2)}</div>
-                  <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M cached<br/>input tokens</div>
-                </div>
-
-                {/* Output Tokens */}
-                <div className="flex flex-col items-start lg:items-end w-24">
-                  <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.outputPrice.toFixed(2)}</div>
-                  <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M output<br/>tokens</div>
-                </div>
-
-                {/* Cache Hit */}
-                <div className="flex flex-col items-start lg:items-end w-24 relative">
-                  <div className="text-[#F0EFE2] font-semibold text-[20px]">{model.cacheHit}<span className="text-[12px] text-[#777] font-normal ml-0.5">%</span></div>
-                  <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">cache hit, last<br/>24 hours</div>
-                  
-                  {/* Effective cost note absolutely positioned underneath across Cache Hit and Speed */}
-                  <div className="absolute top-[60px] lg:top-14 right-0 lg:-right-32 text-[10px] text-[#666] whitespace-nowrap">
-                    Effective input ${model.effectivePrice} per 1M at that hit rate
                   </div>
                 </div>
 
-                {/* Speed */}
-                <div className="flex flex-col items-start lg:items-end w-32 relative">
-                  <div className="text-[#F0EFE2] font-semibold text-[20px]">{model.optimizedThroughput}</div>
-                  <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1 whitespace-normal max-w-[100px]">{i === 2 ? 'output tok/s, end to end' : 'output tok/s, model only'}</div>
+                {/* Right: Metrics */}
+                <div className="flex items-start lg:items-center justify-between w-full lg:w-auto mt-6 lg:mt-0 gap-6 lg:gap-10 shrink-0">
+
+                  {/* Input Tokens */}
+                  <div className="flex flex-col items-start lg:items-end w-20">
+                    <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.listPrice.toFixed(2)}</div>
+                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M input<br />tokens</div>
+                  </div>
+
+                  {/* Cached Input */}
+                  <div className="flex flex-col items-start lg:items-end w-24">
+                    <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.cachedInputPrice.toFixed(2)}</div>
+                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M cached<br />input tokens</div>
+                  </div>
+
+                  {/* Output Tokens */}
+                  <div className="flex flex-col items-start lg:items-end w-24">
+                    <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.outputPrice.toFixed(2)}</div>
+                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M output<br />tokens</div>
+                  </div>
+
+                  {/* Cache Hit */}
+                  <div className="flex flex-col items-start lg:items-end w-24 relative">
+                    <div className="text-[#F0EFE2] font-semibold text-[20px]">{model.cacheHit}<span className="text-[12px] text-[#777] font-normal ml-0.5">%</span></div>
+                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">cache hit, last<br />24 hours</div>
+
+                    {/* Effective cost note absolutely positioned underneath across Cache Hit and Speed */}
+                    <div className="absolute top-[60px] lg:top-14 right-0 lg:-right-32 text-[10px] text-[#666] whitespace-nowrap">
+                      Effective input ${model.effectivePrice} per 1M at that hit rate
+                    </div>
+                  </div>
+
+                  {/* Speed */}
+                  <div className="flex flex-col items-start lg:items-end w-32 relative">
+                    <div className="text-[#F0EFE2] font-semibold text-[20px]">{model.optimizedThroughput}</div>
+                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1 whitespace-normal max-w-[100px]">{i === 2 ? 'output tok/s, end to end' : 'output tok/s, model only'}</div>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="hidden lg:flex items-center justify-center w-6 text-[#555] group-hover:text-[#F0EFE2] transition-colors ml-2">
+                    <ArrowRight size={18} />
+                  </div>
                 </div>
 
-                {/* Arrow */}
-                <div className="hidden lg:flex items-center justify-center w-6 text-[#555] group-hover:text-[#F0EFE2] transition-colors ml-2">
-                  <ArrowRight size={18} />
-                </div>
-              </div>
-
-            </Link>
+              </Link>
             );
           })}
         </div>

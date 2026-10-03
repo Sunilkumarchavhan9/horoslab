@@ -91,7 +91,7 @@ function ParamNode({ title, subtitle, active = false }: { title: string, subtitl
   );
 }
 
-const TARGET_Y = [-216, -144, -72, 0, 72, 144, 216];
+const TARGET_Y = [-144, -72, 0, 72, 144];
 
 const generateKeyframes = (spineX: number) => {
   return TARGET_Y.map((y, i) => {
@@ -127,7 +127,9 @@ const PARTICLES = Array.from({ length: NUM_PARTICLES }).map((_, i) => {
 });
 
 function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'dhyra' }) {
-  const spineX = hoveredNode === 'dhyra' ? 784 : (hoveredNode === 'hf' ? 634 : 484);
+  // The total horizontal distance from the start of the particle wrapper (right edge of HF) to the vertical spine (left edge of Targets).
+  // Layout width: Left Connector (260 - 8 = 252) + Dhyra (156) + Right Connector (260 - 8 = 252) = 660px.
+  const spineX = 660;
 
   return (
     <div className={`absolute left-[192px] top-1/2 w-0 h-0 z-0 pointer-events-none transition-opacity duration-300 ${hoveredNode !== 'none' ? 'opacity-0' : 'opacity-100'}`}>
@@ -246,224 +248,224 @@ export function HardwareDeploymentSection() {
         <div className="inline-block transform scale-[0.65] sm:scale-75 md:scale-90 lg:scale-100 origin-center transition-transform">
           <div className="flex items-center text-left min-w-max px-8 transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
 
-          {/* Main Horizontal Spine passing through everything */}
-          <div className="flex items-center relative">
-            <GlobalParticleSystem hoveredNode={hoveredNode} />
+            {/* Main Horizontal Spine passing through everything */}
+            <div className="flex items-center relative">
+              <GlobalParticleSystem hoveredNode={hoveredNode} />
 
-            {/* 1. Source Node (Hugging Face) */}
-            <motion.div
-              whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-              className={`flex flex-col items-center justify-center p-6 rounded-2xl border bg-[#222] w-48 relative z-10 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'hf' ? 'border-[#555]' : 'border-[#333]'}`}
-              onMouseEnter={() => setHoveredNode('hf')}
-              onMouseLeave={() => setHoveredNode('none')}
-            >
-              <HuggingFaceLogo size={32} className="mb-3" />
-              <span className="font-semibold text-[#F0EFE2] text-[16px] mb-1">Hugging Face</span>
-              <span className="text-[12px] text-[#C8C7BA] mb-4">Any Hugging Face model</span>
+              {/* 1. Source Node (Hugging Face) */}
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+                className={`flex flex-col items-center justify-center p-6 rounded-2xl border bg-[#222] w-48 relative z-10 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'hf' ? 'border-[#555]' : 'border-[#333]'}`}
+                onMouseEnter={() => setHoveredNode('hf')}
+                onMouseLeave={() => setHoveredNode('none')}
+              >
+                <HuggingFaceLogo size={32} className="mb-3" />
+                <span className="font-semibold text-[#F0EFE2] text-[16px] mb-1">Hugging Face</span>
+                <span className="text-[12px] text-[#C8C7BA] mb-4">Any Hugging Face model</span>
 
-              <div className="flex items-center gap-1.5">
-                {[
-                  <QwenLogo size={14} />,
-                  <MistralLogo size={14} />,
-                  <MetaLogo size={14} />,
-                  <AnthropicLogo size={14} />,
-                  <BAAILogo size={14} />,
-                  <GLMLogo size={14} />,
-                  <GoogleLogo size={14} />
-                ].map((logo, i) => (
-                  <div key={i} className="w-5 h-5 rounded-[4px] border border-[#444] bg-[#1a1a1a] flex items-center justify-center">
-                    {logo}
+                <div className="flex items-center gap-1.5">
+                  {[
+                    <QwenLogo size={14} />,
+                    <MistralLogo size={14} />,
+                    <MetaLogo size={14} />,
+                    <AnthropicLogo size={14} />,
+                    <BAAILogo size={14} />,
+                    <GLMLogo size={14} />,
+                    <GoogleLogo size={14} />
+                  ].map((logo, i) => (
+                    <div key={i} className="w-5 h-5 rounded-[4px] border border-[#444] bg-[#1a1a1a] flex items-center justify-center">
+                      {logo}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Left Connector (Fixed Width to prevent layout shift) */}
+              <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
+                {hoveredNode === 'none' ? (
+                  /* Default direct connection */
+                  <div className="flex items-center w-full min-w-[158px] relative">
+                    <div className="w-full h-[1px] border-t border-dashed border-[#75bf00]" />
                   </div>
-                ))}
-              </div>
-            </motion.div>
+                ) : hoveredNode === 'hf' ? (
+                  /* Expanded branches for HF hover */
+                  <div className="flex items-center justify-center w-full">
+                    <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
-            {/* Left Connector (Fixed Width to prevent layout shift) */}
-            <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
-              {hoveredNode === 'none' ? (
-                /* Default direct connection */
-                <div className="flex items-center w-full min-w-[158px] relative">
-                  <div className="w-full h-[1px] border-t border-dashed border-[#75bf00]" />
-                </div>
-              ) : hoveredNode === 'hf' ? (
-                /* Expanded branches for HF hover */
-                <div className="flex items-center justify-center w-full">
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="flex flex-col gap-3 relative z-10 shrink-0"
+                    >
+                      {/* Central cross line (connecting left spine to right spine) */}
+                      <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-[#75bf00] -z-10" />
 
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="flex flex-col gap-3 relative z-10 shrink-0"
-                  >
-                    {/* Central cross line (connecting left spine to right spine) */}
-                    <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-[#75bf00] -z-10" />
+                      {/* Left vertical split (flowing OUTWARDS from center) */}
+                      <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
+                      <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
 
-                    {/* Left vertical split (flowing OUTWARDS from center) */}
-                    <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
-                    <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
+                      {/* Right vertical merge (flowing INWARDS to center) */}
+                      <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute right-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
+                      <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute right-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
 
-                    {/* Right vertical merge (flowing INWARDS to center) */}
-                    <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute right-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
-                    <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute right-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
+                      {[
+                        { title: "LLM", subtitle: "chat" },
+                        { title: "Code", subtitle: "generation" },
+                        { title: "VLM", subtitle: "vision" },
+                        { title: "TTS", subtitle: "speech out" },
+                        { title: "STT", subtitle: "speech in" },
+                        { title: "OCR", subtitle: "extraction" },
+                        { title: "Image", subtitle: "generation" },
+                        { title: "Video", subtitle: "generation" },
+                        { title: "Embeddings", subtitle: "vectors" },
+                        { title: "Rankers", subtitle: "reranking" }
+                      ].map((node, i) => (
+                        <div key={i} className="relative px-5 flex items-center">
+                          <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-[1px] border-t border-dashed border-[#75bf00] no-dash-anim" />
+                          <motion.div variants={itemVariants} className="w-full">
+                            <ParamNode title={node.title} subtitle={node.subtitle} />
+                          </motion.div>
+                          <motion.div variants={hLineVariants} style={{ transformOrigin: 'right' }} className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-[1px] border-t border-dashed border-[#75bf00] no-dash-anim" />
+                        </div>
+                      ))}
+                    </motion.div>
 
-                    {[
-                      { title: "LLM", subtitle: "chat" },
-                      { title: "Code", subtitle: "generation" },
-                      { title: "VLM", subtitle: "vision" },
-                      { title: "TTS", subtitle: "speech out" },
-                      { title: "STT", subtitle: "speech in" },
-                      { title: "OCR", subtitle: "extraction" },
-                      { title: "Image", subtitle: "generation" },
-                      { title: "Video", subtitle: "generation" },
-                      { title: "Embeddings", subtitle: "vectors" },
-                      { title: "Rankers", subtitle: "reranking" }
-                    ].map((node, i) => (
-                      <div key={i} className="relative px-5 flex items-center">
-                        <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-[1px] border-t border-dashed border-[#75bf00] no-dash-anim" />
-                        <motion.div variants={itemVariants} className="w-full">
-                          <ParamNode title={node.title} subtitle={node.subtitle} />
-                        </motion.div>
-                        <motion.div variants={hLineVariants} style={{ transformOrigin: 'right' }} className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-[1px] border-t border-dashed border-[#75bf00] no-dash-anim" />
-                      </div>
-                    ))}
-                  </motion.div>
-
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00] relative">
+                    <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00] relative">
+                    </div>
                   </div>
+                ) : (
+                  /* Expanded branches for Dhyra hover */
+                  <div className="flex items-center justify-center w-full">
+                    <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="flex flex-col gap-3 relative z-10 shrink-0 pr-6"
+                    >
+                      <motion.div variants={hLineVariants} style={{ transformOrigin: 'right' }} className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-[#75bf00] -z-10" />
+                      {/* Right vertical split (flowing OUTWARDS from center) */}
+                      <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute right-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
+                      <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute right-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
+
+                      {[
+                        { title: "GPU fit", subtitle: "cost + VRAM" },
+                        { title: "Baseline", subtitle: "measured" },
+                        { title: "Quantization", subtitle: "quality gated" },
+                        { title: "KV cache", subtitle: "memory tuned" },
+                        { title: "Checkpoints", subtitle: "versioning" },
+                        { title: "LoRA adapters", subtitle: "fine-tuned" },
+                        { title: "Prefix caching", subtitle: "prompt reuse" }
+                      ].map((node, i) => (
+                        <div key={i} className="relative flex items-center justify-end z-10 bg-[#151515]">
+                          <motion.div variants={itemVariants}>
+                            <ParamNode title={node.title} subtitle={node.subtitle} />
+                          </motion.div>
+                          <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute right-[-1.5rem] top-1/2 -translate-y-1/2 w-6 h-[1px] border-t border-dashed border-[#75bf00] -z-10 no-dash-anim" />
+                        </div>
+                      ))}
+                    </motion.div>
+                    <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+                  </div>
+                )}
+              </div>
+
+              {/* 2. Center Node (RunInfra) */}
+              <motion.div
+                whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+                className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'dhyra' ? 'border-[#555]' : 'border-[#333]'}`}
+                onMouseEnter={() => setHoveredNode('dhyra')}
+                onMouseLeave={() => setHoveredNode('none')}
+              >
+                <div className="flex-1 flex items-center justify-center mb-1 rounded-sm overflow-hidden">
+                  <DhyraLogo variant="stacked" size="2xl" className="text-[#F0EFE2]" />
                 </div>
-              ) : (
-                /* Expanded branches for Dhyra hover */
-                <div className="flex items-center justify-center w-full">
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+              </motion.div>
 
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="flex flex-col gap-3 relative z-10 shrink-0 pr-6"
-                  >
-                    <motion.div variants={hLineVariants} style={{ transformOrigin: 'right' }} className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-[#75bf00] -z-10" />
-                    {/* Right vertical split (flowing OUTWARDS from center) */}
-                    <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute right-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
-                    <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute right-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-r border-dashed border-[#75bf00] no-dash-anim" />
+              {/* Right Connector (Fixed Width to prevent layout shift) */}
+              <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
+                {hoveredNode === 'dhyra' ? (
+                  /* Expanded branches for Dhyra hover */
+                  <div className="flex items-center justify-center w-full">
+                    <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
-                    {[
-                      { title: "GPU fit", subtitle: "cost + VRAM" },
-                      { title: "Baseline", subtitle: "measured" },
-                      { title: "Quantization", subtitle: "quality gated" },
-                      { title: "KV cache", subtitle: "memory tuned" },
-                      { title: "Checkpoints", subtitle: "versioning" },
-                      { title: "LoRA adapters", subtitle: "fine-tuned" },
-                      { title: "Prefix caching", subtitle: "prompt reuse" }
-                    ].map((node, i) => (
-                      <div key={i} className="relative flex items-center justify-end z-10 bg-[#151515]">
-                        <motion.div variants={itemVariants}>
-                          <ParamNode title={node.title} subtitle={node.subtitle} />
-                        </motion.div>
-                        <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute right-[-1.5rem] top-1/2 -translate-y-1/2 w-6 h-[1px] border-t border-dashed border-[#75bf00] -z-10 no-dash-anim" />
-                      </div>
-                    ))}
-                  </motion.div>
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="flex flex-col gap-3 relative z-10 shrink-0 pl-6"
+                    >
+                      <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-[#75bf00] -z-10 no-dash-anim" />
+                      {/* Left vertical merge (flowing INWARDS to center) */}
+                      <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
+                      <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
+
+                      {[
+                        { title: "Speculation", subtitle: "acceptance" },
+                        { title: "Kernels", subtitle: "agent sweep" },
+                        { title: "Batching", subtitle: "throughput" },
+                        { title: "Cost routing", subtitle: "price/perf" },
+                        { title: "Circuit break", subtitle: "fallback" },
+                        { title: "Budgets", subtitle: "governance" },
+                        { title: "Auditing", subtitle: "compliance" }
+                      ].map((node, i) => (
+                        <div key={i} className="relative flex items-center z-10 bg-[#151515]">
+                          <motion.div variants={hLineVariants} style={{ transformOrigin: 'right' }} className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 w-6 h-[1px] border-t border-dashed border-[#75bf00] -z-10 no-dash-anim" />
+                          <motion.div variants={itemVariants}>
+                            <ParamNode title={node.title} subtitle={node.subtitle} />
+                          </motion.div>
+                        </div>
+                      ))}
+                    </motion.div>
+
+                    <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+                  </div>
+                ) : (
+                  /* Default / HF hover connection */
+                  <div className="flex items-center w-full min-w-[158px] relative">
+                    <div className="w-full h-[1px] border-t border-dashed border-[#75bf00]" />
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Targets Column */}
+              <div className="flex flex-col gap-4 relative z-10 pl-10">
+                {/* Vertical spine (flowing OUTWARDS from center to Target nodes) */}
+                <div className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-2rem)] border-l border-dashed border-[#75bf00] flow-up -z-10" />
+                <div className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-2rem)] border-l border-dashed border-[#75bf00] flow-down -z-10" />
+
+                <div className="relative">
+                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<DhyraLogo size={36} />} title="Dhyra Cloud" />
                 </div>
-              )}
-            </div>
 
-            {/* 2. Center Node (RunInfra) */}
-            <motion.div
-              whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-              className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'dhyra' ? 'border-[#555]' : 'border-[#333]'}`}
-              onMouseEnter={() => setHoveredNode('dhyra')}
-              onMouseLeave={() => setHoveredNode('none')}
-            >
-              <div className="flex-1 flex items-center justify-center mb-1 rounded-sm overflow-hidden">
-                <DhyraLogo variant="stacked" size="2xl" className="text-[#F0EFE2]" />
-              </div>
-            </motion.div>
-
-            {/* Right Connector (Fixed Width to prevent layout shift) */}
-            <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
-              {hoveredNode === 'dhyra' ? (
-                /* Expanded branches for Dhyra hover */
-                <div className="flex items-center justify-center w-full">
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
-
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="flex flex-col gap-3 relative z-10 shrink-0 pl-6"
-                  >
-                    <motion.div variants={hLineVariants} style={{ transformOrigin: 'left' }} className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] border-t border-dashed border-[#75bf00] -z-10 no-dash-anim" />
-                    {/* Left vertical merge (flowing INWARDS to center) */}
-                    <motion.div variants={vLineTopVariants} style={{ transformOrigin: 'bottom' }} className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
-                    <motion.div variants={vLineBotVariants} style={{ transformOrigin: 'top' }} className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-1.75rem)] border-l border-dashed border-[#75bf00] no-dash-anim" />
-
-                    {[
-                      { title: "Speculation", subtitle: "acceptance" },
-                      { title: "Kernels", subtitle: "agent sweep" },
-                      { title: "Batching", subtitle: "throughput" },
-                      { title: "Cost routing", subtitle: "price/perf" },
-                      { title: "Circuit break", subtitle: "fallback" },
-                      { title: "Budgets", subtitle: "governance" },
-                      { title: "Auditing", subtitle: "compliance" }
-                    ].map((node, i) => (
-                      <div key={i} className="relative flex items-center z-10 bg-[#151515]">
-                        <motion.div variants={hLineVariants} style={{ transformOrigin: 'right' }} className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 w-6 h-[1px] border-t border-dashed border-[#75bf00] -z-10 no-dash-anim" />
-                        <motion.div variants={itemVariants}>
-                          <ParamNode title={node.title} subtitle={node.subtitle} />
-                        </motion.div>
-                      </div>
-                    ))}
-                  </motion.div>
-
-                  <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
+                <div className="relative">
+                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<ModalLogo size={36} />} title="Modal" />
                 </div>
-              ) : (
-                /* Default / HF hover connection */
-                <div className="flex items-center w-full min-w-[158px] relative">
-                  <div className="w-full h-[1px] border-t border-dashed border-[#75bf00]" />
+
+                <div className="relative">
+                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<RunPodLogo size={36} />} title="RunPod" />
                 </div>
-              )}
-            </div>
 
-            {/* 3. Targets Column */}
-            <div className="flex flex-col gap-4 relative z-10 pl-10">
-              {/* Vertical spine (flowing OUTWARDS from center to Target nodes) */}
-              <div className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-2rem)] border-l border-dashed border-[#75bf00] flow-up -z-10" />
-              <div className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-2rem)] border-l border-dashed border-[#75bf00] flow-down -z-10" />
+                <div className="relative">
+                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<span className="text-[#3b82f6] font-bold text-[36px] leading-none">V</span>} title="Vast.ai" />
+                </div>
 
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<DhyraLogo size={36} />} title="Dhyra Cloud" />
+                <div className="relative">
+                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode title="Local hardware" />
+                </div>
+
+
               </div>
-
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<ModalLogo size={36} />} title="Modal" />
-              </div>
-
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<RunPodLogo size={36} />} title="RunPod" />
-              </div>
-
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode icon={<span className="text-[#3b82f6] font-bold text-[36px] leading-none">V</span>} title="Vast.ai" />
-              </div>
-
-              <div className="relative">
-                <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                <TargetNode title="Local hardware" />
-              </div>
-
-
             </div>
           </div>
         </div>
-      </div>
       </div>
     </section>
   );

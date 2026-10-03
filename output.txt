@@ -1,0 +1,52 @@
+Created At: 2026-09-25T22:32:58+05:30
+Completed At: 2026-09-25T22:32:58+05:30
+File Path: `file:///c:/projects/MemoryOS/memoryos-frontend/generate_data.py`
+Total Lines: 219
+Total Bytes: 22758
+Showing lines 190 to 219
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+190:         "gridType": "AIExperiments",
+191:         "comparison": [
+192:             {"model": "Parallel A/B", "provider": "Dhyra Orchestrator", "latency": "N/A", "throughput": "Infinite", "cost": "Variable"},
+193:             {"model": "Shadow Traffic", "provider": "Dhyra Orchestrator", "latency": "0ms (Async)", "throughput": "Full Prod", "cost": "Variable"},
+194:             {"model": "Manual Routing", "provider": "Custom Proxies", "latency": "50ms+", "throughput": "Bottlenecked", "cost": "High Maint"}
+195:         ],
+196:         "outcome_code": "from dhyra.experiments import ABTest\n\ntest = ABTest(name=\"prompt-engineering-v2\")\n\ntest.add_variant(\"control\", model=\"llama-3.1-8b\", prompt=\"v1\")\ntest.add_variant(\"treatment\", model=\"llama-3.1-8b\", prompt=\"v2\")\n\ntest.route_traffic(percentage=10.0)\ntest.monitor(duration_days=7)",
+197:         "cap_code": "import { ExperimentFunnel } from '@dhyra/react';\n\nfunction ABTestResults() {\n  return (\n    <ExperimentFunnel\n      variantA=\"Control\"\n      variantB=\"Treatment\"\n      metric=\"conversion_rate\"\n      statisticalSignificance={0.95}\n    />\n  );\n}"
+198:     },
+199:     "continuous-improvement": {
+200:         "title": "Automated feedback<br />loops for production<br /><span className=\"bg-[#75bf00] text-black px-2 py-0 inline-block\">promotion</span>.",
+201:         "desc": "Seamlessly retrain and verify Llama and Qwen based on real-world outcomes, ensuring your models evolve continuously.",
+202:         "icons": ["MetaLogo", "QwenLogo", "DeepSeekLogo"],
+203:         "gridType": "ContinuousImprovement",
+204:         "comparison": [
+205:             {"model": "DPO Fine-tuning", "provider": "Dhyra Pipeline", "latency": "N/A", "throughput": "Automated", "cost": "$5.00/run"},
+206:             {"model": "PPO RLHF", "provider": "Dhyra Pipeline", "latency": "N/A", "throughput": "Automated", "cost": "$15.00/run"},
+207:             {"model": "OpenAI Fine-tuning", "provider": "OpenAI API", "latency": "N/A", "throughput": "Black Box", "cost": "$50.00+"}
+208:         ],
+209:         "outcome_code": "from dhyra.learning import Flywheel\n\nflywheel = Flywheel(model=\"qwen2.5-14b\")\n\n# Automatically fine-tune on user thumbs-up/down data weekly\nflywheel.schedule_dpo_job(\n    dataset=\"prod_telemetry\",\n    frequency=\"weekly\",\n    evaluation_gate=True\n)\nflywheel.start()",
+210:         "cap_code": "import { FlywheelStatus } from '@dhyra/react';\n\nfunction LearningLoop() {\n  return (\n    <FlywheelStatus\n      stages={['Collect', 'Train', 'Eval', 'Promote']}\n      currentStage=\"Train\"\n      progress={45}\n    />\n  );\n}"
+211:     }
+212: }
+213: 
+214: ts_code = "export const useCaseData: Record<string, any> = " + json.dumps(use_cases, indent=2) + ";\n"
+215: 
+216: with open(r"c:\projects\MemoryOS\memoryos-frontend\lib\use-case-data.ts", "w", encoding="utf-8") as f:
+217:     f.write(ts_code)
+218: print("Generated lib/use-case-data.ts")
+219: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+Created At: 2026-09-25T22:39:15+05:30
+Completed At: 2026-09-25T22:39:15+05:30
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\lib\\use-case-data.ts","LineNumber":1,"LineContent":"export const useCaseData: Record\u003cstring, any\u003e = {"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\app\\use-cases\\[slug]\\page.tsx","LineNumber":16,"LineContent":"import { useCaseData } from \"@/lib/use-case-data\";"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\app\\use-cases\\[slug]\\page.tsx","LineNumber":288,"LineContent":"export default function UseCasePage({ params }: { params: { slug: string } }) {"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\app\\use-cases\\[slug]\\page.tsx","LineNumber":289,"LineContent":"  const data = useCaseData[params.slug];"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\landing\\landing-navbar.tsx","LineNumber":41,"LineContent":"  const [useCasesOpen, setUseCasesOpen] = useState(false);"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\landing\\landing-navbar.tsx","LineNumber":133,"LineContent":"                  setUseCasesOpen(!useCasesOpen);"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\landing\\landing-navbar.tsx","LineNumber":143,"LineContent":"              {useCasesOpen \u0026\u0026 ("}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\landing\\landing-navbar.tsx","LineNumber":285,"LineContent":"                          onClick={() =\u003e setTimeout(() =\u003e setUseCasesOpen(false), 100)}"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\landing\\landing-navbar.tsx","LineNumber":296,"LineContent":"                        onClick={() =\u003e setTimeout(() =\u003e setUseCasesOpen(false), 100)}"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\landing\\landing-navbar.tsx","LineNumber":323,"LineContent":"                  setUseCasesOpen(false);"}
+{"File":"c:\\projects\\MemoryOS\\memoryos-frontend\\components\\epoch\\views\\pipeline-workspace-view.tsx","LineNumber":1042,"LineContent":"                        \u003cdiv className=\"pl-6\"\u003e\u003cspan className=\"text-[#C8C7BA]\"\u003e\u0026quot;useCase\u0026quot;:\u003c/span\u003e \u003cspan className=\"text-[#75bf00]\"\u003e\u0026quot;general inference\u0026quot;\u003c/span\u003e,\u003c/div\u003e"}

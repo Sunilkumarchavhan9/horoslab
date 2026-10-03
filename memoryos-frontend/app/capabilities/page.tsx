@@ -67,10 +67,13 @@ export default function CapabilitiesPage() {
     <div className="relative min-h-screen bg-[#151515] text-[#F0EFE2] font-sans flex flex-col">
       {/* Background Dashed Lines - Global Layout */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Outer Lines (Mobile & Desktop) */}
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+
+        {/* Inner Lines (Desktop Only) */}
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       <div className="relative z-10 flex flex-col w-full min-h-screen">
@@ -81,9 +84,9 @@ export default function CapabilitiesPage() {
         </div>
         
         <main className="flex-grow flex flex-col items-center w-full relative z-10">
-          <div className="w-[88%] md:w-[72%] mx-auto flex flex-col border-x border-dashed border-[#333]">
+          <div className="w-[88%] md:w-[calc(72%_-_240px)] mx-auto flex flex-col border-x border-dashed border-[#333]">
             {/* Header Section */}
-            <div className="w-full px-6 md:px-10 py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
+            <div className="w-full px-6 md:px-10  py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
               <h1 className="text-4xl md:text-[56px] leading-[1.1] font-semibold tracking-tight text-[#F0EFE2] mb-6">
                 Capabilities <span className="bg-[#75bf00] text-[#151515] px-2 py-0.5 ml-1">Graph</span>
               </h1>
@@ -93,7 +96,7 @@ export default function CapabilitiesPage() {
             </div>
 
             {/* Controls Section */}
-            <div className="w-full px-6 md:px-10 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-[#333] bg-[#151515]">
+            <div className="w-full px-6 md:px-10  py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-[#333] bg-[#151515]">
               <div className="relative flex-grow max-w-xl">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#75bf00]" />
                 <input 
@@ -159,7 +162,7 @@ export default function CapabilitiesPage() {
             </div>
             
             {/* Sub-filters */}
-            <div className="w-full px-6 md:px-10 py-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[#999] border-b border-dashed border-[#333] bg-[#151515]">
+            <div className="w-full px-6 md:px-10  py-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[#999] border-b border-dashed border-[#333] bg-[#151515]">
               <button 
                 onClick={() => setActiveFilter("all")}
                 className={`transition-colors whitespace-nowrap ${activeFilter === "all" ? "text-[#F0EFE2]" : "hover:text-[#F0EFE2]"}`}
@@ -185,7 +188,7 @@ export default function CapabilitiesPage() {
             {/* List Section */}
             <div className="w-full flex flex-col pb-32">
               {filteredCapabilities.map((capability, idx) => (
-                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 md:px-10 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 md:px-10  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
                   
                   {/* Left: Identity */}
                   <div className="flex items-start gap-4 flex-1 min-w-[320px]">

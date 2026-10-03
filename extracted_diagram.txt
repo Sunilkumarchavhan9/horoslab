@@ -1,0 +1,1476 @@
+DHYRA
+                         REALITY INTELLIGENCE RUNTIME
+
+        BUILD → ADAPT → EVALUATE → OPTIMIZE → EXPERIMENT
+             → DECIDE → DEPLOY → OBSERVE → VERIFY
+                  → LEARN → TEACH → EVOLVE
+                                  │
+                                  ▼
+
+                    ┌──────────────────────────────┐
+                    │      DHYRA INTELLIGENCE      │
+                    │             GRAPH            │
+                    └──────────────────────────────┘
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          │                       │                        │
+          ▼                       ▼                        ▼
+      REALITY                 INTELLIGENCE              HISTORY
+          │                       │                        │
+          ├── World State         ├── Models              ├── Experience
+          ├── Physical State      ├── Data                ├── Lessons
+          ├── Environment         ├── Context             ├── Outcomes
+          ├── Sensors             ├── Capabilities        ├── Evidence
+          ├── Workloads           ├── Training            ├── Evaluations
+          ├── Telemetry           ├── Systems             ├── Experiments
+          └── Reality Knowledge   └── Runtime             └── Lineage
+
+          ┌─────────────────────────────────────────────────────────┐
+          │ REALITY / WORLD / KNOWLEDGE / MODEL / SYSTEM GRAPH     │
+          │                                                         │
+          │ REALITY                                                 │
+          │ WORLD STATE                                             │
+          │ REALITY KNOWLEDGE                                       │
+          │ KNOWLEDGE GAPS                                          │
+          │ MODELS                                                  │
+          │ MODEL VERSIONS                                          │
+          │ DATA / DATA VERSIONS                                    │
+          │ CONTEXT                                                 │
+          │ CAPABILITIES                                            │
+          │ TRAINING                                                │
+          │ EVALUATIONS                                             │
+          │ EXPERIMENTS                                             │
+          │ RUNTIME                                                 │
+          │ COMPUTE                                                 │
+          │ DEPLOYMENTS                                             │
+          │ OBSERVATIONS                                            │
+          │ EVIDENCE                                                │
+          │ EXPERIENCE                                              │
+          │ LESSONS                                                 │
+          │ POLICIES                                                │
+          │ SYSTEM VERSIONS                                         │
+          │ LINEAGE / PROVENANCE                                    │
+          │ OUTCOMES                                                │
+          │ USAGE / BILLING / PRICING                               │
+          └─────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+
+
+                        CUSTOMER CONTROL PLANE
+                                  │
+                ┌─────────────────┼──────────────────┐
+                ▼                 ▼                  ▼
+             MISSIONS        CONNECTORS           POLICIES
+                │                 │                  │
+         create / monitor    GitHub / APIs      authority
+         pause / resume      cloud              budgets
+         checkpoints         databases          approvals
+         goals               sensors             scope
+                             devices             autonomy
+                             environments        safety
+                                  │                  │
+                                  └────────┬─────────┘
+                                           │
+                                           ├── usage / metering
+                                           ├── billing / credits
+                                           └── plans / pricing
+                                           │
+                                           ▼
+
+
+                           MISSION RUNTIME
+                                  │
+                                  ▼
+                     HUMAN / SYSTEM / API / EVENT
+                                  │
+                                  ▼
+                       INPUT NORMALIZATION
+                                  │
+                                  ▼
+                           INTENT ENGINE
+                                  │
+                                  ▼
+                       OUTCOME INTELLIGENCE
+                                  │
+                                  ▼
+                          OUTCOME CONTRACT
+                                  │
+                   ┌──────────────┼───────────────┐
+                   ▼              ▼               ▼
+                OBJECTIVE     CONSTRAINTS      AUTHORITY
+                   │              │               │
+                   ▼              ▼               ▼
+                  RISK          BUDGET      SUCCESS CRITERIA
+                                  │
+                                  ▼
+
+
+                       REALITY INTELLIGENCE
+                                  │
+        ┌─────────────────────────┼──────────────────────────┐
+        ▼                         ▼                          ▼
+  REALITY FABRIC          CONTEXT INTELLIGENCE        WORLD INTELLIGENCE
+        │                         │                          │
+        │                         ├── Retrieval              ├── Spatial
+        │                         ├── Memory                 ├── Temporal
+        │                         ├── Selection              ├── Objects
+        │                         ├── Compression            ├── Scenes
+        │                         ├── History                ├── Geometry
+        │                         ├── Task Context           ├── Dynamics
+        │                         ├── Tool Context           ├── Prediction
+        │                         ├── Long Context           ├── Causality
+        │                         └── Adaptation             ├── Uncertainty
+        │                                                    └── Future States
+        │
+        ├── System State
+        ├── Workload
+        ├── Model State
+        ├── Runtime State
+        ├── Deployment State
+        ├── Environment
+        ├── Telemetry
+        ├── Customer Data
+        ├── Sensors
+        └── Physical State
+                                  │
+                                  ▼
+
+
+                           UNKNOWN ENGINE
+                                  │
+                         missing information
+                         uncertainty
+                         unresolved state
+                                  │
+                                  ▼
+
+
+                       KNOWLEDGE GAP ENGINE
+                                  │
+                  ┌───────────────┼────────────────┐
+                  ▼               ▼                ▼
+             WHAT IS KNOWN   WHAT IS UNKNOWN   WHAT MATTERS
+                  │               │                │
+                  └───────────────┼────────────────┘
+                                  ▼
+                     KNOWLEDGE ACQUISITION PLAN
+                                  │
+                                  ▼
+
+
+                    ACTIVE REALITY LEARNING
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       OBSERVE                ACQUIRE                  EXPERIMENT
+          │                       │                        │
+      sensors                 telemetry                scenarios
+      devices                 physical data            interventions
+      APIs                    environment              measurements
+      customer data           trajectories             actions
+          │                       │                        │
+          └───────────────────────┼────────────────────────┘
+                                  ▼
+                          GROUND TRUTH
+                                  │
+              ┌───────────────────┼────────────────────┐
+              ▼                   ▼                    ▼
+          REAL OUTCOME       VERIFIED LABEL       PHYSICAL FACT
+              │                   │                    │
+              └───────────────────┼────────────────────┘
+                                  ▼
+                         REALITY KNOWLEDGE
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+        ENTITIES                STATE                  RELATIONS
+        DYNAMICS             CONDITIONS               CAUSES
+        EVENTS               TRANSITIONS             UNCERTAINTY
+        FAILURES             CONSEQUENCES             FUTURES
+                                  │
+                                  ▼
+                         TEACHING / DATA LOOP
+                                  │
+                                  └──────────────► MODELS
+
+
+                       HYPOTHESIS ENGINE
+                                  │
+                    explanations / hypotheses
+                                  │
+                                  ▼
+                       PREDICTION ENGINE
+                                  │
+                future states / outcomes / uncertainty
+                                  │
+                                  ▼
+
+
+                       CAPABILITY INTELLIGENCE
+                                  │
+                                  ▼
+                          CAPABILITY FABRIC
+                                  │
+       ┌──────────────────────────┼──────────────────────────┐
+       ▼                          ▼                          ▼
+     MODELS                      DATA                  TOOLS / SKILLS
+       │                          │                          │
+       ├── LLM                    ├── Datasets               ├── APIs
+       ├── VLM                    ├── Training Data          ├── Code
+       ├── Vision                 ├── Evaluation Data        ├── Tools
+       ├── Audio                  ├── Preference Data        ├── Skills
+       ├── Video                  ├── Synthetic Data         ├── Adapters
+       ├── Multimodal             ├── Failure Data            ├── Simulators
+       ├── World Models           ├── Experience Data         ├── Verifiers
+       ├── Specialists            ├── Physical Data           └── Environments
+       ├── Embeddings             ├── Sensor Data
+       ├── Rerankers              └── Customer Data
+       └── Adapters
+                                  │
+                                  ▼
+
+
+                       CAPABILITY DISCOVERY
+                                  │
+                                  ▼
+                       COMPATIBILITY ENGINE
+                                  │
+                                  ▼
+                       CAPABILITY GAP ENGINE
+                                  │
+                   ┌──────────────┼────────────────┐
+                   ▼              ▼                ▼
+                WEAKNESS       ROOT CAUSE       PRIORITY
+                   │              │                │
+                   └──────────────┼────────────────┘
+                                  ▼
+                       IMPROVEMENT PLAN
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+         DATA                  MODEL                 POST-TRAINING
+          │                       │                        │
+          ├── missing data        ├── architecture         ├── SFT
+          ├── failure data        ├── representation       ├── DPO
+          ├── coverage            ├── precision             ├── GRPO
+          ├── hard examples       ├── adaptation            ├── RFT
+          └── domain gaps         └── specialization       └── RL
+                                  │
+                                  ▼
+
+
+                          SYSTEM COMPOSER
+                                  │
+       MODEL + DATA + CONTEXT + TOOLS + RUNTIME + COMPUTE
+                           + ENVIRONMENT
+                                  │
+                                  ▼
+                           CANDIDATE SYSTEM
+                                  │
+               assumptions / dependencies / risks
+                    predicted metrics / evidence needs
+                                  │
+                                  ▼
+
+
+                   OPEN-WEIGHT MODEL ECOSYSTEM
+                                  │
+                ┌─────────────────┼─────────────────┐
+                ▼                 ▼                 ▼
+          HUGGING FACE      CUSTOMER MODELS    LOCAL REGISTRY
+                │                 │                 │
+                └─────────────────┼─────────────────┘
+                                  ▼
+
+
+                           MODEL REGISTRY
+                                  │
+                     ┌────────────┼────────────┐
+                     ▼            ▼            ▼
+                  MODEL ID     REVISION      ARTIFACT
+                     │            │            │
+                     ├── Weights
+                     ├── Architecture
+                     ├── Configuration
+                     ├── Tokenizer
+                     ├── License
+                     ├── Dependencies
+                     ├── Artifact Digest
+                     └── Provenance
+                                  │
+                                  ▼
+
+
+                      MODEL SECURITY / TRUST
+                                  │
+                 provenance / dependencies / license
+                           artifact integrity
+                                  │
+                                  ▼
+
+
+                       MODEL NORMALIZATION
+                                  │
+                                  ▼
+                      UNIVERSAL MODEL IR
+                                  │
+                                  ▼
+                       COMPUTATION GRAPH
+                                  │
+                ┌─────────────────┼──────────────────┐
+                ▼                 ▼                  ▼
+          GRAPH OPTIMIZER   OPERATOR OPTIMIZER   MEMORY OPTIMIZER
+                │                 │                  │
+                └─────────────────┼──────────────────┘
+                                  ▼
+                         MODEL COMPILER
+                                  │
+                                  ▼
+                         KERNEL GENERATION
+                                  │
+                                  ▼
+                       KERNEL SEARCH / AUTOTUNE
+                                  │
+                                  ▼
+                       COMPILE / BENCHMARK
+                                  │
+                                  ▼
+                       VERIFIED KERNEL SET
+                                  │
+                                  ▼
+
+
+                       MODEL CAPABILITY PROFILER
+                                  │
+                                  ▼
+                         MODEL VERSION GRAPH
+                                  │
+                                  ▼
+
+
+                       FRONTIER RESEARCH FABRIC
+                                  │
+     ┌────────────────────────────┼────────────────────────────┐
+     ▼                            ▼                            ▼
+MODEL RESEARCH              DATA RESEARCH                TRAINING RESEARCH
+     │                            │                            │
+     ├── Architecture             ├── Mixtures                ├── Recipes
+     ├── Algorithms               ├── Curation                ├── Efficiency
+     ├── Representations          ├── Curriculum              ├── Distributed
+     ├── Context                  ├── Synthetic Data          ├── Checkpointing
+     ├── Multimodal               ├── Failure Mining          ├── Fault Recovery
+     ├── Compression              ├── Data Generation         └── Scaling
+     └── New Architectures        └── Quality
+
+POST-TRAINING RESEARCH      EVALUATION RESEARCH         INFERENCE RESEARCH
+     │                            │                            │
+     ├── SFT                      ├── New Evaluations          ├── Routing
+     ├── DPO                      ├── Verifier Research        ├── Batching
+     ├── GRPO                     ├── Blind Spots              ├── Caching
+     ├── RL                       ├── Adversarial Tests        ├── Kernels
+     ├── RFT                      ├── Long Horizon             ├── Compilation
+     ├── Reward Models            └── Evaluation Science       └── Runtime
+     ├── Skills
+     └── Self-improvement
+
+TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
+     │                            │                            │
+     ├── Reasoning                ├── Hardware Selection       ├── Spatial
+     ├── Search                   ├── Placement                ├── Temporal
+     ├── Trajectories             ├── Topology                 ├── Dynamics
+     ├── Adaptive Compute         ├── Utilization              ├── Prediction
+     ├── Test-time Learning       ├── Power                    ├── Simulation
+     └── Verifier Routing         └── Economics                └── Physical AI
+                                  │
+                                  ▼
+
+
+                         AUTONOMOUS RESEARCH
+                                  │
+                       HYPOTHESIS → IMPLEMENTATION
+                                  │
+                               EXPERIMENT
+                                  │
+                                ANALYSIS
+                                  │
+                                RESULT
+                                  │
+                                  ▼
+
+
+                         RESEARCH KNOWLEDGE
+                                  │
+                                  └──────────────► FUTURE SYSTEMS
+
+
+                       INTELLIGENCE DEVELOPMENT
+                                  │
+          ┌───────────────────────┼─────────────────────────┐
+          ▼                       ▼                         ▼
+      DATA ENGINE            MODEL BUILD                ADAPTATION
+          │                       │                         │
+          ├── Discovery            ├── Pretraining           ├── Domain
+          ├── Curation             ├── Continued Training    ├── Task
+          ├── Filtering            ├── Distributed Training  ├── Multimodal
+          ├── Dedup                ├── Fine-tuning            ├── Contextual
+          ├── Quality              ├── Adapters               └── Skill
+          ├── Failure Mining       └── Training
+          ├── Mixture
+          ├── Curriculum
+          └── Synthetic
+                                  │
+                                  ▼
+
+
+                        ACTIVE DATA ENGINE
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+   CAPABILITY GAP          FAILURE MINING            COVERAGE GAP
+          │                       │                        │
+          ├── Sample importance   ├── Hard examples        ├── Rare states
+          ├── Data valuation      ├── Edge cases            ├── Missing domains
+          ├── Gap sampling        ├── Regressions           ├── Missing conditions
+          ├── Coverage search     └── Failure-driven        └── Long-tail data
+          └── Mixture search          sampling
+                                  │
+                                  ▼
+
+
+                       GROUND TRUTH FACTORY
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+      HUMAN FEEDBACK         CUSTOMER OUTCOME         VERIFIERS
+          │                       │                        │
+          ├── Labels              ├── Success              ├── Formal
+          ├── Preferences         ├── Failure              ├── Rules
+          └── Review              └── Outcome              └── Tests
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       WEAK SUPERVISION      SYNTHETIC LABELS         FAILURE LABELS
+                                  │
+                                  ▼
+                           TRAINING SIGNAL
+                                  │
+                                  ▼
+
+
+                         POST-TRAINING ENGINE
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+         SFT                 PREFERENCE / RL          SKILL LEARNING
+          │                       │                        │
+          ├── SFT                 ├── DPO                  ├── Tools
+          ├── LoRA                ├── GRPO                 ├── Code
+          ├── QLoRA               ├── RFT                  ├── Workflows
+          └── Adaptation          ├── Reward Models         └── Actions
+                                  ├── Verifier Training
+                                  └── Self-improvement
+                                  │
+                                  ▼
+
+
+                            DISTILLATION
+                                  │
+                                  ▼
+                           MODEL VARIANTS
+                                  │
+                                  ▼
+                            MODEL VERSION
+                                  │
+                                  ▼
+
+
+                       EVALUATION + VERIFICATION
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+        CAPABILITY              BEHAVIOR             SYSTEM
+        EVALUATION             EVALUATION          EVALUATION
+              │                   │                   │
+              ├── Reasoning        ├── Trajectory      ├── Quality
+              ├── Coding           ├── Tool Use        ├── Latency
+              ├── Vision           ├── Long Horizon    ├── Cost
+              ├── Multimodal       ├── Safety          ├── Throughput
+              ├── Domain           ├── Robustness      ├── Reliability
+              ├── Physical         ├── Recovery        ├── Energy
+              └── Specialized      └── Adversarial     └── Mission Success
+                                  │
+                                  ▼
+
+
+                         EVALUATOR FABRIC
+                                  │
+                    ┌─────────────┼─────────────┐
+                    ▼             ▼             ▼
+                  JUDGES        CRITICS       GRADERS
+                    │             │             │
+                    ├── Reward Models
+                    ├── Classifiers
+                    ├── Human Evaluation
+                    └── Domain Evaluation
+                                  │
+                                  ▼
+
+
+                           VERIFIER FABRIC
+                                  │
+                    ┌─────────────┼──────────────┐
+                    ▼             ▼              ▼
+                  TASK        TRAJECTORY        DOMAIN
+                    │             │              │
+                    ├── Safety
+                    ├── Formal Verification
+                    └── Output Verification
+                                  │
+                                  ▼
+
+
+                        EVALUATOR GENERATION
+                                  │
+                     BLIND SPOT → TEST → VERIFIER
+                                  │
+                                  ▼
+
+
+                        EVALUATION INTEGRITY
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+   CONTAMINATION             DATA LEAKAGE            EVALUATOR BIAS
+   DETECTION                 DETECTION                DETECTION
+          │                       │                        │
+          ├── Benchmark           ├── Holdouts             ├── Judge drift
+          ├── Overfitting        ├── Hidden tests          └── Bias analysis
+          └── Gaming             └── Independent checks
+                                  │
+                                  ▼
+                    REWARD-HACK / GAMING DETECTION
+                                  │
+                                  ▼
+                     INDEPENDENT VALIDATION
+
+
+                        SYSTEM OPTIMIZATION
+                                  │
+                                  ▼
+                          SYSTEM SEARCH
+                                  │
+       ┌──────────────────────────┼─────────────────────────────┐
+       ▼                          ▼                             ▼
+     MODEL                       DATA                         CONTEXT
+       │                          │                             │
+       ├── Architecture           ├── Dataset                  ├── Retrieval
+       ├── Precision              ├── Sampling                 ├── Memory
+       ├── Quantization           ├── Mixture                  ├── Compression
+       ├── Pruning                ├── Curriculum               ├── Selection
+       ├── Distillation           ├── Coverage                 ├── History
+       └── Revision               └── Quality                  └── Adaptation
+                                  │
+                                  ▼
+                               RUNTIME
+                                  │
+                                  ▼
+                               KERNEL
+                                  │
+                                  ▼
+                              HARDWARE
+                                  │
+                                  ▼
+                              WORKLOAD
+                                  │
+                                  ▼
+
+
+                    WORKLOAD INTELLIGENCE + REPLAY
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       REQUESTS               TRAFFIC                   RUNTIME
+       TRACES                 SHAPE                     BEHAVIOR
+          │                       │                        │
+          ├── Input length        ├── Concurrency          ├── Memory
+          ├── Output length       ├── Batching             ├── GPU use
+          ├── Task type           ├── Burstiness           ├── Failures
+          ├── Tool trajectory     └── Distribution         └── Resource usage
+          │
+          └── Production Replay
+                                  │
+                                  ▼
+
+
+                         UNIFIED SYSTEM SEARCH
+                                  │
+                            SEARCH SPACE
+                                  │
+                                  ▼
+                              CANDIDATE
+                                  │
+                                  ▼
+                              PREDICT
+                                  │
+                                  ▼
+                             EXPERIMENT
+                                  │
+                                  ▼
+                              MEASURE
+                                  │
+                                  ▼
+                              VERIFY
+                                  │
+                         ┌────────┴────────┐
+                         ▼                 ▼
+                       KEEP             DISCARD
+                         │
+                         ▼
+
+
+                       MULTI-OBJECTIVE SEARCH
+                                  │
+           ┌──────────────────────┼──────────────────────┐
+           ▼                      ▼                      ▼
+        QUALITY                LATENCY                  COST
+           │                      │                      │
+           ├── Throughput         ├── TTFT               ├── Token Cost
+           ├── Reliability        ├── Inter-token        ├── Request Cost
+           ├── Safety             ├── Throughput         ├── GPU Cost
+           └── Success            └── Tail Latency       └── Energy
+                                  │
+                                  ▼
+                           PARETO FRONTIER
+                                  │
+                                  ▼
+                        MISSION-SPECIFIC CHOICE
+
+
+                       MODEL / RUNTIME / HARDWARE
+                              CO-DESIGN
+                                  │
+              ┌───────────────────┼──────────────────┐
+              ▼                   ▼                  ▼
+            MODEL               RUNTIME           HARDWARE
+              │                   │                  │
+              ├── Architecture    ├── Kernels       ├── GPU
+              ├── Dimensions      ├── Compiler      ├── CPU
+              ├── Precision       ├── Scheduler     ├── TPU
+              ├── Sparsity        ├── Serving       ├── ASIC
+              ├── Attention       ├── Execution     ├── NPU
+              └── Memory          │   Graph         ├── Memory
+                                  ├── Routing       ├── Interconnect
+                                  ├── Batching      ├── Bandwidth
+                                  └── Caching       ├── Power
+                                                    └── Thermal
+
+
+                            INFERENCE OPTIMIZER
+                                  │
+          ┌───────────────────────┼─────────────────────────┐
+          ▼                       ▼                         ▼
+        SERVING                ROUTING                   CACHING
+          │                       │                         │
+          ├── Dynamic             ├── Task routing          ├── KV Cache
+          │   batching             ├── Difficulty            ├── Prefix Cache
+          ├── Scheduling           │   estimation             └── Memory placement
+          ├── Autoscaling          ├── Specialist routing
+          ├── Disaggregation      └── Mixture intelligence
+          └── GPU pooling
+                                  │
+                                  ▼
+
+
+                        ADAPTIVE REASONING ENGINE
+                                  │
+                 ┌────────────────┼─────────────────┐
+                 ▼                ▼                 ▼
+               EASY            MEDIUM              HARD
+                 │                │                 │
+             low compute     moderate compute   search / reasoning
+                                                    │
+                                                    ▼
+                                               VERY HARD
+                                                    │
+                                      stronger model / more compute
+                                                    │
+                                                    ▼
+                                           VERIFY / ROUTE
+                                  │
+                                  ▼
+                     QUALITY × COMPUTE × COST × LATENCY
+
+
+                            KERNEL ENGINE
+                                  │
+                  ┌───────────────┼────────────────┐
+                  ▼               ▼                ▼
+             OPERATOR GRAPH   KERNEL GENERATION   KERNEL SEARCH
+                  │               │                │
+                  └───────────────┼────────────────┘
+                                  ▼
+                         COMPILE / BENCHMARK
+                                  │
+                                  ▼
+                         VERIFIED KERNEL SET
+
+
+                       COMPUTE INTELLIGENCE
+                                  │
+               ┌──────────────────┼───────────────────┐
+               ▼                  ▼                   ▼
+           SELECTION           PLACEMENT            TOPOLOGY
+               │                  │                   │
+               ├── Capacity       ├── GPU locality    ├── Network
+               ├── Availability   ├── Memory          ├── Interconnect
+               ├── Utilization    ├── Bandwidth       └── Parallelism
+               ├── Memory         ├── Power
+               ├── Bandwidth      ├── Thermal
+               ├── Power          ├── Price
+               ├── Thermal        ├── Failure
+               ├── Price          └── Recovery
+               ├── Failure
+               └── Recovery
+
+
+                         MODEL ECONOMICS
+                                  │
+          ┌───────────────────────┼──────────────────────┐
+          ▼                       ▼                      ▼
+     TRAINING COST          INFERENCE COST             ENERGY
+          │                       │                      │
+          ├── Token Cost           ├── Input Token       ├── Tokens / Watt
+          ├── Compute Cost         ├── Output Token      ├── Power
+          ├── Data Cost            ├── Task Cost         └── Thermal
+          └── Lifecycle            ├── Request Cost
+                                   ├── GPU Cost
+                                   └── Successful Task Cost
+
+
+                       COUNTERFACTUAL ENGINE
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       MODEL CHANGE           DATA CHANGE             RUNTIME CHANGE
+          │                       │                        │
+          ├── Architecture        ├── Sampling             ├── Kernel
+          ├── Quantization        ├── Mixture              ├── Scheduling
+          ├── Model size          ├── Training             ├── Serving
+          └── Routing             └── Dataset              └── Compiler
+                                  │
+             ┌────────────────────┼─────────────────────┐
+             ▼                    ▼                     ▼
+          HARDWARE             WORKLOAD             ENVIRONMENT
+             │                    │                     │
+             ├── GPU              ├── Traffic           ├── Physical
+             ├── CPU              ├── Concurrency       ├── Temperature
+             ├── NPU              ├── Context           ├── Geometry
+             └── Edge             └── Tool use          └── Dynamics
+                                  │
+                                  ▼
+                          PREDICTED OUTCOME
+                                  │
+             ┌────────────────────┼────────────────────┐
+             ▼                    ▼                    ▼
+          OBSERVED             HISTORICAL          SIMULATED
+             │
+             ├── Predicted
+             └── Unknown
+
+
+                         CAUSAL EXPERIMENT ENGINE
+                                  │
+                                  ▼
+                            HYPOTHESIS
+                                  │
+                                  ▼
+                             BASELINE
+                                  │
+                                  ▼
+                             VARIABLES
+                                  │
+                   ┌──────────────┼──────────────┐
+                   ▼              ▼              ▼
+                CONTROLS      CANDIDATES       WORKLOAD
+                   │              │              │
+                   ├── Budget      ├── Model      ├── Replay
+                   ├── Risk        ├── Data       ├── Production
+                   └── Gain       ├── Runtime    └── Environment
+                                  │
+                                  ▼
+                            EXPERIMENT
+                                  │
+                           ┌──────┼───────┐
+                           ▼      ▼       ▼
+                      SIMULATION SANDBOX REAL TEST
+                           │      │       │
+                           │      │       ├── Shadow
+                           │      │       ├── Canary
+                           │      │       └── Production
+                           │      │
+                           │      ├── Isolation
+                           │      ├── Limits
+                           │      ├── Credentials
+                           │      ├── Timeout
+                           │      └── Filesystem / Network
+                           │
+                           ├── Capacity
+                           ├── Traffic
+                           ├── Scaling
+                           ├── Placement
+                           ├── Failures
+                           └── Dynamics
+                                  │
+                                  ▼
+                         EXPERIMENT RESULT
+                                  │
+                                  ▼
+                         CAUSAL ATTRIBUTION
+                                  │
+                     BEFORE → CHANGE → AFTER
+                                  │
+                                  ▼
+                               RESULT
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       QUALITY                 LATENCY                   COST
+          │                       │                        │
+          └───────────────────────┼────────────────────────┘
+                                  ▼
+                            WHY IT CHANGED
+
+
+                    SYNTHETIC REALITY / WORLD LAB
+                                  │
+        ┌─────────────────────────┼──────────────────────────┐
+        ▼                         ▼                          ▼
+    SCENARIOS                   FUTURES                    EDGE CASES
+        │                         │                          │
+        ├── World States          ├── Trajectories           ├── Failures
+        ├── Environments          ├── Possible Outcomes      ├── Rare Events
+        ├── Workloads             └── Future Observations    └── Adversarial
+        └── Conditions
+                                  │
+                                  ▼
+
+
+                       RL ENVIRONMENT FACTORY
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       TASKS                 ENVIRONMENTS              TRAJECTORIES
+          │                       │                        │
+          ├── Task Generation     ├── Scenario Gen         ├── Rollouts
+          ├── Curriculum          ├── State Space          ├── Actions
+          ├── Reward              ├── Failure Injection    ├── Rewards
+          ├── Goals               └── Verification         └── Outcomes
+          └── Evaluation
+                                  │
+                                  ▼
+
+
+                           SYNTHETIC DATA
+                                  │
+             ┌────────────────────┼────────────────────┐
+             ▼                    ▼                    ▼
+            TEXT                IMAGE                VIDEO
+             │
+             ├── 3D
+             ├── Sensor
+             ├── Trajectory
+             └── Action
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+           TRAINING           EVALUATION          SIMULATION
+                                  │
+                                  ▼
+
+
+                         SIM2REAL GAP ENGINE
+                                  │
+                          SIMULATION RESULT
+                                  │
+                                  ▼
+                            REAL RESULT
+                                  │
+                                  ▼
+                            DIFFERENCE
+                                  │
+                                  ▼
+                      UNKNOWN REAL-WORLD FACTOR
+                                  │
+                                  ▼
+                       NEW SCENARIO / DATA
+                                  │
+                                  ▼
+                         NEW TRAINING
+                                  │
+                                  ▼
+                       REAL-WORLD TRANSFER
+                                  │
+                                  ▼
+                            VERIFICATION
+                                  │
+                                  └──────────────► WORLD KNOWLEDGE
+
+
+                         DECISION ENGINE
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       QUALITY                  COST                    LATENCY
+          │                       │                        │
+          ├── Throughput         ├── Token Cost           ├── TTFT
+          ├── Reliability        ├── Task Cost            ├── ITL
+          ├── Safety             ├── GPU Cost             └── Tail
+          ├── Mission Success    └── Energy
+          └── Risk
+                                  │
+                                  ▼
+
+
+                       GOVERNANCE / AUTHORITY
+                                  │
+          ┌───────────────────────┼─────────────────────────┐
+          ▼                       ▼                         ▼
+        POLICY              PERMISSIONS               CREDENTIALS
+          │                       │                         │
+          ├── Budget              ├── Scope                 ├── Secret refs
+          ├── Region              ├── Autonomy              ├── Device access
+          ├── License             ├── Approval              └── API access
+          ├── Hardware            └── Safety
+          └── Provider
+                                  │
+                                  ▼
+                    ALLOW / DENY / REQUIRES APPROVAL
+                                  │
+                                  ▼
+                         AUTOMATION DECISION
+                                  │
+                                  ▼
+                            STATE RECHECK
+                                  │
+                    CURRENT REALITY != PLAN
+                                  │
+                         ┌────────┴────────┐
+                         ▼                 ▼
+                      CHANGED            STABLE
+                         │                 │
+                         ▼                 │
+                  REDISCOVER / REPLAN     │
+                         │                 │
+                         └────────┬────────┘
+                                  ▼
+
+
+                       DEPLOYMENT RUNTIME
+                                  │
+          ┌───────────────────────┼──────────────────────────┐
+          ▼                       ▼                          ▼
+        CLOUD                KUBERNETES                 BARE METAL
+          │                       │                          │
+          └───────────────────────┼──────────────────────────┘
+                                  │
+             ┌────────────────────┼────────────────────┐
+             ▼                    ▼                    ▼
+        SERVERLESS GPU       DEDICATED GPU        EDGE / DEVICE
+             │                    │                    │
+             ├── Scale-to-zero    ├── Serving          ├── Local runtime
+             ├── Warm pools       ├── GPU allocation    ├── Device serving
+             ├── Autoscaling      ├── Batching          └── Local inference
+             ├── Dynamic batch    └── Cost scheduling
+             ├── GPU pooling
+             └── Model loading
+                                  │
+             ┌────────────────────┼──────────────────────┐
+             ▼                    ▼                      ▼
+        GPU SERVING             EDGE              PHYSICAL SYSTEMS
+             │                    │                      │
+          model API            device                 robots
+          endpoint             vehicle                machines
+          service              sensor                 industrial
+                                                        devices
+                                                        vehicles
+                                  │
+                                  ▼
+
+
+                      PHYSICAL EXECUTION FABRIC
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          ▼                       ▼                        ▼
+       SENSORS                ACTUATORS                 DEVICES
+          │                       │                        │
+          ├── Camera              ├── Motion              ├── Robots
+          ├── LiDAR               ├── Manipulation        ├── Machines
+          ├── IMU                 ├── Control              ├── Vehicles
+          ├── Audio               ├── Force                └── Industrial
+          ├── Thermal             └── Physical Actions        Systems
+          └── Telemetry
+                                  │
+                                  ▼
+                        HARDWARE-IN-THE-LOOP
+                                  │
+                                  ▼
+                       PHYSICAL EXPERIMENTS
+                                  │
+                                  ▼
+                         REAL-WORLD ACTION
+                                  │
+                                  ▼
+                          PHYSICAL CONSEQUENCE
+
+
+                           DEPLOYED SYSTEM
+                                  │
+                                  ▼
+
+
+                         MANAGED INFERENCE
+                                  │
+            MODEL + WORKLOAD + CONSTRAINTS
+                                  │
+                                  ▼
+                     AUTO-OPTIMIZED SYSTEM
+                                  │
+                 ┌────────────────┼────────────────┐
+                 ▼                ▼                ▼
+               MODEL           RUNTIME           HARDWARE
+                 │                │                │
+                 └────────────────┼────────────────┘
+                                  ▼
+                    VERIFIED PRODUCTION API
+                                  │
+                                  ▼
+
+
+                           DHYRA MODEL API
+                                  │
+              ┌───────────────────┼──────────────────┐
+              ▼                   ▼                  ▼
+          INFERENCE            USAGE            OBSERVATION
+           TRAFFIC             METERING               │
+              │                   │                   ▼
+              │                   ▼                EVIDENCE
+              │                BILLING                │
+              │                   │                   ▼
+              │             PAY-PER-TOKEN       EXPERIENCE
+              │              PAY-PER-USAGE           │
+              │                                       │
+              └───────────────────────────────────────┘
+
+
+                               REALITY
+                                  │
+              ┌───────────────────┼────────────────────┐
+              ▼                   ▼                    ▼
+         DIGITAL WORLD       MODEL BEHAVIOR        PHYSICAL WORLD
+              │                   │                    │
+              ├── Software         ├── Predictions      ├── Camera
+              ├── APIs             ├── Generations      ├── Video
+              ├── Databases        ├── Reasoning        ├── LiDAR
+              ├── Services         ├── Actions          ├── IMU
+              ├── Workloads        ├── Tool Use         ├── Audio
+              └── Applications     ├── Uncertainty      ├── Force/Torque
+                                   └── Failures         └── Telemetry
+                                  │
+                                  ▼
+
+
+                         OBSERVATION FABRIC
+                                  │
+                          SIGNAL → NORMALIZE
+                                  │
+                             OBSERVATION
+                                  │
+                                  ▼
+
+
+                              MEASUREMENT
+                                  │
+             ┌────────────────────┼─────────────────────┐
+             ▼                    ▼                     ▼
+       MODEL OBSERVATION    SYSTEM OBSERVATION    REALITY OBSERVATION
+             │                    │                     │
+             ├── Outputs          ├── Latency           ├── Sensors
+             ├── Quality          ├── Throughput        ├── Environment
+             ├── Uncertainty      ├── Utilization       ├── Physical State
+             ├── Reasoning        ├── Memory             ├── Video
+             ├── Tool Use         ├── GPU / CPU          ├── Telemetry
+             ├── Failures         ├── Network            ├── Workload
+             └── Drift            └── Cost               └── Consequences
+                                  │
+                                  ▼
+
+
+                              EVIDENCE
+                                  │
+             ┌────────────────────┼──────────────────────┐
+             ▼                    ▼                      ▼
+           SOURCE              TIMESTAMP              ARTIFACT
+             │                    │                      │
+             ├── Digest            ├── Execution          ├── Version
+             ├── Experiment       ├── Observation        ├── Model
+             ├── Deployment       └── Provenance         ├── Data
+             └── Environment                             └── Result
+                                  │
+                                  ▼
+
+
+                         REPLAY / LINEAGE
+                                  │
+                                  ▼
+                            CLAIM ENGINE
+                                  │
+                                  ▼
+                       VERIFICATION ENGINE
+                                  │
+             ┌────────────────────┼───────────────────┐
+             ▼                    ▼                   ▼
+          QUALITY            PERFORMANCE            SAFETY
+             │                    │                   │
+             ├── Reliability      ├── Latency         ├── Policy
+             └── Mission Result  └── Cost             └── Constraints
+                                  │
+                                  ▼
+
+
+                        CONSEQUENCE ENGINE
+                                  │
+                     BEFORE → ACTION → AFTER
+                                  │
+                                  ▼
+                               RESULT
+                                  │
+                                  ▼
+
+
+                          MISSION RESULT
+                                  │
+             ┌────────────────────┼───────────────────┐
+             ▼                    ▼                   ▼
+        WHAT CHANGED             PROOF              WHAT NEXT
+                                  │
+                                  ▼
+
+
+                     VERIFIED SYSTEM VERSION
+                                  │
+             ┌────────────────────┼────────────────────┐
+             ▼                    ▼                    ▼
+          DEPLOY                 EXPORT               CLONE
+             │                    │                    │
+             │                    ▼                    ▼
+             │             SYSTEM PACKAGE        NEW EXPERIMENT
+             │                                           │
+             │                                           ▼
+             │                                     RESEARCH BRANCH
+             │
+             ▼
+
+
+                         DHYRA SYSTEM PACKAGE
+                                  │
+              ┌───────────────────┼────────────────────┐
+              ▼                   ▼                    ▼
+            MODEL              RUNTIME              DEPLOYMENT
+              │                   │                    │
+              ├── Weights         ├── Configuration    ├── Manifests
+              ├── Adapters        ├── Serving Strategy ├── Dependencies
+              ├── Tokenizer       ├── Inference Config └── Hardware Profile
+              └── Version         ├── Context Strategy
+                                  └── Runtime Strategy
+                                  │
+                                  ▼
+
+
+                         EVALUATION / PROOF
+                                  │
+                                  ▼
+                         PROVENANCE / LINEAGE
+                                  │
+                                  ▼
+
+
+                       CUSTOMER ENVIRONMENT
+                                  │
+             ┌────────────────────┼────────────────────┐
+             ▼                    ▼                    ▼
+           CLOUD                ON-PREM             AIR-GAPPED
+                                                      / EDGE
+             │                    │                    │
+             └────────────────────┼────────────────────┘
+                                  ▼
+
+
+                       CUSTOMER DEPLOYMENT
+                                  │
+                                  ▼
+                               REALITY
+                                  │
+                                  ▼
+                            OBSERVATION
+                                  │
+                                  ▼
+                            VERIFICATION
+                                  │
+                                  ▼
+                             EXPERIENCE
+
+
+                         EXPERIENCE INTELLIGENCE
+                                  │
+                                  ▼
+                       MODEL EXPERIENCE RECORD
+                                  │
+            ┌─────────────────────┼──────────────────────┐
+            ▼                     ▼                      ▼
+         MISSION                REALITY                  MODEL
+            │                     │                      │
+            ├── Data              ├── State              ├── Version
+            ├── Training          ├── Environment        ├── Behavior
+            ├── Runtime           ├── Action              ├── Failure
+            ├── Experiment        ├── Consequence         └── Capability
+            ├── Decision          └── Outcome
+            ├── Action
+            ├── Observation
+            ├── Evidence
+            ├── Verification
+            └── Result
+                                  │
+                                  ▼
+
+
+                         EXPERIENCE ENGINE
+                                  │
+                                  ▼
+
+
+                           FAILURE MINING
+                                  │
+                ┌─────────────────┼────────────────┐
+                ▼                 ▼                ▼
+             FAILURES         REGRESSIONS       EDGE CASES
+                │                 │                │
+                ├── Drift          └── Anomalies   └── Rare events
+                └── Root cause
+                                  │
+                                  ▼
+
+
+                            LESSON ENGINE
+                                  │
+                ┌─────────────────┼────────────────┐
+                ▼                 ▼                ▼
+             PATTERN           SUCCESS           FAILURE
+                │                 │                │
+                ├── Causal Lesson ├── Reusable     ├── Preventive
+                ├── Trade-off     │   pattern      ├── Correction
+                └── Generalize    └── Best path    └── New test
+                                  │
+                                  ▼
+
+
+                           TEACHING FABRIC
+                                  │
+        ┌─────────────────────────┼────────────────────────┐
+        ▼                         ▼                        ▼
+   MODEL TEACHING           RUNTIME TEACHING          SYSTEM TEACHING
+        │                         │                        │
+        ├── Fine-tune             ├── Routing              ├── Configuration
+        ├── LoRA                  ├── Serving              ├── Deployment
+        ├── RL                    ├── Inference            ├── Compute
+        ├── Distill               ├── Strategy             ├── Placement
+        ├── Adapt                 ├── Verifier             ├── Hardware
+        ├── Retrain               ├── Context              ├── Data Path
+        ├── Reward                ├── Tool Policy           └── Environment
+        └── World Model           └── Caching
+                                  │
+                                  ▼
+
+
+                       INTELLIGENCE EVOLUTION
+                                  │
+                                  ▼
+                         NEW MODEL / VERSION
+                                  │
+                           research / training
+                             / adaptation
+                                  │
+                                  ▼
+                              EVALUATE
+                                  │
+                                  ▼
+                               SHADOW
+                                  │
+                        real / replayed workload
+                                  │
+                                  ▼
+                              BENCHMARK
+                                  │
+                                  ▼
+                               CANARY
+                                  │
+                                  ▼
+                              PROMOTE
+                                  │
+                                  ▼
+                     PRODUCTION INTELLIGENCE
+                                  │
+                                  ▼
+                         BETTER BEHAVIOR
+                                  │
+                                  ▼
+                     BETTER WORLD UNDERSTANDING
+                                  │
+                                  ▼
+                        BETTER REALITY MODEL
+                                  │
+                     ┌────────────┴─────────────┐
+                     ▼                          ▼
+               BETTER KNOWLEDGE             LESS UNCERTAINTY
+                     │                          │
+                     └────────────┬─────────────┘
+                                  ▼
+                         NEXT MISSION
+
+
+                     ╔══════════════════════════╗
+                     ║   CORE DHYRA PRINCIPLE   ║
+                     ╚══════════════════════════╝
+
+          FIND WHAT LIMITS INTELLIGENCE
+                         ↓
+                 IDENTIFY THE GAP
+                         ↓
+                  UNDERSTAND WHY
+                         ↓
+                DETERMINE WHAT CAN CHANGE
+                         ↓
+                 SEARCH THE SYSTEM
+                         ↓
+                   BUILD CANDIDATES
+                         ↓
+                  PREDICT OUTCOMES
+                         ↓
+                  RUN EXPERIMENTS
+                         ↓
+                    VERIFY RESULTS
+                         ↓
+                   DEPLOY SAFELY
+                         ↓
+                 OBSERVE REALITY
+                         ↓
+                ACQUIRE MISSING DATA
+                         ↓
+                  CREATE GROUND TRUTH
+                         ↓
+                 UPDATE WORLD KNOWLEDGE
+                         ↓
+                   TEACH INTELLIGENCE
+                         ↓
+                  IMPROVE THE SYSTEM
+                         ↓
+                   UNDERSTAND REALITY
+                         ↓
+                       EVOLVE
+                         │
+                         └──────────────────► NEXT MISSION
+
+
+              ╔══════════════════════════════════════╗
+              ║          REALITY LEARNING LOOP       ║
+              ╚══════════════════════════════════════╝
+
+                       REAL WORLD
+                           ↓
+                        OBSERVE
+                           ↓
+                    WHAT DO WE KNOW?
+                           ↓
+                    WHAT DON'T WE KNOW?
+                           ↓
+                     KNOWLEDGE GAP
+                           ↓
+                WHAT EVIDENCE IS NEEDED?
+                           ↓
+             ACTIVE DATA / REAL EXPERIMENT
+                           ↓
+                     GROUND TRUTH
+                           ↓
+                    VERIFY THE FACT
+                           ↓
+                  REALITY KNOWLEDGE
+                           ↓
+                    TEACH THE MODEL
+                           ↓
+                 BETTER WORLD MODEL
+                           ↓
+              BETTER PREDICTION / ACTION
+                           ↓
+                       REAL WORLD
+                           ↓
+                        OBSERVE
+                           │
+                           └──────────────────►
+
+
+              ╔══════════════════════════════════════╗
+              ║      FULL SYSTEM INTELLIGENCE LOOP  ║
+              ╚══════════════════════════════════════╝
+
+      MISSION
+        ↓
+      REALITY
+        ↓
+   UNKNOWN / GAP
+        ↓
+ KNOWLEDGE ACQUISITION
+        ↓
+    CAPABILITY
+        ↓
+     MODELS
+        ↓
+   DATA / TRAINING
+        ↓
+   MODEL COMPILER
+        ↓
+   SYSTEM SEARCH
+        ↓
+   OPTIMIZATION
+        ↓
+   EXPERIMENT
+        ↓
+   VERIFICATION
+        ↓
+    DECISION
+        ↓
+   DEPLOYMENT
+        ↓
+ REAL / DIGITAL / PHYSICAL WORLD
+        ↓
+   OBSERVATION
+        ↓
+     EVIDENCE
+        ↓
+    CONSEQUENCE
+        ↓
+    EXPERIENCE
+        ↓
+    GROUND TRUTH
+        ↓
+      LESSON
+        ↓
+     TEACHING
+        ↓
+ NEW INTELLIGENCE
+        ↓
+ BETTER REALITY MODEL
+        ↓
+      EVOLVE
+        │
+        └──────────────────────────────────────►
+                         NEXT MISSION
