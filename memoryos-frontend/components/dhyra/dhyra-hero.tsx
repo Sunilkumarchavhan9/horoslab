@@ -72,8 +72,17 @@ const HERO_MODELS = [
     xPos: "90%",
     xAxisLabels: ["$0", "$0.0025", "$0.005", "$0.0075"],
     yAxisLabels: ["180", "120", "60", "0"],
-    bgDots: [],
-    trendLine: null
+    bgDots: [
+      createDot("40%", "25%", 45, "$0.003", "65.2%"),
+      createDot("40%", "31.1%", 56, "$0.003", "62.4%"),
+      createDot("66.6%", "35%", 63, "$0.005", "58.1%"),
+      createDot("66.6%", "40%", 72, "$0.005", "55.1%"),
+      createDot("66.6%", "45%", 81, "$0.005", "51.4%"),
+      createDot("66.6%", "50%", 90, "$0.005", "48.2%"),
+      createDot("80%", "50%", 90, "$0.006", "51.2%"),
+      createDot("80%", "60%", 108, "$0.006", "45.1%")
+    ],
+    trendLine: { x1: "40%", y1: "25%", x2: "66.6%", y2: "50%" }
   },
   {
     id: "nemotron",
@@ -161,41 +170,44 @@ const HERO_MODELS = [
     trendLine: { x1: "65%", y1: "10%", x2: "80%", y2: "30%" }
   },
   {
-    id: "deepseek-v3",
-    name: "DeepSeek-V3",
+    id: "deepseek-v4-1-flash",
+    name: "DeepSeek V4.1 Flash",
     icon: <DeepSeekLogo size={24} />,
-    speed: 216,
-    cost: "$0.012",
-    cacheHit: "98.3%",
-    yPos: "15%",
-    xPos: "26%",
-    xAxisLabels: ["$0", "$0.015", "$0.03", "$0.045"],
-    yAxisLabels: ["250", "160", "80", "0"],
+    speed: 378,
+    cost: "$0.03",
+    cacheHit: "98.9%",
+    yPos: "12%",
+    xPos: "75%",
+    xAxisLabels: ["$0", "$0.01", "$0.02", "$0.03"],
+    yAxisLabels: ["300", "200", "100", "0"],
     bgDots: [
-      createDot("20%", "45%", 72, "$0.048", "65.2%"),
-      createDot("20%", "50%", 80, "$0.048", "61.0%"),
-      createDot("20%", "55%", 88, "$0.048", "58.4%"),
-      createDot("20%", "60%", 96, "$0.048", "55.1%"),
-      createDot("12%", "35%", 56, "$0.030", "71.9%"),
-      createDot("38%", "20%", 32, "$0.091", "45.0%"),
-      createDot("38%", "40%", 64, "$0.091", "41.5%"),
-      createDot("58%", "40%", 64, "$0.139", "33.2%"),
-      createDot("58%", "60%", 96, "$0.139", "30.1%"),
-      createDot("90%", "60%", 96, "$0.216", "22.5%")
+      createDot("20%", "45%", 72, "$0.005", "65.2%"),
+      createDot("20%", "50%", 80, "$0.005", "61.0%"),
+      createDot("20%", "55%", 88, "$0.005", "58.4%"),
+      createDot("20%", "60%", 96, "$0.005", "55.1%"),
+      createDot("12%", "35%", 56, "$0.003", "71.9%"),
+      createDot("38%", "20%", 32, "$0.008", "45.0%"),
+      createDot("38%", "40%", 64, "$0.008", "41.5%"),
+      createDot("58%", "40%", 64, "$0.012", "33.2%"),
+      createDot("58%", "60%", 96, "$0.012", "30.1%"),
+      createDot("75%", "75%", 180, "$0.03", "45.5%"),
+      createDot("75%", "55%", 110, "$0.03", "50.1%"),
+      createDot("75%", "40%", 64, "$0.03", "60.1%"),
+      createDot("75%", "25%", 32, "$0.03", "65.1%")
     ],
-    trendLine: { x1: "12%", y1: "35%", x2: "20%", y2: "55%" }
+    trendLine: { x1: "12%", y1: "35%", x2: "20%", y2: "60%" }
   },
   {
-    id: "llama-3-1-405b",
-    name: "Llama 3.1 405B",
+    id: "llama-3-1-8b",
+    name: "Llama 3.1 8B",
     icon: <MetaLogo size={24} />,
-    speed: 120,
-    cost: "$0.12",
-    cacheHit: "91.2%",
-    yPos: "25%",
-    xPos: "40%",
-    xAxisLabels: ["$0", "$0.10", "$0.20", "$0.30"],
-    yAxisLabels: ["160", "100", "50", "0"],
+    speed: 280,
+    cost: "$0.015",
+    cacheHit: "98.9%",
+    yPos: "12.5%",
+    xPos: "25%",
+    xAxisLabels: ["$0", "$0.015", "$0.03", "$0.045"],
+    yAxisLabels: ["240", "160", "80", "0"],
     bgDots: [
       createDot("50%", "5%", 16, "$0.030", "55.1%"),
       createDot("50%", "10%", 32, "$0.030", "58.2%"),
@@ -251,7 +263,7 @@ const HERO_MODELS = [
       createDot("58%", "60%", 96, "$0.139", "30.1%"),
       createDot("90%", "60%", 96, "$0.216", "22.5%")
     ],
-    trendLine: { x1: "12%", y1: "35%", x2: "20%", y2: "55%" }
+    trendLine: { x1: "12%", y1: "35%", x2: "20%", y2: "60%" }
   },
   {
     id: "nvidia-cosmos",
@@ -337,18 +349,11 @@ export function DhyraHero() {
       {/* Right Column: Interactive Scatter Plot */}
       <div className="w-full flex flex-col min-w-0">
         {/* Chart Area */}
-        <div className="relative w-full h-[320px] sm:h-[400px] border-l border-b border-[#333] bg-[#141414] mt-6 lg:mt-0 ml-4 lg:ml-8">
+        <div className="relative w-full h-[320px] sm:h-[400px] border-l border-b border-[#333] mt-6 lg:mt-0 ml-4 lg:ml-8">
 
           {/* Inner clipping container for chart visuals */}
           <div className="absolute inset-0 overflow-hidden z-0">
-            {/* Lighter Background Bottom Half */}
-            <div className="absolute bottom-0 left-0 w-full h-[50%] bg-[#1a1a1a] border-t border-[#222]"></div>
-
-            {/* Green Background Box (Highlight Area) */}
-            <div
-              className="absolute bottom-[50%] left-0 bg-[#232712] transition-all duration-500 ease-in-out"
-              style={{ width: model.xPos, top: 0 }}
-            />
+            {/* Backgrounds removed to match clean UI layout */}
 
             {/* Scatter Points (Background Dots & Lines) */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none transition-all duration-500 ease-in-out" preserveAspectRatio="none">
@@ -396,18 +401,6 @@ export function DhyraHero() {
               })}
             </svg>
 
-            {/* Premium Tech Element: Ambient Volumetric Glow behind active model */}
-            <div 
-              className="absolute pointer-events-none transition-all duration-700 ease-in-out mix-blend-screen"
-              style={{ 
-                top: model.yPos, 
-                left: model.xPos, 
-                width: '300px',
-                height: '300px',
-                transform: 'translate(-50%, -50%)',
-                background: 'radial-gradient(circle, rgba(117,191,0,0.15) 0%, rgba(117,191,0,0) 70%)'
-              }}
-            />
           </div>
 
           {/* Competitor Hover Tooltip */}
@@ -444,27 +437,33 @@ export function DhyraHero() {
           )}
 
           {/* Y Axis Label */}
-          <div className="absolute top-2 left-4 text-[11px] text-[#888] z-30 pointer-events-none">Higher speed (tok/s)</div>
+          <div className="absolute -top-6 left-0 text-[11px] text-[#888] z-30 pointer-events-none">Higher speed (tok/s)</div>
 
-          {/* Y Axis Grid Lines & Labels */}
-          <div className="absolute top-[25%] left-0 w-full border-t border-[#2a2a2a] z-10 pointer-events-none"></div>
-          <div className="absolute top-[50%] left-0 w-full border-t border-[#2a2a2a] z-10 pointer-events-none"></div>
-          <div className="absolute top-[75%] left-0 w-full border-t border-[#2a2a2a] z-10 pointer-events-none"></div>
+          {/* Y Axis Tick Marks & Labels */}
+          <div className="absolute top-[0%] left-[-4px] w-[4px] h-[1px] bg-[#444]" />
+          <div className="absolute top-[0%] right-full pr-3 text-[11px] text-[#888] font-mono -translate-y-1/2 text-right">{model.yAxisLabels[0]}</div>
 
-          <div className="absolute top-[25%] -left-8 text-[11px] text-[#888] font-mono -translate-y-1/2">{model.yAxisLabels[0]}</div>
-          <div className="absolute top-[50%] -left-8 text-[11px] text-[#888] font-mono -translate-y-1/2">{model.yAxisLabels[1]}</div>
-          <div className="absolute top-[75%] -left-8 text-[11px] text-[#888] font-mono -translate-y-1/2">{model.yAxisLabels[2]}</div>
-          <div className="absolute bottom-0 -left-4 text-[11px] text-[#888] font-mono translate-y-1/2">{model.yAxisLabels[3]}</div>
+          <div className="absolute top-[33.33%] left-[-4px] w-[4px] h-[1px] bg-[#444]" />
+          <div className="absolute top-[33.33%] right-full pr-3 text-[11px] text-[#888] font-mono -translate-y-1/2 text-right">{model.yAxisLabels[1]}</div>
 
-          {/* X Axis Grid Lines & Labels */}
-          <div className="absolute bottom-0 left-[25%] h-full border-l border-[#2a2a2a] z-10 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-[50%] h-full border-l border-[#2a2a2a] z-10 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-[75%] h-full border-l border-[#2a2a2a] z-10 pointer-events-none"></div>
+          <div className="absolute top-[66.66%] left-[-4px] w-[4px] h-[1px] bg-[#444]" />
+          <div className="absolute top-[66.66%] right-full pr-3 text-[11px] text-[#888] font-mono -translate-y-1/2 text-right">{model.yAxisLabels[2]}</div>
 
-          <div className="absolute -bottom-6 left-0 text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[0]}</div>
-          <div className="absolute -bottom-6 left-[25%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[1]}</div>
-          <div className="absolute -bottom-6 left-[50%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[2]}</div>
-          <div className="absolute -bottom-6 left-[75%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[3]}</div>
+          <div className="absolute top-[100%] left-[-4px] w-[4px] h-[1px] bg-[#444]" />
+          <div className="absolute top-[100%] right-full pr-3 text-[11px] text-[#888] font-mono -translate-y-1/2 text-right">{model.yAxisLabels[3]}</div>
+
+          {/* X Axis Tick Marks & Labels */}
+          <div className="absolute bottom-[-4px] left-[0%] w-[1px] h-[4px] bg-[#444]" />
+          <div className="absolute -bottom-6 left-[0%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[0]}</div>
+
+          <div className="absolute bottom-[-4px] left-[33.33%] w-[1px] h-[4px] bg-[#444]" />
+          <div className="absolute -bottom-6 left-[33.33%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[1]}</div>
+
+          <div className="absolute bottom-[-4px] left-[66.66%] w-[1px] h-[4px] bg-[#444]" />
+          <div className="absolute -bottom-6 left-[66.66%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[2]}</div>
+
+          <div className="absolute bottom-[-4px] left-[100%] w-[1px] h-[4px] bg-[#444]" />
+          <div className="absolute -bottom-6 left-[100%] text-[11px] text-[#888] font-mono -translate-x-1/2">{model.xAxisLabels[3]}</div>
 
           {/* Vertical & Horizontal Dotted Lines from the icon */}
           <div
@@ -475,10 +474,29 @@ export function DhyraHero() {
             <div className="w-2.5 h-2.5 rounded-full bg-[#75bf00] translate-y-1/2 translate-x-[-1px]"></div>
           </div>
 
+          {/* Optimization Quadrant Highlight - Exactly as requested */}
           <div
-            className="absolute border-t-2 border-dotted border-[#75bf00]/50 transition-all duration-500 ease-in-out z-10 pointer-events-none"
-            style={{ left: 0, width: model.xPos, top: model.yPos }}
+            className="absolute z-0 pointer-events-none transition-all duration-500 ease-in-out"
+            style={{
+              left: 0,
+              top: 0,
+              width: model.xPos,
+              height: model.yPos,
+              background: 'linear-gradient(135deg, rgba(117,191,0,0.2) 0%, rgba(117,191,0,0.02) 100%)'
+            }}
           />
+
+          {/* Horizontal Dotted Line */}
+          <div
+            className="absolute border-t-2 border-dotted border-[#75bf00] transition-all duration-500 ease-in-out z-10 flex flex-row items-center justify-start pointer-events-none"
+            style={{
+              left: 0,
+              width: model.xPos,
+              top: model.yPos
+            }}
+          >
+            <div className="w-2.5 h-2.5 rounded-full bg-[#75bf00] -translate-x-1/2 -translate-y-[1px]"></div>
+          </div>
 
           {/* Highlighted Point (Dynamic Icon) */}
           <div
@@ -495,22 +513,19 @@ export function DhyraHero() {
           >
             {/* Glowing Ring Container */}
             <div className={`relative flex items-center justify-center transition-all duration-300 ${hoveredMain ? 'w-[90px] h-[90px]' : 'w-[84px] h-[84px]'}`}>
-              {/* Outer faint glow */}
-              <div className="absolute inset-0 rounded-full bg-[#75bf00]/10 blur-md"></div>
-              {/* Middle transparent dark ring */}
-              <div className="absolute inset-1 rounded-full bg-black/40 border border-[#75bf00]/30 backdrop-blur-sm"></div>
+              {/* Removed the unwanted outer faint glow and middle transparent dark ring */}
               {/* Thick Green Segment Ring (Progress Ring based on Cache Hits) */}
               <svg className={`absolute inset-0 w-full h-full -rotate-90 transition-opacity ${hoveredMain ? 'opacity-100' : 'opacity-80'}`} viewBox="0 0 100 100" style={{ overflow: 'visible' }}>
                 <circle cx="50" cy="50" r="38" fill="none" stroke="#222" strokeWidth="3" />
-                <circle 
-                  cx="50" cy="50" r="38" 
-                  fill="none" 
-                  stroke="#75bf00" 
-                  strokeWidth="3" 
+                <circle
+                  cx="50" cy="50" r="38"
+                  fill="none"
+                  stroke="#75bf00"
+                  strokeWidth="3"
                   strokeDasharray="100 100"
                   strokeDashoffset={100 - parseFloat(model.cacheHit)}
                   pathLength="100"
-                  strokeLinecap="round" 
+                  strokeLinecap="round"
                 />
               </svg>
               {/* Inner solid dark circle for icon */}
@@ -520,33 +535,20 @@ export function DhyraHero() {
             </div>
 
             {/* The Text Label */}
-            <div className="absolute left-[70px] top-1/2 -translate-y-1/2 flex flex-col justify-center whitespace-nowrap drop-shadow-md pointer-events-none">
-              <span className="text-[#F0EFE2] font-bold text-[16px] drop-shadow-lg">{model.name}</span>
-              <span className="text-[#75bf00] text-[13px] font-medium tracking-tight drop-shadow-lg">{model.cacheHit} cache hits</span>
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 flex flex-col justify-center whitespace-nowrap drop-shadow-md pointer-events-none z-20 ${parseFloat(model.xPos) > 70 ? 'right-[54px] items-end' : 'left-[54px] items-start'}`}
+            >
+              <span className="text-[#F0EFE2] font-bold text-[16px] drop-shadow-lg leading-tight px-1 py-0.5 rounded bg-[#141414]/90">{model.name}</span>
+              <span className="text-[#75bf00] text-[13px] font-medium tracking-tight drop-shadow-lg leading-tight px-1 rounded bg-[#141414]/90">{model.cacheHit} cache hits</span>
             </div>
           </div>
-
-          {/* Main Model Hover Tooltip */}
-          {hoveredMain && (
-            <div
-              className="absolute z-50 bg-[#F0EFE2] text-[#111] p-3 rounded-[2px] shadow-xl text-[12px] leading-relaxed w-[260px] pointer-events-none"
-              style={{
-                left: `calc(${model.xPos} - 130px)`, // Center below icon
-                top: `calc(${model.yPos} + 50px)`,
-              }}
-            >
-              <div className="font-bold mb-1">Reality Intelligence Runtime</div>
-              <div className="mb-2">{model.speed} tok/s, {model.cost} per 1M cached input tokens</div>
-              <div className="text-[#333]">{model.cacheHit} Reality Fabric hit. Last 24 hours. Measured end to end on the verifiable physical routing path, verified Mission Result 2026-08-15.</div>
-            </div>
-          )}
 
         </div>
 
         {/* X Axis Label & Controls */}
         <div className="flex items-center justify-between mt-10">
           <div className="text-[12px] text-[#A0A0A0] flex items-center gap-1">
-            <span>&larr; Optimized Intelligence Cost</span>
+            <span>&larr; Lower cached input price</span>
             <span className="text-[#666]">(USD / 1M tokens)</span>
           </div>
           <div className="flex items-center gap-1 bg-[#222] p-1 rounded-[4px]">
@@ -576,19 +578,20 @@ export function DhyraHero() {
           <div className="flex flex-col transition-opacity duration-300">
             <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Fast output</div>
             <div className="text-[28px] font-bold text-[#F0EFE2] tracking-tight">{model.speed} <span className="text-[13px] font-normal text-[#888]">tok/s</span></div>
-            <div className="text-[11px] text-[#666] mt-1">End-to-end</div>
+            <div className="text-[11px] text-[#666] mt-1">Model only</div>
           </div>
           <div className="flex flex-col transition-opacity duration-300">
-            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Low cost</div>
+            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Cached cost</div>
             <div className="text-[28px] font-bold text-[#F0EFE2] tracking-tight">{model.cost} <span className="text-[13px] font-normal text-[#888]">/ 1M</span></div>
-            <div className="text-[11px] text-[#666] mt-1">Reality Fabric</div>
+            <div className="text-[11px] text-[#666] mt-1">Cached input</div>
           </div>
           <div className="flex flex-col transition-opacity duration-300">
-            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Fabric match rate</div>
+            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Cache hit rate</div>
             <div className="text-[28px] font-bold text-[#75bf00] tracking-tight flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full border-2 border-[#75bf00] shrink-0 inline-block mr-1"></span>
               {model.cacheHit}
             </div>
+            <div className="text-[11px] text-[#666] mt-1">Last 24 hours</div>
           </div>
         </div>
 
