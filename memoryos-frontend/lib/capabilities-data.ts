@@ -1,14 +1,16 @@
-import { 
-  QwenLogo, 
+import {
+  QwenLogo,
   DeepSeekLogo,
   GLMLogo,
-  NvidiaLogo, 
+  NvidiaLogo,
   OneXLogo,
   TeslaLogo,
   MetaLogo,
   MistralLogo,
-  PhysicalIntelligenceLogo
-} from "@/components/dhyra/primitives/brand-icons";
+  PhysicalIntelligenceLogo,
+  GoogleLogo,
+  HuggingFaceLogo
+} from "@/components/hemera/primitives/brand-icons";
 
 export const CAPABILITIES = [
   {
@@ -17,7 +19,7 @@ export const CAPABILITIES = [
     developer: "Z.ai",
     providerSlug: "zai-org",
     icon: GLMLogo,
-    tags: ["Trending", "Tool calling / JSON mode / Streaming / Image input"],
+    tags: ["Trending", "Reasoning · Tool Use · Multimodal · Long Context"],
     metrics: {
       input: "$0.10",
       cached: "$0.01",
@@ -28,7 +30,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.011 per 1M at that hit rate",
-    description: "GLM 5.3 Flash is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as zai-org/GLM-5.3-Flash at $0.10 per 1M sensory context tokens and $0.40 per 1M output action tokens. Its maximum context window is 1,048,576 tokens. The runtime provides Mission API-compatible intents and Anthropic-compatible system messages.",
+    description: "GLM 5.3 Flash is a reasoning capability available through Hemera. It can be composed with tools, perception, memory, and other capabilities to execute mission workflows. Hemera evaluates its behavior against mission requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -52,7 +54,7 @@ export const CAPABILITIES = [
     developer: "NVIDIA",
     providerSlug: "nvidia-ai",
     icon: NvidiaLogo,
-    tags: ["Tool calling / JSON mode / Streaming"],
+    tags: ["Reasoning · Tool Use · Code"],
     metrics: {
       input: "$0.05",
       cached: "$0.01",
@@ -63,7 +65,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.015 per 1M at that hit rate",
-    description: "Nemotron 3.5 Lightning is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as nvidia-ai/nemotron-3-5-lightning-30b. The runtime provides high-speed execution for complex automation tasks.",
+    description: "Nemotron 3.5 Lightning 30B is a reasoning and code generation capability available through Hemera. It can be composed into missions requiring rapid reasoning and automation. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -87,7 +89,7 @@ export const CAPABILITIES = [
     developer: "Alibaba Cloud",
     providerSlug: "alibaba",
     icon: QwenLogo,
-    tags: ["Tool calling / JSON mode / Streaming / Image input"],
+    tags: ["Reasoning · Tool Use · Multimodal"],
     metrics: {
       input: "$0.10",
       cached: "$0.01",
@@ -98,7 +100,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, end to end",
     effectiveCost: "Effective input $0.014 per 1M at that hit rate",
-    description: "Qwen3.8 27B is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as alibaba/qwen3-8-27b.",
+    description: "Qwen3.8 27B is a multimodal reasoning capability available through Hemera. It can be composed into missions requiring vision, language reasoning, and tool use. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -122,7 +124,7 @@ export const CAPABILITIES = [
     developer: "DeepSeek",
     providerSlug: "deepseek",
     icon: DeepSeekLogo,
-    tags: ["Tool calling / JSON mode / Streaming / Image input"],
+    tags: ["Reasoning · Multimodal · Tool Use"],
     metrics: {
       input: "$0.10",
       cached: "$0.01",
@@ -133,7 +135,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.013 per 1M at that hit rate",
-    description: "Ornith 1.5 35B is an outcome intelligence runtime listed in the Dhyra Capability Graph.",
+    description: "DeepSeek-V3 is a reasoning capability available through Hemera. It can be composed into missions requiring language reasoning, multimodal inputs, and tool use. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -157,7 +159,7 @@ export const CAPABILITIES = [
     developer: "Physical Intelligence",
     providerSlug: "pi-robotics",
     icon: PhysicalIntelligenceLogo,
-    tags: ["Physical Actuation / Spatial Reasoning / Proprioception"],
+    tags: ["Physical Control · Spatial Reasoning · Proprioception"],
     metrics: {
       input: "$0.15",
       cached: "$0.01",
@@ -168,7 +170,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "hz control loop, edge",
     effectiveCost: "Effective physical execution $0.02 per 1M at that hit rate",
-    description: "Physical Intelligence pi0 provides general-purpose physical edge automation and spatial reasoning capabilities. Dhyra integrates this runtime into the physical reality fabric.",
+    description: "Physical Intelligence pi0 is a physical actuation capability available through Hemera. It can be composed into physical edge automation and spatial reasoning missions. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Physical Action Intent API",
       anthropicCompatibility: "Not applicable (Physical Control)",
@@ -192,7 +194,7 @@ export const CAPABILITIES = [
     developer: "NVIDIA",
     providerSlug: "nvidia-ai",
     icon: NvidiaLogo,
-    tags: ["Video / 3D Simulation / World Model"],
+    tags: ["World Modeling · Simulation · Video Understanding"],
     metrics: {
       input: "$0.25",
       cached: "$0.02",
@@ -203,7 +205,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "fps simulation, remote",
     effectiveCost: "Effective inference $0.04 per 1M at that hit rate",
-    description: "Nvidia Cosmos 1.0 provides 3D environmental simulation and trajectory planning for complex physical environments.",
+    description: "Nvidia Cosmos 1.0 is a simulation and world modeling capability available through Hemera. It can be composed into missions requiring environmental simulation and physical understanding. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Simulation / Environment API",
       anthropicCompatibility: "Not applicable",
@@ -227,7 +229,7 @@ export const CAPABILITIES = [
     developer: "Meta",
     providerSlug: "meta",
     icon: MetaLogo,
-    tags: ["Tool calling / JSON mode / Streaming"],
+    tags: ["Reasoning · Tool Use · Planning"],
     metrics: {
       input: "$0.80",
       cached: "$0.08",
@@ -238,7 +240,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.12 per 1M at that hit rate",
-    description: "Llama 3.1 405B is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as meta/llama-3-1-405b.",
+    description: "Llama 3.1 405B is a reasoning capability available through Hemera. It can be composed into missions requiring language reasoning, tool use, and complex planning. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -262,7 +264,7 @@ export const CAPABILITIES = [
     developer: "Mistral AI",
     providerSlug: "mistral",
     icon: MistralLogo,
-    tags: ["Tool calling / JSON mode / Streaming"],
+    tags: ["Language · Reasoning · Tool Use"],
     metrics: {
       input: "$2.00",
       cached: "$0.20",
@@ -273,7 +275,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.53 per 1M at that hit rate",
-    description: "Mistral Large 2 is an outcome intelligence runtime listed in the Dhyra Capability Graph. Dhyra serves it as mistral/mistral-large-2.",
+    description: "Mistral Large 2 is a reasoning capability available through Hemera. It can be composed into missions requiring language reasoning and tool use. Hemera evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -283,6 +285,146 @@ export const CAPABILITIES = [
       contextWindow: "128,000 tokens",
       maxRequestSize: "2.0 MB per request",
       maxGeneratedOutput: "8,192 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8"
+      }
+    }
+  },
+  {
+    id: "llama-3-2-90b-vision-instruct",
+    name: "Llama 3.2 90B Vision",
+    developer: "Meta",
+    providerSlug: "meta-llama",
+    icon: MetaLogo,
+    tags: ["Vision · Perception · Multimodal"],
+    metrics: {
+      input: "$0.80",
+      cached: "$0.08",
+      output: "$2.00",
+      cacheHit: "94.2%",
+      speed: "115",
+      timeToFirst: "450",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.12 per 1M at that hit rate",
+    description: "Llama 3.2 90B Vision is a multimodal capability available through Hemera. It can be composed into missions requiring advanced vision and perception. Hemera evaluates the capability against workload requirements before deployment.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text, images",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "128,000 tokens",
+      maxRequestSize: "10.0 MB per request",
+      maxGeneratedOutput: "8,192 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8"
+      }
+    }
+  },
+  {
+    id: "timesfm-1-0-200m",
+    name: "TimesFM 1.0",
+    developer: "Google",
+    providerSlug: "google",
+    icon: GoogleLogo,
+    tags: ["Temporal Reasoning · Prediction"],
+    metrics: {
+      input: "$0.01",
+      cached: "$0.001",
+      output: "$0.05",
+      cacheHit: "75.0%",
+      speed: "3200",
+      timeToFirst: "15",
+    },
+    speedLabel: "series steps/s",
+    effectiveCost: "Effective input $0.008 per 1M at that hit rate",
+    description: "TimesFM 1.0 is a time-series foundation model capability available through Hemera. It can be composed into missions requiring temporal reasoning and forecasting. Hemera evaluates the capability against workload requirements before deployment.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Not applicable",
+      acceptedInput: "Time-series data, numerical arrays",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "10,000 steps",
+      maxRequestSize: "5.0 MB per request",
+      maxGeneratedOutput: "1,000 steps",
+      capabilities: {
+        toolCalling: "Not supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP32"
+      }
+    }
+  },
+  {
+    id: "qwen2-5-coder-32b",
+    name: "Qwen 2.5 Coder 32B",
+    developer: "Alibaba Cloud",
+    providerSlug: "alibaba",
+    icon: QwenLogo,
+    tags: ["Code · Verification · Reasoning"],
+    metrics: {
+      input: "$0.10",
+      cached: "$0.01",
+      output: "$0.40",
+      cacheHit: "98.1%",
+      speed: "185",
+      timeToFirst: "320",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.012 per 1M at that hit rate",
+    description: "Qwen 2.5 Coder 32B is a code generation and reasoning capability available through Hemera. It can be composed into missions requiring programming, verification, and logical deduction. Hemera evaluates the capability against workload requirements before deployment.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "131,072 tokens",
+      maxRequestSize: "4.0 MB per request",
+      maxGeneratedOutput: "8,192 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "BF16"
+      }
+    }
+  },
+  {
+    id: "c4ai-command-r-plus",
+    name: "Command R+",
+    developer: "Cohere",
+    providerSlug: "cohere",
+    icon: HuggingFaceLogo,
+    tags: ["Language · Tool Use · Planning"],
+    metrics: {
+      input: "$3.00",
+      cached: "$0.30",
+      output: "$15.00",
+      cacheHit: "85.2%",
+      speed: "45",
+      timeToFirst: "800",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.70 per 1M at that hit rate",
+    description: "Command R+ is a language and reasoning capability available through Hemera. It can be composed into missions requiring complex tool use and multi-step planning. Hemera evaluates the capability against workload requirements before deployment.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "128,000 tokens",
+      maxRequestSize: "2.0 MB per request",
+      maxGeneratedOutput: "4,000 tokens",
       capabilities: {
         toolCalling: "Supported",
         jsonMode: "Supported",

@@ -23,9 +23,11 @@ import {
   TrendingUp,
   Settings,
   ChevronDown,
-  Info
+  Info,
+  Sparkles,
+  Play
 } from "lucide-react";
-import { ConsolePage } from "@/components/developer-console/console-ui";
+import { ConsolePage } from "@/components/hemera/console-ui";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
 
 // --- Mock Data ---
@@ -527,13 +529,5 @@ export function ExperienceSection() {
 
       </div>
     </ConsolePage>
-  );
-}
-          </div >
-        )}
-
-
-      </div >
-    </ConsolePage >
   );
 }
