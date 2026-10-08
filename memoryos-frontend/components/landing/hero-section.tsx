@@ -31,7 +31,7 @@ export function HeroSection() {
 
       <HeroAnnouncementStrip />
 
-      <div className="mx-auto flex max-w-[1440px] justify-center px-6 pb-24 pt-10 sm:px-10 lg:px-16 lg:pb-32 lg:pt-14 xl:px-20 xl:pb-40">
+      <div className="mx-auto flex max-w-[1440px] justify-center px-6 pb-24 pt-10 sm:px-[120px] lg:px-16 lg:pb-32 lg:pt-14 xl:px-20 xl:pb-40">
         <div className="flex w-full max-w-[1200px] flex-col items-center text-center">
 
           {/* Eyebrow */}

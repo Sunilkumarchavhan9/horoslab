@@ -31,7 +31,7 @@ export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
       <div className="pointer-events-none absolute bottom-[116px] left-1/2 h-[74px] w-[52vw] min-w-[280px] max-w-[760px] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,rgba(10,43,167,0)_0%,rgba(10,43,167,0.22)_18%,rgba(49,75,244,0.96)_50%,rgba(9,40,145,0.26)_82%,rgba(9,40,145,0)_100%)] opacity-82 blur-[26px] beam-float sm:bottom-[130px] sm:h-[88px]" />
       <div className="pointer-events-none absolute bottom-[102px] left-1/2 h-[112px] w-[32vw] min-w-[220px] max-w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(49,75,244,0.94)_0%,rgba(9,40,145,0.58)_32%,rgba(8,9,59,0.26)_58%,rgba(8,9,12,0)_84%)] opacity-94 blur-[22px] beam-pulse sm:bottom-[112px]" />
 
-      <div className="relative flex min-h-svh flex-col px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-10">
+      <div className="relative flex min-h-svh flex-col px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-[120px]">
         <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
           <Link href="/" className="inline-flex">
             <PersonalStarMark />
@@ -50,7 +50,7 @@ export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
             Never forget anything, anywhere with HOROS
           </h1>
 
-          <div className="mt-8 w-full max-w-[760px] rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-5 shadow-[0_30px_80px_rgba(0,0,0,0.62)] backdrop-blur-xl sm:mt-10 sm:rounded-[5px] sm:px-7 sm:py-7 md:px-10 md:py-8">
+          <div className="mt-8 w-full max-w-[760px] rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-5 shadow-[0_30px_80px_rgba(0,0,0,0.62)] backdrop-blur-xl sm:mt-10 sm:rounded-[5px] sm:px-7 sm:py-7 md:px-[152px] md:py-8">
             {children}
           </div>
         </div>

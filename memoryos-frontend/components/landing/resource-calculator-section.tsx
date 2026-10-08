@@ -238,7 +238,7 @@ export function ResourceCalculatorSection() {
       
       {/* Static Header - Inside Constrained Container */}
       <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515]">
-        <div className="px-6 md:px-10 py-16 md:py-24">
+        <div className="px-6 md:px-[152px] py-16 md:py-24">
           <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-8">
             <div className="flex flex-col max-w-xl">
               <h2 className="text-4xl md:text-5xl font-semibold text-[#F0EFE2] tracking-tight leading-tight mb-6">
@@ -302,7 +302,7 @@ export function ResourceCalculatorSection() {
       <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515]">
         
         {/* Main Calculator Area */}
-        <div className="px-6 md:px-10 py-12 md:py-16">
+        <div className="px-6 md:px-[152px] py-12 md:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8">
             
             {/* Left Panel: Configure Workload */}

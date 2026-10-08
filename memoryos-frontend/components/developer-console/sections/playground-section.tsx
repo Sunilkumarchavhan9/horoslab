@@ -1303,7 +1303,7 @@ const answer = await model.generate({
               <MemoryStarLogo tone="white" />
             </span>
           </div>
-          <div className="flex items-center justify-between px-10">
+          <div className="flex items-center justify-between px-[120px]">
             <div className="flex items-center gap-3">
               <span className="text-sm">⌂</span>
               <span className="text-sm font-semibold uppercase tracking-wide">{workspace || "memoryostm"}</span>

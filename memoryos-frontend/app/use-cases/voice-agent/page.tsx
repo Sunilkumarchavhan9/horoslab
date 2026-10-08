@@ -1596,7 +1596,7 @@ export default function RagSearchPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3">
 
                   {/* Row 1 */}
-                  <div className="px-10 py-12 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-[120px] py-12 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                     <div className="text-[#75bf00]">
                       <Mic size={32} strokeWidth={1.5} />
                     </div>
@@ -1606,7 +1606,7 @@ export default function RagSearchPage() {
                     </p>
                   </div>
 
-                  <div className="px-10 py-12 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-[120px] py-12 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                     <div className="text-[#75bf00]">
                       <Cpu size={32} strokeWidth={1.5} />
                     </div>
@@ -1616,7 +1616,7 @@ export default function RagSearchPage() {
                     </p>
                   </div>
 
-                  <div className="px-10 py-12 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-[120px] py-12 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
                     <div className="text-[#75bf00]">
                       <Layers size={32} strokeWidth={1.5} />
                     </div>
@@ -1627,7 +1627,7 @@ export default function RagSearchPage() {
                   </div>
 
                   {/* Row 2 */}
-                  <div className="px-10 py-12 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-[120px] py-12 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                     <div className="text-[#75bf00]">
                       <Database size={32} strokeWidth={1.5} />
                     </div>
@@ -1637,7 +1637,7 @@ export default function RagSearchPage() {
                     </p>
                   </div>
 
-                  <div className="px-10 py-12 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-[120px] py-12 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                     <div className="text-[#75bf00]">
                       <Zap size={32} strokeWidth={1.5} />
                     </div>
@@ -1647,7 +1647,7 @@ export default function RagSearchPage() {
                     </p>
                   </div>
 
-                  <div className="px-10 py-12 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-[120px] py-12 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
                     <div className="text-[#75bf00]">
                       <Server size={32} strokeWidth={1.5} />
                     </div>

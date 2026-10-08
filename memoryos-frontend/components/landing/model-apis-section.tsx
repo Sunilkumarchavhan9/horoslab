@@ -72,21 +72,21 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
                 {/* --- ROW 2 --- */}
                 <div className="flex flex-col border-b border-dashed border-[#333]">
-                  <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-10 border-b border-dashed border-[#333]">
+                  <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-[120px] border-b border-dashed border-[#333]">
                     <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
                       <Radio size={20} className="text-[#8b5cf6]" />
                     </div>
                     <span className="text-[13px] font-medium text-[#e0e0e0]">Connect with any sensory hardware</span>
                   </div>
 
-                  <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-10 border-b border-dashed border-[#333]">
+                  <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-[120px] border-b border-dashed border-[#333]">
                     <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
                       <NvidiaLogo size={22} />
                     </div>
                     <span className="text-[13px] font-medium text-[#e0e0e0]">Size the GPU / XPU edge target</span>
                   </div>
 
-                  <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-10">
+                  <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-[120px]">
                     <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
                       <Server size={20} className="text-[#C8C7BA]" />
                     </div>
@@ -130,7 +130,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                 </div>
 
                 {/* --- ROW 3 --- */}
-                <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-10 border-b border-dashed border-[#333]">
+                <div className="flex items-center gap-4 p-6 lg:px-8 xl:px-[120px] border-b border-dashed border-[#333]">
                   <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" className="w-[24px] h-[24px] grayscale opacity-70" />
                   </div>
@@ -152,13 +152,13 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                 </div>
 
                 {/* --- ROW 4 --- */}
-                <div className="flex items-center p-6 lg:px-8 xl:px-10">
+                <div className="flex items-center p-6 lg:px-8 xl:px-[120px]">
                   <a href="#" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
                     Start building your stack
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </a>
                 </div>
-                <div className="flex items-center p-6 lg:px-8 xl:px-10">
+                <div className="flex items-center p-6 lg:px-8 xl:px-[120px]">
                   <a href="#" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
                     Browse 40+ supported APIs
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

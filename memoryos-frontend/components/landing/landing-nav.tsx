@@ -520,7 +520,7 @@ const RESOURCES_SECTIONS = [
 export function LandingNav() {
   return (
     <header className="relative z-50 bg-white border-b border-slate-100">
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-2 sm:px-10 lg:h-[60px] lg:px-16 lg:py-0 xl:px-20">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-2 sm:px-[120px] lg:h-[60px] lg:px-16 lg:py-0 xl:px-20">
         <div className="flex items-center shrink-0">
           <a href="/" className="flex items-center hover:opacity-90 transition-opacity">
             <HorosLogo variant="wordmark" size="3xl" className="text-black" />

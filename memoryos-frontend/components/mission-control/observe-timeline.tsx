@@ -97,7 +97,7 @@ export function ObserveTimeline() {
  </CommandBar>
 
  <div className="flex-1 flex flex-col h-full relative z-0">
- <div className="px-10 pt-10 shrink-0 mx-auto w-full">
+ <div className="px-[120px] pt-10 shrink-0 mx-auto w-full">
  <SectionHeader 
  title="Organization Timeline" 
  description="The live, horizontal Activity River showing exactly what is happening across the entire autonomous enterprise in real time."

@@ -21,7 +21,7 @@ export function ConsoleAuthShell({
   return (
     <main className="min-h-svh bg-black lg:grid lg:min-h-svh lg:grid-cols-[minmax(420px,0.9fr)_1.1fr] lg:overflow-hidden xl:grid-cols-[minmax(500px,0.92fr)_1.08fr]">
       <section className="flex min-h-svh bg-[#171717] text-[#F0EFE2] lg:h-svh lg:min-h-0 lg:overflow-y-auto">
-        <div className="mx-auto flex w-full max-w-[560px] flex-col justify-start px-5 py-6 sm:px-8 sm:py-8 lg:max-w-[520px] lg:px-10 lg:py-10 xl:py-12">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col justify-start px-5 py-6 sm:px-8 sm:py-8 lg:max-w-[520px] lg:px-[120px] lg:py-10 xl:py-12">
           <Link href="/" className="mt-5 w-fit lg:mt-3">
             <MemoryStarLogo tone="white" />
           </Link>
@@ -73,7 +73,7 @@ export function ConsoleAuthShell({
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02)_28%,rgba(0,0,0,0.1)_70%,transparent)]" />
         </div>
 
-        <div className="relative mt-auto border-t border-[#202020] bg-black/92 px-5 py-6 text-[#F0EFE2] sm:px-8 sm:py-8 lg:px-10 lg:py-10 xl:px-12 xl:py-14">
+        <div className="relative mt-auto border-t border-[#202020] bg-black/92 px-5 py-6 text-[#F0EFE2] sm:px-8 sm:py-8 lg:px-[120px] lg:py-10 xl:px-12 xl:py-14">
           <p className="text-center font-mono text-[11px] tracking-[0.16em] text-[#d5d5d5] sm:text-[12px] lg:text-[13px] lg:tracking-[0.18em] xl:text-[14px]">
             {footerLabel}
           </p>
