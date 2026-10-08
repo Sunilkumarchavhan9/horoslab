@@ -870,8 +870,8 @@ export default function RagSearchPage() {
 
             {/* Inner Vertical Lines matching the 14% columns */}
             <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
                
             </div>
 

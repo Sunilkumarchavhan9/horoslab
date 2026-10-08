@@ -1569,8 +1569,8 @@ export default function SimulationWorldModelsPage() {
           <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden border-t border-dashed border-[#333]">
             {/* Inner Vertical Lines matching the 14% columns */}
             <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
                
             </div>
 
@@ -1648,8 +1648,8 @@ export default function SimulationWorldModelsPage() {
 
             {/* Inner Vertical Lines extending through the footer */}
             <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
                
             </div>
 
@@ -1690,7 +1690,7 @@ export default function SimulationWorldModelsPage() {
             </div>
 
             {/* --- FOOTER CONTENT --- */}
-            <div className="w-[88%] md:w-[72%] mx-auto py-16 flex flex-col relative z-10">
+            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto py-16 flex flex-col relative z-10">
               {/* Top Footer Row */}
               <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
                 {/* Left Column */}
@@ -1773,7 +1773,7 @@ export default function SimulationWorldModelsPage() {
               {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
               <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
-              <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+              <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
                   <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><HorosLogo className="h-[40px] w-auto" /></span>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>

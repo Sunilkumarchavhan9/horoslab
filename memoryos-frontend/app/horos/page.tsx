@@ -17,8 +17,8 @@ const GridDivider = () => (
     <div className="absolute left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
     
     {/* Crosses at intersections */}
-    <div className="absolute left-[14%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="absolute left-[86%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute hidden md:block left-[14%] lg:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
     <div className="hidden md:block absolute left-[calc(18%_+_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
     <div className="hidden md:block absolute left-[calc(82%_-_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
     
@@ -66,8 +66,8 @@ export default function HorosPage() {
       <main className="pb-32 w-full relative z-10 flex flex-col">
         {/* Global Vertical Grid Lines */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
           <div className="hidden md:block absolute left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
           <div className="hidden md:block absolute left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         </div>
