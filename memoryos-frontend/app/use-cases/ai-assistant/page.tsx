@@ -1037,8 +1037,8 @@ outlines==0.0.46`;
                   </p>
                   <div className="flex items-center gap-4 mt-6">
                     <button className="group bg-[#75bf00] text-black px-5 py-2.5 text-[14px] font-normal hover:bg-[#85cf00] transition-colors rounded-none flex items-center gap-1.5">
-                      Deploy this pipeline{" "}
-                      <ChevronRight
+                      Deploy your assistant{" "}
+                      <ArrowRight
                         size={16}
                         strokeWidth={2}
                         className="transition-transform group-hover:translate-x-1"
@@ -1046,7 +1046,7 @@ outlines==0.0.46`;
                     </button>
                     <button className="group bg-transparent text-[#94a3b8] border border-[#333] px-5 py-2.5 text-[14px] font-normal hover:bg-[#1a1a1a] transition-colors rounded-none flex items-center gap-1.5">
                       Read the stack{" "}
-                      <ChevronRight
+                      <ArrowRight
                         size={16}
                         strokeWidth={2}
                         className="transition-transform group-hover:translate-x-1"
