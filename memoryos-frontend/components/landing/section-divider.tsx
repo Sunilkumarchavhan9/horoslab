@@ -23,8 +23,8 @@ export function SectionDivider({ position = "top", hideInnerCrosses = false, cla
       <div className={`absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
       {!hideInnerCrosses && (
         <>
-          <div className={`hidden md:block absolute left-[calc(18%_+_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
-          <div className={`hidden md:block absolute left-[calc(82%_-_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
+          <div className={`hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
+          <div className={`hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
         </>
       )}
 
