@@ -133,8 +133,8 @@ export function AIAssistantGrid() {
           </div>
 
           {/* Bottom Right */}
-          <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '85.3%', top: '68.5%', transform: 'translate(-50%, -50%)' }}>
-            <MetaLogo size={28} />
+          <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '88%', top: '60%', transform: 'translate(-50%, -50%)' }}>
+              <MetaLogo size={28} />
           </div>
 
           {/* Bottom Row */}
@@ -142,11 +142,11 @@ export function AIAssistantGrid() {
             <DeepSeekLogo size={24} />
           </div>
           
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '78.3%', top: '77%', transform: 'translate(-50%, -50%)' }}>
-            <VLLMLogo size={24} />
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '68%', top: '82%', transform: 'translate(-50%, -50%)' }}>
+              <VLLMLogo size={24} />
           </div>
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap text-center leading-tight" style={{ left: '85.3%', top: '77%', transform: 'translate(-50%, -50%)' }}>
-            Knowledge<br/>work
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap text-center leading-tight" style={{ left: '86%', top: '82%', transform: 'translate(-50%, -50%)' }}>
+              Knowledge<br/>work
           </div>
           
         </div>
