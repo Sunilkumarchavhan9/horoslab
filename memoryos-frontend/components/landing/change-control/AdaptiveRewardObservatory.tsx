@@ -285,7 +285,7 @@ export function AdaptiveRewardObservatory() {
     <div ref={containerRef} className="w-full h-full font-sans flex flex-col lg:flex-row relative overflow-hidden group select-none">
 
       {/* LEFT: Observatory Graph */}
-      <div className="flex-[7] relative px-6 md:px-[152px] py-8 md:py-10">
+      <div className="flex-[7] relative px-6 lg:px-8 py-8 md:py-10">
         <div className="flex justify-between items-end mb-6">
           <div className="flex items-center gap-4">
             <h3 className="text-[14px] font-bold text-gray-900 tracking-wide uppercase">Adaptive Reward Observatory</h3>

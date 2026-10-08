@@ -50,7 +50,7 @@ export function PersonalAuthShell({ children }: PersonalAuthShellProps) {
             Never forget anything, anywhere with HOROS
           </h1>
 
-          <div className="mt-8 w-full max-w-[760px] rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-5 shadow-[0_30px_80px_rgba(0,0,0,0.62)] backdrop-blur-xl sm:mt-10 sm:rounded-[5px] sm:px-7 sm:py-7 md:px-[152px] md:py-8">
+          <div className="mt-8 w-full max-w-[760px] rounded-[5px] bg-[linear-gradient(180deg,#181c22_0%,#08090c_100%)] px-4 py-5 shadow-[0_30px_80px_rgba(0,0,0,0.62)] backdrop-blur-xl sm:mt-10 sm:rounded-[5px] sm:px-7 sm:py-7 px-6 lg:px-8 md:py-8">
             {children}
           </div>
         </div>

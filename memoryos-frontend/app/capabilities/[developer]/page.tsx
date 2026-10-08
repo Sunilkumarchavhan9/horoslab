@@ -51,7 +51,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Header Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto px-6 md:px-[152px] py-12 lg:py-16 flex flex-col items-start border-x border-dashed border-[#333]">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto px-6 lg:px-8 py-12 lg:py-16 flex flex-col items-start border-x border-dashed border-[#333]">
               {/* Breadcrumbs */}
               <div className="flex items-center gap-2 text-[12px] text-[#777] mb-12">
                 <Link href="/capabilities" className="hover:text-[#F0EFE2] transition-colors">Capability Graph</Link>
@@ -105,7 +105,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Pricing Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto px-6 md:px-[152px] py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="flex justify-between items-end mb-6">
                 <h2 className="text-[22px] font-medium text-[#F0EFE2]">Pricing</h2>
                 <span className="text-[12px] text-[#777]">USD, pay per token</span>
@@ -140,7 +140,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Measured Performance Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto px-6 md:px-[152px] py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="flex justify-between items-baseline mb-6">
                 <h2 className="text-[22px] font-medium text-[#F0EFE2]">Measured performance</h2>
               </div>
@@ -170,7 +170,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Specs & Capacity Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto px-6 md:px-[152px] py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="border border-dashed border-[#333] flex flex-col">
                 <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[#333]">
 
@@ -299,14 +299,14 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Code Examples Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto px-6 md:px-[152px] py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <CodeExamples capabilityId={capability.id} />
             </div>
           </div>
 
           {/* Trust & Provenance */}
           <div className="w-full">
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto px-6 md:px-[152px] py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <h2 className="text-[20px] font-semibold text-[#F0EFE2] mb-2">Trust and provenance</h2>
               <p className="text-[12px] text-[#777] mb-8">Verify the company and operating credentials behind this capability.</p>
 

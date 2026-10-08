@@ -86,9 +86,9 @@ export default function CapabilitiesPage() {
         </div>
         
         <main className="flex-grow flex flex-col items-center w-full relative z-10">
-          <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto flex flex-col border-x border-dashed border-[#333]">
+          <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto flex flex-col border-x border-dashed border-[#333]">
             {/* Header Section */}
-            <div className="w-full px-6 md:px-[152px]  py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
+            <div className="w-full px-6 lg:px-8  py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
               <h1 className="text-4xl md:text-[56px] leading-[1.1] font-semibold tracking-tight text-[#F0EFE2] mb-6">
                 Capabilities <span className="bg-[#75bf00] text-[#151515] px-2 py-0.5 ml-1">Graph</span>
               </h1>
@@ -98,7 +98,7 @@ export default function CapabilitiesPage() {
             </div>
 
             {/* Controls Section */}
-            <div className="w-full px-6 md:px-[152px]  py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-[#333] bg-[#151515]">
+            <div className="w-full px-6 lg:px-8  py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-[#333] bg-[#151515]">
               <div className="relative flex-grow max-w-xl">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#75bf00]" />
                 <input 
@@ -164,7 +164,7 @@ export default function CapabilitiesPage() {
             </div>
             
             {/* Sub-filters */}
-            <div className="w-full px-6 md:px-[152px]  py-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[#999] border-b border-dashed border-[#333] bg-[#151515]">
+            <div className="w-full px-6 lg:px-8  py-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[#999] border-b border-dashed border-[#333] bg-[#151515]">
               <button 
                 onClick={() => setActiveFilter("all")}
                 className={`transition-colors whitespace-nowrap ${activeFilter === "all" ? "text-[#F0EFE2]" : "hover:text-[#F0EFE2]"}`}
@@ -190,7 +190,7 @@ export default function CapabilitiesPage() {
             {/* List Section */}
             <div className="w-full flex flex-col pb-32">
               {filteredCapabilities.map((capability, idx) => (
-                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 md:px-[152px]  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 lg:px-8  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
                   
                   {/* Left: Identity */}
                   <div className="flex items-start gap-4 flex-1 min-w-[200px] lg:min-w-[240px]">

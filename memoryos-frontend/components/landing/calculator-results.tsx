@@ -134,7 +134,7 @@ export function CalculatorResults({
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100vw] border-t border-dashed border-[#333]"></div>
 
         {/* Title Area */}
-        <div className="px-6 md:px-[152px] mb-10 relative">
+        <div className="px-6 lg:px-8 mb-10 relative">
           <h2 className="text-4xl md:text-[44px] font-semibold text-[#F0EFE2] tracking-tight leading-tight mb-5">
             {modelName} on {gpuBase} {gpuMem} <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-[2px] inline-block leading-none">GB</span>
           </h2>
@@ -155,7 +155,7 @@ export function CalculatorResults({
           </div>
         </div>
 
-        <div className="px-6 md:px-[152px] py-10 flex flex-col gap-10">
+        <div className="px-6 lg:px-8 py-10 flex flex-col gap-10">
 
           {/* 1. Estimated Memory Fit Box */}
           <div className="border border-dashed border-[#333] rounded-[4px] overflow-hidden flex flex-col bg-[#151515]">
@@ -302,7 +302,7 @@ export function CalculatorResults({
 
           {/* 3. Decode Bandwidth Ceiling Box */}
           <div className="flex flex-col w-full border border-dashed border-[#333] rounded-[4px] overflow-hidden bg-[#151515]">
-            <div className="px-6 md:px-[152px] py-8 flex gap-4">
+            <div className="px-6 lg:px-8 py-8 flex gap-4">
               <div className="mt-1 flex items-start text-[#ffb000]">
                 <Gauge size={20} />
               </div>
@@ -316,7 +316,7 @@ export function CalculatorResults({
               </div>
             </div>
             
-            <div className="px-6 md:px-[152px] py-8 border-t border-dashed border-[#333] flex flex-col gap-4">
+            <div className="px-6 lg:px-8 py-8 border-t border-dashed border-[#333] flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-3xl font-medium text-[#F0EFE2]">{decodeCeiling.toLocaleString()} output tok/s</span>
                 <span className="border border-[#ffb000]/30 text-[#ffb000] text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded-[2px] uppercase">
@@ -334,12 +334,12 @@ export function CalculatorResults({
 
           {/* 4. Provider price spread */}
           <div className="flex flex-col w-full border border-dashed border-[#333] rounded-[4px] overflow-hidden bg-[#151515]">
-            <div className="px-6 md:px-[152px] py-8 flex flex-col gap-2">
+            <div className="px-6 lg:px-8 py-8 flex flex-col gap-2">
               <h3 className="text-[22px] font-medium text-[#F0EFE2]">Provider price spread, {gpu}</h3>
               <p className="text-[13px] text-[#888]">Dated GPU-hour rental prices for this hardware. They are not monthly serving totals because throughput evidence is missing.</p>
             </div>
 
-            <div className="px-6 md:px-[152px] py-10 border-t border-dashed border-[#333] flex flex-col gap-5 w-full">
+            <div className="px-6 lg:px-8 py-10 border-t border-dashed border-[#333] flex flex-col gap-5 w-full">
               {providers.map((provider, i) => {
                 const isCheapest = i === 0;
                 return (
@@ -359,7 +359,7 @@ export function CalculatorResults({
               })}
             </div>
 
-            <div className="px-6 md:px-[152px] py-8 border-t border-dashed border-[#333] flex flex-col gap-4">
+            <div className="px-6 lg:px-8 py-8 border-t border-dashed border-[#333] flex flex-col gap-4">
               <span className="text-[12px] font-bold text-[#F0EFE2]">Source:</span>
               <a href="#" className="text-[12px] text-[#666] hover:text-[#ccc] underline decoration-[#333] underline-offset-4">DigitalOcean, GPU Droplets, on demand, 1 month ago, captured 2026-08-08</a>
               <a href="#" className="text-[12px] text-[#666] hover:text-[#ccc] underline decoration-[#333] underline-offset-4">Hyperstack, on demand, 1 month ago, captured 2026-08-08</a>
@@ -370,7 +370,7 @@ export function CalculatorResults({
               <a href="#" className="text-[12px] text-[#666] hover:text-[#ccc] underline decoration-[#333] underline-offset-4">Verda, on demand, 1 month ago, captured 2026-08-08</a>
             </div>
 
-            <div className="px-6 md:px-[152px] py-6 border-t border-dashed border-[#333]">
+            <div className="px-6 lg:px-8 py-6 border-t border-dashed border-[#333]">
               <div
                 onClick={() => setIsChartInfoOpen(!isChartInfoOpen)}
                 className="flex items-center gap-2 cursor-pointer hover:text-[#F0EFE2] text-[#888] transition-colors w-fit"

@@ -1680,7 +1680,7 @@ export default function DocumentAIPage() {
             </div>
 
             {/* --- FOOTER CONTENT --- */}
-            <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto py-16 flex flex-col relative z-10">
+            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
               {/* Top Footer Row */}
               <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
                 {/* Left Column */}
@@ -1763,7 +1763,7 @@ export default function DocumentAIPage() {
               {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
               <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
 
-              <div className="w-[88%] md:w-[72%] lg:w-[64%] lg:w-[64%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+              <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
                   <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><HorosLogo className="h-[40px] w-auto" /></span>
                   <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
