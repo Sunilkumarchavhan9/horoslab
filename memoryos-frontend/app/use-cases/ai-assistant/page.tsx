@@ -1072,10 +1072,10 @@ outlines==0.0.46`;
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-6xl font-medium tracking-tight mb-4">
+                <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
                   What you actually own
                 </h2>
-                <p className="text-[#999999] text-xl max-w-xl mx-auto">
+                <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed max-w-2xl mx-auto">
                   The intelligence, its experience, and the system that runs it. Horos keeps the model, context, tools, decisions, evidence, and versions traceable as one evolving assistant.
                 </p>
               </div>
@@ -1104,39 +1104,39 @@ outlines==0.0.46`;
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
                   <div className="p-8 lg:p-12 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">
+                    <div className="text-[#75bf00] font-mono text-[11px] font-bold">
                       0 1
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
+                    <h3 className="text-2xl font-medium text-[#F0EFE2] leading-tight">
                       Your intelligence version.
                     </h3>
-                    <p className="text-[#C8C7BA] text-xl leading-relaxed">
+                    <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
                       The exact model, context strategy, tools, runtime, configuration, and deployment behind the assistant. Every change becomes a version you can evaluate, compare, and promote.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-8 lg:p-12 bg-[#151515] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">
+                    <div className="text-[#75bf00] font-mono text-[11px] font-bold">
                       0 2
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
+                    <h3 className="text-2xl font-medium text-[#F0EFE2] leading-tight">
                       Your assistant&apos;s experience.
                     </h3>
-                    <p className="text-[#C8C7BA] text-xl leading-relaxed">
+                    <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
                       Conversations, tool trajectories, failures, outcomes, observations, and feedback become structured experience instead of disappearing into application logs.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-8 lg:p-12 flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">
+                    <div className="text-[#75bf00] font-mono text-[11px] font-bold">
                       0 3
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
+                    <h3 className="text-2xl font-medium text-[#F0EFE2] leading-tight">
                       Your improvement loop.
                     </h3>
-                    <p className="text-[#C8C7BA] text-xl leading-relaxed">
+                    <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
                       Evaluate what the assistant actually did, verify the result, and turn proven experience into new evaluation data, teaching signals, policies, or system versions.
                     </p>
                   </div>
@@ -1224,7 +1224,7 @@ outlines==0.0.46`;
                   >
                     <div className="flex items-center px-8 py-8 md:border-r border-dashed border-[#333] min-h-[140px]">
                       <div className="flex items-center gap-3">
-                        <span className="text-[#75bf00] font-mono text-[16px] font-bold">
+                        <span className="text-[#75bf00] font-mono text-[11px] font-bold">
                           {row.num}
                         </span>
                         <span className="text-[24px] font-medium text-[#F0EFE2]">
