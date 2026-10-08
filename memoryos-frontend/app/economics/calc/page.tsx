@@ -29,8 +29,8 @@ export default async function CalculatorResultPage({
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
 
         {/* Inner Lines (Desktop Only) */}
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute right-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       <div className="relative z-10 flex flex-col w-full min-h-screen">
