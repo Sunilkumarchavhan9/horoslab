@@ -1078,11 +1078,10 @@ outlines==0.0.46`;
             <div className="min-w-0">
               <div className="text-center mb-16">
                 <h2 className="text-6xl font-medium tracking-tight mb-4">
-                  Own your reasoning engine.
+                  What you actually own
                 </h2>
                 <p className="text-[#999999] text-xl max-w-xl mx-auto">
-                  No black boxes. Full access to the optimization knobs, the
-                  codebase, and the model choice. None of it locked away.
+                  The intelligence, its experience, and the system that runs it. Horos keeps the model, context, tools, decisions, evidence, and versions traceable as one evolving assistant.
                 </p>
               </div>
             </div>
@@ -1114,14 +1113,12 @@ outlines==0.0.46`;
                       0 1
                     </div>
                     <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      Pick the model your
+                      Your intelligence
                       <br />
-                      product needs.
+                      version.
                     </h3>
                     <p className="text-[#C8C7BA] text-xl leading-relaxed">
-                      Llama, Mistral, Qwen, Phi, Gemma, or your own fine-tune.
-                      The AI Assistant retunes its reasoning core around your
-                      choice.
+                      The exact model, context strategy, tools, runtime, configuration, and deployment behind the assistant. Every change becomes a version you can evaluate, compare, and promote.
                     </p>
                   </div>
 
@@ -1131,16 +1128,12 @@ outlines==0.0.46`;
                       0 2
                     </div>
                     <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      Tool use and
+                      Your assistant&apos;s
                       <br />
-                      streaming on your
-                      <br />
-                      stack.
+                      experience.
                     </h3>
                     <p className="text-[#C8C7BA] text-xl leading-relaxed">
-                      OpenAI-compatible chat completions with native tool
-                      calling and execution streaming. No proprietary client
-                      required.
+                      Conversations, tool trajectories, failures, outcomes, observations, and feedback become structured experience instead of disappearing into application logs.
                     </p>
                   </div>
 
@@ -1150,13 +1143,12 @@ outlines==0.0.46`;
                       0 3
                     </div>
                     <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      Own the runtime
+                      Your improvement
                       <br />
-                      and the data.
+                      loop.
                     </h3>
                     <p className="text-[#C8C7BA] text-xl leading-relaxed">
-                      Export the Dockerfile and serve script. Run the ecosystem
-                      on your own managed infrastructure or private GPUs.
+                      Evaluate what the assistant actually did, verify the result, and turn proven experience into new evaluation data, teaching signals, policies, or system versions.
                     </p>
                   </div>
                 </div>
