@@ -74,100 +74,148 @@ import {
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
+    label: "Intelligence system",
     runInfra: {
-      title: "Pick model, optimize, deploy",
-      desc: "Start quickly and keep the production path open.",
+      title: "Version the complete assistant",
+      desc: "Define the model, context, capabilities, runtime, workload, environment, policies, and deployment as one system version.",
     },
     closed: {
-      title: "Call provider endpoint",
-      desc: "Fast first demo, but the runtime stays rented.",
+      title: "Provider-defined intelligence",
+      desc: "The provider controls the underlying model, runtime, serving path, and infrastructure.",
     },
     diy: {
-      title: "Build serving stack first",
-      desc: "Infrastructure work comes before product learning.",
+      title: "Assemble the system yourself",
+      desc: "Your team connects the model, context, tools, runtime, infrastructure, and application logic.",
     },
   },
   {
     num: "0 2",
-    label: "Model control",
+    label: "Model",
     runInfra: {
-      title: "Bring the model ID",
-      desc: "Keep model choice and serving decisions visible.",
+      title: "Discover, profile, and evolve models",
+      desc: "Bring open models from Hugging Face and supported sources. Pin revisions, validate dependencies and runtime compatibility, build capability profiles, and evaluate models as candidates for the assistant.",
     },
     closed: {
-      title: "Provider catalog",
-      desc: "You use what the provider exposes.",
+      title: "Provider model selection",
+      desc: "Choose from the models and versions exposed through the API.",
     },
     diy: {
-      title: "Your model",
-      desc: "Full control if your team maintains the runtime.",
+      title: "Maintain the model lifecycle",
+      desc: "Source, import, validate, serve, evaluate, update, and maintain models yourself.",
     },
   },
   {
     num: "0 3",
-    label: "Tuning",
+    label: "Context & memory",
     runInfra: {
-      title: "Measured latency and GPU cost",
-      desc: "Compare serving choices before deployment.",
+      title: "Make context part of the intelligence system",
+      desc: "Represent conversation history, documents, retrieval, memory, tool results, context length, and context strategy as measurable system components.",
     },
     closed: {
-      title: "Opaque",
-      desc: "Latency and batching stay behind the API.",
+      title: "Provider-managed context",
+      desc: "Context handling, caching, retrieval behavior, and model-side context decisions remain inside the provider's execution path.",
     },
     diy: {
-      title: "Manual profiling",
-      desc: "Your team owns tuning and regressions.",
+      title: "Build the context layer",
+      desc: "You own memory, retrieval, context construction, storage, caching, and context evaluation.",
     },
   },
   {
     num: "0 4",
-    label: "Export",
+    label: "Capabilities",
     runInfra: {
-      title: "Managed now, export when needed",
-      desc: "Use the endpoint first and take the deploy package later.",
+      title: "Compose capabilities around the model",
+      desc: "Connect search, APIs, databases, files, repositories, code execution, and other tools while keeping their permissions, execution paths, and outcomes observable.",
     },
     closed: {
-      title: "Locked endpoint",
-      desc: "You keep calling the provider.",
+      title: "Provider-defined capabilities",
+      desc: "Use the tools and integrations exposed by the provider's agent environment.",
     },
     diy: {
-      title: "Already owned",
-      desc: "Export exists because you built everything yourself.",
+      title: "Build every capability",
+      desc: "Implement tool interfaces, execution services, credentials, permissions, retries, isolation, and observability yourself.",
     },
   },
   {
     num: "0 5",
-    label: "Operations",
+    label: "Workload intelligence",
     runInfra: {
-      title: "Low until you choose to own it",
-      desc: "Operate managed, then export with the same measured plan.",
+      title: "Learn the assistant's actual workload",
+      desc: "Capture conversation patterns, context length, concurrency, tool trajectories, traffic distribution, batching behavior, failures, latency, utilization, and cost.",
     },
     closed: {
-      title: "Low, with lock-in",
-      desc: "Less infra work, less production control.",
+      title: "Opaque workload execution",
+      desc: "The provider decides how requests are routed, batched, scheduled, and executed internally.",
     },
     diy: {
-      title: "High",
-      desc: "You own infra, failures, upgrades, and serving changes.",
+      title: "Build workload intelligence",
+      desc: "Collect traces, construct replay datasets, model workload distributions, benchmark them, and maintain them yourself.",
     },
   },
   {
     num: "0 6",
-    label: "Security",
+    label: "System search & optimization",
     runInfra: {
-      title: "SOC 2 Type II",
-      desc: "Audited controls across access, logging, and incident response.",
+      title: "Search across the intelligence stack",
+      desc: "Experiment across model variants, data, context, runtime, kernels, hardware, workload, and environment. Measure quality, latency, throughput, memory, and cost to find better system configurations.",
     },
     closed: {
-      title: "Varies by vendor",
-      desc: "Compliance depends on the third party sitting in the request path.",
+      title: "Provider optimization",
+      desc: "Model serving, runtime, kernels, hardware placement, batching, and lower-level optimization remain outside your control.",
     },
     diy: {
-      title: "You build it",
-      desc: "Your team owns the audit trail, logging, and access controls.",
+      title: "Manual system search",
+      desc: "Your team designs experiments, profiles configurations, tunes infrastructure, and maintains performance regressions.",
     },
   },
+  {
+    num: "0 7",
+    label: "Verification & evidence",
+    runInfra: {
+      title: "Prove the assistant before promotion",
+      desc: "Evaluate candidates against defined quality, tool behavior, latency, cost, reliability, and outcome requirements. Keep claims tied to immutable evidence and promote only verified system versions.",
+    },
+    closed: {
+      title: "Provider measurements",
+      desc: "You primarily rely on provider benchmarks, model evaluations, and service-level guarantees.",
+    },
+    diy: {
+      title: "Build the proof system",
+      desc: "Your team owns evaluation datasets, experiments, benchmarks, evidence collection, regression checks, and promotion gates.",
+    },
+  },
+  {
+    num: "0 8",
+    label: "Experience & teaching",
+    runInfra: {
+      title: "Turn operation into new intelligence",
+      desc: "Capture observations, tool trajectories, failures, outcomes, feedback, and lessons. Convert verified experience into evaluation data, teaching signals, model adaptation, policy updates, skill updates, or new system versions.",
+    },
+    closed: {
+      title: "Provider-owned improvement",
+      desc: "The provider controls how its underlying models learn and improve. Your assistant remains dependent on their model evolution.",
+    },
+    diy: {
+      title: "Build the evolution loop",
+      desc: "Collect experience, construct datasets, train or adapt models, evaluate changes, and promote new versions yourself.",
+    },
+  },
+  {
+    num: "0 9",
+    label: "Authority & security",
+    runInfra: {
+      title: "Enforce authority outside the model",
+      desc: "Give every agent and workload an identity. Evaluate mission, intent, target, permissions, credentials, spend, environment, autonomy level, and current world state before consequential execution. Record the decision and resulting evidence.",
+    },
+    closed: {
+      title: "Provider security boundary",
+      desc: "Identity, authorization, credentials, execution isolation, and infrastructure controls are primarily defined by the provider.",
+    },
+    diy: {
+      title: "Own every security boundary",
+      desc: "Your team implements identity, credentials, authorization, isolation, network controls, approval flows, policies, monitoring, and audit evidence.",
+    },
+  }
 ];
 
 const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@dhyra/runtime";
@@ -1146,6 +1194,21 @@ outlines==0.0.46`;
             </div>
           </div>
         </div>
+        
+        <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mt-32">
+          <div />
+          <div className="min-w-0">
+            <div className="text-center">
+              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
+                Three ways to ship AI assistants
+              </h2>
+              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed max-w-2xl mx-auto">
+                Most teams either consume a hosted intelligence API or build the assistant stack themselves. Horos lets you compose, optimize, verify, and evolve the intelligence system around the assistant.
+              </p>
+            </div>
+          </div>
+          <div />
+        </div>
         {/* Table with End-to-End Horizontal Lines */}
         <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px] mt-32 mb-32">
           {/* Double Horizontal Border Top */}
@@ -1183,34 +1246,34 @@ outlines==0.0.46`;
                     <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-md">
                       <HorosLogo size={28} />
                     </div>
-                    <span className="text-[28px] font-medium text-[#F0EFE2]">
-                      Dhyra
+                    <span className="text-2xl font-medium text-[#F0EFE2]">
+                      Horos
                     </span>
                   </div>
-                  <p className="text-[#C8C7BA] text-[20px]">
-                    OpenAI-compatible endpoints with bare-metal model control.
+                  <p className="text-[#C8C7BA] text-[15px] leading-relaxed mt-2">
+                    Build, verify, and evolve the assistant as an intelligence system.
                   </p>
                 </div>
                 <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
                   <div className="flex items-center gap-3 mb-2">
                     <Key size={28} className="text-[#C8C7BA]" />
-                    <span className="text-[28px] font-medium text-[#F0EFE2]">
-                      Closed model APIs
-                    </span>
+                    <span className="text-2xl font-medium text-[#F0EFE2]">
+                        Closed model APIs
+                      </span>
                   </div>
-                  <p className="text-[#C8C7BA] text-[20px]">
-                    Per-token, hosted.
+                  <p className="text-[#C8C7BA] text-[15px] leading-relaxed mt-2">
+                    Consume intelligence through a provider-controlled system.
                   </p>
                 </div>
                 <div className="flex flex-col justify-center px-8 py-6 border-b border-dashed border-[#333]">
                   <div className="flex items-center gap-3 mb-2">
                     <Cpu size={28} className="text-[#C8C7BA]" />
-                    <span className="text-[28px] font-medium text-[#F0EFE2]">
-                      DIY self-hosting
-                    </span>
+                    <span className="text-2xl font-medium text-[#F0EFE2]">
+                        DIY self-hosting
+                      </span>
                   </div>
-                  <p className="text-[#C8C7BA] text-[20px]">
-                    Full control, heavy operations.
+                  <p className="text-[#C8C7BA] text-[15px] leading-relaxed mt-2">
+                    Build the intelligence engineering loop yourself.
                   </p>
                 </div>
               </div>
@@ -1227,35 +1290,35 @@ outlines==0.0.46`;
                         <span className="text-[#75bf00] font-mono text-[11px] font-bold">
                           {row.num}
                         </span>
-                        <span className="text-[24px] font-medium text-[#F0EFE2]">
+                        <span className="text-xl font-medium text-[#F0EFE2]">
                           {row.label}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                      <h4 className="text-[24px] font-medium text-[#75bf00] mb-2">
+                      <h4 className="text-xl font-medium text-[#75bf00] mb-2">
                         {row.runInfra.title}
                       </h4>
-                      <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
                         {row.runInfra.desc}
                       </p>
                     </div>
 
                     <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333]">
-                      <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">
+                      <h4 className="text-xl font-medium text-[#F0EFE2] mb-2">
                         {row.closed.title}
                       </h4>
-                      <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
                         {row.closed.desc}
                       </p>
                     </div>
 
                     <div className="flex flex-col justify-center px-8 py-8">
-                      <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">
+                      <h4 className="text-xl font-medium text-[#F0EFE2] mb-2">
                         {row.diy.title}
                       </h4>
-                      <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
                         {row.diy.desc}
                       </p>
                     </div>
