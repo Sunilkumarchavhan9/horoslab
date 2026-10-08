@@ -1006,16 +1006,11 @@ outlines==0.0.46`;
                     </div>
                   </div>
                   <h1 className="text-5xl lg:text-[54px] font-medium tracking-tight leading-[1.15] mt-[-1rem]">
-                    Personal AI
-                    <br />
-                    assistants on the
-                    <br />
-                    models{" "}
-                    <span className="bg-[#75bf00] text-black px-2 py-0 inline-block">
-                      you own
-                    </span>
-                    .
-                  </h1>
+                      Personal AI assistants on the models{" "}
+                      <span className="bg-[#75bf00] text-black px-2 py-0 inline-block">
+                        you own
+                      </span>.
+                    </h1>
                   <p className="text-[#C8C7BA] text-[15px] tracking-wide max-w-md mt-4 leading-relaxed">
                     <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] text-[13px] whitespace-nowrap align-middle mr-0.5 translate-y-[-1px]">
                       <MetaLogo size={13} /> Llama
