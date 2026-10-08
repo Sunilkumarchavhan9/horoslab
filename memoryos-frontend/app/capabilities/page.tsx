@@ -190,7 +190,7 @@ export default function CapabilitiesPage() {
             {/* List Section */}
             <div className="w-full flex flex-col pb-32">
               {filteredCapabilities.map((capability, idx) => (
-                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 lg:px-8  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row lg:flex-wrap items-start lg:items-center justify-between gap-y-6 py-8 px-6 lg:px-8  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
                   
                   {/* Left: Identity */}
                   <div className="flex items-start gap-4 flex-1 min-w-[200px] lg:min-w-[240px]">
@@ -218,28 +218,28 @@ export default function CapabilitiesPage() {
                   </div>
 
                   {/* Right: Metrics */}
-                  <div className="flex items-start lg:items-center justify-between w-full lg:w-auto mt-6 lg:mt-0 gap-4 lg:gap-6 shrink-0">
+                  <div className="flex flex-wrap items-start lg:items-center justify-start lg:justify-end w-full lg:w-auto mt-6 lg:mt-0 gap-4 lg:gap-6 shrink">
                     
                     {/* Input Tokens */}
-                    <div className="flex flex-col items-start lg:items-end w-20">
+                    <div className="flex flex-col items-start lg:items-end w-1/3 lg:w-auto min-w-[70px] shrink">
                       <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{capability.metrics.input.replace('$', '')}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M input<br/>tokens</div>
                     </div>
 
                     {/* Cached Input */}
-                    <div className="flex flex-col items-start lg:items-end w-20">
+                    <div className="flex flex-col items-start lg:items-end w-1/3 lg:w-auto min-w-[70px] shrink">
                       <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{capability.metrics.cached.replace('$', '')}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M cached<br/>input tokens</div>
                     </div>
 
                     {/* Output Tokens */}
-                    <div className="flex flex-col items-start lg:items-end w-20">
+                    <div className="flex flex-col items-start lg:items-end w-1/3 lg:w-auto min-w-[70px] shrink">
                       <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{capability.metrics.output.replace('$', '')}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M output<br/>tokens</div>
                     </div>
 
                     {/* Cache Hit */}
-                    <div className="flex flex-col items-start lg:items-end w-20 relative">
+                    <div className="flex flex-col items-start lg:items-end w-1/3 lg:w-auto min-w-[70px] shrink relative">
                       <div className="text-[#F0EFE2] font-semibold text-[20px]">{capability.metrics.cacheHit.replace('%', '')}<span className="text-[12px] text-[#777] font-normal ml-0.5">%</span></div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">cache hit, last<br/>24 hours</div>
                       
@@ -250,7 +250,7 @@ export default function CapabilitiesPage() {
                     </div>
 
                     {/* Speed */}
-                    <div className="flex flex-col items-start lg:items-end w-24 relative">
+                    <div className="flex flex-col items-start lg:items-end w-1/3 lg:w-auto min-w-[90px] shrink relative">
                       <div className="text-[#F0EFE2] font-semibold text-[20px]">{capability.metrics.speed}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1 whitespace-normal max-w-[100px]">{capability.speedLabel}</div>
                     </div>

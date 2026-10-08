@@ -138,7 +138,7 @@ export default function CapabilitiesPage() {
             {/* List Section */}
             <div className="w-full flex flex-col pb-32">
               {filteredCapabilities.map((capability, idx) => (
-                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 lg:px-8 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row lg:flex-wrap items-start lg:items-center justify-between gap-y-6 py-8 px-6 lg:px-8 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
                   
                   {/* Left: Identity */}
                   <div className="flex items-start gap-4 flex-1 min-w-[200px] lg:min-w-[240px]">

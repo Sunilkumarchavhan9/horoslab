@@ -510,7 +510,7 @@ export function HorosPricingEfficiency() {
           {filteredModels.map((model, i) => {
             const capabilityData = CAPABILITIES.find(c => c.id === model.id);
             return (
-              <Link href={`/capabilities/${model.id}`} key={model.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-4 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+              <Link href={`/capabilities/${model.id}`} key={model.id} className="group flex flex-col lg:flex-row lg:flex-wrap items-start lg:items-center justify-between gap-y-6 py-8 px-4 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
 
                 {/* Left: Identity */}
                 <div className="flex items-start gap-4 flex-1 min-w-[320px]">
