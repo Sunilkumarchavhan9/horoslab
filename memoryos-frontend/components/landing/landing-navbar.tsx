@@ -114,7 +114,7 @@ export function LandingNavbar({
       </div>
 
       <div className="w-full flex justify-center h-14 relative z-10 pointer-events-none">
-        <div className="flex items-center justify-between w-[96%] sm:w-[72%] lg:w-[calc(64%_-_240px)] bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 lg:px-8">
+        <div className="flex items-center justify-between w-[96%] sm:w-[72%] lg:w-[64%] lg:w-[calc(64%_-_240px)] bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 lg:px-8">
           {/* Left: Official Vector Brand Logo */}
           <div className="flex items-center shrink-0 h-14 pr-2">
             <Link href="/" className="flex items-center group shrink-0 whitespace-nowrap">

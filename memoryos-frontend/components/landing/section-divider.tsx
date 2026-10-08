@@ -19,8 +19,8 @@ export function SectionDivider({ position = "top", hideInnerCrosses = false, cla
       <div className={`absolute left-0 right-0 ${positionClass} ${borderClass} border-dashed border-[#333]`} />
 
       {/* Crosses at intersections */}
-      <div className={`absolute left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
-      <div className={`absolute left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
+      <div className={`absolute hidden md:block left-[14%] lg:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
+      <div className={`absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
       {!hideInnerCrosses && (
         <>
           <div className={`hidden md:block absolute left-[calc(18%_+_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] ${position === "top" ? "-translate-y-[52%]" : "translate-y-[50%]"} ${positionClass}`}>+</div>
