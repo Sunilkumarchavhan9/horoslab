@@ -1108,14 +1108,12 @@ outlines==0.0.46`;
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                  <div className="p-8 lg:p-12 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">
                       0 1
                     </div>
                     <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      Your intelligence
-                      <br />
-                      version.
+                      Your intelligence version.
                     </h3>
                     <p className="text-[#C8C7BA] text-xl leading-relaxed">
                       The exact model, context strategy, tools, runtime, configuration, and deployment behind the assistant. Every change becomes a version you can evaluate, compare, and promote.
@@ -1123,14 +1121,12 @@ outlines==0.0.46`;
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] bg-[#151515] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                  <div className="p-8 lg:p-12 bg-[#151515] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">
                       0 2
                     </div>
                     <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      Your assistant&apos;s
-                      <br />
-                      experience.
+                      Your assistant&apos;s experience.
                     </h3>
                     <p className="text-[#C8C7BA] text-xl leading-relaxed">
                       Conversations, tool trajectories, failures, outcomes, observations, and feedback become structured experience instead of disappearing into application logs.
@@ -1138,14 +1134,12 @@ outlines==0.0.46`;
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
+                  <div className="p-8 lg:p-12 flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">
                       0 3
                     </div>
                     <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      Your improvement
-                      <br />
-                      loop.
+                      Your improvement loop.
                     </h3>
                     <p className="text-[#C8C7BA] text-xl leading-relaxed">
                       Evaluate what the assistant actually did, verify the result, and turn proven experience into new evaluation data, teaching signals, policies, or system versions.
