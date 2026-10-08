@@ -193,7 +193,7 @@ export default function CapabilitiesPage() {
                 <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 md:px-[152px]  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
                   
                   {/* Left: Identity */}
-                  <div className="flex items-start gap-4 flex-1 min-w-[320px]">
+                  <div className="flex items-start gap-4 flex-1 min-w-[200px] lg:min-w-[240px]">
                     <div className="mt-1 w-10 h-10 flex items-center justify-center shrink-0">
                       <capability.icon size={28} className="text-[#F0EFE2]" />
                     </div>
@@ -218,7 +218,7 @@ export default function CapabilitiesPage() {
                   </div>
 
                   {/* Right: Metrics */}
-                  <div className="flex items-start lg:items-center justify-between w-full lg:w-auto mt-6 lg:mt-0 gap-6 lg:gap-10 shrink-0">
+                  <div className="flex items-start lg:items-center justify-between w-full lg:w-auto mt-6 lg:mt-0 gap-4 lg:gap-6 shrink-0">
                     
                     {/* Input Tokens */}
                     <div className="flex flex-col items-start lg:items-end w-20">
@@ -227,30 +227,30 @@ export default function CapabilitiesPage() {
                     </div>
 
                     {/* Cached Input */}
-                    <div className="flex flex-col items-start lg:items-end w-24">
+                    <div className="flex flex-col items-start lg:items-end w-20">
                       <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{capability.metrics.cached.replace('$', '')}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M cached<br/>input tokens</div>
                     </div>
 
                     {/* Output Tokens */}
-                    <div className="flex flex-col items-start lg:items-end w-24">
+                    <div className="flex flex-col items-start lg:items-end w-20">
                       <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{capability.metrics.output.replace('$', '')}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">per 1M output<br/>tokens</div>
                     </div>
 
                     {/* Cache Hit */}
-                    <div className="flex flex-col items-start lg:items-end w-24 relative">
+                    <div className="flex flex-col items-start lg:items-end w-20 relative">
                       <div className="text-[#F0EFE2] font-semibold text-[20px]">{capability.metrics.cacheHit.replace('%', '')}<span className="text-[12px] text-[#777] font-normal ml-0.5">%</span></div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">cache hit, last<br/>24 hours</div>
                       
                       {/* Effective cost note absolutely positioned underneath across Cache Hit and Speed */}
-                      <div className="absolute top-[60px] lg:top-14 right-0 lg:-right-32 text-[10px] text-[#666] whitespace-nowrap">
+                      <div className="absolute top-[60px] lg:top-14 right-0 lg:right-0 text-[10px] text-[#666] whitespace-nowrap">
                         {capability.effectiveCost}
                       </div>
                     </div>
 
                     {/* Speed */}
-                    <div className="flex flex-col items-start lg:items-end w-32 relative">
+                    <div className="flex flex-col items-start lg:items-end w-24 relative">
                       <div className="text-[#F0EFE2] font-semibold text-[20px]">{capability.metrics.speed}</div>
                       <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1 whitespace-normal max-w-[100px]">{capability.speedLabel}</div>
                     </div>
