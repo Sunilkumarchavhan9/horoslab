@@ -1,4 +1,6 @@
 "use client";
+import { SectionDivider } from "@/components/landing/section-divider";
+import { GlobalFooter } from "@/components/landing/global-footer";
 
 import React, { useState, useEffect } from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
@@ -6,8 +8,8 @@ import { LiveLatencyPipeline } from "@/components/landing/live-latency-pipeline"
 import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
-import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
-import { DhyraLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, DhyraWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/dhyra/primitives/brand-icons";
+import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -281,10 +283,10 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-    classes += " border-b";
-  } else {
-    classes += " border-b md:border-b-0";
-  }
+      classes += " border-b";
+    } else {
+      classes += " border-b md:border-b-0";
+    }
 
   return classes;
 };
@@ -452,20 +454,24 @@ export default function VerifiableLegalAgentsPage() {
         .chat-scroll:hover::-webkit-scrollbar-thumb { background-color: #666666; }
       ` }} />
 
-      {/* GLOBAL VERTICAL DASHED LINES */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="w-full h-full grid grid-cols-[14%_72%_14%]">
-          <div className="relative border-r border-dashed border-[#333]">
-            <div className="absolute top-0 bottom-0 left-1/2 border-l border-dashed border-[#333]" />
-          </div>
-          <div />
-          <div className="relative border-l border-dashed border-[#333]">
-            <div className="absolute top-0 bottom-0 left-1/2 border-l border-dashed border-[#333]" />
+            {/* GLOBAL VERTICAL DASHED LINES */}
+        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+            {/* Left margin (14%) with 7% line bisecting it */}
+            <div className="relative border-r border-dashed border-[#333]">
+                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+              </div>
+            {/* Center content (72%) */}
+            <div />
+            {/* Right margin (14%) with 93% line bisecting it */}
+            <div className="relative border-l border-dashed border-[#333]">
+                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
+              </div>
           </div>
         </div>
-      </div>
 
-      <div className="relative z-[100]">
+        <div className="relative z-[100]">
         <LandingNavbar />
       </div>
 
@@ -510,10 +516,10 @@ export default function VerifiableLegalAgentsPage() {
 
         {/* Hero Section Container */}
         <div className="w-full relative mt-20 mb-20 min-h-[600px] flex items-center">
-          <div className="absolute bottom-0 left-0 w-full h-px border-t border-dashed border-[#333] z-0" />
+          <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-0" />
 
           <div className="absolute inset-0 pointer-events-none z-20">
-            <div className="w-full h-full grid grid-cols-[14%_72%_14%]">
+            <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="relative">
                 <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
                 <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
@@ -527,10 +533,10 @@ export default function VerifiableLegalAgentsPage() {
           </div>
 
           {/* Hero Content */}
-          <div className="w-full grid grid-cols-[14%_72%_14%] py-24 md:py-32 relative z-10">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] py-24 md:py-32 relative z-10">
             <div />
             <div className="min-w-0">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
                 <div className="flex flex-col gap-6 max-w-lg">
                   <h1 className="text-5xl lg:text-[64px] font-medium tracking-tight leading-[1.1] mt-[-1rem]">
@@ -565,7 +571,7 @@ export default function VerifiableLegalAgentsPage() {
 
         {/* Features Section */}
         <div className="w-full relative z-10 mt-16">
-          <div className="w-full grid grid-cols-[14%_72%_14%]">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
@@ -579,11 +585,11 @@ export default function VerifiableLegalAgentsPage() {
           </div>
 
           <div className="w-full relative z-10">
-            <div className="absolute top-0 left-[14%] right-[14%] h-px border-t border-dashed border-[#333] z-20" />
-            <div className="absolute bottom-0 left-[14%] right-[14%] h-px border-t border-dashed border-[#333] z-20" />
+            
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
             <div className="absolute inset-0 pointer-events-none z-20">
-              <div className="w-full h-full grid grid-cols-[14%_72%_14%] relative">
+              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
                 <div className="relative h-full">
                   <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
                   <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
@@ -606,9 +612,9 @@ export default function VerifiableLegalAgentsPage() {
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-[14%_72%_14%]">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
-              <div className="min-w-0 mx-[10px] border-l border-r border-dashed border-[#333]">
+              <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
@@ -648,6 +654,7 @@ export default function VerifiableLegalAgentsPage() {
 
         {/* Comparison Table Section */}
         <div className="w-full relative z-10 mt-32 mb-32">
+          <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-16 px-4">
             <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
               Three ways to build verifiable legal AI
@@ -658,11 +665,11 @@ export default function VerifiableLegalAgentsPage() {
           </div>
 
           <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-            <div className="absolute top-[-10px] left-[14%] right-[14%] h-[20px] border-t border-b border-dashed border-[#333] pointer-events-none" />
-            <div className="absolute bottom-[-10px] left-[14%] right-[14%] h-[20px] border-t border-b border-dashed border-[#333] pointer-events-none" />
+            
+            
 
             <div className="absolute inset-0 pointer-events-none z-20">
-              <div className="w-full h-full grid grid-cols-[14%_72%_14%] relative">
+              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
                 <div className="relative h-full">
                   <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
                   <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
@@ -685,7 +692,7 @@ export default function VerifiableLegalAgentsPage() {
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-[14%_72%_14%] relative z-30">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
               <div />
               <div className="min-w-0 bg-[#151515]">
                 <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
@@ -698,7 +705,7 @@ export default function VerifiableLegalAgentsPage() {
                     </div>
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                        <DhyraLogo size={28} />
+                        <HorosLogo size={28} />
                       </div>
                       <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
                     </div>
@@ -755,7 +762,9 @@ export default function VerifiableLegalAgentsPage() {
 
         {/* Sandbox Showcase Section */}
         <div className="w-full relative z-10 mt-32">
-          <div className="w-full grid grid-cols-[14%_72%_14%] pt-16 mb-16">
+          {/* Top Divider for Sandbox Section */}
+          <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-16 mb-16">
             <div />
             <div className="min-w-0">
               <div className="text-center">
@@ -770,7 +779,7 @@ export default function VerifiableLegalAgentsPage() {
             <div />
           </div>
 
-          <div className="absolute top-0 left-0 right-0 h-px border-t border-dashed border-[#333] z-20" />
+          <SectionDivider position="top" className="absolute top-0 left-0 right-0 z-20" />
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
@@ -1000,7 +1009,7 @@ export default function VerifiableLegalAgentsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col gap-4 overflow-y-auto pointer-events-auto thin-hover-scrollbar">
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
                     <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">LEGAL ENGINES</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
@@ -1063,35 +1072,35 @@ export default function VerifiableLegalAgentsPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-y-auto pointer-events-auto thin-hover-scrollbar">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
                       onClick={() => selectFileManually("verify_contract.py")}
-                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "verify_contract.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "verify_contract.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       verify_contract.py
                     </button>
                     <button
                       onClick={() => selectFileManually("eval.py")}
-                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       eval.py
                     </button>
                     <button
                       onClick={() => selectFileManually("run_legal_audit.sh")}
-                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_legal_audit.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_legal_audit.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       run_legal_audit.sh
                     </button>
                     <button
                       onClick={() => selectFileManually("pipeline.json")}
-                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       pipeline.json
                     </button>
                     <button
                       onClick={() => selectFileManually("Dockerfile")}
-                      className={`text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       Dockerfile
                     </button>
@@ -1127,11 +1136,11 @@ export default function VerifiableLegalAgentsPage() {
 
           {/* Features Grid Row */}
           <div className="w-full relative z-10">
-            <div className="absolute bottom-0 left-[14%] right-[14%] h-px border-t border-dashed border-[#333] z-20" />
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
-            <div className="w-full grid grid-cols-[14%_72%_14%] relative z-10">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
-              <div className="absolute top-0 left-[14%] right-[14%] h-px border-t border-dashed border-[#333] z-20" />
+              
 
               <div className="min-w-0">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
@@ -1175,8 +1184,8 @@ export default function VerifiableLegalAgentsPage() {
 
           {/* Hugging Face Catalog Section */}
           <div className="w-full relative z-10 pt-24 pb-16">
-            <div className="absolute top-0 left-0 w-full h-px border-t border-dashed border-[#333]" />
-            <div className="w-full grid grid-cols-[14%_72%_14%]">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
@@ -1204,7 +1213,7 @@ export default function VerifiableLegalAgentsPage() {
                 </div>
 
                 {/* Models Grid */}
-                <div className="w-full border-t border-dashed border-[#333]">
+              <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
@@ -1251,7 +1260,7 @@ export default function VerifiableLegalAgentsPage() {
 
           {/* Tuning Section */}
           <div className="w-full relative z-10 mt-32">
-            <div className="w-full grid grid-cols-[14%_72%_14%]">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
@@ -1334,9 +1343,9 @@ export default function VerifiableLegalAgentsPage() {
           </div>
 
           {/* Try this pipeline Section */}
-          <div className="w-full relative z-10 py-24">
-            <div className="absolute top-0 left-0 w-full h-px border-t border-dashed border-[#333]" />
-            <div className="w-full grid grid-cols-[14%_72%_14%]">
+            <div className="w-full relative z-10 py-24">
+              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
                 <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
@@ -1381,7 +1390,7 @@ export default function VerifiableLegalAgentsPage() {
               </div>
               <div className="border-l border-dashed border-[#333]" />
             </div>
-            <div className="absolute bottom-0 left-0 w-full h-px border-t border-dashed border-[#333]" />
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full" />
           </div>
 
           {/* FAQ Section */}
@@ -1412,7 +1421,7 @@ export default function VerifiableLegalAgentsPage() {
 
             <div className="flex items-start gap-4 max-w-4xl w-full text-left">
               <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <DhyraLogo size={20} />
+                <HorosLogo size={20} />
               </div>
               <div>
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
@@ -1428,13 +1437,14 @@ export default function VerifiableLegalAgentsPage() {
           {/* Bottom CTA Section */}
           <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden border-t border-dashed border-[#333]">
             <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+              <div className="hidden md:block absolute left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+               
             </div>
 
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#222_1px,transparent_1px),linear-gradient(to_bottom,#222_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-40 z-0 bg-[position:14%_top]" />
 
-            <div className="w-full grid grid-cols-[14%_72%_14%] absolute inset-0 pointer-events-none z-0">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] absolute inset-0 pointer-events-none z-0">
               <div />
               <div className="relative">
                 <div className="hidden md:flex absolute top-[48px] left-[96px] w-[48px] h-[48px] bg-[#1a1a1a] border border-[#333] items-center justify-center z-10"><DeepSeekLogo size={20} /></div>
@@ -1454,7 +1464,7 @@ export default function VerifiableLegalAgentsPage() {
 
             <div className="relative z-20 flex flex-col items-center text-center max-w-4xl px-4 mt-8 pointer-events-auto">
               <div className="mb-12">
-                <DhyraLogo size={40} />
+                <HorosLogo size={40} />
               </div>
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
@@ -1497,147 +1507,10 @@ export default function VerifiableLegalAgentsPage() {
             </div>
           </div>
 
-          {/* FOOTER SECTION WRAPPER */}
-          <div className="w-full relative bg-[#151515] z-10 flex flex-col items-center">
-            <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-            </div>
-
-            <div className="w-full relative flex items-center justify-center my-8 z-10 overflow-hidden" style={{ height: "38px" }}>
-              <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="paint0_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#75BF00" />
-                    <stop offset="0.480769" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint1_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0.110577" stopColor="#333333" />
-                    <stop offset="0.586538" stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint2_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0.423077" stopColor="#333333" />
-                    <stop offset="0.942308" stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint3_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                </defs>
-                <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="url(#paint0_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="8.5" x2="100%" y2="8.5" stroke="url(#paint1_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="16.5" x2="100%" y2="16.5" stroke="#333333" strokeDasharray="3 3" />
-                <line x1="0" y1="24.5" x2="100%" y2="24.5" stroke="url(#paint2_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="32.5" x2="100%" y2="32.5" stroke="url(#paint3_linear_55_3)" strokeDasharray="3 3" />
-              </svg>
-              <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-                <DhyraLogo size={25} />
-              </div>
-            </div>
-
-            <div className="w-[88%] md:w-[72%] mx-auto py-16 flex flex-col relative z-10">
-              <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
-                <div className="flex flex-col">
-                  <div className="mb-2 text-[#F0EFE2]">
-                    <DhyraWordmarkLogo className="h-[24px] w-auto" />
-                  </div>
-                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
-
-                  <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
-                    <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="GitHub">
-                      <GithubLogo size={18} />
-                    </a>
-                    <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="X (Twitter)">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-                      </svg>
-                    </a>
-                    <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="LinkedIn">
-                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                      </svg>
-                    </a>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 bg-[#222] hover:bg-[#2a2a2a] text-[#C8C7BA] px-3.5 py-2 rounded-[6px] transition-colors border border-[#333]">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" /></svg>
-                      <span className="text-[12px] font-medium tracking-tight">Join the community</span>
-                    </button>
-                    <button className="flex items-center gap-2 bg-[#222] hover:bg-[#2a2a2a] text-[#C8C7BA] px-3.5 py-2 rounded-[6px] transition-colors border border-[#333]">
-                      <div className="w-1.5 h-1.5 bg-[#75bf00] rounded-full" />
-                      <span className="text-[12px] font-medium tracking-tight">System status</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-end">
-                  <div className="flex flex-col items-end gap-3 mb-10 w-full">
-                    <div className="flex items-center gap-x-6">
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Intelligence Agent</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Capability Fabric</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Pricing</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Enterprise</a>
-                    </div>
-                    <div className="flex items-center gap-x-6">
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Benchmarks</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Docs</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Research</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">News</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Contact</a>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end">
-                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
-                    <div className="flex items-center gap-4 text-[#C8C7BA]">
-                      <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
-                      <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
-                      <GoogleLogo size={18} className="text-[#4285f4] hover:brightness-125 transition-all cursor-pointer" />
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors cursor-pointer">
-                        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-                      </svg>
-                      <div className="w-[18px] h-[18px] border-[1.5px] border-current rounded-full flex items-center justify-center text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors cursor-pointer">
-                        <div className="w-1.5 h-1.5 bg-current rounded-full" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full border-t border-dashed border-[#333] relative">
-              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
-
-              <div className="w-[88%] md:w-[72%] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
-                <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><DhyraLogo className="h-[40px] w-auto" /></span>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Cookies</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Terms</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Privacy</a>
-                </div>
-
-                <div className="flex items-center gap-2 text-[#666]">
-                  <button className="p-1.5 rounded-[6px] hover:text-[#F0EFE2] hover:bg-[#222] transition-colors">
-                    <Sun size={15} />
-                  </button>
-                  <button className="p-1.5 rounded-[6px] bg-[#1a1a1a] text-[#F0EFE2] border border-[#333] transition-colors">
-                    <Monitor size={15} />
-                  </button>
-                  <button className="p-1.5 rounded-[6px] hover:text-[#F0EFE2] hover:bg-[#222] transition-colors">
-                    <Moon size={15} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+        <GlobalFooter />
       </main>
     </div>
   );
 }
+

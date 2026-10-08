@@ -27,6 +27,7 @@ type RequestsSectionProps = {
   requestEvents: RequestSectionEvent[];
   isLoading?: boolean;
   errorMessage?: string | null;
+  [key: string]: any;
 };
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -333,3 +334,4 @@ export function RequestsSection({
     </>
   );
 }
+

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Check, Info, ArrowRight, Minus, ChevronRight, X } from "lucide-react";
-import { DeepSeekLogo, MetaLogo, MistralLogo, OrnithLogo, NvidiaLogo, QwenLogo, GLMLogo } from "@/components/dhyra/primitives/brand-icons";
+import { DeepSeekLogo, MetaLogo, MistralLogo, OrnithLogo, NvidiaLogo, QwenLogo, GLMLogo } from "@/components/horos/primitives/brand-icons";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { CAPABILITIES } from "@/lib/capabilities-data";
 

@@ -19,10 +19,10 @@ import {
   Zap,
 } from "lucide-react";
 import {
-  getDhyraMissionControlSnapshot,
-  readActiveDhyraWorkspaceId,
-  type DhyraMissionControlSnapshot,
-} from "@/lib/dhyra-api";
+  getHorosMissionControlSnapshot,
+  readActiveHorosWorkspaceId,
+  type HorosMissionControlSnapshot,
+} from "@/lib/horos-api";
 import { cn } from "@/lib/utils";
 
 type LoadState<T> =
@@ -100,12 +100,12 @@ function BlueSparklineGraph({ points }: { points: number[] }) {
 }
 
 export function AccountHomeDashboard() {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
-  const [state, setState] = useState<LoadState<DhyraMissionControlSnapshot>>(loadingState);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+  const [state, setState] = useState<LoadState<HorosMissionControlSnapshot>>(loadingState);
   const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
     syncWorkspace();
     window.addEventListener("focus", syncWorkspace);
     window.addEventListener("storage", syncWorkspace);
@@ -126,7 +126,7 @@ export function AccountHomeDashboard() {
 
       setState(loadingState());
       try {
-        const result = await getDhyraMissionControlSnapshot(workspaceId);
+        const result = await getHorosMissionControlSnapshot(workspaceId);
         if (!canceled) {
           setState({ status: "ready", data: result, error: null });
         }

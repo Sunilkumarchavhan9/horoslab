@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Archive, Building2, Clock3, Search, AlertTriangle, Loader2 } from "lucide-react";
-import { listDhyraInstitutions, readActiveDhyraWorkspaceId, type DhyraInstitution } from "@/lib/dhyra-api";
+import { listHorosInstitutions, readActiveHorosWorkspaceId, type HorosInstitution } from "@/lib/horos-api";
 import { Button } from "@/components/ui/button";
 
 type ArchiveStatusFilter = "All statuses" | "archived" | "paused" | "deleted";
@@ -28,15 +28,15 @@ function statusTone(status?: string | null): string {
 }
 
 export function InstitutionsArchive() {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [institutions, setInstitutions] = useState<DhyraInstitution[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [institutions, setInstitutions] = useState<HorosInstitution[]>([]);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
  const [query, setQuery] = useState("");
  const [statusFilter, setStatusFilter] = useState<ArchiveStatusFilter>("All statuses");
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -60,7 +60,7 @@ export function InstitutionsArchive() {
  setLoading(true);
  setError(null);
  try {
- const liveInstitutions = await listDhyraInstitutions(workspaceId);
+ const liveInstitutions = await listHorosInstitutions(workspaceId);
  if (!canceled) setInstitutions(liveInstitutions);
  } catch (loadError) {
  if (!canceled) {
@@ -157,7 +157,7 @@ export function InstitutionsArchive() {
  if (!workspaceId) return;
  setLoading(true);
  setError(null);
- void listDhyraInstitutions(workspaceId)
+ void listHorosInstitutions(workspaceId)
  .then((rows) => setInstitutions(rows))
  .catch((retryError) => setError(retryError instanceof Error ? retryError.message : "Failed to load institution archive."))
  .finally(() => setLoading(false));

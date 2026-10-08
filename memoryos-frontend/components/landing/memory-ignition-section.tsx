@@ -98,7 +98,7 @@ export function MemoryIgnitionSection() {
               Every agent starts with an institutional <span className="text-[#0015FF]">brief.</span>
             </h2>
             <p className="text-[16px] text-slate-500 max-w-[640px] font-light leading-relaxed">
-              Before work begins, Dhyra gives the agent its mission, authority boundary, risky files, required tests, human approvals, evidence duties, and settlement rule.
+              Before work begins, HOROS gives the agent its mission, authority boundary, risky files, required tests, human approvals, evidence duties, and settlement rule.
             </p>
           </Reveal>
         </div>
@@ -201,7 +201,7 @@ export function MemoryIgnitionSection() {
               <Reveal delay={0.1} className="mt-auto relative z-10">
                 <h3 className="text-[17px] font-semibold text-slate-900 mb-2">Institution Pre-flight Brief</h3>
                 <p className="text-[13px] text-slate-500 leading-relaxed">
-                  Give Dhyra a goal, and the runtime generates the mission contract, role map, authority chain, proof requirements, and next action.
+                  Give HOROS a goal, and the runtime generates the mission contract, role map, authority chain, proof requirements, and next action.
                 </p>
               </Reveal>
             </div>

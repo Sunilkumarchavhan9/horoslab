@@ -50,7 +50,7 @@ export function DeveloperExtensionsView() {
                         <span className="text-[15px] font-bold text-foreground flex items-center gap-2">
                            GitHub Connector
                         </span>
-                        <span className="text-[12px] text-muted-foreground font-mono">@dhyra/ext-github v2.4.1</span>
+                        <span className="text-[12px] text-muted-foreground font-mono">@horos/ext-github v2.4.1</span>
                      </div>
                   </div>
                   <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-mono rounded-sm border border-emerald-500/20">
@@ -96,7 +96,7 @@ export function DeveloperExtensionsView() {
                         <span className="text-[15px] font-bold text-foreground flex items-center gap-2">
                            AWS Infra Config
                         </span>
-                        <span className="text-[12px] text-muted-foreground font-mono">@dhyra/ext-aws v1.0.2</span>
+                        <span className="text-[12px] text-muted-foreground font-mono">@horos/ext-aws v1.0.2</span>
                      </div>
                   </div>
                   <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-mono rounded-sm border border-emerald-500/20">
@@ -152,7 +152,7 @@ export function DeveloperExtensionsView() {
                
                <div className="p-5 flex flex-col gap-4">
                   <p className="text-[13px] text-muted-foreground leading-relaxed">
-                     Custom internal plugin connecting Dhyra to the proprietary data warehouse. Exposes querying capabilities to analytical agents.
+                     Custom internal plugin connecting HOROS to the proprietary data warehouse. Exposes querying capabilities to analytical agents.
                   </p>
                   
                   <div className="grid grid-cols-2 gap-4 border-t border-border pt-4 mt-2">

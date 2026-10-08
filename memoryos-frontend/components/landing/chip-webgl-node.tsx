@@ -79,7 +79,7 @@ const FRAGMENT_SHADER = `
       float plasmaVeins = 1.0 - smoothstep(0.1, 0.6, crystal);
       plasmaVeins = pow(plasmaVeins, 2.5); // Sharpen the immense heat
       
-      // Radiant energy colors (Dhyra Green converging into Deep Space Azure)
+      // Radiant energy colors (HOROS Green converging into Deep Space Azure)
       vec3 veinColor = mix(vec3(0.0, 0.6, 1.0), vec3(0.5, 1.0, 0.0), plasmaVeins * 1.5);
       vec3 godTierEnergy = veinColor * plasmaVeins * 3.0;
       

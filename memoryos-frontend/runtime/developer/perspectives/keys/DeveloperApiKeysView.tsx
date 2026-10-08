@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { createDhyraRuntimeApiKey, listDhyraRuntimeApiKeys, revokeDhyraRuntimeApiKey } from "@/lib/dhyra-api";
+import { createHorosRuntimeApiKey, listHorosRuntimeApiKeys, revokeHorosRuntimeApiKey } from "@/lib/horos-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 
@@ -37,7 +37,7 @@ export function DeveloperApiKeysView({ workspaceId }: { workspaceId?: string | n
     const [createdToken, setCreatedToken] = useState<string | null>(null);
     const loadKeys = async () => {
         if (!workspaceId) return;
-        try { setError(null); const items = await listDhyraRuntimeApiKeys(workspaceId); setKeys(items.map((item) => ({ id: item.id, keyName: item.name ?? item.id, keyPrefix: item.prefix ?? "-", scopes: item.endpoints ?? [], environment: "Workspace", created: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-", lastUsed: item.lastUsedAt ? new Date(item.lastUsedAt).toLocaleString() : "Never", status: item.status === "revoked" ? "Revoked" : "Active" }))); }
+        try { setError(null); const items = await listHorosRuntimeApiKeys(workspaceId); setKeys(items.map((item) => ({ id: item.id, keyName: item.name ?? item.id, keyPrefix: item.prefix ?? "-", scopes: item.endpoints ?? [], environment: "Workspace", created: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-", lastUsed: item.lastUsedAt ? new Date(item.lastUsedAt).toLocaleString() : "Never", status: item.status === "revoked" ? "Revoked" : "Active" }))); }
         catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load API keys."); }
         finally { setLoading(false); }
     };
@@ -46,8 +46,8 @@ export function DeveloperApiKeysView({ workspaceId }: { workspaceId?: string | n
         const timer = window.setInterval(() => void loadKeys(), 5000);
         return () => window.clearInterval(timer);
     }, [workspaceId]);
-    const createKey = async (event: React.FormEvent) => { event.preventDefault(); if (!workspaceId || !name.trim()) return; try { setCreating(true); setError(null); const result = await createDhyraRuntimeApiKey(workspaceId, { name: name.trim() }); setName(""); setCreatedToken(result.token); setCreateOpen(true); await loadKeys(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to create API key."); } finally { setCreating(false); } };
-    const revokeKey = async (id: string, event: React.MouseEvent) => { event.stopPropagation(); if (!workspaceId) return; try { setError(null); await revokeDhyraRuntimeApiKey(workspaceId, id); await loadKeys(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to revoke API key."); } };
+    const createKey = async (event: React.FormEvent) => { event.preventDefault(); if (!workspaceId || !name.trim()) return; try { setCreating(true); setError(null); const result = await createHorosRuntimeApiKey(workspaceId, { name: name.trim() }); setName(""); setCreatedToken(result.token); setCreateOpen(true); await loadKeys(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to create API key."); } finally { setCreating(false); } };
+    const revokeKey = async (id: string, event: React.MouseEvent) => { event.stopPropagation(); if (!workspaceId) return; try { setError(null); await revokeHorosRuntimeApiKey(workspaceId, id); await loadKeys(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to revoke API key."); } };
 
     const visibleKeys = keys.filter((key) =>
         (environmentFilter === "All" || key.environment === environmentFilter) &&
@@ -81,7 +81,7 @@ export function DeveloperApiKeysView({ workspaceId }: { workspaceId?: string | n
                         <span className="text-xs text-muted-foreground mt-1">Manage runtime authentication.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("dhyra-api-keys.json", visibleKeys)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("horos-api-keys.json", visibleKeys)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

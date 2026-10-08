@@ -34,7 +34,7 @@ export function VerificationWorkspace({ activeSection }: { activeSection: string
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <Scale className="size-4 text-muted-foreground" />
-            <span className="text-[12px] font-bold uppercase tracking-wider text-foreground">Dhyra Verification</span>
+            <span className="text-[12px] font-bold uppercase tracking-wider text-foreground">HOROS Verification</span>
           </div>
           
           <div className="h-4 w-px bg-border" />

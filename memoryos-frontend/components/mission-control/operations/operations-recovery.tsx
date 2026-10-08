@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
 import { Badge } from "@/components/ui/badge";
-import { listDhyraRecoveryEscalations } from "@/lib/dhyra-api";
+import { listHorosRecoveryEscalations } from "@/lib/horos-api";
 import { exportLiveRows } from "../export-live-rows";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
@@ -67,7 +67,7 @@ export function OperationsRecovery({ workspaceId }: { workspaceId?: string | nul
         let cancelled = false;
         const load = async () => {
             try {
-                const items = await listDhyraRecoveryEscalations(workspaceId);
+                const items = await listHorosRecoveryEscalations(workspaceId);
                 if (!cancelled) setRecoveries(items.map(toRecoveryRow));
             } catch {
                 if (!cancelled) setRecoveries([]);
@@ -109,7 +109,7 @@ export function OperationsRecovery({ workspaceId }: { workspaceId?: string | nul
                 <div className="flex items-center justify-between px-6 py-4">
                     <h1 className="text-xl font-bold tracking-tight text-foreground">Mission Recovery</h1>
                     <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => exportLiveRows("dhyra-recovery.json", visibleRecoveries)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("horos-recovery.json", visibleRecoveries)} className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export Recovery Log
                         </button>

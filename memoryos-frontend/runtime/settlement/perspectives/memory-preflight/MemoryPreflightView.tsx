@@ -29,7 +29,7 @@ export function MemoryPreflightView() {
     const fetchMemories = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch("/api/dhyra/settlement/memories");
+            const res = await fetch("/api/horos/settlement/memories");
             if (res.ok) {
                 const { data } = await res.json();
                 setMemories(data.map((m: any) => ({

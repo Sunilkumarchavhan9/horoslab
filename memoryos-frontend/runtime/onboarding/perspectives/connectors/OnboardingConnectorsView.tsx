@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { authorizeConnector } from "@/lib/continuity-lab/connector-actions";
 import { listSources, disconnectSource, isLiveCompanySource, reconnectSource, syncSourceNow, type CompanySource } from "@/lib/company-sources-api";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
-import { resolveActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
+import { resolveActiveHorosWorkspaceId } from "@/lib/horos-api";
 import { ConnectorBrandAvatar } from "@/components/continuity-lab/connector-brand-icons";
 
 const CONNECTORS = [
@@ -66,7 +66,7 @@ export function OnboardingConnectorsView() {
 
     async function loadWorkspace() {
       try {
-        const nextWorkspaceId = await resolveActiveDhyraWorkspaceId();
+        const nextWorkspaceId = await resolveActiveHorosWorkspaceId();
         if (mounted) {
           setWorkspaceId(nextWorkspaceId);
         }

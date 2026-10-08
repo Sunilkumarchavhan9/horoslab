@@ -13,7 +13,7 @@ import {
   ConsoleSectionCard,
   ConsoleStatCard,
   ConsoleStatGrid,
-} from "@/components/developer-console/console-ui";
+} from "@/components/horos/console-ui";
 import { formatMemoryForDisplay } from "@/lib/memory-display-text";
 import { getOrCreateMemoryToken } from "@/lib/memory-token";
 
@@ -411,3 +411,4 @@ export function ConflictStalenessSection({ requestEvents, openLoops }: ConflictS
     </ConsolePage>
   );
 }
+

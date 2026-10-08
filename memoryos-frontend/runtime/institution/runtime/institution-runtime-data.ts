@@ -2,15 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  getDhyraInstitution,
-  listDhyraInstitutions,
-  readActiveDhyraWorkspaceId,
-  type DhyraInstitution,
-  type DhyraInstitutionDetail,
-  type DhyraInstitutionVersion,
-  type DhyraMemoryRecordDetail,
-  type DhyraMission,
-} from "@/lib/dhyra-api";
+  getHorosInstitution,
+  listHorosInstitutions,
+  readActiveHorosWorkspaceId,
+  type HorosInstitution,
+  type HorosInstitutionDetail,
+  type HorosInstitutionVersion,
+  type HorosMemoryRecordDetail,
+  type HorosMission,
+} from "@/lib/horos-api";
 import { useInstitutionStore } from "../store";
 
 export type InstitutionCapability = {
@@ -64,7 +64,7 @@ export type InstitutionIdentity = {
   dependencies: InstitutionDependency[];
 };
 
-export type InstitutionIntegration = NonNullable<DhyraInstitutionDetail["integrations"]>[number];
+export type InstitutionIntegration = NonNullable<HorosInstitutionDetail["integrations"]>[number];
 
 function formatCountLabel(value: number, label: string): string {
   return `${value} ${label}${value === 1 ? "" : "s"}`;
@@ -77,11 +77,11 @@ function firstString(...values: unknown[]): string | null {
   return null;
 }
 
-function getInstitutionSummary(institution: DhyraInstitutionDetail | DhyraInstitution): string {
+function getInstitutionSummary(institution: HorosInstitutionDetail | HorosInstitution): string {
   return firstString(institution.summary, institution.template?.name, institution.status) ?? "Live institution record";
 }
 
-function deriveOwners(institution: DhyraInstitutionDetail): string[] {
+function deriveOwners(institution: HorosInstitutionDetail): string[] {
   const metadata = institution.metadata && typeof institution.metadata === "object" ? institution.metadata : null;
   const owners = metadata && Array.isArray((metadata as Record<string, unknown>).owners)
     ? ((metadata as Record<string, unknown>).owners as unknown[]).filter((owner): owner is string => typeof owner === "string" && owner.trim().length > 0)
@@ -90,7 +90,7 @@ function deriveOwners(institution: DhyraInstitutionDetail): string[] {
   return institution.integrations?.slice(0, 2).map((integration) => integration.provider ?? integration.id) ?? [];
 }
 
-function deriveCapabilities(institution: DhyraInstitutionDetail, missions: DhyraMission[], integrations: InstitutionIntegration[], memoryRecords: DhyraMemoryRecordDetail[]): InstitutionCapability[] {
+function deriveCapabilities(institution: HorosInstitutionDetail, missions: HorosMission[], integrations: InstitutionIntegration[], memoryRecords: HorosMemoryRecordDetail[]): InstitutionCapability[] {
   return [
     {
       id: "cap-missions",
@@ -123,7 +123,7 @@ function deriveCapabilities(institution: DhyraInstitutionDetail, missions: Dhyra
   ];
 }
 
-function deriveDependencies(integrations: InstitutionIntegration[], versions: DhyraInstitutionVersion[]): InstitutionDependency[] {
+function deriveDependencies(integrations: InstitutionIntegration[], versions: HorosInstitutionVersion[]): InstitutionDependency[] {
   const dependencies: InstitutionDependency[] = integrations.map((integration) => ({
     id: integration.id,
     name: integration.provider ?? integration.id ?? "Integration",
@@ -143,7 +143,7 @@ function deriveDependencies(integrations: InstitutionIntegration[], versions: Dh
   return dependencies;
 }
 
-function deriveGenome(institution: DhyraInstitutionDetail, versions: DhyraInstitutionVersion[], missions: DhyraMission[], integrations: InstitutionIntegration[], memoryRecords: DhyraMemoryRecordDetail[]): GenomeTrait[] {
+function deriveGenome(institution: HorosInstitutionDetail, versions: HorosInstitutionVersion[], missions: HorosMission[], integrations: InstitutionIntegration[], memoryRecords: HorosMemoryRecordDetail[]): GenomeTrait[] {
   const templateName = institution.template?.name ?? "Unknown template";
   const latestVersion = versions[0]?.version ?? institution.version ?? "n/a";
   return [
@@ -158,7 +158,7 @@ function deriveGenome(institution: DhyraInstitutionDetail, versions: DhyraInstit
   ];
 }
 
-function derivePolicies(institution: DhyraInstitutionDetail): GovernancePolicy[] {
+function derivePolicies(institution: HorosInstitutionDetail): GovernancePolicy[] {
   return (institution.authorityPolicies ?? []).map((policy, index) => ({
     id: policy.id,
     name: policy.name ?? `Policy ${index + 1}`,
@@ -174,11 +174,11 @@ function derivePolicies(institution: DhyraInstitutionDetail): GovernancePolicy[]
 }
 
 function buildHierarchy(
-  institution: DhyraInstitutionDetail,
-  versions: DhyraInstitutionVersion[],
-  missions: DhyraMission[],
+  institution: HorosInstitutionDetail,
+  versions: HorosInstitutionVersion[],
+  missions: HorosMission[],
   integrations: InstitutionIntegration[],
-  memoryRecords: DhyraMemoryRecordDetail[],
+  memoryRecords: HorosMemoryRecordDetail[],
 ): HierarchyNode {
   return {
     id: institution.id,
@@ -240,18 +240,18 @@ function buildHierarchy(
 
 export function useInstitutionRuntimeData() {
   const { selectedEntity, selectEntity } = useInstitutionStore();
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
-  const [institutions, setInstitutions] = useState<DhyraInstitution[]>([]);
-  const [institution, setInstitution] = useState<DhyraInstitutionDetail | null>(null);
-  const [versions, setVersions] = useState<DhyraInstitutionVersion[]>([]);
-  const [missions, setMissions] = useState<DhyraMission[]>([]);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+  const [institutions, setInstitutions] = useState<HorosInstitution[]>([]);
+  const [institution, setInstitution] = useState<HorosInstitutionDetail | null>(null);
+  const [versions, setVersions] = useState<HorosInstitutionVersion[]>([]);
+  const [missions, setMissions] = useState<HorosMission[]>([]);
   const [integrations, setIntegrations] = useState<InstitutionIntegration[]>([]);
-  const [memoryRecords, setMemoryRecords] = useState<DhyraMemoryRecordDetail[]>([]);
+  const [memoryRecords, setMemoryRecords] = useState<HorosMemoryRecordDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
     window.addEventListener("focus", syncWorkspace);
     syncWorkspace();
     return () => window.removeEventListener("focus", syncWorkspace);
@@ -260,7 +260,7 @@ export function useInstitutionRuntimeData() {
   const refresh = useCallback(async () => {
     if (!workspaceId) {
       setLoading(false);
-      setError("No active Dhyra workspace is available.");
+      setError("No active HOROS workspace is available.");
       setInstitutions([]);
       setInstitution(null);
       setVersions([]);
@@ -273,7 +273,7 @@ export function useInstitutionRuntimeData() {
     setLoading(true);
     setError(null);
     try {
-      const liveInstitutions = await listDhyraInstitutions(workspaceId);
+      const liveInstitutions = await listHorosInstitutions(workspaceId);
       setInstitutions(liveInstitutions);
 
       const activeInstitutionId = liveInstitutions[0]?.id ?? null;
@@ -286,7 +286,7 @@ export function useInstitutionRuntimeData() {
         return;
       }
 
-      const detail = await getDhyraInstitution(workspaceId, activeInstitutionId);
+      const detail = await getHorosInstitution(workspaceId, activeInstitutionId);
       setInstitution(detail);
       setVersions(detail.versions ?? []);
       setMissions(detail.missions ?? []);

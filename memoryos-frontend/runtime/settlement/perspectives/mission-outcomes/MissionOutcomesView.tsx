@@ -32,7 +32,7 @@ export function MissionOutcomesView() {
     const fetchOutcomes = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch("/api/dhyra/settlement/outcomes");
+            const res = await fetch("/api/horos/settlement/outcomes");
             if (res.ok) {
                 const { data } = await res.json();
                 setOutcomes(data.map((o: any) => ({

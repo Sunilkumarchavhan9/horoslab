@@ -1,4 +1,5 @@
 "use client";
+import { SectionDivider } from "@/components/landing/section-divider";
 
 import React, { useState, useEffect } from "react";
 import { ClipboardList } from "lucide-react";
@@ -81,7 +82,8 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
       </div>
 
       {/* Main Grid Layout (aligned with master vertical lines) */}
-      <div className="relative z-10 w-full grid grid-cols-[calc(14%_+_120px)_17fr_19fr_calc(14%_+_120px)] border-t border-dashed border-[#333333]">
+      <SectionDivider />
+      <div className="relative z-10 w-full grid grid-cols-[calc(18%_+_120px)_17fr_19fr_calc(18%_+_120px)]">
         {/* Column 1: Left Margin Cell */}
         <div className="relative p-4 min-h-[580px]" />
 
@@ -114,7 +116,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="text-[#F0EFE2] font-medium text-[14px]">Mission Runtime Execution Plan</div>
-                  <div className="text-[#666666] font-mono text-[11px]">Dhyra Reality Intelligence Loop</div>
+                  <div className="text-[#666666] font-mono text-[11px]">HOROS Reality Intelligence Loop</div>
                 </div>
               </div>
               <div className="border border-[#333] bg-[#1a1a1a] text-[#C8C7BA] font-mono text-[10px] px-2 py-0.5 rounded-[1px]">
@@ -176,7 +178,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
                 Review the mission contract, then authorize.
               </div>
               <div className="text-[#555555] font-mono text-[10px] uppercase tracking-wider">
-                DHYRA CANONICAL_V4
+                HOROS CANONICAL_V4
               </div>
             </div>
 

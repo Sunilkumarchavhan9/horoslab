@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Award, ChevronDown, Download, FileText, Filter, Hash, RefreshCw, Search, CheckCircle2, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { listDhyraCertificates, readActiveDhyraWorkspaceId, type DhyraCertificate } from "@/lib/dhyra-api";
+import { listHorosCertificates, readActiveHorosWorkspaceId, type HorosCertificate } from "@/lib/horos-api";
 
 function formatDate(value?: string): string {
   if (!value) return "Unknown";
@@ -11,7 +11,7 @@ function formatDate(value?: string): string {
   return Number.isNaN(date.getTime()) ? "Unknown" : date.toLocaleString();
 }
 
-function evidenceCount(certificate: DhyraCertificate): number {
+function evidenceCount(certificate: HorosCertificate): number {
   if (!certificate.evidenceSummary || typeof certificate.evidenceSummary !== "object") return 0;
   const summary = certificate.evidenceSummary as Record<string, unknown>;
   const value = summary.evidenceCount ?? summary.count ?? summary.items;
@@ -21,24 +21,24 @@ function evidenceCount(certificate: DhyraCertificate): number {
 }
 
 export function VerificationCertificatesView() {
-  const [certificates, setCertificates] = useState<DhyraCertificate[]>([]);
+  const [certificates, setCertificates] = useState<HorosCertificate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const workspaceId = readActiveDhyraWorkspaceId();
+  const workspaceId = readActiveHorosWorkspaceId();
 
   const loadCertificates = useCallback(async () => {
     if (!workspaceId) {
       setCertificates([]);
       setLoading(false);
-      setError("No active Dhyra workspace is available.");
+      setError("No active HOROS workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const payload = await listDhyraCertificates(workspaceId, { limit: 50 });
+      const payload = await listHorosCertificates(workspaceId, { limit: 50 });
       setCertificates(payload.certificates);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load certificates.");

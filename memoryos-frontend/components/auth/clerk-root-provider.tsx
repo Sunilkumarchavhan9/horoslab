@@ -22,7 +22,7 @@ function ClerkLoadFailureFallback() {
     <main className="grid min-h-svh place-items-center bg-[#070707] px-5 text-[#F0EFE2]">
       <section className="w-full max-w-[520px] border border-[#262626] bg-[#101010] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:p-8">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#8b95a3]">
-          Dhyra authentication
+          HOROS authentication
         </p>
         <h1 className="mt-4 text-[28px] font-semibold tracking-[-0.04em] text-[#F0EFE2]">
           Clerk could not load in this browser.
@@ -62,7 +62,7 @@ class ClerkLoadErrorBoundary extends Component<
   componentDidCatch(error: unknown, info: ErrorInfo) {
     if (isClerkLoadFailure(error)) {
       this.props.onClerkLoadFailure();
-      console.warn("[Dhyra Auth] Clerk JS failed to load.", {
+      console.warn("[HOROS Auth] Clerk JS failed to load.", {
         componentStack: info.componentStack,
       });
       return;

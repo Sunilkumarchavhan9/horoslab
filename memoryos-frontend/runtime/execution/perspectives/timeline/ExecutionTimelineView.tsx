@@ -17,9 +17,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useMissionStore } from "../../../missions/runtime/store";
 import { useMissionRuntimeData } from "../../../missions/runtime/mission-runtime-data";
-import type { DhyraMissionDetail } from "@/lib/dhyra-api";
+import type { HorosMissionDetail } from "@/lib/horos-api";
 
-type MissionTimelineEvent = NonNullable<DhyraMissionDetail["timeline"]>[number];
+type MissionTimelineEvent = NonNullable<HorosMissionDetail["timeline"]>[number];
 
 function formatTime(value?: string | null): string {
   if (!value) return "--:--";
@@ -42,7 +42,7 @@ function iconForStage(stage?: string): { icon: typeof Target; color: string; bg:
 export function ExecutionTimelineView() {
   const { selection } = useMissionStore();
   const { missions, loading, error, getMission } = useMissionRuntimeData();
-  const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
+  const [mission, setMission] = useState<HorosMissionDetail | null>(null);
   const [missionLoading, setMissionLoading] = useState(false);
   const [missionError, setMissionError] = useState<string | null>(null);
 

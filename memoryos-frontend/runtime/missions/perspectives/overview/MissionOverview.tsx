@@ -109,7 +109,7 @@ export function MissionOverview() {
       const mission = await createMission({
         institutionId: primaryInstitution.id,
         title: "Software Institution Loop",
-        objective: "Run one mission from planning through learning, backed by live Dhyra data.",
+        objective: "Run one mission from planning through learning, backed by live HOROS data.",
         plan: [
           "Planning",
           "Execution",
@@ -189,7 +189,7 @@ export function MissionOverview() {
           </div>
           <div className="flex flex-col">
             <h1 className="text-[18px] font-bold leading-none tracking-tight">Mission Command Center</h1>
-            <p className="text-[13px] text-muted-foreground mt-1">Live Dhyra data for the software institution loop.</p>
+            <p className="text-[13px] text-muted-foreground mt-1">Live HOROS data for the software institution loop.</p>
           </div>
         </div>
 

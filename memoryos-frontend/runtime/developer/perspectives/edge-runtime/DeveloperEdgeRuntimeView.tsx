@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { enrollDhyraEdgeWorker, listDhyraWorkers } from "@/lib/dhyra-api";
+import { enrollHorosEdgeWorker, listHorosWorkers } from "@/lib/horos-api";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 
@@ -37,7 +37,7 @@ export function DeveloperEdgeRuntimeView({ workspaceId }: { workspaceId?: string
     useEffect(() => {
         if (!workspaceId) return;
         let active = true;
-        const load = () => listDhyraWorkers(workspaceId).then((workers) => {
+        const load = () => listHorosWorkers(workspaceId).then((workers) => {
             if (!active) return;
             const rows = workers.filter((worker) => {
                 const metadata = worker.metadata && typeof worker.metadata === "object" ? worker.metadata as Record<string, unknown> : {};
@@ -54,7 +54,7 @@ export function DeveloperEdgeRuntimeView({ workspaceId }: { workspaceId?: string
         const timer = window.setInterval(() => void load(), 5000);
         return () => { active = false; window.clearInterval(timer); };
     }, [workspaceId]);
-    const enroll = async (event: React.FormEvent) => { event.preventDefault(); if (!workspaceId || !workerId.trim()) return; try { setError(null); await enrollDhyraEdgeWorker(workspaceId, workerId.trim()); setWorkerId(""); setEnrollOpen(false); window.location.reload(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to enroll edge worker."); } };
+    const enroll = async (event: React.FormEvent) => { event.preventDefault(); if (!workspaceId || !workerId.trim()) return; try { setError(null); await enrollHorosEdgeWorker(workspaceId, workerId.trim()); setWorkerId(""); setEnrollOpen(false); window.location.reload(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to enroll edge worker."); } };
     const visibleEdgeRecords = edgeRecords.filter((record) => (statusFilter === "All" || record.status === statusFilter) && (regionFilter === "All" || record.region === regionFilter) && `${record.device} ${record.identity} ${record.region}`.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const toggleRow = (id: string, e: React.MouseEvent) => {
@@ -83,7 +83,7 @@ export function DeveloperEdgeRuntimeView({ workspaceId }: { workspaceId?: string
                         <span className="text-xs text-muted-foreground mt-1">Manage edge workers and remote deployments.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("dhyra-edge-workers.json", visibleEdgeRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("horos-edge-workers.json", visibleEdgeRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>

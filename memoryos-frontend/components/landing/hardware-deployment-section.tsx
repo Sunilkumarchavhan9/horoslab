@@ -1,12 +1,13 @@
 "use client";
+import { SectionDivider } from "@/components/landing/section-divider";
 
 import React from "react";
 import { Cloud, Cpu, Box, Anchor, Bot } from "lucide-react";
-import { DhyraLogo, ModalLogo, RunPodLogo, MetaLogo, AnthropicLogo, BAAILogo, GLMLogo, GoogleLogo, K8sFaviconLogo, OneXLogo, TeslaLogo, QwenLogo, MistralLogo, HuggingFaceLogo } from "../dhyra/primitives/brand-icons";
+import { HorosLogo, ModalLogo, RunPodLogo, MetaLogo, AnthropicLogo, BAAILogo, GLMLogo, GoogleLogo, K8sFaviconLogo, OneXLogo, TeslaLogo, QwenLogo, MistralLogo, HuggingFaceLogo } from "../horos/primitives/brand-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import dhyraChipImg from "./dhyra-chip.png";
-import { DhyraAnimatedLogo } from "./dhyra-animated-logo";
+import horosChipImg from "./horos-chip.png";
+import { HorosAnimatedLogo } from "./horos-animated-logo";
 
 const PREM_EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -126,9 +127,9 @@ const PARTICLES = Array.from({ length: NUM_PARTICLES }).map((_, i) => {
   return { id: i, logoIndex: i % 6, targetIndex, delay };
 });
 
-function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'dhyra' }) {
+function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'horos' }) {
   // The total horizontal distance from the start of the particle wrapper (right edge of HF) to the vertical spine (left edge of Targets).
-  // Layout width: Left Connector (260 - 8 = 252) + Dhyra (156) + Right Connector (260 - 8 = 252) = 660px.
+  // Layout width: Left Connector (260 - 8 = 252) + HOROS (156) + Right Connector (260 - 8 = 252) = 660px.
   const spineX = 660;
 
   return (
@@ -160,10 +161,12 @@ function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'd
 }
 
 export function HardwareDeploymentSection() {
-  const [hoveredNode, setHoveredNode] = React.useState<'none' | 'hf' | 'dhyra'>('none');
+  const [hoveredNode, setHoveredNode] = React.useState<'none' | 'hf' | 'horos'>('none');
 
   return (
-    <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden py-24 border-t border-dashed border-[#333]">
+    <>
+      <SectionDivider />
+      <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden py-24 ">
       <style>{`
         .border-dashed.border-\\[\\#75bf00\\] {
           border: none !important;
@@ -228,18 +231,18 @@ export function HardwareDeploymentSection() {
       {/* Background Dashed Lines - Global Layout */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       {/* Header Section */}
-      <div className="w-full relative px-[calc(14%_+_120px)] mb-32 text-center">
+      <div className="w-full relative px-[calc(18%_+_120px)] mb-32 text-center">
         <h2 className="text-4xl sm:text-5xl font-medium tracking-tight mb-4 z-10 relative">
           Deploy and <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">verify</span> anywhere
         </h2>
         <p className="text-[#C8C7BA] max-w-2xl mx-auto text-[15px] z-10 relative">
-          Dhyra deploys intelligence into software, compute clusters, edge devices, and physical robotics. Actuate when authorized, and verify the physical consequences.
+          HOROS deploys intelligence into software, compute clusters, edge devices, and physical robotics. Actuate when authorized, and verify the physical consequences.
         </p>
       </div>
 
@@ -335,7 +338,7 @@ export function HardwareDeploymentSection() {
                     </div>
                   </div>
                 ) : (
-                  /* Expanded branches for Dhyra hover */
+                  /* Expanded branches for HOROS hover */
                   <div className="flex items-center justify-center w-full">
                     <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
@@ -375,19 +378,19 @@ export function HardwareDeploymentSection() {
               {/* 2. Center Node (RunInfra) */}
               <motion.div
                 whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-                className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'dhyra' ? 'border-[#555]' : 'border-[#333]'}`}
-                onMouseEnter={() => setHoveredNode('dhyra')}
+                className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'horos' ? 'border-[#555]' : 'border-[#333]'}`}
+                onMouseEnter={() => setHoveredNode('horos')}
                 onMouseLeave={() => setHoveredNode('none')}
               >
                 <div className="flex-1 flex items-center justify-center mb-1 rounded-sm overflow-hidden">
-                  <DhyraLogo variant="stacked" size="2xl" className="text-[#F0EFE2]" />
+                  <HorosLogo variant="stacked" size="2xl" className="text-[#F0EFE2]" />
                 </div>
               </motion.div>
 
               {/* Right Connector (Fixed Width to prevent layout shift) */}
               <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
-                {hoveredNode === 'dhyra' ? (
-                  /* Expanded branches for Dhyra hover */
+                {hoveredNode === 'horos' ? (
+                  /* Expanded branches for HOROS hover */
                   <div className="flex items-center justify-center w-full">
                     <div className="flex-1 h-[1px] border-t border-dashed border-[#75bf00]" />
 
@@ -438,7 +441,7 @@ export function HardwareDeploymentSection() {
 
                 <div className="relative">
                   <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                  <TargetNode icon={<DhyraLogo size={36} />} title="Dhyra Cloud" />
+                  <TargetNode icon={<HorosLogo size={36} />} title="HOROS Cloud" />
                 </div>
 
                 <div className="relative">
@@ -468,5 +471,7 @@ export function HardwareDeploymentSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }
+

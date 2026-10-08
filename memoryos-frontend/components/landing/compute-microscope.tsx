@@ -86,7 +86,7 @@ export function ComputeMicroscope() {
       {/* Center: The Optimizer Engine */}
       <div className="shrink-0 flex items-center justify-center relative py-8 lg:py-0">
         <div className="w-32 h-24 bg-[#111] border border-[#333] shadow-[0_0_30px_rgba(117,191,0,0.05)] rounded-md flex flex-col items-center justify-center relative z-10">
-          <div className="text-[#75bf00] font-bold text-[10px] tracking-widest mb-1">DHYRA COMPILER</div>
+          <div className="text-[#75bf00] font-bold text-[10px] tracking-widest mb-1">HOROS COMPILER</div>
           <div className="text-[9px] text-[#666] text-center px-4 leading-relaxed">optimized kernels for your GPU setup</div>
         </div>
         
@@ -112,13 +112,13 @@ export function ComputeMicroscope() {
         
         {/* Desktop Text */}
         <div className="hidden xl:block text-left shrink-0 min-w-[160px]">
-          <div className="font-bold text-[#75bf00] mb-1">After Dhyra</div>
+          <div className="font-bold text-[#75bf00] mb-1">After HOROS</div>
           <div className="text-[#C8C7BA] text-xs">Every cycle counts.<br/>Max throughput,<br/>minimal waste</div>
         </div>
 
         {/* Mobile Text */}
         <div className="xl:hidden text-left w-full">
-          <div className="font-bold text-[#75bf00] mb-1">After Dhyra</div>
+          <div className="font-bold text-[#75bf00] mb-1">After HOROS</div>
           <div className="text-[#C8C7BA] text-xs">Every cycle counts. Max throughput, minimal waste</div>
         </div>
 

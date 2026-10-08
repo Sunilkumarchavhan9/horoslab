@@ -5,10 +5,10 @@ import { Share2, FileText, ChevronRight, ChevronDown, Copy, Check, Link as LinkI
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
 import { CAPABILITIES } from "@/lib/capabilities-data";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
-import { NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
-import { FullSpecAccordion } from "@/components/dhyra/capabilities/full-spec-accordion";
-import { CodeExamples } from "@/components/dhyra/capabilities/code-examples";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
+import { NvidiaLogo } from "@/components/horos/primitives/brand-icons";
+import { FullSpecAccordion } from "@/components/horos/capabilities/full-spec-accordion";
+import { CodeExamples } from "@/components/horos/capabilities/code-examples";
 
 interface PageProps {
   params: Promise<{
@@ -301,8 +301,8 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
               <p className="text-[12px] text-[#777] mb-8">Verify the company and operating credentials behind this capability.</p>
               
               <div className="flex items-center gap-2 text-[13px] text-[#F0EFE2] font-medium mb-6">
-                <DhyraLogo variant="icon" size="sm" className="h-3 w-auto" />
-                Dhyra is a product of System Integration.
+                <HorosLogo variant="icon" size="sm" className="h-3 w-auto" />
+                HOROS is a product of System Integration.
               </div>
 
               <div className="flex flex-wrap items-center gap-6 text-[12px]">

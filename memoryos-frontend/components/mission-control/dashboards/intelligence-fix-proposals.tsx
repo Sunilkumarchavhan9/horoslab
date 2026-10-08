@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useInspector } from "../universal-inspector";
 import { useProductionIntelligence } from "./use-production-intelligence";
-import { approveDhyraFixProposal } from "@/lib/dhyra-api";
+import { approveHorosFixProposal } from "@/lib/horos-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
 const MOCK_PROPOSALS = [
@@ -58,7 +58,7 @@ export function IntelligenceFixProposals({ workspaceId }: { workspaceId?: string
         if (!workspaceId || approving) return;
         setApproving(proposalId);
         try {
-            await approveDhyraFixProposal(workspaceId, proposalId);
+            await approveHorosFixProposal(workspaceId, proposalId);
         } finally {
             setApproving(null);
         }

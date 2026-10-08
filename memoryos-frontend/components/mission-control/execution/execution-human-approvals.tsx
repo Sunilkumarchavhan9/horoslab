@@ -49,7 +49,7 @@ export function ExecutionHumanApprovals() {
  </div>
  <div className="flex flex-col">
  <h3 className="text-[16px] font-bold">Deploy Production</h3>
- <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Requested by Dhyra Planner</span>
+ <span className="text-[12px] text-foreground/50 dark:text-[#F0EFE2]/50">Requested by HOROS Planner</span>
  </div>
  </div>
  <div className="flex items-center gap-2">

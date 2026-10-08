@@ -29,9 +29,9 @@ export default async function AuthSignUpPage({
 
   return (
     <ConsoleAuthShell
-      title="Create your Dhyra account"
+      title="Create your HOROS account"
       subtitle="Join the workspace, connect your tools, and continue to Mission Control."
-      footerLabel="Dhyra"
+      footerLabel="HOROS"
     >
       {clerkEnabled ? (
         <ClerkConsoleSignUp

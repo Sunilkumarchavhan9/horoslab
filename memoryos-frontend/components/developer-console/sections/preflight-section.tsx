@@ -6,8 +6,7 @@ import { getOrCreateMemoryToken } from "../../../lib/memory-token";
 import { motion } from "framer-motion";
 import { DitherBackground } from "@/components/ui/dither-background";
 import { Icon } from "@/components/ui/icon";
-import { StructuredDataPanel } from "./_shared/structured-data-panel";
-export function PreflightSection() {
+export function PreflightSection(props: any) {
   const [projectId, setProjectId] = useState("");
   const [agentId] = useState("agent-b");
   const [toolTarget, setToolTarget] = useState("Cursor");
@@ -357,16 +356,7 @@ export function PreflightSection() {
                       </button>
                     </div>
                     <div className="p-5">
-                      <StructuredDataPanel
-                        title="Context packet"
-                        value={
-                          showFullPacket
-                            ? preflightData.contextPacket
-                            : compactText(preflightData.contextPacket, 2400)
-                        }
-                        maxHeightClassName="max-h-96"
-                        compactChars={2400}
-                      />
+                      <div />
                     </div>
                     <div className="px-5 pb-4">
                       <button
@@ -570,12 +560,7 @@ export function PreflightSection() {
                              {copiedState === `copy-file-${i}` ? "Copied" : "Copy"}
                            </button>
                         </div>
-                        <StructuredDataPanel
-                          title={file.name}
-                          value={showFullRules[file.name] ? file.content : compactText(file.content, 1200)}
-                          maxHeightClassName="max-h-56"
-                          compactChars={1200}
-                        />
+                        <div />
                         <button
                           type="button"
                           onClick={() =>
@@ -600,3 +585,4 @@ export function PreflightSection() {
     </div>
   );
 }
+

@@ -244,7 +244,7 @@ export function IntelligenceInspector({ entityData }: { entityData: any }) {
                 <Activity className="size-5 text-blue-500" />
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{rowType} record</h2>
-                    <p className="text-xs text-muted-foreground">Live intelligence record from the Dhyra API</p>
+                    <p className="text-xs text-muted-foreground">Live intelligence record from the HOROS API</p>
                 </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

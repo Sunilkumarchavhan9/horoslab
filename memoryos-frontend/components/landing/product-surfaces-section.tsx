@@ -25,7 +25,7 @@ const PRINCIPLES = [
   },
   { 
     title: "Evidence-Backed Audit Trail",
-    description: "Every authorization, action, decision, verification, and outcome becomes immutable evidence. Dhyra builds an inspectable chain of proof that links who acted, why they acted, what evidence supported the action, and whether reality confirmed the result."
+    description: "Every authorization, action, decision, verification, and outcome becomes immutable evidence. HOROS builds an inspectable chain of proof that links who acted, why they acted, what evidence supported the action, and whether reality confirmed the result."
   },
   { 
     title: "Institutional Tenant Isolation",

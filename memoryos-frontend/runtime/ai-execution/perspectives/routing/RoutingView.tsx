@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
 import { useAiExecutionOverview } from "../../use-ai-execution-overview";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
-import { executeDhyraAiTest } from "@/lib/dhyra-api";
+import { executeHorosAiTest } from "@/lib/horos-api";
 
 type RoutingRow = {
     id: string;
@@ -32,7 +32,7 @@ export function RoutingView({ workspaceId }: { workspaceId?: string | null }) {
     const [strategyFilter, setStrategyFilter] = useState("All");
     const [routings, setRoutings] = useState<RoutingRow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [testPrompt, setTestPrompt] = useState("Return exactly: DHYRA_TEST_OK");
+    const [testPrompt, setTestPrompt] = useState("Return exactly: HOROS_TEST_OK");
     const [testResult, setTestResult] = useState<string | null>(null);
     const [testError, setTestError] = useState<string | null>(null);
     const [testing, setTesting] = useState(false);
@@ -112,7 +112,7 @@ export function RoutingView({ workspaceId }: { workspaceId?: string | null }) {
         setTestResult(null);
         setTestError(null);
         try {
-            const result = await executeDhyraAiTest(workspaceId, testPrompt.trim());
+            const result = await executeHorosAiTest(workspaceId, testPrompt.trim());
             const output = result.output ?? result.text ?? result.content ?? result;
             setTestResult(typeof output === "string" ? output : JSON.stringify(output));
         } catch (error) {

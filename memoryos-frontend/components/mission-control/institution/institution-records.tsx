@@ -15,7 +15,7 @@ const MOCK_INSTITUTIONS = [
  agents: 42,
  health: 98,
  lastMutation: "2 days ago",
- owner: "Dhyra Planner",
+ owner: "HOROS Planner",
  risk: "Low"
  },
  {

@@ -28,7 +28,7 @@ export function LearningHandoffView() {
     const fetchLearnings = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch("/api/dhyra/settlement/learnings");
+            const res = await fetch("/api/horos/settlement/learnings");
             if (res.ok) {
                 const { data } = await res.json();
                 setLearnings(data.map((l: any) => ({

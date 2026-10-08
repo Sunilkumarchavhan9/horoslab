@@ -8,14 +8,14 @@ import {
     Download, Power, Settings, RotateCcw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { enrollDhyraEdgeWorker } from "@/lib/dhyra-api";
+import { enrollHorosEdgeWorker } from "@/lib/horos-api";
 
 export function EdgeRuntimeInspector({ entityData }: { entityData: any }) {
     const [reconnecting, setReconnecting] = useState(false);
     const reconnect = async () => {
         if (!entityData.workspaceId || !entityData.id) return;
         setReconnecting(true);
-        try { await enrollDhyraEdgeWorker(entityData.workspaceId, entityData.id); } finally { setReconnecting(false); }
+        try { await enrollHorosEdgeWorker(entityData.workspaceId, entityData.id); } finally { setReconnecting(false); }
     };
     return (
         <Tabs defaultValue="overview" className="flex-1 flex flex-col w-full h-full">
@@ -101,7 +101,7 @@ export function EdgeRuntimeInspector({ entityData }: { entityData: any }) {
                                             {entityData.offlineMode ? "Operating in Disconnected Environment" : "Ready for Offline Operation"}
                                         </span>
                                         <span className="text-xs text-muted-foreground leading-relaxed">
-                                            This edge runtime is configured to gracefully handle prolonged disconnection from the Dhyra central control plane. Local telemetry and mission evidence are being cached locally.
+                                            This edge runtime is configured to gracefully handle prolonged disconnection from the HOROS central control plane. Local telemetry and mission evidence are being cached locally.
                                         </span>
                                     </div>
                                 </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
 import { ChevronRight, ChevronDown, Info, Gauge, Box, ArrowRight, CheckCircle2, ChevronUp, Copy, Share2, Link, ExternalLink, MemoryStick, SquareTerminal, Bot, TriangleAlert, Server, Cpu, SlidersHorizontal, Scale, ArrowRightLeft, Leaf, TrendingUp, Boxes, Link2, Layers, Binary, Activity, BarChart2, HardDrive, Calendar, X, Plus } from "lucide-react";
-import { QwenLogo, NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
+import { QwenLogo, NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 
 export function ResourceCalculatorResult({
   model,
@@ -304,7 +304,7 @@ export function ResourceCalculatorResult({
                   { title: "config.json:architectures[0]", url: "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/blob/7ae557604adf67be50417f59c2c2f167def9a775/config.json" },
                   { title: "NVIDIA T4 product specification", url: "https://www.nvidia.com/en-us/data-center/tesla-t4/" },
                   { title: "Hugging Face config.json transformer shape", url: "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/blob/7ae557604adf67be50417f59c2c2f167def9a775/config.json" },
-                  { title: "Dhyra Engine feasibility runtime-overhead policy", url: "#" },
+                  { title: "HOROS Engine feasibility runtime-overhead policy", url: "#" },
                   { title: "Decode and prefill ceilings derived from GPU memory bandwidth, dense compute, and model parameters", url: "https://www.nvidia.com/en-us/data-center/tesla-t4/" },
                   { title: "vLLM serve CLI documentation", url: "https://docs.vllm.ai/en/latest/cli/serve/" },
                   { title: "NVIDIA L4 product specification", url: "https://www.nvidia.com/en-us/data-center/l4/" },
@@ -402,10 +402,10 @@ export function ResourceCalculatorResult({
             </div>
             <div className="text-[12px] md:text-[13px] lg:text-[14px] font-mono">
               <span className="text-[#C8C7BA]">GET </span>
-              <span className="text-[#C8C7BA]">https://dhyra.com/api/calc</span>
+              <span className="text-[#C8C7BA]">https://horos.com/api/calc</span>
             </div>
             <div className="text-[11px] md:text-[12px] lg:text-[13px] font-mono text-[#888] break-all leading-relaxed">
-              https://dhyra.com/api/calc?hfId=Qwen%2FQwen2.5-0.5B-Instruct&amp;gpuId=T4&amp;gpuCount=1&amp;requestsPerDay=50000&amp;avgInputTokens=500&amp;avgOutputTokens=500&amp;utilization=0.3&amp;quantization=fp16&amp;servedContextTokens=8192
+              https://horos.com/api/calc?hfId=Qwen%2FQwen2.5-0.5B-Instruct&amp;gpuId=T4&amp;gpuCount=1&amp;requestsPerDay=50000&amp;avgInputTokens=500&amp;avgOutputTokens=500&amp;utilization=0.3&amp;quantization=fp16&amp;servedContextTokens=8192
             </div>
           </div>
 
@@ -413,7 +413,7 @@ export function ResourceCalculatorResult({
             <span className="text-[9px] md:text-[10px] lg:text-[11px] font-medium text-[#888] uppercase tracking-wider">Canonical result</span>
             <div className="flex items-start justify-between gap-4 group cursor-pointer">
               <span className="text-[12px] md:text-[13px] lg:text-[14px] font-mono text-[#C8C7BA] group-hover:text-[#C8C7BA] transition-colors break-all">
-                https://dhyra.com/calc/qwen-2.5-0.5b/t4/50k-req-day
+                https://horos.com/calc/qwen-2.5-0.5b/t4/50k-req-day
               </span>
               <ExternalLink size={16} className="text-[#888] group-hover:text-[#C8C7BA] transition-colors shrink-0 mt-0.5" />
             </div>
@@ -423,7 +423,7 @@ export function ResourceCalculatorResult({
             <span className="text-[9px] md:text-[10px] lg:text-[11px] font-medium text-[#888] uppercase tracking-wider">Descriptor</span>
             <div className="flex items-start justify-between gap-4 group cursor-pointer">
               <span className="text-[12px] md:text-[13px] lg:text-[14px] font-mono text-[#C8C7BA] group-hover:text-[#C8C7BA] transition-colors break-all">
-                https://dhyra.com/api/calc/schema
+                https://horos.com/api/calc/schema
               </span>
               <ExternalLink size={16} className="text-[#888] group-hover:text-[#C8C7BA] transition-colors shrink-0 mt-0.5" />
             </div>

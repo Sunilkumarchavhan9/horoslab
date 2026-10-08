@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Cloud, ExternalLink, Rocket, Check, Cpu } from "lucide-react";
-import { NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
+import { NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 
 export function DeployDashboard() {
   const [activeTab, setActiveTab] = useState<"dockerfile" | "servesh" | "runinfrayaml">("dockerfile");

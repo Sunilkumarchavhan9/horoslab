@@ -15,7 +15,7 @@ import {
   DeepSeekLogo,
   VLLMLogo,
   AnthropicLogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 export function EmbeddingsGrid() {
   return (

@@ -75,14 +75,14 @@ export function SdkInspector({ entityData }: { entityData: any }) {
                                     </div>
                                     <Package className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 </button>
-                                <button type="button" onClick={() => void navigator.clipboard?.writeText("Dhyra worker contract: register, lease, execute, evidence, complete")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                <button type="button" onClick={() => void navigator.clipboard?.writeText("HOROS worker contract: register, lease, execute, evidence, complete")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium text-foreground">Runtime APIs</span>
                                         <span className="text-xs text-muted-foreground">Explore underlying endpoint definitions</span>
                                     </div>
                                     <Code2 className="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 </button>
-                                <button type="button" onClick={() => window.open("https://www.npmjs.com/package/@dhyratm/v12-sdk", "_blank", "noopener,noreferrer")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
+                                <button type="button" onClick={() => window.open("https://www.npmjs.com/package/@horostm/v12-sdk", "_blank", "noopener,noreferrer")} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors text-left group">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium text-foreground">Examples</span>
                                         <span className="text-xs text-muted-foreground">Code snippets and quickstarts</span>
@@ -136,16 +136,16 @@ export function SdkInspector({ entityData }: { entityData: any }) {
                     <Copy className="size-3.5" />
                     Copy Install
                 </button>
-                <button type="button" onClick={() => window.open("https://www.npmjs.com/package/@dhyratm/v12-sdk", "_blank", "noopener,noreferrer")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+                <button type="button" onClick={() => window.open("https://www.npmjs.com/package/@horostm/v12-sdk", "_blank", "noopener,noreferrer")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
                     <BookOpen className="size-3.5" />
                     Documentation
                 </button>
                 <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
-                <button type="button" onClick={() => void navigator.clipboard?.writeText("Dhyra worker quickstart: register -> lease -> execute -> complete")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
+                <button type="button" onClick={() => void navigator.clipboard?.writeText("HOROS worker quickstart: register -> lease -> execute -> complete")} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm">
                     <Terminal className="size-3.5" />
                     Examples
                 </button>
-                <button type="button" onClick={() => { const blob = new Blob([JSON.stringify(entityData, null, 2)], { type: "application/json" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `dhyra-sdk-${entityData.version ?? "contract"}.json`; link.click(); URL.revokeObjectURL(link.href); }} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm ml-auto">
+                <button type="button" onClick={() => { const blob = new Blob([JSON.stringify(entityData, null, 2)], { type: "application/json" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `horos-sdk-${entityData.version ?? "contract"}.json`; link.click(); URL.revokeObjectURL(link.href); }} className="flex items-center justify-center gap-2 px-3 py-2 bg-background border border-border hover:bg-muted transition-colors rounded-md text-xs font-medium text-foreground whitespace-nowrap shadow-sm ml-auto">
                     <Download className="size-3.5" />
                     Download
                 </button>

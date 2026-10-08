@@ -1,7 +1,7 @@
 "use client";
 
 import { Code, MessageSquare, Globe, Database, ExternalLink, Image as ImageIcon, FileText, Link2, Layers3 } from "lucide-react";
-import { type DhyraMissionDetail } from "@/lib/dhyra-api";
+import { type HorosMissionDetail } from "@/lib/horos-api";
 
 function formatDate(value?: string | null): string {
  if (!value) return "Unknown";
@@ -20,7 +20,7 @@ function evidenceIcon(kind?: string | null) {
  return <Code className="size-5 text-foreground" />;
 }
 
-export function MissionDetailEvidence({ mission }: { mission: DhyraMissionDetail }) {
+export function MissionDetailEvidence({ mission }: { mission: HorosMissionDetail }) {
  const items = mission.evidence ?? [];
  const typeCounts = items.reduce<Record<string, number>>((counts, item) => {
  const type = item.kind ?? "evidence";

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Play, AlertCircle, CheckCircle2, Clock, ShieldCheck, Search, Plus, Rocket, XCircle } from "lucide-react";
-import { readActiveDhyraWorkspaceId, listDhyraMissions, listDhyraInstitutions, createDhyraMission, type DhyraMissionDetail } from "@/lib/dhyra-api";
+import { readActiveHorosWorkspaceId, listHorosMissions, listHorosInstitutions, createHorosMission, type HorosMissionDetail } from "@/lib/horos-api";
 
 type MissionRow = {
   id: string;
@@ -29,23 +29,23 @@ function formatRelativeTime(value?: string): string {
   return `${absDays} day${absDays === 1 ? "" : "s"} ago`;
 }
 
-function missionRisk(mission: DhyraMissionDetail): string {
+function missionRisk(mission: HorosMissionDetail): string {
   const policy = mission.authorityPolicies?.[0];
   if (policy?.blocked) return "High";
   if (policy?.needsApproval) return "Medium";
   return "Low";
 }
 
-function missionPlanner(mission: DhyraMissionDetail): string {
+function missionPlanner(mission: HorosMissionDetail): string {
   const planner = mission.executionRun?.planner as { planner?: unknown; model?: unknown; stage?: unknown } | undefined;
   const plannerName =
     typeof planner?.planner === "string" ? planner.planner :
     typeof planner?.model === "string" ? planner.model :
     null;
-  return plannerName || "Dhyra Planner";
+  return plannerName || "HOROS Planner";
 }
 
-function missionProgress(mission: DhyraMissionDetail): number {
+function missionProgress(mission: HorosMissionDetail): number {
   switch ((mission.state ?? "").toLowerCase()) {
     case "completed":
       return 100;
@@ -61,7 +61,7 @@ function missionProgress(mission: DhyraMissionDetail): number {
 }
 
 export function MissionsActive({ onViewMission }: { onViewMission?: (id: string) => void }) {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
   const [missions, setMissions] = useState<MissionRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
   const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
     syncWorkspace();
     window.addEventListener("focus", syncWorkspace);
     window.addEventListener("storage", syncWorkspace);
@@ -92,8 +92,8 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
     setError(null);
     try {
       const [liveMissions, institutions] = await Promise.all([
-        listDhyraMissions(workspaceId),
-        listDhyraInstitutions(workspaceId),
+        listHorosMissions(workspaceId),
+        listHorosInstitutions(workspaceId),
       ]);
       setInstitutionId(institutions[0]?.id ?? null);
       setMissions(
@@ -141,7 +141,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
     setCreating(true);
     setError(null);
     try {
-      await createDhyraMission(workspaceId, {
+      await createHorosMission(workspaceId, {
         institutionId,
         title: "New Mission",
         objective: "Define and run a new operational mission.",

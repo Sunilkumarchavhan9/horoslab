@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Cloud, ExternalLink, Rocket, Check, Cpu, Server, Radio, Bot, Send, Settings } from "lucide-react";
-import { NvidiaLogo, RunPodLogo, ModalLogo, K8sFaviconLogo, DhyraLogo, TeslaLogo, OneXLogo } from "@/components/dhyra/primitives/brand-icons";
+import { NvidiaLogo, RunPodLogo, ModalLogo, K8sFaviconLogo, HorosLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
 type PlatformCategory = "computational" | "edge" | "physical" | "industrial";
 
 interface TargetItem {
@@ -15,7 +15,7 @@ interface TargetItem {
 
 export function DeployStep() {
   const [activeCategory, setActiveCategory] = useState<PlatformCategory>("computational");
-  const [selectedTarget, setSelectedTarget] = useState<string>("dhyra");
+  const [selectedTarget, setSelectedTarget] = useState<string>("horos");
   const [activeTab, setActiveTab] = useState<string>("dockerfile");
 
   const categories: { id: PlatformCategory; label: string; icon: React.ReactNode }[] = [
@@ -28,10 +28,10 @@ export function DeployStep() {
   const targetsByCategory: Record<PlatformCategory, TargetItem[]> = {
     computational: [
       {
-        id: "dhyra",
-        name: "Dhyra Cloud",
+        id: "horos",
+        name: "HOROS Cloud",
         desc: "Fully managed endpoint, auto-scaling",
-        icon: <div className="flex items-center justify-center w-8 h-8 shrink-0"><DhyraLogo size={32} /></div>,
+        icon: <div className="flex items-center justify-center w-8 h-8 shrink-0"><HorosLogo size={32} /></div>,
         gpus: ["H100", "L40S", "A100", "L4"],
       },
       {
@@ -253,7 +253,7 @@ export function DeployStep() {
             GENERATED ARTIFACT
           </span>
           <div className="flex items-center gap-1.5">
-            {["dockerfile", "servesh", "dhyrayaml"].map((tab) => (
+            {["dockerfile", "servesh", "horosyaml"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -263,14 +263,14 @@ export function DeployStep() {
                     : "text-[#666666] hover:text-[#aaaaaa]"
                 }`}
               >
-                {tab === "dockerfile" ? "Dockerfile" : tab === "servesh" ? "serve.sh" : "dhyra.yaml"}
+                {tab === "dockerfile" ? "Dockerfile" : tab === "servesh" ? "serve.sh" : "horos.yaml"}
               </button>
             ))}
           </div>
         </div>
 
         <div className="flex-1 p-2.5 bg-[#0d0d0d] rounded-[1px] border border-[#1e1e1e] text-[11px] leading-[1.7] font-mono overflow-hidden text-[#d4d4d4]">
-          <div className="flex"><span className="text-[#555555] select-none w-5 text-right mr-3 shrink-0">1</span><span>FROM dhyra/vllm:0.6.3-l40s</span></div>
+          <div className="flex"><span className="text-[#555555] select-none w-5 text-right mr-3 shrink-0">1</span><span>FROM horos/vllm:0.6.3-l40s</span></div>
           <div className="flex"><span className="text-[#555555] select-none w-5 text-right mr-3 shrink-0">2</span><span>ENV MODEL=Llama-3.1-8B-Instruct</span></div>
           <div className="flex"><span className="text-[#555555] select-none w-5 text-right mr-3 shrink-0">3</span><span>ENV QUANTIZATION=awq_marlin</span></div>
           <div className="flex"><span className="text-[#555555] select-none w-5 text-right mr-3 shrink-0">4</span><span>COPY ./weights /models</span></div>

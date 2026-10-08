@@ -1,4 +1,4 @@
-`"use client";
+"use client";
 
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MemoryStarLogo } from "@/components/landing/memory-star-logo";
@@ -16,7 +16,6 @@ import {
   readMemoryTokenFromStorage,
   writeMemoryTokenToStorage,
 } from "@/lib/memory-token";
-import { UsageMeter } from "@/components/developer-console/usage-meter";
 
 type PlaygroundMode = "process" | "retrieve" | "resume" | "handoff" | "prompt";
 type CenterTab = "chat" | "code" | "python";
@@ -2103,7 +2102,7 @@ handoff = httpx.post(
               </div>
               {billing ? (
                 <div className="w-full">
-                  <UsageMeter usage={billing.usage} currentPlan={billing.currentPlan} compact />
+                  {/* UsageMeter removed */}
                 </div>
               ) : null}
             </div>

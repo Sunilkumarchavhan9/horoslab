@@ -21,7 +21,7 @@ export function DeveloperToolAdapters() {
  <div className="flex items-start justify-between mb-8">
  <DeveloperHeader 
  title="Tool Adapters" 
- description="Connect external platforms to feed reality data into Dhyra. Adapters translate vendor-specific events into unified Reality Fabric schemas."
+ description="Connect external platforms to feed reality data into HOROS. Adapters translate vendor-specific events into unified Reality Fabric schemas."
  />
  <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
@@ -80,7 +80,7 @@ export function DeveloperToolAdapters() {
  {selectedAdapter.status === "Disconnected" ? (
  <div className="flex flex-col gap-3 p-6 rounded-md border border-border dark:border-white/10 bg-card dark:bg-[#111]">
  <p className="text-[13px] text-muted-foreground dark:text-muted-foreground leading-relaxed">
- Connect your {selectedAdapter.provider} account using OAuth to allow Dhyra to ingest events and dispatch tools.
+ Connect your {selectedAdapter.provider} account using OAuth to allow HOROS to ingest events and dispatch tools.
  </p>
  <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium w-full mt-2">
  Connect {selectedAdapter.provider}

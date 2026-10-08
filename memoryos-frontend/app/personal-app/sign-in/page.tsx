@@ -51,7 +51,7 @@ export default async function PersonalAppSignInPage() {
             disabled
             className="flex min-h-[56px] w-full items-center justify-center rounded-[5px] bg-[linear-gradient(180deg,#314bf4_0%,#0a2ba7_100%)] px-5 text-[16px] font-semibold text-[#F0EFE2]/80"
           >
-            Log in to Dhyra
+            Log in to HOROS
           </button>
           <p className="pt-4 text-center text-[14px] leading-7 text-[#7d8596]">
             By continuing, you agree to our <a href="#" className="underline underline-offset-2">Terms</a> and{" "}

@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { connectDhyraMcpConnection, listDhyraMcpConnections, registerDhyraMcpConnection } from "@/lib/dhyra-api";
+import { connectHorosMcpConnection, listHorosMcpConnections, registerHorosMcpConnection } from "@/lib/horos-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 
@@ -41,7 +41,7 @@ export function DeveloperMcpView({ workspaceId }: { workspaceId?: string | null 
         if (!workspaceId) return;
         try {
             setLoadError(null);
-            const items = await listDhyraMcpConnections(workspaceId);
+            const items = await listHorosMcpConnections(workspaceId);
             setRecords(items.map((item) => ({ id: item.id, serverName: item.name ?? item.id, uri: String(item.config?.uri ?? item.client ?? "-"), capabilities: Array.isArray(item.config?.capabilities) ? item.config!.capabilities as string[] : [], resources: Array.isArray(item.config?.resources) ? `${item.config!.resources.length} discovered` : String(item.config?.resources ?? "-"), policies: Array.isArray(item.config?.policies) ? item.config!.policies as string[] : [], status: item.status === "connected" ? "Connected" : item.status === "error" ? "Error" : "Disconnected" })));
         } catch (cause) {
             setLoadError(cause instanceof Error ? cause.message : "Unable to load MCP connections.");
@@ -57,13 +57,13 @@ export function DeveloperMcpView({ workspaceId }: { workspaceId?: string | null 
     const registerServer = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!workspaceId || !form.name.trim() || !form.uri.trim()) { setRegisterError("Server name and URI are required."); return; }
-        try { setRegistering(true); setRegisterError(null); const created = await registerDhyraMcpConnection(workspaceId, { name: form.name.trim(), uri: form.uri.trim() }); await connectDhyraMcpConnection(workspaceId, created.id, { token: form.token.trim() || undefined }); setForm({ name: "", uri: "", token: "" }); setRegisterOpen(false); await loadConnections(); }
+        try { setRegistering(true); setRegisterError(null); const created = await registerHorosMcpConnection(workspaceId, { name: form.name.trim(), uri: form.uri.trim() }); await connectHorosMcpConnection(workspaceId, created.id, { token: form.token.trim() || undefined }); setForm({ name: "", uri: "", token: "" }); setRegisterOpen(false); await loadConnections(); }
         catch (cause) { setRegisterError(cause instanceof Error ? cause.message : "Unable to register MCP server."); }
         finally { setRegistering(false); }
     };
     const connectServer = async (id: string) => {
         if (!workspaceId) return;
-        try { setConnecting(id); setRegisterError(null); await connectDhyraMcpConnection(workspaceId, id); await loadConnections(); }
+        try { setConnecting(id); setRegisterError(null); await connectHorosMcpConnection(workspaceId, id); await loadConnections(); }
         catch (cause) { setRegisterError(cause instanceof Error ? cause.message : "Unable to connect MCP server."); }
         finally { setConnecting(null); }
     };
@@ -100,17 +100,17 @@ export function DeveloperMcpView({ workspaceId }: { workspaceId?: string | null 
                     <div className="flex flex-col">
                         <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
                             <TerminalSquare className="size-5 text-indigo-500" />
-                            Dhyra MCP and External Tools
+                            HOROS MCP and External Tools
                         </h1>
                         <span className="text-xs text-muted-foreground mt-1">Connect external AI systems to the Institution via Model Context Protocol.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("dhyra-mcp-connections.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("horos-mcp-connections.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>
                         <button type="button" onClick={() => setSetupOpen((open) => !open)} className="flex items-center gap-2 border border-border bg-background px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
-                            <LinkIcon className="size-3.5" /> Dhyra MCP Client
+                            <LinkIcon className="size-3.5" /> HOROS MCP Client
                         </button>
                         <button type="button" onClick={() => { setRegisterOpen((open) => !open); setRegisterError(null); }} className="flex items-center gap-2 bg-primary px-3 py-1.5 rounded-md text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm">
                             Register External MCP
@@ -118,13 +118,13 @@ export function DeveloperMcpView({ workspaceId }: { workspaceId?: string | null 
                     </div>
                 </div>
                 {setupOpen && <div className="mx-6 mb-4 rounded-md border border-border bg-card p-4 text-xs text-muted-foreground">
-                    <p className="font-semibold text-foreground">Dhyra V12 MCP client</p>
+                    <p className="font-semibold text-foreground">HOROS V12 MCP client</p>
                     <p className="mt-1">Use this published stdio client in Claude, Cursor, or another MCP host. It is separate from registering an external HTTP MCP server below.</p>
                     <div className="mt-3 grid gap-2 md:grid-cols-2">
-                        <code className="rounded bg-muted px-3 py-2 text-foreground">pnpm add -g @dhyratm/v12-mcp</code>
-                        <code className="rounded bg-muted px-3 py-2 text-foreground">dhyra-v12-mcp</code>
-                        <code className="rounded bg-muted px-3 py-2 text-foreground">DHYRA_V12_API_URL=http://localhost:3011</code>
-                        <code className="rounded bg-muted px-3 py-2 text-foreground">DHYRA_V12_API_KEY=runtime-key</code>
+                        <code className="rounded bg-muted px-3 py-2 text-foreground">pnpm add -g @horostm/v12-mcp</code>
+                        <code className="rounded bg-muted px-3 py-2 text-foreground">horos-v12-mcp</code>
+                        <code className="rounded bg-muted px-3 py-2 text-foreground">HOROS_V12_API_URL=http://localhost:3011</code>
+                        <code className="rounded bg-muted px-3 py-2 text-foreground">HOROS_V12_API_KEY=runtime-key</code>
                     </div>
                 </div>}
                 {registerOpen && <form onSubmit={registerServer} className="mx-6 mb-4 grid gap-3 rounded-md border border-border bg-card p-4 md:grid-cols-[1fr_2fr_1fr_auto]">
@@ -150,7 +150,7 @@ export function DeveloperMcpView({ workspaceId }: { workspaceId?: string | null 
                         <LiveFilterDropdown label="Status" value={statusFilter} options={["All", "Connected", "Disconnected", "Error"]} onChange={setStatusFilter} />
                         <LiveFilterDropdown label="Capability" value={capabilityFilter} options={capabilityOptions} onChange={setCapabilityFilter} />
                         <LiveFilterDropdown label="Policy" value={policyFilter} options={policyOptions} onChange={setPolicyFilter} />
-                        <button type="button" onClick={() => exportLiveRows("dhyra-mcp-connections.json", visibleRecords)} className="ml-auto flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors border border-border px-3 py-1.5 rounded-md bg-background shrink-0 shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("horos-mcp-connections.json", visibleRecords)} className="ml-auto flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors border border-border px-3 py-1.5 rounded-md bg-background shrink-0 shadow-sm">
                             <Download className="size-3.5" /> Export visible
                         </button>
                     </div>

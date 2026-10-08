@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "../universal-inspector";
-import { createDhyraInstitution, listDhyraInstitutions } from "@/lib/dhyra-api";
+import { createHorosInstitution, listHorosInstitutions } from "@/lib/horos-api";
 import { LiveFilterDropdown } from "../ui/live-filter-dropdown";
 
 type InstitutionRow = {
@@ -61,7 +61,7 @@ export function WorkspaceInstitutions({ workspaceId }: { workspaceId?: string | 
     useEffect(() => {
         if (!workspaceId) return;
         let cancelled = false;
-        const load = () => listDhyraInstitutions(workspaceId)
+        const load = () => listHorosInstitutions(workspaceId)
             .then((items) => {
                 if (cancelled) return;
                 setInstitutions(items.map((item) => ({ id: item.id, name: item.name, category: (item.category ?? "Infrastructure") as InstitutionRow["category"], status: (item.status ?? "Active") as InstitutionRow["status"], version: item.version ?? "-", owner: "Workspace", workersCount: 0, missionsCount: item.missionCount ?? 0, policiesCount: 0, memoryRecordsCount: "-", updated: item.updatedAt ? new Date(item.updatedAt).toLocaleString() : "-" })));
@@ -97,7 +97,7 @@ export function WorkspaceInstitutions({ workspaceId }: { workspaceId?: string | 
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement("a");
         anchor.href = url;
-        anchor.download = "dhyra-institutions.json";
+        anchor.download = "horos-institutions.json";
         anchor.click();
         URL.revokeObjectURL(url);
     };
@@ -111,8 +111,8 @@ export function WorkspaceInstitutions({ workspaceId }: { workspaceId?: string | 
         setCreating(true);
         setCreateError(null);
         try {
-            await createDhyraInstitution(workspaceId, { name: institutionName.trim(), category: institutionCategory });
-            const refreshed = await listDhyraInstitutions(workspaceId);
+            await createHorosInstitution(workspaceId, { name: institutionName.trim(), category: institutionCategory });
+            const refreshed = await listHorosInstitutions(workspaceId);
             setInstitutions(refreshed.map((item) => ({ id: item.id, name: item.name, category: (item.category ?? "Infrastructure") as InstitutionRow["category"], status: (item.status ?? "Active") as InstitutionRow["status"], version: item.version ?? "-", owner: "Workspace", workersCount: 0, missionsCount: item.missionCount ?? 0, policiesCount: 0, memoryRecordsCount: "-", updated: item.updatedAt ? new Date(item.updatedAt).toLocaleString() : "-" })));
             setInstitutionName("");
             setInstitutionCategory("Software Development");

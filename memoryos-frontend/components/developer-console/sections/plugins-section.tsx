@@ -40,7 +40,7 @@ function statusLabel(status: PluginStatus) {
   return "available";
 }
 
-export function PluginsSection() {
+export function PluginsSection(props: any) {
   const [plugins, setPlugins] = useState<PluginCard[]>([]);
   const [events, setEvents] = useState<PluginEvent[]>([]);
   const [activeCategory, setActiveCategory] = useState<"All" | "Runtime" | "MCP" | "Workflow">("All");
@@ -428,3 +428,4 @@ memoryos plugin status ${selectedPlugin.id}`}</code>
     </>
   );
 }
+

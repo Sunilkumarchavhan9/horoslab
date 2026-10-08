@@ -1,7 +1,7 @@
 "use client";
 
 import { ScrollText, FileJson, Clock3, PlayCircle, CheckCircle2, AlertTriangle } from "lucide-react";
-import { type DhyraMissionDetail } from "@/lib/dhyra-api";
+import { type HorosMissionDetail } from "@/lib/horos-api";
 
 function stringifyLogEntry(entry: unknown): string {
  if (typeof entry === "string") return entry;
@@ -23,7 +23,7 @@ function formatTime(value?: string | null): string {
  return new Date(timestamp).toLocaleString();
 }
 
-export function MissionDetailLogs({ mission }: { mission: DhyraMissionDetail }) {
+export function MissionDetailLogs({ mission }: { mission: HorosMissionDetail }) {
  const executionLogs = Array.isArray(mission.executionRun?.logs) ? mission.executionRun.logs : [];
  const timeline = Array.isArray(mission.timeline) ? mission.timeline : [];
  const latestTimeline = timeline[0] ?? null;

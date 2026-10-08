@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
+import { SectionDivider } from "@/components/landing/section-divider";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { ResultInspectionSection } from "@/components/landing/result-inspection-section";
 import { FeatureShowcase } from "@/components/landing/feature-showcase";
@@ -11,9 +12,9 @@ import { DeploymentOptionsSection } from "@/components/landing/deployment-option
 import { SupportedStackSection } from "@/components/landing/supported-stack-section";
 import { FaqSection } from "@/components/landing/faq-section";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { AuthModal } from "@/components/dhyra/modals/auth-modal";
-import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
-import { PixelFilter } from "@/components/dhyra/primitives/pixel-filter";
+import { AuthModal } from "@/components/horos/modals/auth-modal";
+import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
+import { PixelFilter } from "@/components/horos/primitives/pixel-filter";
 import { X } from "lucide-react";
 import gsap from "gsap";
 
@@ -229,7 +230,8 @@ export default function Home() {
           dark={true}
         />
 
-        {/* 2. Reality & Capability Architecture Canvas Section */}
+        
+          {/* 2. Reality & Capability Architecture Canvas Section */}
         <ResultInspectionSection
           onOpenSignIn={() => {
             setAuthModalMode("sign-in");
@@ -238,7 +240,9 @@ export default function Home() {
           dark={true}
         />
 
-        {/* 3. Feature Showcase Sticky Scroll Section */}
+        
+          <div className="w-full relative z-20"><SectionDivider position="top" /></div>
+          {/* 3. Feature Showcase Sticky Scroll Section */}
         <FeatureShowcase
           onOpenSignIn={() => {
             setAuthModalMode("sign-in");
@@ -247,19 +251,29 @@ export default function Home() {
           dark={true}
         />
 
-        {/* 4. Model APIs & Build Your Own Stack Section */}
+        
+          <div className="w-full relative z-20"><SectionDivider position="top" /></div>
+          {/* 4. Model APIs & Build Your Own Stack Section */}
         <ModelApisSection dark={true} />
 
-        {/* 5. Hardware Deployment Section */}
+        
+          <div className="w-full relative z-20"><SectionDivider position="top" /></div>
+          {/* 5. Hardware Deployment Section */}
         <HardwareDeploymentSection />
 
-        {/* 6. Deployment Options Section */}
+        
+          <div className="w-full relative z-20"><SectionDivider position="top" /></div>
+          {/* 6. Deployment Options Section */}
         <DeploymentOptionsSection />
 
-        {/* 7. Supported Stack Section */}
+        
+          <div className="w-full relative z-20"><SectionDivider position="top" /></div>
+          {/* 7. Supported Stack Section */}
         <SupportedStackSection />
         
-        {/* 8. FAQ Section */}
+        
+          <div className="w-full relative z-20"><SectionDivider position="top" /></div>
+          {/* 8. FAQ Section */}
         <FaqSection />
 
         {/* 9. Footer CTA & Footer */}
@@ -311,3 +325,4 @@ export default function Home() {
     </div>
   );
 }
+

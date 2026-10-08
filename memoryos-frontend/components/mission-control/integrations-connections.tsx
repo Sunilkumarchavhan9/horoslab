@@ -15,10 +15,10 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { MemoryOSIcon } from "@/components/landing/memoryos-icon";
 import {
- listDhyraIntegrations,
- readActiveDhyraWorkspaceId,
- type DhyraIntegrationConnection,
-} from "@/lib/dhyra-api";
+ listHorosIntegrations,
+ readActiveHorosWorkspaceId,
+ type HorosIntegrationConnection,
+} from "@/lib/horos-api";
 import { authorizeConnector, disconnectConnector } from "@/lib/continuity-lab/connector-actions";
 import { fetchConnectorList } from "@/lib/continuity-lab/connector-list";
 import {
@@ -412,8 +412,8 @@ const AUTHORS_LIST = [
 ];
 
 export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: string) => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [connections, setConnections] = useState<DhyraIntegrationConnection[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [connections, setConnections] = useState<HorosIntegrationConnection[]>([]);
  const [sourceProviders, setSourceProviders] = useState<SourceProvider[]>([]);
  const [companySources, setCompanySources] = useState<CompanySource[]>([]);
  const [connectingType, setConnectingType] = useState<string | null>(null);
@@ -450,7 +450,7 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
  }, []);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -475,7 +475,7 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
  setError(null);
  try {
  const [listResult, providerResult, sourcesResult, connectorRows] = await Promise.all([
-  listDhyraIntegrations(workspaceId, { limit: 100 }),
+  listHorosIntegrations(workspaceId, { limit: 100 }),
   listSourceProviders(),
   listSources(),
   fetchConnectorList(),
@@ -484,11 +484,11 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
   const connectorByProvider = new Map(
    connectorRows.map((connector) => [connector.type.toLowerCase(), connector]),
   );
-  const dhyraIntegrations = (listResult.integrations ?? []).map((integration) => {
+  const horosIntegrations = (listResult.integrations ?? []).map((integration) => {
    const liveConnector = connectorByProvider.get(integration.provider.toLowerCase());
    return liveConnector ? { ...integration, status: liveConnector.status } : integration;
   });
- const byProvider = new Map(dhyraIntegrations.map((integration) => [integration.provider.toLowerCase(), integration]));
+ const byProvider = new Map(horosIntegrations.map((integration) => [integration.provider.toLowerCase(), integration]));
  const sourceProvidersByName = new Set((sourcesResult ?? []).map((source) => source.provider.toLowerCase()));
   const normalizedSources = (sourcesResult ?? []).map((source) => {
    const integration = byProvider.get(source.provider.toLowerCase());
@@ -499,7 +499,7 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
      ? { ...source, status: normalizeConnectionStatus(liveConnector.status) }
     : source;
   });
- const missingSources = dhyraIntegrations
+ const missingSources = horosIntegrations
   .filter((integration) => !sourceProvidersByName.has(integration.provider.toLowerCase()))
   .map((integration) => ({
    id: integration.id,
@@ -515,7 +515,7 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
    memoryCount: 0,
    health: null,
   } satisfies CompanySource));
- setConnections(dhyraIntegrations);
+ setConnections(horosIntegrations);
  setSourceProviders(providerResult ?? []);
  setCompanySources([...normalizedSources, ...missingSources]);
  }
@@ -599,13 +599,13 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
  connected?: boolean;
  status?: string;
  linked?: CompanySource | null;
- dhyraCount: number;
+ horosCount: number;
  };
  const mergedMap = new Map<string, CatalogCard>();
 
  ALL_CATALOG_ITEMS.forEach((item) => {
   const linked = findCompanySourceForProvider(companySources, item.id, item.name);
-  const dhyraConnections = connections.filter((c) =>
+  const horosConnections = connections.filter((c) =>
    c.provider.toLowerCase().includes(item.id)
   );
   const isConnected = Boolean(linked && isLiveCompanySource(linked));
@@ -615,7 +615,7 @@ export function IntegrationsConnections({ onViewDetail }: { onViewDetail: (id: s
  connected: isConnected,
  status: linked?.status ?? (isConnected ? "Connected" : "Available"),
  linked,
- dhyraCount: dhyraConnections.length,
+ horosCount: horosConnections.length,
  });
  });
 
@@ -650,7 +650,7 @@ sourceProviders.forEach((provider) => {
  description: provider.description || "Seamlessly integrate with your workflow.",
  connected: isConnected,
  linked: linked ?? null,
- dhyraCount: 0,
+ horosCount: 0,
  });
  }
  });
@@ -1109,7 +1109,7 @@ return (
  {card.tag1 || "262,144 max context"}
  </span>
  <span className="inline-flex items-center rounded-full bg-[#eaeaea] text-foreground/90 px-3 py-0.5 text-[12px] font-medium">
- {card.tag2 || (card.dhyraCount > 0 ? `${card.dhyraCount} Links` : "Third-party")}
+ {card.tag2 || (card.horosCount > 0 ? `${card.horosCount} Links` : "Third-party")}
  </span>
  </div>
  </div>

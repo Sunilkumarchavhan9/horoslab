@@ -236,15 +236,15 @@ import {
     type GitHubPullRequestDetail,
 } from "@/lib/continuity-lab/wiki-api"
 import {
-    createDhyraMission,
-    createDhyraMissionEvidence,
-    listDhyraInstitutions,
-    listDhyraVerificationRuns,
-    readActiveDhyraWorkspaceId,
-    resolveActiveDhyraWorkspaceId,
-    verifyDhyraMission,
-    type DhyraVerificationRunHistoryItem,
-} from "@/lib/dhyra-api"
+    createHorosMission,
+    createHorosMissionEvidence,
+    listHorosInstitutions,
+    listHorosVerificationRuns,
+    readActiveHorosWorkspaceId,
+    resolveActiveHorosWorkspaceId,
+    verifyHorosMission,
+    type HorosVerificationRunHistoryItem,
+} from "@/lib/horos-api"
 import type { MemoryOsConnectorState } from "@/lib/continuity-lab/runtime"
 import { cn } from "@/lib/utils"
 
@@ -517,7 +517,7 @@ export function MissionControlWorkspace() {
     const profileLabel = (key: string) => profileText(profilePreferences.language, key)
 
     const [phase, setPhase] = useState<Phase>("idle")
-    const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId())
+    const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId())
     const [refreshTick, setRefreshTick] = useState(0)
     const sidebarSectionRefs = useRef<Record<SidebarSection, HTMLDivElement | null>>({} as any)
     const [connectStatus, setConnectStatus] = useState<any>(null)
@@ -537,7 +537,7 @@ export function MissionControlWorkspace() {
     const [launchError, setLaunchError] = useState<string | null>(null)
     const [activeStep, setActiveStep] = useState<number>(0)
     const [verificationResult, setVerificationResult] = useState<VerificationRecord | null>(null)
-    const [verificationHistory, setVerificationHistory] = useState<DhyraVerificationRunHistoryItem[]>([])
+    const [verificationHistory, setVerificationHistory] = useState<HorosVerificationRunHistoryItem[]>([])
     const [verificationHistoryLoading, setVerificationHistoryLoading] = useState(false)
     const [verificationHistoryError, setVerificationHistoryError] = useState<string | null>(null)
     const [isSectionLoading, setIsSectionLoading] = useState(false)
@@ -611,7 +611,7 @@ export function MissionControlWorkspace() {
         setActiveStep(0)
 
         try {
-            const institutions = await listDhyraInstitutions(workspaceId)
+            const institutions = await listHorosInstitutions(workspaceId)
             const institution = institutions[0]
             if (!institution) {
                 throw new Error("Create an institution first so verification has a place to write back.")
@@ -625,7 +625,7 @@ export function MissionControlWorkspace() {
 
             const record = buildVerificationRecord(selectedRepo.fullName, detail)
 
-            await createDhyraMission(workspaceId, {
+            await createHorosMission(workspaceId, {
                 institutionId: institution.id,
                 title: "Code verification: " + record.pullRequestTitle,
                 objective: record.evidenceReport.summary,
@@ -1372,7 +1372,7 @@ export function MissionControlWorkspace() {
                                                                 Analyzing <span className="text-[#0f52ff]">{selectedPr?.number}</span>
                                                             </h2>
                                                             <p className="mt-2 max-w-2xl text-sm leading-6 text-foreground/55">
-                                                                Dhyra is scanning the repo, collecting evidence, and running policy checks before it writes the final report.
+                                                                HOROS is scanning the repo, collecting evidence, and running policy checks before it writes the final report.
                                                             </p>
                                                         </div>
                                                         <div className="flex items-center gap-2 rounded-md border border-border bg-card px-6 py-2 text-sm text-foreground ">

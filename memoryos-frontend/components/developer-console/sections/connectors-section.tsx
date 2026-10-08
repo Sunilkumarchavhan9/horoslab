@@ -602,3 +602,4 @@ function addActivity(message: string, status: string = "info") {
     </div>
   );
 }
+

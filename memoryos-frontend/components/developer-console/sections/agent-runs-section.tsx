@@ -24,8 +24,8 @@ import {
   XCircle,
   type LucideIcon,
 } from "lucide-react";
-import { ConsolePage } from "@/components/developer-console/console-ui";
-import { ConnectorBrandIcon } from "@/components/developer-console/connector-brand-icons";
+import { ConsolePage } from "@/components/horos/console-ui";
+import { ConnectorBrandIcon } from "@/components/continuity-lab/connector-brand-icons";
 import { MemoryosLogoTile } from "@/components/continuity-lab/memoryos-logo-mark";
 import {
   cancelAgentRun,
@@ -1258,3 +1258,4 @@ function Modal({ title, open, onClose, children }: { title: string; open: boolea
     </div>
   );
 }
+

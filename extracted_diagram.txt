@@ -1,4 +1,4 @@
-DHYRA
+HEMERA
                          REALITY INTELLIGENCE RUNTIME
 
         BUILD → ADAPT → EVALUATE → OPTIMIZE → EXPERIMENT
@@ -8,7 +8,7 @@ DHYRA
                                   ▼
 
                     ┌──────────────────────────────┐
-                    │      DHYRA INTELLIGENCE      │
+                    │      HEMERA INTELLIGENCE      │
                     │             GRAPH            │
                     └──────────────────────────────┘
                                   │
@@ -1047,7 +1047,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
                                   ▼
 
 
-                           DHYRA MODEL API
+                           HEMERA MODEL API
                                   │
               ┌───────────────────┼──────────────────┐
               ▼                   ▼                  ▼
@@ -1172,7 +1172,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
              ▼
 
 
-                         DHYRA SYSTEM PACKAGE
+                         HEMERA SYSTEM PACKAGE
                                   │
               ┌───────────────────┼────────────────────┐
               ▼                   ▼                    ▼
@@ -1339,7 +1339,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
 
 
                      ╔══════════════════════════╗
-                     ║   CORE DHYRA PRINCIPLE   ║
+                     ║   CORE HEMERA PRINCIPLE   ║
                      ╚══════════════════════════╝
 
           FIND WHAT LIMITS INTELLIGENCE

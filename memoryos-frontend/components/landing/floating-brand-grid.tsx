@@ -7,7 +7,7 @@ import {
   MistralLogo, 
   DeepSeekLogo,
   OpenAILogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 interface FloatingBrandGridProps {
   className?: string;

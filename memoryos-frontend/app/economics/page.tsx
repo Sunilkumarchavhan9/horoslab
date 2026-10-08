@@ -2,7 +2,7 @@ import React from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { ResourceCalculatorSection } from "@/components/landing/resource-calculator-section";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { PixelFilter } from "@/components/dhyra/primitives/pixel-filter";
+import { PixelFilter } from "@/components/horos/primitives/pixel-filter";
 
 export default function EconomicsPage() {
   return (
@@ -11,10 +11,13 @@ export default function EconomicsPage() {
 
       {/* Background Dashed Lines - Global Layout */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Outer Lines (Mobile & Desktop) */}
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+
+        {/* Inner Lines (Desktop Only) */}
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute right-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       <div className="relative z-10 flex flex-col w-full min-h-screen">

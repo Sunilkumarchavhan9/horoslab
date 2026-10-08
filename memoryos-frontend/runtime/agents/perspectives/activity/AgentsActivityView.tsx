@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAgentStore } from "../../store";
 import { getAgentRunsSummary, listAgentRuns } from "@/lib/agent-runs-api";
 import type { MasterplanAgentRunDetail } from "@/lib/masterplan-api";
-import { readActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
+import { readActiveHorosWorkspaceId } from "@/lib/horos-api";
 
 type ActivityEntry = {
   id: string;
@@ -85,7 +85,7 @@ export function AgentsActivityView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const workspaceId = readActiveDhyraWorkspaceId() ?? undefined;
+  const workspaceId = readActiveHorosWorkspaceId() ?? undefined;
 
   const loadActivity = useCallback(async () => {
     setLoading(true);

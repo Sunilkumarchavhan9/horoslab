@@ -83,7 +83,7 @@ export function OnboardingTeamView() {
           onClick={() => setStep('identity')}
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-medium px-4 py-2 transition-colors"
         >
-          <ArrowLeft className="size-4" /> Back to Dhyra
+          <ArrowLeft className="size-4" /> Back to HOROS
         </button>
         <button 
           onClick={() => setStep('connectors')}

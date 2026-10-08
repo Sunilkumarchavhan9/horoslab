@@ -13,7 +13,7 @@ import {
   QwenLogo,
   SGLangLogo,
   VLLMLogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 import { VoiceOrb } from "@/components/ui/voice-orb";
 
 export function EcosystemGrid() {
@@ -173,9 +173,9 @@ export function EcosystemGrid() {
 
           {/* Row 5 (y=74.6%) */}
           {/* Text: Transcription */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap" style={{ left: '90.9%', top: '74.5%', transform: 'translate(-50%, -50%)' }}>
-            Transcription
-          </div>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap" style={{ left: '83%', top: '74.5%', transform: 'translate(0%, -50%)' }}>
+              Transcription
+            </div>
           {/* Col 2: DeepSeek (x=22.3%) */}
           <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '22.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
             <DeepSeekLogo size={28} />

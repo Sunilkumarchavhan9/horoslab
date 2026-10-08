@@ -4,12 +4,12 @@ import React from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { CornerDownLeft } from "lucide-react";
-import { TokenPromptInput } from "@/components/dhyra/primitives/token-prompt-input";
-import { CellularRevealBackground } from "@/components/dhyra/primitives/cellular-reveal-background";
+import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
+import { CellularRevealBackground } from "@/components/horos/primitives/cellular-reveal-background";
 import { LeftFeedStrip, RightFeedStrip } from "./side-feed-strips";
 import { HeroGlitchImage } from "./hero-glitch-image";
 import { FloatingBrandGrid } from "./floating-brand-grid";
-import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
+import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 
 interface LandingHeroProps {
   onLaunchPrompt?: (params: any) => void;
@@ -24,7 +24,7 @@ const HEADLINES = [
   { prefix: "Learn, Teach, and ", highlight: "Evolve." },
 ];
 
-// 14 Canonical Workloads representing Dhyra's Reality Intelligence Architecture
+// 14 Canonical Workloads representing HOROS's Reality Intelligence Architecture
 const ALL_14_WORKLOADS = [
   {
     label: "Compare engines",
@@ -187,7 +187,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
           <div className="w-full relative mb-0">
             <HeroGlitchImage
               src="/hero-rack.jpg"
-              alt="Dhyra NVIDIA Rack"
+              alt="HOROS NVIDIA Rack"
               className="w-full relative z-10"
             />
           </div>
@@ -277,7 +277,7 @@ export function LandingHero({ onLaunchPrompt, dark = true }: LandingHeroProps) {
                 </h1>
               </div>
               <p className="text-sm sm:text-base text-[#90988c] font-mono max-w-3xl mx-auto leading-relaxed pt-1 pb-4">
-                Dhyra builds frontier intelligence systems that learn from real-world evidence—discovering gaps, adapting models, running experiments, verifying outcomes, and evolving continuously.
+                HOROS builds frontier intelligence systems that learn from real-world evidence—discovering gaps, adapting models, running experiments, verifying outcomes, and evolving continuously.
               </p>
             </div>
 

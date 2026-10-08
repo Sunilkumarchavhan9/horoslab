@@ -53,6 +53,7 @@ const SECTION_ICONS: Record<SettingsSectionId, ComponentType<{ className?: strin
   preferences: SlidersHorizontal,
   "personal-connections": Link2,
   general: Settings2,
+  "horos-api": KeyRound,
   connections: Link2,
   sessions: Monitor,
   plans: CreditCard,

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { FileCheck, Check, Copy } from "lucide-react";
-import { AWSLogo, OpenTelemetryLogo, NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
+import { AWSLogo, OpenTelemetryLogo, NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 
 export function EvidenceProofStep() {
   const [copied, setCopied] = useState(false);
@@ -16,10 +16,10 @@ export function EvidenceProofStep() {
   const evidenceItems = [
     { num: "01", title: "AWS Cost Explorer (CUR)", desc: "-$34.20/day verified delta match", status: "verified", Icon: AWSLogo },
     { num: "02", title: "OpenTelemetry P95 Collector", desc: "38.2ms p95 across 10,000 trace samples", status: "verified", Icon: OpenTelemetryLogo },
-    { num: "03", title: "Dhyra Golden Eval Suite", desc: "98.9% accuracy with zero quality regression", status: "verified", Icon: ({ size = 14 }) => <FileCheck size={size} className="text-[#75bf00]" /> },
+    { num: "03", title: "HOROS Golden Eval Suite", desc: "98.9% accuracy with zero quality regression", status: "verified", Icon: ({ size = 14 }) => <FileCheck size={size} className="text-[#75bf00]" /> },
     { num: "04", title: "NVIDIA NVML Power Sensors", desc: "185W average sustained on L40S", status: "verified", Icon: NvidiaLogo },
     { num: "05", title: "Audit Provenance Trace", desc: "Verifiable SHA256 immutable receipt", status: "signed", Icon: ({ size = 14 }) => <Check size={size} className="text-[#75bf00]" /> },
-    { num: "06", title: "Independent Verifier Signature", desc: "Dhyra-Independent-Verifier-04", status: "valid", Icon: ({ size = 14 }) => <Check size={size} className="text-[#75bf00]" /> },
+    { num: "06", title: "Independent Verifier Signature", desc: "HOROS-Independent-Verifier-04", status: "valid", Icon: ({ size = 14 }) => <Check size={size} className="text-[#75bf00]" /> },
   ];
 
   return (

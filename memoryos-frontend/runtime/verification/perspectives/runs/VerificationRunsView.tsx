@@ -4,16 +4,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Filter, ChevronDown, Clock, RefreshCw, ShieldCheck, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useVerificationStore } from "../../store";
-import { listDhyraVerificationRuns, readActiveDhyraWorkspaceId, type DhyraVerificationRunHistoryItem } from "@/lib/dhyra-api";
+import { listHorosVerificationRuns, readActiveHorosWorkspaceId, type HorosVerificationRunHistoryItem } from "@/lib/horos-api";
 
-function formatConfidence(run: DhyraVerificationRunHistoryItem): string {
+function formatConfidence(run: HorosVerificationRunHistoryItem): string {
   if (typeof run.confidence === "number" && Number.isFinite(run.confidence)) {
     return `${(run.confidence * 100).toFixed(1)}%`;
   }
   return run.finalDecision ?? "Pending";
 }
 
-function formatDuration(run: DhyraVerificationRunHistoryItem): string {
+function formatDuration(run: HorosVerificationRunHistoryItem): string {
   const started = run.createdAt;
   const finished = run.finalDecision;
   if (!started) return "Pending";
@@ -23,23 +23,23 @@ function formatDuration(run: DhyraVerificationRunHistoryItem): string {
 
 export function VerificationRunsView() {
   const { selectedRunId, setSelectedRunId } = useVerificationStore();
-  const [runs, setRuns] = useState<DhyraVerificationRunHistoryItem[]>([]);
+  const [runs, setRuns] = useState<HorosVerificationRunHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveDhyraWorkspaceId();
+  const workspaceId = readActiveHorosWorkspaceId();
 
   const loadRuns = useCallback(async () => {
     if (!workspaceId) {
       setRuns([]);
       setLoading(false);
-      setError("No active Dhyra workspace is available.");
+      setError("No active HOROS workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const payload = await listDhyraVerificationRuns(workspaceId, { limit: 50 });
+      const payload = await listHorosVerificationRuns(workspaceId, { limit: 50 });
       setRuns(payload.verifications);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load verification runs.");

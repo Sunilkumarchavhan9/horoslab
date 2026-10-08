@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, CircleDashed, Clock, FileJson, RefreshCw, UserCheck, Code2, Cpu, ShieldCheck, Sparkles, Search, Filter, ChevronDown, Building, Rocket, History, Scale as GovIcon, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type DhyraMissionDetail } from "@/lib/dhyra-api";
+import { type HorosMissionDetail } from "@/lib/horos-api";
 
 function stringifyLogEntry(entry: unknown): string {
  if (typeof entry === "string") return entry;
@@ -37,7 +37,7 @@ function readState(value?: string | null): string {
  return (value ?? "draft").replace(/_/g, " ");
 }
 
-export function MissionDetailExecution({ mission }: { mission: DhyraMissionDetail }) {
+export function MissionDetailExecution({ mission }: { mission: HorosMissionDetail }) {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const execution = mission.executionRun;
  const logs = Array.isArray(execution?.logs) ? execution.logs : [];

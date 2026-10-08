@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useThemePreference } from "@/lib/continuity-lab/use-theme-preference";
 import { useMissionStore } from "../../runtime/store";
 import { useMissionRuntimeData } from "../../runtime/mission-runtime-data";
-import type { DhyraMissionDetail } from "@/lib/dhyra-api";
+import type { HorosMissionDetail } from "@/lib/horos-api";
 
 type MissionTimelineEvent = {
   id?: string;
@@ -16,14 +16,14 @@ type MissionTimelineEvent = {
   timestamp?: string;
 };
 
-function pickMissionState(mission?: DhyraMissionDetail | null): string {
+function pickMissionState(mission?: HorosMissionDetail | null): string {
   return (mission?.state ?? "draft").toLowerCase();
 }
 
 export function MissionExecutionView() {
   const { selection, setSelection } = useMissionStore();
   const { missions, getMission } = useMissionRuntimeData();
-  const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
+  const [mission, setMission] = useState<HorosMissionDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

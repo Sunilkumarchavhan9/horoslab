@@ -7,12 +7,12 @@ Showing lines 190 to 219
 The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
 190:         "gridType": "AIExperiments",
 191:         "comparison": [
-192:             {"model": "Parallel A/B", "provider": "Dhyra Orchestrator", "latency": "N/A", "throughput": "Infinite", "cost": "Variable"},
-193:             {"model": "Shadow Traffic", "provider": "Dhyra Orchestrator", "latency": "0ms (Async)", "throughput": "Full Prod", "cost": "Variable"},
+192:             {"model": "Parallel A/B", "provider": "Hemera Orchestrator", "latency": "N/A", "throughput": "Infinite", "cost": "Variable"},
+193:             {"model": "Shadow Traffic", "provider": "Hemera Orchestrator", "latency": "0ms (Async)", "throughput": "Full Prod", "cost": "Variable"},
 194:             {"model": "Manual Routing", "provider": "Custom Proxies", "latency": "50ms+", "throughput": "Bottlenecked", "cost": "High Maint"}
 195:         ],
-196:         "outcome_code": "from dhyra.experiments import ABTest\n\ntest = ABTest(name=\"prompt-engineering-v2\")\n\ntest.add_variant(\"control\", model=\"llama-3.1-8b\", prompt=\"v1\")\ntest.add_variant(\"treatment\", model=\"llama-3.1-8b\", prompt=\"v2\")\n\ntest.route_traffic(percentage=10.0)\ntest.monitor(duration_days=7)",
-197:         "cap_code": "import { ExperimentFunnel } from '@dhyra/react';\n\nfunction ABTestResults() {\n  return (\n    <ExperimentFunnel\n      variantA=\"Control\"\n      variantB=\"Treatment\"\n      metric=\"conversion_rate\"\n      statisticalSignificance={0.95}\n    />\n  );\n}"
+196:         "outcome_code": "from hemera.experiments import ABTest\n\ntest = ABTest(name=\"prompt-engineering-v2\")\n\ntest.add_variant(\"control\", model=\"llama-3.1-8b\", prompt=\"v1\")\ntest.add_variant(\"treatment\", model=\"llama-3.1-8b\", prompt=\"v2\")\n\ntest.route_traffic(percentage=10.0)\ntest.monitor(duration_days=7)",
+197:         "cap_code": "import { ExperimentFunnel } from '@hemera/react';\n\nfunction ABTestResults() {\n  return (\n    <ExperimentFunnel\n      variantA=\"Control\"\n      variantB=\"Treatment\"\n      metric=\"conversion_rate\"\n      statisticalSignificance={0.95}\n    />\n  );\n}"
 198:     },
 199:     "continuous-improvement": {
 200:         "title": "Automated feedback<br />loops for production<br /><span className=\"bg-[#75bf00] text-black px-2 py-0 inline-block\">promotion</span>.",
@@ -20,12 +20,12 @@ The following code has been modified to include a line number before every line,
 202:         "icons": ["MetaLogo", "QwenLogo", "DeepSeekLogo"],
 203:         "gridType": "ContinuousImprovement",
 204:         "comparison": [
-205:             {"model": "DPO Fine-tuning", "provider": "Dhyra Pipeline", "latency": "N/A", "throughput": "Automated", "cost": "$5.00/run"},
-206:             {"model": "PPO RLHF", "provider": "Dhyra Pipeline", "latency": "N/A", "throughput": "Automated", "cost": "$15.00/run"},
+205:             {"model": "DPO Fine-tuning", "provider": "Hemera Pipeline", "latency": "N/A", "throughput": "Automated", "cost": "$5.00/run"},
+206:             {"model": "PPO RLHF", "provider": "Hemera Pipeline", "latency": "N/A", "throughput": "Automated", "cost": "$15.00/run"},
 207:             {"model": "OpenAI Fine-tuning", "provider": "OpenAI API", "latency": "N/A", "throughput": "Black Box", "cost": "$50.00+"}
 208:         ],
-209:         "outcome_code": "from dhyra.learning import Flywheel\n\nflywheel = Flywheel(model=\"qwen2.5-14b\")\n\n# Automatically fine-tune on user thumbs-up/down data weekly\nflywheel.schedule_dpo_job(\n    dataset=\"prod_telemetry\",\n    frequency=\"weekly\",\n    evaluation_gate=True\n)\nflywheel.start()",
-210:         "cap_code": "import { FlywheelStatus } from '@dhyra/react';\n\nfunction LearningLoop() {\n  return (\n    <FlywheelStatus\n      stages={['Collect', 'Train', 'Eval', 'Promote']}\n      currentStage=\"Train\"\n      progress={45}\n    />\n  );\n}"
+209:         "outcome_code": "from hemera.learning import Flywheel\n\nflywheel = Flywheel(model=\"qwen2.5-14b\")\n\n# Automatically fine-tune on user thumbs-up/down data weekly\nflywheel.schedule_dpo_job(\n    dataset=\"prod_telemetry\",\n    frequency=\"weekly\",\n    evaluation_gate=True\n)\nflywheel.start()",
+210:         "cap_code": "import { FlywheelStatus } from '@hemera/react';\n\nfunction LearningLoop() {\n  return (\n    <FlywheelStatus\n      stages={['Collect', 'Train', 'Eval', 'Promote']}\n      currentStage=\"Train\"\n      progress={45}\n    />\n  );\n}"
 211:     }
 212: }
 213: 

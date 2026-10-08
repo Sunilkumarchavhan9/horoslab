@@ -25,10 +25,10 @@ import {
   ChevronDown,
 } from "lucide-react";
 import {
-  getDhyraMissionControlSnapshot,
-  readActiveDhyraWorkspaceId,
-  type DhyraMissionControlSnapshot,
-} from "@/lib/dhyra-api";
+  getHorosMissionControlSnapshot,
+  readActiveHorosWorkspaceId,
+  type HorosMissionControlSnapshot,
+} from "@/lib/horos-api";
 import { cn } from "@/lib/utils";
 
 type ColumnType = "Domains" | "Workers" | "Storage" | "Recents";
@@ -268,8 +268,8 @@ function DateRangePickerPopover({
 }
 
 export function AccountHomeDashboard() {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
-  const [snapshot, setSnapshot] = useState<DhyraMissionControlSnapshot | null>(null);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+  const [snapshot, setSnapshot] = useState<HorosMissionControlSnapshot | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
 
   /* Search & Columns States */
@@ -317,7 +317,7 @@ export function AccountHomeDashboard() {
   }, []);
 
   useEffect(() => {
-    const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+    const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
     syncWorkspace();
     window.addEventListener("focus", syncWorkspace);
     window.addEventListener("storage", syncWorkspace);
@@ -332,7 +332,7 @@ export function AccountHomeDashboard() {
     async function load() {
       if (!workspaceId) return;
       try {
-        const result = await getDhyraMissionControlSnapshot(workspaceId);
+        const result = await getHorosMissionControlSnapshot(workspaceId);
         if (!canceled) setSnapshot(result);
       } catch (err) {
         // Safe fallback
@@ -380,7 +380,7 @@ export function AccountHomeDashboard() {
             <div className="flex items-center gap-3">
               <Globe className="size-4 text-[#777] group-hover:text-[#0f52ff] transition-colors" />
               <span className="text-[14px] font-medium text-[#111] group-hover:text-[#0f52ff] transition-colors">
-                dhyratm.me
+                horostm.me
               </span>
             </div>
             <ChevronRight className="size-4 text-[#aaa] group-hover:text-[#111] transition-colors" />

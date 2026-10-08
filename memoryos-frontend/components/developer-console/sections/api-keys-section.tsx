@@ -114,7 +114,7 @@ function toneForStatus(status: ApiKeyRecord["status"]) {
   return status === "active" ? "#14c38e" : "#ff6d6d";
 }
 
-export function ApiKeysSection() {
+export function ApiKeysSection(props: any) {
   const [keys, setKeys] = useState<ApiKeyRecord[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [keyName, setKeyName] = useState(randomName);
@@ -629,3 +629,5 @@ curl -X POST "$MEMORYOS_BASE_URL/v1/retrieve" \\
     </>
   );
 }
+
+

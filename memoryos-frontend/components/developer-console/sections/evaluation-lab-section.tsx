@@ -21,7 +21,7 @@ import {
   ConsoleStatGrid,
   ConsoleStatusBadge,
   ConsoleSurface,
-} from "@/components/developer-console/console-ui";
+} from "@/components/horos/console-ui";
 import {
   createMasterplanEvaluationRun,
   createMasterplanWorkspace,
@@ -514,3 +514,4 @@ function EvidenceRow({ label, value }: { label: string; value?: string | null })
     </div>
   );
 }
+

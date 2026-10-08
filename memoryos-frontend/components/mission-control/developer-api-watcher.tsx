@@ -29,7 +29,7 @@ export function DeveloperAPIWatcher() {
  <div className="flex items-start justify-between mb-2">
  <DeveloperHeader 
  title="API Watcher" 
- description="Dhyra continuously monitors your external dependencies. When breaking changes are detected, migration missions are automatically generated."
+ description="HOROS continuously monitors your external dependencies. When breaking changes are detected, migration missions are automatically generated."
  />
  <div className="relative">
  <Search className="size-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />

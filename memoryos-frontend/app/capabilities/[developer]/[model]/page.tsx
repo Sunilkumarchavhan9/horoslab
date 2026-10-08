@@ -1,3 +1,5 @@
+import { SectionDivider } from "@/components/landing/section-divider";
+
 import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -5,10 +7,10 @@ import { Share2, FileText, ChevronRight, ChevronDown, Copy, Check, Link as LinkI
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
 import { CAPABILITIES } from "@/lib/capabilities-data";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
-import { NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
-import { FullSpecAccordion } from "@/components/dhyra/capabilities/full-spec-accordion";
-import { CodeExamples } from "@/components/dhyra/capabilities/code-examples";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
+import { NvidiaLogo } from "@/components/horos/primitives/brand-icons";
+import { FullSpecAccordion } from "@/components/horos/capabilities/full-spec-accordion";
+import { CodeExamples } from "@/components/horos/capabilities/code-examples";
 
 interface PageProps {
   params: Promise<{
@@ -31,14 +33,14 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
     <div className="relative min-h-screen bg-[#151515] text-[#C8C7BA] font-sans flex flex-col">
       {/* Background Dashed Lines - Global Layout */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-      </div>
+        <div className="hidden md:block absolute right-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        </div>
 
       <div className="relative z-10 flex flex-col w-full min-h-screen">
-        <div className="w-full border-b border-dashed border-[#333] flex justify-center">
+        <div className="w-full flex justify-center">
           <div className="w-full">
             <LandingNavbar />
           </div>
@@ -47,8 +49,9 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
         <main className="flex-grow flex flex-col w-full relative z-10">
           
           {/* Header Section */}
-          <div className="w-full border-b border-dashed border-[#333]">
-            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-10 py-12 lg:py-16 flex flex-col items-start border-x border-dashed border-[#333] bg-[#151515]">
+          <div className="w-full relative">
+            <SectionDivider position="top" />
+            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-[120px] py-12 lg:py-16 flex flex-col items-start border-x border-dashed border-[#333]">
               {/* Breadcrumbs */}
               <div className="flex items-center gap-2 text-[10px] md:text-[11px] lg:text-[12px] text-[#777] mb-12">
                 <Link href="/capabilities" className="hover:text-[#C8C7BA] transition-colors">Capability Graph</Link>
@@ -100,8 +103,9 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           </div>
 
           {/* Pricing Section */}
-          <div className="w-full border-b border-dashed border-[#333]">
-            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-10 py-12 lg:py-16 border-x border-dashed border-[#333] bg-[#151515]">
+          <div className="w-full relative">
+            <SectionDivider position="top" />
+            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-[120px] py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="flex justify-between items-end mb-6">
                 <h2 className="text-[18px] md:text-[20px] lg:text-[22px] font-medium text-[#C8C7BA]">Pricing</h2>
                 <span className="text-[10px] md:text-[11px] lg:text-[12px] text-[#777]">USD, pay per token</span>
@@ -134,8 +138,9 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           </div>
 
           {/* Measured Performance Section */}
-          <div className="w-full border-b border-dashed border-[#333]">
-            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-10 py-12 lg:py-16 border-x border-dashed border-[#333] bg-[#151515]">
+          <div className="w-full relative">
+            <SectionDivider position="top" />
+            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-[120px] py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="flex justify-between items-baseline mb-6">
                 <h2 className="text-[18px] md:text-[20px] lg:text-[22px] font-medium text-[#C8C7BA]">Measured performance</h2>
               </div>
@@ -163,8 +168,9 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           </div>
 
           {/* Specs & Capacity Section */}
-          <div className="w-full border-b border-dashed border-[#333]">
-            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-10 py-12 lg:py-16 border-x border-dashed border-[#333] bg-[#151515]">
+          <div className="w-full relative">
+            <SectionDivider position="top" />
+            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-[120px] py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="border border-dashed border-[#333] flex flex-col">
                 <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[#333]">
                   
@@ -291,21 +297,23 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           </div>
 
           {/* Code Examples Section */}
-          <div className="w-full border-b border-dashed border-[#333]">
-            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-10 py-12 lg:py-16 border-x border-dashed border-[#333] bg-[#151515]">
+          <div className="w-full relative">
+            <SectionDivider position="top" />
+            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-[120px] py-12 lg:py-16 border-x border-dashed border-[#333]">
               <CodeExamples capabilityId={capability.id} />
             </div>
           </div>
 
           {/* Trust & Provenance */}
-          <div className="w-full">
-            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-10 py-12 lg:py-16 border-x border-dashed border-[#333] bg-[#151515]">
+          <div className="w-full relative">
+            <SectionDivider position="top" />
+            <div className="w-[88%] md:w-[72%] mx-auto px-6 md:px-[120px] py-12 lg:py-16 border-x border-dashed border-[#333]">
               <h2 className="text-lg md:text-[19px] lg:text-[20px] font-medium text-[#C8C7BA] mb-2">Trust and provenance</h2>
               <p className="text-[10px] md:text-[11px] lg:text-[12px] text-[#777] mb-8">Verify the company and operating credentials behind this capability.</p>
               
               <div className="flex items-center gap-2 text-[11px] md:text-[12px] lg:text-[13px] text-[#C8C7BA] font-medium mb-6">
-                <DhyraLogo variant="icon" size="sm" className="h-3 w-auto" />
-                Dhyra is a product of System Integration.
+                <HorosLogo variant="icon" size="sm" className="h-3 w-auto" />
+                HOROS is a product of System Integration.
               </div>
 
               <div className="flex flex-wrap items-center gap-6 text-[10px] md:text-[11px] lg:text-[12px]">

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { DhyraLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo } from "../dhyra/primitives/brand-icons";
+import { HorosLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo } from "../horos/primitives/brand-icons";
 
 // Helper component for the horizontal borders with corner intersection dots
 function HorizontalDivider({ position = "top", infinite = false }: { position?: "top" | "bottom", infinite?: boolean }) {
@@ -33,7 +33,7 @@ export function DeploymentOptionsSection() {
       </div>
 
       {/* Main Blueprint Container (aligned with the 120px inward margin on both sides) */}
-      <div className="relative z-10 w-[calc(72%_-_240px)] flex flex-col pb-12 lg:pb-16">
+      <div className="relative z-10 w-[calc(64%_-_240px)] flex flex-col pb-12 lg:pb-16">
         
         {/* Absolute Bottom Infinite Horizontal Line */}
         <HorizontalDivider position="bottom" infinite={true} />
@@ -83,13 +83,13 @@ export function DeploymentOptionsSection() {
                 Managed
               </div>
               <div className="mb-6 flex items-center gap-3 text-[#F0EFE2] relative z-10">
-                <DhyraLogo className="h-[48px]" />
+                <HorosLogo className="h-[48px]" />
               </div>
               <h3 className="text-[#F0EFE2] text-lg font-semibold mb-3 relative z-10">
-                Dhyra Cloud
+                HOROS Cloud
               </h3>
               <p className="text-[#C8C7BA] text-[13px] leading-relaxed relative z-10">
-                A fully managed Reality Intelligence Runtime. Dhyra handles node provisioning, container orchestration, and continuous state synchronization. You simply provide the authorized intent, and we scale the capabilities securely, billed purely on verified usage.
+                A fully managed Reality Intelligence Runtime. HOROS handles node provisioning, container orchestration, and continuous state synchronization. You simply provide the authorized intent, and we scale the capabilities securely, billed purely on verified usage.
               </p>
             </div>
 

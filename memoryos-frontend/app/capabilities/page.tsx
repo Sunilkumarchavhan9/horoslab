@@ -1,11 +1,13 @@
 "use client";
+import { SectionDivider } from "@/components/landing/section-divider";
+
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { Search, ChevronDown, ArrowRight, ArrowUpRight, Sun, Monitor, Moon, SearchCode, Database, Zap, ArrowRightCircle } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
 import { 
   QwenLogo, 
   DeepSeekLogo, 
@@ -14,7 +16,7 @@ import {
   HuggingFaceLogo,
   TeslaLogo,
   GithubLogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 import { CAPABILITIES } from "@/lib/capabilities-data";
 
@@ -27,7 +29,7 @@ export default function CapabilitiesPage() {
   // Compute unique tags dynamically
   const tagCounts = CAPABILITIES.reduce((acc, c) => {
     c.tags.forEach(tagGroup => {
-      const splitTags = tagGroup.split(" / ");
+      const splitTags = tagGroup.split(/\s*(?:\/|·)\s*/);
       splitTags.forEach(t => {
         const trimmed = t.trim();
         if (trimmed && trimmed !== "Trending") {
@@ -48,7 +50,7 @@ export default function CapabilitiesPage() {
     
     // Check if any of the model's split tags match the activeFilter
     return c.tags.some(tagGroup => {
-      const splitTags = tagGroup.split(" / ").map(t => t.trim());
+      const splitTags = tagGroup.split(/\s*(?:\/|·)\s*/).map(t => t.trim());
       return splitTags.includes(activeFilter);
     });
   }).sort((a, b) => {
@@ -68,25 +70,25 @@ export default function CapabilitiesPage() {
       {/* Background Dashed Lines - Global Layout */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Outer Lines (Mobile & Desktop) */}
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[14%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute left-[86%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute right-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
 
         {/* Inner Lines (Desktop Only) */}
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(86%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-      </div>
+        </div>
 
       <div className="relative z-10 flex flex-col w-full min-h-screen">
-        <div className="w-full border-b border-dashed border-[#333] flex justify-center">
+        <div className="w-full flex justify-center">
           <div className="w-full">
             <LandingNavbar />
           </div>
         </div>
         
         <main className="flex-grow flex flex-col items-center w-full relative z-10">
-          <div className="w-[88%] md:w-[calc(72%_-_240px)] mx-auto flex flex-col border-x border-dashed border-[#333]">
+          <div className="w-[88%] md:w-[72%] mx-auto flex flex-col border-x border-dashed border-[#333]">
             {/* Header Section */}
-            <div className="w-full px-6 md:px-10  py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
+            <div className="w-full px-6 md:px-[120px]  py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
               <h1 className="text-4xl md:text-[56px] leading-[1.1] font-semibold tracking-tight text-[#F0EFE2] mb-6">
                 Capabilities <span className="bg-[#75bf00] text-[#151515] px-2 py-0.5 ml-1">Graph</span>
               </h1>
@@ -96,7 +98,7 @@ export default function CapabilitiesPage() {
             </div>
 
             {/* Controls Section */}
-            <div className="w-full px-6 md:px-10  py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-[#333] bg-[#151515]">
+            <div className="w-full px-6 md:px-[120px]  py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-[#333] bg-[#151515]">
               <div className="relative flex-grow max-w-xl">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#75bf00]" />
                 <input 
@@ -162,7 +164,7 @@ export default function CapabilitiesPage() {
             </div>
             
             {/* Sub-filters */}
-            <div className="w-full px-6 md:px-10  py-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[#999] border-b border-dashed border-[#333] bg-[#151515]">
+            <div className="w-full px-6 md:px-[120px]  py-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[#999] border-b border-dashed border-[#333] bg-[#151515]">
               <button 
                 onClick={() => setActiveFilter("all")}
                 className={`transition-colors whitespace-nowrap ${activeFilter === "all" ? "text-[#F0EFE2]" : "hover:text-[#F0EFE2]"}`}
@@ -188,7 +190,7 @@ export default function CapabilitiesPage() {
             {/* List Section */}
             <div className="w-full flex flex-col pb-32">
               {filteredCapabilities.map((capability, idx) => (
-                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 md:px-10  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
+                <Link href={`/capabilities/${capability.id}`} key={capability.id} className="group flex flex-col lg:flex-row items-start lg:items-center justify-between py-8 px-6 md:px-[120px]  border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
                   
                   {/* Left: Identity */}
                   <div className="flex items-start gap-4 flex-1 min-w-[320px]">
@@ -271,4 +273,7 @@ export default function CapabilitiesPage() {
     </div>
   );
 }
+
+
+
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
 
 interface ResultInspectionSectionProps {
   onOpenSignIn?: () => void;
@@ -709,7 +709,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
 
           <div className="relative z-20 flex justify-center">
             <div className="bg-[#151515] px-3 flex items-center justify-center">
-              <DhyraLogo className="w-[52px] h-[65px]" />
+              <HorosLogo className="w-[52px] h-[65px]" />
             </div>
           </div>
         </div>
@@ -725,7 +725,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           </h2>
 
           <p className="text-xs sm:text-sm text-[#C8C7BA] font-sans pt-1 max-w-2xl mx-auto leading-relaxed">
-            Dhyra connects models, data, context, runtime, compute, workloads, and real-world evidence into one continuous system for building, testing, verifying, deploying, and improving intelligence.
+            HOROS connects models, data, context, runtime, compute, workloads, and real-world evidence into one continuous system for building, testing, verifying, deploying, and improving intelligence.
           </p>
         </div>
 
@@ -740,7 +740,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
         </div>
       </div>
 
-      {/* ROW 1: 4 DHYRA CANONICAL REALITY ARCHITECTURE CARDS */}
+      {/* ROW 1: 4 HOROS CANONICAL REALITY ARCHITECTURE CARDS */}
       <div className="relative z-10 w-full border-b border-dashed border-[#333333]">
         <div className="absolute inset-0 pointer-events-none z-0">
           {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
@@ -752,7 +752,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
           <div className="min-h-[220px] hidden lg:block" />
 
           {PILLARS_ROW_1.map((item) => (
@@ -788,7 +788,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
         </div>
       </div>
 
-      {/* ROW 2: 4 DHYRA CANONICAL REALITY ARCHITECTURE CARDS + DHYRA WATERMARK */}
+      {/* ROW 2: 4 HOROS CANONICAL REALITY ARCHITECTURE CARDS + HOROS WATERMARK */}
       <div className="relative z-10 w-full border-b border-dashed border-[#333333]">
         <div className="absolute inset-0 pointer-events-none z-0">
           {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
@@ -800,10 +800,10 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
           <div className="relative min-h-[220px] hidden lg:block">
             <span className="absolute bottom-2 right-2.5 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
-              DHYRA
+              HOROS
             </span>
           </div>
 
@@ -852,7 +852,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(14%_+_120px)_repeat(4,1fr)_calc(14%_+_120px)]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
           <div className="relative min-h-[220px] hidden lg:block">
             <span className="absolute bottom-2 right-2.5 text-[9px] font-mono tracking-[0.25em] text-[#444444] font-semibold select-none pointer-events-none uppercase">
               DELIVERABLE

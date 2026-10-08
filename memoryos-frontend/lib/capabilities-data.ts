@@ -10,7 +10,7 @@ import {
   PhysicalIntelligenceLogo,
   GoogleLogo,
   HuggingFaceLogo
-} from "@/components/hemera/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 export const CAPABILITIES = [
   {
@@ -30,7 +30,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.011 per 1M at that hit rate",
-    description: "GLM 5.3 Flash is a reasoning capability available through Hemera. It can be composed with tools, perception, memory, and other capabilities to execute mission workflows. Hemera evaluates its behavior against mission requirements before deployment.",
+    description: "GLM 5.3 Flash is a reasoning capability available through HOROS. It can be composed with tools, perception, memory, and other capabilities to execute mission workflows. HOROS evaluates its behavior against mission requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -65,7 +65,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.015 per 1M at that hit rate",
-    description: "Nemotron 3.5 Lightning 30B is a reasoning and code generation capability available through Hemera. It can be composed into missions requiring rapid reasoning and automation. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Nemotron 3.5 Lightning 30B is a reasoning and code generation capability available through HOROS. It can be composed into missions requiring rapid reasoning and automation. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -100,7 +100,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, end to end",
     effectiveCost: "Effective input $0.014 per 1M at that hit rate",
-    description: "Qwen3.8 27B is a multimodal reasoning capability available through Hemera. It can be composed into missions requiring vision, language reasoning, and tool use. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Qwen3.8 27B is a multimodal reasoning capability available through HOROS. It can be composed into missions requiring vision, language reasoning, and tool use. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -135,7 +135,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.013 per 1M at that hit rate",
-    description: "DeepSeek-V3 is a reasoning capability available through Hemera. It can be composed into missions requiring language reasoning, multimodal inputs, and tool use. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "DeepSeek-V3 is a reasoning capability available through HOROS. It can be composed into missions requiring language reasoning, multimodal inputs, and tool use. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -170,7 +170,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "hz control loop, edge",
     effectiveCost: "Effective physical execution $0.02 per 1M at that hit rate",
-    description: "Physical Intelligence pi0 is a physical actuation capability available through Hemera. It can be composed into physical edge automation and spatial reasoning missions. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Physical Intelligence pi0 is a physical actuation capability available through HOROS. It can be composed into physical edge automation and spatial reasoning missions. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Physical Action Intent API",
       anthropicCompatibility: "Not applicable (Physical Control)",
@@ -205,13 +205,13 @@ export const CAPABILITIES = [
     },
     speedLabel: "fps simulation, remote",
     effectiveCost: "Effective inference $0.04 per 1M at that hit rate",
-    description: "Nvidia Cosmos 1.0 is a simulation and world modeling capability available through Hemera. It can be composed into missions requiring environmental simulation and physical understanding. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Nvidia Cosmos 1.0 is a simulation and world modeling capability available through HOROS. It can be composed into missions requiring environmental simulation and physical understanding. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Simulation / Environment API",
       anthropicCompatibility: "Not applicable",
       acceptedInput: "Video, Point Cloud, Radar",
       availability: "Preview",
-      dataRetention: "Simulation outputs are ephemeral.",
+      dataRetention: "Simulation outputs are ephorosl.",
       contextWindow: "10 seconds historical state",
       maxRequestSize: "250 MB (PointCloud + Video)",
       maxGeneratedOutput: "Trajectory mapping",
@@ -240,7 +240,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.12 per 1M at that hit rate",
-    description: "Llama 3.1 405B is a reasoning capability available through Hemera. It can be composed into missions requiring language reasoning, tool use, and complex planning. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Llama 3.1 405B is a reasoning capability available through HOROS. It can be composed into missions requiring language reasoning, tool use, and complex planning. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -275,7 +275,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.53 per 1M at that hit rate",
-    description: "Mistral Large 2 is a reasoning capability available through Hemera. It can be composed into missions requiring language reasoning and tool use. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Mistral Large 2 is a reasoning capability available through HOROS. It can be composed into missions requiring language reasoning and tool use. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -310,7 +310,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.12 per 1M at that hit rate",
-    description: "Llama 3.2 90B Vision is a multimodal capability available through Hemera. It can be composed into missions requiring advanced vision and perception. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Llama 3.2 90B Vision is a multimodal capability available through HOROS. It can be composed into missions requiring advanced vision and perception. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -345,7 +345,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "series steps/s",
     effectiveCost: "Effective input $0.008 per 1M at that hit rate",
-    description: "TimesFM 1.0 is a time-series foundation model capability available through Hemera. It can be composed into missions requiring temporal reasoning and forecasting. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "TimesFM 1.0 is a time-series foundation model capability available through HOROS. It can be composed into missions requiring temporal reasoning and forecasting. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Not applicable",
@@ -380,7 +380,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.012 per 1M at that hit rate",
-    description: "Qwen 2.5 Coder 32B is a code generation and reasoning capability available through Hemera. It can be composed into missions requiring programming, verification, and logical deduction. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Qwen 2.5 Coder 32B is a code generation and reasoning capability available through HOROS. It can be composed into missions requiring programming, verification, and logical deduction. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -415,7 +415,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input $0.70 per 1M at that hit rate",
-    description: "Command R+ is a language and reasoning capability available through Hemera. It can be composed into missions requiring complex tool use and multi-step planning. Hemera evaluates the capability against workload requirements before deployment.",
+    description: "Command R+ is a language and reasoning capability available through HOROS. It can be composed into missions requiring complex tool use and multi-step planning. HOROS evaluates the capability against workload requirements before deployment.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getDhyraMissionSettlement, listDhyraCertificates, listDhyraMemoryLessons, listDhyraMemoryRecords, listDhyraMissions } from "@/lib/dhyra-api";
+import { getHorosMissionSettlement, listHorosCertificates, listHorosMemoryLessons, listHorosMemoryRecords, listHorosMissions } from "@/lib/horos-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { useInspector } from "@/components/mission-control/universal-inspector";
 
@@ -24,20 +24,20 @@ export function SettlementWorkspace({ activeSection, workspaceId }: { activeSect
     const load = async () => {
       try {
         setLoading(true);
-        const missions = await listDhyraMissions(workspaceId);
+        const missions = await listHorosMissions(workspaceId);
         let next: Row[] = [];
         if (view === "memory-preflight" || view === "mission-outcomes") {
-          const result = await listDhyraMemoryRecords(workspaceId);
+          const result = await listHorosMemoryRecords(workspaceId);
           next = result.memoryRecords as unknown as Row[];
         } else if (view === "learning-handoff") {
-          const result = await listDhyraMemoryLessons(workspaceId);
+          const result = await listHorosMemoryLessons(workspaceId);
           next = result.lessons as unknown as Row[];
         } else if (view === "certificates") {
-          const result = await listDhyraCertificates(workspaceId, { limit: 100 });
+          const result = await listHorosCertificates(workspaceId, { limit: 100 });
           next = result.certificates as unknown as Row[];
         } else {
           next = (await Promise.all(missions.map(async (mission) => {
-            try { return await getDhyraMissionSettlement(workspaceId, mission.id); } catch { return null; }
+            try { return await getHorosMissionSettlement(workspaceId, mission.id); } catch { return null; }
           }))).filter(Boolean) as Row[];
         }
         if (!cancelled) { setRows(next); setError(null); }
@@ -71,7 +71,7 @@ export function SettlementWorkspace({ activeSection, workspaceId }: { activeSect
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `dhyra-${view}.json`;
+    anchor.download = `horos-${view}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
   };

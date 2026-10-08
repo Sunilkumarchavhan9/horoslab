@@ -239,7 +239,7 @@ export function ClerkConsoleSignIn({ redirectTo, emailLinkCompleteUrl, authError
         await redirectToOrganizationTask();
         return;
       }
-      console.error("[Dhyra Auth] Developer OAuth sign-in failed", error);
+      console.error("[HOROS Auth] Developer OAuth sign-in failed", error);
       setStatusMessage(getErrorMessage(error));
       setStatusTone("error");
     } finally {
@@ -382,7 +382,7 @@ export function ClerkConsoleSignIn({ redirectTo, emailLinkCompleteUrl, authError
       />
 
       <p className="pt-1 text-center text-[13px] text-[#9ca5b0]">
-        New to Dhyra?{" "}
+        New to HOROS?{" "}
         <Link
           href="/auth/sign-up"
           className="text-[#c9defd] underline-offset-2 hover:underline"

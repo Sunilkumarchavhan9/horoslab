@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { resolveActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
+import { resolveActiveHorosWorkspaceId } from "@/lib/horos-api";
 
-const DhyraInferenceControlPlane = dynamic(
+const HorosInferenceControlPlane = dynamic(
   () =>
-    import("@/components/inference-control/dhyra-inference-control-plane").then(
-      (mod) => mod.DhyraInferenceControlPlane
+    import("@/components/inference-control/horos-inference-control-plane").then(
+      (mod) => mod.HorosInferenceControlPlane
     ),
   {
     ssr: false,
     loading: () => (
       <div className="flex min-h-screen items-center justify-center bg-[#151515] text-xs font-mono text-[#788274]">
-        Loading Dhyra Control Plane...
+        Loading HOROS Control Plane...
       </div>
     ),
   }
@@ -29,14 +29,14 @@ export function MissionControlClient() {
 
     const bootstrapWorkspace = async () => {
       try {
-        const workspaceId = await resolveActiveDhyraWorkspaceId();
+        const workspaceId = await resolveActiveHorosWorkspaceId();
         if (workspaceId && !cancelled) setWorkspaceId(workspaceId);
         if (!workspaceId && !cancelled) {
-          setWorkspaceError("Unable to resolve an Dhyra workspace for this account.");
+          setWorkspaceError("Unable to resolve an HOROS workspace for this account.");
         }
       } catch (error) {
         if (!cancelled) {
-          setWorkspaceError(error instanceof Error ? error.message : "Failed to resolve the Dhyra workspace.");
+          setWorkspaceError(error instanceof Error ? error.message : "Failed to resolve the HOROS workspace.");
         }
       } finally {
         if (!cancelled) {
@@ -63,10 +63,10 @@ export function MissionControlClient() {
   if (workspaceError || !workspaceId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#151515] p-8 text-xs font-mono text-red-500">
-        {workspaceError || "No active Dhyra workspace is available."}
+        {workspaceError || "No active HOROS workspace is available."}
       </div>
     );
   }
 
-  return <DhyraInferenceControlPlane workspaceId={workspaceId} />;
+  return <HorosInferenceControlPlane workspaceId={workspaceId} />;
 }

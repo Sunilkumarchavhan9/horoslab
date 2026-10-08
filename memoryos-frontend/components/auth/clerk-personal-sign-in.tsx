@@ -331,7 +331,7 @@ export function ClerkPersonalSignIn({ redirectTo }: ClerkPersonalSignInProps) {
             ? "Preparing sign-in..."
             : pendingStrategy === "email"
               ? "Logging in..."
-              : "Log in with Dhyra"}
+              : "Log in with HOROS"}
         </span>
       </button>
 

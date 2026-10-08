@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { resolveActiveDhyraWorkspaceId } from "@/lib/dhyra-api";
-import { DhyraInferenceControlPlane } from "./dhyra-inference-control-plane";
+import { resolveActiveHorosWorkspaceId } from "@/lib/horos-api";
+import { HorosInferenceControlPlane } from "./horos-inference-control-plane";
 
 export function InferencePageClient() {
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
@@ -11,16 +11,16 @@ export function InferencePageClient() {
   useEffect(() => {
     let cancelled = false;
 
-    void resolveActiveDhyraWorkspaceId()
+    void resolveActiveHorosWorkspaceId()
       .then((resolvedWorkspaceId) => {
         if (!cancelled) {
           if (resolvedWorkspaceId) setWorkspaceId(resolvedWorkspaceId);
-          else setError("Unable to resolve an Dhyra workspace for this account.");
+          else setError("Unable to resolve an HOROS workspace for this account.");
         }
       })
       .catch((reason: unknown) => {
         if (!cancelled) {
-          setError(reason instanceof Error ? reason.message : "Failed to resolve the Dhyra workspace.");
+          setError(reason instanceof Error ? reason.message : "Failed to resolve the HOROS workspace.");
         }
       });
 
@@ -36,10 +36,10 @@ export function InferencePageClient() {
   if (!workspaceId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#fbfbfa] text-xs font-mono text-[#788274]">
-        Loading Dhyra Control Plane...
+        Loading HOROS Control Plane...
       </div>
     );
   }
 
-  return <DhyraInferenceControlPlane workspaceId={workspaceId} />;
+  return <HorosInferenceControlPlane workspaceId={workspaceId} />;
 }

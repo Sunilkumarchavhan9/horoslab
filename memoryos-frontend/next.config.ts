@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
     const backendOrigin = (process.env.MEMORYOS_API_ORIGIN ?? "http://localhost:3001").replace(/\/$/, "");
     return [
       {
-        source: "/api/v1/dhyra/:path*",
-        destination: `${backendOrigin}/api/v1/dhyra/:path*`,
+        source: "/api/v1/horos/:path*",
+        destination: `${backendOrigin}/api/v1/horos/:path*`,
       },
     ];
   },

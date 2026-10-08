@@ -12,21 +12,21 @@ import {
  Check,
 } from "lucide-react";
 import {
- listDhyraMemoryLessons,
- readActiveDhyraWorkspaceId,
- type DhyraMemoryLesson,
-} from "@/lib/dhyra-api";
+ listHorosMemoryLessons,
+ readActiveHorosWorkspaceId,
+ type HorosMemoryLesson,
+} from "@/lib/horos-api";
 
 function formatConfidence(value?: number | null): string {
  if (typeof value !== "number" || Number.isNaN(value)) return "N/A";
  return `${Math.max(0, Math.min(100, Math.round(value)))}%`;
 }
 
-function lessonLabel(lesson: DhyraMemoryLesson): string {
+function lessonLabel(lesson: HorosMemoryLesson): string {
  return lesson.title?.trim() || lesson.content?.trim() || lesson.id;
 }
 
-function institutionLabel(lesson: DhyraMemoryLesson): string {
+function institutionLabel(lesson: HorosMemoryLesson): string {
  const source = lesson.sourceRecords?.[0];
  if (source?.institutionId) return source.institutionId;
  if (source?.summary) return source.summary;
@@ -41,13 +41,13 @@ function statusTone(status?: string | null): string {
 }
 
 export function MemoryLessons({ onViewDetail }: { onViewDetail?: (id: string) => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [lessons, setLessons] = useState<DhyraMemoryLesson[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [lessons, setLessons] = useState<HorosMemoryLesson[]>([]);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -71,7 +71,7 @@ export function MemoryLessons({ onViewDetail }: { onViewDetail?: (id: string) =>
  setLoading(true);
  setError(null);
  try {
- const result = await listDhyraMemoryLessons(workspaceId);
+ const result = await listHorosMemoryLessons(workspaceId);
  if (!canceled) {
  setLessons(result.lessons ?? []);
  }

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Activity, Target, Dna, Box, ShieldCheck, Flag, GitCommit, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getDhyraInstitutionHistory, listDhyraInstitutions, readActiveDhyraWorkspaceId, type DhyraInstitutionHistory } from "@/lib/dhyra-api";
+import { getHorosInstitutionHistory, listHorosInstitutions, readActiveHorosWorkspaceId, type HorosInstitutionHistory } from "@/lib/horos-api";
 
 function historyIcon(type?: string) {
   const normalized = (type ?? "").toLowerCase();
@@ -32,29 +32,29 @@ function formatDate(value?: string): string {
 }
 
 export function InstitutionEvolutionView() {
-  const [history, setHistory] = useState<DhyraInstitutionHistory | null>(null);
+  const [history, setHistory] = useState<HorosInstitutionHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveDhyraWorkspaceId();
+  const workspaceId = readActiveHorosWorkspaceId();
 
   const loadHistory = useCallback(async () => {
     if (!workspaceId) {
       setHistory(null);
       setLoading(false);
-      setError("No active Dhyra workspace is available.");
+      setError("No active HOROS workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const institutions = await listDhyraInstitutions(workspaceId);
+      const institutions = await listHorosInstitutions(workspaceId);
       const firstInstitution = institutions[0];
       if (!firstInstitution) {
         setHistory(null);
         return;
       }
-      setHistory(await getDhyraInstitutionHistory(workspaceId, firstInstitution.id));
+      setHistory(await getHorosInstitutionHistory(workspaceId, firstInstitution.id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load institution evolution.");
     } finally {

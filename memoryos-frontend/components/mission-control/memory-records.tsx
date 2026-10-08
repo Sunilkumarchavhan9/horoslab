@@ -17,10 +17,10 @@ import {
  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
- listDhyraMemoryRecords,
- readActiveDhyraWorkspaceId,
- type DhyraMemoryRecordDetail,
-} from "@/lib/dhyra-api";
+ listHorosMemoryRecords,
+ readActiveHorosWorkspaceId,
+ type HorosMemoryRecordDetail,
+} from "@/lib/horos-api";
 
 function formatTimestamp(value?: string | null): string {
  if (!value) return "Unknown";
@@ -29,7 +29,7 @@ function formatTimestamp(value?: string | null): string {
  return parsed.toLocaleString();
 }
 
-function recordStatus(record: DhyraMemoryRecordDetail): string {
+function recordStatus(record: HorosMemoryRecordDetail): string {
  const value = (record.certificate?.status ?? record.status ?? "review").toString().toUpperCase();
  if (value === "PASS" || value === "FAIL" || value === "REVIEW") return value;
  return value === "APPROVED" ? "PASS" : value === "REJECTED" ? "FAIL" : "REVIEW";
@@ -45,11 +45,11 @@ function normalizeText(value: string): string {
  return value.trim().toLowerCase();
 }
 
-function getRecordInstitutionName(record: DhyraMemoryRecordDetail): string {
+function getRecordInstitutionName(record: HorosMemoryRecordDetail): string {
  return record.institution?.name?.trim() || "Unknown institution";
 }
 
-function getRecordMissionType(record: DhyraMemoryRecordDetail): string {
+function getRecordMissionType(record: HorosMemoryRecordDetail): string {
  const category = record.institution?.category?.trim();
  if (category) return category;
  const templateName = record.institution?.template?.name?.trim();
@@ -84,13 +84,13 @@ function filterContentClassName(widthClass = "w-[220px]"): string {
  );
 }
 
-function getRecordCreatedAtMs(record: DhyraMemoryRecordDetail): number | null {
+function getRecordCreatedAtMs(record: HorosMemoryRecordDetail): number | null {
  if (!record.createdAt) return null;
  const parsed = new Date(record.createdAt).getTime();
  return Number.isFinite(parsed) ? parsed : null;
 }
 
-function matchesDateFilter(record: DhyraMemoryRecordDetail, filter: string): boolean {
+function matchesDateFilter(record: HorosMemoryRecordDetail, filter: string): boolean {
  if (filter === "all") return true;
  const createdAtMs = getRecordCreatedAtMs(record);
  if (createdAtMs === null) return false;
@@ -104,8 +104,8 @@ function matchesDateFilter(record: DhyraMemoryRecordDetail, filter: string): boo
 }
 
 export function MemoryRecords({ onViewDetail }: { onViewDetail?: (id: string) => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [records, setRecords] = useState<DhyraMemoryRecordDetail[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [records, setRecords] = useState<HorosMemoryRecordDetail[]>([]);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
  const [searchQuery, setSearchQuery] = useState("");
@@ -115,7 +115,7 @@ export function MemoryRecords({ onViewDetail }: { onViewDetail?: (id: string) =>
  const [dateFilter, setDateFilter] = useState("all");
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -139,7 +139,7 @@ export function MemoryRecords({ onViewDetail }: { onViewDetail?: (id: string) =>
  setLoading(true);
  setError(null);
  try {
- const result = await listDhyraMemoryRecords(workspaceId, { limit: 200 });
+ const result = await listHorosMemoryRecords(workspaceId, { limit: 200 });
  if (!canceled) setRecords(result.memoryRecords ?? []);
  } catch (loadError) {
  if (!canceled) {

@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  createDhyraInstitution,
-  createDhyraMission,
-  getDhyraMission,
-  listDhyraInstitutions,
-  listDhyraMissions,
-  listDhyraTemplates,
-  readActiveDhyraWorkspaceId,
-  resolveActiveDhyraWorkspaceId,
-  runDhyraMission,
-  decideDhyraMissionCandidates,
-  sendDhyraMissionTelemetry,
-  verifyDhyraMissionWindow,
-  type DhyraInstitution,
-  type DhyraMissionDetail,
-  type DhyraMissionRunResult,
-  type DhyraTemplate,
-} from "@/lib/dhyra-api";
+  createHorosInstitution,
+  createHorosMission,
+  getHorosMission,
+  listHorosInstitutions,
+  listHorosMissions,
+  listHorosTemplates,
+  readActiveHorosWorkspaceId,
+  resolveActiveHorosWorkspaceId,
+  runHorosMission,
+  decideHorosMissionCandidates,
+  sendHorosMissionTelemetry,
+  verifyHorosMissionWindow,
+  type HorosInstitution,
+  type HorosMissionDetail,
+  type HorosMissionRunResult,
+  type HorosTemplate,
+} from "@/lib/horos-api";
 import {
   formatRelativeTime,
   missionPlanner,
@@ -68,7 +68,7 @@ export type MissionTemplateCard = {
   roles: string[];
   policies: string[];
   authority: string;
-  template: DhyraTemplate;
+  template: HorosTemplate;
 };
 
 export type MissionHistoryCard = {
@@ -80,10 +80,10 @@ export type MissionHistoryCard = {
   duration: string;
   status: "PASS" | "FAIL";
   nodes: { label: string; time: string; status: "success" | "error" | "pending" }[];
-  mission: DhyraMissionDetail;
+  mission: HorosMissionDetail;
 };
 
-export function buildMissionRow(mission: DhyraMissionDetail): MissionRow {
+export function buildMissionRow(mission: HorosMissionDetail): MissionRow {
   const planner = mission.executionRun?.planner as
     | {
         planner?: unknown;
@@ -109,13 +109,13 @@ export function buildMissionRow(mission: DhyraMissionDetail): MissionRow {
   };
 }
 
-export function buildMissionTemplateCard(template: DhyraTemplate): MissionTemplateCard {
+export function buildMissionTemplateCard(template: HorosTemplate): MissionTemplateCard {
   const definition = (template.definition ?? {}) as Record<string, unknown>;
   const category = template.category ?? "General";
   const runtime = firstString(definition.runtime, template.version ? `v${template.version}` : null) ?? "Live";
   const roles = asStringArray(definition.roles ?? definition.agents ?? definition.requiredRoles);
   const policies = asStringArray(definition.policies ?? definition.checks ?? definition.rules);
-  const authority = firstString(definition.authority, template.proof && typeof template.proof === "object" ? (template.proof as Record<string, unknown>).authority : null) ?? "Dhyra Planner";
+  const authority = firstString(definition.authority, template.proof && typeof template.proof === "object" ? (template.proof as Record<string, unknown>).authority : null) ?? "HOROS Planner";
 
   return {
     id: template.id,
@@ -130,7 +130,7 @@ export function buildMissionTemplateCard(template: DhyraTemplate): MissionTempla
   };
 }
 
-export function buildMissionHistoryCard(mission: DhyraMissionDetail): MissionHistoryCard | null {
+export function buildMissionHistoryCard(mission: HorosMissionDetail): MissionHistoryCard | null {
   const status = (mission.verificationRun?.finalDecision ?? "").toUpperCase();
   const finalStatus: "PASS" | "FAIL" | null =
     status === "PASS" ? "PASS" : status === "FAIL" ? "FAIL" : mission.state === "completed" ? "PASS" : mission.state === "failed" ? "FAIL" : null;
@@ -178,22 +178,22 @@ export function buildMissionHistoryCard(mission: DhyraMissionDetail): MissionHis
 }
 
 export function useMissionRuntimeData() {
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
-  const [missions, setMissions] = useState<DhyraMissionDetail[]>([]);
-  const [institutions, setInstitutions] = useState<DhyraInstitution[]>([]);
-  const [templates, setTemplates] = useState<DhyraTemplate[]>([]);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+  const [missions, setMissions] = useState<HorosMissionDetail[]>([]);
+  const [institutions, setInstitutions] = useState<HorosInstitution[]>([]);
+  const [templates, setTemplates] = useState<HorosTemplate[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const syncWorkspace = () => {
-      const cachedWorkspaceId = readActiveDhyraWorkspaceId();
+      const cachedWorkspaceId = readActiveHorosWorkspaceId();
       if (cachedWorkspaceId) {
         setWorkspaceId(cachedWorkspaceId);
         return;
       }
 
-      void resolveActiveDhyraWorkspaceId()
+      void resolveActiveHorosWorkspaceId()
         .then(setWorkspaceId)
         .catch(() => setWorkspaceId(null));
     };
@@ -204,7 +204,7 @@ export function useMissionRuntimeData() {
 
   const refresh = useCallback(async () => {
     if (!workspaceId) {
-      setError("No active Dhyra workspace is available.");
+      setError("No active HOROS workspace is available.");
       setMissions([]);
       setInstitutions([]);
       setTemplates([]);
@@ -215,8 +215,8 @@ export function useMissionRuntimeData() {
     setError(null);
     try {
       const [missionRows, institutionRows] = await Promise.all([
-        listDhyraMissions(workspaceId),
-        listDhyraInstitutions(workspaceId),
+        listHorosMissions(workspaceId),
+        listHorosInstitutions(workspaceId),
       ]);
       setMissions(missionRows);
       setInstitutions(institutionRows);
@@ -227,7 +227,7 @@ export function useMissionRuntimeData() {
     }
 
     try {
-      const templateRows = await listDhyraTemplates(workspaceId).catch(() => []);
+      const templateRows = await listHorosTemplates(workspaceId).catch(() => []);
       setTemplates(templateRows);
     } catch {
       setTemplates([]);
@@ -254,9 +254,9 @@ export function useMissionRuntimeData() {
       proof?: Record<string, unknown>;
     }) => {
       if (!workspaceId) {
-        throw new Error("No active Dhyra workspace is available.");
+        throw new Error("No active HOROS workspace is available.");
       }
-      const mission = await createDhyraMission(workspaceId, input);
+      const mission = await createHorosMission(workspaceId, input);
       await refresh();
       return mission;
     },
@@ -267,10 +267,10 @@ export function useMissionRuntimeData() {
     const existing = institutions[0];
     if (existing) return existing;
     if (!workspaceId) {
-      throw new Error("No active Dhyra workspace is available.");
+      throw new Error("No active HOROS workspace is available.");
     }
 
-    const created = await createDhyraInstitution(workspaceId, {
+    const created = await createHorosInstitution(workspaceId, {
       name: "Software Release",
       category: "Engineering",
       version: "1.0",
@@ -302,11 +302,11 @@ export function useMissionRuntimeData() {
         approvals?: string[];
         notes?: string;
       },
-    ): Promise<DhyraMissionRunResult> => {
+    ): Promise<HorosMissionRunResult> => {
       if (!workspaceId) {
-        throw new Error("No active Dhyra workspace is available.");
+        throw new Error("No active HOROS workspace is available.");
       }
-      const result = await runDhyraMission(workspaceId, missionId, input);
+      const result = await runHorosMission(workspaceId, missionId, input);
       await refresh();
       return result;
     },
@@ -316,26 +316,26 @@ export function useMissionRuntimeData() {
   const getMission = useCallback(
     async (missionId: string) => {
       if (!workspaceId) return null;
-      return getDhyraMission(workspaceId, missionId);
+      return getHorosMission(workspaceId, missionId);
     },
     [workspaceId],
   );
 
   const decideMission = useCallback(async (missionId: string, input: { evaluations: Array<Record<string, unknown>>; objectives?: Array<{ metric: string; direction: "minimize" | "maximize"; weight: number }> }) => {
-    if (!workspaceId) throw new Error("No active Dhyra workspace is available.");
-    const decision = await decideDhyraMissionCandidates(workspaceId, missionId, input);
+    if (!workspaceId) throw new Error("No active HOROS workspace is available.");
+    const decision = await decideHorosMissionCandidates(workspaceId, missionId, input);
     await refresh();
     return decision;
   }, [refresh, workspaceId]);
 
   const sendMissionTelemetry = useCallback(async (missionId: string, input: { workerId: string; measurements: Record<string, number>; evidenceIds?: string[]; observedAt?: string }) => {
-    if (!workspaceId) throw new Error("No active Dhyra workspace is available.");
-    return sendDhyraMissionTelemetry(workspaceId, missionId, input);
+    if (!workspaceId) throw new Error("No active HOROS workspace is available.");
+    return sendHorosMissionTelemetry(workspaceId, missionId, input);
   }, [workspaceId]);
 
   const verifyMissionWindow = useCallback(async (missionId: string, input: { measurements: Record<string, number>; constraints: Array<Record<string, unknown>>; evidenceIds: string[]; requiredWindowSeconds: number; observedWindowSeconds: number }) => {
-    if (!workspaceId) throw new Error("No active Dhyra workspace is available.");
-    const result = await verifyDhyraMissionWindow(workspaceId, missionId, input);
+    if (!workspaceId) throw new Error("No active HOROS workspace is available.");
+    const result = await verifyHorosMissionWindow(workspaceId, missionId, input);
     await refresh();
     return result;
   }, [refresh, workspaceId]);

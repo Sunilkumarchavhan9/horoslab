@@ -22,7 +22,7 @@ export function VerificationAssurance() {
                     <span className="text-sm text-black/50">Engineering Institution</span>
                  </div>
                  <h1 className="text-2xl font-bold tracking-tight text-black">Assurance Case: SDK Deployment</h1>
-                 <p className="text-sm text-black/50 mt-1">Tracing the exact cryptographic proof of why Dhyra trusts this execution.</p>
+                 <p className="text-sm text-black/50 mt-1">Tracing the exact cryptographic proof of why HOROS trusts this execution.</p>
               </div>
               
               <div className="flex gap-6 text-right">

@@ -3,50 +3,50 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, LayoutTemplate, ShieldCheck, Scale, FileText, Workflow, Layers, Sparkles, Search } from "lucide-react";
 import {
- createDhyraInstitution,
- createDhyraTemplate,
- getDhyraTemplate,
- listDhyraTemplates,
- readActiveDhyraWorkspaceId,
- type DhyraTemplate,
-} from "@/lib/dhyra-api";
+ createHorosInstitution,
+ createHorosTemplate,
+ getHorosTemplate,
+ listHorosTemplates,
+ readActiveHorosWorkspaceId,
+ type HorosTemplate,
+} from "@/lib/horos-api";
 
 type TemplatesProps = {
  onViewInstitution?: (id: string) => void;
 };
 
-function defaultTemplateSummary(template: DhyraTemplate): string {
+function defaultTemplateSummary(template: HorosTemplate): string {
  return template.description?.trim() || "Reusable blueprint for instantiating a new institution.";
 }
 
-function missionsCount(template: DhyraTemplate): number {
+function missionsCount(template: HorosTemplate): number {
  const definition = template.definition as { missions?: unknown } | undefined;
  const missions = definition?.missions;
  return Array.isArray(missions) ? missions.length : 0;
 }
 
-function authorityLabel(template: DhyraTemplate): string {
+function authorityLabel(template: HorosTemplate): string {
  const definition = template.definition as { authority?: { level?: unknown } } | undefined;
  const level = definition?.authority?.level;
  if (typeof level === "string" && level.trim()) return level;
  return template.category?.trim() || "General";
 }
 
-function policiesLabel(template: DhyraTemplate): string {
+function policiesLabel(template: HorosTemplate): string {
  const definition = template.definition as { policies?: unknown } | undefined;
  const policies = definition?.policies;
  if (Array.isArray(policies) && policies.length > 0) return String(policies[0]);
  return "Standard";
 }
 
-function evidenceLabel(template: DhyraTemplate): string {
+function evidenceLabel(template: HorosTemplate): string {
  const definition = template.definition as { evidence?: unknown } | undefined;
  const evidence = definition?.evidence;
  if (typeof evidence === "string" && evidence.trim()) return evidence;
  return "Evidence Trail";
 }
 
-function approvalLabel(template: DhyraTemplate): string {
+function approvalLabel(template: HorosTemplate): string {
  const definition = template.definition as { approval?: unknown } | undefined;
  const approval = definition?.approval;
  if (typeof approval === "string" && approval.trim()) return approval;
@@ -54,19 +54,19 @@ function approvalLabel(template: DhyraTemplate): string {
 }
 
 export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [templates, setTemplates] = useState<DhyraTemplate[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [templates, setTemplates] = useState<HorosTemplate[]>([]);
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState<string | null>(null);
  const [creating, setCreating] = useState(false);
  const [instantiatingId, setInstantiatingId] = useState<string | null>(null);
- const [blueprintTemplate, setBlueprintTemplate] = useState<DhyraTemplate | null>(null);
+ const [blueprintTemplate, setBlueprintTemplate] = useState<HorosTemplate | null>(null);
  const [blueprintLoading, setBlueprintLoading] = useState(false);
  const [query, setQuery] = useState("");
  const [searchInput, setSearchInput] = useState("");
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -86,7 +86,7 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  setLoading(true);
  setError(null);
  try {
- const liveTemplates = await listDhyraTemplates(workspaceId, {
+ const liveTemplates = await listHorosTemplates(workspaceId, {
  search: query.trim() || undefined,
  });
  setTemplates(liveTemplates);
@@ -112,7 +112,7 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  setCreating(true);
  setError(null);
  try {
- await createDhyraTemplate(workspaceId, {
+ await createHorosTemplate(workspaceId, {
  name: "New Template",
  category: "general",
  description: "New reusable template for an institution.",
@@ -134,12 +134,12 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  }, [refresh, workspaceId]);
 
  const handleInstantiate = useCallback(
- async (template: DhyraTemplate) => {
+ async (template: HorosTemplate) => {
  if (!workspaceId) return;
  setInstantiatingId(template.id);
  setError(null);
  try {
- const created = await createDhyraInstitution(workspaceId, {
+ const created = await createHorosInstitution(workspaceId, {
  name: `${template.name} Institution`,
  category: template.category ?? "general",
  version: template.version ?? "1.0.0",
@@ -164,12 +164,12 @@ export function InstitutionsTemplates({ onViewInstitution }: TemplatesProps) {
  );
 
  const handleViewBlueprint = useCallback(
- async (template: DhyraTemplate) => {
+ async (template: HorosTemplate) => {
  if (!workspaceId) return;
  setBlueprintLoading(true);
  setError(null);
  try {
- const liveTemplate = await getDhyraTemplate(workspaceId, template.id);
+ const liveTemplate = await getHorosTemplate(workspaceId, template.id);
  setBlueprintTemplate(liveTemplate);
  } catch (viewError) {
  setError(viewError instanceof Error ? viewError.message : "Failed to load blueprint.");

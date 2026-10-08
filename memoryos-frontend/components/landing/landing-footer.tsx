@@ -77,7 +77,7 @@ export function LandingFooter() {
               Autonomous organization<br />infrastructure.
             </h2>
             <p className="mt-4 text-[12px] text-[#F0EFE2]/80 leading-relaxed max-w-xs">
-              Dhyra runs the institutions that agents become: mission, authority, execution, proof, settlement, and evolution.
+              HOROS runs the institutions that agents become: mission, authority, execution, proof, settlement, and evolution.
             </p>
           </div>
 
@@ -111,7 +111,7 @@ export function LandingFooter() {
       {/* Copyright text placed in the solid blue area just above the image */}
       <div className="w-full flex justify-end px-8 md:px-12 pb-4 pt-4 relative z-20">
         <div className="text-[10px] font-mono tracking-widest text-[#F0EFE2]/70">
-          © 2026 · DHYRA INC. · ALL RIGHTS RESERVED
+          © 2026 · HOROS INC. · ALL RIGHTS RESERVED
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export function LandingFooter() {
         style={{ backgroundImage: "url('/footer-columns-bg.jpg')" }}
       >
 
-        {/* Huge "Dhyra." text container with relative positioning for the icon */}
+        {/* Huge "HOROS." text container with relative positioning for the icon */}
         <div className="relative inline-flex items-center justify-center pb-4">
           <h1 className="text-[35vw] md:text-[35vw] lg:text-[400px] font-bold tracking-tighter leading-[0.8] text-[#D4AF37]/40 select-none whitespace-nowrap">
             ep<span className="relative">o<div className="absolute top-[56%] left-[53%] -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"><MemoryStarIcon className="h-[8vw] w-[8vw] md:h-[100px] md:w-[100px] text-[#F0EFE2]" /></div></span>ch.

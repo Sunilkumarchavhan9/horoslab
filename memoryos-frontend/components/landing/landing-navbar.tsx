@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown, ArrowRight, ArrowUpRight, Menu, X, Box, Calculator, BookOpen, Clock, Rocket, Newspaper } from "lucide-react";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
+import HorosLogo from "@/components/horos/primitives/horos-logo";
 import {
   QwenLogo,
   DeepSeekLogo,
@@ -23,7 +23,7 @@ import {
   K8sFaviconLogo,
   GithubLogo,
   VLLMLogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 interface LandingNavbarProps {
   onOpenDashboard?: () => void;
@@ -114,16 +114,16 @@ export function LandingNavbar({
       </div>
 
       <div className="w-full flex justify-center h-14 relative z-10 pointer-events-none">
-        <div className="flex items-center justify-between lg:justify-center lg:gap-12 xl:gap-20 w-[96%] sm:w-[72%] lg:w-auto bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 lg:px-8">
+        <div className="flex items-center justify-between w-[96%] sm:w-[72%] lg:w-[calc(64%_-_240px)] bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 lg:px-8">
           {/* Left: Official Vector Brand Logo */}
-          <div className="flex items-center shrink-0 h-14 pl-3 pr-2">
+          <div className="flex items-center shrink-0 h-14 pr-2">
             <Link href="/" className="flex items-center group shrink-0 whitespace-nowrap">
-              <DhyraLogo variant="stacked" size="md" className="text-[#F0EFE2]" />
+              <HorosLogo variant="wordmark" size="xl" className="text-[#F0EFE2]" />
             </Link>
           </div>
 
           {/* Center: Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-7 text-[#F0EFE2] font-medium whitespace-nowrap">
+          <nav className="hidden xl:flex items-center gap-3 xl:gap-5 text-[#F0EFE2] font-medium whitespace-nowrap text-xs">
             {/* Use cases dropdown */}
             <div
               className="relative"
@@ -147,94 +147,93 @@ export function LandingNavbar({
                 <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[720px] border border-dashed border-[#333] bg-[#151515] shadow-2xl z-50 text-left font-sans grid grid-cols-3 whitespace-normal">
                   {[
                     {
-                      title: "Voice agent",
-                      desc: "Whisper, Llama, and GPU scheduling in one recipe.",
-                      icons: [OpenAILogo, MetaLogo, NvidiaLogo],
+                      title: "Voice Agents",
+                      desc: "Understand and respond to voice in real time.",
+                      icons: [OpenAILogo, QwenLogo, NvidiaLogo],
                       href: "/use-cases/voice-agent"
                     },
                     {
-                      title: "AI assistant",
-                      desc: "Llama, Hermes, and Qwen with tools.",
-                      icons: [QwenLogo, MetaLogo, NvidiaLogo],
+                      title: "AI Assistants",
+                      desc: "Build assistants that understand and act.",
+                      icons: [MetaLogo, QwenLogo, MistralLogo],
                       href: "/use-cases/ai-assistant"
                     },
                     {
-                      title: "Embeddings",
-                      desc: "BGE encoders plus reranker on one server.",
-                      icons: [BAAILogo, NvidiaLogo],
+                      title: "Coding Agents",
+                      desc: "Agents that write, test, and improve code.",
+                      icons: [QwenLogo, DeepSeekLogo, MistralLogo],
                       href: "/use-cases/embeddings"
                     },
                     {
-                      title: "RAG search",
-                      desc: "BGE embeddings with rerank in the loop.",
-                      icons: [BAAILogo, HuggingFaceLogo],
+                      title: "Research Agents",
+                      desc: "Agents that research, reason, and discover.",
+                      icons: [DeepSeekLogo, QwenLogo, MistralLogo],
                       href: "/use-cases/rag-search"
                     },
                     {
-                      title: "Document AI",
-                      desc: "Qwen2.5-VL and Llama 3.2 Vision to JSON.",
-                      icons: [QwenLogo, MetaLogo],
+                      title: "Vision AI",
+                      desc: "Models that see and understand the world.",
+                      icons: [QwenLogo, MetaLogo, NvidiaLogo],
                       href: "/use-cases/document-ai"
                     },
                     {
-                      title: "Transcription",
-                      desc: "Whisper plus diarization and PII redaction.",
-                      icons: [OpenAILogo, NvidiaLogo],
+                      title: "Multimodal AI",
+                      desc: "Understand text, images, audio, and video.",
+                      icons: [QwenLogo, MetaLogo, MistralLogo],
                       href: "/use-cases/transcription"
                     },
                     {
-                      title: "Synthetic Data Factory",
-                      desc: "Auto-generate data to fine-tune models.",
-                      icons: [MetaLogo, HuggingFaceLogo],
+                      title: "Reasoning AI",
+                      desc: "Models that reason through hard problems.",
+                      icons: [DeepSeekLogo, QwenLogo, MistralLogo],
                       href: "/use-cases/teaching-data-factory"
                     },
                     {
-                      title: "Simulation & World Models",
-                      desc: "Replay and predict physical dynamics.",
-                      icons: [GoogleLogo, NvidiaLogo],
+                      title: "World Models",
+                      desc: "Models that learn how worlds behave.",
+                      icons: [NvidiaLogo, GoogleLogo, MetaLogo],
                       href: "/use-cases/simulation-world-models"
                     },
                     {
-                      title: "Continuous Auto-Diagnosis",
-                      desc: "Deploy agents to self-heal infrastructure.",
-                      icons: [GithubLogo, K8sFaviconLogo],
+                      title: "Autonomous Agents",
+                      desc: "Agents that plan, act, and adapt.",
+                      icons: [MetaLogo, QwenLogo, DeepSeekLogo],
                       href: "/use-cases/continuous-auto-diagnosis"
                     },
                     {
-                      title: "Autonomous Software Engineers",
-                      desc: "Agents that autonomously write and test code.",
-                      icons: [GithubLogo, MetaLogo],
+                      title: "Engineering AI",
+                      desc: "AI for complex engineering problems.",
+                      icons: [QwenLogo, MetaLogo, NvidiaLogo],
                       href: "/use-cases/autonomous-software-engineers"
                     },
                     {
-                      title: "Verifiable Legal Agents",
-                      desc: "Verifiable proofs for zero-hallucination AI.",
-                      icons: [OpenAILogo, NvidiaLogo],
+                      title: "Autonomous Systems",
+                      desc: "Systems that perceive, decide, and act.",
+                      icons: [NvidiaLogo, MetaLogo, QwenLogo],
                       href: "/use-cases/verifiable-legal-agents"
                     },
                     {
-                      title: "Automated Scientific Discoverers",
-                      desc: "Agents that run massive physics simulations.",
-                      icons: [HuggingFaceLogo, MetaLogo],
+                      title: "Scientific AI",
+                      desc: "AI for science and discovery.",
+                      icons: [DeepSeekLogo, QwenLogo, NvidiaLogo],
                       href: "/use-cases/automated-scientific-discoverers"
                     },
                     {
-                      title: "Decoding Physical Reality",
-                      desc: "Process sensor streams to teach AI models.",
-                      icons: [DeepSeekLogo, NvidiaLogo],
+                      title: "Physical AI",
+                      desc: "Teach models to understand the physical world.",
+                      icons: [NvidiaLogo, QwenLogo, MetaLogo],
                       href: "/use-cases/decoding-physical-reality"
                     },
                     {
-                      title: "Generative Video & Physics",
-                      desc: "Synthesize physical worlds to train models.",
-                      icons: [GoogleLogo, MetaLogo],
+                      title: "Synthetic Reality",
+                      desc: "Create worlds to train and test models.",
+                      icons: [NvidiaLogo, GoogleLogo, MetaLogo],
                       href: "/use-cases/generative-video-and-physics"
                     },
-
                     {
-                      title: "Embodied Humanoid Robots",
-                      desc: "Low-latency brains for humanoid robots.",
-                      icons: [NvidiaLogo, MetaLogo],
+                      title: "Robotics",
+                      desc: "Intelligence for robots and machines.",
+                      icons: [NvidiaLogo, GoogleLogo],
                       href: "/use-cases/embodied-humanoid-robots"
                     }
                   ].map((uc, i) => {
@@ -382,8 +381,8 @@ export function LandingNavbar({
               )}
             </div>
 
-            <Link href="/dhyra" className="transition-colors whitespace-nowrap flex items-center gap-1.5">
-              Dhyra
+            <Link href="/horos" className="transition-colors whitespace-nowrap flex items-center gap-1.5">
+              HOROS
               <span className="bg-[#C3C2B6] text-black text-[9px] font-medium px-1.5 py-0.2 rounded-xs tracking-tight whitespace-nowrap">
                 NEW
               </span>
@@ -395,11 +394,11 @@ export function LandingNavbar({
           </nav>
 
           {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
-          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pr-3">
+          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-2">
             <button
               type="button"
               onClick={onOpenSignIn || onOpenDashboard}
-              className="hidden sm:flex items-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer text-sm font-semibold whitespace-nowrap"
+              className="hidden sm:flex items-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-2.5 py-1 rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
             >
               <span>Demo</span>
             </button>
@@ -407,7 +406,7 @@ export function LandingNavbar({
             <button
               type="button"
               onClick={onOpenSignUp || onOpenDashboard}
-              className="flex items-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-3 py-1.5 rounded-xs transition-all cursor-pointer text-sm whitespace-nowrap shadow-sm"
+              className="flex items-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-2.5 py-1 rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
             >
               <span>Request Access</span>
             </button>
@@ -416,7 +415,7 @@ export function LandingNavbar({
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 text-[#aaa] hover:text-[#F0EFE2] bg-[#1c1c1c] border border-[#2a2a2a] rounded-xs cursor-pointer ml-1"
+              className="xl:hidden p-1.5 text-[#aaa] hover:text-[#F0EFE2] bg-[#1c1c1c] border border-[#2a2a2a] rounded-xs cursor-pointer ml-1"
             >
               {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
@@ -427,7 +426,7 @@ export function LandingNavbar({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-[#282828] bg-[#141414] px-4 py-4 space-y-3 font-sans tracking-tight text-sm font-medium">
+        <div className="xl:hidden border-b border-[#282828] bg-[#141414] px-4 py-4 space-y-3 font-sans tracking-tight text-sm font-medium">
           <div className="flex flex-col space-y-2.5">
             <Link
               href="#use-cases"
@@ -445,11 +444,11 @@ export function LandingNavbar({
               Pricing
             </Link>
             <Link
-              href="/dhyra"
+              href="/horos"
               onClick={() => setTimeout(() => setMobileMenuOpen(false), 150)}
               className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2] flex items-center justify-between"
             >
-              <span>Dhyra</span>
+              <span>HOROS</span>
               <span className="bg-[#C3C2B6] text-black text-[9px] font-medium px-1.5 py-0.2 rounded-xs">
                 NEW
               </span>

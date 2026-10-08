@@ -36,7 +36,7 @@ export function OrganizationTeams() {
  <div className="flex flex-col gap-1 text-[13px]">
  <div className="flex items-center gap-2 font-semibold text-foreground dark:text-[#F0EFE2] mb-2">
  <Building className="size-4" />
- Dhyra Inc.
+ HOROS Inc.
  </div>
  
  <div className="flex flex-col ml-4 border-l border-border dark:border-white/10 pl-3 gap-2">

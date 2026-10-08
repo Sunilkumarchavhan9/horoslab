@@ -1,5 +1,5 @@
 import { MemoryStarLogo } from "./memory-star-logo";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
 import { NavMegaDropdown } from "./nav-mega-dropdown";
 import { Globe, Box, Code, ShieldCheck, Lock, FileText, Brain, Network, Dna, Activity, Zap, Store, Wrench, Cpu, Shield, Terminal, FileCheck, Rocket, Search, Bot, CheckCircle, ClipboardList, BookOpen, FileCode2, GitBranch, Webhook, Package, Database, Lightbulb, Gamepad2, Layers, ExternalLink, Cloud, PlayCircle, Eye, ScrollText, Microscope, Book, Rss, History, Map, Users, HelpCircle, Briefcase, ImageIcon } from "lucide-react";
 
@@ -186,7 +186,7 @@ const SOLUTIONS_SECTIONS = [
     items: [
       {
         label: "Founder Program",
-        description: "Design your first governed institution with Dhyra.",
+        description: "Design your first governed institution with HOROS.",
         href: "/design-partner",
         icon: <Globe className="w-5 h-5" />
       },
@@ -243,7 +243,7 @@ const DEVELOPER_SECTIONS = [
       {
         label: "GitHub",
         description: "Open source repositories.",
-        href: "https://github.com/dhyra",
+        href: "https://github.com/horos",
         icon: <GitBranch className="w-5 h-5" />
       }
     ]
@@ -523,7 +523,7 @@ export function LandingNav() {
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-2 sm:px-10 lg:h-[60px] lg:px-16 lg:py-0 xl:px-20">
         <div className="flex items-center shrink-0">
           <a href="/" className="flex items-center hover:opacity-90 transition-opacity">
-            <DhyraLogo size="lg" className="text-black" />
+            <HorosLogo variant="wordmark" size="3xl" className="text-black" />
           </a>
         </div>
 

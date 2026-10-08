@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
-import { AuthModal } from "@/components/dhyra/modals/auth-modal";
-import { PixelFilter } from "@/components/dhyra/primitives/pixel-filter";
+import { AuthModal } from "@/components/horos/modals/auth-modal";
+import { PixelFilter } from "@/components/horos/primitives/pixel-filter";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
 import { ContactForm } from "@/components/landing/contact-form";
 

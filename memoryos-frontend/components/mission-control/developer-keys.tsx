@@ -8,12 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
- createDhyraRuntimeApiKey,
- listDhyraRuntimeApiKeys,
- readActiveDhyraWorkspaceId,
- revokeDhyraRuntimeApiKey,
- type DhyraRuntimeApiKey,
-} from "@/lib/dhyra-api";
+ createHorosRuntimeApiKey,
+ listHorosRuntimeApiKeys,
+ readActiveHorosWorkspaceId,
+ revokeHorosRuntimeApiKey,
+ type HorosRuntimeApiKey,
+} from "@/lib/horos-api";
 
 function formatTimestamp(value?: string | null): string {
  if (!value) return "Never";
@@ -52,14 +52,14 @@ function resolveExpirationDate(preset: ExpirationPreset): string | undefined {
 }
 
 export function DeveloperKeys() {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [keys, setKeys] = useState<DhyraRuntimeApiKey[]>([]);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [keys, setKeys] = useState<HorosRuntimeApiKey[]>([]);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
  const [creating, setCreating] = useState(false);
  const [busyKeyId, setBusyKeyId] = useState<string | null>(null);
  const [createOpen, setCreateOpen] = useState(false);
- const [createName, setCreateName] = useState("Dhyra Runtime");
+ const [createName, setCreateName] = useState("HOROS Runtime");
  const [createCreditLimit, setCreateCreditLimit] = useState("");
  const [createResetLimitEvery, setCreateResetLimitEvery] = useState("N/A");
  const [createExpiration, setCreateExpiration] = useState<ExpirationPreset>("never");
@@ -71,11 +71,11 @@ export function DeveloperKeys() {
  setKeys([]);
  return;
  }
- setKeys(await listDhyraRuntimeApiKeys(targetWorkspaceId));
+ setKeys(await listHorosRuntimeApiKeys(targetWorkspaceId));
  }
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -98,7 +98,7 @@ export function DeveloperKeys() {
  setLoading(true);
  setError(null);
  try {
- const result = await listDhyraRuntimeApiKeys(workspaceId);
+ const result = await listHorosRuntimeApiKeys(workspaceId);
  if (!canceled) setKeys(result);
  } catch (loadError) {
  if (!canceled) {
@@ -138,8 +138,8 @@ export function DeveloperKeys() {
  ? Math.max(0, Math.trunc(Number(creditLimitValue)))
  : null;
  const resetLimitEvery = createResetLimitEvery.trim() === "N/A" ? null : createResetLimitEvery.trim();
- const result = await createDhyraRuntimeApiKey(workspaceId, {
- name: createName.trim() || "Dhyra Runtime",
+ const result = await createHorosRuntimeApiKey(workspaceId, {
+ name: createName.trim() || "HOROS Runtime",
  ...(expires ? { expires } : {}),
  creditLimit,
  resetLimitEvery,
@@ -147,7 +147,7 @@ export function DeveloperKeys() {
  await reloadKeys();
  setCreatedSecret(result.token);
  setCreateOpen(false);
- setCreateName("Dhyra Runtime");
+ setCreateName("HOROS Runtime");
  setCreateCreditLimit("");
  setCreateResetLimitEvery("N/A");
  setCreateExpiration("never");
@@ -162,7 +162,7 @@ export function DeveloperKeys() {
  if (!workspaceId) return;
  setBusyKeyId(keyId);
  try {
- await revokeDhyraRuntimeApiKey(workspaceId, keyId);
+ await revokeHorosRuntimeApiKey(workspaceId, keyId);
  await reloadKeys();
  } catch (revokeError) {
  setError(revokeError instanceof Error ? revokeError.message : "Failed to revoke API key.");
@@ -171,17 +171,17 @@ export function DeveloperKeys() {
  }
  }
 
- async function handleRotate(key: DhyraRuntimeApiKey) {
+ async function handleRotate(key: HorosRuntimeApiKey) {
  if (!workspaceId) return;
  setBusyKeyId(key.id);
  try {
- const created = await createDhyraRuntimeApiKey(workspaceId, {
+ const created = await createHorosRuntimeApiKey(workspaceId, {
  name: `${key.name} (rotated)`,
  expires: key.expiresAt,
  creditLimit: key.creditLimit ?? null,
  resetLimitEvery: key.resetLimitEvery ?? null,
  });
- await revokeDhyraRuntimeApiKey(workspaceId, key.id);
+ await revokeHorosRuntimeApiKey(workspaceId, key.id);
  await reloadKeys();
  setCreatedSecret(created.token);
  } catch (rotateError) {
@@ -198,7 +198,7 @@ export function DeveloperKeys() {
  <Key className="size-6 text-foreground" strokeWidth={1.5} />
  <h1 className="text-[28px] font-medium text-foreground tracking-tight">API Keys</h1>
  </div>
- <p className="text-[15px] text-muted-foreground">Live runtime API keys for Dhyra agents and tools.</p>
+ <p className="text-[15px] text-muted-foreground">Live runtime API keys for HOROS agents and tools.</p>
  </div>
 
  <div className="flex items-center justify-end mb-6">

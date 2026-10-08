@@ -112,7 +112,7 @@ export function AgentsActivity() {
  {[
  { agent: "Claude Reviewer", action: "Opened PR #443", time: "10 mins ago", type: "success" },
  { agent: "Security Verifier", action: "Passed Pen Test", time: "15 mins ago", type: "success" },
- { agent: "Dhyra Planner", action: "Generated Execution Graph", time: "1 hr ago", type: "info" },
+ { agent: "HOROS Planner", action: "Generated Execution Graph", time: "1 hr ago", type: "info" },
  { agent: "Onboarding Coordinator", action: "Failed to send email (Timeout)", time: "3 hrs ago", type: "error" },
  { agent: "Claude Reviewer", action: "Requested Capability Lease", time: "4 hrs ago", type: "warning" },
  ].map((event, i) => (

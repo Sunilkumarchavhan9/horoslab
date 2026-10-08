@@ -26,15 +26,15 @@ import {
  Briefcase,
 } from "lucide-react";
 import {
- getDhyraMissionControlSnapshot,
- listDhyraEvidence,
- listDhyraMemoryRecords,
- readActiveDhyraWorkspaceId,
- resolveActiveDhyraWorkspaceId,
- type DhyraMissionControlSnapshot,
- type DhyraMission,
- type DhyraEvidence,
-} from "@/lib/dhyra-api";
+ getHorosMissionControlSnapshot,
+ listHorosEvidence,
+ listHorosMemoryRecords,
+ readActiveHorosWorkspaceId,
+ resolveActiveHorosWorkspaceId,
+ type HorosMissionControlSnapshot,
+ type HorosMission,
+ type HorosEvidence,
+} from "@/lib/horos-api";
 import { cn } from "@/lib/utils";
 import { MetricCard } from "./ui/metric-card";
 import { Timeline } from "./ui/timeline";
@@ -170,7 +170,7 @@ function enforceGridPadding(arr: (MetricCardData | null)[]): (MetricCardData | n
   return next;
 }
 
-let cachedAccountHomeSnapshot: DhyraMissionControlSnapshot | null = null;
+let cachedAccountHomeSnapshot: HorosMissionControlSnapshot | null = null;
 
 function formatRelativeTime(
  value?: string,
@@ -316,16 +316,16 @@ function summarizeSeriesTrend(series: number[]): { change: string; changeType: "
  };
 }
 
-function flattenMissionEvidence(missions: DhyraMission[]): DhyraEvidence[] {
- const evidence: DhyraEvidence[] = [];
+function flattenMissionEvidence(missions: HorosMission[]): HorosEvidence[] {
+ const evidence: HorosEvidence[] = [];
  for (const mission of missions) {
- const missionEvidence = (mission as DhyraMission & { evidence?: DhyraEvidence[] }).evidence ?? [];
+ const missionEvidence = (mission as HorosMission & { evidence?: HorosEvidence[] }).evidence ?? [];
  evidence.push(...missionEvidence);
  }
  return evidence;
 }
 
-function buildLiveMetricSlots(snapshot: DhyraMissionControlSnapshot | null, range: string | number): (MetricCardData | null)[] {
+function buildLiveMetricSlots(snapshot: HorosMissionControlSnapshot | null, range: string | number): (MetricCardData | null)[] {
  const institutions = snapshot?.recent?.institutions ?? [];
  const missions = snapshot?.recent?.missions ?? [];
  const evidence = flattenMissionEvidence(missions);
@@ -384,7 +384,7 @@ function buildLiveMetricSlots(snapshot: DhyraMissionControlSnapshot | null, rang
  ]);
 }
 
-function buildRecentActivityItems(snapshot: DhyraMissionControlSnapshot | null): RecentActivityItem[] {
+function buildRecentActivityItems(snapshot: HorosMissionControlSnapshot | null): RecentActivityItem[] {
  const institutions = snapshot?.recent?.institutions ?? [];
  const missions = snapshot?.recent?.missions ?? [];
  const evidence = flattenMissionEvidence(missions);
@@ -406,7 +406,7 @@ function buildRecentActivityItems(snapshot: DhyraMissionControlSnapshot | null):
  }
 
  for (const mission of missions) {
- const missionActivity = mission as DhyraMission & {
+ const missionActivity = mission as HorosMission & {
  verificationRun?: { createdAt?: string | null; finalDecision?: string | null; confidence?: number | null };
  certificate?: { createdAt?: string | null };
  };
@@ -836,8 +836,8 @@ export function AccountHomeDashboard({ onNavigate }: { onNavigate?: (section: st
  const { preferences } = useProfilePreferences();
  const t = (key: string) => profileText(preferences.language, key);
  const relativeTime = (value?: string) => formatRelativeTime(value, preferences.language);
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [snapshot, setSnapshot] = useState<DhyraMissionControlSnapshot | null>(cachedAccountHomeSnapshot);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [snapshot, setSnapshot] = useState<HorosMissionControlSnapshot | null>(cachedAccountHomeSnapshot);
  const [loadError, setLoadError] = useState<string | null>(null);
  const [refreshTick, setRefreshTick] = useState(0);
  const hasSnapshotRef = useRef(Boolean(cachedAccountHomeSnapshot));
@@ -848,8 +848,8 @@ export function AccountHomeDashboard({ onNavigate }: { onNavigate?: (section: st
  const [isSearchFocused, setIsSearchFocused] = useState(false);
  const [searchSelectedIndex, setSearchSelectedIndex] = useState(0);
  const searchInputRef = useRef<HTMLInputElement>(null);
- const [searchEvidence, setSearchEvidence] = useState<DhyraEvidence[]>([]);
- const [liveEvidence, setLiveEvidence] = useState<DhyraEvidence[]>([]);
+ const [searchEvidence, setSearchEvidence] = useState<HorosEvidence[]>([]);
+ const [liveEvidence, setLiveEvidence] = useState<HorosEvidence[]>([]);
  const [searchMemoryRecords, setSearchMemoryRecords] = useState<Array<{ id: string; summary?: string | null; mission?: { title?: string; objective?: string } | null; createdAt?: string }>>([]);
  const [dashboardColumns, setDashboardColumns] = useState([
   { id: "col1_Institutions", type: "Institutions" as ColumnType },
@@ -933,7 +933,7 @@ const pushColumn = (newType: ColumnType) => {
 
  // Sync workspace ID
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -951,11 +951,11 @@ const pushColumn = (newType: ColumnType) => {
  try {
  let wid = workspaceId;
  if (!wid) {
- wid = await resolveActiveDhyraWorkspaceId();
+ wid = await resolveActiveHorosWorkspaceId();
  if (wid) setWorkspaceId(wid);
  }
  if (wid) {
- const snap = await getDhyraMissionControlSnapshot(wid, {
+ const snap = await getHorosMissionControlSnapshot(wid, {
  search: searchQuery.trim() || undefined,
  start: dateRangeWindow.start.toISOString(),
  end: dateRangeWindow.end.toISOString(),
@@ -981,7 +981,7 @@ const pushColumn = (newType: ColumnType) => {
  }
  }
  } catch (err) {
- console.error("Failed to fetch live dhyra snapshot", err);
+ console.error("Failed to fetch live horos snapshot", err);
  if (!canceled) setLoadError(err instanceof Error ? err.message : "Could not load the live workspace snapshot.");
  } finally {
  if (!canceled) {
@@ -1004,7 +1004,7 @@ const pushColumn = (newType: ColumnType) => {
    setLiveEvidence([]);
    return;
   }
-  void listDhyraEvidence(workspaceId).then((result) => {
+  void listHorosEvidence(workspaceId).then((result) => {
    if (!canceled) {
     setLiveEvidence(result.items);
     setSearchEvidence(result.items);
@@ -1029,8 +1029,8 @@ const pushColumn = (newType: ColumnType) => {
   }
 
   void Promise.all([
-   listDhyraEvidence(workspaceId),
-   listDhyraMemoryRecords(workspaceId, { limit: 100 }),
+   listHorosEvidence(workspaceId),
+   listHorosMemoryRecords(workspaceId, { limit: 100 }),
   ]).then(([evidence, memories]) => {
    if (canceled) return;
    setSearchEvidence(evidence.items);
@@ -1351,11 +1351,11 @@ const pushColumn = (newType: ColumnType) => {
   "Settlement": { value: String(snapshot?.overview?.certificates ?? 0), detail: "settled missions with certificates", target: "memory-settlement" },
   "Policies": { value: "-", detail: "Open Policies for live authority rules", target: "governance-policies" },
   "Audit": { value: "-", detail: "Open Audit for the durable audit trail", target: "governance-audit" },
-  "API": { value: "Live", detail: "versioned Dhyra API explorer", target: "runtime-api" },
+  "API": { value: "Live", detail: "versioned HOROS API explorer", target: "runtime-api" },
   "API Keys": { value: "Live", detail: "workspace runtime access keys", target: "runtime-keys" },
   "SDK": { value: "Live", detail: "published worker SDK and contract", target: "runtime-sdk" },
   "MCP": { value: String(snapshot?.overview?.integrations ?? 0), detail: "runtime integrations and MCP access", target: "runtime-mcp" },
-  "CLI": { value: "Live", detail: "published Dhyra CLI commands", target: "runtime-cli" },
+  "CLI": { value: "Live", detail: "published HOROS CLI commands", target: "runtime-cli" },
   "Webhooks": { value: String(Object.values(snapshot?.webhooks?.stats ?? {}).reduce((sum, count) => sum + Number(count || 0), 0)), detail: "webhook delivery records", target: "runtime-webhooks" },
   "Institutions": { value: String(snapshot?.overview?.institutions ?? 0), detail: "institutions in this workspace", target: "workspace-institutions" },
   "Missions": { value: String(snapshot?.overview?.missions ?? 0), detail: "missions in this workspace", target: "workspace-missions" },

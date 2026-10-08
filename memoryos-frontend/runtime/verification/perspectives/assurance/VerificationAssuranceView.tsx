@@ -3,15 +3,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ShieldCheck, Target, Shield, ServerCog, BarChart4, RefreshCw, AlertTriangle } from "lucide-react";
 import { getExperienceSummary, listExperienceOutcomes, type ExperienceSummary } from "@/lib/experience-api";
-import { listDhyraCertificates, listDhyraVerificationRuns, readActiveDhyraWorkspaceId, type DhyraCertificate, type DhyraVerificationRunHistoryItem } from "@/lib/dhyra-api";
+import { listHorosCertificates, listHorosVerificationRuns, readActiveHorosWorkspaceId, type HorosCertificate, type HorosVerificationRunHistoryItem } from "@/lib/horos-api";
 
 export function VerificationAssuranceView() {
   const [summary, setSummary] = useState<ExperienceSummary | null>(null);
-  const [verifications, setVerifications] = useState<DhyraVerificationRunHistoryItem[]>([]);
-  const [certificates, setCertificates] = useState<DhyraCertificate[]>([]);
+  const [verifications, setVerifications] = useState<HorosVerificationRunHistoryItem[]>([]);
+  const [certificates, setCertificates] = useState<HorosCertificate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveDhyraWorkspaceId();
+  const workspaceId = readActiveHorosWorkspaceId();
 
   const loadAssurance = useCallback(async () => {
     setLoading(true);
@@ -19,8 +19,8 @@ export function VerificationAssuranceView() {
     try {
       const [experienceSummary, verificationPage, certificatePage, outcomes] = await Promise.all([
         getExperienceSummary().catch(() => null),
-        workspaceId ? listDhyraVerificationRuns(workspaceId, { limit: 20 }) : Promise.resolve({ verifications: [] as DhyraVerificationRunHistoryItem[], page: { nextCursor: null, hasMore: false, total: 0 } }),
-        workspaceId ? listDhyraCertificates(workspaceId, { limit: 20 }) : Promise.resolve({ certificates: [] as DhyraCertificate[], page: { nextCursor: null, hasMore: false, total: 0 } }),
+        workspaceId ? listHorosVerificationRuns(workspaceId, { limit: 20 }) : Promise.resolve({ verifications: [] as HorosVerificationRunHistoryItem[], page: { nextCursor: null, hasMore: false, total: 0 } }),
+        workspaceId ? listHorosCertificates(workspaceId, { limit: 20 }) : Promise.resolve({ certificates: [] as HorosCertificate[], page: { nextCursor: null, hasMore: false, total: 0 } }),
         listExperienceOutcomes().catch(() => []),
       ]);
 

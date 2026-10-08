@@ -58,7 +58,7 @@ import {
   siCursor,
 } from "simple-icons";
 import { CATALOG_BRAND_PATHS } from "@/components/continuity-lab/brand-icons/catalog-brand-paths";
-import { ConnectorBrandIcon } from "@/components/developer-console/connector-brand-icons";
+import { ConnectorBrandIcon } from "@/components/continuity-lab/connector-brand-icons";
 
 // Helper component for simple-icons
 function SimpleIcon({ icon, className }: { icon: any, className?: string }) {
@@ -595,8 +595,11 @@ export function OverviewSection(props: any) {
             </div>
           </div>
         </div>
-
       </div>
     </div>
-  );
+  </div>
+);
 }
+
+
+

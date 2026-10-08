@@ -12,7 +12,7 @@ const VERIFIERS = [
  { id: "ver_3", name: "Compliance Check (SOC2)", language: "Rego", version: "v1.0.0", runs: "145", passRate: "100%", status: "Active" }
 ];
 
-const CONFIG_CODE = `import { Verifier, Context } from "@dhyra/sdk";
+const CONFIG_CODE = `import { Verifier, Context } from "@horos/sdk";
 import { execSync } from "child_process";
 
 export default class SecurityAudit extends Verifier {

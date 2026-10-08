@@ -89,7 +89,7 @@ function getApiOrigin() {
   return origin;
 }
 
-export function AgentsSection() {
+export function AgentsSection(props: any) {
   const [connectedAgents, setConnectedAgents] = useState<ConnectedAgent[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -632,5 +632,6 @@ memoryos agent status`}</code>
     </>
   );
 }
+
 
 

@@ -30,9 +30,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dhyra",
+  title: "HOROS",
   description:
-    "Dhyra is the agent work control plane for AI-native companies: inheritance, control, proof, and outcome learning before and after agent work.",
+    "HOROS is the agent work control plane for AI-native companies: inheritance, control, proof, and outcome learning before and after agent work.",
   icons: {
     icon: "/memoryostmlogoofficial.png",
     shortcut: "/memoryostmlogoofficial.png",

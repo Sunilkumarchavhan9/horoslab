@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChevronRight, CheckCircle2, FileText, Database, Shield, Zap, Lightbulb, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getDhyraMemoryRecord, readActiveDhyraWorkspaceId, type DhyraMemoryRecordDetail } from "@/lib/dhyra-api";
+import { getHorosMemoryRecord, readActiveHorosWorkspaceId, type HorosMemoryRecordDetail } from "@/lib/horos-api";
 
 function formatTimestamp(value?: string | null): string {
  if (!value) return "Unknown";
@@ -13,13 +13,13 @@ function formatTimestamp(value?: string | null): string {
 }
 
 export function MemoryRecordDetail({ id, onBack }: { id: string; onBack: () => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [record, setRecord] = useState<DhyraMemoryRecordDetail | null>(null);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [record, setRecord] = useState<HorosMemoryRecordDetail | null>(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -43,7 +43,7 @@ export function MemoryRecordDetail({ id, onBack }: { id: string; onBack: () => v
  setLoading(true);
  setError(null);
  try {
- const result = await getDhyraMemoryRecord(workspaceId, id);
+ const result = await getHorosMemoryRecord(workspaceId, id);
  if (!canceled) setRecord(result);
  } catch (loadError) {
  if (!canceled) {
@@ -116,7 +116,7 @@ export function MemoryRecordDetail({ id, onBack }: { id: string; onBack: () => v
  (record.lessons ?? []).map((lesson, i) => (
  <div key={`${lesson}-${i}`} className="bg-card border border-border p-3 rounded-md">
  <div className="text-[13px] font-semibold text-foreground mb-1">{lesson}</div>
- <div className="text-[12px] text-muted-foreground">Captured in Dhyra memory</div>
+ <div className="text-[12px] text-muted-foreground">Captured in HOROS memory</div>
  </div>
  ))
  ) : (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { OpenAILogo, MetaLogo, NvidiaLogo } from "@/components/dhyra/primitives/brand-icons";
+import { OpenAILogo, MetaLogo, NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 import { Mic, Volume2 } from "lucide-react";
 
 export function LiveLatencyPipeline() {
@@ -23,7 +23,7 @@ export function LiveLatencyPipeline() {
   const renderCube = (cx: number, cy: number, type: "outline" | "solid", label: string) => {
     const isSolid = type === "solid";
     
-    // Deep Dhyra purple/indigo for solid, clean wireframe for outline
+    // Deep HOROS purple/indigo for solid, clean wireframe for outline
     const topFill = isSolid ? "#6d28d9" : "transparent"; // Violet 700
     const leftFill = isSolid ? "#5b21b6" : "transparent"; // Violet 800
     const rightFill = isSolid ? "#4c1d95" : "transparent"; // Violet 900
@@ -238,7 +238,7 @@ export function LiveLatencyPipeline() {
             <div className="text-sm text-[#F0EFE2] line-through opacity-40 font-mono">1.42s</div>
           </div>
           <div className="flex flex-col gap-1 text-right">
-            <div className="text-[10px] text-[#6d28d9] font-bold uppercase tracking-wider">Dhyra Pipeline</div>
+            <div className="text-[10px] text-[#6d28d9] font-bold uppercase tracking-wider">HOROS Pipeline</div>
             <div className="text-2xl font-bold text-[#F0EFE2] leading-none font-mono">
               {activeStage < 3 ? "..." : "428ms"}
             </div>

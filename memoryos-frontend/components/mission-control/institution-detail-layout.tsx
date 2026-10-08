@@ -18,15 +18,15 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
- archiveDhyraInstitution,
- cloneDhyraInstitution,
- createDhyraMission,
- deleteDhyraInstitution,
- getDhyraInstitution,
- readActiveDhyraWorkspaceId,
- updateDhyraInstitution,
- type DhyraInstitutionDetail,
-} from "@/lib/dhyra-api";
+ archiveHorosInstitution,
+ cloneHorosInstitution,
+ createHorosMission,
+ deleteHorosInstitution,
+ getHorosInstitution,
+ readActiveHorosWorkspaceId,
+ updateHorosInstitution,
+ type HorosInstitutionDetail,
+} from "@/lib/horos-api";
 import { InstitutionDetailOverview } from "./institution-detail-overview";
 
 type DetailTab = "Overview" | "Missions" | "Authority" | "Verification" | "Institution Record" | "Settings";
@@ -101,21 +101,21 @@ function readState(missionState?: string | null): string {
  return (missionState ?? "draft").replace(/_/g, " ");
 }
 
-function getTemplateDefinition(institution: DhyraInstitutionDetail): AnyRecord {
+function getTemplateDefinition(institution: HorosInstitutionDetail): AnyRecord {
  return asRecord(institution.template?.definition);
 }
 
-function getInstitutionMetadata(institution: DhyraInstitutionDetail): AnyRecord {
+function getInstitutionMetadata(institution: HorosInstitutionDetail): AnyRecord {
  return asRecord(institution.metadata);
 }
 
-function getAuthorityDefaults(institution: DhyraInstitutionDetail): AnyRecord {
+function getAuthorityDefaults(institution: HorosInstitutionDetail): AnyRecord {
  const metadata = getInstitutionMetadata(institution);
  const definition = getTemplateDefinition(institution);
  return asRecord(metadata.authorityPolicy ?? metadata.authority ?? definition.authority ?? {});
 }
 
-function getVerificationPolicy(institution: DhyraInstitutionDetail): AnyRecord {
+function getVerificationPolicy(institution: HorosInstitutionDetail): AnyRecord {
  const metadata = getInstitutionMetadata(institution);
  const definition = getTemplateDefinition(institution);
  return asRecord(metadata.verificationPolicy ?? metadata.verification ?? definition.verificationPolicy ?? {});
@@ -127,8 +127,8 @@ function joinOrNone(values: string[]): string {
 
 export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: () => void }) {
  const [activeTab, setActiveTab] = useState<DetailTab>("Overview");
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [institution, setInstitution] = useState<DhyraInstitutionDetail | null>(null);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [institution, setInstitution] = useState<HorosInstitutionDetail | null>(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState<string | null>(null);
  const [launching, setLaunching] = useState(false);
@@ -137,7 +137,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  const [renameDraft, setRenameDraft] = useState("");
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -158,7 +158,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setLoading(true);
  setError(null);
  try {
- const detail = await getDhyraInstitution(workspaceId, id);
+ const detail = await getHorosInstitution(workspaceId, id);
  setInstitution(detail);
  } catch (loadError) {
  setInstitution(null);
@@ -182,7 +182,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setLoading(true);
  setError(null);
  try {
- const detail = await getDhyraInstitution(workspaceId, id);
+ const detail = await getHorosInstitution(workspaceId, id);
  if (!canceled) {
  setInstitution(detail);
  }
@@ -253,7 +253,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setLaunching(true);
  setError(null);
  try {
- await createDhyraMission(workspaceId, {
+ await createHorosMission(workspaceId, {
  institutionId: institution.id,
  title: `${institution.name} Mission`,
  objective: `Run a live mission for ${institution.name}.`,
@@ -284,7 +284,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setSavingAction("rename");
  setError(null);
  try {
- await updateDhyraInstitution(workspaceId, institution.id, { name: nextName });
+ await updateHorosInstitution(workspaceId, institution.id, { name: nextName });
  setRenameOpen(false);
  await reloadInstitution();
  } catch (renameError) {
@@ -300,7 +300,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setSavingAction("archive");
  setError(null);
  try {
- await archiveDhyraInstitution(workspaceId, institution.id);
+ await archiveHorosInstitution(workspaceId, institution.id);
  await reloadInstitution();
  } catch (archiveError) {
  setError(archiveError instanceof Error ? archiveError.message : "Failed to archive institution.");
@@ -314,11 +314,11 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setSavingAction("clone");
  setError(null);
  try {
- const clone = await cloneDhyraInstitution(workspaceId, institution.id, {
+ const clone = await cloneHorosInstitution(workspaceId, institution.id, {
  name: `${institution.name} Clone`,
  version: institution.version ?? "1.0.0",
  });
- const detail = await getDhyraInstitution(workspaceId, clone.id);
+ const detail = await getHorosInstitution(workspaceId, clone.id);
  setInstitution(detail);
  setActiveTab("Overview");
  } catch (cloneError) {
@@ -334,7 +334,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  setSavingAction("delete");
  setError(null);
  try {
- await deleteDhyraInstitution(workspaceId, institution.id);
+ await deleteHorosInstitution(workspaceId, institution.id);
  onBack();
  } catch (deleteError) {
  setError(deleteError instanceof Error ? deleteError.message : "Failed to delete institution.");
@@ -429,7 +429,7 @@ export function InstitutionDetailLayout({ id, onBack }: { id: string; onBack: ()
  <div className="bg-card border border-border rounded-md p-12 flex flex-col items-center justify-center text-center h-[400px]">
  <div className="size-16 bg-muted rounded-full flex items-center justify-center mb-6" />
  <h2 className="text-[20px] font-semibold text-foreground mb-2">Loading institution</h2>
- <p className="text-[15px] text-muted-foreground max-w-md">Fetching live data from Dhyra for this workspace.</p>
+ <p className="text-[15px] text-muted-foreground max-w-md">Fetching live data from HOROS for this workspace.</p>
  </div>
  ) : error ? (
  <div className="bg-card border border-border rounded-md p-12 flex flex-col items-center justify-center text-center h-[400px]">

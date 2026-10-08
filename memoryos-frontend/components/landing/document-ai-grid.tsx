@@ -15,8 +15,8 @@ import {
   DeepSeekLogo,
   VLLMLogo,
   AnthropicLogo,
-  DhyraLogo
-} from "@/components/dhyra/primitives/brand-icons";
+  HorosLogo
+} from "@/components/horos/primitives/brand-icons";
 
 export function DocumentAIGrid() {
   return (
@@ -90,10 +90,10 @@ export function DocumentAIGrid() {
           </div>
 
 
-          {/* Center Dhyra Logo */}
+          {/* Center HOROS Logo */}
           <div className="absolute z-30 flex items-center justify-center pointer-events-auto" style={{ left: '50.189%', top: '40%', transform: 'translate(-50%, -50%)' }}>
             <div className="relative hover:scale-105 transition-transform duration-700 cursor-pointer drop-shadow-2xl text-[#F0EFE2]">
-              <DhyraLogo size={140} />
+              <HorosLogo size={140} />
             </div>
           </div>
 

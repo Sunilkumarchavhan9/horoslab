@@ -1,15 +1,16 @@
 "use client";
+import { SectionDivider } from "@/components/landing/section-divider";
 
 import React, { useState, useEffect } from "react";
 import { ChevronDown, ExternalLink, Play, ClipboardList, GitBranch, ListChecks, Cpu, X } from "lucide-react";
-import { MetaLogo, VLLMLogo, QwenLogo, MicrosoftLogo, DeepSeekLogo, OpenAILogo, AnthropicLogo, MistralLogo, GoogleLogo, SGLangLogo, NvidiaLogo, TEILogo, DiffusersLogo, DhyraLogo, VLLMOmniLogo } from "@/components/dhyra/primitives/brand-icons";
+import { MetaLogo, VLLMLogo, QwenLogo, MicrosoftLogo, DeepSeekLogo, OpenAILogo, AnthropicLogo, MistralLogo, GoogleLogo, SGLangLogo, NvidiaLogo, TEILogo, DiffusersLogo, HorosLogo, VLLMOmniLogo } from "@/components/horos/primitives/brand-icons";
 import { OptimizationStep } from "./optimization-step";
 import { DeployStep } from "./deploy-step";
 import { PhysicalWorldStep } from "./physical-world-step";
 import { PolicyAuthorityStep } from "./policy-authority-step";
 import { EvidenceProofStep } from "./evidence-proof-step";
 import { LearningFlywheelStep } from "./learning-flywheel-step";
-import { TokenPromptInput, CYCLING_PROMPTS } from "@/components/dhyra/primitives/token-prompt-input";
+import { TokenPromptInput, CYCLING_PROMPTS } from "@/components/horos/primitives/token-prompt-input";
 
 // Master alignment lines: Outer (14%), Inner Margins (pushed inside by 120px)
 export const MARGIN_VERTICAL_POSITIONS = ["14%", "calc(14% + 120px)", "calc(86% - 120px)", "86%"];
@@ -338,7 +339,7 @@ function RunbookDashboard() {
             </div>
             <div className="flex flex-col gap-1">
               <div className="text-[#F0EFE2] font-medium text-[14px]">Mission Runtime Execution Plan</div>
-              <div className="text-[#666666] font-mono text-[11px]">Dhyra Reality Intelligence Loop</div>
+              <div className="text-[#666666] font-mono text-[11px]">HOROS Reality Intelligence Loop</div>
             </div>
           </div>
           <div className="border border-[#333] bg-[#1a1a1a] text-[#C8C7BA] font-mono text-[10px] px-2 py-0.5 rounded-[1px]">
@@ -403,7 +404,7 @@ function RunbookDashboard() {
           Review the mission contract, then authorize.
         </div>
         <div className="text-[#555555] font-mono text-[10px] uppercase tracking-wider">
-          DHYRA CANONICAL_V4
+          HOROS CANONICAL_V4
         </div>
       </div>
     </div>
@@ -439,7 +440,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
           if (entry.isIntersecting) {
             const section = parseInt(entry.target.getAttribute("data-section") || "0", 10);
             setActiveSection(section);
-            window.dispatchEvent(new CustomEvent("dhyraActiveSectionChange", { detail: section }));
+            window.dispatchEvent(new CustomEvent("horosActiveSectionChange", { detail: section }));
           }
         });
       },
@@ -470,7 +471,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
       </div>
 
       {/* Row 1: Centered Header Block (Scrolls away naturally) */}
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(14%_+_120px)_1fr_calc(14%_+_120px)] pt-16">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)] pt-16">
         <div className="relative p-4 min-h-[140px] hidden lg:block" />
 
         {/* Main Center Header Content */}
@@ -497,12 +498,13 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
       </div>
 
       {/* Row 2: Sticky Scroll Arena */}
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(14%_+_120px)_6fr_12fr_calc(14%_+_120px)] border-t border-dashed border-[#333333]">
+      <SectionDivider />
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_6fr_12fr_calc(18%_+_120px)]">
 
         {/* Column 1: Left Margin Cell */}
         <div className="relative border-r border-dashed border-[#333333] hidden lg:block">
           <span className="sticky top-[80vh] ml-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
-            DHYRA
+            HOROS
           </span>
         </div>
 
@@ -516,7 +518,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
           >
             <div className="space-y-4">
               <h3 className="text-2xl sm:text-3xl lg:text-[32px] font-medium text-[#F0EFE2] font-sans leading-snug tracking-tight">
-                Tell Dhyra what you want
+                Tell HOROS what you want
                 <br />
                 <ModelScroller />
                 <br />
@@ -532,7 +534,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
           >
             <div className="space-y-4">
               <h3 className="text-2xl sm:text-3xl lg:text-[32px] font-medium text-[#cccccc] font-sans leading-snug tracking-tight">
-                Dhyra explores
+                HOROS explores
                 <br />
                 <EngineScroller />
                 <br />
@@ -735,7 +737,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
         <div className="relative pt-12 lg:pt-16 hidden lg:block">
           <div className="sticky top-32 w-full">
             <div className="absolute left-[4vw] -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-              <DhyraLogo className="w-16 h-auto text-[#F0EFE2]" />
+              <HorosLogo className="w-16 h-auto text-[#F0EFE2]" />
               <div className="text-[11px] text-[#F0EFE2] font-sans font-medium leading-[1.8]" style={{ writingMode: 'vertical-rl' }}>
                 <p>Frontier Intelligence</p>
                 <p>Engineering</p>

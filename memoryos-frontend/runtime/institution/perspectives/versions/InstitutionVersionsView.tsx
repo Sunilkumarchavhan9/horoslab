@@ -4,17 +4,17 @@ import { useCallback, useEffect, useState } from "react";
 import { GitBranch, GitCommit, FileText, Activity, Dna, CheckCircle2, ChevronRight, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  getDhyraInstitution,
-  listDhyraInstitutions,
-  listDhyraInstitutionVersions,
-  readActiveDhyraWorkspaceId,
-  type DhyraInstitution,
-  type DhyraInstitutionVersion,
-} from "@/lib/dhyra-api";
+  getHorosInstitution,
+  listHorosInstitutions,
+  listHorosInstitutionVersions,
+  readActiveHorosWorkspaceId,
+  type HorosInstitution,
+  type HorosInstitutionVersion,
+} from "@/lib/horos-api";
 
 type VersionGroup = {
-  institution: DhyraInstitution;
-  versions: DhyraInstitutionVersion[];
+  institution: HorosInstitution;
+  versions: HorosInstitutionVersion[];
 };
 
 function formatDate(value?: string): string {
@@ -23,7 +23,7 @@ function formatDate(value?: string): string {
   return Number.isNaN(date.getTime()) ? "Unknown" : date.toLocaleString();
 }
 
-function snapshotSummary(version: DhyraInstitutionVersion): string {
+function snapshotSummary(version: HorosInstitutionVersion): string {
   if (!version.snapshot || typeof version.snapshot !== "object") return "No snapshot payload";
   const keys = Object.keys(version.snapshot).slice(0, 4);
   return keys.length > 0 ? `Snapshot fields: ${keys.join(", ")}` : "Empty snapshot";
@@ -33,24 +33,24 @@ export function InstitutionVersionsView() {
   const [groups, setGroups] = useState<VersionGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = readActiveDhyraWorkspaceId();
+  const workspaceId = readActiveHorosWorkspaceId();
 
   const loadVersions = useCallback(async () => {
     if (!workspaceId) {
       setGroups([]);
       setLoading(false);
-      setError("No active Dhyra workspace is available.");
+      setError("No active HOROS workspace is available.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      const institutions = await listDhyraInstitutions(workspaceId);
+      const institutions = await listHorosInstitutions(workspaceId);
       const liveGroups = await Promise.all(
         institutions.slice(0, 4).map(async (institution) => {
-          const detail = await getDhyraInstitution(workspaceId, institution.id).catch(() => institution);
-          const versionRows = await listDhyraInstitutionVersions(workspaceId, institution.id).catch(() => ({ versions: [] as DhyraInstitutionVersion[] }));
+          const detail = await getHorosInstitution(workspaceId, institution.id).catch(() => institution);
+          const versionRows = await listHorosInstitutionVersions(workspaceId, institution.id).catch(() => ({ versions: [] as HorosInstitutionVersion[] }));
           return { institution: detail, versions: versionRows.versions };
         }),
       );

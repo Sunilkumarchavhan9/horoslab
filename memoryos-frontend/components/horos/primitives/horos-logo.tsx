@@ -1,0 +1,149 @@
+"use client";
+
+import React from "react";
+import { cn } from "@/lib/utils";
+
+interface HorosLogoProps extends React.SVGProps<SVGSVGElement> {
+  variant?: "full" | "icon" | "wordmark" | "stacked";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
+  dark?: boolean;
+}
+
+export function HorosIcon({
+  className,
+  ...props
+}: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 184 160"
+      className={cn("w-auto shrink-0 select-none", className)}
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M 113.00 10.50
+           Q 111.00 10.00 109.50 10.50
+           Q 108.00 11.00 106.50 12.50
+           Q 105.00 14.00 92.00 39.00
+           Q 79.00 64.00 72.50 71.00
+           Q 66.00 78.00 62.00 80.00
+           Q 58.00 82.00 54.50 82.50
+           Q 51.00 83.00 50.50 83.50
+           Q 50.00 84.00 37.00 84.00
+           Q 24.00 84.00 22.50 85.00
+           Q 21.00 86.00 20.50 88.50
+           Q 20.00 91.00 20.50 92.00
+           Q 21.00 93.00 22.50 94.00
+           Q 24.00 95.00 34.00 95.00
+           Q 44.00 95.00 44.50 95.50
+           Q 45.00 96.00 47.50 96.00
+           Q 50.00 96.00 52.50 97.00
+           Q 55.00 98.00 57.00 100.00
+           Q 59.00 102.00 59.00 104.50
+           Q 59.00 107.00 57.00 111.50
+           Q 55.00 116.00 55.00 118.00
+           Q 55.00 120.00 56.50 121.50
+           Q 58.00 123.00 61.00 122.50
+           Q 64.00 122.00 72.50 104.50
+           Q 81.00 87.00 82.00 86.00
+           Q 83.00 85.00 87.00 76.50
+           Q 91.00 68.00 92.00 67.00
+           Q 93.00 66.00 97.00 57.50
+           Q 101.00 49.00 102.00 48.00
+           Q 103.00 47.00 110.00 33.00
+           Q 117.00 19.00 117.00 16.00
+           Q 117.00 13.00 116.00 12.00
+           Q 115.00 11.00 113.00 10.50
+           Z"
+      />
+      <path
+        fill="currentColor"
+        d="M 159.00 83.50
+           Q 157.00 82.00 150.50 82.00
+           Q 144.00 82.00 143.50 82.50
+           Q 143.00 83.00 135.50 82.50
+           Q 128.00 82.00 126.00 80.00
+           Q 124.00 78.00 124.00 77.00
+           Q 124.00 76.00 126.50 70.50
+           Q 129.00 65.00 129.00 62.50
+           Q 129.00 60.00 127.00 58.50
+           Q 125.00 57.00 122.50 57.50
+           Q 120.00 58.00 118.00 60.50
+           Q 116.00 63.00 101.50 91.50
+           Q 87.00 120.00 86.00 121.00
+           Q 85.00 122.00 81.00 130.00
+           Q 77.00 138.00 76.50 142.00
+           Q 76.00 146.00 78.00 147.50
+           Q 80.00 149.00 82.00 149.00
+           Q 84.00 149.00 85.50 148.00
+           Q 87.00 147.00 96.50 128.50
+           Q 106.00 110.00 111.50 104.00
+           Q 117.00 98.00 120.00 96.50
+           Q 123.00 95.00 128.00 94.50
+           Q 133.00 94.00 133.50 93.50
+           Q 134.00 93.00 135.50 93.50
+           Q 137.00 94.00 146.50 94.00
+           Q 156.00 94.00 158.50 92.50
+           Q 161.00 91.00 161.50 90.00
+           Q 162.00 89.00 161.50 87.00
+           Q 161.00 85.00 159.00 83.50
+           Z"
+      />
+    </svg>
+  );
+}
+
+export function HorosLogo({
+  variant = "full",
+  size = "md",
+  className,
+  dark,
+  ...props
+}: HorosLogoProps) {
+  if (variant === "icon") {
+    return <HorosIcon className={className} {...props} />;
+  }
+
+  const heightClasses = {
+    xs: "h-3 text-xs",
+    sm: "h-3.5 text-sm",
+    md: "h-4 text-base",
+    lg: "h-5 text-lg",
+    xl: "h-6 text-xl",
+    "2xl": "h-8 text-2xl",
+    "3xl": "h-12 text-3xl",
+    "4xl": "h-16 text-4xl",
+    "5xl": "h-20 text-5xl",
+    "6xl": "h-24 text-6xl",
+  };
+
+  if (variant === "stacked") {
+    return (
+      <div className={cn("flex flex-col items-center justify-center gap-1", heightClasses[size], className)}>
+        <HorosIcon className="w-auto h-[1.25em] text-current" />
+        <span className="font-medium tracking-tight leading-none text-current">
+          HOROS
+        </span>
+      </div>
+    );
+  }
+
+  if (variant === "wordmark") {
+    const textSizeClass = heightClasses[size].split(" ").find((c) => c.startsWith("text-"));
+    return (
+      <div className={cn("flex items-center gap-0.5", textSizeClass, className)}>
+        <HorosIcon className="w-auto h-[1.6em] text-current" />
+        <span className="font-medium tracking-tight text-[0.7em] text-current">
+          HOROS
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <HorosIcon className={cn(heightClasses[size], className)} {...props} />
+  );
+}
+
+export default HorosLogo;

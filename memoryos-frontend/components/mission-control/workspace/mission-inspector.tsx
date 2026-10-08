@@ -3,28 +3,28 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, Loader2, Play, RotateCcw, ShieldCheck, XCircle } from "lucide-react";
 import {
-    cancelDhyraMission,
-    decideDhyraMissionApproval,
-    getDhyraMissionEvidenceBundle,
-    getDhyraMission,
-    getDhyraMissionSettlement,
-    issueDhyraMissionCertificate,
-    queueDhyraMission,
-    retryDhyraMission,
-    runDhyraMission,
-    settleDhyraMission,
-    verifyDhyraMission,
-    type DhyraMissionDetail,
-} from "@/lib/dhyra-api";
+    cancelHorosMission,
+    decideHorosMissionApproval,
+    getHorosMissionEvidenceBundle,
+    getHorosMission,
+    getHorosMissionSettlement,
+    issueHorosMissionCertificate,
+    queueHorosMission,
+    retryHorosMission,
+    runHorosMission,
+    settleHorosMission,
+    verifyHorosMission,
+    type HorosMissionDetail,
+} from "@/lib/horos-api";
 
 export function MissionInspector({ entityData }: { entityData: Record<string, unknown> }) {
     const workspaceId = typeof entityData.workspaceId === "string" ? entityData.workspaceId : null;
     const missionId = String(entityData.id ?? "");
-    const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
+    const [mission, setMission] = useState<HorosMissionDetail | null>(null);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [settlement, setSettlement] = useState<Awaited<ReturnType<typeof getDhyraMissionSettlement>>>(null);
+    const [settlement, setSettlement] = useState<Awaited<ReturnType<typeof getHorosMissionSettlement>>>(null);
 
     useEffect(() => {
         if (!workspaceId || !missionId) {
@@ -35,8 +35,8 @@ export function MissionInspector({ entityData }: { entityData: Record<string, un
         const load = async () => {
             try {
                 const [next, nextSettlement] = await Promise.all([
-                    getDhyraMission(workspaceId, missionId),
-                    getDhyraMissionSettlement(workspaceId, missionId).catch(() => null),
+                    getHorosMission(workspaceId, missionId),
+                    getHorosMissionSettlement(workspaceId, missionId).catch(() => null),
                 ]);
                 if (!cancelled) {
                     setMission(next);
@@ -55,19 +55,19 @@ export function MissionInspector({ entityData }: { entityData: Record<string, un
     const refresh = async () => {
         if (!workspaceId || !missionId) return;
         const [next, nextSettlement] = await Promise.all([
-            getDhyraMission(workspaceId, missionId),
-            getDhyraMissionSettlement(workspaceId, missionId).catch(() => null),
+            getHorosMission(workspaceId, missionId),
+            getHorosMissionSettlement(workspaceId, missionId).catch(() => null),
         ]);
         setMission(next);
         setSettlement(nextSettlement);
     };
 
-    const action = async (name: string, operation: () => Promise<DhyraMissionDetail | unknown>) => {
+    const action = async (name: string, operation: () => Promise<HorosMissionDetail | unknown>) => {
         setBusy(name);
         setError(null);
         try {
             const result = await operation();
-            if (result && typeof result === "object" && "id" in result) setMission(result as DhyraMissionDetail);
+            if (result && typeof result === "object" && "id" in result) setMission(result as HorosMissionDetail);
             await refresh();
         } catch (cause) {
             setError(cause instanceof Error ? cause.message : "Mission action failed.");
@@ -94,14 +94,14 @@ export function MissionInspector({ entityData }: { entityData: Record<string, un
     return (
         <div className="flex h-full flex-col overflow-auto bg-background/50">
             <div className="flex flex-wrap items-center gap-2 border-b border-border bg-card/50 px-6 py-3">
-                <button disabled={Boolean(busy) || terminal || isWaitingForApproval || isRepositoryMission} title={isRepositoryMission ? "Approve the repository mission to start its guarded GitHub execution." : isWaitingForApproval ? "Approval is required before execution." : undefined} onClick={() => void action("run", () => runDhyraMission(workspaceId, missionId))} className="inline-flex items-center gap-1.5 rounded bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"><Play className="size-3.5" />{busy === "run" ? "Running..." : "Run"}</button>
-                {canQueueWorkerJob ? <button disabled={Boolean(busy)} title="Create an explicitly approved execute job for a registered Dhyra worker to lease." onClick={() => void action("queue", async () => { await queueDhyraMission(workspaceId, missionId, { source: "mission_control", humanApproval: "approved" }); return getDhyraMission(workspaceId, missionId); })} className="inline-flex items-center gap-1.5 rounded border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-600 disabled:opacity-50">{busy === "queue" ? "Queueing..." : "Queue worker job"}</button> : null}
-                <button disabled={Boolean(busy) || mission.state !== "failed"} onClick={() => void action("retry", () => retryDhyraMission(workspaceId, missionId, "Retried from Mission Control"))} className="inline-flex items-center gap-1.5 rounded border border-border bg-background px-3 py-1.5 text-xs font-semibold disabled:opacity-50"><RotateCcw className="size-3.5" />Retry</button>
-                <button disabled={Boolean(busy) || terminal || !isWaitingForApproval} onClick={() => void action("approve", () => decideDhyraMissionApproval(workspaceId, missionId, "approved", "Approved from Mission Control"))} className="inline-flex items-center gap-1.5 rounded border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-500 disabled:opacity-50"><ShieldCheck className="size-3.5" />{busy === "approve" ? "Approving..." : "Approve"}</button>
-                <button disabled={Boolean(busy) || !canVerify} title={canVerify ? "Run verification against the live mission evidence." : "Verification requires an execution and at least one evidence item."} onClick={() => void action("verify", async () => { await verifyDhyraMission(workspaceId, missionId, { evidenceIds: evidence.map((item) => item.id), checklist: ["Execution completed", "Evidence is present", "Declared acceptance criteria reviewed"], humanApproval: "approved", confidence: 100, approvals: ["Mission Control reviewer"] }); return null; })} className="inline-flex items-center gap-1.5 rounded border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-600 disabled:opacity-50"><ShieldCheck className="size-3.5" />{busy === "verify" ? "Verifying..." : "Verify"}</button>
-                <button disabled={Boolean(busy) || !canIssueCertificate} title={canIssueCertificate ? "Issue the certificate from the live PASS verification." : "A PASS verification is required before issuing a certificate."} onClick={() => void action("certificate", async () => { const bundle = await getDhyraMissionEvidenceBundle(workspaceId, missionId); await issueDhyraMissionCertificate(workspaceId, missionId, { summary: `Verified mission: ${mission.title}`, approvals: ["Mission Control reviewer"], evidenceSummary: { evidenceCount: evidence.length, bundleHash: bundle.bundleHash }, proof: { bundleHash: bundle.bundleHash } }); return null; })} className="inline-flex items-center gap-1.5 rounded border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 disabled:opacity-50"><ShieldCheck className="size-3.5" />{busy === "certificate" ? "Issuing..." : "Issue Certificate"}</button>
-                <button disabled={Boolean(busy) || !canSettle} title={canSettle ? "Settle the verified mission and create its learning handoff." : "Issue a certificate before settlement."} onClick={() => void action("settlement", async () => { const bundle = await getDhyraMissionEvidenceBundle(workspaceId, missionId); const result = await settleDhyraMission(workspaceId, missionId, { decision: "PASS", evidenceHash: bundle.bundleHash, assuranceConfidence: mission.verificationRun?.confidence ?? 100, humanApproval: "approved", unresolvedRisks: [], summary: mission.title, lessons: ["Verified mission outcome recorded from Mission Control."] }); setSettlement(result.settlement); return null; })} className="inline-flex items-center gap-1.5 rounded border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-700 disabled:opacity-50">{busy === "settlement" ? "Settling..." : "Settle & Learn"}</button>
-                <button disabled={Boolean(busy) || terminal} onClick={() => void action("cancel", () => cancelDhyraMission(workspaceId, missionId, "Cancelled from Mission Control"))} className="inline-flex items-center gap-1.5 rounded border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-500 disabled:opacity-50"><XCircle className="size-3.5" />Cancel</button>
+                <button disabled={Boolean(busy) || terminal || isWaitingForApproval || isRepositoryMission} title={isRepositoryMission ? "Approve the repository mission to start its guarded GitHub execution." : isWaitingForApproval ? "Approval is required before execution." : undefined} onClick={() => void action("run", () => runHorosMission(workspaceId, missionId))} className="inline-flex items-center gap-1.5 rounded bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"><Play className="size-3.5" />{busy === "run" ? "Running..." : "Run"}</button>
+                {canQueueWorkerJob ? <button disabled={Boolean(busy)} title="Create an explicitly approved execute job for a registered HOROS worker to lease." onClick={() => void action("queue", async () => { await queueHorosMission(workspaceId, missionId, { source: "mission_control", humanApproval: "approved" }); return getHorosMission(workspaceId, missionId); })} className="inline-flex items-center gap-1.5 rounded border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-600 disabled:opacity-50">{busy === "queue" ? "Queueing..." : "Queue worker job"}</button> : null}
+                <button disabled={Boolean(busy) || mission.state !== "failed"} onClick={() => void action("retry", () => retryHorosMission(workspaceId, missionId, "Retried from Mission Control"))} className="inline-flex items-center gap-1.5 rounded border border-border bg-background px-3 py-1.5 text-xs font-semibold disabled:opacity-50"><RotateCcw className="size-3.5" />Retry</button>
+                <button disabled={Boolean(busy) || terminal || !isWaitingForApproval} onClick={() => void action("approve", () => decideHorosMissionApproval(workspaceId, missionId, "approved", "Approved from Mission Control"))} className="inline-flex items-center gap-1.5 rounded border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-500 disabled:opacity-50"><ShieldCheck className="size-3.5" />{busy === "approve" ? "Approving..." : "Approve"}</button>
+                <button disabled={Boolean(busy) || !canVerify} title={canVerify ? "Run verification against the live mission evidence." : "Verification requires an execution and at least one evidence item."} onClick={() => void action("verify", async () => { await verifyHorosMission(workspaceId, missionId, { evidenceIds: evidence.map((item) => item.id), checklist: ["Execution completed", "Evidence is present", "Declared acceptance criteria reviewed"], humanApproval: "approved", confidence: 100, approvals: ["Mission Control reviewer"] }); return null; })} className="inline-flex items-center gap-1.5 rounded border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-600 disabled:opacity-50"><ShieldCheck className="size-3.5" />{busy === "verify" ? "Verifying..." : "Verify"}</button>
+                <button disabled={Boolean(busy) || !canIssueCertificate} title={canIssueCertificate ? "Issue the certificate from the live PASS verification." : "A PASS verification is required before issuing a certificate."} onClick={() => void action("certificate", async () => { const bundle = await getHorosMissionEvidenceBundle(workspaceId, missionId); await issueHorosMissionCertificate(workspaceId, missionId, { summary: `Verified mission: ${mission.title}`, approvals: ["Mission Control reviewer"], evidenceSummary: { evidenceCount: evidence.length, bundleHash: bundle.bundleHash }, proof: { bundleHash: bundle.bundleHash } }); return null; })} className="inline-flex items-center gap-1.5 rounded border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-700 disabled:opacity-50"><ShieldCheck className="size-3.5" />{busy === "certificate" ? "Issuing..." : "Issue Certificate"}</button>
+                <button disabled={Boolean(busy) || !canSettle} title={canSettle ? "Settle the verified mission and create its learning handoff." : "Issue a certificate before settlement."} onClick={() => void action("settlement", async () => { const bundle = await getHorosMissionEvidenceBundle(workspaceId, missionId); const result = await settleHorosMission(workspaceId, missionId, { decision: "PASS", evidenceHash: bundle.bundleHash, assuranceConfidence: mission.verificationRun?.confidence ?? 100, humanApproval: "approved", unresolvedRisks: [], summary: mission.title, lessons: ["Verified mission outcome recorded from Mission Control."] }); setSettlement(result.settlement); return null; })} className="inline-flex items-center gap-1.5 rounded border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-700 disabled:opacity-50">{busy === "settlement" ? "Settling..." : "Settle & Learn"}</button>
+                <button disabled={Boolean(busy) || terminal} onClick={() => void action("cancel", () => cancelHorosMission(workspaceId, missionId, "Cancelled from Mission Control"))} className="inline-flex items-center gap-1.5 rounded border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-500 disabled:opacity-50"><XCircle className="size-3.5" />Cancel</button>
             </div>
             <div className="space-y-6 p-6">
                 {error && <div className="rounded border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">{error}</div>}

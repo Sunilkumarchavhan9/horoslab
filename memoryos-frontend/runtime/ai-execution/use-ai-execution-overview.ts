@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDhyraAiExecutionOverview, type DhyraAiExecutionOverview } from "@/lib/dhyra-api";
+import { getHorosAiExecutionOverview, type HorosAiExecutionOverview } from "@/lib/horos-api";
 
-const EMPTY: DhyraAiExecutionOverview = { catalog: [], endpoints: [], health: [], providerHealth: [], executions: [], costs: {} };
+const EMPTY: HorosAiExecutionOverview = { catalog: [], endpoints: [], health: [], providerHealth: [], executions: [], costs: {} };
 
-export function useAiExecutionOverview(workspaceId?: string | null): DhyraAiExecutionOverview {
-  const [overview, setOverview] = useState<DhyraAiExecutionOverview>(EMPTY);
+export function useAiExecutionOverview(workspaceId?: string | null): HorosAiExecutionOverview {
+  const [overview, setOverview] = useState<HorosAiExecutionOverview>(EMPTY);
   useEffect(() => {
     if (!workspaceId) return;
     let cancelled = false;
-    const load = () => getDhyraAiExecutionOverview(workspaceId).then((next) => {
+    const load = () => getHorosAiExecutionOverview(workspaceId).then((next) => {
       if (!cancelled) {
         setOverview({
           catalog: Array.isArray(next.catalog) ? next.catalog : [],

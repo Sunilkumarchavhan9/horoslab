@@ -29,9 +29,9 @@ export default async function AuthSignInPage({
 
   return (
     <ConsoleAuthShell
-      title="Sign in to Dhyra"
+      title="Sign in to HOROS"
       subtitle="Sign in and continue to your workspace."
-      footerLabel="Dhyra"
+      footerLabel="HOROS"
     >
       {clerkEnabled ? (
         <ClerkConsoleSignIn

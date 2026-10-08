@@ -22,7 +22,7 @@ export type SettingsSectionId =
   | "membership"
   | "memoryos-api"
   | "analytics"
-  | "dhyra-api"
+  | "horos-api"
   /** Legacy route — not shown in sidebar; playbooks/schedules cover this surface. */
   | "automations";
 
@@ -76,7 +76,7 @@ const ALL_SETTINGS_SECTION_IDS: SettingsSectionId[] = [
   "membership",
   "memoryos-api",
   "analytics",
-  "dhyra-api",
+  "horos-api",
   "automations",
 ];
 
@@ -105,7 +105,7 @@ export const SETTINGS_SECTION_DESCRIPTIONS: Partial<Record<SettingsSectionId, st
   repositories: "GitHub connector status and indexed repositories.",
   membership: "Organization members and roles.",
   "memoryos-api": "Service users and legacy API keys for your organization.",
-  "dhyra-api": "API keys and programmatic access for the Dhyra Engine.",
+  "horos-api": "API keys and programmatic access for the HOROS Engine.",
   analytics: "Governance KPIs and trust benchmarks.",
   automations: "Workflow templates and scheduled agent runs.",
 };
@@ -167,10 +167,10 @@ export const SETTINGS_NAV: SettingsNavGroup[] = [
         keywords: ["memoryos api", "developer", "keys", "mcp", "rest"],
       },
       {
-        id: "dhyra-api",
-        label: "Dhyra API",
+        id: "horos-api",
+        label: "HOROS API",
         badge: "New",
-        keywords: ["dhyra api", "engine", "keys", "inference", "rest"],
+        keywords: ["horos api", "engine", "keys", "inference", "rest"],
       },
       { id: "analytics", label: "Analytics", keywords: ["kpi", "governance", "metrics", "trust"] },
     ],

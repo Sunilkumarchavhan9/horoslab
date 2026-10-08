@@ -138,7 +138,7 @@ export function EvidenceClaimsView() {
             <div className="mt-auto border-t border-border bg-card p-4 flex items-center justify-center">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="size-4 text-muted-foreground" />
-                <span className="text-[12px] font-bold text-muted-foreground">Dhyra Policy Enforced: claims now reflect live backend outcomes.</span>
+                <span className="text-[12px] font-bold text-muted-foreground">HOROS Policy Enforced: claims now reflect live backend outcomes.</span>
               </div>
             </div>
           </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, ChevronDown, ArrowRight, ArrowUpRight, Sun, Monitor, Moon, SearchCode, Database, Zap, ArrowRightCircle } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
 import { 
   QwenLogo, 
   DeepSeekLogo, 
@@ -14,7 +14,7 @@ import {
   HuggingFaceLogo,
   TeslaLogo,
   GithubLogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 import { CAPABILITIES } from "@/lib/capabilities-data";
 
@@ -25,7 +25,7 @@ export default function CapabilitiesPage() {
   // Compute unique tags dynamically
   const tagCounts = CAPABILITIES.reduce((acc, c) => {
     c.tags.forEach(tagGroup => {
-      const splitTags = tagGroup.split(" / ");
+      const splitTags = tagGroup.split(/\s*(?:\/|·)\s*/);
       splitTags.forEach(t => {
         const trimmed = t.trim();
         if (trimmed && trimmed !== "Trending") {
@@ -46,7 +46,7 @@ export default function CapabilitiesPage() {
     
     // Check if any of the model's split tags match the activeFilter
     return c.tags.some(tagGroup => {
-      const splitTags = tagGroup.split(" / ").map(t => t.trim());
+      const splitTags = tagGroup.split(/\s*(?:\/|·)\s*/).map(t => t.trim());
       return splitTags.includes(activeFilter);
     });
   });

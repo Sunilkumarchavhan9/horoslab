@@ -20,7 +20,7 @@ export function DeveloperAPIKeys() {
  <div className="flex items-start justify-between mb-2">
  <DeveloperHeader 
  title="API Keys" 
- description="Manage programmatic access to your Dhyra organization. Keys should be rotated every 90 days for optimal security."
+ description="Manage programmatic access to your HOROS organization. Keys should be rotated every 90 days for optimal security."
  />
  <button className="px-6 py-2 bg-[#111] dark:bg-white text-[#F0EFE2] dark:text-black rounded-md text-[13px] font-medium flex items-center gap-2 hover:opacity-90">
  <Plus className="size-4" />
@@ -142,7 +142,7 @@ export function DeveloperAPIKeys() {
  <Fingerprint className="size-4 text-muted-foreground mt-0.5" />
  <div className="flex flex-col">
  <span className="text-[13px] font-medium text-foreground dark:text-[#F0EFE2]">Key Created</span>
- <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Oct 12, 2025 by admin@dhyra.ai</span>
+ <span className="text-[11px] text-muted-foreground dark:text-muted-foreground">Oct 12, 2025 by admin@horos.ai</span>
  </div>
  </div>
  </div>

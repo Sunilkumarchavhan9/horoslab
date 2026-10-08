@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils";
 import { CommandBar, SectionHeader, SplitPane } from "./execution-shared-components";
 
 const MOCK_REPLAY_EVENTS = [
- { id: "e1", time: "11:30:00", text: "Planner created strategy", type: "system", agent: "Dhyra Planner" },
+ { id: "e1", time: "11:30:00", text: "Planner created strategy", type: "system", agent: "HOROS Planner" },
  { id: "e2", time: "11:30:08", text: "Research Agent started", type: "running", agent: "Research Agent" },
  { id: "e3", time: "11:30:21", text: "Coding Agent opened PR", type: "success", agent: "Coding Agent" },
  { id: "e4", time: "11:31:10", text: "Security Review requested", type: "review", agent: "Security Verifier" },
  { id: "e5", time: "11:31:42", text: "Human Approval granted", type: "success", agent: "Engineering Manager" },
  { id: "e6", time: "11:32:05", text: "Verifier PASS", type: "success", agent: "System Verifier" },
- { id: "e7", time: "11:32:10", text: "Settlement completed", type: "system", agent: "Dhyra Runtime" },
+ { id: "e7", time: "11:32:10", text: "Settlement completed", type: "system", agent: "HOROS Runtime" },
 ];
 
 export function ExecutionTimeline() {

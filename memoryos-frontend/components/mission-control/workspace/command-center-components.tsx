@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { LucideIcon, Search, Bell, Plus, RefreshCw } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DhyraLogo } from "@/components/dhyra/primitives/dhyra-logo";
+import { HorosLogo } from "@/components/horos/primitives/horos-logo";
 import React from "react";
 
 export function MetricCard({ 
@@ -78,7 +78,7 @@ export function CommandHeader() {
         <div className="flex items-center justify-between w-full pb-6 border-b border-border/40 mb-6">
             <div className="flex items-center gap-6">
                 <div className="flex items-center">
-                    <DhyraLogo size="md" className="text-foreground" />
+                    <HorosLogo size="md" className="text-foreground" />
                 </div>
                 
                 <div className="h-4 w-px bg-border" />

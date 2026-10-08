@@ -1,4 +1,4 @@
-import { DhyraMissionDetail } from "@/lib/dhyra-api";
+import { HorosMissionDetail } from "@/lib/horos-api";
 
 export type MissionRow = {
  id: string;
@@ -29,19 +29,19 @@ export function formatRelativeTime(value?: string): string {
  return `${absDays}d ago`;
 }
 
-export function missionRisk(mission: DhyraMissionDetail): string {
+export function missionRisk(mission: HorosMissionDetail): string {
  const policy = mission.authorityPolicies?.[0];
  if (policy?.blocked) return "High";
  if (policy?.needsApproval) return "Medium";
  return "Low";
 }
 
-export function missionPlanner(mission: DhyraMissionDetail): string {
+export function missionPlanner(mission: HorosMissionDetail): string {
  const planner = mission.executionRun?.planner as { planner?: unknown; model?: unknown; stage?: unknown } | undefined;
- return typeof planner?.planner === "string" ? planner.planner : "Dhyra Planner";
+ return typeof planner?.planner === "string" ? planner.planner : "HOROS Planner";
 }
 
-export function missionProgress(mission: DhyraMissionDetail): number {
+export function missionProgress(mission: HorosMissionDetail): number {
  switch ((mission.state ?? "").toLowerCase()) {
  case "completed": return 100;
  case "waiting_review": return 85;

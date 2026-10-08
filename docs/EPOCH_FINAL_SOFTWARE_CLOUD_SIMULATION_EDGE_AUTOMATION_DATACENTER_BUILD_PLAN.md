@@ -1,23 +1,23 @@
-DHYRA — FRONTIER AI REALITY INTELLIGENT INFRASTRUCTURE
+HEMERA — FRONTIER AI REALITY INTELLIGENT INFRASTRUCTURE
 Permanent Product + Architecture + Engineering Build Plan
 Status: Foundational architecture / full-system build plan
 Document role: Engineering source of truth
 Architecture policy: Permanent architecture from Day 1. No throwaway domain model. No architectural rewrite after the first release.
 Implementation policy: Build in dependency order, but every major future domain receives a stable interface, identity, versioning, lineage, security boundary, event model, and test contract from the first implementation.
-Primary product: Dhyra — a Frontier Intelligence Engineering System for continuously engineering, verifying, deploying, and improving intelligent systems from evidence.
+Primary product: Hemera — a Frontier Intelligence Engineering System for continuously engineering, verifying, deploying, and improving intelligent systems from evidence.
 
 0. The Product in One Sentence
-Dhyra continuously engineers a better intelligence system by searching across models, data, context, runtime, compute, workload, and environment against real-world objectives, then measuring, verifying, deploying, observing, and learning from the result.
+Hemera continuously engineers a better intelligence system by searching across models, data, context, runtime, compute, workload, and environment against real-world objectives, then measuring, verifying, deploying, observing, and learning from the result.
 
-Dhyra is not a generic agent platform.
+Hemera is not a generic agent platform.
 
-Dhyra is not only a model registry.
+Hemera is not only a model registry.
 
-Dhyra is not only an inference platform.
+Hemera is not only an inference platform.
 
-Dhyra is not only an evaluation platform.
+Hemera is not only an evaluation platform.
 
-Dhyra is not only a robotics platform.
+Hemera is not only a robotics platform.
 
 Those are capabilities inside one larger system.
 
@@ -62,8 +62,8 @@ NEW INTELLIGENCE
 NEXT SYSTEM
   └────────────────────────────→
 1. Product Boundary
-1.1 What Dhyra owns
-Dhyra owns the intelligence-engineering primitives and their relationships:
+1.1 What Hemera owns
+Hemera owns the intelligence-engineering primitives and their relationships:
 
 Missions
 
@@ -121,7 +121,7 @@ Lineage
 
 Outcomes
 
-1.2 What Dhyra abstracts
+1.2 What Hemera abstracts
 External substrates remain replaceable:
 
 Cloud providers
@@ -150,20 +150,20 @@ Inference runtimes
 
 Hardware accelerators
 
-Dhyra must be able to replace a substrate without changing its core domain model.
+Hemera must be able to replace a substrate without changing its core domain model.
 
-1.3 What Dhyra does not promise
-Dhyra does not guarantee that a model is intelligent merely because it is large.
+1.3 What Hemera does not promise
+Hemera does not guarantee that a model is intelligent merely because it is large.
 
-Dhyra does not treat simulation as reality.
+Hemera does not treat simulation as reality.
 
-Dhyra does not treat an evaluation score as proof.
+Hemera does not treat an evaluation score as proof.
 
-Dhyra does not grant authority merely because a capability exists.
+Hemera does not grant authority merely because a capability exists.
 
-Dhyra does not silently mutate customer state.
+Hemera does not silently mutate customer state.
 
-Dhyra does not overwrite historical versions.
+Hemera does not overwrite historical versions.
 
 2. First Customer and First Workload
 The long-term platform is broad. The first commercial workflow must be narrow enough to become excellent.
@@ -205,7 +205,7 @@ production telemetry
 manual experimentation
 The result is weak reproducibility, slow iteration, unclear causality, and expensive engineering cycles.
 
-Dhyra turns this into a versioned, evidence-backed optimization loop.
+Hemera turns this into a versioned, evidence-backed optimization loop.
 
 2.3 First canonical workload
 The canonical first workload is:
@@ -241,7 +241,7 @@ Verified system version
 This creates a commercially legible entry point while retaining the permanent architecture needed for broader intelligence engineering.
 
 3. Full-System Construction Rule
-Dhyra is built as the complete permanent product described by the architecture diagram. There is no reduced product architecture, no disposable MVP architecture, and no intentional omission of a permanent subsystem because it belongs to a later commercial release.
+Hemera is built as the complete permanent product described by the architecture diagram. There is no reduced product architecture, no disposable MVP architecture, and no intentional omission of a permanent subsystem because it belongs to a later commercial release.
 
 The rule is:
 
@@ -258,9 +258,9 @@ All architecture domains are therefore part of the implementation target from th
 
 Dependency determines construction order. Dependency does not determine product scope.
 
-A domain may depend on another domain, but it remains a first-class Dhyra domain with its own identity, schemas, APIs, events, workers, storage, security boundaries, observability, tests, and failure semantics.
+A domain may depend on another domain, but it remains a first-class Hemera domain with its own identity, schemas, APIs, events, workers, storage, security boundaries, observability, tests, and failure semantics.
 
-Dhyra must never create a temporary internal abstraction with the expectation that the real abstraction will be introduced later.
+Hemera must never create a temporary internal abstraction with the expectation that the real abstraction will be introduced later.
 
 3.1 Implementation invariants
 Every permanent domain receives:
@@ -403,7 +403,7 @@ World intelligence + simulation + physical execution
 This is a dependency topology, not a release roadmap.
 
 3.4 No domain is a placeholder
-Every architecture block has a real implementation target. Adapters may abstract external substrates, but the Dhyra-side capability must be concrete.
+Every architecture block has a real implementation target. Adapters may abstract external substrates, but the Hemera-side capability must be concrete.
 
 For example:
 
@@ -522,7 +522,7 @@ created timestamp
 +
 source provenance
 6. Truth and Evidence Hierarchy
-Dhyra must never collapse different evidence levels into one generic status.
+Hemera must never collapse different evidence levels into one generic status.
 
 UNOBSERVED
    ↓
@@ -629,7 +629,7 @@ maximize mission success
 A multi-objective run can produce:
 
 Pareto frontier
-Dhyra does not silently choose a point on the frontier. The mission contract or policy determines the acceptable tradeoff.
+Hemera does not silently choose a point on the frontier. The mission contract or policy determines the acceptable tradeoff.
 
 9. System Candidate Lifecycle
 DESCRIBED
@@ -706,7 +706,7 @@ authority
 → observation
 → verification
 11. Intelligence Graph
-The Intelligence Graph is Dhyra's persistent connective tissue.
+The Intelligence Graph is Hemera's persistent connective tissue.
 
 It does not require a dedicated graph database.
 
@@ -763,7 +763,7 @@ The system should be a modular monolith + isolated workers, not dozens of micros
 
 Permanent boundaries matter more than physical deployment boundaries.
 
-dhyra/
+hemera/
 ├── apps/
 │   ├── console/                  # Next.js control plane
 │   ├── api/                     # TypeScript API
@@ -1331,7 +1331,7 @@ deadline
 This becomes the bridge between reality and experimentation.
 
 23. Capability Fabric
-Capability records describe what Dhyra can use.
+Capability records describe what Hemera can use.
 
 Categories:
 
@@ -1772,7 +1772,7 @@ experience
 Emergency stop and containment paths must bypass normal optimization logic.
 
 39. Managed Inference
-Dhyra Model API exposes a verified system rather than forcing customers to manage every infrastructure detail.
+Hemera Model API exposes a verified system rather than forcing customers to manage every infrastructure detail.
 
 Request path:
 
@@ -1896,7 +1896,7 @@ The customer should not receive only logs.
 
 They receive:
 
-what changed, why, what the evidence proves, what it does not prove, and what Dhyra recommends doing next.
+what changed, why, what the evidence proves, what it does not prove, and what Hemera recommends doing next.
 
 44. Experience Engine
 Experience is the bridge from operation to learning.
@@ -1997,7 +1997,7 @@ data path
 environment
 The learning target is not always the model.
 
-That is a core Dhyra principle.
+That is a core Hemera principle.
 
 48. Intelligence Evolution
 Canonical lifecycle:
@@ -2455,10 +2455,10 @@ why
 Step 14 — Feed the system
 Use the lesson in the next optimization run.
 
-This is Dhyra's first permanent product loop.
+This is Hemera's first permanent product loop.
 
 64. Complete Full-System Implementation Specification
-This section is the build specification for the complete Dhyra product represented by the architecture diagram. Every domain below is part of the permanent product surface.
+This section is the build specification for the complete Hemera product represented by the architecture diagram. Every domain below is part of the permanent product surface.
 
 For each domain the implementation must include:
 
@@ -2620,7 +2620,7 @@ approval.requested
 approval.granted
 approval.denied
 64.3 Mission Runtime
-Mission Runtime is the central coordinator of Dhyra.
+Mission Runtime is the central coordinator of Hemera.
 
 Implement:
 
@@ -3851,7 +3851,7 @@ Output:
 optimized inference system
 verified performance envelope
 production API configuration
-64.54 Dhyra Model API
+64.54 Hemera Model API
 The model API exposes:
 
 inference
@@ -4167,7 +4167,7 @@ rate limits
 retry strategy
 audit trail
 64.70 Export / Import
-The Dhyra System Package must contain:
+The Hemera System Package must contain:
 
 system definition
 model references/data artifacts as permitted
@@ -4521,7 +4521,7 @@ DEPLOYMENT RUNTIME
         ↓
 MANAGED INFERENCE
         ↓
-DHYRA MODEL API
+HEMERA MODEL API
         ↓
 DIGITAL / EDGE / PHYSICAL EXECUTION
         ↓
@@ -5009,7 +5009,7 @@ The full product is considered architecturally implemented only when every archi
 10. failure/recovery semantics
 11. tests
 12. documentation
-The product-level acceptance criterion is not the completion of a specific feature. It is the ability of the full Dhyra system to execute and close the complete intelligence loop.
+The product-level acceptance criterion is not the completion of a specific feature. It is the ability of the full Hemera system to execute and close the complete intelligence loop.
 
 79. Full-System Completion Criterion
 The definitive product loop is:
@@ -5087,7 +5087,7 @@ NEW INTELLIGENCE
 EVOLUTION
 ↓
 NEXT MISSION
-If any link is missing, Dhyra is not the complete system described by the architecture.
+If any link is missing, Hemera is not the complete system described by the architecture.
 
 80. Autonomous Research
 Autonomous research loop:
@@ -5211,7 +5211,7 @@ Define objective
      ↓
 Run baseline
      ↓
-Let Dhyra search
+Let Hemera search
      ↓
 Review candidates
      ↓
@@ -5222,7 +5222,7 @@ Deploy
 Observe
      ↓
 Continue optimizing
-The customer should not need to understand Dhyra's entire architecture.
+The customer should not need to understand Hemera's entire architecture.
 
 Complexity stays inside the system.
 
@@ -5785,7 +5785,7 @@ retention
 110. What Success Looks Like
 A customer connects a model and workload.
 
-Dhyra learns the current system.
+Hemera learns the current system.
 
 The customer defines:
 
@@ -5793,11 +5793,11 @@ quality target
 latency target
 cost target
 risk limits
-Dhyra searches the system space.
+Hemera searches the system space.
 
-Dhyra runs controlled experiments.
+Hemera runs controlled experiments.
 
-Dhyra produces:
+Hemera produces:
 
 Candidate A
 Candidate B
@@ -5810,13 +5810,13 @@ evidence
 uncertainty
 The customer approves.
 
-Dhyra deploys.
+Hemera deploys.
 
-Dhyra observes.
+Hemera observes.
 
-Dhyra learns.
+Hemera learns.
 
-Then Dhyra proposes the next improvement.
+Then Hemera proposes the next improvement.
 
 The product becomes more valuable as it accumulates:
 
@@ -6209,17 +6209,17 @@ Commercial / operational
 [ ] SDKs are generated from contracts.
 [ ] Observability is present across all workers and runtimes.
 115. Final Engineering Rule
-Build Dhyra as the full permanent system represented by the architecture diagram. Do not reduce the domain architecture to reach a first release. Use dependency order only to determine what must be constructed before something else can execute. Every permanent domain, contract, lineage relationship, evidence path, execution boundary, optimization path, reality interaction, teaching path, and evolution path remains part of the product from the beginning.
+Build Hemera as the full permanent system represented by the architecture diagram. Do not reduce the domain architecture to reach a first release. Use dependency order only to determine what must be constructed before something else can execute. Every permanent domain, contract, lineage relationship, evidence path, execution boundary, optimization path, reality interaction, teaching path, and evolution path remains part of the product from the beginning.
 
-The engineering objective is not to produce a small version of Dhyra.
+The engineering objective is not to produce a small version of Hemera.
 
-The engineering objective is to produce the complete Dhyra system.
+The engineering objective is to produce the complete Hemera system.
 
-APPENDIX A — CURRENT DHYRA ARCHITECTURE SOURCE
+APPENDIX A — CURRENT HEMERA ARCHITECTURE SOURCE
 The following architecture is retained from the current design source and is part of the permanent reference model.
 
   
-          DHYRA  Ai  frontier reality Infrastructure
+          HEMERA   frontier ai reality Infrastructure
 
         BUILD → ADAPT → EVALUATE → OPTIMIZE → EXPERIMENT
              → DECIDE → DEPLOY → OBSERVE → VERIFY
@@ -6228,7 +6228,7 @@ The following architecture is retained from the current design source and is par
                                   ▼
 
                     ┌──────────────────────────────┐
-                    │      DHYRA INTELLIGENCE      │
+                    │      HEMERA INTELLIGENCE      │
                     │             GRAPH            │
                     └──────────────────────────────┘
                                   │
@@ -7267,7 +7267,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
                                   ▼
 
 
-                           DHYRA MODEL API
+                           HEMERA MODEL API
                                   │
               ┌───────────────────┼──────────────────┐
               ▼                   ▼                  ▼
@@ -7392,7 +7392,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
              ▼
 
 
-                         DHYRA SYSTEM PACKAGE
+                         HEMERA SYSTEM PACKAGE
                                   │
               ┌───────────────────┼────────────────────┐
               ▼                   ▼                    ▼
@@ -7559,7 +7559,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
 
 
                      ╔══════════════════════════╗
-                     ║   CORE DHYRA PRINCIPLE   ║
+                     ║   CORE HEMERA PRINCIPLE   ║
                      ╚══════════════════════════╝
 
           FIND WHAT LIMITS INTELLIGENCE
@@ -7697,7 +7697,7 @@ TEST-TIME RESEARCH         COMPUTE RESEARCH              WORLD RESEARCH
 
 APPENDIX B — CHANGELOG FROM PRIOR ARCHITECTURE
 Key structural improvements made in this version
-Preserved the complete Dhyra architecture as the permanent product scope.
+Preserved the complete Hemera architecture as the permanent product scope.
 
 Removed MVP, day-by-day, week-by-week, and month-by-month product reduction plans.
 
@@ -7736,9 +7736,9 @@ Retained the original architecture source as the permanent reference appendix.
 APPENDIX C — FIRST DAY COMMANDMENT
 When a new engineer opens the repository, the intended mental model should be:
 
-Dhyra is not building another model API.
+Hemera is not building another model API.
 
-Dhyra is building the infrastructure through which
+Hemera is building the infrastructure through which
 intelligent systems can be engineered against reality.
 
 Every model is a version.

@@ -5,12 +5,12 @@ import { X, ShieldAlert, Cpu, Database, Network } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMissionStore } from "../runtime/store";
 import { useMissionRuntimeData } from "../runtime/mission-runtime-data";
-import type { DhyraMissionDetail } from "@/lib/dhyra-api";
+import type { HorosMissionDetail } from "@/lib/horos-api";
 
 export function MissionInspector() {
   const { isInspectorOpen, toggleInspector, selection, setSelection } = useMissionStore();
   const { getMission } = useMissionRuntimeData();
-  const [mission, setMission] = useState<DhyraMissionDetail | null>(null);
+  const [mission, setMission] = useState<HorosMissionDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,7 +86,7 @@ export function MissionInspector() {
                       <Cpu className="size-4 text-blue-600" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[13px] font-semibold text-foreground">{mission.executionRun?.planner && typeof mission.executionRun.planner === "object" ? "Planner Agent" : "Dhyra Planner"}</span>
+                      <span className="text-[13px] font-semibold text-foreground">{mission.executionRun?.planner && typeof mission.executionRun.planner === "object" ? "Planner Agent" : "HOROS Planner"}</span>
                       <span className="text-[11px] text-muted-foreground">{mission.state ?? "draft"} • {mission.executionRun?.startedAt ? "running" : "idle"}</span>
                     </div>
                   </div>

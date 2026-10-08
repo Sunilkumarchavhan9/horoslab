@@ -12,7 +12,7 @@ import {
   AnthropicLogo,
   DeepSeekLogo,
   VLLMLogo
-} from "@/components/dhyra/primitives/brand-icons";
+} from "@/components/horos/primitives/brand-icons";
 
 export function VisionAIGrid() {
   return (

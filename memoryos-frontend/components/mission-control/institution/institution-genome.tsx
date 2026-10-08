@@ -30,7 +30,7 @@ const GENOME_TREE: TreeNode[] = [
  {
  id: "roles", label: "Roles", icon: <Network className="size-3.5" />,
  children: [
- { id: "rol_planner", label: "Dhyra Planner", icon: <FileJson className="size-3.5" /> },
+ { id: "rol_planner", label: "HOROS Planner", icon: <FileJson className="size-3.5" /> },
  { id: "rol_reviewer", label: "Security Reviewer", icon: <FileJson className="size-3.5" /> },
  ]
  },

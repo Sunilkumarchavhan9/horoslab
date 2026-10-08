@@ -166,7 +166,7 @@ export function ExecutionInspector({ entityData }: { entityData: any }) {
                                 <div className="flex gap-3">
                                     <span className="text-muted-foreground shrink-0">10:15:25</span>
                                     <span className="text-purple-400 font-bold shrink-0">[TOOL CALL]</span>
-                                    <span>view_file {"{"} "AbsolutePath": "/etc/dhyra/config.json" {"}"}</span>
+                                    <span>view_file {"{"} "AbsolutePath": "/etc/horos/config.json" {"}"}</span>
                                 </div>
                                 <div className="flex gap-3">
                                     <span className="text-muted-foreground shrink-0">10:15:26</span>

@@ -737,7 +737,7 @@ function speechRecognitionErrorMessage(error: string): string {
   return `Speech recognition error: ${error}`;
 }
 
-export function RunDemoSection() {
+export function RunDemoSection(props: any) {
   const [runState, setRunState] = useState<DemoRunState>("idle");
   const [micState, setMicState] = useState<MicState>("disabled");
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
@@ -2064,3 +2064,4 @@ export function RunDemoSection() {
     </div>
   );
 }
+

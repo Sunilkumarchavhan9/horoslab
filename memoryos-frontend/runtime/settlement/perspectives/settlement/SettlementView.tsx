@@ -29,7 +29,7 @@ export function SettlementView() {
     const fetchSettlements = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch("/api/dhyra/settlement/settlements");
+            const res = await fetch("/api/horos/settlement/settlements");
             if (res.ok) {
                 const { data } = await res.json();
                 setSettlements(data.map((s: any) => ({

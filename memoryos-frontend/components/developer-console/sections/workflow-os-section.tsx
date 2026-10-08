@@ -321,7 +321,7 @@ function statusLabel(status: WorkflowRow["status"]) {
 
 /* ─── component ──────────────────────────────────────────────── */
 
-export function WorkflowOsSection() {
+export function WorkflowOsSection(props: any) {
   const { agents, sessions, loading, isRefreshing, error, refresh } = useWorkflowData();
   const [activeTab, setActiveTab] = useState<
     "live" | "scheduled" | "history"
@@ -1039,3 +1039,4 @@ export function WorkflowOsSection() {
     </div>
   );
 }
+

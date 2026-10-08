@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Plus, Rocket } from "lucide-react";
-import { readActiveDhyraWorkspaceId, listDhyraMissions, listDhyraInstitutions, createDhyraInstitution, createDhyraMission } from "@/lib/dhyra-api";
+import { readActiveHorosWorkspaceId, listHorosMissions, listHorosInstitutions, createHorosInstitution, createHorosMission } from "@/lib/horos-api";
 import { RealityFabricShell } from "../../reality-fabric-shell";
 import { useThemePreference } from "@/lib/continuity-lab/use-theme-preference";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import { ActiveMissionInspector } from "./active-mission-inspector";
 import { isLiveCompanySource, listSources } from "@/lib/company-sources-api";
 
 export function MissionsActive({ onViewMission }: { onViewMission?: (id: string) => void }) {
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
  const [missions, setMissions] = useState<MissionRow[]>([]);
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  const textMuted = isDark ? "text-[#F0EFE2]/50" : "text-foreground/50";
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  window.addEventListener("focus", syncWorkspace);
  return () => window.removeEventListener("focus", syncWorkspace);
  }, []);
@@ -42,8 +42,8 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  setError(null);
  try {
   const [liveMissions, institutions] = await Promise.all([
-   listDhyraMissions(workspaceId),
-   listDhyraInstitutions(workspaceId),
+   listHorosMissions(workspaceId),
+   listHorosInstitutions(workspaceId),
   ]);
   setInstitutionId(institutions[0]?.id ?? null);
   setMissions(
@@ -123,7 +123,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  try {
  let targetInstitutionId = institutionId;
  if (!targetInstitutionId) {
- const createdInstitution = await createDhyraInstitution(workspaceId, {
+ const createdInstitution = await createHorosInstitution(workspaceId, {
  name: "Software Release",
  category: "engineering",
  version: "1.0.0",
@@ -136,7 +136,7 @@ export function MissionsActive({ onViewMission }: { onViewMission?: (id: string)
  targetInstitutionId = createdInstitution.id;
  setInstitutionId(createdInstitution.id);
  }
- await createDhyraMission(workspaceId, {
+ await createHorosMission(workspaceId, {
  institutionId: targetInstitutionId,
  title: "Release v1.0",
  objective: "Run the software release mission from planning through learning.",

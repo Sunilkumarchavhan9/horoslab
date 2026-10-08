@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInspector } from "@/components/mission-control/universal-inspector";
-import { getDhyraCliCatalog } from "@/lib/dhyra-api";
+import { getHorosCliCatalog } from "@/lib/horos-api";
 import { LiveFilterDropdown } from "@/components/mission-control/ui/live-filter-dropdown";
 import { exportLiveRows } from "@/components/mission-control/export-live-rows";
 
@@ -28,16 +28,16 @@ export function DeveloperCliView({ workspaceId }: { workspaceId?: string | null 
     const [isLoading, setIsLoading] = useState(Boolean(workspaceId));
     const [versionFilter, setVersionFilter] = useState("All");
     const [platformFilter, setPlatformFilter] = useState("All");
-    const [packageInfo, setPackageInfo] = useState({ name: "@dhyratm/v12-cli", version: "0.1.3", status: "Published" });
+    const [packageInfo, setPackageInfo] = useState({ name: "@horostm/v12-cli", version: "0.1.3", status: "Published" });
 
     useEffect(() => {
         if (!workspaceId) return;
         let active = true;
-        const load = () => getDhyraCliCatalog(workspaceId).then((payload) => {
+        const load = () => getHorosCliCatalog(workspaceId).then((payload) => {
             if (!active) return;
             const cli = payload.cli && typeof payload.cli === "object" ? payload.cli as Record<string, unknown> : {};
             const version = String(cli.version ?? "-");
-            setPackageInfo({ name: String(cli.name ?? "@dhyratm/v12-cli"), version, status: String(cli.status ?? "Published") });
+            setPackageInfo({ name: String(cli.name ?? "@horostm/v12-cli"), version, status: String(cli.status ?? "Published") });
             const releases = Array.isArray(cli.releases)
                 ? cli.releases
                 : Array.isArray(cli.platforms)
@@ -85,16 +85,16 @@ export function DeveloperCliView({ workspaceId }: { workspaceId?: string | null 
                             <Terminal className="size-5 text-indigo-500" />
                             CLI Dashboard
                         </h1>
-                        <span className="text-xs text-muted-foreground mt-1">Manage the Dhyra command-line runtime.</span>
+                        <span className="text-xs text-muted-foreground mt-1">Manage the HOROS command-line runtime.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => exportLiveRows("dhyra-cli-releases.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
+                        <button type="button" onClick={() => exportLiveRows("horos-cli-releases.json", visibleRecords)} className="flex items-center gap-2 bg-background border border-border px-3 py-1.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-sm">
                             <Download className="size-3.5" />
                             Export
                         </button>
                     </div>
                 </div>
-                <div className="mx-6 mb-4 rounded-md border border-border bg-card p-4"><p className="text-sm font-semibold text-foreground">{packageInfo.name} <span className="font-mono text-xs text-muted-foreground">v{packageInfo.version}</span></p><p className="mt-1 text-xs text-muted-foreground">{packageInfo.status}. Install the published CLI to operate missions and workers from your terminal.</p><div className="mt-3 grid gap-2 md:grid-cols-3"><code className="rounded bg-muted px-3 py-2 text-xs text-foreground">npm install -g @dhyratm/v12-cli</code><code className="rounded bg-muted px-3 py-2 text-xs text-foreground">pnpm add -g @dhyratm/v12-cli</code><code className="rounded bg-muted px-3 py-2 text-xs text-foreground">bun add -g @dhyratm/v12-cli</code></div></div>
+                <div className="mx-6 mb-4 rounded-md border border-border bg-card p-4"><p className="text-sm font-semibold text-foreground">{packageInfo.name} <span className="font-mono text-xs text-muted-foreground">v{packageInfo.version}</span></p><p className="mt-1 text-xs text-muted-foreground">{packageInfo.status}. Install the published CLI to operate missions and workers from your terminal.</p><div className="mt-3 grid gap-2 md:grid-cols-3"><code className="rounded bg-muted px-3 py-2 text-xs text-foreground">npm install -g @horostm/v12-cli</code><code className="rounded bg-muted px-3 py-2 text-xs text-foreground">pnpm add -g @horostm/v12-cli</code><code className="rounded bg-muted px-3 py-2 text-xs text-foreground">bun add -g @horostm/v12-cli</code></div></div>
 
                 <div className="flex items-center justify-between px-6 py-3 bg-muted/20 overflow-visible">
                     <div className="flex items-center gap-2 shrink-0">
@@ -133,7 +133,7 @@ export function DeveloperCliView({ workspaceId }: { workspaceId?: string | null 
                         {isLoading ? <tr><td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">Loading CLI catalog...</td></tr> : visibleRecords.length === 0 ? <tr><td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">No platform release matches the current filters.</td></tr> : visibleRecords.map((record) => (
                             <tr 
                                 key={record.id} 
-                                onClick={() => openInspector("cli" as any, { ...record, context: 'developer', name: `Dhyra CLI ${record.version}` })}
+                                onClick={() => openInspector("cli" as any, { ...record, context: 'developer', name: `HOROS CLI ${record.version}` })}
                                 className={cn(
                                     "group hover:bg-muted/30 transition-colors cursor-pointer",
                                     selectedRows.has(record.id) ? "bg-primary/5 hover:bg-primary/10" : ""

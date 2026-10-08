@@ -68,7 +68,7 @@ export function SystemComposerSection() {
       </div>
 
       {/* Main Blueprint Container (aligned with the 120px inward margin on both sides) */}
-      <div className="relative z-10 w-[calc(72%_-_240px)] flex flex-col pb-12 lg:pb-16">
+      <div className="relative z-10 w-[calc(64%_-_240px)] flex flex-col pb-12 lg:pb-16">
 
         {/* Absolute Bottom Infinite Horizontal Line */}
         <HorizontalDivider position="bottom" infinite={true} />
@@ -86,7 +86,7 @@ export function SystemComposerSection() {
             System <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">Composer</span>
           </h2>
           <p className="text-[#FFF5CE] mt-6 text-base sm:text-lg md:text-xl max-w-3xl mx-auto">
-            Dhyra discovers models, runtimes, and hardware, composing multiple candidate systems that compete in simulated sandboxes before execution.
+            HOROS discovers models, runtimes, and hardware, composing multiple candidate systems that compete in simulated sandboxes before execution.
           </p>
         </div>
 

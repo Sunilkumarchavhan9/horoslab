@@ -27,7 +27,7 @@ import {
   Sparkles,
   Play
 } from "lucide-react";
-import { ConsolePage } from "@/components/hemera/console-ui";
+import { ConsolePage } from "@/components/horos/console-ui";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
 
 // --- Mock Data ---
@@ -89,7 +89,7 @@ function SimpleSparkline({ data, color }: { data: number[], color: string }) {
   );
 }
 
-export function ExperienceSection() {
+export function ExperienceSection(props: any) {
   const [activeTab, setActiveTab] = useState("Outcomes");
   const [selectedOutcomeId, setSelectedOutcomeId] = useState<string | null>(OUTCOMES_DATA[0].id);
 
@@ -531,3 +531,4 @@ export function ExperienceSection() {
     </ConsolePage>
   );
 }
+

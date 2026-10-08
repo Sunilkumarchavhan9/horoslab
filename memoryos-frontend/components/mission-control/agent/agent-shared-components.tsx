@@ -107,7 +107,7 @@ export const MOCK_AGENTS = [
  },
  {
  id: "agt_plan_02",
- name: "Dhyra Planner",
+ name: "HOROS Planner",
  status: "RUNNING" as AgentStatus,
  institution: "Engineering",
  provider: "OpenAI (GPT-4o)",

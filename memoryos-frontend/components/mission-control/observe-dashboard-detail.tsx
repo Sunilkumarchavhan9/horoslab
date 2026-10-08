@@ -37,11 +37,11 @@ import type { SankeyLinkProps, SankeyNodeProps, TreemapNode } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
- getDhyraMissionControlSnapshot,
- readActiveDhyraWorkspaceId,
- type DhyraMission,
- type DhyraMissionControlSnapshot,
-} from "@/lib/dhyra-api";
+ getHorosMissionControlSnapshot,
+ readActiveHorosWorkspaceId,
+ type HorosMission,
+ type HorosMissionControlSnapshot,
+} from "@/lib/horos-api";
 
 const MOCK_CHART_DATA = [
  { time: "Jul 23, 03:30 PM", s1: 0, s2: 0, s3: 0 },
@@ -310,7 +310,7 @@ type LiveDashboardView = {
  leaderboard: Array<{ name: string; value: number }>;
  policyBreakdown: Array<{ name: string; value: number; color: string }>;
  proofMix: Array<{ name: string; value: number; color: string }>;
- missions: DhyraMission[];
+ missions: HorosMission[];
 };
 
 function formatRuntimeDuration(startedAt?: string | null, finishedAt?: string | null): string {
@@ -327,7 +327,7 @@ function formatRuntimeDuration(startedAt?: string | null, finishedAt?: string | 
 
 function buildLiveDashboardView(
  id: string,
- snapshot: DhyraMissionControlSnapshot | null,
+ snapshot: HorosMissionControlSnapshot | null,
 ): LiveDashboardView | null {
  if (!snapshot) return null;
 
@@ -562,8 +562,8 @@ function buildLiveDashboardView(
 
 export function ObserveDashboardDetail({ id, onBack, mode = "view", createdDashboards, onCreateDashboard }: ObserveDashboardDetailProps) {
  const LIVE_REFRESH_MS = 15000;
- const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveDhyraWorkspaceId());
- const [snapshot, setSnapshot] = useState<DhyraMissionControlSnapshot | null>(null);
+ const [workspaceId, setWorkspaceId] = useState<string | null>(() => readActiveHorosWorkspaceId());
+ const [snapshot, setSnapshot] = useState<HorosMissionControlSnapshot | null>(null);
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState<string | null>(null);
  const [selectedBuilderType, setSelectedBuilderType] = useState<string | null>(null);
@@ -603,7 +603,7 @@ export function ObserveDashboardDetail({ id, onBack, mode = "view", createdDashb
  }, [customDashboard?.chartType, id, mode, selectedBuilderType]);
 
  useEffect(() => {
- const syncWorkspace = () => setWorkspaceId(readActiveDhyraWorkspaceId());
+ const syncWorkspace = () => setWorkspaceId(readActiveHorosWorkspaceId());
  syncWorkspace();
  window.addEventListener("focus", syncWorkspace);
  window.addEventListener("storage", syncWorkspace);
@@ -622,7 +622,7 @@ export function ObserveDashboardDetail({ id, onBack, mode = "view", createdDashb
  setLoading(true);
  setError(null);
  try {
- const snap = await getDhyraMissionControlSnapshot(workspaceId);
+ const snap = await getHorosMissionControlSnapshot(workspaceId);
  setSnapshot(snap);
  } catch (loadError) {
  setSnapshot(null);

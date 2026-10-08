@@ -52,6 +52,7 @@ type IntegrationsSectionProps = {
     lastRequestRoute?: string | null;
     lastRequestAt?: string | null;
   };
+  [key: string]: any;
 };
 
 const DEFAULT_API_BASE_URL = (
@@ -471,7 +472,7 @@ function CopyButton({
   );
 }
 
-export function IntegrationsSection({ installationVerification, liveSignals }: IntegrationsSectionProps = {}) {
+export function IntegrationsSection({ installationVerification, liveSignals }: IntegrationsSectionProps) {
   const [selectedSurface, setSelectedSurface] = useState<SetupSurface>("sdk");
   const [selectedCatalogId, setSelectedCatalogId] = useState<string | null>(null);
   const [catalogTab, setCatalogTab] = useState<(typeof CATALOG_TABS)[number]>("All");
@@ -895,3 +896,4 @@ MEMORYOS_BASE_URL=${apiBaseUrl}`,
     </div>
   );
 }
+

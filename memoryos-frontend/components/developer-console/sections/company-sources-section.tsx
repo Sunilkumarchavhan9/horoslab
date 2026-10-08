@@ -20,8 +20,8 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { ConsolePage } from "@/components/developer-console/console-ui";
-import { ConnectorBrandIcon } from "@/components/developer-console/connector-brand-icons";
+import { ConsolePage } from "@/components/horos/console-ui";
+import { ConnectorBrandIcon } from "@/components/continuity-lab/connector-brand-icons";
 import {
   connectSource,
   disconnectSource,
@@ -119,7 +119,7 @@ function asSourceFilter(value?: string): SourceFilter {
   return filters.includes(value as SourceFilter) ? (value as SourceFilter) : "Manual";
 }
 
-export function CompanySourcesSection() {
+export function CompanySourcesSection(props: any) {
   const [activeFilter, setActiveFilter] = useState<SourceFilter>("All Sources");
   const [search, setSearch] = useState("");
   const [providerModalOpen, setProviderModalOpen] = useState(false);
@@ -856,3 +856,4 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
     </div>
   );
 }
+
