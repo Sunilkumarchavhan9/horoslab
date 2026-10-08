@@ -73,147 +73,163 @@ import {
 
 const COMPARISON_ROWS = [
   {
-    num: "0 1",
-    label: "Intelligence system",
+    num: '0 1',
+    label: 'System',
     runInfra: {
-      title: "Version the complete assistant",
-      desc: "Define the model, context, capabilities, runtime, workload, environment, policies, and deployment as one system version.",
+      title: 'Version the complete intelligence system',
+      desc: 'Model, context, capabilities, runtime, compute, workload, environment, and policies are defined as one reproducible system version with lineage.',
     },
     closed: {
-      title: "Provider-defined intelligence",
-      desc: "The provider controls the underlying model, runtime, serving path, and infrastructure.",
+      title: 'Provider-defined system',
+      desc: 'The provider determines the model, runtime, serving path, and infrastructure behind the assistant.',
     },
     diy: {
-      title: "Assemble the system yourself",
-      desc: "Your team connects the model, context, tools, runtime, infrastructure, and application logic.",
+      title: 'Assemble it yourself',
+      desc: 'Your team connects the model, application logic, tools, runtime, infrastructure, and deployment stack.',
     },
   },
   {
-    num: "0 2",
-    label: "Model",
+    num: '0 2',
+    label: 'Models',
     runInfra: {
-      title: "Discover, profile, and evolve models",
-      desc: "Bring open models from Hugging Face and supported sources. Pin revisions, validate dependencies and runtime compatibility, build capability profiles, and evaluate models as candidates for the assistant.",
+      title: 'Discover and evaluate open models',
+      desc: 'Bring models from Hugging Face, customer artifacts, private registries, or local registries. Horos validates the artifact, checks license and dependencies, verifies runtime and hardware compatibility, versions the model, and builds its capability profile.',
     },
     closed: {
-      title: "Provider model selection",
-      desc: "Choose from the models and versions exposed through the API.",
+      title: 'Provider model catalog',
+      desc: 'Choose from the models and versions exposed through the API.',
     },
     diy: {
-      title: "Maintain the model lifecycle",
-      desc: "Source, import, validate, serve, evaluate, update, and maintain models yourself.",
+      title: 'Own the model lifecycle',
+      desc: 'Source, validate, serve, evaluate, update, and maintain models yourself.',
     },
   },
   {
-    num: "0 3",
-    label: "Context & memory",
+    num: '0 3',
+    label: 'Context',
     runInfra: {
-      title: "Make context part of the intelligence system",
-      desc: "Represent conversation history, documents, retrieval, memory, tool results, context length, and context strategy as measurable system components.",
+      title: 'Engineer context as part of intelligence',
+      desc: 'Treat retrieval, memory, history, task context, tool context, compressed context, selected context, long context, and adaptive context as versioned system variables.',
     },
     closed: {
-      title: "Provider-managed context",
-      desc: "Context handling, caching, retrieval behavior, and model-side context decisions remain inside the provider's execution path.",
+      title: 'Provider-managed context',
+      desc: 'Context handling, retrieval, caching, and other model-side context behavior remain inside the provider\'s stack.',
     },
     diy: {
-      title: "Build the context layer",
-      desc: "You own memory, retrieval, context construction, storage, caching, and context evaluation.",
+      title: 'Build the context system',
+      desc: 'Your team owns memory, retrieval, storage, context construction, caching, and context evaluation.',
     },
   },
   {
-    num: "0 4",
-    label: "Capabilities",
+    num: '0 4',
+    label: 'Capabilities',
     runInfra: {
-      title: "Compose capabilities around the model",
-      desc: "Connect search, APIs, databases, files, repositories, code execution, and other tools while keeping their permissions, execution paths, and outcomes observable.",
+      title: 'Compose capabilities around the model',
+      desc: 'Use models, tools, skills, data, runtimes, verifiers, environments, and hardware as explicit capabilities with provenance, resource profiles, security posture, and composability. Capability and permission remain separate.',
     },
     closed: {
-      title: "Provider-defined capabilities",
-      desc: "Use the tools and integrations exposed by the provider's agent environment.",
+      title: 'Provider capabilities',
+      desc: 'Use the tools, integrations, and execution features exposed by the provider.',
     },
     diy: {
-      title: "Build every capability",
-      desc: "Implement tool interfaces, execution services, credentials, permissions, retries, isolation, and observability yourself.",
+      title: 'Build every capability',
+      desc: 'Implement tools, APIs, execution services, credentials, permissions, isolation, retries, and observability yourself.',
     },
   },
   {
-    num: "0 5",
-    label: "Workload intelligence",
+    num: '0 5',
+    label: 'Workload',
     runInfra: {
-      title: "Learn the assistant's actual workload",
-      desc: "Capture conversation patterns, context length, concurrency, tool trajectories, traffic distribution, batching behavior, failures, latency, utilization, and cost.",
+      title: 'Learn the workload behind the assistant',
+      desc: 'Capture input and output distributions, task type, tool trajectory, context length, concurrency, batching, burstiness, traffic distribution, GPU utilization, memory, failures, network, and resource usage.',
     },
     closed: {
-      title: "Opaque workload execution",
-      desc: "The provider decides how requests are routed, batched, scheduled, and executed internally.",
+      title: 'Provider-managed workload',
+      desc: 'The provider decides how traffic is routed, batched, scheduled, and executed internally.',
     },
     diy: {
-      title: "Build workload intelligence",
-      desc: "Collect traces, construct replay datasets, model workload distributions, benchmark them, and maintain them yourself.",
+      title: 'Build workload intelligence',
+      desc: 'Collect traces, create replay datasets, benchmark production traffic, and maintain the workload model yourself.',
     },
   },
   {
-    num: "0 6",
-    label: "System search & optimization",
+    num: '0 6',
+    label: 'Optimization',
     runInfra: {
-      title: "Search across the intelligence stack",
-      desc: "Experiment across model variants, data, context, runtime, kernels, hardware, workload, and environment. Measure quality, latency, throughput, memory, and cost to find better system configurations.",
+      title: 'Search the complete intelligence system',
+      desc: 'Search across model, data, context, runtime, kernel, hardware, workload, and environment. Predict candidates, run experiments, measure them, verify the result, then keep or discard the change.',
     },
     closed: {
-      title: "Provider optimization",
-      desc: "Model serving, runtime, kernels, hardware placement, batching, and lower-level optimization remain outside your control.",
+      title: 'Provider optimization',
+      desc: 'Runtime, kernels, batching, hardware placement, inference strategy, and lower-level optimization remain outside your control.',
     },
     diy: {
-      title: "Manual system search",
-      desc: "Your team designs experiments, profiles configurations, tunes infrastructure, and maintains performance regressions.",
+      title: 'Manual system search',
+      desc: 'Your engineers design experiments, profile configurations, tune infrastructure, and maintain regressions.',
     },
   },
   {
-    num: "0 7",
-    label: "Verification & evidence",
+    num: '0 7',
+    label: 'Verification',
     runInfra: {
-      title: "Prove the assistant before promotion",
-      desc: "Evaluate candidates against defined quality, tool behavior, latency, cost, reliability, and outcome requirements. Keep claims tied to immutable evidence and promote only verified system versions.",
+      title: 'Verify behavior and claims',
+      desc: 'Evaluate capability, behavior, and system performance, then verify whether the claimed result is actually supported by evidence. Support task, trajectory, domain, safety, formal, output, and independent verification.',
     },
     closed: {
-      title: "Provider measurements",
-      desc: "You primarily rely on provider benchmarks, model evaluations, and service-level guarantees.",
+      title: 'Provider evaluation',
+      desc: 'You mainly depend on provider benchmarks, model evaluations, and service guarantees.',
     },
     diy: {
-      title: "Build the proof system",
-      desc: "Your team owns evaluation datasets, experiments, benchmarks, evidence collection, regression checks, and promotion gates.",
+      title: 'Build the verification loop',
+      desc: 'Create evaluation protocols, datasets, experiments, evidence, regression tests, and promotion gates yourself.',
     },
   },
   {
-    num: "0 8",
-    label: "Experience & teaching",
+    num: '0 8',
+    label: 'Experience',
     runInfra: {
-      title: "Turn operation into new intelligence",
-      desc: "Capture observations, tool trajectories, failures, outcomes, feedback, and lessons. Convert verified experience into evaluation data, teaching signals, model adaptation, policy updates, skill updates, or new system versions.",
+      title: 'Record what actually happened',
+      desc: 'Store the mission, reality, model, data, runtime, experiment, decision, action, observation, evidence, consequence, and result as a structured experience record. Mine failures, regressions, drift, anomalies, rare events, and edge cases from that experience.',
     },
     closed: {
-      title: "Provider-owned improvement",
-      desc: "The provider controls how its underlying models learn and improve. Your assistant remains dependent on their model evolution.",
+      title: 'Provider-owned operational history',
+      desc: 'Your application receives responses and telemetry, while the provider controls much of the underlying model and runtime history.',
     },
     diy: {
-      title: "Build the evolution loop",
-      desc: "Collect experience, construct datasets, train or adapt models, evaluate changes, and promote new versions yourself.",
+      title: 'Build your own experience layer',
+      desc: 'Collect interaction traces, tool trajectories, outcomes, failures, and production evidence yourself.',
     },
   },
   {
-    num: "0 9",
-    label: "Authority & security",
+    num: '0 9',
+    label: 'Teaching',
     runInfra: {
-      title: "Enforce authority outside the model",
-      desc: "Give every agent and workload an identity. Evaluate mission, intent, target, permissions, credentials, spend, environment, autonomy level, and current world state before consequential execution. Record the decision and resulting evidence.",
+      title: 'Turn lessons into new intelligence',
+      desc: 'Use experience and lessons to teach the model, runtime, or system through fine-tuning, LoRA, RL, distillation, adaptation, retraining, reward, world-model training, routing, serving, context, caching, configuration, compute, placement, hardware, data path, or environment changes.',
     },
     closed: {
-      title: "Provider security boundary",
-      desc: "Identity, authorization, credentials, execution isolation, and infrastructure controls are primarily defined by the provider.",
+      title: 'Provider-owned teaching',
+      desc: 'The provider controls how the underlying intelligence is trained and improved.',
     },
     diy: {
-      title: "Own every security boundary",
-      desc: "Your team implements identity, credentials, authorization, isolation, network controls, approval flows, policies, monitoring, and audit evidence.",
+      title: 'Build the teaching pipeline',
+      desc: 'Construct training data, learning signals, adaptations, evaluations, and new versions yourself.',
+    },
+  },
+  {
+    num: '1 0',
+    label: 'Authority',
+    runInfra: {
+      title: 'Decide what intelligence is allowed to do',
+      desc: 'Separate capability, permission, authority, approval, and credentials. Before consequential execution, check mission authority, policy, capability, credentials, resources, current state, and preconditions. Return ALLOW, DENY, or REQUIRES_APPROVAL and recheck state before execution.',
+    },
+    closed: {
+      title: 'Provider-controlled authority',
+      desc: 'Identity, authorization, credentials, execution controls, and infrastructure boundaries are largely defined by the provider.',
+    },
+    diy: {
+      title: 'Own the authority layer',
+      desc: 'Your team implements identity, permissions, credentials, approvals, policies, isolation, and execution controls.',
     },
   }
 ];
@@ -1251,7 +1267,7 @@ outlines==0.0.46`;
                     </span>
                   </div>
                   <p className="text-[#C8C7BA] text-[15px] leading-relaxed mt-2">
-                    Build, verify, and evolve the assistant as an intelligence system.
+                    Engineer, verify, and evolve the assistant system.
                   </p>
                 </div>
                 <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
@@ -1262,7 +1278,7 @@ outlines==0.0.46`;
                       </span>
                   </div>
                   <p className="text-[#C8C7BA] text-[15px] leading-relaxed mt-2">
-                    Consume intelligence through a provider-controlled system.
+                    Managed intelligence, limited control.
                   </p>
                 </div>
                 <div className="flex flex-col justify-center px-8 py-6 border-b border-dashed border-[#333]">
@@ -1273,7 +1289,7 @@ outlines==0.0.46`;
                       </span>
                   </div>
                   <p className="text-[#C8C7BA] text-[15px] leading-relaxed mt-2">
-                    Build the intelligence engineering loop yourself.
+                    Full control, full engineering burden.
                   </p>
                 </div>
               </div>
