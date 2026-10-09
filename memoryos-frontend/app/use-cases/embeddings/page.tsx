@@ -16,45 +16,73 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Compose the agent system", desc: "Connect models, context, tools, and runtime, then test the complete workflow." },
-    closed: { title: "Call a model endpoint", desc: "Build tool execution, memory, and agent logic in your application." },
-    diy: { title: "Build the stack first", desc: "Set up model serving, tools, state, and observability." }
+    label: "System",
+    runInfra: { title: "Engineer the complete intelligence system.", desc: "Version models, data, context, tools, runtime, compute, workload, environment, and policies together." },
+    closed: { title: "Start with a hosted model.", desc: "Assemble application logic, memory, tools, and state around the provider." },
+    diy: { title: "Build the entire stack.", desc: "Integrate and maintain each component and its dependencies." }
   },
   {
     num: "0 2",
-    label: "Model control",
-    runInfra: { title: "Bring your models", desc: "Use Hugging Face or private models and version the complete configuration." },
-    closed: { title: "Provider catalog", desc: "Choose from available models with limited control over serving internals." },
-    diy: { title: "Own the model stack", desc: "Manage model versions, runtime compatibility, and serving." }
+    label: "Models",
+    runInfra: { title: "Find the right intelligence for the task.", desc: "Discover, profile, compare, and version open-weight or private models against actual capability requirements." },
+    closed: { title: "Choose from the provider's models.", desc: "Model access and internal serving controls depend on the API." },
+    diy: { title: "Manage model infrastructure yourself.", desc: "Own artifacts, compatibility, profiling, and serving." }
   },
   {
     num: "0 3",
-    label: "Agent tuning",
-    runInfra: { title: "Tune the complete workflow", desc: "Test context, tool selection, routing, runtime, and compute against task quality and latency." },
-    closed: { title: "Tune exposed parameters", desc: "Model serving and infrastructure controls remain with the provider." },
-    diy: { title: "Tune every layer manually", desc: "Your team builds the profiling and optimization workflow." }
+    label: "Context",
+    runInfra: { title: "Represent what the agent knows and what remains unknown.", desc: "Track task state, memory, observations, provenance, freshness, and uncertainty across changing environments." },
+    closed: { title: "Supply context through the API.", desc: "Build persistent state and environment awareness around the provider's interface." },
+    diy: { title: "Build your own context system.", desc: "Maintain memory, retrieval, state tracking, and data lineage." }
   },
   {
     num: "0 4",
-    label: "Verification",
-    runInfra: { title: "Verify actual task completion", desc: "Evaluate outputs, tool traces, failures, latency, and cost with evidence for each system version." },
-    closed: { title: "Test in your application", desc: "Model-level evaluations do not establish end-to-end agent reliability." },
-    diy: { title: "Build your own evaluations", desc: "Maintain task datasets, regression tests, and trace checks." }
+    label: "Capabilities",
+    runInfra: { title: "Compose capabilities into executable systems.", desc: "Connect models, tools, skills, data, verifiers, simulators, and physical-world interfaces. Capability and permission remain separate." },
+    closed: { title: "Integrate available tools and APIs.", desc: "Build application logic around the provider's supported capabilities." },
+    diy: { title: "Build and maintain every integration.", desc: "Own compatibility, dependencies, execution, and security boundaries." }
   },
   {
     num: "0 5",
-    label: "Deployment",
-    runInfra: { title: "Managed or exportable", desc: "Deploy the verified configuration or export a versioned system package." },
-    closed: { title: "Provider endpoint", desc: "Your production workflow remains dependent on the hosted service." },
-    diy: { title: "Operate everything", desc: "Own packaging, infrastructure, scaling, releases, and rollback." }
+    label: "Workload",
+    runInfra: { title: "Understand the conditions behind performance.", desc: "Capture task distributions, tool trajectories, context lengths, concurrency, failures, resource use, and relevant environmental state." },
+    closed: { title: "Measure exposed request metrics.", desc: "Deeper workload and environment instrumentation depends on your application and provider." },
+    diy: { title: "Instrument and replay workloads yourself.", desc: "Correlate agent behavior with runtime and infrastructure conditions." }
   },
   {
     num: "0 6",
+    label: "Optimization",
+    runInfra: { title: "Search beyond prompts and model choice.", desc: "Experiment across model, data, context, runtime, tools, kernels, hardware, workload, and environment. Keep changes that meet defined constraints." },
+    closed: { title: "Tune exposed settings.", desc: "Underlying model-serving and infrastructure optimizations remain provider-dependent." },
+    diy: { title: "Build the search and experiment machinery.", desc: "Profile, test, and optimize each layer yourself." }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: { title: "Establish what the system actually proved.", desc: "Verify task outcomes, tool execution, expected state changes, quality, and operational constraints against evidence." },
+    closed: { title: "Evaluate through available provider and application tooling.", desc: "API responses and model scores alone do not prove end-to-end outcomes." },
+    diy: { title: "Build evaluation and verification separately.", desc: "Maintain test datasets, independent checks, evidence, and regression controls." }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: { title: "Turn executions into durable experience.", desc: "Record the mission, reality state, system version, decisions, actions, observations, evidence, consequences, and results. Mine failures and edge cases for lessons." },
+    closed: { title: "Connect the records yourself.", desc: "Provider traces and application logs may not capture the complete outcome and its causes." },
+    diy: { title: "Reconstruct experience across your stack.", desc: "Correlate model, data, deployment, runtime, environment, and outcome records." }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: { title: "Teach intelligence from observed reality.", desc: "Convert verified experience and ground truth into training signals, world-model learning, and model, policy, skill, runtime, or system improvements. Teach models to represent changing states, learn dynamics, predict consequences, and reduce uncertainty." },
+    closed: { title: "Use available customization mechanisms.", desc: "A continuous learning loop grounded in observed outcomes requires additional capabilities and integration." },
+    diy: { title: "Build the teaching pipeline yourself.", desc: "Manage ground truth, training, world models, policy learning, evaluation, and version promotion." }
+  },
+  {
+    num: "1 0",
     label: "Authority",
-    runInfra: { title: "Policy-controlled execution", desc: "Check permissions, credentials, approval requirements, and current state before consequential actions." },
-    closed: { title: "Application-controlled permissions", desc: "Your application must enforce the agent's action boundaries." },
-    diy: { title: "Build the execution boundary", desc: "Your team owns permissions, auditing, and enforcement." }
+    runInfra: { title: "Control what intelligence can do.", desc: "Check mission scope, permissions, credentials, policies, budgets, preconditions, and current state before consequential execution. Record outcomes and verify postconditions." },
+    closed: { title: "Enforce execution permissions in your application.", desc: "Model and tool access do not replace application-level authority." },
+    diy: { title: "Build the authorization boundary.", desc: "Own policy enforcement, approvals, credentials, auditing, state checks, and rollback." }
   }
 ];
 
@@ -648,9 +676,7 @@ export default function EmbeddingsPage() {
                 Three ways to ship AI agents
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most teams call a hosted model and build the agent around it, or maintain the entire stack themselves. Horos engineers the model, context, tools, runtime, and deployment as one system.
-                <br /><br />
-                Compare Horos, hosted model APIs, and self-hosting across the agent lifecycle.
+                A model API gives you intelligence on demand. An agent framework helps you execute tasks. Horos engineers the system behind the agent, verifies what it achieves, and uses observed outcomes to improve the intelligence itself.
               </p>
             </div>
 
@@ -722,7 +748,7 @@ export default function EmbeddingsPage() {
                     <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
                       <div className="flex items-center gap-3 mb-2">
                         <Key size={28} className="text-[#C8C7BA]" />
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Closed embedding APIs</span>
+                        <span className="text-[28px] font-medium text-[#F0EFE2]">Closed model APIs</span>
                       </div>
                       <p className="text-[#C8C7BA] text-[20px]">Per-call, hosted.</p>
                     </div>
