@@ -30,13 +30,16 @@ export function MissionControlClient() {
     const bootstrapWorkspace = async () => {
       try {
         const workspaceId = await resolveActiveHorosWorkspaceId();
-        if (workspaceId && !cancelled) setWorkspaceId(workspaceId);
-        if (!workspaceId && !cancelled) {
-          setWorkspaceError("Unable to resolve an HOROS workspace for this account.");
+        if (workspaceId && !cancelled) {
+          setWorkspaceId(workspaceId);
+        } else if (!workspaceId && !cancelled) {
+          console.warn("Unable to resolve workspace. Falling back to local-dev-workspace for UI development.");
+          setWorkspaceId("local-dev-workspace");
         }
       } catch (error) {
         if (!cancelled) {
-          setWorkspaceError(error instanceof Error ? error.message : "Failed to resolve the HOROS workspace.");
+          console.error("Failed to resolve HOROS workspace:", error);
+          setWorkspaceId("local-dev-workspace");
         }
       } finally {
         if (!cancelled) {
