@@ -733,31 +733,31 @@ export default function EmbeddingsPage() {
                     <div className="hidden md:flex items-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
                       <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
                     </div>
-                    <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="flex flex-col justify-center px-6 py-6 border-b md:border-r border-dashed border-[#333] relative">
                       <div className="absolute top-4 right-4 flex items-center">
                         <span className="text-[9px] font-bold tracking-[0.2em] text-[#75bf00] uppercase">Recommended</span>
                       </div>
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                          <HorosLogo size={28} />
+                        <div className="w-10 h-10 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
+                          <HorosLogo size={24} />
                         </div>
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
+                        <span className="text-[24px] font-medium text-[#F0EFE2]">Horos</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[20px]">Fast path with model control and export.</p>
+                      <p className="text-[#C8C7BA] text-[16px]">Fast path with model control and export.</p>
                     </div>
-                    <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex flex-col justify-center px-6 py-6 border-b md:border-r border-dashed border-[#333]">
                       <div className="flex items-center gap-3 mb-2">
-                        <Key size={28} className="text-[#C8C7BA]" />
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Closed model APIs</span>
+                        <Key size={24} className="text-[#C8C7BA]" />
+                        <span className="text-[24px] font-medium text-[#F0EFE2]">Closed model APIs</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[20px]">Per-call, hosted.</p>
+                      <p className="text-[#C8C7BA] text-[16px]">Per-call, hosted.</p>
                     </div>
-                    <div className="flex flex-col justify-center px-8 py-6 border-b border-dashed border-[#333]">
+                    <div className="flex flex-col justify-center px-6 py-6 border-b border-dashed border-[#333]">
                       <div className="flex items-center gap-3 mb-2">
-                        <Cpu size={28} className="text-[#C8C7BA]" />
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">DIY self-hosting</span>
+                        <Cpu size={24} className="text-[#C8C7BA]" />
+                        <span className="text-[24px] font-medium text-[#F0EFE2]">DIY self-hosting</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[20px]">Full control, heavy operations.</p>
+                      <p className="text-[#C8C7BA] text-[16px]">Full control, heavy operations.</p>
                     </div>
                   </div>
 
@@ -765,26 +765,26 @@ export default function EmbeddingsPage() {
                   <div className="border-l border-r border-b border-dashed border-[#333]">
                     {COMPARISON_ROWS.map((row, idx) => (
                       <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                        <div className="flex items-center px-8 py-8 md:border-r border-dashed border-[#333] min-h-[140px]">
+                        <div className="flex items-center px-6 py-6 md:border-r border-dashed border-[#333]">
                           <div className="flex items-center gap-3">
-                            <span className="text-[#75bf00] font-mono text-[16px] font-bold">{row.num}</span>
-                            <span className="text-[24px] font-medium text-[#F0EFE2]">{row.label}</span>
+                            <span className="text-[#75bf00] font-mono text-[14px] font-bold">{row.num}</span>
+                            <span className="text-[20px] font-medium text-[#F0EFE2]">{row.label}</span>
                           </div>
                         </div>
                         
-                        <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[24px] font-medium text-[#75bf00] mb-2">{row.runInfra.title}</h4>
-                          <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.runInfra.desc}</p>
+                        <div className="flex flex-col justify-center px-6 py-6 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                          <h4 className="text-[20px] font-medium text-[#75bf00] mb-2">{row.runInfra.title}</h4>
+                          <p className="text-[#C8C7BA] text-[16px] leading-relaxed">{row.runInfra.desc}</p>
                         </div>
 
-                        <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333]">
-                          <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                          <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.closed.desc}</p>
+                        <div className="flex flex-col justify-center px-6 py-6 md:border-r border-dashed border-[#333]">
+                          <h4 className="text-[20px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
+                          <p className="text-[#C8C7BA] text-[16px] leading-relaxed">{row.closed.desc}</p>
                         </div>
 
-                        <div className="flex flex-col justify-center px-8 py-8">
-                          <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                          <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.diy.desc}</p>
+                        <div className="flex flex-col justify-center px-6 py-6">
+                          <h4 className="text-[20px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
+                          <p className="text-[#C8C7BA] text-[16px] leading-relaxed">{row.diy.desc}</p>
                         </div>
                       </div>
                     ))}
