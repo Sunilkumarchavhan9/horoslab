@@ -562,7 +562,7 @@ export default function EmbeddingsPage() {
           </div>
 
           {/* Grid with End-to-End Horizontal Lines */}
-          <div className="w-full relative z-10">
+          <div className="w-full relative z-10 pb-24">
             {/* Constrained Horizontal Borders */}
             
             <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
@@ -642,12 +642,8 @@ export default function EmbeddingsPage() {
         </div>
 
         {/* Full-width dashed line separator */}
-        <div className="w-full h-px border-t border-dashed border-[#333]" />
-
         {/* Comparison Table Section */}
-          <div className="w-full relative z-10 mt-32 mb-32">
-            
-          <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full relative z-10 py-24">
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[32px] md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
                 Three ways to ship embeddings
