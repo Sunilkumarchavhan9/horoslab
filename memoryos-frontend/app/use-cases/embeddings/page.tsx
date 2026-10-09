@@ -553,7 +553,7 @@ export default function EmbeddingsPage() {
             <div className="min-w-0">
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
+                <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   The optimization knobs, the codebase, the model choice. None of it locked away.
                 </p>
               </div>
@@ -649,7 +649,7 @@ export default function EmbeddingsPage() {
             
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+              <h2 className="text-[32px] md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
                 Three ways to ship embeddings
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
@@ -775,7 +775,7 @@ export default function EmbeddingsPage() {
           </div>
 
 {/* Sandbox Showcase Section */}
-        <div className="w-full relative z-10 mt-32">
+        <div className="w-full relative z-10 py-24">`n          <SectionDivider`n            position="top"`n            className="absolute top-0 left-0 w-full"`n          />
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           {/* Heading for Sandbox */}
@@ -1189,7 +1189,7 @@ export default function EmbeddingsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Cloud size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Managed Horos</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Managed Horos</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Our GPUs, per-million-tokens billing from L4 to B200.
                     </p>
@@ -1200,7 +1200,7 @@ export default function EmbeddingsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Server size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Your infrastructure</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       AWS, GCP, RunPod, bare metal. Same verifier/, your cluster.
                     </p>
@@ -1211,7 +1211,7 @@ export default function EmbeddingsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Network size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Local workstation</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Local workstation</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       docker compose up. Full pipeline on a single GPU.
                     </p>
@@ -1228,7 +1228,7 @@ export default function EmbeddingsPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+                <h2 className="text-[32px] md:text-[44px] font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
                   Supported HF embedding models work
                 </h2>
                 <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
@@ -1290,7 +1290,7 @@ export default function EmbeddingsPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 mt-32">
+        <div className="w-full relative z-10 py-24">`n          <SectionDivider`n            position="top"`n            className="absolute top-0 left-0 w-full"`n          />
           {/* Heading */}
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
@@ -1298,72 +1298,72 @@ export default function EmbeddingsPage() {
               <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
                 What horosInfra tunes
               </h2>
-              <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
+              <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                 Every stage of the pipeline, retuned for optimal embedding throughput and vector search.
               </p>
 
               {/* Tunes Grid */}
-              <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+              <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                   
                   {/* Row 1 */}
-                  <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <ScanSearch size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Batch indexing</h3>
-                    <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Batch indexing</h3>
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Zero-padding sequence packing for offline indexing. Optimal context chunking on L4.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Zap size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Streaming embed</h3>
-                    <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Streaming embed</h3>
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Zero-cold-start embedding via CapabilityFabric. Sub-10ms memory retrieval.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Sliders size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Reranker fusion</h3>
-                    <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Reranker fusion</h3>
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       BGE and E5 cross-encoders fused natively on-GPU. Single execution graph for top-k.
                     </p>
                   </div>
 
                   {/* Row 2 */}
-                  <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Layers size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Embedding serving sweep</h3>
-                    <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Embedding serving sweep</h3>
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Auto-tune INT8/FP8 quantization and token limits. Maximum recall on MTEB benchmarks.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Database size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Vector DB sync</h3>
-                    <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Vector DB sync</h3>
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Zero-copy network transfer directly to pgvector. Fully managed vector sink.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Workflow size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Per-stage scheduling</h3>
-                    <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Per-stage scheduling</h3>
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Dynamic GPU allocation via IntentEngine. 100% compute saturation during retrieval.
                     </p>
                   </div>
@@ -1382,7 +1382,7 @@ export default function EmbeddingsPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
-                <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+                <h2 className="text-[44px] md:text-[52px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
                   Try this pipeline
                 </h2>
                 <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
@@ -1714,5 +1714,7 @@ export default function EmbeddingsPage() {
     </div>
   );
 }
+
+
 
 
