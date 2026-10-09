@@ -1916,41 +1916,41 @@ outlines==0.0.46`;
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                     {/* Card 1 */}
-                    <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                      <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                        <Cloud size={28} strokeWidth={1.5} />
+                    <div className="px-8 py-8 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
+                      <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                        <Cloud size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-[24px] font-medium text-[#F0EFE2]">
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">
                         Managed RunInfra
                       </h3>
-                      <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                         Our GPUs, per-million-tokens billing from L4 to B200.
                       </p>
                     </div>
 
                     {/* Card 2 */}
-                    <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                      <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                        <Server size={28} strokeWidth={1.5} />
+                    <div className="px-8 py-8 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
+                      <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                        <Server size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-[24px] font-medium text-[#F0EFE2]">
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">
                         Your infrastructure
                       </h3>
-                      <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                         AWS, GCP, RunPod, bare metal. Same verifier/, your
                         cluster.
                       </p>
                     </div>
 
                     {/* Card 3 */}
-                    <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                      <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                        <Network size={28} strokeWidth={1.5} />
+                    <div className="px-8 py-8 flex flex-col gap-4 items-start">
+                      <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                        <Network size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-[24px] font-medium text-[#F0EFE2]">
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">
                         Local workstation
                       </h3>
-                      <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                         docker compose up. Full pipeline on a single GPU.
                       </p>
                     </div>
