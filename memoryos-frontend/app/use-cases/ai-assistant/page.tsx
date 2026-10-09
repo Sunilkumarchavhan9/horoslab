@@ -1417,7 +1417,7 @@ outlines==0.0.46`;
                     }}
                   >
                     {/* Tabs */}
-                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto min-w-0">
                       <div className="flex gap-8 h-full items-end pb-2">
                         <button
                           onClick={() => setActiveMainTab("pipeline")}
@@ -1455,8 +1455,8 @@ outlines==0.0.46`;
                     </div>
 
                     {/* Chat Content */}
-                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                      <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto min-w-0">
+                      <div className="w-full min-w-0 flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                         {/* Step 0 */}
                         <div
                           className={`bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px] transition-all duration-500 transform ${visibleStep >= 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
@@ -1693,17 +1693,17 @@ outlines==0.0.46`;
                     </div>
 
                     {/* Files Content */}
-                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll">
-                      <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll min-w-0">
+                      <div className="w-full min-w-0 flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
                         <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">
                           TOOL DEFINITIONS
                         </span>
-                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
                           3
                         </span>
                       </div>
 
-                      <div className="flex flex-col gap-1.5 text-[13px] font-mono">
+                      <div className="w-full min-w-0 flex flex-col gap-1.5 text-[13px] font-mono">
                         {/* Kernels files */}
                         <button
                           onClick={() => {
@@ -1823,9 +1823,9 @@ outlines==0.0.46`;
                     </div>
 
                     {/* Code Content */}
-                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll">
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll min-w-0">
                       {/* Editor top tabs */}
-                      <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                      <div className="w-full min-w-0 flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         <button
                           onClick={() =>
                             selectFileManually("tool_definitions.py" as any)
@@ -1865,7 +1865,7 @@ outlines==0.0.46`;
                       </div>
 
                       {/* Code Area with Line Numbers */}
-                      <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text">
+                      <div className="w-full min-w-0 flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text">
                         {/* Line numbers column */}
                         <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
                           {Array.from({
