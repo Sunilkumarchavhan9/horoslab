@@ -608,7 +608,7 @@ export default function EmbeddingsPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
                     <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Embedding models</h3>
                     <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
@@ -617,7 +617,7 @@ export default function EmbeddingsPage() {
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
                     <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Reranking models</h3>
                     <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
@@ -626,7 +626,7 @@ export default function EmbeddingsPage() {
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
+                  <div className="p-10 flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
                     <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Retrieval optimization</h3>
                     <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
