@@ -880,16 +880,18 @@ export default function EmbeddingsPage() {
                 <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1">
-                        Fix the memory leak in the database connection pool.
+                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-3 leading-relaxed">
+                        Implement a distributed sub-millisecond caching layer for the database connection pool.
                       </p>
-                      <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><QwenLogo size={11} /> Qwen3-Coder</span>
-                        served with <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle ml-1"><VLLMLogo size={11} /> vLLM</span>. <span className="whitespace-nowrap">Sandboxed in
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><Package size={11} /> Docker</span>
-                        on a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle ml-1"><NvidiaLogo size={11} /> L4</span>.</span>
-                      </p>
+                      <div className="flex flex-wrap items-center gap-2 text-[#C8C7BA] text-[12px] font-medium mt-2">
+                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><QwenLogo size={12} className="text-[#75bf00]" /> Qwen-Coder-32B</span>
+                        <span className="text-[#666] font-mono text-[10px] uppercase tracking-wider">via</span>
+                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><VLLMLogo size={12} /> vLLM Engine</span>
+                        <span className="text-[#666] font-mono text-[10px] uppercase tracking-wider">on</span>
+                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><Package size={12} className="text-[#75bf00]" /> K8s Sandbox</span>
+                        <span className="text-[#666] font-mono text-[10px] uppercase tracking-wider">with</span>
+                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><NvidiaLogo size={12} className="text-[#76b900]" /> 8x H100</span>
+                      </div>
                     </div>
 
                     {/* Step 1: Agent Initial Ack */}
