@@ -553,7 +553,7 @@ export default function EmbeddingsPage() {
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
                 <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The optimization knobs, the codebase, the model choice. None of it locked away.
+                  Your embedding models, rerankers, and retrieval configuration. Horos tests them against your own search workload.
                 </p>
               </div>
             </div>
@@ -610,27 +610,27 @@ export default function EmbeddingsPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Encoder plus<br/>reranker, fused.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Cross-encoder reranks the same top-k in the same vLLM server. One round-trip beats the stacked Pinecone-plus-Cohere setup.
+                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Embedding models</h3>
+                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                      BGE-M3, multilingual-E5-large, GTE-large, Nomic Embed. Convert documents and queries into vectors for retrieval.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">100+ languages,<br/>one recipe.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      BGE-M3 covers Chinese, English, French, Hindi, and 96+ more with the same embedding-serving recipe. No model-per-language sprawl.
+                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Reranking models</h3>
+                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                      BGE-reranker-v2-m3, Jina Reranker v2, Mixedbread Reranker. Re-score retrieved passages to rank the most relevant results first.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">5-10x cheaper at<br/>scale.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Closed APIs bill per call. Horos amortizes GPU compute across batches. At 1M docs a day, you save thousands a month.
+                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Retrieval optimization</h3>
+                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                      Tune batch size, sequence length, precision, and reranking depth. Compare Recall@K, nDCG, latency, and GPU memory before choosing a configuration.
                     </p>
                   </div>
                 </div>
