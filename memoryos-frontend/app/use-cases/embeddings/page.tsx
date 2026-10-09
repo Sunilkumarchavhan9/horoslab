@@ -775,7 +775,7 @@ export default function EmbeddingsPage() {
           </div>
 
 {/* Sandbox Showcase Section */}
-        <div className="w-full relative z-10 py-24">`n          <SectionDivider`n            position="top"`n            className="absolute top-0 left-0 w-full"`n          />
+        <div className="w-full relative z-10 py-24">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           {/* Heading for Sandbox */}
@@ -1290,7 +1290,11 @@ export default function EmbeddingsPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 py-24">`n          <SectionDivider`n            position="top"`n            className="absolute top-0 left-0 w-full"`n          />
+        <div className="w-full relative z-10 py-24">
+          <SectionDivider
+            position="top"
+            className="absolute top-0 left-0 w-full"
+          />
           {/* Heading */}
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
@@ -1714,6 +1718,7 @@ export default function EmbeddingsPage() {
     </div>
   );
 }
+
 
 
 
