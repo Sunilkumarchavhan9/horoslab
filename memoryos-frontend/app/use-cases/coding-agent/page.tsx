@@ -543,18 +543,18 @@ export default function EmbeddingsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-6 max-w-xl">
                   <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
-                    Complex workflows in.{" "}
+                    Issues in.{" "}
                     <span className="bg-[#75bf00] text-black px-2 py-1 leading-[1.3] box-decoration-clone">
-                      Verified actions out.
+                      Verified patches out.
                     </span>
                   </h1>
                   <p className="text-[#C8C7BA] text-[17px] tracking-wide mt-4">
-                    Most teams call a hosted model and build the agent around it. Horos engineers the model, context, tools, runtime, and deployment as one complete system.
+                    Open-weight coding models, repository context, terminal tools, and test execution engineered as one system. Horos measures patch correctness, traces failures, and uses verified outcomes to improve future coding intelligence.
                   </p>
 
                   <div className="flex items-center gap-4 mt-6">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px] whitespace-nowrap">
-                      Build my agent system <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Optimize your coding agent <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px] whitespace-nowrap">
                       Explore the stack <ChevronRight size={16} />
