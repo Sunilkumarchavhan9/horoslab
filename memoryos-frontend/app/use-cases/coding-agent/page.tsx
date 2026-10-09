@@ -149,6 +149,20 @@ const PACKAGE_JSON_CODE = `{
   }
 }`;
 
+const TSCONFIG_CODE = `{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}`;
+
+
 const REQUIREMENTS_CODE = `torch>=2.1.0
 vllm==0.4.0
 transformers>=4.38.0
@@ -361,7 +375,9 @@ export default function EmbeddingsPage() {
     "concurrency.test.ts": CONCURRENCY_TEST_CODE,
     "load.ts": LOAD_BENCHMARK_CODE,
     "patch.diff": PATCH_CODE,
-    "Dockerfile": DOCKERFILE_CODE
+    "Dockerfile": DOCKERFILE_CODE,
+    "package.json": PACKAGE_JSON_CODE,
+    "tsconfig.json": TSCONFIG_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
@@ -923,13 +939,12 @@ export default function EmbeddingsPage() {
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1">
                         Build a reliable background job execution system for this repository. Understand the existing architecture, preserve API contracts, handle retries and duplicate requests, and optimize throughput under concurrent workloads.
                       </p>
-                      <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><QwenLogo size={11} /> Qwen3-Coder</span>
-                        served with <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle ml-1"><VLLMLogo size={11} /> vLLM</span>. <span className="whitespace-nowrap">Sandboxed in
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><Package size={11} /> Docker</span>
-                        on a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle ml-1"><NvidiaLogo size={11} /> L4</span>.</span>
-                      </p>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><QwenLogo size={12} /> Qwen3-Coder</span>
+                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><VLLMLogo size={12} /> vLLM</span>
+                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><Package size={12} /> Docker</span>
+                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><NvidiaLogo size={12} /> 1x L4</span>
+                      </div>
                     </div>
 
                     {/* Step 1: Agent Initial Ack */}
@@ -968,7 +983,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Repository understanding</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Map modules, dependencies, API contracts, and execution paths.</span>
+                          
                         </div>
                       </div>
 
@@ -986,7 +1001,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">System design</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Define job states, idempotency guarantees, retry behavior, and failure recovery.</span>
+                          
                         </div>
                       </div>
 
@@ -1004,7 +1019,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Implementation</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Build the execution lifecycle and integrate it with the existing codebase.</span>
+                          
                         </div>
                       </div>
 
@@ -1022,7 +1037,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Behavioral verification</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Test duplicate requests, concurrent workers, retries, and process restarts.</span>
+                          
                         </div>
                       </div>
 
@@ -1040,7 +1055,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Performance optimization</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Benchmark throughput, tail latency, memory, and resource consumption.</span>
+                          
                         </div>
                       </div>
 
@@ -1058,7 +1073,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">System verification</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.3s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Compare candidate against baseline and retain correct configurations.</span>
+                          
                         </div>
                       </div>
                     </div>
@@ -1185,6 +1200,18 @@ export default function EmbeddingsPage() {
                         className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                       >
                         <ChevronRight size={14} className={activeFile === "Dockerfile" ? "text-[#75bf00]" : "text-[#555]"} /> Dockerfile
+                      </button>
+                      <button
+                        onClick={() => selectFileManually("package.json")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "package.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "package.json" ? "text-[#75bf00]" : "text-[#555]"} /> package.json
+                      </button>
+                      <button
+                        onClick={() => selectFileManually("tsconfig.json")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "tsconfig.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "tsconfig.json" ? "text-[#75bf00]" : "text-[#555]"} /> tsconfig.json
                       </button>
                     </div>
                   </div>
