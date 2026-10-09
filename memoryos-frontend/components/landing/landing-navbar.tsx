@@ -162,7 +162,7 @@ export function LandingNavbar({
                       title: "Coding Agents",
                       desc: "Agents that write, test, and improve code.",
                       icons: [QwenLogo, DeepSeekLogo, MistralLogo],
-                      href: "/use-cases/embeddings"
+                      href: "/use-cases/coding-agent"
                     },
                     {
                       title: "Research Agents",
