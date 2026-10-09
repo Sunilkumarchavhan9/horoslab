@@ -1211,7 +1211,7 @@ outlines==0.0.46`;
           </div>
         </div>
         
-        <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mt-32">
+        <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mt-16">
           <div />
           <div className="min-w-0">
             <div className="text-center">
@@ -1226,7 +1226,7 @@ outlines==0.0.46`;
           <div />
         </div>
         {/* Table with End-to-End Horizontal Lines */}
-        <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px] mt-32 mb-32">
+        <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px] mt-16 mb-16">
           {/* Double Horizontal Border Top */}
           
           {/* Double Horizontal Border Bottom */}
