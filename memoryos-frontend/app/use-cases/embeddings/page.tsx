@@ -515,22 +515,21 @@ export default function EmbeddingsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-6 max-w-lg">
                   <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
-                    Embeddings and<br />
-                    rerank,<br />
-                    <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      one round-trip.
+                    Embeddings in.<br />
+                    <span className="bg-[#75bf00] text-black px-2 py-0 mt-2 inline-block relative">
+                      Reranked results out.
                     </span>
                   </h1>
-                  <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-md mt-2">
-                    BGE, E5, GTE, Nomic. Encoder and cross-encoder reranker fused on a single GPU.
+                  <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-md mt-4">
+                    BGE, E5, GTE, and Nomic encoders paired with cross-encoder rerankers. Horos tunes embedding batches, sequence length, precision, candidate count, and reranking on your GPU.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
+                  <div className="flex items-center gap-4 mt-6">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy this pipeline <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Tune my retrieval stack <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the stack <ChevronRight size={16} />
+                      Explore the stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
