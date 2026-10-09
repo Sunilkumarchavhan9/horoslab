@@ -98,11 +98,11 @@ export function EmbeddingsGrid() {
             <MicrosoftLogo size={24} />
           </div>
 
-          {/* Center (Col 3/4): Huge Emoji (x=50%) */}
+          {/* Center (Col 3/4): Hugging Face Emoji (x=50%) */}
           <div className="absolute z-30 flex items-center justify-center pointer-events-auto" style={{ left: '50%', top: '40%', transform: 'translate(-50%, -50%)' }}>
-            <div className="relative hover:scale-105 transition-transform duration-300 drop-shadow-[0_10px_30px_rgba(255,255,255,0.1)]">
-               <div className="absolute inset-0 bg-white/5 blur-[50px] rounded-full scale-125"></div>
-               <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="Hugging Face" className="w-[200px] h-[200px] md:w-[240px] md:h-[240px] relative z-10" />
+            <div className="relative hover:scale-105 transition-transform duration-300 drop-shadow-[0_5px_15px_rgba(255,255,255,0.1)]">
+               <div className="absolute inset-0 bg-white/5 blur-[20px] rounded-full scale-125"></div>
+               <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="Hugging Face" className="w-[64px] h-[64px] md:w-[72px] md:h-[72px] relative z-10" />
             </div>
           </div>
 
