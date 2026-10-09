@@ -95,45 +95,55 @@ const TEST_CODE = `import { test, expect } from 'vitest';\nimport { DBConnection
 
 const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`;
 
-const EXECUTOR_CODE = `import { JobState } from './state';
-export class JobExecutor {
-  async execute(jobId: string) {
-    // Idempotent job execution logic
-    console.log("Executing job:", jobId);
+const AGENT_CORE_CODE = `import { VLLMEngine } from '../server/vllm';
+import { ToolRegistry } from './tools';
+
+export class CodingAgent {
+  constructor(private engine: VLLMEngine, private tools: ToolRegistry) {}
+
+  async executeTask(prompt: string) {
+    const context = await this.tools.call('search_repository', { query: prompt });
+    return this.engine.generate(prompt, context);
   }
 }`;
 
-const STATE_CODE = `export enum JobState {
-  PENDING = 'PENDING',
-  RUNNING = 'RUNNING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED'
+const TOOLS_CODE = `export class ToolRegistry {
+  private tools: Map<string, Function> = new Map();
+
+  register(name: string, fn: Function) {
+    this.tools.set(name, fn);
+  }
+
+  async call(name: string, args: any) {
+    if (!this.tools.has(name)) throw new Error(\`Tool \${name} not found\`);
+    return this.tools.get(name)!(args);
+  }
 }`;
 
-const RETRY_TEST_CODE = `import { test, expect } from 'vitest';
-import { JobExecutor } from '../src/jobs/executor';
+const VLLM_ENGINE_CODE = `export class VLLMEngine {
+  async generate(prompt: string, context: any) {
+    // Connect to vLLM server on L4 GPU
+    console.log("Generating with Qwen3-Coder-32B via vLLM...");
+    return "function solve() { return true; }";
+  }
+}`;
 
-test('failed jobs retry up to 3 times', async () => {
-  const executor = new JobExecutor();
-  // ... mock failure ...
-  expect(true).toBe(true);
+const TEST_TOOL_CALLING_CODE = `import { test, expect } from 'vitest';
+import { ToolRegistry } from '../src/agent/tools';
+
+test('agent can call repository tools', async () => {
+  const registry = new ToolRegistry();
+  registry.register('search', () => 'mock context');
+  const result = await registry.call('search', {});
+  expect(result).toBe('mock context');
 });`;
 
-const CONCURRENCY_TEST_CODE = `import { test, expect } from 'vitest';
-import { JobExecutor } from '../src/jobs/executor';
+const BENCHMARK_CODE = `import { bench } from 'vitest';
+import { CodingAgent } from '../src/agent/core';
 
-test('concurrent workers do not pick same job', async () => {
-  const executor = new JobExecutor();
-  // ... run concurrent workers ...
-  expect(true).toBe(true);
-});`;
-
-const LOAD_BENCHMARK_CODE = `import { bench } from 'vitest';
-import { JobExecutor } from '../src/jobs/executor';
-
-bench('job throughput under load', async () => {
-  const executor = new JobExecutor();
-  await executor.execute("bench-job");
+bench('SWE-bench evaluation', async () => {
+  // Run SWE-bench test split
+  // Verify 94.2% pass@1
 });`;
 
 
@@ -364,16 +374,16 @@ export default function EmbeddingsPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<CodingAgentFile>("executor.ts");
+  const [activeFile, setActiveFile] = useState<CodingAgentFile>("core.ts");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "executor.ts": EXECUTOR_CODE,
-    "state.ts": STATE_CODE,
-    "retry.test.ts": RETRY_TEST_CODE,
-    "concurrency.test.ts": CONCURRENCY_TEST_CODE,
-    "load.ts": LOAD_BENCHMARK_CODE,
+    "core.ts": AGENT_CORE_CODE,
+    "tools.ts": TOOLS_CODE,
+    "vllm.ts": VLLM_ENGINE_CODE,
+    "tool_calling.test.ts": TEST_TOOL_CALLING_CODE,
+    "swe_bench.ts": BENCHMARK_CODE,
     "patch.diff": PATCH_CODE,
     "Dockerfile": DOCKERFILE_CODE,
     "package.json": PACKAGE_JSON_CODE,
@@ -381,8 +391,8 @@ export default function EmbeddingsPage() {
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "I'll map the existing execution flow, identify the affected modules, design the state transitions, implement the system, and test its behavior under failures and load.";
-  const AGENT_MSG_2 = "A versioned implementation with code changes, reproducible tests, benchmark evidence, runtime configuration, and a deployment package.";
+  const AGENT_MSG_1 = "I'll implement the agent core with tool calling, integrate the vLLM engine, and benchmark it on the SWE-bench dataset.";
+  const AGENT_MSG_2 = "Coding agent built and verified. Tool calling achieved 94.2% pass rate on the benchmark.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -937,7 +947,7 @@ export default function EmbeddingsPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1">
-                        Build a reliable background job execution system for this repository. Understand the existing architecture, preserve API contracts, handle retries and duplicate requests, and optimize throughput under concurrent workloads.
+                        Build a coding agent. Qwen3-Coder for repository-level coding with tool calling. Serve with vLLM on a single L4.
                       </p>
                       <div className="flex flex-wrap gap-2 mt-3">
                         <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><QwenLogo size={12} /> Qwen3-Coder</span>
@@ -980,7 +990,7 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Repository understanding</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Context retrieval</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
                           
@@ -998,7 +1008,7 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">System design</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tool calling integration</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
                           
@@ -1016,7 +1026,7 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Implementation</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">vLLM engine setup</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
                           
@@ -1034,7 +1044,7 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Behavioral verification</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">SWE-bench evaluation</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
                           
