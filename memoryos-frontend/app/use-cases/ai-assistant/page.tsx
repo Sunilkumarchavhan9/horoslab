@@ -1972,10 +1972,10 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+              <h2 className="text-[32px] md:text-[44px] font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
                 Supported HF chat models work
               </h2>
-              <p className="text-[#C8C7BA] text-[20px] font-mono leading-relaxed text-center max-w-2xl mb-12">
+              <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
                 Supported chat-capable models on Hugging Face run through the
                 compatible recipe. Search the live catalog above. The examples
                 below are just a starting view.
