@@ -1186,8 +1186,7 @@ export default function EmbeddingsPage() {
                       >
                         <ChevronRight size={14} className={activeFile === "Dockerfile" ? "text-[#75bf00]" : "text-[#555]"} /> Dockerfile
                       </button>
-                      
-                    </div></div>
+                    </div>
                   </div>
                 </div>
 
