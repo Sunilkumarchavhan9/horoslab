@@ -1211,7 +1211,7 @@ outlines==0.0.46`;
           </div>
         </div>
         
-        <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mt-16">
+        <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mt-32">
           <div />
           <div className="min-w-0">
             <div className="text-center">
@@ -1226,7 +1226,7 @@ outlines==0.0.46`;
           <div />
         </div>
         {/* Table with End-to-End Horizontal Lines */}
-        <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px] mt-16 mb-16">
+        <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px] mt-32 mb-32">
           {/* Double Horizontal Border Top */}
           
           {/* Double Horizontal Border Bottom */}
@@ -1247,22 +1247,22 @@ outlines==0.0.46`;
             <div className="min-w-0 bg-[#151515]">
               {/* Table Header */}
               <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
-                <div className="hidden md:flex items-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
+                <div className="hidden md:flex items-center px-6 py-4 border-b md:border-r border-dashed border-[#333]">
                   <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">
                     What Matters
                   </span>
                 </div>
-                <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333] relative">
+                <div className="flex flex-col justify-center px-6 py-4 border-b md:border-r border-dashed border-[#333] relative">
                   <div className="absolute top-4 right-4 flex items-center">
                     <span className="text-[9px] font-bold tracking-[0.2em] text-[#75bf00] uppercase">
                       Recommended
                     </span>
                   </div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-md">
-                      <HorosLogo size={28} />
+                    <div className="w-10 h-10 bg-[#111] border border-[#333] flex items-center justify-center rounded-md">
+                      <HorosLogo size={24} />
                     </div>
-                    <span className="text-[19px] font-medium tracking-tight text-[#F0EFE2]">
+                    <span className="text-[18px] font-medium tracking-tight text-[#F0EFE2]">
                       Horos
                     </span>
                   </div>
@@ -1270,10 +1270,10 @@ outlines==0.0.46`;
                     Engineer, verify, and evolve the assistant system.
                   </p>
                 </div>
-                <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
+                <div className="flex flex-col justify-center px-6 py-4 border-b md:border-r border-dashed border-[#333]">
                   <div className="flex items-center gap-3 mb-2">
-                    <Key size={28} className="text-[#C8C7BA]" />
-                    <span className="text-[18px] font-medium tracking-tight text-[#F0EFE2]">
+                    <Key size={24} className="text-[#C8C7BA]" />
+                    <span className="text-[17px] font-medium tracking-tight text-[#F0EFE2]">
                         Closed model APIs
                       </span>
                   </div>
@@ -1281,10 +1281,10 @@ outlines==0.0.46`;
                     Managed intelligence, limited control.
                   </p>
                 </div>
-                <div className="flex flex-col justify-center px-8 py-6 border-b border-dashed border-[#333]">
+                <div className="flex flex-col justify-center px-6 py-4 border-b border-dashed border-[#333]">
                   <div className="flex items-center gap-3 mb-2">
-                    <Cpu size={28} className="text-[#C8C7BA]" />
-                    <span className="text-[18px] font-medium tracking-tight text-[#F0EFE2]">
+                    <Cpu size={24} className="text-[#C8C7BA]" />
+                    <span className="text-[17px] font-medium tracking-tight text-[#F0EFE2]">
                         DIY self-hosting
                       </span>
                   </div>
@@ -1301,7 +1301,7 @@ outlines==0.0.46`;
                     key={idx}
                     className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200"
                   >
-                    <div className="flex items-center px-8 py-8 md:border-r border-dashed border-[#333] min-h-[140px]">
+                    <div className="flex items-center px-6 py-4 md:border-r border-dashed border-[#333] min-h-[100px]">
                       <div className="flex items-center gap-3">
                         <span className="text-[#75bf00] font-mono text-[11px] font-bold tracking-widest">
                           {row.num}
@@ -1312,29 +1312,29 @@ outlines==0.0.46`;
                       </div>
                     </div>
 
-                    <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                      <h4 className="text-[17px] font-medium text-[#75bf00] transition-colors mb-2">
+                    <div className="flex flex-col justify-center px-6 py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                      <h4 className="text-[16px] font-medium text-[#75bf00] transition-colors mb-1">
                         {row.runInfra.title}
                       </h4>
-                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
+                      <p className="text-[#C8C7BA] text-[14px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
                         {row.runInfra.desc}
                       </p>
                     </div>
 
-                    <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333]">
-                      <h4 className="text-[17px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors mb-2">
+                    <div className="flex flex-col justify-center px-6 py-4 md:border-r border-dashed border-[#333]">
+                      <h4 className="text-[16px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors mb-1">
                         {row.closed.title}
                       </h4>
-                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
+                      <p className="text-[#C8C7BA] text-[14px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
                         {row.closed.desc}
                       </p>
                     </div>
 
-                    <div className="flex flex-col justify-center px-8 py-8">
-                      <h4 className="text-[17px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors mb-2">
+                    <div className="flex flex-col justify-center px-6 py-4">
+                      <h4 className="text-[16px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors mb-1">
                         {row.diy.title}
                       </h4>
-                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
+                      <p className="text-[#C8C7BA] text-[14px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
                         {row.diy.desc}
                       </p>
                     </div>
