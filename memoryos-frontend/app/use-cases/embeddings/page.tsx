@@ -17,44 +17,44 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "Launch",
-    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly and keep the production path open." },
-    closed: { title: "Call provider endpoint", desc: "Fast first demo, but the runtime stays rented." },
-    diy: { title: "Build serving stack first", desc: "Infrastructure work comes before product learning." }
+    runInfra: { title: "Compose the agent system", desc: "Connect models, context, tools, and runtime, then test the complete workflow." },
+    closed: { title: "Call a model endpoint", desc: "Build tool execution, memory, and agent logic in your application." },
+    diy: { title: "Build the stack first", desc: "Set up model serving, tools, state, and observability." }
   },
   {
     num: "0 2",
     label: "Model control",
-    runInfra: { title: "Bring the model ID", desc: "Keep model choice and serving decisions visible." },
-    closed: { title: "Provider catalog", desc: "You use what the provider exposes." },
-    diy: { title: "Your model", desc: "Full control if your team maintains the runtime." }
+    runInfra: { title: "Bring your models", desc: "Use Hugging Face or private models and version the complete configuration." },
+    closed: { title: "Provider catalog", desc: "Choose from available models with limited control over serving internals." },
+    diy: { title: "Own the model stack", desc: "Manage model versions, runtime compatibility, and serving." }
   },
   {
     num: "0 3",
-    label: "Tuning",
-    runInfra: { title: "Measured latency and GPU cost", desc: "Compare serving choices before deployment." },
-    closed: { title: "Opaque", desc: "Latency and batching stay behind the API." },
-    diy: { title: "Manual profiling", desc: "Your team owns tuning and regressions." }
+    label: "Agent tuning",
+    runInfra: { title: "Tune the complete workflow", desc: "Test context, tool selection, routing, runtime, and compute against task quality and latency." },
+    closed: { title: "Tune exposed parameters", desc: "Model serving and infrastructure controls remain with the provider." },
+    diy: { title: "Tune every layer manually", desc: "Your team builds the profiling and optimization workflow." }
   },
   {
     num: "0 4",
-    label: "Export",
-    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first and take the deploy package later." },
-    closed: { title: "Locked endpoint", desc: "You keep calling the provider." },
-    diy: { title: "Already owned", desc: "Export exists because you built everything yourself." }
+    label: "Verification",
+    runInfra: { title: "Verify actual task completion", desc: "Evaluate outputs, tool traces, failures, latency, and cost with evidence for each system version." },
+    closed: { title: "Test in your application", desc: "Model-level evaluations do not establish end-to-end agent reliability." },
+    diy: { title: "Build your own evaluations", desc: "Maintain task datasets, regression tests, and trace checks." }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, less production control." },
-    diy: { title: "High", desc: "You own infra, failures, upgrades, and serving changes." }
+    label: "Deployment",
+    runInfra: { title: "Managed or exportable", desc: "Deploy the verified configuration or export a versioned system package." },
+    closed: { title: "Provider endpoint", desc: "Your production workflow remains dependent on the hosted service." },
+    diy: { title: "Operate everything", desc: "Own packaging, infrastructure, scaling, releases, and rollback." }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across access, logging, and incident response." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in the request path." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls." }
+    label: "Authority",
+    runInfra: { title: "Policy-controlled execution", desc: "Check permissions, credentials, approval requirements, and current state before consequential actions." },
+    closed: { title: "Application-controlled permissions", desc: "Your application must enforce the agent's action boundaries." },
+    diy: { title: "Build the execution boundary", desc: "Your team owns permissions, auditing, and enforcement." }
   }
 ];
 
@@ -645,12 +645,12 @@ export default function EmbeddingsPage() {
           <div className="w-full relative z-10 py-24">
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[32px] md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to ship embeddings
+                Three ways to ship AI agents
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most teams pick between speed and control. Horos keeps both in one workflow.
+                Most teams call a hosted model and build the agent around it, or maintain the entire stack themselves. Horos engineers the model, context, tools, runtime, and deployment as one system.
                 <br /><br />
-                Deployment comparison for embeddings across Horos, closed APIs, and DIY self-hosting.
+                Compare Horos, hosted model APIs, and self-hosting across the agent lifecycle.
               </p>
             </div>
 
