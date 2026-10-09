@@ -1,8 +1,5 @@
 import React, { Suspense } from "react"
-import { auth } from "@clerk/nextjs/server"
 import type { Metadata } from "next"
-import { isClerkEnabled } from "@/lib/clerk"
-import { redirect } from "next/navigation"
 import { MissionControlClient } from "./mission-control-client"
 
 export const metadata: Metadata = {
@@ -11,13 +8,6 @@ export const metadata: Metadata = {
 }
 
 export default async function MissionControlPage() {
-  if (isClerkEnabled()) {
-    const { userId } = await auth()
-    if (!userId) {
-      redirect("/auth/sign-in?next=/mission-control")
-    }
-  }
-
   return (
     <Suspense
       fallback={
