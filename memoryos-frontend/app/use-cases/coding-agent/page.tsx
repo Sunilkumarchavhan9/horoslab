@@ -581,7 +581,7 @@ export default function EmbeddingsPage() {
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
                 <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  Your embedding models, rerankers, and retrieval configuration. Horos tests them against your own search workload.
+                  Your coding model, repository context, and execution environment. Horos evaluates the complete system against real coding tasks.
                 </p>
               </div>
             </div>
@@ -638,27 +638,27 @@ export default function EmbeddingsPage() {
                   {/* Card 1 */}
                   <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Embedding models</h3>
+                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Coding models</h3>
                     <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
-                      BGE-M3, multilingual-E5-large, GTE-large, Nomic Embed. Convert documents and queries into vectors for retrieval.
+                      Devstral 2, Devstral Small 2, and Qwen3-Coder. Compare code changes, tool use, and repository-level task completion.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Reranking models</h3>
+                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Repository understanding</h3>
                     <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
-                      BGE-reranker-v2-m3, Jina Reranker v2, Mixedbread Reranker. Re-score retrieved passages to rank the most relevant results first.
+                      Repository symbols, imports, call sites, dependencies, commits, and issue context. Give the agent the code and relationships it needs to make changes across files.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-10 flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Retrieval optimization</h3>
+                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Patch verification</h3>
                     <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
-                      Tune batch size, sequence length, precision, and reranking depth. Compare Recall@K, nDCG, latency, and GPU memory before choosing a configuration.
+                      Run builds, type checks, and tests against proposed changes. Record failures, passing checks, regressions, and evidence for each verified system version.
                     </p>
                   </div>
                 </div>
