@@ -842,9 +842,9 @@ export default function EmbeddingsPage() {
                         Fix the memory leak in the database connection pool.
                       </p>
                       <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1">Qwen3-Coder</span>
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><QwenLogo size={11} /> Qwen3-Coder</span>
                         with the Horos context engine. <span className="whitespace-nowrap">Execute with
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">Docker</span>
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><Package size={11} /> Docker</span>
                         on a single
                         <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><NvidiaLogo size={11} /> L4</span>.</span>
                       </p>
