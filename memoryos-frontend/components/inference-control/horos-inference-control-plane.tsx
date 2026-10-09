@@ -124,6 +124,18 @@ export function HorosInferenceControlPlane({
       // Clear data error on new attempt
       if (dataError) setDataError(null);
 
+      if (workspaceId === "local-dev-workspace") {
+        // Silently use empty states for local UI development
+        setOverview(null);
+        setPrograms([]);
+        setModels([]);
+        setRuns([]);
+        setDeployments([]);
+        setRegistry([]);
+        setEvidence([]);
+        return;
+      }
+
       // Fetch sequentially to avoid backend 429 rate limits on 7 simultaneous requests
       const o = await horosAdapter.getOverview(workspaceId);
       const p = await horosAdapter.getPrograms(workspaceId);
