@@ -883,10 +883,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Analyzed connection pool</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Reading connection pool</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Found unclosed DB connections in error paths</span>
+                          <span className="text-[#666] text-[12px]">Extracting AST and DBConnectionPool methods</span>
                         </div>
                       </div>
 
@@ -901,10 +901,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Generated patch</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Synthesizing patch</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Added connection closure in finally blocks</span>
+                          <span className="text-[#666] text-[12px]">Generating patch.diff for src/db/pool.ts</span>
                         </div>
                       </div>
 
@@ -919,10 +919,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran type checks</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running tsc --noEmit</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Passed all TypeScript strict type checks</span>
+                          <span className="text-[#75bf00] text-[12px]">0 errors in strict type checking</span>
                         </div>
                       </div>
 
@@ -937,10 +937,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran unit tests</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Executing test suite</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">145 tests passed across 4 suites</span>
+                          <span className="text-[#666] text-[12px]">145 passing, 0 failing tests via vitest</span>
                         </div>
                       </div>
 
@@ -955,10 +955,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran memory profile</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running memory profiler</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">No leaks detected over 100k test iterations</span>
+                          <span className="text-[#666] text-[12px]">Verified zero active handles on teardown</span>
                         </div>
                       </div>
                     </div>
@@ -1014,67 +1014,45 @@ export default function EmbeddingsPage() {
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <button
-                      onClick={() => selectFileManually("pool.ts")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pool.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                    >
-                      <ChevronRight size={14} className={activeFile === "pool.ts" ? "text-[#75bf00]" : "text-[#555]"} /> pool.ts
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("patch.diff")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "patch.diff" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                    >
-                      <ChevronRight size={14} className={activeFile === "patch.diff" ? "text-[#75bf00]" : "text-[#555]"} /> patch.diff
-                    </button>
-                    <button 
-                      onClick={() => selectFileManually("test.ts")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                    >
-                      <ChevronRight size={14} className={activeFile === "test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> test.ts
-                    </button>
-
-                    {/* Project Tree Folder */}
-                    <div className="mt-6 flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> src/db/
+                        <ChevronDown size={14} className="text-[#777]" /> src/
                       </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
-                        <button
-                          onClick={() => selectFileManually("patch.diff")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "patch.diff" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          <ChevronRight size={14} className={activeFile === "patch.diff" ? "text-[#75bf00]" : "text-[#444]"} /> patch.diff
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("test.ts")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "test.ts" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          <ChevronRight size={14} className={activeFile === "test.ts" ? "text-[#75bf00]" : "text-[#444]"} /> test.ts
-                        </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> verifier/
+                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
+                          <ChevronDown size={14} className="text-[#777]" /> db/
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> package.json
+                        <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                          <button
+                            onClick={() => selectFileManually("pool.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pool.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          >
+                            <ChevronRight size={14} className={activeFile === "pool.ts" ? "text-[#75bf00]" : "text-[#555]"} /> pool.ts
+                          </button>
+                          <button 
+                            onClick={() => selectFileManually("test.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          >
+                            <ChevronRight size={14} className={activeFile === "test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> pool.test.ts
+                          </button>
                         </div>
-                        <button
-                          onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          <ChevronRight size={14} className={activeFile === "requirements.txt" ? "text-[#75bf00]" : "text-[#444]"} /> requirements.txt
-                        </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> models/
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> benchmarks/
-                        </div>
-                        <button
-                          onClick={() => selectFileManually("README.md")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          <ChevronRight size={14} className={activeFile === "README.md" ? "text-[#75bf00]" : "text-[#444]"} /> README.md
-                        </button>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex flex-col gap-0.5">
+                      <button
+                        onClick={() => selectFileManually("patch.diff")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "patch.diff" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "patch.diff" ? "text-[#75bf00]" : "text-[#555]"} /> patch.diff
+                      </button>
+                      <button
+                        onClick={() => selectFileManually("Dockerfile")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "Dockerfile" ? "text-[#75bf00]" : "text-[#555]"} /> Dockerfile
+                      </button>
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                        <ChevronRight size={14} className="text-[#333]" /> package.json
                       </div>
                     </div>
                   </div>
