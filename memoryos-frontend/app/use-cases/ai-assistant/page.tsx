@@ -30,6 +30,7 @@ import {
   HorosWordmarkLogo,
   AnthropicLogo,
   GithubLogo,
+  HermesLogo,
 } from "@/components/horos/primitives/brand-icons";
 import {
   Key,
@@ -534,6 +535,10 @@ const getLogo = (author: string, modelName: string = "") => {
     return <QwenLogo size={20} />;
   if (a.includes("nvidia") || m.includes("nvfp4"))
     return <NvidiaLogo size={20} />;
+  if (a.includes("mistral") || m.includes("ministral"))
+    return <MistralLogo size={20} />;
+  if (a.includes("nous") || m.includes("hermes"))
+    return <HermesLogo size={20} />;
   if (a.includes("moonshot") || m.includes("kimi"))
     return <KimiLogo size={20} />;
   if (a.includes("coqui") || a.includes("canopy"))
