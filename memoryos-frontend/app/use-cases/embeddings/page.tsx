@@ -525,10 +525,10 @@ export default function EmbeddingsPage() {
                   </p>
 
                   <div className="flex items-center gap-4 mt-6">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px] whitespace-nowrap">
                       Tune my retrieval stack <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px] whitespace-nowrap">
                       Explore the stack <ChevronRight size={16} />
                     </button>
                   </div>
