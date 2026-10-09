@@ -95,6 +95,48 @@ const TEST_CODE = `import { test, expect } from 'vitest';\nimport { DBConnection
 
 const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`;
 
+const EXECUTOR_CODE = `import { JobState } from './state';
+export class JobExecutor {
+  async execute(jobId: string) {
+    // Idempotent job execution logic
+    console.log("Executing job:", jobId);
+  }
+}`;
+
+const STATE_CODE = `export enum JobState {
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED'
+}`;
+
+const RETRY_TEST_CODE = `import { test, expect } from 'vitest';
+import { JobExecutor } from '../src/jobs/executor';
+
+test('failed jobs retry up to 3 times', async () => {
+  const executor = new JobExecutor();
+  // ... mock failure ...
+  expect(true).toBe(true);
+});`;
+
+const CONCURRENCY_TEST_CODE = `import { test, expect } from 'vitest';
+import { JobExecutor } from '../src/jobs/executor';
+
+test('concurrent workers do not pick same job', async () => {
+  const executor = new JobExecutor();
+  // ... run concurrent workers ...
+  expect(true).toBe(true);
+});`;
+
+const LOAD_BENCHMARK_CODE = `import { bench } from 'vitest';
+import { JobExecutor } from '../src/jobs/executor';
+
+bench('job throughput under load', async () => {
+  const executor = new JobExecutor();
+  await executor.execute("bench-job");
+});`;
+
+
 const PACKAGE_JSON_CODE = `{
   "name": "horos-pool-benchmark",
   "version": "1.0.0",
@@ -165,7 +207,7 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
         }
         return part;
       });
-    } else if (lang === "markdown") {
+    } else if (lang === "markdown" || activeFile.endsWith(".md")) {
       if (content.startsWith("#")) {
         lineContent = <span className="text-[#a855f7] font-bold">{content}</span>;
       } else {
@@ -308,25 +350,23 @@ export default function EmbeddingsPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<CodingAgentFile>("pool.ts");
+  const [activeFile, setActiveFile] = useState<CodingAgentFile>("executor.ts");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "pool.ts": POOL_CODE,
+    "executor.ts": EXECUTOR_CODE,
+    "state.ts": STATE_CODE,
+    "retry.test.ts": RETRY_TEST_CODE,
+    "concurrency.test.ts": CONCURRENCY_TEST_CODE,
+    "load.ts": LOAD_BENCHMARK_CODE,
     "patch.diff": PATCH_CODE,
-    "test.ts": TEST_CODE,
-    "Dockerfile": DOCKERFILE_CODE,
-    "package.json": PACKAGE_JSON_CODE,
-    "requirements.txt": REQUIREMENTS_CODE,
-    "eval_ranking.json": EVAL_RANKING_CODE,
-    "README.md": README_CODE,
-    "pool.test.ts": TEST_CODE
+    "Dockerfile": DOCKERFILE_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll analyze the connection pool, identify the leak, patch the code, and run the memory profiles.";
-  const AGENT_MSG_2 = "Patch verified. Memory leak fixed and 145 tests passed. Review the diff and merge.";
+  const AGENT_MSG_1 = "I'll map the existing execution flow, identify the affected modules, design the state transitions, implement the system, and test its behavior under failures and load.";
+  const AGENT_MSG_2 = "A versioned implementation with code changes, reproducible tests, benchmark evidence, runtime configuration, and a deployment package.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -384,7 +424,7 @@ export default function EmbeddingsPage() {
     } else if (visibleStep >= 2 && visibleStep <= 6) {
       // Steps 2-6: Reveal logs sequentially one by one
       timer = setTimeout(() => setVisibleStep(prev => prev + 1), 450);
-    } else if (visibleStep === 7) {
+    } else if (visibleStep === 8) {
       // Step 7 (LAST): Type out AGENT_MSG_2 real-time character-by-character at the very end
       if (typedMsg2.length < AGENT_MSG_2.length) {
         timer = setTimeout(() => {
@@ -880,18 +920,16 @@ export default function EmbeddingsPage() {
                 <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-3 leading-relaxed">
-                        Implement a distributed sub-millisecond caching layer for the database connection pool.
+                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1">
+                        Build a reliable background job execution system for this repository. Understand the existing architecture, preserve API contracts, handle retries and duplicate requests, and optimize throughput under concurrent workloads.
                       </p>
-                      <div className="flex flex-wrap items-center gap-2 text-[#C8C7BA] text-[12px] font-medium mt-2">
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><QwenLogo size={12} className="text-[#75bf00]" /> Qwen-Coder-32B</span>
-                        <span className="text-[#666] font-mono text-[10px] uppercase tracking-wider">via</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><VLLMLogo size={12} /> vLLM Engine</span>
-                        <span className="text-[#666] font-mono text-[10px] uppercase tracking-wider">on</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><Package size={12} className="text-[#75bf00]" /> K8s Sandbox</span>
-                        <span className="text-[#666] font-mono text-[10px] uppercase tracking-wider">with</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-1 rounded shadow-sm"><NvidiaLogo size={12} className="text-[#76b900]" /> 8x H100</span>
-                      </div>
+                      <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><QwenLogo size={11} /> Qwen3-Coder</span>
+                        served with <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle ml-1"><VLLMLogo size={11} /> vLLM</span>. <span className="whitespace-nowrap">Sandboxed in
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><Package size={11} /> Docker</span>
+                        on a single
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle ml-1"><NvidiaLogo size={11} /> L4</span>.</span>
+                      </p>
                     </div>
 
                     {/* Step 1: Agent Initial Ack */}
@@ -927,10 +965,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Reading connection pool</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Repository understanding</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Extracting AST and DBConnectionPool methods</span>
+                          <span className="text-[#666] text-[12px]">Map modules, dependencies, API contracts, and execution paths.</span>
                         </div>
                       </div>
 
@@ -945,10 +983,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Synthesizing patch</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">System design</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Generating patch.diff for src/db/pool.ts</span>
+                          <span className="text-[#666] text-[12px]">Define job states, idempotency guarantees, retry behavior, and failure recovery.</span>
                         </div>
                       </div>
 
@@ -963,10 +1001,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running tsc --noEmit</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Implementation</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">0 errors in strict type checking</span>
+                          <span className="text-[#75bf00] text-[12px]">Build the execution lifecycle and integrate it with the existing codebase.</span>
                         </div>
                       </div>
 
@@ -981,10 +1019,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Executing test suite</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Behavioral verification</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">145 passing, 0 failing tests via vitest</span>
+                          <span className="text-[#666] text-[12px]">Test duplicate requests, concurrent workers, retries, and process restarts.</span>
                         </div>
                       </div>
 
@@ -999,18 +1037,36 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running memory profiler</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Performance optimization</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Verified zero active handles on teardown</span>
+                          <span className="text-[#666] text-[12px]">Benchmark throughput, tail latency, memory, and resource consumption.</span>
+                        </div>
+                      </div>
+
+                      {/* Log 6 (Step 7) */}
+                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 8 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                          {visibleStep === 8 ? (
+                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                          ) : (
+                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                          )}
+                        </div>
+                        <div className="flex flex-col flex-1 gap-0.5">
+                          <div className="flex justify-between items-center w-full">
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">System verification</span>
+                            <span className="text-[#C8C7BA] text-[12px]">2.3s</span>
+                          </div>
+                          <span className="text-[#75bf00] text-[12px]">Compare candidate against baseline and retain correct configurations.</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Step 7 (LAST STEP): Agent Final Summary */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                    {/* Step 8 (LAST STEP): Agent Final Summary */}
+                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 8 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
                       <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
+                        {visibleStep === 8 && typedMsg2.length < AGENT_MSG_2.length ? (
                           <Loader2 size={14} className="text-[#75bf00] animate-spin" />
                         ) : (
                           <Sparkles size={14} className="text-[#75bf00]" />
@@ -1020,7 +1076,7 @@ export default function EmbeddingsPage() {
                         <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
                         <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
                           {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
+                          {visibleStep === 8 && typedMsg2.length < AGENT_MSG_2.length && (
                             <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                           )}
                         </p>
@@ -1064,24 +1120,59 @@ export default function EmbeddingsPage() {
                       </div>
                       <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                          <ChevronDown size={14} className="text-[#777]" /> db/
+                          <ChevronDown size={14} className="text-[#777]" /> jobs/
                         </div>
                         <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
                           <button
-                            onClick={() => selectFileManually("pool.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pool.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                            onClick={() => selectFileManually("executor.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "executor.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                           >
-                            <ChevronRight size={14} className={activeFile === "pool.ts" ? "text-[#75bf00]" : "text-[#555]"} /> pool.ts
+                            <ChevronRight size={14} className={activeFile === "executor.ts" ? "text-[#75bf00]" : "text-[#555]"} /> executor.ts
                           </button>
                           <button 
-                            onClick={() => selectFileManually("test.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                            onClick={() => selectFileManually("state.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "state.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                           >
-                            <ChevronRight size={14} className={activeFile === "test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> pool.test.ts
+                            <ChevronRight size={14} className={activeFile === "state.ts" ? "text-[#75bf00]" : "text-[#555]"} /> state.ts
                           </button>
                         </div>
                       </div>
                     </div>
+                    
+                    <div className="mt-2 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
+                        <ChevronDown size={14} className="text-[#777]" /> tests/
+                      </div>
+                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                          <button
+                            onClick={() => selectFileManually("retry.test.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "retry.test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          >
+                            <ChevronRight size={14} className={activeFile === "retry.test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> retry.test.ts
+                          </button>
+                          <button
+                            onClick={() => selectFileManually("concurrency.test.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "concurrency.test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          >
+                            <ChevronRight size={14} className={activeFile === "concurrency.test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> concurrency.test.ts
+                          </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
+                        <ChevronDown size={14} className="text-[#777]" /> benchmarks/
+                      </div>
+                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                          <button
+                            onClick={() => selectFileManually("load.ts")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "load.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          >
+                            <ChevronRight size={14} className={activeFile === "load.ts" ? "text-[#75bf00]" : "text-[#555]"} /> load.ts
+                          </button>
+                      </div>
+                    </div>
+                    
                     <div className="mt-2 flex flex-col gap-0.5">
                       <button
                         onClick={() => selectFileManually("patch.diff")}
@@ -1095,44 +1186,8 @@ export default function EmbeddingsPage() {
                       >
                         <ChevronRight size={14} className={activeFile === "Dockerfile" ? "text-[#75bf00]" : "text-[#555]"} /> Dockerfile
                       </button>
-                      <button
-                        onClick={() => selectFileManually("package.json")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "package.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "package.json" ? "text-[#75bf00]" : "text-[#555]"} /> package.json
-                      </button>
                       
-                      {/* Restored folders */}
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold mt-2">
-                        <ChevronDown size={14} className="text-[#777]" /> benchmarks/
-                      </div>
-                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
-                          <button
-                            onClick={() => selectFileManually("eval_ranking.json")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_ranking.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                          >
-                            <ChevronRight size={14} className={activeFile === "eval_ranking.json" ? "text-[#75bf00]" : "text-[#555]"} /> eval_ranking.json
-                          </button>
-                      </div>
-
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#555] mt-2">
-                        <ChevronRight size={14} className="text-[#333]" /> models/
-                      </div>
-                      
-                      <button
-                        onClick={() => selectFileManually("requirements.txt")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "requirements.txt" ? "text-[#75bf00]" : "text-[#555]"} /> requirements.txt
-                      </button>
-                      
-                      <button
-                        onClick={() => selectFileManually("README.md")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "README.md" ? "text-[#75bf00]" : "text-[#555]"} /> README.md
-                      </button>
-                    </div>
+                    </div></div>
                   </div>
                 </div>
 
@@ -1164,7 +1219,7 @@ export default function EmbeddingsPage() {
                     <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
                       {highlightCode(
                         typedCodeText,
-                        activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".md") ? "markdown" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : "typescript",
+                        activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : "typescript",
                         !isTypingCode
                       )}
                     </div>
