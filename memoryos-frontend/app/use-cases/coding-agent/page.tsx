@@ -838,9 +838,9 @@ export default function EmbeddingsPage() {
                         Fix the memory leak in the database connection pool.
                       </p>
                       <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><BAAILogo size={11} /> BGE-M3</span>
-                        with the cross-encoder reranker. <span className="whitespace-nowrap">Serve with
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><VLLMLogo size={11} /> vLLM</span>
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1">Qwen3-Coder</span>
+                        with the Horos context engine. <span className="whitespace-nowrap">Execute with
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">Docker</span>
                         on a single
                         <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><NvidiaLogo size={11} /> L4</span>.</span>
                       </p>
