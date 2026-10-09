@@ -55,12 +55,21 @@ async function proxyMasterplanRequest(request: NextRequest, context: RouteContex
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
   const body = hasBody ? new Uint8Array(await request.arrayBuffer()) : undefined;
 
-  const response = await fetch(targetUrl, {
-    method: request.method,
-    headers,
-    body,
-    cache: "no-store",
-  });
+  let response: Response;
+  try {
+    response = await fetch(targetUrl, {
+      method: request.method,
+      headers,
+      body,
+      cache: "no-store",
+    });
+  } catch (error) {
+    console.error(`[Proxy Error] Failed to connect to backend at ${targetUrl}:`, error);
+    return new NextResponse(JSON.stringify({ error: "Backend service unavailable. Please ensure your local backend is running on port 3011." }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
 
   const responseHeaders = new Headers();
   response.headers.forEach((value, key) => {
