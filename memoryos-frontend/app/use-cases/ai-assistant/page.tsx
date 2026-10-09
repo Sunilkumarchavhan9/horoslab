@@ -538,7 +538,7 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes("mistral") || m.includes("ministral"))
     return <MistralLogo size={20} />;
   if (a.includes("nous") || m.includes("hermes"))
-    return <HermesLogo size={20} />;
+    return <HermesLogo size={26} />;
   if (a.includes("moonshot") || m.includes("kimi"))
     return <KimiLogo size={20} />;
   if (a.includes("coqui") || a.includes("canopy"))
@@ -1074,7 +1074,7 @@ outlines==0.0.46`;
                       <NvidiaLogo size={14} />
                     </div>
                   </div>
-                  <h1 className="text-5xl lg:text-[54px] font-medium tracking-tight leading-[1.15] mt-[-1rem]">
+                  <h1 className="text-4xl lg:text-[44px] font-medium tracking-tight leading-[1.15] mt-[-1rem]">
                       Personal AI assistants on the models{" "}
                       <span className="bg-[#75bf00] text-black px-2 py-0 inline-block">
                         you own
@@ -1141,10 +1141,10 @@ outlines==0.0.46`;
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
+                <h2 className="text-3xl md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
                   What you actually own
                 </h2>
-                <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed max-w-2xl mx-auto">
+                <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed max-w-2xl mx-auto">
                   The intelligence, its experience, and the system that runs it. Horos keeps the model, context, tools, decisions, evidence, and versions traceable as one evolving assistant.
                 </p>
               </div>
@@ -1176,7 +1176,7 @@ outlines==0.0.46`;
                     <div className="text-[#75bf00] font-mono text-[11px] font-bold">
                       0 1
                     </div>
-                    <h3 className="text-2xl font-medium text-[#F0EFE2] leading-tight">
+                    <h3 className="text-xl font-medium text-[#F0EFE2] leading-tight">
                       Your intelligence version.
                     </h3>
                     <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
@@ -1189,7 +1189,7 @@ outlines==0.0.46`;
                     <div className="text-[#75bf00] font-mono text-[11px] font-bold">
                       0 2
                     </div>
-                    <h3 className="text-2xl font-medium text-[#F0EFE2] leading-tight">
+                    <h3 className="text-xl font-medium text-[#F0EFE2] leading-tight">
                       Your assistant&apos;s experience.
                     </h3>
                     <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
@@ -1202,7 +1202,7 @@ outlines==0.0.46`;
                     <div className="text-[#75bf00] font-mono text-[11px] font-bold">
                       0 3
                     </div>
-                    <h3 className="text-2xl font-medium text-[#F0EFE2] leading-tight">
+                    <h3 className="text-xl font-medium text-[#F0EFE2] leading-tight">
                       Your improvement loop.
                     </h3>
                     <p className="text-[#C8C7BA] text-[15px] leading-relaxed">
@@ -1220,10 +1220,10 @@ outlines==0.0.46`;
           <div />
           <div className="min-w-0">
             <div className="text-center">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
+              <h2 className="text-3xl md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
                 Three ways to ship AI assistants
               </h2>
-              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed max-w-2xl mx-auto">
+              <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed max-w-2xl mx-auto">
                 Most teams either consume a hosted intelligence API or build the assistant stack themselves. Horos lets you compose, optimize, verify, and evolve the intelligence system around the assistant.
               </p>
             </div>
@@ -1267,7 +1267,7 @@ outlines==0.0.46`;
                     <div className="w-10 h-10 bg-[#111] border border-[#333] flex items-center justify-center rounded-md">
                       <HorosLogo size={24} />
                     </div>
-                    <span className="text-[18px] font-medium tracking-tight text-[#F0EFE2]">
+                    <span className="text-[16px] font-medium tracking-tight text-[#F0EFE2]">
                       Horos
                     </span>
                   </div>
@@ -1360,11 +1360,11 @@ outlines==0.0.46`;
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6 text-[#F0EFE2]">
+                <h2 className="text-4xl lg:text-[44px] font-medium tracking-tight mb-6 text-[#F0EFE2]">
                   Code you own.{" "}
                   <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#999999] text-[16px] max-w-2xl mx-auto leading-relaxed">
                   The full recipe ships with you. Codebase, kernels, engine
                   config, weights. Run it anywhere.
                 </p>
@@ -2063,7 +2063,7 @@ outlines==0.0.46`;
         </div>
 
         {/* What Horos Infra tunes Section */}
-        <div className="w-full relative z-10 pt-24">
+        <div className="w-full relative z-10 py-24">
           <SectionDivider
             position="top"
             className="absolute top-0 left-0 w-full"
@@ -2071,93 +2071,87 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                What Horos Infra tunes
+              <h2 className="text-[32px] md:text-[44px] font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+                What Horos tunes
               </h2>
-              <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mb-16">
-                Every stage of the pipeline, retuned per model and GPU.
+              <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mb-16">
+                Every layer of your assistant, tuned for its model and workload.
               </p>
 
               {/* Tunes Grid */}
-              <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+              <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                   {/* Row 1 */}
-                  <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Cpu size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2]">
-                      Kernel sweep
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">
+                      Model selection
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      FlashAttention, FlashInfer, Marlin, custom fusion.
-                      Correctness + speedup gates on every rewrite.
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                      Qwen, Hermes, and Ministral. Compare task quality, tool use, latency, and GPU memory.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Layers size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2]">
-                      Quantization
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">
+                      Tool calling
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      FP8, AWQ, GPTQ, HQQ, INT8 SmoothQuant, NVFP4. Quality
-                      scored against your accuracy floor.
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                      Function schemas, argument accuracy, parallel calls, and tool execution failures.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Database size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2]">
-                      KV cache
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">
+                      Context handling
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      FP8, INT4, and TurboQuant 3-4 bit KV compression. 60 to
-                      75% VRAM savings.
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                      Conversation history, retrieval, memory, and context compression.
                     </p>
                   </div>
 
                   {/* Row 2 */}
-                  <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Zap size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2]">
-                      Speculative decoding
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">
+                      Structured output
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      EAGLE3, MTP, n-gram lookup, draft model. 1.3 to 2x decode
-                      speedup, weights untouched.
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                      JSON schemas, constrained generation, and output validation.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Sliders size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2]">
-                      Serving config
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">
+                      Inference runtime
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Continuous batching, chunked prefill, PagedAttention,
-                      prefix cache. Tuned across vLLM, SGLang, TensorRT-LLM.
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                      vLLM, SGLang, KV cache, batching, and streaming.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-10 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-5 items-start">
                     <div className="text-[#75bf00]">
                       <Cloud size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2]">
-                      Multi-cloud capacity
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">
+                      Assistant evaluation
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Pareto GPU selection across L4 to B200. Managed or
-                      exportable.
+                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                      Task completion, tool-call accuracy, response quality, latency, and token cost.
                     </p>
                   </div>
                 </div>
@@ -2177,7 +2171,7 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
-              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+              <h2 className="text-[44px] md:text-[52px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
                 Try this pipeline
               </h2>
               <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
@@ -2342,7 +2336,7 @@ outlines==0.0.46`;
 
         {/* FAQ Section */}
         <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-          <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
             Common{" "}
             <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">
               questions
@@ -2364,7 +2358,7 @@ outlines==0.0.46`;
                   className="flex items-center justify-between w-full text-left group"
                 >
                   <span
-                    className={`text-[18px] font-medium transition-colors ${activeFaq === idx ? "text-[#F0EFE2]" : "text-[#C8C7BA] group-hover:text-[#F0EFE2]"}`}
+                    className={`text-[16px] font-medium transition-colors ${activeFaq === idx ? "text-[#F0EFE2]" : "text-[#C8C7BA] group-hover:text-[#F0EFE2]"}`}
                   >
                     {faq.question}
                   </span>

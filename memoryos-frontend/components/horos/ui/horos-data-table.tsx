@@ -37,7 +37,7 @@ export function HorosDataTable<T>({
                 <th
                   key={idx}
                   className={cn(
-                    "whitespace-nowrap px-4 py-3 font-semibold",
+                    "whitespace-nowrap px-4 py-2 font-semibold",
                     col.align === "right" && "text-right",
                     col.align === "center" && "text-center",
                     col.className
@@ -53,7 +53,7 @@ export function HorosDataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-16 text-center text-xs text-[#788072]"
+                  className="px-4 py-8 text-center text-xs text-[#788072]"
                 >
                   {emptyMessage}
                 </td>
@@ -82,7 +82,7 @@ export function HorosDataTable<T>({
                       <td
                         key={colIdx}
                         className={cn(
-                          "px-4 py-3.5 text-[#1f241d]",
+                          "px-4 py-2 text-[#1f241d]",
                           col.align === "right" && "text-right",
                           col.align === "center" && "text-center",
                           col.className
