@@ -207,7 +207,7 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
         }
         return part;
       });
-    } else if (lang === "markdown" || activeFile.endsWith(".md")) {
+    } else if (lang === "markdown") {
       if (content.startsWith("#")) {
         lineContent = <span className="text-[#a855f7] font-bold">{content}</span>;
       } else {
@@ -1218,7 +1218,7 @@ export default function EmbeddingsPage() {
                     <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
                       {highlightCode(
                         typedCodeText,
-                        activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : "typescript",
+                        activeFile.endsWith(".md") ? "markdown" : activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : "typescript",
                         !isTypingCode
                       )}
                     </div>
