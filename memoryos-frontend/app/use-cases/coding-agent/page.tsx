@@ -93,7 +93,38 @@ const PATCH_CODE = `--- src/db/pool.ts\n+++ src/db/pool.ts\n@@ -12,6 +12,8 @@\n 
 
 const TEST_CODE = `import { test, expect } from 'vitest';\nimport { DBConnectionPool } from './pool';\n\ntest('pool releases connection on success', async () => {\n  const pool = new DBConnectionPool();\n  await pool.executeQuery('SELECT 1', []);\n  expect(pool.pool.idleCount).toBe(1);\n});\n\ntest('pool releases connection on error', async () => {\n  const pool = new DBConnectionPool();\n  try {\n    await pool.executeQuery('INVALID SYNTAX', []);\n  } catch (e) {}\n  expect(pool.pool.idleCount).toBe(1);\n});`; 
 
-const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`; 
+const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`;
+
+const PACKAGE_JSON_CODE = `{
+  "name": "horos-pool-benchmark",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "vitest run",
+    "test:memory": "vitest run --inspect --profile"
+  },
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}`;
+
+const REQUIREMENTS_CODE = `torch>=2.1.0
+vllm==0.4.0
+transformers>=4.38.0
+swe-bench-eval`;
+
+const EVAL_RANKING_CODE = `{
+  "model": "Qwen3-Coder-32B",
+  "pass@1": 94.2,
+  "memory_leaks_resolved": 100,
+  "latency_percentile_99": "4.2ms",
+  "status": "APPROVED"
+}`;
+
+const README_CODE = `# DB Connection Pool Optimization
+Agent task: Fix connection teardown leak.
+Hardware: 1x L4, 24GB VRAM
+Status: VERIFIED`;
+ 
 
 type CodingAgentFile = string;
 
@@ -134,6 +165,12 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
         }
         return part;
       });
+    } else if (lang === "markdown" || activeFile.endsWith(".md")) {
+      if (content.startsWith("#")) {
+        lineContent = <span className="text-[#a855f7] font-bold">{content}</span>;
+      } else {
+        lineContent = content;
+      }
     } else if (lang === "json") {
       const parts = line.split(/("[^"]*"\s*:|"[^"]*"|\b\d+\b|\btrue\b|\bfalse\b)/);
       lineContent = parts.map((part, pi) => {
@@ -279,7 +316,12 @@ export default function EmbeddingsPage() {
     "pool.ts": POOL_CODE,
     "patch.diff": PATCH_CODE,
     "test.ts": TEST_CODE,
-    "Dockerfile": DOCKERFILE_CODE
+    "Dockerfile": DOCKERFILE_CODE,
+    "package.json": PACKAGE_JSON_CODE,
+    "requirements.txt": REQUIREMENTS_CODE,
+    "eval_ranking.json": EVAL_RANKING_CODE,
+    "README.md": README_CODE,
+    "pool.test.ts": TEST_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
@@ -1051,9 +1093,43 @@ export default function EmbeddingsPage() {
                       >
                         <ChevronRight size={14} className={activeFile === "Dockerfile" ? "text-[#75bf00]" : "text-[#555]"} /> Dockerfile
                       </button>
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                        <ChevronRight size={14} className="text-[#333]" /> package.json
+                      <button
+                        onClick={() => selectFileManually("package.json")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "package.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "package.json" ? "text-[#75bf00]" : "text-[#555]"} /> package.json
+                      </button>
+                      
+                      {/* Restored folders */}
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold mt-2">
+                        <ChevronDown size={14} className="text-[#777]" /> benchmarks/
                       </div>
+                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                          <button
+                            onClick={() => selectFileManually("eval_ranking.json")}
+                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_ranking.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          >
+                            <ChevronRight size={14} className={activeFile === "eval_ranking.json" ? "text-[#75bf00]" : "text-[#555]"} /> eval_ranking.json
+                          </button>
+                      </div>
+
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#555] mt-2">
+                        <ChevronRight size={14} className="text-[#333]" /> models/
+                      </div>
+                      
+                      <button
+                        onClick={() => selectFileManually("requirements.txt")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "requirements.txt" ? "text-[#75bf00]" : "text-[#555]"} /> requirements.txt
+                      </button>
+                      
+                      <button
+                        onClick={() => selectFileManually("README.md")}
+                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      >
+                        <ChevronRight size={14} className={activeFile === "README.md" ? "text-[#75bf00]" : "text-[#555]"} /> README.md
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1062,30 +1138,15 @@ export default function EmbeddingsPage() {
                 <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   {/* Editor top tabs */}
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                    <button
-                      onClick={() => selectFileManually("pool.ts")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pool.ts" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      pool.ts
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("patch.diff")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "patch.diff" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      patch.diff
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("test.ts")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "test.ts" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      test.ts
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("Dockerfile")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      Dockerfile
-                    </button>
+                    {Object.keys(FILE_CODE_MAP).map(file => (
+                      <button
+                        key={file}
+                        onClick={() => selectFileManually(file as CodingAgentFile)}
+                        className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === file ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      >
+                        {file}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Code Area with Line Numbers */}
