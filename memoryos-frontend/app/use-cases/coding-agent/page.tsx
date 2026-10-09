@@ -87,71 +87,15 @@ const COMPARISON_ROWS = [
 ];
 
 
-const ENCODER_CODE = `# Batched embedding client wired to the vLLM OpenAI-compatible API.
-from openai import OpenAI
- 
-client = OpenAI(base_url="http://localhost:8000/v1", api_key="local")
- 
-def embed(texts: list[str]) -> list[list[float]]:
-    """Return one dense vector per input text."""
-    res = client.embeddings.create(
-        model="BAAI/bge-m3",
-        input=texts,
-        encoding_format="float",
-    )
-    return [d.embedding for d in res.data]
- 
-def rerank(query: str, docs: list[str]) -> list[float]:
-    """Score each doc for the query, higher is more relevant."""
-    return client.rerank.score(
-        model="BAAI/bge-reranker-v2-m3",
-        query=query,
-        documents=docs
-    )`;
+const POOL_CODE = `import { Pool } from 'pg';\n\nexport class DBConnectionPool {\n  private pool: Pool;\n  \n  constructor() {\n    this.pool = new Pool({\n      max: 20,\n      idleTimeoutMillis: 30000,\n    });\n  }\n\n  async executeQuery(query: string, params: any[]) {\n    const client = await this.pool.connect();\n    try {\n      const result = await client.query(query, params);\n      return result.rows;\n    } finally {\n      // Memory leak fixed: ensure connection is always released\n      client.release();\n    }\n  }\n}`; 
 
-const SERVE_CODE = `#!/usr/bin/env bash
-# Horos Infra serve entrypoint, generated for embeddings
-set -euo pipefail
- 
-ENCODER="BAAI/bge-m3"
-RERANKER="BAAI/bge-reranker-v2-m3"
-GPU="nvidia-l4"
- 
-python -m vllm.entrypoints.openai.api_server \\
-  --task "embedding" \\
-  --model "$ENCODER" \\
-  --served-model-name "bge-m3" \\
-  --max-num-batched-tokens 32768
- 
-# Reranker runs as a sibling vLLM process on port 8001:
-#   vllm serve $RERANKER --task=score --port 8001`;
+const PATCH_CODE = `--- src/db/pool.ts\n+++ src/db/pool.ts\n@@ -12,6 +12,8 @@\n     try {\n       const result = await client.query(query, params);\n       return result.rows;\n+    } finally {\n+      client.release();\n     }\n   }\n }`; 
 
-const PIPELINE_CODE = `{
-  "name": "embeddings",
-  "target_throughput": "12000 tok/s",
-  "encoder":   "bge-m3",
-  "reranker":  "bge-reranker-v2-m3",
-  "engine":    "vllm",
-  "gpu":       "nvidia-l4",
-  "optimizer": "embedding-serving",
-  "sinks": ["pinecone", "qdrant", "weaviate", "pgvector"]
-}`;
+const TEST_CODE = `import { test, expect } from 'vitest';\nimport { DBConnectionPool } from './pool';\n\ntest('pool releases connection on success', async () => {\n  const pool = new DBConnectionPool();\n  await pool.executeQuery('SELECT 1', []);\n  expect(pool.pool.idleCount).toBe(1);\n});\n\ntest('pool releases connection on error', async () => {\n  const pool = new DBConnectionPool();\n  try {\n    await pool.executeQuery('INVALID SYNTAX', []);\n  } catch (e) {}\n  expect(pool.pool.idleCount).toBe(1);\n});`; 
 
-const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS base
- 
-RUN apt-get update && apt-get install -y python3.11 python3-pip
- 
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
- 
-COPY adapters/ /app/adapters/
-COPY serve.sh pipeline.json .
- 
-EXPOSE 8000
-ENTRYPOINT ["./serve.sh"]`;
+const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`; 
 
-type EmbeddingsFile = string;
+type CodingAgentFile = string;
 
 function highlightCode(code: string, lang: string, isComplete: boolean = false) {
   if (!code) return null;
@@ -323,20 +267,20 @@ export default function EmbeddingsPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<EmbeddingsFile>("encoder.py");
+  const [activeFile, setActiveFile] = useState<CodingAgentFile>("pool.ts");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "encoder.py": ENCODER_CODE,
-    "serve.sh": SERVE_CODE,
-    "pipeline.json": PIPELINE_CODE,
+    "pool.ts": POOL_CODE,
+    "patch.diff": PATCH_CODE,
+    "test.ts": TEST_CODE,
     "Dockerfile": DOCKERFILE_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll profile BGE on the L4, configure vLLM with encoder plus reranker, then benchmark a 10k-doc index.";
-  const AGENT_MSG_2 = "Recipe is ready. Targeting encode at 12k tokens/s and rerank at 180 q/s on L4 at $0.62/hr. Run the in-app bench on your corpus to lock the numbers. Want me to deploy?";
+  const AGENT_MSG_1 = "On it. I'll analyze the connection pool, identify the leak, patch the code, and run the memory profiles.";
+  const AGENT_MSG_2 = "Patch verified. Memory leak fixed and 145 tests passed. Review the diff and merge.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -346,7 +290,7 @@ export default function EmbeddingsPage() {
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
-  const selectFileManually = (file: EmbeddingsFile) => {
+  const selectFileManually = (file: CodingAgentFile) => {
     setIsAutoPlay(false);
     setActiveFile(file);
     setActiveMainTab("code");
@@ -354,7 +298,7 @@ export default function EmbeddingsPage() {
 
   // Code character-by-character real-time streaming typewriter effect when activeFile changes
   useEffect(() => {
-    const fullCode = FILE_CODE_MAP[activeFile] || ENCODER_CODE;
+    const fullCode = FILE_CODE_MAP[activeFile] || POOL_CODE;
 
     setTypedCodeText("");
     setIsTypingCode(true);
@@ -891,7 +835,7 @@ export default function EmbeddingsPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1">
-                        Build an embeddings API.
+                        Fix the memory leak in the database connection pool.
                       </p>
                       <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
                         <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><BAAILogo size={11} /> BGE-M3</span>
@@ -935,10 +879,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled BGE-M3 on L4</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Analyzed connection pool</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">12k tokens/s peak, batch 32</span>
+                          <span className="text-[#666] text-[12px]">Found unclosed DB connections in error paths</span>
                         </div>
                       </div>
 
@@ -953,10 +897,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Selected vLLM serving engine</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Generated patch</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">encoder plus reranker on one server</span>
+                          <span className="text-[#666] text-[12px]">Added connection closure in finally blocks</span>
                         </div>
                       </div>
 
@@ -971,10 +915,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned embedding batching</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran type checks</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">higher vectors/sec at recall parity</span>
+                          <span className="text-[#75bf00] text-[12px]">Passed all TypeScript strict type checks</span>
                         </div>
                       </div>
 
@@ -989,10 +933,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Enabled batch padding fusion</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran unit tests</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">82% padding waste removed</span>
+                          <span className="text-[#666] text-[12px]">145 tests passed across 4 suites</span>
                         </div>
                       </div>
 
@@ -1007,10 +951,10 @@ export default function EmbeddingsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran indexing harness, 10k docs</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran memory profile</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">1.2s end-to-end, $0.62 / hr</span>
+                          <span className="text-[#666] text-[12px]">No leaks detected over 100k test iterations</span>
                         </div>
                       </div>
                     </div>
@@ -1041,7 +985,7 @@ export default function EmbeddingsPage() {
                     <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
                       <input
                         type="text"
-                        placeholder="Teach the agent to handle custom chunking strategies..."
+                        placeholder="Teach the agent to handle custom error boundaries..."
                         className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
                         readOnly
                       />
@@ -1067,41 +1011,41 @@ export default function EmbeddingsPage() {
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                     <button
-                      onClick={() => selectFileManually("outcome.ts")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "outcome.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("pool.ts")}
+                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pool.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                     >
-                      <ChevronRight size={14} className={activeFile === "outcome.ts" ? "text-[#75bf00]" : "text-[#555]"} /> outcome.ts
+                      <ChevronRight size={14} className={activeFile === "pool.ts" ? "text-[#75bf00]" : "text-[#555]"} /> pool.ts
                     </button>
                     <button
-                      onClick={() => selectFileManually("capability.ts")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "capability.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("patch.diff")}
+                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "patch.diff" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                     >
-                      <ChevronRight size={14} className={activeFile === "capability.ts" ? "text-[#75bf00]" : "text-[#555]"} /> capability.ts
+                      <ChevronRight size={14} className={activeFile === "patch.diff" ? "text-[#75bf00]" : "text-[#555]"} /> patch.diff
                     </button>
                     <button 
-                      onClick={() => selectFileManually("mission.json")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "mission.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("test.ts")}
+                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                     >
-                      <ChevronRight size={14} className={activeFile === "mission.json" ? "text-[#75bf00]" : "text-[#555]"} /> mission.json
+                      <ChevronRight size={14} className={activeFile === "test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> test.ts
                     </button>
 
                     {/* Project Tree Folder */}
                     <div className="mt-6 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> horos-mission/
+                        <ChevronDown size={14} className="text-[#777]" /> src/db/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
-                          onClick={() => selectFileManually("capability.ts")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "capability.ts" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("patch.diff")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "patch.diff" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          <ChevronRight size={14} className={activeFile === "capability.ts" ? "text-[#75bf00]" : "text-[#444]"} /> capability.ts
+                          <ChevronRight size={14} className={activeFile === "patch.diff" ? "text-[#75bf00]" : "text-[#444]"} /> patch.diff
                         </button>
                         <button 
-                          onClick={() => selectFileManually("mission.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "mission.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("test.ts")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "test.ts" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          <ChevronRight size={14} className={activeFile === "mission.json" ? "text-[#75bf00]" : "text-[#444]"} /> mission.json
+                          <ChevronRight size={14} className={activeFile === "test.ts" ? "text-[#75bf00]" : "text-[#444]"} /> test.ts
                         </button>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
                           <ChevronRight size={14} className="text-[#333]" /> verifier/
@@ -1137,22 +1081,22 @@ export default function EmbeddingsPage() {
                   {/* Editor top tabs */}
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
-                      onClick={() => selectFileManually("encoder.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "encoder.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("pool.ts")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pool.ts" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      encoder.py
+                      pool.ts
                     </button>
                     <button
-                      onClick={() => selectFileManually("serve.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("patch.diff")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "patch.diff" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      serve.sh
+                      patch.diff
                     </button>
                     <button
-                      onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("test.ts")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "test.ts" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      pipeline.json
+                      test.ts
                     </button>
                     <button
                       onClick={() => selectFileManually("Dockerfile")}
@@ -1175,15 +1119,7 @@ export default function EmbeddingsPage() {
                     <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
                       {highlightCode(
                         typedCodeText,
-                        activeFile.endsWith(".py")
-                          ? "python"
-                          : activeFile.endsWith(".sh")
-                            ? "bash"
-                            : activeFile.endsWith(".json")
-                              ? "json"
-                              : activeFile === "Dockerfile"
-                                ? "dockerfile"
-                                : "typescript",
+                        activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : "typescript",
                         !isTypingCode
                       )}
                     </div>
