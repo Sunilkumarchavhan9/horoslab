@@ -17,72 +17,72 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: { title: "Engineer the complete intelligence system.", desc: "Version models, data, context, tools, runtime, compute, workload, environment, and policies together." },
-    closed: { title: "Start with a hosted model.", desc: "Assemble application logic, memory, tools, and state around the provider." },
-    diy: { title: "Build the entire stack.", desc: "Integrate and maintain each component and its dependencies." }
+    runInfra: { title: "Version the complete coding system.", desc: "Code model, repository snapshot, context, tools, sandbox, test environment, runtime, and execution policies." },
+    closed: { title: "Build around a hosted code model.", desc: "Connect repository access, tools, execution, tests, and orchestration in your application." },
+    diy: { title: "Own the entire stack.", desc: "Integrate model serving, repository indexing, tool execution, sandboxing, and test infrastructure." }
   },
   {
     num: "0 2",
     label: "Models",
-    runInfra: { title: "Find the right intelligence for the task.", desc: "Discover, profile, compare, and version open-weight or private models against actual capability requirements." },
-    closed: { title: "Choose from the provider's models.", desc: "Model access and internal serving controls depend on the API." },
-    diy: { title: "Manage model infrastructure yourself.", desc: "Own artifacts, compatibility, profiling, and serving." }
+    runInfra: { title: "Find the right coding model.", desc: "Compare open-weight models and fine-tunes on repository-specific tasks. Track model revisions, chat templates, quantization, and runtime compatibility." },
+    closed: { title: "Choose from provider models.", desc: "Access and internal inference controls depend on the provider." },
+    diy: { title: "Manage coding models yourself.", desc: "Handle model selection, artifacts, quantization, compatibility, and serving." }
   },
   {
     num: "0 3",
     label: "Context",
-    runInfra: { title: "Represent what the agent knows and what remains unknown.", desc: "Track task state, memory, observations, provenance, freshness, and uncertainty across changing environments." },
-    closed: { title: "Supply context through the API.", desc: "Build persistent state and environment awareness around the provider's interface." },
-    diy: { title: "Build your own context system.", desc: "Maintain memory, retrieval, state tracking, and data lineage." }
+    runInfra: { title: "Represent the codebase, not just its files.", desc: "Build context from symbols, imports, call sites, dependencies, issue descriptions, diffs, test results, and repository state." },
+    closed: { title: "Supply repository context yourself.", desc: "Implement code search, retrieval, dependency awareness, and context construction around the API." },
+    diy: { title: "Build repository intelligence.", desc: "Maintain indexing, code navigation, context selection, and synchronization with changing commits." }
   },
   {
     num: "0 4",
     label: "Capabilities",
-    runInfra: { title: "Compose capabilities into executable systems.", desc: "Connect models, tools, skills, data, verifiers, simulators, and physical-world interfaces. Capability and permission remain separate." },
-    closed: { title: "Integrate available tools and APIs.", desc: "Build application logic around the provider's supported capabilities." },
-    diy: { title: "Build and maintain every integration.", desc: "Own compatibility, dependencies, execution, and security boundaries." }
+    runInfra: { title: "Compose the coding toolchain.", desc: "Connect repository search, file editing, terminal, Git, compilers, test runners, debuggers, and CI as versioned capabilities with explicit permissions." },
+    closed: { title: "Integrate exposed tool interfaces.", desc: "Your application coordinates execution, state, and access controls." },
+    diy: { title: "Build and maintain tool adapters.", desc: "Own execution, compatibility, isolation, and integration failures." }
   },
   {
     num: "0 5",
     label: "Workload",
-    runInfra: { title: "Understand the conditions behind performance.", desc: "Capture task distributions, tool trajectories, context lengths, concurrency, failures, resource use, and relevant environmental state." },
-    closed: { title: "Measure exposed request metrics.", desc: "Deeper workload and environment instrumentation depends on your application and provider." },
-    diy: { title: "Instrument and replay workloads yourself.", desc: "Correlate agent behavior with runtime and infrastructure conditions." }
+    runInfra: { title: "Measure real coding tasks.", desc: "Track languages, repository size, issue type, files changed, tool trajectories, retries, test outcomes, execution time, latency, and cost." },
+    closed: { title: "Measure requests and application traces.", desc: "Repository-level outcomes and execution metrics require additional instrumentation." },
+    diy: { title: "Build workload replay and tracing.", desc: "Reproduce tasks and correlate model behavior with tools, tests, and infrastructure." }
   },
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: { title: "Search beyond prompts and model choice.", desc: "Experiment across model, data, context, runtime, tools, kernels, hardware, workload, and environment. Keep changes that meet defined constraints." },
-    closed: { title: "Tune exposed settings.", desc: "Underlying model-serving and infrastructure optimizations remain provider-dependent." },
-    diy: { title: "Build the search and experiment machinery.", desc: "Profile, test, and optimize each layer yourself." }
+    runInfra: { title: "Search the complete coding system.", desc: "Compare models, repository context, retrieval, tool strategy, step budgets, inference settings, runtimes, and hardware against task-success and cost constraints." },
+    closed: { title: "Tune exposed model and tool settings.", desc: "Internal serving and hardware optimization remain provider-dependent." },
+    diy: { title: "Build the optimization engine.", desc: "Profile, experiment, and tune models, context, tool execution, and serving independently." }
   },
   {
     num: "0 7",
     label: "Verification",
-    runInfra: { title: "Establish what the system actually proved.", desc: "Verify task outcomes, tool execution, expected state changes, quality, and operational constraints against evidence." },
-    closed: { title: "Evaluate through available provider and application tooling.", desc: "API responses and model scores alone do not prove end-to-end outcomes." },
-    diy: { title: "Build evaluation and verification separately.", desc: "Maintain test datasets, independent checks, evidence, and regression controls." }
+    runInfra: { title: "Prove what the patch passes.", desc: "Run builds, type checks, tests, static analysis, and task-specific acceptance checks. Preserve the patch, test results, environment, and evidence for each system version." },
+    closed: { title: "Build end-to-end verification around the API.", desc: "Generated code and model-level scores do not establish patch correctness." },
+    diy: { title: "Maintain the verification pipeline.", desc: "Own test datasets, isolated execution, regression checks, and reproducibility." }
   },
   {
     num: "0 8",
     label: "Experience",
-    runInfra: { title: "Turn executions into durable experience.", desc: "Record the mission, reality state, system version, decisions, actions, observations, evidence, consequences, and results. Mine failures and edge cases for lessons." },
-    closed: { title: "Connect the records yourself.", desc: "Provider traces and application logs may not capture the complete outcome and its causes." },
-    diy: { title: "Reconstruct experience across your stack.", desc: "Correlate model, data, deployment, runtime, environment, and outcome records." }
+    runInfra: { title: "Remember what happened during execution.", desc: "Record the issue, repository commit, system version, tool calls, commands, outputs, patch, failures, test evidence, and final outcome. Mine regressions, repeated repair attempts, and failure causes." },
+    closed: { title: "Connect provider traces to repository outcomes.", desc: "Application-level execution history and evidence remain your responsibility." },
+    diy: { title: "Build persistent execution history.", desc: "Correlate model versions, tool traces, patches, test runs, and production regressions across your stack." }
   },
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: { title: "Teach intelligence from observed reality.", desc: "Convert verified experience and ground truth into training signals, world-model learning, and model, policy, skill, runtime, or system improvements. Teach models to represent changing states, learn dynamics, predict consequences, and reduce uncertainty." },
-    closed: { title: "Use available customization mechanisms.", desc: "A continuous learning loop grounded in observed outcomes requires additional capabilities and integration." },
-    diy: { title: "Build the teaching pipeline yourself.", desc: "Manage ground truth, training, world models, policy learning, evaluation, and version promotion." }
+    runInfra: { title: "Teach coding intelligence from verified outcomes.", desc: "Turn test results, compiler failures, review corrections, and accepted patches into training signals, coding skills, improved tool policies, and model or system updates. Teach models how code changes affect software behavior, then evaluate new versions before promotion." },
+    closed: { title: "Use available model customization.", desc: "Fine-tuning and access to training mechanisms depend on the provider. Building the verified learning loop requires additional infrastructure." },
+    diy: { title: "Build the teaching pipeline.", desc: "Manage training data, fine-tuning, preference signals, evaluations, coding skills, and version promotion yourself." }
   },
   {
     num: "1 0",
     label: "Authority",
-    runInfra: { title: "Control what intelligence can do.", desc: "Check mission scope, permissions, credentials, policies, budgets, preconditions, and current state before consequential execution. Record outcomes and verify postconditions." },
-    closed: { title: "Enforce execution permissions in your application.", desc: "Model and tool access do not replace application-level authority." },
-    diy: { title: "Build the authorization boundary.", desc: "Own policy enforcement, approvals, credentials, auditing, state checks, and rollback." }
+    runInfra: { title: "Control what the coding agent can change.", desc: "Enforce repository scope, allowed commands, secret access, network permissions, write access, resource budgets, and approval requirements. Recheck workspace state before consequential changes." },
+    closed: { title: "Enforce permissions in your application.", desc: "Tool access and model capabilities do not replace execution authorization." },
+    diy: { title: "Build the execution boundary.", desc: "Own command restrictions, credentials, approvals, audit records, rollback, and deployment permissions." }
   }
 ];
 
@@ -673,10 +673,10 @@ export default function EmbeddingsPage() {
           <div className="w-full relative z-10 py-24">
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[32px] md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to ship AI agents
+                Three ways to ship coding agents
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                A model API gives you intelligence on demand. An agent framework helps you execute tasks. Horos engineers the system behind the agent, verifies what it achieves, and uses observed outcomes to improve the intelligence itself.
+                Most coding agents generate patches and rely on tests to judge the result. Horos engineers the code model, repository context, tools, runtime, and verification as one system, then uses verified execution outcomes to improve future coding intelligence.
               </p>
             </div>
 
