@@ -59,7 +59,7 @@ const COMPARISON_ROWS = [
 
 const AGENT_CODE = `# Autonomous Software Engineer Agent for Repository Issue Resolution
 import os
-from dhyra_swe import AutonomousSWEAgent, CodebaseGraph
+from horos_swe import AutonomousSWEAgent, CodebaseGraph
 
 # Initialize coding agent with tree-sitter codebase indexing
 agent = AutonomousSWEAgent.from_pretrained("Qwen/Qwen2.5-Coder-32B-Instruct")
@@ -97,7 +97,7 @@ REPO_NAME="org/core-platform"
 ISSUE_ID="142"
 
 # Execute autonomous bug resolution in isolated container
-dhyra-swe-agent resolve \\
+horos-swe-agent resolve \\
   --repo $REPO_NAME \\
   --issue $ISSUE_ID \\
   --model Qwen/Qwen2.5-Coder-32B-Instruct \\
@@ -134,7 +134,7 @@ EXPOSE 8080
 ENTRYPOINT ["/workspace/run_swe.sh"]`;
 
 const EVAL_CODE = `# Evaluation harness: measuring SWE-bench resolution rate and test pass rate
-from dhyra_eval import SWEBenchEvaluator, CodeQualityGate
+from horos_eval import SWEBenchEvaluator, CodeQualityGate
 
 def evaluate_patch_quality(original_repo: str, patch_diff: str) -> dict:
     """Verify coding agent accuracy against SWE-bench criteria."""
@@ -301,7 +301,7 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "How do Autonomous Software Engineers safely test and verify code?",
-    answer: "Dhyra executes all agent-generated patches in isolated Docker sandboxes using your existing test suites (pytest, go test, npm test) and AST linters before creating pull requests.",
+    answer: "Horos executes all agent-generated patches in isolated Docker sandboxes using your existing test suites (pytest, go test, npm test) and AST linters before creating pull requests.",
   },
   {
     question: "Can the agent index large enterprise monorepos and custom SDKs?",
@@ -670,7 +670,7 @@ export default function AutonomousSoftwareEngineersPage() {
               Three ways to build autonomous coding agents
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for AI software engineers across Dhyra, closed copilot APIs, and DIY scripts.
+              Workflow comparison for AI software engineers across Horos, closed copilot APIs, and DIY scripts.
             </p>
           </div>
 
@@ -717,7 +717,7 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                         <HorosLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Autonomous SWE & sandbox verification.</p>
                   </div>
@@ -1274,7 +1274,7 @@ export default function AutonomousSoftwareEngineersPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and repository.
@@ -1484,7 +1484,7 @@ export default function AutonomousSoftwareEngineersPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the task or issue. Dhyra builds and optimizes the SWE stack.
+                Describe the task or issue. Horos builds and optimizes the SWE stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">

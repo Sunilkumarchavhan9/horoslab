@@ -60,7 +60,7 @@ const COMPARISON_ROWS = [
 
 const README_CODE = `# Generative Video & Physics Engine
 
-Autonomous video synthesis and physical world model generation powered by Dhyra.
+Autonomous video synthesis and physical world model generation powered by Horos.
 
 ## Architecture Overview
 - Generative Engines: OpenAI Sora, Runway Gen-3, Luma Dream Machine
@@ -69,7 +69,7 @@ Autonomous video synthesis and physical world model generation powered by Dhyra.
 - Inference Compute: NVIDIA H100 / A100 Clusters & TensorRT-LLM
 
 ## Batch Execution
-$ dhyra-video-agent generate \\
+$ horos-video-agent generate \\
     --prompt-dataset s3://training-prompts/batch-01 \\
     --generative-model OpenAI-Sora \\
     --physics-validation strict`;
@@ -150,7 +150,7 @@ class VideoAuditor:
 
 const RUN_SIMULATION_CODE = `# Generative Video Engine with Physics Verification
 import torch
-from dhyra_video import VideoGeneratorAgent, PhysicsVerifier, VideoSynthesisAST, VideoAuditor
+from horos_video import VideoGeneratorAgent, PhysicsVerifier, VideoSynthesisAST, VideoAuditor
 
 # Initialize video generation agent with OpenAI Sora world model
 agent = VideoGeneratorAgent.from_pretrained("openai/sora-1-worldmodel")
@@ -190,11 +190,11 @@ set -euo pipefail
 PROMPTS_DIR="s3://training-prompts/batch-01"
 WORLD_MODEL="OpenAI-Sora"
 
-echo "[Dhyra Video] Initializing NVIDIA H100 Cluster pipeline..."
-echo "[Dhyra Video] Generating 4K 60fps physically grounded video..."
+echo "[Horos Video] Initializing NVIDIA H100 Cluster pipeline..."
+echo "[Horos Video] Generating 4K 60fps physically grounded video..."
 
 # Execute zero-hallucination video generation with TensorRT acceleration
-dhyra-video-agent generate \\
+horos-video-agent generate \\
   --prompt-dataset $PROMPTS_DIR \\
   --generative-model $WORLD_MODEL \\
   --physics-proofs enabled \\
@@ -207,7 +207,7 @@ const SIMULATION_PIPELINE_CODE = `{
   "agent": "video-physics-generator-v1",
   "generative_model": "openai-sora-worldmodel",
   "edge_runtime": "TensorRT-LLM-CUDA-12.4",
-  "validation_engine": "Dhyra-Physics-Verifier",
+  "validation_engine": "Horos-Physics-Verifier",
   "physics_proofs": true,
   "max_physics_violation_score": 0.005,
   "telemetry_outputs": [
@@ -255,12 +255,12 @@ const REQUIREMENTS_CODE = `torch>=2.4.0
 tensorrt>=10.0.0
 numpy>=1.26.0
 opencv-python-headless>=4.9.0
-dhyra-physical-agent>=2.4.0
+horos-physical-agent>=2.4.0
 rospy2>=0.5.0
 av>=12.0.0`;
 
 const EVAL_PHYSICS_CODE = `# Evaluation harness: measuring video realism and physical accuracy
-from dhyra_eval import VideoEvaluator, PhysicsSafetyGate
+from horos_eval import VideoEvaluator, PhysicsSafetyGate
 
 def evaluate_video_accuracy(prompt_data: str, generation_report: dict) -> dict:
     """Verify generative video physical accuracy and zero-hallucination guarantee."""
@@ -417,8 +417,8 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How does Dhyra synthesize the physical world to train models?",
-    answer: "Dhyra ingests massive datasets of generated video from engines like OpenAI Sora, extracting continuous prediction mechanics, depth maps, and object permanence to create unified 4D spatial training data.",
+    question: "How does Horos synthesize the physical world to train models?",
+    answer: "Horos ingests massive datasets of generated video from engines like OpenAI Sora, extracting continuous prediction mechanics, depth maps, and object permanence to create unified 4D spatial training data.",
   },
   {
     question: "Can the generative physics engine run on local edge clusters?",
@@ -799,7 +799,7 @@ export default function GenerativeVideoAndPhysicsPage() {
               Three ways to decode physical reality
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across Dhyra, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+              Workflow comparison for physical intelligence agents across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
             </p>
           </div>
 
@@ -846,7 +846,7 @@ export default function GenerativeVideoAndPhysicsPage() {
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                         <HorosLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Verified sensor telemetry & 0 spatial drift.</p>
                   </div>
@@ -1407,7 +1407,7 @@ export default function GenerativeVideoAndPhysicsPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
@@ -1617,7 +1617,7 @@ export default function GenerativeVideoAndPhysicsPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the sensor stream ingestion or spatial perception task. Dhyra builds and optimizes the edge physical stack.
+                Describe the sensor stream ingestion or spatial perception task. Horos builds and optimizes the edge physical stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">

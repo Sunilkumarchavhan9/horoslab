@@ -59,7 +59,7 @@ const COMPARISON_ROWS = [
 
 const DIAGNOSE_CODE = `# Continuous Auto-Diagnosis Agent for Kubernetes Infrastructure
 import torch
-from dhyra_sre import AutoDiagnosisAgent, TelemetryStream
+from horos_sre import AutoDiagnosisAgent, TelemetryStream
 
 # Initialize SRE reasoning model with eBPF telemetry hooks
 agent = AutoDiagnosisAgent.from_pretrained("kubernetes/k8s-sre-agent")
@@ -90,7 +90,7 @@ CLUSTER_CONTEXT="k8s-prod-us-east"
 TARGET_NAMESPACE="billing-services"
 
 # Execute real-time eBPF diagnosis and canary patch rollout
-dhyra-agent diagnose \\
+horos-agent diagnose \\
   --cluster $CLUSTER_CONTEXT \\
   --namespace $TARGET_NAMESPACE \\
   --ebpf-tracing enabled \\
@@ -127,7 +127,7 @@ EXPOSE 8080
 ENTRYPOINT ["/agent/remediate.sh"]`;
 
 const EVAL_CODE = `# Evaluation harness: measuring MTTR and RCA accuracy
-from dhyra_eval import IncidentEvaluator, SafetyGate
+from horos_eval import IncidentEvaluator, SafetyGate
 
 def evaluate_remediation_safety(incident_log: dict, generated_patch: dict) -> dict:
     """Verify safety and efficacy of autonomous infrastructure patches."""
@@ -294,7 +294,7 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "How does Continuous Auto-Diagnosis prevent dangerous automated changes?",
-    answer: "Dhyra uses strict safety guardrails including canary dry-runs, policy gate checks, and configurable auto-rollback rules to ensure no patch causes downtime.",
+    answer: "Horos uses strict safety guardrails including canary dry-runs, policy gate checks, and configurable auto-rollback rules to ensure no patch causes downtime.",
   },
   {
     question: "Does it support custom Kubernetes clusters and eBPF observability?",
@@ -663,7 +663,7 @@ export default function ContinuousAutoDiagnosisPage() {
               Three ways to manage infrastructure health
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for auto-diagnosis across Dhyra, closed monitoring APIs, and DIY scripts.
+              Workflow comparison for auto-diagnosis across Horos, closed monitoring APIs, and DIY scripts.
             </p>
           </div>
 
@@ -710,7 +710,7 @@ export default function ContinuousAutoDiagnosisPage() {
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                         <HorosLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Autonomous RCA & self-healing.</p>
                   </div>
@@ -1267,7 +1267,7 @@ export default function ContinuousAutoDiagnosisPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and cluster.
@@ -1477,7 +1477,7 @@ export default function ContinuousAutoDiagnosisPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the incident scope. Dhyra builds and optimizes the diagnosis stack.
+                Describe the incident scope. Horos builds and optimizes the diagnosis stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">

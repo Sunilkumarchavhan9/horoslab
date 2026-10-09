@@ -234,7 +234,7 @@ const COMPARISON_ROWS = [
   }
 ];
 
-const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@dhyra/runtime";
+const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@horos/runtime";
 
 export const PersonalAssistantOutcome = new OutcomeContract({
   name: "PersonalAssistant",
@@ -252,7 +252,7 @@ export const PersonalAssistantOutcome = new OutcomeContract({
   onSuccess: (result) => console.log(\`Task completed securely: \${result}\`)
 });`;
 
-const CAPABILITY_CODE = `import { CapabilityFabric } from "@dhyra/runtime";
+const CAPABILITY_CODE = `import { CapabilityFabric } from "@horos/runtime";
 
 export const LocalContextAPI = CapabilityFabric.register({
   name: "LocalContextAPI",
@@ -310,8 +310,8 @@ __global__ void flash_attention_kernel(
 const SERVE_CODE = `#!/bin/bash
 # serve.sh
 
-# Start the Dhyra serving engine
-dhyra serve \\
+# Start the Horos serving engine
+horos serve \\
   --model Qwen/Qwen2.5-Coder-32B-Instruct \\
   --port 8080 \\
   --tensor-parallel-size 1 \\
@@ -815,7 +815,7 @@ outlines==0.0.46`;
     "docker-compose.yml": DOCKER_COMPOSE_CODE,
     "requirements.txt": REQUIREMENTS_CODE,
     "README.md":
-      "# Dhyra Infra AI Assistant\\n\\nProduction deployment manifest.",
+      "# Horos Infra AI Assistant\\n\\nProduction deployment manifest.",
   };
 
   const [activeFile, setActiveFile] = useState<AIAssistantFile>(
@@ -1758,7 +1758,7 @@ outlines==0.0.46`;
                         <div className="mt-6 flex flex-col gap-1.5">
                           <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
                             <ChevronDown size={14} className="text-[#777]" />{" "}
-                            dhyra-ai-assistant/
+                            horos-ai-assistant/
                           </div>
                           <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                             <button

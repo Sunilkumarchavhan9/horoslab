@@ -69,7 +69,7 @@ Low-latency brains for physical embodiment. Deploy Vision-Language-Action (VLA) 
 - Perception: Multi-modal fusion (cameras, proprioception, tactile)
 
 ## Local Edge Deployment
-$ dhyra-robot-agent deploy \\
+$ horos-robot-agent deploy \\
     --robot-id humanoid-01 \\
     --vla-model google-rt-2 \\
     --kinematics-verifier strict`;
@@ -148,7 +148,7 @@ class SafetyAuditor:
 
 const RUN_EMBODIED_AGENT_CODE = `# VLA Control Loop with Kinematics Verification
 import torch
-from dhyra_robotics import EmbodiedAgent, KinematicsVerifier, HumanoidASTEngine, SafetyAuditor
+from horos_robotics import EmbodiedAgent, KinematicsVerifier, HumanoidASTEngine, SafetyAuditor
 
 # Initialize Vision-Language-Action agent with Google RT-2
 agent = EmbodiedAgent.from_pretrained("google/rt-2-vla-model")
@@ -188,11 +188,11 @@ set -euo pipefail
 SENSOR_TOPIC="ros2://humanoid-01/sensors"
 VLA_MODEL="Google-RT-2"
 
-echo "[Dhyra Robotics] Initializing NVIDIA Jetson Thor Edge cluster..."
-echo "[Dhyra Robotics] Starting 1000Hz Vision-Language-Action control loop..."
+echo "[Horos Robotics] Initializing NVIDIA Jetson Thor Edge cluster..."
+echo "[Horos Robotics] Starting 1000Hz Vision-Language-Action control loop..."
 
 # Execute verifiable robotic policy with TensorRT acceleration
-dhyra-robot-agent deploy \\
+horos-robot-agent deploy \\
   --sensor-stream $SENSOR_TOPIC \\
   --vla-model $VLA_MODEL \\
   --kinematics-guards enabled \\
@@ -205,7 +205,7 @@ const ROBOT_PIPELINE_CODE = `{
   "agent": "humanoid-control-v1",
   "vla_model": "google-rt-2-vla",
   "edge_runtime": "TensorRT-LLM-CUDA-12.4",
-  "safety_engine": "Dhyra-Kinematics-Verifier",
+  "safety_engine": "Horos-Kinematics-Verifier",
   "kinematics_guards": true,
   "max_torque_nm": 120.0,
   "sensor_inputs": [
@@ -253,12 +253,12 @@ const REQUIREMENTS_CODE = `torch>=2.4.0
 tensorrt>=10.0.0
 numpy>=1.26.0
 opencv-python-headless>=4.9.0
-dhyra-physical-agent>=2.4.0
+horos-physical-agent>=2.4.0
 rospy2>=0.5.0
 av>=12.0.0`;
 
 const EVAL_POLICY_CODE = `# Evaluation harness: measuring physical dexterity and task success
-from dhyra_eval import PolicyEvaluator, KinematicsSafetyGate
+from horos_eval import PolicyEvaluator, KinematicsSafetyGate
 
 def evaluate_embodied_policy(task_definition: str, execution_log: dict) -> dict:
     """Verify physical execution accuracy and collision-free guarantees."""
@@ -415,8 +415,8 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How does Dhyra deploy models to physical robots?",
-    answer: "Dhyra compiles massive VLA models down into optimized TensorRT-LLM binaries that run directly on local edge nodes like the NVIDIA Jetson Thor, allowing for sub-10ms inference loops without network dependencies.",
+    question: "How does Horos deploy models to physical robots?",
+    answer: "Horos compiles massive VLA models down into optimized TensorRT-LLM binaries that run directly on local edge nodes like the NVIDIA Jetson Thor, allowing for sub-10ms inference loops without network dependencies.",
   },
   {
     question: "How do you prevent AI hallucinations from causing physical damage?",
@@ -796,7 +796,7 @@ export default function EmbodiedHumanoidsPage() {
               Three ways to decode physical reality
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across Dhyra, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+              Workflow comparison for physical intelligence agents across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
             </p>
           </div>
 
@@ -843,7 +843,7 @@ export default function EmbodiedHumanoidsPage() {
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                         <HorosLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Verified sensor telemetry & 0 spatial drift.</p>
                   </div>
@@ -1404,7 +1404,7 @@ export default function EmbodiedHumanoidsPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
@@ -1614,7 +1614,7 @@ export default function EmbodiedHumanoidsPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the sensor stream ingestion or spatial perception task. Dhyra builds and optimizes the edge physical stack.
+                Describe the sensor stream ingestion or spatial perception task. Horos builds and optimizes the edge physical stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">

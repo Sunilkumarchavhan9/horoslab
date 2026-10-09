@@ -312,7 +312,7 @@ const FAQ_DATA = [
 
 
 export default function EmbeddingsPage() {
-  const [activeTab, setActiveTab] = useState("Dhyra");
+  const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [activeFile, setActiveFile] = useState<RagSearchFile>("retrieve.py");
@@ -717,9 +717,9 @@ export default function EmbeddingsPage() {
                 Three ways to ship cited Q&A
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most teams pick between speed and control. Dhyra keeps both in one workflow.
+                Most teams pick between speed and control. Horos keeps both in one workflow.
                 <br /><br />
-                Deployment comparison for RAG pipelines across Dhyra, closed APIs, and DIY self-hosting.
+                Deployment comparison for RAG pipelines across Horos, closed APIs, and DIY self-hosting.
               </p>
             </div>
 
@@ -784,7 +784,7 @@ export default function EmbeddingsPage() {
                         <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                           <HorosLogo size={28} />
                         </div>
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                        <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                       </div>
                       <p className="text-[#C8C7BA] text-[20px]">Fast path with model control and export.</p>
                     </div>
@@ -1120,7 +1120,7 @@ export default function EmbeddingsPage() {
                     {/* Project Tree Folder */}
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> dhyra-rag-search/
+                        <ChevronDown size={14} className="text-[#777]" /> horos-rag-search/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
@@ -1257,7 +1257,7 @@ export default function EmbeddingsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Cloud size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Managed Dhyra</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Managed Horos</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Our GPUs, per-million-tokens billing from L4 to B200.
                     </p>
@@ -1364,7 +1364,7 @@ export default function EmbeddingsPage() {
             <div />
             <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and GPU.
@@ -1591,7 +1591,7 @@ export default function EmbeddingsPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the goal. Dhyra builds and optimizes the stack.
+                Describe the goal. Horos builds and optimizes the stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
@@ -1678,7 +1678,7 @@ export default function EmbeddingsPage() {
                   <div className="mb-2 text-[#F0EFE2]">
                     <HorosWordmarkLogo className="h-[24px] w-auto" />
                   </div>
-                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 dhyraInfra. All rights reserved.</p>
+                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 horosInfra. All rights reserved.</p>
 
                   {/* Social Icons */}
                   <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
@@ -1729,9 +1729,9 @@ export default function EmbeddingsPage() {
                     </div>
                   </div>
 
-                  {/* Ask AI about Dhyra */}
+                  {/* Ask AI about Horos */}
                   <div className="flex flex-col items-end">
-                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Dhyra</span>
+                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Horos</span>
                     <div className="flex items-center gap-4 text-[#C8C7BA]">
                       <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
                       <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
@@ -1750,8 +1750,8 @@ export default function EmbeddingsPage() {
 
             {/* Bottom Legal / Theme Row */}
             <div className="w-full border-t border-dashed border-[#333] relative">
-              {/* Tiny DHYRA text aligned to the left of the 14% grid line */}
-              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">DHYRA</div>
+              {/* Tiny HOROS text aligned to the left of the 14% grid line */}
+              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
 
               <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
                 <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">

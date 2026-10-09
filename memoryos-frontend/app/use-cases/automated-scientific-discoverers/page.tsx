@@ -178,7 +178,7 @@ const COMPARISON_ROWS = [
 
 const README_CODE = `# Automated Scientific Discoverers Engine
 
-Autonomous physics-guided scientific discovery pipeline powered by Dhyra.
+Autonomous physics-guided scientific discovery pipeline powered by Horos.
 
 ## Architecture Overview
 - Physics Solvers: OpenMM 8.1 CUDA & Quantum ESPRESSO v7.2 DFT
@@ -188,7 +188,7 @@ Autonomous physics-guided scientific discovery pipeline powered by Dhyra.
 - Wet-Lab Automation: Opentrons OT-3 liquid handling protocol triggers
 
 ## Batch Execution
-$ dhyra-science-agent simulate \\
+$ horos-science-agent simulate \\
     --input-dir ./candidates/catalysts_2026 \\
     --solver Quantum-ESPRESSO-v7.2 \\
     --physics-proofs enabled`;
@@ -266,7 +266,7 @@ class ForceFieldAuditor:
 
 const RUN_SIMULATION_CODE = `# Automated Scientific Discoverer with Physics Trajectory Verification
 import torch
-from dhyra_science import ScientificDiscovererAgent, PhysicsVerifier, DFTGraphEngine, ForceFieldAuditor
+from horos_science import ScientificDiscovererAgent, PhysicsVerifier, DFTGraphEngine, ForceFieldAuditor
 
 # Initialize scientific reasoning engine with OpenMM physics verifier
 agent = ScientificDiscovererAgent.from_pretrained("meta/esmfold-3-physics-verifier")
@@ -306,11 +306,11 @@ set -euo pipefail
 DATASET_DIR="./candidates/catalysts_2026"
 SOLVER="Quantum-ESPRESSO-v7.2"
 
-echo "[Dhyra Science] Initializing 8x H100 GPU Cluster CUDA 12.4 solver..."
-echo "[Dhyra Science] Running OpenMM molecular dynamics simulation..."
+echo "[Horos Science] Initializing 8x H100 GPU Cluster CUDA 12.4 solver..."
+echo "[Horos Science] Running OpenMM molecular dynamics simulation..."
 
 # Execute zero-unphysical-drift MD simulation with CUDA acceleration
-dhyra-science-agent simulate \\
+horos-science-agent simulate \\
   --input-dir $DATASET_DIR \\
   --solver $SOLVER \\
   --physics-proofs enabled \\
@@ -370,12 +370,12 @@ const REQUIREMENTS_CODE = `torch>=2.4.0
 openmm>=8.1.1
 numpy>=1.26.0
 biopython>=1.83
-dhyra-science-agent>=2.4.0
+horos-science-agent>=2.4.0
 opentrons>=7.0.0
 scipy>=1.13.0`;
 
 const EVAL_PHYSICS_CODE = `# Evaluation harness: measuring trajectory precision and physics conservation
-from dhyra_eval import TrajectoryEvaluator, PhysicsSafetyGate
+from horos_eval import TrajectoryEvaluator, PhysicsSafetyGate
 
 def evaluate_discoverer_accuracy(pdb_structure: str, sim_report: dict) -> dict:
     """Verify scientific discoverer accuracy and energy conservation guarantee."""
@@ -676,7 +676,7 @@ const FAQ_DATA = [
     question:
       "How do Automated Scientific Discoverers guarantee zero unphysical drift?",
     answer:
-      "Dhyra uses GPU-accelerated OpenMM and Quantum ESPRESSO physics solvers combined with mathematical force field verification to ensure every atomic trajectory and energy state adheres to thermodynamics.",
+      "Horos uses GPU-accelerated OpenMM and Quantum ESPRESSO physics solvers combined with mathematical force field verification to ensure every atomic trajectory and energy state adheres to thermodynamics.",
   },
   {
     question:
@@ -1105,7 +1105,7 @@ export default function AutomatedScientificDiscoverersPage() {
               Three ways to build automated scientific discoverers
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for scientific discovery agents across Dhyra,
+              Workflow comparison for scientific discovery agents across Horos,
               closed LLM APIs, and DIY Slurm scripts.
             </p>
           </div>
@@ -1158,7 +1158,7 @@ export default function AutomatedScientificDiscoverersPage() {
                         <HorosLogo size={28} />
                       </div>
                       <span className="text-[28px] font-medium text-[#F0EFE2]">
-                        Dhyra
+                        Horos
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">
@@ -1928,7 +1928,7 @@ export default function AutomatedScientificDiscoverersPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and simulation
@@ -2305,7 +2305,7 @@ export default function AutomatedScientificDiscoverersPage() {
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
                 Describe the physics simulation or molecular discovery task.
-                Dhyra builds and optimizes the GPU science stack.
+                Horos builds and optimizes the GPU science stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">

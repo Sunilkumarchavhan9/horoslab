@@ -59,7 +59,7 @@ const COMPARISON_ROWS = [
 
 const README_CODE = `# Physical Reality Decoding Engine
 
-Autonomous sensor-stream ingestion and physical AI world model runtime powered by Dhyra.
+Autonomous sensor-stream ingestion and physical AI world model runtime powered by Horos.
 
 ## Architecture Overview
 - Perception Engines: NVIDIA Cosmos-1 WorldModel & Meta V-JEPA-2
@@ -69,7 +69,7 @@ Autonomous sensor-stream ingestion and physical AI world model runtime powered b
 - Edge Compute: NVIDIA Jetson Thor / Orin & TensorRT CUDA 12.4 acceleration
 
 ## Batch Execution
-$ dhyra-physical-agent decode \\
+$ horos-physical-agent decode \\
     --input-streams rtsp://camera-cluster-01/feed \\
     --world-model NVIDIA-Cosmos-1 \\
     --spatial-proofs enabled`;
@@ -150,7 +150,7 @@ class SensorFusionAuditor:
 
 const RUN_SIMULATION_CODE = `# Physical Reality Decoding Engine with Spatial Telemetry Verification
 import torch
-from dhyra_physical import PhysicalDecoderAgent, SpatialVerifier, SpatialASTEngine, SensorFusionAuditor
+from horos_physical import PhysicalDecoderAgent, SpatialVerifier, SpatialASTEngine, SensorFusionAuditor
 
 # Initialize physical perception agent with NVIDIA Cosmos-1 world model
 agent = PhysicalDecoderAgent.from_pretrained("nvidia/cosmos-1-vision-worldmodel")
@@ -190,11 +190,11 @@ set -euo pipefail
 STREAMS_DIR="rtsp://edge-gateway-cluster/sensors"
 WORLD_MODEL="NVIDIA-Cosmos-1"
 
-echo "[Dhyra Physical] Initializing NVIDIA Jetson Thor Edge CUDA 12.4 pipeline..."
-echo "[Dhyra Physical] Processing 60fps multi-camera & LiDAR streams..."
+echo "[Horos Physical] Initializing NVIDIA Jetson Thor Edge CUDA 12.4 pipeline..."
+echo "[Horos Physical] Processing 60fps multi-camera & LiDAR streams..."
 
 # Execute zero-drift physical reality decoding with TensorRT acceleration
-dhyra-physical-agent decode \\
+horos-physical-agent decode \\
   --input-streams $STREAMS_DIR \\
   --world-model $WORLD_MODEL \\
   --spatial-proofs enabled \\
@@ -255,12 +255,12 @@ const REQUIREMENTS_CODE = `torch>=2.4.0
 tensorrt>=10.0.0
 numpy>=1.26.0
 opencv-python-headless>=4.9.0
-dhyra-physical-agent>=2.4.0
+horos-physical-agent>=2.4.0
 rospy2>=0.5.0
 av>=12.0.0`;
 
 const EVAL_PHYSICS_CODE = `# Evaluation harness: measuring spatial perception and sensor decoding accuracy
-from dhyra_eval import PerceptionEvaluator, SpatialSafetyGate
+from horos_eval import PerceptionEvaluator, SpatialSafetyGate
 
 def evaluate_decoder_accuracy(sensor_feed: str, decoding_report: dict) -> dict:
     """Verify physical reality decoding accuracy and spatial zero-drift guarantee."""
@@ -417,8 +417,8 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How does Dhyra decode physical reality from heterogeneous sensor streams?",
-    answer: "Dhyra ingests real-time RTSP video, LiDAR point clouds, IMU telemetry, and thermal arrays into a unified 4D spatial representation, continuous prediction engine, and ground-truth observation verifier.",
+    question: "How does Horos decode physical reality from heterogeneous sensor streams?",
+    answer: "Horos ingests real-time RTSP video, LiDAR point clouds, IMU telemetry, and thermal arrays into a unified 4D spatial representation, continuous prediction engine, and ground-truth observation verifier.",
   },
   {
     question: "Can the physical reality engine run on edge hardware like NVIDIA Jetson Orin or Thor?",
@@ -799,7 +799,7 @@ export default function DecodingPhysicalRealityPage() {
               Three ways to decode physical reality
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across Dhyra, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+              Workflow comparison for physical intelligence agents across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
             </p>
           </div>
 
@@ -846,7 +846,7 @@ export default function DecodingPhysicalRealityPage() {
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                         <HorosLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Verified sensor telemetry & 0 spatial drift.</p>
                   </div>
@@ -1407,7 +1407,7 @@ export default function DecodingPhysicalRealityPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
@@ -1617,7 +1617,7 @@ export default function DecodingPhysicalRealityPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the sensor stream ingestion or spatial perception task. Dhyra builds and optimizes the edge physical stack.
+                Describe the sensor stream ingestion or spatial perception task. Horos builds and optimizes the edge physical stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">

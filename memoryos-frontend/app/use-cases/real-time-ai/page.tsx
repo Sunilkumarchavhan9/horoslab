@@ -58,7 +58,7 @@ const COMPARISON_ROWS = [
 ];
 
 
-const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@dhyra/runtime";
+const OUTCOME_CODE = `import { IntentEngine, OutcomeContract } from "@horos/runtime";
 
 export const AIAgentOutcome = new OutcomeContract({
   name: "RealTimeStreaming",
@@ -76,7 +76,7 @@ export const AIAgentOutcome = new OutcomeContract({
   onSuccess: (result) => console.log(\`Agent workflow completed: \${result}\`)
 });`;
 
-const CAPABILITY_CODE = `import { CapabilityFabric } from "@dhyra/runtime";
+const CAPABILITY_CODE = `import { CapabilityFabric } from "@horos/runtime";
 
 export const AgentToolsAPI = CapabilityFabric.register({
   name: "AgentToolsAPI",
@@ -138,8 +138,8 @@ __global__ void flash_attention_kernel(
 const SERVE_CODE = `#!/bin/bash
 # serve.sh
 
-# Start the Dhyra serving engine
-dhyra serve \\
+# Start the Horos serving engine
+horos serve \\
   --model Qwen/Qwen2.5-Coder-32B-Instruct \\
   --port 8080 \\
   --tensor-parallel-size 1 \\
@@ -303,7 +303,7 @@ const FAQ_DATA = [
 ];
 
 export default function RealTimePage() {
-  const [activeTab, setActiveTab] = useState("Dhyra");
+  const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
   type RealTimeFile =
@@ -523,7 +523,7 @@ aiohttp==3.10.5`;
   const FILE_CODE_MAP: Record<string, string> = {
     "stream.py": "import asyncio\nimport aiohttp\n\nasync def stream_response():\n    async with aiohttp.ClientSession() as session:\n        async with session.post('http://localhost:8000/v1/chat/completions', json={\n            'model': 'meta-llama/Llama-3.1-8B-Instruct',\n            'messages': [{'role': 'user', 'content': 'Hello'}],\n            'stream': True\n        }) as response:\n            async for chunk in response.content.iter_chunked(1024):\n                print(chunk.decode('utf-8'))",
     "config.yaml": "model: meta-llama/Llama-3.1-8B-Instruct\ntensor_parallel_size: 1\ngpu_memory_utilization: 0.9\nmax_model_len: 8192\nkv_cache_dtype: auto",
-    "webrtc.ts": "import { WebRTCClient } from '@dhyra/webrtc';\n\nconst client = new WebRTCClient({\n  url: 'wss://localhost:8080',\n  onTrack: (track) => {\n    console.log('Received audio track:', track);\n  }\n});",
+    "webrtc.ts": "import { WebRTCClient } from '@horos/webrtc';\n\nconst client = new WebRTCClient({\n  url: 'wss://localhost:8080',\n  onTrack: (track) => {\n    console.log('Received audio track:', track);\n  }\n});",
     "serve.sh": SERVE_CODE,
     "pipeline.json": PIPELINE_CODE,
     "Dockerfile": DOCKERFILE_CODE,
@@ -868,7 +868,7 @@ aiohttp==3.10.5`;
             Three ways to ship <span className="text-[#75bf00]">real-time streaming.</span>
           </h2>
           <p className="text-[#C8C7BA] text-base md:text-[17px] lg:text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-            Workflow comparison for streaming pipelines across Dhyra, closed-source APIs, and DIY orchestration.
+            Workflow comparison for streaming pipelines across Horos, closed-source APIs, and DIY orchestration.
           </p>
         </div>
 
@@ -905,7 +905,7 @@ aiohttp==3.10.5`;
                     <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-md">
                       <HorosLogo size={28} />
                     </div>
-                    <span className="text-xl md:text-2xl lg:text-[28px] font-medium text-[#75bf00]">Dhyra</span>
+                    <span className="text-xl md:text-2xl lg:text-[28px] font-medium text-[#75bf00]">Horos</span>
                   </div>
                   <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px]">OpenAI-compatible endpoints with bare-metal model control.</p>
                 </div>
@@ -1411,14 +1411,14 @@ aiohttp==3.10.5`;
           </div>
         </div>
 
-        {/* What Dhyra tunes Section */}
+        {/* What Horos tunes Section */}
         <div className="w-full relative z-10 pt-24">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full" />
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
               <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#C8C7BA] mb-4 text-center">
-                What Dhyra tunes for Real-Time
+                What Horos tunes for Real-Time
               </h2>
               <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] font-sans leading-relaxed text-center max-w-2xl mb-16">
                 Every stage of the pipeline, retuned per model and GPU.

@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 import { isClerkEnabled } from "./lib/clerk";
 
 const isDeveloperProtectedRoute = createRouteMatcher([
-  "/mission-control",
-  "/mission-control/(.*)",
   "/playground",
 ]);
 

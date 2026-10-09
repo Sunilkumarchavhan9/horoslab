@@ -59,7 +59,7 @@ const COMPARISON_ROWS = [
 
 const VERIFY_CODE = `# Verifiable Legal Agent with Mathematical ZK Citation Proofs
 import torch
-from dhyra_legal import VerifiableLegalAgent, ZKProofVerifier, StatutoryGraph
+from horos_legal import VerifiableLegalAgent, ZKProofVerifier, StatutoryGraph
 
 # Initialize legal reasoning engine with ZK citation verifier
 agent = VerifiableLegalAgent.from_pretrained("openai/gpt-4o-legal-verifier")
@@ -95,7 +95,7 @@ CONTRACT_DIR="./contracts/m_and_a_2026"
 JURISDICTION="US-SEC-Federal"
 
 # Execute zero-hallucination contract audit with ZK proof generation
-dhyra-legal-agent audit \\
+horos-legal-agent audit \\
   --input-dir $CONTRACT_DIR \\
   --jurisdiction $JURISDICTION \\
   --zk-proofs enabled \\
@@ -127,7 +127,7 @@ EXPOSE 8080
 ENTRYPOINT ["/legal/run_legal_audit.sh"]`;
 
 const EVAL_CODE = `# Evaluation harness: measuring citation precision and ZK proof latency
-from dhyra_eval import CitationEvaluator, ZKSafetyGate
+from horos_eval import CitationEvaluator, ZKSafetyGate
 
 def evaluate_legal_accuracy(original_contract: str, audit_report: dict) -> dict:
     """Verify legal agent accuracy and zero-hallucination guarantee."""
@@ -294,7 +294,7 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "How do Verifiable Legal Agents guarantee zero hallucinations?",
-    answer: "Dhyra uses deterministic statutory AST graphs combined with ZK-SNARK mathematical citation proofs to ensure every case citation and statutory quote is 100% verified.",
+    answer: "Horos uses deterministic statutory AST graphs combined with ZK-SNARK mathematical citation proofs to ensure every case citation and statutory quote is 100% verified.",
   },
   {
     question: "Can the agent audit complex M&A, IP, and regulatory compliance documents?",
@@ -660,7 +660,7 @@ export default function VerifiableLegalAgentsPage() {
               Three ways to build verifiable legal AI
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for legal agents across Dhyra, closed LLM APIs, and DIY prompt chains.
+              Workflow comparison for legal agents across Horos, closed LLM APIs, and DIY prompt chains.
             </p>
           </div>
 
@@ -707,7 +707,7 @@ export default function VerifiableLegalAgentsPage() {
                       <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
                         <HorosLogo size={28} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Dhyra</span>
+                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[20px]">Verifiable ZK proofs & 0 hallucination.</p>
                   </div>
@@ -1264,7 +1264,7 @@ export default function VerifiableLegalAgentsPage() {
               <div />
               <div className="min-w-0">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  What Dhyra tunes
+                  What Horos tunes
                 </h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
                   Every stage of the pipeline, retuned per model and jurisdiction.
@@ -1474,7 +1474,7 @@ export default function VerifiableLegalAgentsPage() {
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the contract or compliance task. Dhyra builds and optimizes the ZK legal stack.
+                Describe the contract or compliance task. Horos builds and optimizes the ZK legal stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
