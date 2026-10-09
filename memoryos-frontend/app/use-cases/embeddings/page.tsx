@@ -515,8 +515,8 @@ export default function EmbeddingsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-6 max-w-lg">
                   <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
-                    Embeddings in.<br />
-                    <span className="bg-[#75bf00] text-black px-2 py-0 mt-2 inline-block relative">
+                    Embeddings in.{" "}
+                    <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
                       Reranked results out.
                     </span>
                   </h1>
