@@ -180,15 +180,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "BAAI/bge-m3", name: "BGE-M3", author: "BAAI", downloads: "568M", tag: "Embed" },
-  { id: "BAAI/bge-large-en-v1.5", name: "BGE-Large EN v1.5", author: "BAAI", downloads: "335M", tag: "Embed" },
-  { id: "BAAI/bge-reranker-v2-m3", name: "BGE Reranker v2-m3", author: "BAAI", downloads: "568M", tag: "Rerank" },
-  { id: "jinaai/jina-embeddings-v3", name: "Jina Embeddings v3", author: "Jina AI", downloads: "570M", tag: "Embed" },
-  { id: "mixedbread-ai/mxbai-embed-large-v1", name: "Mixedbread Embed Large", author: "Mixedbread AI", downloads: "335M", tag: "Embed" },
-  { id: "Snowflake/snowflake-arctic-embed-l", name: "Arctic Embed L", author: "Snowflake", downloads: "335M", tag: "Embed" },
-  { id: "Alibaba-NLP/gte-Qwen2-1.5B-instruct", name: "GTE-Qwen2 1.5B", author: "Alibaba", downloads: "1.5B", tag: "Embed" },
-  { id: "intfloat/e5-mistral-7b-instruct", name: "E5 Mistral 7B", author: "Intfloat", downloads: "7B", tag: "Embed" },
-  { id: "nomic-ai/nomic-embed-text-v1.5", name: "Nomic Embed v1.5", author: "Nomic AI", downloads: "137M", tag: "Embed" }
+  { id: "mistralai/Devstral-2-123B-Instruct-2512", name: "Devstral 2 123B", author: "Mistral", downloads: "2.1M", tag: "Code" },
+  { id: "mistralai/Devstral-Small-2-24B-Instruct-2512", name: "Devstral Small 24B", author: "Mistral", downloads: "5M", tag: "Code" },
+  { id: "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8", name: "Qwen3 Coder 480B", author: "Qwen", downloads: "10M", tag: "Code" },
+  { id: "Qwen/Qwen2.5-Coder-32B-Instruct", name: "Qwen2.5 Coder 32B", author: "Qwen", downloads: "4M", tag: "Code" },
+  { id: "deepseek-ai/DeepSeek-Coder-V2-Instruct", name: "DeepSeek Coder V2", author: "DeepSeek", downloads: "8M", tag: "Code" },
+  { id: "meta-llama/CodeLlama-70b-Instruct-hf", name: "CodeLlama 70B", author: "Meta", downloads: "3M", tag: "Code" },
+  { id: "bigcode/starcoder2-15b", name: "StarCoder 2 15B", author: "BigCode", downloads: "2M", tag: "Code" },
+  { id: "Phind/Phind-CodeLlama-34B-v2", name: "Phind CodeLlama", author: "Phind", downloads: "1M", tag: "Code" },
+  { id: "WizardLM/WizardCoder-Python-34B-V1.0", name: "WizardCoder 34B", author: "WizardLM", downloads: "1.5M", tag: "Code" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -248,16 +248,20 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I run an embedder and reranker on the same GPU?",
-    answer: "Yes. Our fused memory architecture allows you to run a massive encoder like BGE-M3 alongside a cross-encoder reranker on a single H100 or L40S, eliminating network hops between models.",
+    question: "Do I have to use a specific model?",
+    answer: "No. You can use Devstral, Qwen Coder, DeepSeek, or any custom fine-tune. Horos manages the context injection and tool execution regardless of the underlying LLM."
   },
   {
-    question: "How do you handle massive document ingestion?",
-    answer: "We use aggressive sequence packing and continuous batching. Variable length documents are packed natively to avoid zero-padding waste, dramatically increasing throughput.",
+    question: "Can I run the execution environment locally?",
+    answer: "Yes. You can use docker-compose to run the complete Horos sandbox and verifier on your local workstation."
   },
   {
-    question: "Do you support direct Vector DB connections?",
-    answer: "Yes. Our pipelines feature zero-copy network paths that stream embeddings directly into pgvector, Milvus, Qdrant, or Pinecone without hitting intermediary APIs.",
+    question: "How does it handle tests and builds?",
+    answer: "Horos isolates execution. It mounts your codebase into a sandbox, applies the proposed patch, and runs your native test commands (e.g. npm run test). The outputs are fed back into the agent loop."
+  },
+  {
+    question: "Is my code sent to third-party servers?",
+    answer: "If you self-host the LLM and the Horos execution engine, your code never leaves your VPC. You have complete data sovereignty."
   }
 ];
 
@@ -1186,10 +1190,10 @@ export default function EmbeddingsPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-[32px] md:text-[44px] font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  Supported HF embedding models work
+                  Supported open coding models
                 </h2>
                 <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
-                  Supported embedding and reranking models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
+                  Supported code models on Hugging Face integrate directly with Horos. Use any compatible completion API or self-hosted weight.
                 </p>
 
                 {/* Search Bar */}
@@ -1201,7 +1205,7 @@ export default function EmbeddingsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any voice-compatible model on Hugging Face"
+                    placeholder="Search any compatible coding model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[15px] pl-11 pr-14 py-3.5 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -1257,10 +1261,10 @@ export default function EmbeddingsPage() {
             <div />
             <div className="min-w-0">
               <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                What horosInfra tunes
+                What Horos tunes
               </h2>
               <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                Every stage of the pipeline, retuned for optimal embedding throughput and vector search.
+                Every component of your agentic infrastructure, optimized for verifiable code changes at scale.
               </p>
 
               {/* Tunes Grid */}
@@ -1272,9 +1276,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <ScanSearch size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Batch indexing</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Repository indexing</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Zero-padding sequence packing for offline indexing. Optimal context chunking on L4.
+                      Dependency graphing and symbol resolution. Precise context injection into agent prompts.
                     </p>
                   </div>
 
@@ -1282,9 +1286,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Zap size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Streaming embed</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Test runner integration</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Zero-cold-start embedding via CapabilityFabric. Sub-10ms memory retrieval.
+                      Direct feedback loops from vitest, pytest, and compilers. Fast-failing patch attempts.
                     </p>
                   </div>
 
@@ -1292,9 +1296,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Sliders size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Reranker fusion</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Patch evaluation</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      BGE and E5 cross-encoders fused natively on-GPU. Single execution graph for top-k.
+                      Syntax validation, linting checks, and regression tests executed in isolated sandboxes.
                     </p>
                   </div>
 
@@ -1303,9 +1307,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Layers size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Embedding serving sweep</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">LLM execution policies</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Auto-tune INT8/FP8 quantization and token limits. Maximum recall on MTEB benchmarks.
+                      Auto-tune context windows, retry budgets, and model parameters for highest success rates.
                     </p>
                   </div>
 
@@ -1313,9 +1317,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Database size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Vector DB sync</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">CI/CD pipeline sync</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Zero-copy network transfer directly to pgvector. Fully managed vector sink.
+                      Direct pull request generation with attached test evidence. Managed integration flow.
                     </p>
                   </div>
 
@@ -1323,9 +1327,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Workflow size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Per-stage scheduling</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Workspace isolation</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Dynamic GPU allocation via IntentEngine. 100% compute saturation during retrieval.
+                      Ephemeral containers for every task execution. 100% safe parallel sandbox isolation.
                     </p>
                   </div>
 
