@@ -209,10 +209,7 @@ const TSCONFIG_CODE = `{
 }`;
 
 
-const REQUIREMENTS_CODE = `torch>=2.1.0
-vllm==0.4.0
-transformers>=4.38.0
-swe-bench-eval`;
+
 
 const EVAL_RANKING_CODE = `{
   "model": "Qwen3-Coder-32B",
