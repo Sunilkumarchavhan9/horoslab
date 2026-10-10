@@ -1167,72 +1167,81 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 py-6 pl-6 pr-2 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2 w-full pr-4">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">MISSION ASSETS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 py-6 px-4 flex flex-col items-start gap-4 overflow-hidden pointer-events-auto chat-scroll min-w-0">
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2 w-full">
+                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase shrink-0">MISSION ASSETS</span>
+                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm shrink-0">3</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#75bf00] font-semibold">
+                  <div className="flex flex-col gap-1.5 text-[13px] font-mono w-full">
+                    <div className="flex flex-col gap-0.5 w-full">
+                      <div className="px-2 py-1.5 text-[#75bf00] font-semibold truncate w-full">
                         tool_definitions/
                       </div>
-                      <div className="pl-6 flex flex-col gap-0.5 mt-1">
+                      <div className="pl-3 flex flex-col gap-0.5 mt-1 w-full">
                         <button
                           onClick={() => selectFileManually("memory.py")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "memory.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "memory.py" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} memory.py
+                          {activeFile === "memory.py" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>} 
+                          <span className="truncate">memory.py</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("policies.py")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "policies.py" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} policies.py
+                          {activeFile === "policies.py" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          <span className="truncate">policies.py</span>
                         </button>
                       </div>
                     </div>
                     
-                    <div className="mt-4 flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#C8C7BA] font-semibold">
+                    <div className="mt-4 flex flex-col gap-0.5 w-full">
+                      <div className="px-2 py-1.5 text-[#C8C7BA] font-semibold truncate w-full">
                         horos-ai-assistant/
                       </div>
-                      <div className="pl-6 flex flex-col gap-0.5 mt-1">
+                      <div className="pl-3 flex flex-col gap-0.5 mt-1 w-full">
                         <button
                           onClick={() => selectFileManually("serve.sh")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "serve.sh" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} serve.sh
+                          {activeFile === "serve.sh" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          <span className="truncate">serve.sh</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("pipeline.py")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "pipeline.py" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} pipeline.py
+                          {activeFile === "pipeline.py" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          <span className="truncate">pipeline.py</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "Dockerfile" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} Dockerfile
+                          {activeFile === "Dockerfile" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          <span className="truncate">Dockerfile</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("docker-compose.yml")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "docker-compose.yml" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} docker-compose.yml
+                          {activeFile === "docker-compose.yml" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          <span className="truncate">docker-compose.yml</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("requirements.txt")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "requirements.txt" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} requirements.txt
+                          {activeFile === "requirements.txt" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          <span className="truncate">requirements.txt</span>
                         </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold">
-                          <span className="w-[14px]"></span> models/
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold w-full">
+                          <span className="w-[14px] shrink-0"></span>
+                          <span className="truncate">models/</span>
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold">
-                          <span className="w-[14px]"></span> evals/
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold w-full">
+                          <span className="w-[14px] shrink-0"></span>
+                          <span className="truncate">evals/</span>
                         </div>
                       </div>
                     </div>
