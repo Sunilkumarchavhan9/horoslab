@@ -574,22 +574,22 @@ export default function EmbeddingsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-6 max-w-lg">
                   <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
-                    Cited Q&A you<br />
-                    can <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      audit
-                    </span> on your<br />
-                    own corpus.
+                    Research that<br />
+                    ends in <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
+                      evidence,
+                    </span><br />
+                    not summaries.
                   </h1>
                   <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-md mt-2">
-                    Hybrid retrieval, grounded generation, citation spans. Eval on your gold set, not the vendor's marketing page.
+                    Horos agents connect findings across papers, code, and datasets, turn knowledge gaps into testable hypotheses, and run reproducible experiments. Every result carries its methods, observations, and supporting evidence.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy this pipeline <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Run a research mission <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the stack <ChevronRight size={16} />
+                      Explore the research stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
@@ -1784,5 +1784,8 @@ export default function EmbeddingsPage() {
     </div>
   );
 }
+
+
+
 
 
