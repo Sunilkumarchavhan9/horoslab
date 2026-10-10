@@ -946,15 +946,9 @@ export default function EmbeddingsPage() {
                 <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1">
-                        Build a coding agent. Qwen3-Coder for repository-level coding with tool calling. Serve with vLLM on a single L4.
+                      <p className="text-[#C8C7BA] text-[13px] font-medium leading-[26px] mb-1">
+                        Build a coding agent. <span className="inline-flex items-center gap-1 bg-[#222] border border-[#333] px-1.5 py-0.5 rounded-[4px] mx-0.5"><QwenLogo size={12} /> Qwen3-Coder</span> for repository-level coding with tool calling. Serve with <span className="inline-flex items-center gap-1 bg-[#222] border border-[#333] px-1.5 py-0.5 rounded-[4px] mx-0.5"><VLLMLogo size={12} /> vLLM</span> on a single <span className="inline-flex items-center gap-1 bg-[#222] border border-[#333] px-1.5 py-0.5 rounded-[4px] mx-0.5"><NvidiaLogo size={12} /> L4</span>.
                       </p>
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><QwenLogo size={12} /> Qwen3-Coder</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><VLLMLogo size={12} /> vLLM</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><Package size={12} /> Docker</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded-[4px] text-[#C8C7BA] text-[11px] font-mono"><NvidiaLogo size={12} /> 1x L4</span>
-                      </div>
                     </div>
 
                     {/* Step 1: Agent Initial Ack */}
