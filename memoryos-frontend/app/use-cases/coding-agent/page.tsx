@@ -1417,7 +1417,7 @@ export default function EmbeddingsPage() {
                 What Horos tunes
               </h2>
               <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                Every component of your agentic infrastructure, optimized for verifiable code changes at scale.
+                Every layer of the coding system, optimized against repository tasks, executable results, and your quality, latency, and cost constraints.
               </p>
 
               {/* Tunes Grid */}
@@ -1429,9 +1429,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <ScanSearch size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Repository indexing</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">01 Repository context</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Dependency graphing and symbol resolution. Precise context injection into agent prompts.
+                      Code symbols, imports, call sites, dependencies, issues, and diffs. Tune which information the agent uses for each coding task and repository revision.
                     </p>
                   </div>
 
@@ -1439,9 +1439,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Zap size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Test runner integration</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">02 Coding models and tools</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Direct feedback loops from vitest, pytest, and compilers. Fast-failing patch attempts.
+                      Compare coding models, tool schemas, action budgets, and retry strategies. Measure how each configuration affects code changes and task completion.
                     </p>
                   </div>
 
@@ -1449,9 +1449,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Sliders size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Patch evaluation</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">03 Execution environment</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Syntax validation, linting checks, and regression tests executed in isolated sandboxes.
+                      Control dependencies, compilers, test runners, resource limits, and permissions. Reproduce coding experiments in versioned environments.
                     </p>
                   </div>
 
@@ -1460,9 +1460,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Layers size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">LLM execution policies</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">04 Patch verification</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Auto-tune context windows, retry budgets, and model parameters for highest success rates.
+                      Run builds, type checks, tests, and regression checks. Preserve each patch, execution result, and supporting evidence.
                     </p>
                   </div>
 
@@ -1470,9 +1470,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Database size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">CI/CD pipeline sync</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">05 Workload optimization</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Direct pull request generation with attached test evidence. Managed integration flow.
+                      Replay repository tasks and compare task success, tool failures, latency, token cost, GPU memory, and runtime configuration.
                     </p>
                   </div>
 
@@ -1480,9 +1480,9 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Workflow size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Workspace isolation</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">06 Experience to teaching</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Ephemeral containers for every task execution. 100% safe parallel sandbox isolation.
+                      Turn test failures, accepted patches, review corrections, and regressions into new evaluations, coding skills, and model or system improvements. Evaluate new versions before promotion.
                     </p>
                   </div>
 
