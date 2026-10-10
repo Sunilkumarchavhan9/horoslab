@@ -95,56 +95,92 @@ const TEST_CODE = `import { test, expect } from 'vitest';\nimport { DBConnection
 
 const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`;
 
-const AGENT_CORE_CODE = `import { VLLMEngine } from '../server/vllm';
-import { ToolRegistry } from './tools';
+const MEMORY_PY_CODE = `def initialize_memory(agent_id, session_token):
+    """
+    Sets up the persistent memory context for the agent.
+    Connects to the MemoryOS backend to retrieve historical execution paths.
+    """
+    import requests
+    response = requests.get(
+        f"http://memoryos-backend.local/api/v1/memory/{agent_id}",
+        headers={"Authorization": f"Bearer {session_token}"}
+    )
+    if response.status_code == 200:
+        return response.json().get("context", {})
+    raise Exception("Failed to initialize memory")`;
 
-export class CodingAgent {
-  constructor(private engine: VLLMEngine, private tools: ToolRegistry) {}
+const POLICIES_PY_CODE = `def verify_tool_calling_policy(tool_name, arguments, auth_level):
+    """
+    Validates if the agent has permissions to execute the given tool.
+    Enforces repository-level boundaries.
+    """
+    RESTRICTED_TOOLS = ["delete_repository", "modify_secrets"]
+    
+    if tool_name in RESTRICTED_TOOLS and auth_level < 3:
+        return False, "Permission denied for restricted tool."
+        
+    return True, "Policy check passed."`;
 
-  async executeTask(prompt: string) {
-    const context = await this.tools.call('search_repository', { query: prompt });
-    return this.engine.generate(prompt, context);
-  }
-}`;
+const SERVE_SH_CODE = `#!/bin/bash
+set -e
 
-const TOOLS_CODE = `export class ToolRegistry {
-  private tools: Map<string, Function> = new Map();
+echo "Starting Horos AI Assistant..."
+echo "Loading Qwen3-Coder model onto L4 GPU..."
 
-  register(name: string, fn: Function) {
-    this.tools.set(name, fn);
-  }
+# Boot vLLM with Qwen3-Coder
+python3 -m vllm.entrypoints.openai.api_server \\
+    --model Qwen/Qwen3-Coder-32B-Instruct \\
+    --tensor-parallel-size 1 \\
+    --gpu-memory-utilization 0.95 \\
+    --max-model-len 32768 \\
+    --port 8000 &
 
-  async call(name: string, args: any) {
-    if (!this.tools.has(name)) throw new Error(\`Tool \${name} not found\`);
-    return this.tools.get(name)!(args);
-  }
-}`;
+echo "vLLM engine started. Booting agent API..."
+python3 pipeline.py --host 0.0.0.0 --port 8080`;
 
-const VLLM_ENGINE_CODE = `export class VLLMEngine {
-  async generate(prompt: string, context: any) {
-    // Connect to vLLM server on L4 GPU
-    console.log("Generating with Qwen3-Coder-32B via vLLM...");
-    return "function solve() { return true; }";
-  }
-}`;
+const PIPELINE_PY_CODE = `from tool_definitions.memory import initialize_memory
+from tool_definitions.policies import verify_tool_calling_policy
+from vllm import LLM, SamplingParams
 
-const TEST_TOOL_CALLING_CODE = `import { test, expect } from 'vitest';
-import { ToolRegistry } from '../src/agent/tools';
+class AgentPipeline:
+    def __init__(self, agent_id):
+        self.agent_id = agent_id
+        self.context = initialize_memory(agent_id, "mock_token")
+        
+    def execute_task(self, prompt, available_tools):
+        # Format tool schema for Qwen3-Coder
+        system_prompt = "You are a coding agent. Use tools to solve the task."
+        
+        # Engine mock invocation
+        print(f"Executing task: {prompt}")
+        return "Completed execution."`;
 
-test('agent can call repository tools', async () => {
-  const registry = new ToolRegistry();
-  registry.register('search', () => 'mock context');
-  const result = await registry.call('search', {});
-  expect(result).toBe('mock context');
-});`;
+const DOCKER_COMPOSE_CODE = `version: '3.8'
+services:
+  agent-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - VLLM_URL=http://vllm-engine:8000
+    depends_on:
+      - vllm-engine
+      
+  vllm-engine:
+    image: vllm/vllm-openai:v0.4.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: --model Qwen/Qwen3-Coder-32B-Instruct`;
 
-const BENCHMARK_CODE = `import { bench } from 'vitest';
-import { CodingAgent } from '../src/agent/core';
-
-bench('SWE-bench evaluation', async () => {
-  // Run SWE-bench test split
-  // Verify 94.2% pass@1
-});`;
+const REQUIREMENTS_CODE = `vllm==0.4.0
+requests==2.31.0
+fastapi==0.110.0
+uvicorn==0.27.1`;
 
 
 const PACKAGE_JSON_CODE = `{
@@ -237,6 +273,14 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
       } else {
         lineContent = content;
       }
+    } else if (lang === "yaml") {
+      const parts = line.split(/(^[\s-]*[\w-]+:|"[^"]*"|'[^']*'|#.*)/);
+      lineContent = parts.map((part, pi) => {
+        if (part.endsWith(":")) return <span key={pi} className="text-[#93c5fd] font-semibold">{part}</span>;
+        if (part.startsWith("#")) return <span key={pi} className="text-[#666] italic">{part}</span>;
+        if (part.startsWith('"') || part.startsWith("'")) return <span key={pi} className="text-[#75bf00]">{part}</span>;
+        return part;
+      });
     } else if (lang === "json") {
       const parts = line.split(/("[^"]*"\s*:|"[^"]*"|\b\d+\b|\btrue\b|\bfalse\b)/);
       lineContent = parts.map((part, pi) => {
@@ -374,20 +418,19 @@ export default function EmbeddingsPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<CodingAgentFile>("core.ts");
+  const [activeFile, setActiveFile] = useState<CodingAgentFile>("memory.py");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "core.ts": AGENT_CORE_CODE,
-    "tools.ts": TOOLS_CODE,
-    "vllm.ts": VLLM_ENGINE_CODE,
-    "tool_calling.test.ts": TEST_TOOL_CALLING_CODE,
-    "swe_bench.ts": BENCHMARK_CODE,
-    "patch.diff": PATCH_CODE,
+    "memory.py": MEMORY_PY_CODE,
+    "policies.py": POLICIES_PY_CODE,
+    "serve.sh": SERVE_SH_CODE,
+    "pipeline.py": PIPELINE_PY_CODE,
     "Dockerfile": DOCKERFILE_CODE,
-    "package.json": PACKAGE_JSON_CODE,
-    "tsconfig.json": TSCONFIG_CODE
+    "docker-compose.yml": DOCKER_COMPOSE_CODE,
+    "requirements.txt": REQUIREMENTS_CODE,
+    "patch.diff": PATCH_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
@@ -1134,89 +1177,67 @@ export default function EmbeddingsPage() {
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                     <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> src/
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#75bf00] font-semibold">
+                        tool_definitions/
                       </div>
                       <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                          <ChevronDown size={14} className="text-[#777]" /> jobs/
-                        </div>
-                        <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
-                          <button
-                            onClick={() => selectFileManually("executor.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "executor.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                          >
-                            <ChevronRight size={14} className={activeFile === "executor.ts" ? "text-[#75bf00]" : "text-[#555]"} /> executor.ts
-                          </button>
-                          <button 
-                            onClick={() => selectFileManually("state.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "state.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                          >
-                            <ChevronRight size={14} className={activeFile === "state.ts" ? "text-[#75bf00]" : "text-[#555]"} /> state.ts
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => selectFileManually("memory.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "memory.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <ChevronRight size={14} className={activeFile === "memory.py" ? "text-[#75bf00]" : "text-[#555]"} /> memory.py
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("policies.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="w-[14px]"></span> policies.py
+                        </button>
                       </div>
                     </div>
                     
-                    <div className="mt-2 flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> tests/
+                    <div className="mt-4 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#C8C7BA] font-semibold">
+                        horos-ai-assistant/
                       </div>
                       <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
-                          <button
-                            onClick={() => selectFileManually("retry.test.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "retry.test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                          >
-                            <ChevronRight size={14} className={activeFile === "retry.test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> retry.test.ts
-                          </button>
-                          <button
-                            onClick={() => selectFileManually("concurrency.test.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "concurrency.test.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                          >
-                            <ChevronRight size={14} className={activeFile === "concurrency.test.ts" ? "text-[#75bf00]" : "text-[#555]"} /> concurrency.test.ts
-                          </button>
+                        <button
+                          onClick={() => selectFileManually("serve.sh")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="w-[14px]"></span> serve.sh
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("pipeline.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="w-[14px]"></span> pipeline.py
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("Dockerfile")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="w-[14px]"></span> Dockerfile
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("docker-compose.yml")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="w-[14px]"></span> docker-compose.yml
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("requirements.txt")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="w-[14px]"></span> requirements.txt
+                        </button>
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold">
+                          <span className="w-[14px]"></span> models/
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold">
+                          <span className="w-[14px]"></span> evals/
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="mt-2 flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> benchmarks/
-                      </div>
-                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
-                          <button
-                            onClick={() => selectFileManually("load.ts")}
-                            className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "load.ts" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                          >
-                            <ChevronRight size={14} className={activeFile === "load.ts" ? "text-[#75bf00]" : "text-[#555]"} /> load.ts
-                          </button>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-2 flex flex-col gap-0.5">
-                      <button
-                        onClick={() => selectFileManually("patch.diff")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "patch.diff" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "patch.diff" ? "text-[#75bf00]" : "text-[#555]"} /> patch.diff
-                      </button>
-                      <button
-                        onClick={() => selectFileManually("Dockerfile")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "Dockerfile" ? "text-[#75bf00]" : "text-[#555]"} /> Dockerfile
-                      </button>
-                      <button
-                        onClick={() => selectFileManually("package.json")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "package.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "package.json" ? "text-[#75bf00]" : "text-[#555]"} /> package.json
-                      </button>
-                      <button
-                        onClick={() => selectFileManually("tsconfig.json")}
-                        className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "tsconfig.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
-                      >
-                        <ChevronRight size={14} className={activeFile === "tsconfig.json" ? "text-[#75bf00]" : "text-[#555]"} /> tsconfig.json
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1249,7 +1270,7 @@ export default function EmbeddingsPage() {
                     <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
                       {highlightCode(
                         typedCodeText,
-                        activeFile.endsWith(".md") ? "markdown" : activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : "typescript",
+                        activeFile.endsWith(".md") ? "markdown" : activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : activeFile.endsWith(".yml") ? "yaml" : "typescript",
                         !isTypingCode
                       )}
                     </div>
