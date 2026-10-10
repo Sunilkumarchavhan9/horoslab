@@ -1429,7 +1429,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <ScanSearch size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">01 Repository context</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Repository context</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Code symbols, imports, call sites, dependencies, issues, and diffs. Tune which information the agent uses for each coding task and repository revision.
                     </p>
@@ -1439,7 +1439,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Zap size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">02 Coding models and tools</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Coding models and tools</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Compare coding models, tool schemas, action budgets, and retry strategies. Measure how each configuration affects code changes and task completion.
                     </p>
@@ -1449,7 +1449,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Sliders size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">03 Execution environment</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Execution environment</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Control dependencies, compilers, test runners, resource limits, and permissions. Reproduce coding experiments in versioned environments.
                     </p>
@@ -1460,7 +1460,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Layers size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">04 Patch verification</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Patch verification</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Run builds, type checks, tests, and regression checks. Preserve each patch, execution result, and supporting evidence.
                     </p>
@@ -1470,7 +1470,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Database size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">05 Workload optimization</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Workload optimization</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Replay repository tasks and compare task success, tool failures, latency, token cost, GPU memory, and runtime configuration.
                     </p>
@@ -1480,7 +1480,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00]">
                       <Workflow size={32} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">06 Experience to teaching</h3>
+                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Experience to teaching</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                       Turn test failures, accepted patches, review corrections, and regressions into new evaluations, coding skills, and model or system improvements. Evaluate new versions before promotion.
                     </p>
