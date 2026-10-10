@@ -923,8 +923,8 @@ export default function EmbeddingsPage() {
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
+                gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
               }}>
                 {/* Tabs bg */}
                 <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
@@ -944,8 +944,8 @@ export default function EmbeddingsPage() {
 
               {/* Content (Z-20) */}
               <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
+                gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
               }}>
 
                 {/* Tabs */}
