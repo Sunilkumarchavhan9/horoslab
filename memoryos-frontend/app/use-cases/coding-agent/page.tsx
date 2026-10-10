@@ -1671,54 +1671,7 @@ export default function EmbeddingsPage() {
               </div>
             </div>
           </div>
-          {/* --- FOOTER SECTION WRAPPER --- */}
-          <div className="w-full relative bg-[#151515] z-10 flex flex-col items-center">
 
-            {/* Inner Vertical Lines extending through the footer */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-               
-            </div>
-
-            {/* --- DIVIDER --- */}
-            <div className="w-full relative flex items-center justify-center my-8 z-10 overflow-hidden" style={{ height: "38px" }}>
-              {/* Custom SVG 5-Line Divider from User */}
-              <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="paint0_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#75BF00" />
-                    <stop offset="0.480769" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint1_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0.110577" stopColor="#333333" />
-                    <stop offset="0.586538" stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint2_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0.423077" stopColor="#333333" />
-                    <stop offset="0.942308" stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint3_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                </defs>
-                <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="url(#paint0_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="8.5" x2="100%" y2="8.5" stroke="url(#paint1_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="16.5" x2="100%" y2="16.5" stroke="#333333" strokeDasharray="3 3" />
-                <line x1="0" y1="24.5" x2="100%" y2="24.5" stroke="url(#paint2_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="32.5" x2="100%" y2="32.5" stroke="url(#paint3_linear_55_3)" strokeDasharray="3 3" />
-              </svg>
-              {/* Center Logo Cutout */}
-              <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-                <HorosLogo size={25} />
-              </div>
-            </div>
-
-
-          </div>
         </div>
         <GlobalFooter />
       </main>
