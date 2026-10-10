@@ -923,7 +923,7 @@ export default function EmbeddingsPage() {
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                gridTemplateColumns: '41fr 380fr 270fr 621fr 39fr',
                 gridTemplateRows: '53.5fr 785fr 53.5fr'
               }}>
                 {/* Tabs bg */}
@@ -944,7 +944,7 @@ export default function EmbeddingsPage() {
 
               {/* Content (Z-20) */}
               <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                gridTemplateColumns: '41fr 380fr 270fr 621fr 39fr',
                 gridTemplateRows: '53.5fr 785fr 53.5fr'
               }}>
 
@@ -1167,7 +1167,7 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 px-4 py-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
                     <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">MISSION ASSETS</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
@@ -1240,7 +1240,7 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 px-4 py-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   {/* Editor top tabs */}
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     {Object.keys(FILE_CODE_MAP).map(file => (
