@@ -372,6 +372,7 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('mixedbread')) return <MixedbreadLogo size={20} />;
   if (a.includes('snowflake')) return <SnowflakeLogo size={20} />;
   if (a.includes('nomic')) return <NomicLogo size={20} />;
+  if (a.includes('bigcode') || m.includes('starcoder')) return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659521200179-5e48005437cb5b49818287a5.png" alt="BigCode" style={{ width: 20, height: 20 }} className="rounded-sm object-cover" />;
 
   return <HuggingFaceLogo size={20} />;
 };
