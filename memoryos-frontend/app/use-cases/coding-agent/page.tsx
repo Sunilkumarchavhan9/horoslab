@@ -987,7 +987,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Context retrieval</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          
+                          <span className="text-[#666] text-[12px] font-mono leading-tight mt-1">Indexed 245 files. Extracted AST for src/agent/core.ts</span>
                         </div>
                       </div>
 
@@ -1005,7 +1005,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Tool calling integration</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          
+                          <span className="text-[#666] text-[12px] font-mono leading-tight mt-1">Registered 12 tools in ToolRegistry. Verifying signatures...</span>
                         </div>
                       </div>
 
@@ -1023,7 +1023,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">vLLM engine setup</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                           </div>
-                          
+                          <span className="text-[#75bf00] text-[12px] font-mono leading-tight mt-1">Connecting to vLLM on L4 GPU. Loaded Qwen3-Coder.</span>
                         </div>
                       </div>
 
@@ -1041,7 +1041,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">SWE-bench evaluation</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                           </div>
-                          
+                          <span className="text-[#666] text-[12px] font-mono leading-tight mt-1">Running 2,294 test cases. Pass@1: 94.2% (verified).</span>
                         </div>
                       </div>
 
@@ -1059,7 +1059,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Performance optimization</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                           </div>
-                          
+                          <span className="text-[#666] text-[12px] font-mono leading-tight mt-1">Optimized KV cache. Throughput: 1,200 tokens/sec.</span>
                         </div>
                       </div>
 
@@ -1077,7 +1077,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">System verification</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.3s</span>
                           </div>
-                          
+                          <span className="text-[#75bf00] text-[12px] font-mono leading-tight mt-1">Patch generated. 4 files modified. 0 regressions.</span>
                         </div>
                       </div>
                     </div>
