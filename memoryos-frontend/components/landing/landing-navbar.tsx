@@ -168,7 +168,7 @@ export function LandingNavbar({
                       title: "Research Agents",
                       desc: "Agents that research, reason, and discover.",
                       icons: [DeepSeekLogo, QwenLogo, MistralLogo],
-                      href: "/use-cases/rag-search"
+                      href: "/use-cases/research-agent"
                     },
                     {
                       title: "Vision AI",
