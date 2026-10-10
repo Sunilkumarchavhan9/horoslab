@@ -923,7 +923,7 @@ export default function EmbeddingsPage() {
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 380fr 270fr 621fr 39fr',
+                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
                 gridTemplateRows: '53.5fr 785fr 53.5fr'
               }}>
                 {/* Tabs bg */}
@@ -944,7 +944,7 @@ export default function EmbeddingsPage() {
 
               {/* Content (Z-20) */}
               <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 380fr 270fr 621fr 39fr',
+                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
                 gridTemplateRows: '53.5fr 785fr 53.5fr'
               }}>
 
@@ -1167,7 +1167,7 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 px-4 py-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
                     <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">MISSION ASSETS</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
@@ -1177,18 +1177,18 @@ export default function EmbeddingsPage() {
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#75bf00] font-semibold">
                         tool_definitions/
                       </div>
-                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                      <div className="pl-6 flex flex-col gap-0.5 mt-1">
                         <button
                           onClick={() => selectFileManually("memory.py")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "memory.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <ChevronRight size={14} className={activeFile === "memory.py" ? "text-[#75bf00]" : "text-[#555]"} /> memory.py
+                          {activeFile === "memory.py" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} memory.py
                         </button>
                         <button
                           onClick={() => selectFileManually("policies.py")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <span className="w-[14px]"></span> policies.py
+                          {activeFile === "policies.py" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} policies.py
                         </button>
                       </div>
                     </div>
@@ -1197,36 +1197,36 @@ export default function EmbeddingsPage() {
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#C8C7BA] font-semibold">
                         horos-ai-assistant/
                       </div>
-                      <div className="pl-4 flex flex-col gap-0.5 border-l border-[#252525] ml-3.5 mt-1">
+                      <div className="pl-6 flex flex-col gap-0.5 mt-1">
                         <button
                           onClick={() => selectFileManually("serve.sh")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <span className="w-[14px]"></span> serve.sh
+                          {activeFile === "serve.sh" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} serve.sh
                         </button>
                         <button
                           onClick={() => selectFileManually("pipeline.py")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <span className="w-[14px]"></span> pipeline.py
+                          {activeFile === "pipeline.py" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} pipeline.py
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <span className="w-[14px]"></span> Dockerfile
+                          {activeFile === "Dockerfile" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} Dockerfile
                         </button>
                         <button
                           onClick={() => selectFileManually("docker-compose.yml")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <span className="w-[14px]"></span> docker-compose.yml
+                          {activeFile === "docker-compose.yml" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} docker-compose.yml
                         </button>
                         <button
                           onClick={() => selectFileManually("requirements.txt")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          <span className="w-[14px]"></span> requirements.txt
+                          {activeFile === "requirements.txt" ? <ChevronRight size={14} className="text-[#75bf00]" /> : <span className="w-[14px]"></span>} requirements.txt
                         </button>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold">
                           <span className="w-[14px]"></span> models/
@@ -1240,7 +1240,7 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 px-4 py-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   {/* Editor top tabs */}
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     {Object.keys(FILE_CODE_MAP).map(file => (
