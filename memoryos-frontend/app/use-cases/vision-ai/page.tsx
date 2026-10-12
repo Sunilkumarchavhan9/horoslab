@@ -591,24 +591,24 @@ export default function VisionAIPage() {
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
-                <div className="flex flex-col gap-6 max-w-lg">
-                  <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
+                <div className="flex flex-col gap-6 max-w-xl">
+                  <h1 className="text-5xl lg:text-[62px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
                     Vision AI with<br />
                     <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      open vision
-                    </span><br />
-                    models.
+                      open models
+                    </span> that<br />
+                    understand the world.
                   </h1>
-                  <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-md mt-2">
-                    Open vision-language models that see, analyze, and understand the visual world. Per-image billed becomes per-million-tokens.
+                  <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-lg mt-2 leading-relaxed">
+                    Evaluate open vision models on images and video. Optimize scene understanding, object relationships, motion, and temporal prediction against real visual workloads.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy this pipeline <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Optimize vision system <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the stack <ChevronRight size={16} />
+                      Explore stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>

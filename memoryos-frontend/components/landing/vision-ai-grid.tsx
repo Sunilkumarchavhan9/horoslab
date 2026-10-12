@@ -74,12 +74,12 @@ export function VisionAIGrid() {
           </div>
 
           {/* Text: Object Detection */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-base sm:text-lg md:text-xl xl:text-lg font-medium whitespace-nowrap" style={{ left: '10%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
-            Detection
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '10%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
+            Object Detection
           </div>
-          {/* Text: Captioning */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-base sm:text-lg md:text-xl xl:text-lg font-medium whitespace-nowrap" style={{ left: '78.3%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
-            Captioning
+          {/* Text: Scene Understanding */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '77%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
+            Scene Understanding
           </div>
           
           <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '92.5%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
@@ -99,7 +99,7 @@ export function VisionAIGrid() {
             </div>
           </div>
 
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-base sm:text-lg md:text-xl xl:text-lg font-medium whitespace-nowrap" style={{ left: '50%', top: '65.7%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '50%', top: '65.7%', transform: 'translate(-50%, -50%)' }}>
             Spatial Reasoning
           </div>
 
@@ -112,12 +112,12 @@ export function VisionAIGrid() {
             <DeepSeekLogo size={24} />
           </div>
           
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '78.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '69%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
             <VLLMLogo size={24} />
           </div>
           
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-base sm:text-lg md:text-xl xl:text-lg font-medium whitespace-nowrap" style={{ left: '92.5%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
-            Video Analysis
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '88%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
+            Motion &amp; Event Analysis
           </div>
           
         </div>
