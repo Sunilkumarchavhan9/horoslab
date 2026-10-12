@@ -641,10 +641,6 @@ export default function VisionAIPage() {
 
           {/* Grid with End-to-End Horizontal Lines */}
           <div className="w-full relative z-10">
-            {/* Constrained Horizontal Borders */}
-            
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
             {/* Double Vertical Borders & Crosshairs */}
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
@@ -718,9 +714,6 @@ export default function VisionAIPage() {
             </div>
           </div>
         </div>
-
-        {/* Full-width dashed line separator */}
-        <div className="w-full h-px border-t border-dashed border-[#333]" />
 
         {/* Comparison Table Section */}
           <div className="w-full relative z-10 mt-32 mb-32">
