@@ -16,134 +16,269 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly with IntentEngine and keep the production path open." },
-    closed: { title: "Call provider endpoint", desc: "Fast first demo, but the generative runtime stays rented." },
-    diy: { title: "Build serving stack first", desc: "Infrastructure work for generation and retrieval comes before product learning." }
+    label: "System",
+    runInfra: {
+      title: "One connected research lifecycle.",
+      desc: "Link hypotheses, models, data, experiments, evaluations, and results."
+    },
+    closed: {
+      title: "Research around an API.",
+      desc: "Build orchestration, experiment tracking, and result management in your application."
+    },
+    diy: {
+      title: "Infrastructure you assemble.",
+      desc: "Integrate model serving, data, training, and evaluation systems yourself."
+    }
   },
   {
     num: "0 2",
-    label: "Model control",
-    runInfra: { title: "Bring the model ID", desc: "Keep LLM and embedding choice visible in CapabilityFabric." },
-    closed: { title: "Provider catalog", desc: "You use what the LLM provider exposes for generation." },
-    diy: { title: "Your model", desc: "Full control if your team maintains the generation runtime." }
+    label: "Models",
+    runInfra: {
+      title: "Compare model versions.",
+      desc: "Track architectures, checkpoints, adaptations, and measured capabilities, including physical-world understanding."
+    },
+    closed: {
+      title: "Provider model catalog.",
+      desc: "Use available models and supported customization methods."
+    },
+    diy: {
+      title: "Full model ownership.",
+      desc: "Manage weights, architectures, training, checkpoints, and serving."
+    }
   },
   {
     num: "0 3",
-    label: "Tuning",
-    runInfra: { title: "Measured latency and GPU cost", desc: "Compare RAG serving choices before deployment." },
-    closed: { title: "Opaque", desc: "TTFT, token generation speed, and batching stay behind the API." },
-    diy: { title: "Manual profiling", desc: "Your team owns KV cache tuning and model regressions." }
+    label: "Context",
+    runInfra: {
+      title: "Research knowledge with lineage.",
+      desc: "Connect prior findings, hypotheses, datasets, and experiment history."
+    },
+    closed: {
+      title: "Application-managed memory.",
+      desc: "Build research context and history around provider APIs."
+    },
+    diy: {
+      title: "Your own knowledge layer.",
+      desc: "Maintain research records and artifact relationships."
+    }
   },
   {
     num: "0 4",
-    label: "Export",
-    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first, take the KnowledgeTier container later." },
-    closed: { title: "Locked endpoint", desc: "You keep calling the provider for every RAG query." },
-    diy: { title: "Already owned", desc: "Export exists because you built the entire RAG stack yourself." }
+    label: "Capabilities",
+    runInfra: {
+      title: "One connected research toolkit.",
+      desc: "Combine model repositories, datasets, training, evaluation, and compute environments."
+    },
+    closed: {
+      title: "Provider-supported tools.",
+      desc: "Integrate available APIs and external research tools."
+    },
+    diy: {
+      title: "Custom research infrastructure.",
+      desc: "Build and maintain each integration."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, less generative production control." },
-    diy: { title: "High", desc: "You own vector DBs, LLM failures, upgrades, and serving changes." }
+    label: "Workload",
+    runInfra: {
+      title: "Every experiment accounted for.",
+      desc: "Record model configurations, datasets, training runs, compute use, and failures."
+    },
+    closed: {
+      title: "Exposed usage metrics.",
+      desc: "Measure what the provider makes available."
+    },
+    diy: {
+      title: "Full-stack instrumentation.",
+      desc: "Collect training, evaluation, and infrastructure metrics yourself."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across KnowledgeTier access, logging, and incident response." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in your query path." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls for all data." }
+    label: "Optimization",
+    runInfra: {
+      title: "Search for better intelligence.",
+      desc: "Compare architectures, data mixtures, training methods, adaptation, and inference strategies."
+    },
+    closed: {
+      title: "Available configuration tuning.",
+      desc: "Optimize the models and settings exposed by the provider."
+    },
+    diy: {
+      title: "Your own optimization pipeline.",
+      desc: "Build experiment search, profiling, and compute scheduling."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: {
+      title: "Evidence-backed improvements.",
+      desc: "Compare model versions against baselines and preserve reproducible evaluation results."
+    },
+    closed: {
+      title: "Independent model evaluation.",
+      desc: "Test provider models against your own research objectives."
+    },
+    diy: {
+      title: "Custom verification infrastructure.",
+      desc: "Maintain benchmarks, evaluators, and reproducibility yourself."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: {
+      title: "Research that accumulates.",
+      desc: "Preserve hypotheses, code, datasets, checkpoints, failures, and experiment outcomes."
+    },
+    closed: {
+      title: "Connected application records.",
+      desc: "Link provider results to your research history."
+    },
+    diy: {
+      title: "Self-managed experiment lineage.",
+      desc: "Correlate code, training runs, artifacts, and results."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: {
+      title: "Findings become new intelligence.",
+      desc: "Turn verified results and ground truth into training signals, world-model learning, and improved model versions."
+    },
+    closed: {
+      title: "Provider-dependent adaptation.",
+      desc: "Use available fine-tuning and customization capabilities."
+    },
+    diy: {
+      title: "Your own learning pipeline.",
+      desc: "Manage data curation, training, distillation, and model promotion."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    runInfra: {
+      title: "Controlled research execution.",
+      desc: "Govern dataset access, credentials, compute budgets, experiment permissions, and approvals."
+    },
+    closed: {
+      title: "Application-level controls.",
+      desc: "Enforce access and execution policies around provider APIs."
+    },
+    diy: {
+      title: "Self-managed governance.",
+      desc: "Build permissions, auditing, budgets, and approval workflows."
+    }
   }
 ];
 
 
-const RETRIEVE_CODE = `# Hybrid retrieval (dense + BM25), rerank, grounded answer with citations.
-from openai import OpenAI
-from qdrant_client import QdrantClient
-from tantivy import Index as BM25
- 
-llm = OpenAI(base_url="http://localhost:8000/v1")
-qdr = QdrantClient(host="qdrant", port=6333)
-bm25 = BM25.open("/index/docs.tantivy")
- 
-def answer(query: str) -> dict:
-    """Return grounded answer plus citation spans per claim."""
-    q_vec = llm.embeddings.create(model="bge-large-en-v1.5", input=query).data[0].embedding
-    dense = qdr.search("docs", q_vec, limit=20)
-    sparse = bm25.search(query, limit=20)
-    fused = reciprocal_rank_fusion(dense, sparse, k=60)
-    ranked = llm.rerank.score(model="bge-reranker-v2-m3", query=query, documents=fused)[:5]
-    ctx = build_grounded_prompt(query, ranked)
-    out = llm.chat.completions.create(model="llama-3.1-8b", messages=ctx)
-    return {"answer": out.choices[0].message.content, "citations": getattr(out.choices[0].message, "citations", [])}`;
+const EXPERIMENT_CODE = `# Autonomous hypothesis testing: literature grounding, PyTorch runs, artifact lineage.
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from horos.research import LiteratureGraph, HypothesisTracker
 
-const SERVE_CODE = `#!/usr/bin/env bash
-# Embed + rerank + LLM on one vLLM process
-set -euo pipefail
- 
-EMBED="BAAI/bge-large-en-v1.5"
-RERANK="BAAI/bge-reranker-v2-m3"
-LLM="meta-llama/Llama-3.1-8B-Instruct"
- 
-python -m vllm.entrypoints.openai.api_server \\
-  --model "$LLM" \\
-  --served-model-name "llama-3.1-8b" \\
-  --quantization "awq" \\
-  --enable-prefix-caching
- 
-# Sibling processes serve the encoder + reranker:
-#   vllm serve $EMBED  --task=embedding --port 8001
-#   vllm serve $RERANK --task=score`;
+tracker = HypothesisTracker(experiment_id="exp-reasoning-phys-04")
+lit = LiteratureGraph.from_sources(["arxiv", "semantic_scholar", "openalex"])
 
-const PIPELINE_CODE = `{
-  "name": "rag-search",
-  "target_p95_ms": 620,
-  "eval_set": "evals/gold.json",
-  "retrieval": "hybrid",
-  "embed_model":  "bge-large-en-v1.5",
-  "rerank_model": "bge-reranker-v2-m3",
-  "llm_model":    "llama-3.1-8b",
-  "engine":       "vllm",
-  "gpu":          "nvidia-l40s",
-  "top_k": 20, "rerank_to": 5
+def run_experiment(hypothesis: str) -> dict:
+    """Validate research hypothesis against baseline checkpoints."""
+    papers = lit.query(hypothesis, top_k=15, min_citations=20)
+    baseline_acc = tracker.load_baseline_metric("arc_challenge_accuracy")
+    
+    # Formulate test and execute evaluation harness
+    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-32B-Instruct", torch_dtype=torch.bfloat16, device_map="cuda:0")
+    results = evaluate_hypothesis(model, hypothesis, papers, eval_set="benchmarks/physical_reasoning.json")
+    
+    delta = results["accuracy"] - baseline_acc
+    tracker.record_run(hypothesis=hypothesis, delta=delta, checkpoint="checkpoints/step-12000.pt", verified=(delta > 0))
+    return {"hypothesis_delta": delta, "checkpoint": "step-12000.pt", "evidence": results["citations"]}`;
+
+const LITERATURE_CODE = `# Literature discovery & citation tracing across arXiv, OpenAlex, Semantic Scholar.
+import httpx
+from horos.lineage import CitationSpanMapper
+
+class LiteratureDiscovery:
+    def __init__(self, semantic_api_key: str = None):
+        self.arxiv_endpoint = "https://export.arxiv.org/api/query"
+        self.openalex_endpoint = "https://api.openalex.org/works"
+        self.span_mapper = CitationSpanMapper()
+
+    def discover_and_trace(self, query: str, max_depth: int = 2) -> dict:
+        """Trace prior findings, competing claims, and dataset lineage."""
+        papers = self.fetch_related_works(query)
+        graph = self.build_citation_graph(papers, depth=max_depth)
+        claims = self.extract_empirical_findings(graph)
+        return {
+            "total_papers": len(papers),
+            "verified_claims": claims,
+            "connected_datasets": graph.datasets,
+            "code_repositories": graph.github_repos
+        }`;
+
+const EVALUATE_CODE = `# Gold-standard capability verification: baselines vs candidate checkpoint.
+import json
+from horos.eval import BenchmarkSuite, VerificationHarness
+
+def run_verification(checkpoint_path: str, baseline_id: str) -> dict:
+    """Measure real capability changes with repeatable evidence."""
+    harness = VerificationHarness(target_device="cuda:0")
+    benchmarks = ["physical_world_qa", "gsm8k_cot", "humaneval_plus"]
+    
+    metrics = {}
+    for bench in benchmarks:
+        score_new = harness.score_checkpoint(checkpoint_path, bench)
+        score_base = harness.score_baseline(baseline_id, bench)
+        metrics[bench] = {
+            "candidate": score_new,
+            "baseline": score_base,
+            "gain": score_new - score_base,
+            "p_value": harness.significance_test(bench)
+        }
+    return {"verified": all(m["gain"] >= 0 for m in metrics.values()), "breakdown": metrics}`;
+
+const RESEARCH_JSON_CODE = `{
+  "name": "research-agent",
+  "task": "hypothesis-testing-and-discovery",
+  "base_model": "Qwen/Qwen2.5-32B-Instruct",
+  "reasoning_model": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+  "literature_sources": ["arxiv", "semantic_scholar", "openalex"],
+  "dataset_sources": ["huggingface/gsm8k", "internal/physics-eval"],
+  "engine": "vllm",
+  "gpu": "nvidia-l40s",
+  "tracking": {
+    "artifact_lineage": true,
+    "checkpoints": "s3://horos-research-vault/checkpoints",
+    "reproducible_seeds": [42, 1337, 2026]
+  }
 }`;
 
-const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS base
- 
-RUN apt-get update && apt-get install -y python3.11 python3-pip
- 
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
- 
-COPY adapters/ /app/adapters/
-COPY corpus/ /app/corpus/
-COPY evals/ /app/evals/
-COPY eval.py serve.sh pipeline.json .
- 
-EXPOSE 8000
-ENTRYPOINT ["/app/serve.sh"]`;
+const TRAIN_CODE = `# Model adaptation & checkpoint training with lineage and parameter tracking.
+import torch
+from peft import LoraConfig, get_peft_model
+from transformers import AutoModelForCausalLM, TrainingArguments, Trainer
 
-const EVAL_CODE = `# Gold-set eval harness: recall, faithfulness, citation coverage.
-import json
-from adapters.retrieve import answer
- 
-def run_eval(gold_path: str) -> dict:
-    """Score a gold set: [{question, reference_answer, relevant_doc_ids}]."""
-    items = json.load(open(gold_path))
-    scores = {"recall_at_5": 0.0, "faithfulness": 0.0, "citation_coverage": 0.0}
-    for item in items:
-        out = answer(item["question"])
-        hit_ids = {c["doc_id"] for c in out["citations"]}
-        scores["recall_at_5"] += len(hit_ids & set(item["relevant_doc_ids"])) / 5
-        scores["faithfulness"] += faithfulness_score(out["answer"], out["citations"])
-        scores["citation_coverage"] += citation_coverage(out["answer"], out["citations"])
-    n = len(items)
-    return {k: v / n for k, v in scores.items()}`;
+def launch_training(config_path: str = "research.json"):
+    """Adapt model based on verified hypothesis ground-truth evidence."""
+    lora_config = LoraConfig(r=16, lora_alpha=32, target_modules=["q_proj", "v_proj"], lora_dropout=0.05)
+    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-32B-Instruct", torch_dtype=torch.bfloat16)
+    model = get_peft_model(model, lora_config)
+    
+    args = TrainingArguments(
+        output_dir="checkpoints/research-run",
+        per_device_train_batch_size=4,
+        gradient_accumulation_steps=8,
+        learning_rate=2e-5,
+        bf16=True,
+        logging_steps=10
+    )
+    print("Training initiated on NVIDIA L40S. Preserving experiment artifacts...")`;
 
-type RagSearchFile = string;
+type ResearchAgentFile = string;
 
 function highlightCode(code: string, lang: string, isComplete: boolean = false) {
   if (!code) return null;
@@ -228,15 +363,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B", author: "Meta", downloads: "70B", tag: "LLM" },
-  { id: "meta-llama/Llama-3.1-8B-Instruct", name: "Llama 3.1 8B", author: "Meta", downloads: "8B", tag: "LLM" },
-  { id: "meta-llama/Llama-3.2-3B-Instruct", name: "Llama 3.2 3B", author: "Meta", downloads: "3B", tag: "Edge LLM" },
-  { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen 2.5 72B", author: "Alibaba", downloads: "72B", tag: "LLM" },
-  { id: "Qwen/Qwen2.5-32B-Instruct", name: "Qwen 2.5 32B", author: "Alibaba", downloads: "32B", tag: "LLM" },
-  { id: "Qwen/Qwen2.5-7B-Instruct", name: "Qwen 2.5 7B", author: "Alibaba", downloads: "7B", tag: "LLM" },
-  { id: "Qwen/QwQ-32B-Preview", name: "QwQ 32B", author: "Alibaba", downloads: "32B", tag: "Reasoning" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", name: "DeepSeek R1 Distill 70B", author: "DeepSeek", downloads: "70B", tag: "Reasoning" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Llama-8B", name: "DeepSeek R1 Distill 8B", author: "DeepSeek", downloads: "8B", tag: "Reasoning" }
+  { id: "moonshotai/Kimi-K3", name: "Kimi K3", author: "Moonshot AI", downloads: "2.8T MoE", tag: "Deep Research" },
+  { id: "deepseek-ai/DeepSeek-V3.2", name: "DeepSeek-V3.2", author: "DeepSeek", downloads: "685B MoE", tag: "Tool Reasoning" },
+  { id: "Qwen/Qwen3.5-397B-A17B", name: "Qwen3.5-397B-A17B", author: "Alibaba", downloads: "397B MoE", tag: "Multimodal Research" },
+  { id: "moonshotai/Kimi-K2.5", name: "Kimi K2.5", author: "Moonshot AI", downloads: "1T MoE", tag: "Visual Agent" },
+  { id: "deepseek-ai/DeepSeek-R1-0528", name: "DeepSeek-R1-0528", author: "DeepSeek", downloads: "671B", tag: "Deep Reasoning" },
+  { id: "Qwen/Qwen3.5-35B-A3B", name: "Qwen3.5-35B-A3B", author: "Alibaba", downloads: "35B MoE", tag: "Efficient Reasoning" },
+  { id: "Qwen/Qwen3.5-27B", name: "Qwen3.5-27B", author: "Alibaba", downloads: "27B", tag: "Multimodal Analysis" },
+  { id: "Qwen/QwQ-32B", name: "QwQ-32B", author: "Alibaba", downloads: "32B", tag: "Math Reasoning" },
+  { id: "microsoft/Phi-4-reasoning", name: "Phi-4-reasoning", author: "Microsoft", downloads: "14B", tag: "Scientific Reasoning" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -264,13 +399,13 @@ const getLogo = (author: string, modelName: string = "") => {
 
   if (a.includes('openai') || m.includes('whisper') || m.includes('gpt')) return <OpenAILogo size={20} />;
   if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
+  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen') || m.includes('qwq')) return <QwenLogo size={20} />;
   if (a.includes('nvidia') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
   if (a.includes('moonshot') || m.includes('kimi')) return <KimiLogo size={20} />;
-  if (a.includes('coqui') || a.includes('canopy')) return <span className="text-[18px]">🤗</span>;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
-  if (a.includes('mistral') || a.includes('intfloat') || m.includes('mistral') || m.includes('mixtral')) return <MistralLogo size={20} />;
   if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
+  if (a.includes('coqui') || a.includes('canopy')) return <span className="text-[18px]">🤗</span>;
+  if (a.includes('mistral') || a.includes('intfloat') || m.includes('mistral') || m.includes('mixtral')) return <MistralLogo size={20} />;
   if (a.includes('baai')) return <BAAILogo size={20} />;
   if (a.includes('jina')) return <JinaLogo size={20} />;
   if (a.includes('mixedbread')) return <MixedbreadLogo size={20} />;
@@ -286,26 +421,26 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-      classes += " border-b";
-    } else {
-      classes += " border-b md:border-b-0";
-    }
+    classes += " border-b";
+  } else {
+    classes += " border-b md:border-b-0";
+  }
 
   return classes;
 };
 
 const FAQ_DATA = [
   {
-    question: "Can I run an embedder and reranker on the same GPU?",
-    answer: "Yes. Our fused memory architecture allows you to run a massive encoder like BGE-M3 alongside a cross-encoder reranker on a single H100 or L40S, eliminating network hops between models.",
+    question: "Can I compare model experiments against the same baseline?",
+    answer: "Yes. Horos tracks model versions, datasets, training configurations, compute, and evaluation results. Compare experiments under defined conditions to establish which changes improve capability, which cause regressions, and what the evidence supports.",
   },
   {
-    question: "How do you handle massive document ingestion?",
-    answer: "We use aggressive sequence packing and continuous batching. Variable length documents are packed natively to avoid zero-padding waste, dramatically increasing throughput.",
+    question: "Can Horos help develop models that understand the physical world?",
+    answer: "That's a core research direction. Investigate models using video, sensor data, spatial and temporal relationships, and physical-world observations. Evaluate whether models can represent changing states and predict outcomes against observed reality.",
   },
   {
-    question: "Do you support direct Vector DB connections?",
-    answer: "Yes. Our pipelines feature zero-copy network paths that stream embeddings directly into pgvector, Milvus, Qdrant, or Pinecone without hitting intermediary APIs.",
+    question: "Do I need to build the entire training and evaluation stack myself?",
+    answer: "No. Horos is designed to connect model research, training and adaptation, experiment execution, evaluation, and verification in one workflow. You can work with supported model and compute infrastructure while preserving experiment records, model lineage, and evidence.",
   }
 ];
 
@@ -315,31 +450,31 @@ export default function EmbeddingsPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<RagSearchFile>("retrieve.py");
+  const [activeFile, setActiveFile] = useState<ResearchAgentFile>("experiment.py");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "retrieve.py": RETRIEVE_CODE,
-    "eval.py": EVAL_CODE,
-    "serve.sh": SERVE_CODE,
-    "pipeline.json": PIPELINE_CODE,
-    "Dockerfile": DOCKERFILE_CODE
+    "experiment.py": EXPERIMENT_CODE,
+    "literature.py": LITERATURE_CODE,
+    "evaluate.py": EVALUATE_CODE,
+    "research.json": RESEARCH_JSON_CODE,
+    "train.py": TRAIN_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll wire dense plus BM25 plus rerank plus grounded Llama on one L40S, then score against your gold set for recall, faithfulness, and citation coverage.";
-  const AGENT_MSG_2 = "Recipe is ready. Targeting p95 620ms on L40S at $1.40/hr, citations resolve back to source spans. Recall depends on your corpus, run the eval harness on your gold set. Want me to deploy?";
+  const AGENT_MSG_1 = "On it. I'll search arXiv literature, formulate hypothesis tests in PyTorch, run checkpoints on one L40S, and preserve benchmark lineage.";
+  const AGENT_MSG_2 = "Research workflow ready. Baseline verified across 1,420 papers, experiments running on L40S ($1.40/hr) with full checkpoint lineage. Want me to launch the suite?";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
   const [visibleStep, setVisibleStep] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  
+
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
-  const selectFileManually = (file: RagSearchFile) => {
+  const selectFileManually = (file: ResearchAgentFile) => {
     setIsAutoPlay(false);
     setActiveFile(file);
     setActiveMainTab("code");
@@ -347,7 +482,7 @@ export default function EmbeddingsPage() {
 
   // Code character-by-character real-time streaming typewriter effect when activeFile changes
   useEffect(() => {
-    const fullCode = FILE_CODE_MAP[activeFile] || RETRIEVE_CODE;
+    const fullCode = FILE_CODE_MAP[activeFile] || EXPERIMENT_CODE;
 
     setTypedCodeText("");
     setIsTypingCode(true);
@@ -473,24 +608,24 @@ export default function EmbeddingsPage() {
         .chat-scroll:hover::-webkit-scrollbar-thumb { background-color: #666666; }
       ` }} />
 
-            {/* GLOBAL VERTICAL DASHED LINES */}
-        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            {/* Left margin (14%) with 7% line bisecting it */}
-            <div className="relative border-r border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
-              </div>
-            {/* Center content (72%) */}
-            <div />
-            {/* Right margin (14%) with 93% line bisecting it */}
-            <div className="relative border-l border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
-              </div>
+      {/* GLOBAL VERTICAL DASHED LINES */}
+      {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          {/* Left margin (14%) with 7% line bisecting it */}
+          <div className="relative border-r border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+          </div>
+          {/* Center content (72%) */}
+          <div />
+          {/* Right margin (14%) with 93% line bisecting it */}
+          <div className="relative border-l border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
           </div>
         </div>
+      </div>
 
-        <div className="relative z-[100]">
+      <div className="relative z-[100]">
         <LandingNavbar
           onOpenSignIn={() => {
             setAuthModalMode("sign-in");
@@ -504,7 +639,7 @@ export default function EmbeddingsPage() {
       </div>
 
       <main className="flex-1 flex flex-col relative z-10">
-        
+
         {/* SVG Filter for recoloring the image to brand colors */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <filter id="brand-duotone">
@@ -530,11 +665,11 @@ export default function EmbeddingsPage() {
           <div className="relative w-[700px] h-[700px]">
             <div className="absolute inset-0 bg-gradient-to-r from-[#151515] via-transparent to-transparent z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#151515] via-transparent to-transparent z-10" />
-            <img 
+            <img
               src="https://a2-us.storyblok.com/f/1019538/1236x1236/9561ddb94e/hands.png/m/1080x0/filters:quality(85):format(webp)"
               alt="Hero Background"
               className="w-full h-full object-contain object-top mix-blend-screen"
-              style={{ 
+              style={{
                 maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
                 filter: 'url(#brand-duotone)'
               }}
@@ -545,7 +680,7 @@ export default function EmbeddingsPage() {
         {/* Hero Section Container */}
         <div className="w-full relative mt-20 mb-20 min-h-[600px] flex items-center">
           {/* Infinite Horizontal Lines bounding the hero section */}
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
+          <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
           {/* Crosshairs at exact intersections with the global vertical lines */}
           <div className="absolute inset-0 pointer-events-none z-20">
@@ -572,31 +707,31 @@ export default function EmbeddingsPage() {
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
-                <div className="flex flex-col gap-6 max-w-lg">
-                  <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
-                    Research that<br />
-                    ends in <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      evidence,
-                    </span><br />
-                    not summaries.
+                <div className="flex flex-col gap-5 max-w-xl">
+                  <h1 className="text-4xl lg:text-[46px] font-bold tracking-tight leading-[1.18] text-[#f2efe8]">
+                    Research that ends in<br />
+                    <span className="bg-[#75bf00] text-black px-2.5 py-0.5 inline-block font-bold mr-1">
+                      evidence
+                    </span>
+                    , not summaries.
                   </h1>
-                  <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-md mt-2">
-                    Horos agents connect findings across papers, code, and datasets, turn knowledge gaps into testable hypotheses, and run reproducible experiments. Every result carries its methods, observations, and supporting evidence.
+                  <p className="text-[#C8C7BA] text-[16px] tracking-wide max-w-lg leading-relaxed">
+                    Connect findings across papers, code, and datasets into testable hypotheses and reproducible experiments.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Run a research mission <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  <div className="flex items-center gap-3.5 mt-2">
+                    <button className="group whitespace-nowrap bg-[#75bf00] text-black font-semibold px-4.5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
+                      Run research mission <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Explore the research stack <ChevronRight size={16} />
+                    <button className="group whitespace-nowrap bg-[#222] text-[#F0EFE2] font-semibold px-4.5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
+                      Explore the stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
 
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
-                  <RagSearchGrid 
+                  <RagSearchGrid
                     label1="Vector Search"
                     label2="Citations"
                     label3="Reranking"
@@ -616,9 +751,11 @@ export default function EmbeddingsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The IntentEngine routing, the KnowledgeTier configuration, the CapabilityFabric model choice. None of it locked away.
+                <h2 className="text-3xl md:text-4xl lg:text-[46px] font-medium tracking-tight text-[#F0EFE2] mb-4">
+                  What you actually own
+                </h2>
+                <p className="text-[#C8C7BA] text-[16px] md:text-[18px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
+                  Horos helps you explore ways to improve AI models, test what works, and measure the results. Every experiment is recorded so you can understand what changed and why.
                 </p>
               </div>
             </div>
@@ -627,10 +764,6 @@ export default function EmbeddingsPage() {
 
           {/* Grid with End-to-End Horizontal Lines */}
           <div className="w-full relative z-10">
-            {/* Constrained Horizontal Borders */}
-            
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
             {/* Double Vertical Borders & Crosshairs */}
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
@@ -673,29 +806,29 @@ export default function EmbeddingsPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Citations you can<br/>audit.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Every answer carries source-doc spans per claim. When legal or finance asks for the source, you have it. Hallucinations stop being invisible.
+                    <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Choose what to improve.</h3>
+                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                      Start with an AI model and a clear goal. Improve its coding, reasoning, accuracy, or ability to understand images. Horos records how the original model performs before testing changes.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Hybrid retrieval<br/>beats pure vector.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Dense embeddings miss jargon, codes, and rare terms. Dense plus BM25 plus rerank lifts recall on the queries that actually fail in production.
+                    <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Experiment and compare.</h3>
+                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                      Try different training data, learning methods, and model designs. Horos keeps track of what you changed, what resources you used, and what happened in each experiment.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
+                  <div className="p-10 flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Eval on your gold<br/>set, not theirs.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Built-in eval harness scores recall, faithfulness, and citation coverage against your own Q&A. Compare two stacks side by side before you deploy.
+                    <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Prove the improvement.</h3>
+                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                      Compare the new model with the original. Measure whether it performs better, runs faster, or costs less. Keep the results and failures so you know which changes are worth carrying forward.
                     </p>
                   </div>
                 </div>
@@ -705,140 +838,135 @@ export default function EmbeddingsPage() {
           </div>
         </div>
 
-        {/* Full-width dashed line separator */}
-        <div className="w-full h-px border-t border-dashed border-[#333]" />
-
         {/* Comparison Table Section */}
-          <div className="w-full relative z-10 mt-32 mb-32">
-            
+        <div className="w-full relative z-10 mt-32 mb-32">
+
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-            <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to ship cited Q&A
-              </h2>
-              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most teams pick between speed and control. Horos keeps both in one workflow.
-                <br /><br />
-                Deployment comparison for RAG pipelines across Horos, closed APIs, and DIY self-hosting.
-              </p>
-            </div>
-
-            {/* Table with End-to-End Horizontal Lines */}
-            <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-              {/* Double Horizontal Border Top */}
-              
-              {/* Double Horizontal Border Bottom */}
-              
-
-              {/* Double Vertical Borders & Crosshairs */}
-              <div className="absolute inset-0 pointer-events-none z-20">
-                <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
-                  {/* Left Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
-                  </div>
-
-                  <div />
-
-                  {/* Right Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Table Content */}
-              <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
-                <div />
-                <div className="min-w-0 bg-[#151515]">
-                  {/* Table Header */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
-                    <div className="hidden md:flex items-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
-                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
-                    </div>
-                    <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333] relative">
-                      <div className="absolute top-4 right-4 flex items-center">
-                        <span className="text-[9px] font-bold tracking-[0.2em] text-[#75bf00] uppercase">Recommended</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                          <HorosLogo size={28} />
-                        </div>
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[20px]">Fast path with model control and export.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Key size={28} className="text-[#C8C7BA]" />
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Closed LLM APIs</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[20px]">Per-call, hosted.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-8 py-6 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Cpu size={28} className="text-[#C8C7BA]" />
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">DIY self-hosting</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[20px]">Full control, heavy operations.</p>
-                    </div>
-                  </div>
-
-                  {/* Table Rows */}
-                  <div className="border-l border-r border-b border-dashed border-[#333]">
-                    {COMPARISON_ROWS.map((row, idx) => (
-                      <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                        <div className="flex items-center px-8 py-8 md:border-r border-dashed border-[#333] min-h-[140px]">
-                          <div className="flex items-center gap-3">
-                            <span className="text-[#75bf00] font-mono text-[16px] font-bold">{row.num}</span>
-                            <span className="text-[24px] font-medium text-[#F0EFE2]">{row.label}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[24px] font-medium text-[#75bf00] mb-2">{row.runInfra.title}</h4>
-                          <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.runInfra.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333]">
-                          <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                          <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.closed.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-8 py-8">
-                          <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                          <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.diy.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div />
-              </div>
-            </div>
+          <div className="flex flex-col items-center mb-14 px-4">
+            <h2 className="text-3xl md:text-4xl lg:text-[46px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+              Three ways to ship research agents
+            </h2>
+            <p className="text-[#C8C7BA] text-[15px] md:text-[16px] font-sans leading-relaxed text-center max-w-3xl mx-auto">
+              Most research agents find papers and summarize findings. Horos connects research hypotheses to model development, experiments, and measured results, helping researchers develop and validate models that better understand physical reality.
+            </p>
           </div>
 
-{/* Sandbox Showcase Section */}
+          {/* Table with End-to-End Horizontal Lines */}
+          <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
+            {/* Double Horizontal Border Top */}
+
+            {/* Double Horizontal Border Bottom */}
+
+
+            {/* Double Vertical Borders & Crosshairs */}
+            <div className="absolute inset-0 pointer-events-none z-20">
+              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
+                {/* Left Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
+                </div>
+
+                <div />
+
+                {/* Right Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Table Content */}
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
+              <div />
+              <div className="min-w-0 bg-[#151515]">
+                {/* Table Header */}
+                <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
+                  <div className="hidden md:flex items-center px-6 py-5 border-b md:border-r border-dashed border-[#333]">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
+                  </div>
+                  <div className="flex flex-col justify-center px-6 py-5 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="absolute top-3.5 right-4 flex items-center">
+                      <span className="text-[9px] font-bold tracking-[0.2em] text-[#75bf00] uppercase">Recommended</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <div className="w-9 h-9 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <HorosLogo size={20} />
+                      </div>
+                      <span className="text-[18px] md:text-[20px] font-medium text-[#F0EFE2]">Horos</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[13px] md:text-[14px] leading-snug">One connected research lifecycle.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-6 py-5 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <Key size={20} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[18px] md:text-[20px] font-medium text-[#F0EFE2]">Closed model APIs</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[13px] md:text-[14px] leading-snug">Research around an API.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-6 py-5 border-b border-dashed border-[#333]">
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <Cpu size={20} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[18px] md:text-[20px] font-medium text-[#F0EFE2]">DIY self-hosting</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[13px] md:text-[14px] leading-snug">Infrastructure you assemble.</p>
+                  </div>
+                </div>
+
+                {/* Table Rows */}
+                <div className="border-l border-r border-b border-dashed border-[#333]">
+                  {COMPARISON_ROWS.map((row, idx) => (
+                    <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
+                      <div className="flex items-center px-6 py-5 md:border-r border-dashed border-[#333]">
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-[#75bf00] font-mono text-[13px] font-bold">{row.num}</span>
+                          <span className="text-[16px] md:text-[17px] font-medium text-[#F0EFE2]">{row.label}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-6 py-5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[14px] md:text-[15px] font-semibold text-[#75bf00] mb-1">{row.runInfra.title}</h4>
+                        <p className="text-[#C8C7BA] text-[13px] md:text-[14px] leading-relaxed">{row.runInfra.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-6 py-5 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[14px] md:text-[15px] font-semibold text-[#F0EFE2] mb-1">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[13px] md:text-[14px] leading-relaxed">{row.closed.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-6 py-5">
+                        <h4 className="text-[14px] md:text-[15px] font-semibold text-[#F0EFE2] mb-1">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[13px] md:text-[14px] leading-relaxed">{row.diy.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div />
+            </div>
+          </div>
+        </div>
+
+        {/* Sandbox Showcase Section */}
         <div className="w-full relative z-10 mt-32">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
@@ -847,11 +975,11 @@ export default function EmbeddingsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
-                  Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
+                <h2 className="text-4xl lg:text-[46px] font-medium tracking-tight mb-5">
+                  Research code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
-                  The full recipe ships with you. Codebase, kernels, engine config, weights. Run it anywhere.
+                <p className="text-[#999999] text-[16px] md:text-[17px] max-w-2xl mx-auto leading-relaxed">
+                  The complete research stack ships with you. Literature mining, hypothesis testing, experiment tracking, and model evaluations.
                 </p>
               </div>
             </div>
@@ -862,381 +990,384 @@ export default function EmbeddingsPage() {
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0 px-1 md:px-2">
+                {/* Sandbox Content Container (Constrained inside the vertical lines) */}
+                <div className="w-full relative mx-auto" style={{ aspectRatio: '1351 / 892' }}>
 
+                  {/* Panes Backgrounds (Z-0) */}
+                  <div className="absolute inset-0 grid" style={{
+                    gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                    gridTemplateRows: '53.5fr 785fr 53.5fr'
+                  }}>
+                    {/* Tabs bg */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
 
+                    {/* Chat bg */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
 
-            {/* Sandbox Content Container (SVG Skeleton Architecture) */}
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+                    {/* Files bg */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
 
-              {/* Panes Backgrounds (Z-0) */}
-              <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-                {/* Tabs bg */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
-
-                {/* Chat bg */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
-
-                {/* Files bg */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
-
-                {/* Code bg */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
-              </div>
-
-              {/* Skeleton Grid Lines (Z-10) */}
-              <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
-
-              {/* Content (Z-20) */}
-              <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-
-                {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
-                    <button
-                      onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <span className="text-[#75bf00]">&gt;_</span> PIPELINE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Code2 size={13} /> CODE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Sliders size={13} /> OPTIMIZATION
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Rocket size={13} /> DEPLOY
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
-                    <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
-                    <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
-                  </div>
-                </div>
-
-                {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Build cited Q&A over our internal docs. Hybrid retrieval with
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><BAAILogo size={11} /> BGE-Large-en-v1.5</span>
-                        plus BM25, cross-encoder reranker,
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><MetaLogo size={11} /> Llama-3.1-8B</span>
-                        grounded with citation spans. Score against our gold set on a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> L40S</span>.
-                      </p>
-                    </div>
-
-                    {/* Step 1: Agent Initial Ack */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
-                          {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      {/* Log 1 (Step 2) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ingested 10k docs, hybrid index</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">BGE-Large to Qdrant, BM25 to Tantivy sidecar</span>
-                        </div>
-                      </div>
-
-                      {/* Log 2 (Step 3) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned dense vs sparse weights</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">fused recall up on jargon and codes</span>
-                        </div>
-                      </div>
-
-                      {/* Log 3 (Step 4) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Reranker over both retrievers</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">k=20 each, rerank to top-5</span>
-                        </div>
-                      </div>
-
-                      {/* Log 4 (Step 5) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Compiled grounded Llama 3.1 8B</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.3s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">AWQ INT4, citation-span decoder</span>
-                        </div>
-                      </div>
-
-                      {/* Log 5 (Step 6) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran gold-set eval, 500 queries</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">p95 620ms, faithfulness scored per claim</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Step 7 (LAST STEP): Agent Final Summary */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Code bg */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
                   </div>
 
-                  {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
-                      <input
-                        type="text"
-                        placeholder="Teach the agent to handle custom chunking strategies..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
-                        readOnly
-                      />
-                      <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                          
-                        </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  {/* Skeleton Grid Lines (Z-10) */}
+                  <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
 
-                {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">RAG ADAPTERS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      qdrant.py
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      weaviate.py
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      pgvector.py
-                    </div>
+                  {/* Content (Z-20) */}
+                  <div className="absolute inset-0 grid pointer-events-none z-20" style={{
+                    gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                    gridTemplateRows: '53.5fr 785fr 53.5fr'
+                  }}>
 
-                    {/* Project Tree Folder */}
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> horos-rag-search/
-                      </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                    {/* Tabs */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
+                      <div className="flex gap-8 h-full items-end pb-2">
                         <button
-                          onClick={() => selectFileManually("retrieve.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "retrieve.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => setActiveMainTab("pipeline")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          retrieve.py
+                          <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                         </button>
-                        <button 
-                          onClick={() => selectFileManually("eval.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        <button
+                          onClick={() => setActiveMainTab("code")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          eval.py
+                          <Code2 size={13} /> CODE
                         </button>
-                        <button 
-                          onClick={() => selectFileManually("serve.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        <button
+                          onClick={() => setActiveMainTab("optimization")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          serve.sh
+                          <Sliders size={13} /> OPTIMIZATION
                         </button>
-                        <button 
-                          onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        <button
+                          onClick={() => setActiveMainTab("deploy")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          pipeline.json
+                          <Rocket size={13} /> DEPLOY
                         </button>
-                        <button 
-                          onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          Dockerfile
-                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
+                        <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
+                        <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
+                      </div>
+                    </div>
+
+                    {/* Chat Content */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                      <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
+                        <div className="bg-[#1a1a1a] border border-[#252525] p-4 rounded-[4px]">
+                          <p className="text-[#C8C7BA] text-[13px] font-medium leading-[25px]">
+                            Build a research agent. Discover papers on arXiv, test hypotheses on{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-0.5">
+                              <QwenLogo size={11} /> Qwen 2.5
+                            </span>
+                            , and verify on{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle mx-0.5">
+                              <NvidiaLogo size={11} /> L40S
+                            </span>
+                            .
+                          </p>
+                        </div>
+
+                        {/* Step 1: Agent Initial Ack */}
+                        <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
+                              <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={14} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                              {typedMsg1}
+                              {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
+                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Logs list */}
+                        <div className="flex flex-col gap-4 mt-2">
+                          {/* Log 1 (Step 2) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 2 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Literature discovery</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
+                              </div>
+                              <span className="text-[#666] text-[12px]">Indexed 1,420 arXiv papers via OpenAlex</span>
+                            </div>
+                          </div>
+
+                          {/* Log 2 (Step 3) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 3 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Hypothesis design</span>
+                                <span className="text-[#C8C7BA] text-[12px]">0.8s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[12px]">Formulated reasoning baseline vs candidate</span>
+                            </div>
+                          </div>
+
+                          {/* Log 3 (Step 4) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 4 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Dataset curation</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
+                              </div>
+                              <span className="text-[#666] text-[12px]">Extracted 25k verified empirical pairs</span>
+                            </div>
+                          </div>
+
+                          {/* Log 4 (Step 5) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 5 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">PyTorch execution</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
+                              </div>
+                              <span className="text-[#666] text-[12px]">Dispatched on L40S; saved 3 checkpoints</span>
+                            </div>
+                          </div>
+
+                          {/* Log 5 (Step 6) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 6 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Capability verification</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.3s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[12px]">+8.4% reasoning gain, full lineage verified</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 7 (LAST STEP): Agent Final Summary */}
+                        <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
+                              <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={14} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                              {typedMsg2}
+                              {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
+                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Prompt input bar */}
+                      <div className="mt-2 shrink-0 mb-2">
+                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
+                          <input
+                            type="text"
+                            placeholder="Ask the agent to test a hypothesis or benchmark another checkpoint..."
+                            className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
+                            readOnly
+                          />
+                          <div className="flex justify-between items-center px-1">
+                            <div className="flex gap-1.5">
+                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Hypothesis</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Literature</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Experiments</span>
+                            </div>
+                            <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                              <ArrowUp size={14} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Files Content */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
+                        <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">RESEARCH TOOLS</span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+                      </div>
+                      <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          docker-compose.yml
+                          arxiv_search.py
                         </div>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          requirements.txt
+                          semantic_scholar.py
                         </div>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> corpus/
+                          openalex_graph.py
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> evals/
+
+                        {/* Project Tree Folder */}
+                        <div className="mt-2 flex flex-col gap-1.5">
+                          <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
+                            <ChevronDown size={14} className="text-[#777]" /> horos-research-agent/
+                          </div>
+                          <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                            <button
+                              onClick={() => selectFileManually("experiment.py")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "experiment.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              experiment.py
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("literature.py")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "literature.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              literature.py
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("evaluate.py")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "evaluate.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              evaluate.py
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("research.json")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "research.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              research.json
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("train.py")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "train.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              train.py
+                            </button>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              <ChevronRight size={14} className="text-[#333]" /> hypotheses/
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              <ChevronRight size={14} className="text-[#333]" /> checkpoints/
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              requirements.txt
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              README.md
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          README.md
+                      </div>
+                    </div>
+
+                    {/* Code Content */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      {/* Editor top tabs */}
+                      <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                        <button
+                          onClick={() => selectFileManually("experiment.py")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "experiment.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          experiment.py
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("literature.py")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "literature.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          literature.py
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("evaluate.py")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "evaluate.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          evaluate.py
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("research.json")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "research.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          research.json
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("train.py")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "train.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          train.py
+                        </button>
+                      </div>
+
+                      {/* Code Area with Line Numbers */}
+                      <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                        {/* Line numbers column */}
+                        <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                          {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
+                            <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                          ))}
+                        </div>
+
+                        {/* Highlighted code column */}
+                        <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                          {highlightCode(
+                            typedCodeText,
+                            activeFile.endsWith(".py")
+                              ? "python"
+                              : activeFile.endsWith(".sh")
+                                ? "bash"
+                                : activeFile.endsWith(".json")
+                                  ? "json"
+                                  : activeFile === "Dockerfile"
+                                    ? "dockerfile"
+                                    : "typescript",
+                            !isTypingCode
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  {/* Editor top tabs */}
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                    <button
-                      onClick={() => selectFileManually("retrieve.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "retrieve.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      retrieve.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("eval.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      eval.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("serve.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      serve.sh
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      pipeline.json
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("Dockerfile")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      Dockerfile
-                    </button>
-                  </div>
-
-                  {/* Code Area with Line Numbers */}
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    {/* Line numbers column */}
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
-                      {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
-                      ))}
-                    </div>
-
-                    {/* Highlighted code column */}
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
-                      {highlightCode(
-                        typedCodeText,
-                        activeFile.endsWith(".py")
-                          ? "python"
-                          : activeFile.endsWith(".sh")
-                            ? "bash"
-                            : activeFile.endsWith(".json")
-                              ? "json"
-                              : activeFile === "Dockerfile"
-                                ? "dockerfile"
-                                : "typescript",
-                        !isTypingCode
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
+              <div />
             </div>
           </div>
 
@@ -1297,10 +1428,10 @@ export default function EmbeddingsPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
-                  Supported HF retrieval models work
+                  Supported research & reasoning models
                 </h2>
                 <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
-                  Supported retrieval-compatible models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
+                  Frontier research, reasoning, and multimodal models run directly in Horos workflows. Search the live Hugging Face catalog or explore verified models below.
                 </p>
 
                 {/* Search Bar */}
@@ -1312,7 +1443,7 @@ export default function EmbeddingsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any voice-compatible model on Hugging Face"
+                    placeholder="Search any research or reasoning model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[15px] pl-11 pr-14 py-3.5 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -1321,7 +1452,7 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Models Grid */}
-              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
@@ -1333,7 +1464,13 @@ export default function EmbeddingsPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
+                        <a
+                          key={model.id}
+                          href={`https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
+                        >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                           <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                             {getLogo(model.author, model.name)}
@@ -1346,11 +1483,11 @@ export default function EmbeddingsPage() {
                             <span className="text-[#F0EFE2] font-medium">{model.downloads}</span>
                             <span className="text-[#75bf00] text-[12px] font-medium border border-[#2a381a] px-2 py-1 rounded-sm tracking-wide">{model.tag}</span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
-                  
+
                 </div>
               </div>
               <div />
@@ -1358,81 +1495,81 @@ export default function EmbeddingsPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 mt-32">
-          {/* Heading */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            <div />
-            <div className="min-w-0">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+          <div className="w-full relative z-10 mt-20 md:mt-24 pb-28 md:pb-36">
+            {/* Heading */}
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+              <div />
+              <div className="min-w-0">
+                <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-3 text-center">
                   What Horos tunes
                 </h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  Every stage of the pipeline, retuned per model and GPU.
+                <p className="text-[#C8C7BA] text-[15px] md:text-[16px] font-sans leading-relaxed text-center max-w-3xl mx-auto mb-12">
+                  Every stage of model research, from architecture and training to inference and physical-world understanding. Every experiment is measured against a baseline.
                 </p>
 
                 {/* Tunes Grid */}
-                <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+                <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
-                    
+
                     {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <Cpu size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Hybrid retrieval</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Dense embeddings plus BM25 lexical, fused. Catches jargon and rare terms that pure vector misses.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Model architecture</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Attention mechanisms, context, multimodal design, and model representations. Compare architectural changes to discover what improves reasoning, perception, and prediction.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <Database size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Reranker fusion</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Cross-encoder reranks dense and sparse hits together in one server. No extra API hop.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Data and curriculum</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Data mixtures, synthetic examples, and difficult cases from model failures. Find which data improves a capability instead of simply increasing dataset size.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Sliders size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Citation spans</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Every claim resolves back to source-doc spans. Hallucinations stay traceable, audits stay cheap.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Training and adaptation</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Continued training, LoRA, preference optimization, and distillation. Compare training methods while tracking checkpoints, compute, and capability changes.
                       </p>
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <ShieldCheck size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Eval harness</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in eval against your gold-set Q&A. Recall, faithfulness, citation coverage, all measured before deploy.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Evaluation and verification</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Test reasoning, coding, tool use, and long-horizon behavior. Compare model versions against baselines and preserve evidence for every claimed improvement.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Zap size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Grounded LLM</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Llama 3.1 8B with retrieval-augmented prompts. FlashAttention v2 plus PagedAttention KV.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Inference and test-time optimization</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Routing, caching, batching, and adaptive reasoning. Measure quality, latency, throughput, and compute cost for each configuration.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <Brain size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Vector and lexical store</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Qdrant for dense, BM25 sidecar for sparse, pgvector or Weaviate also wired. No network hop.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">World-model learning</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Video, sensor observations, spatial relationships, and physical dynamics. Test whether models can represent changing states, predict what happens next, and match predictions against observed reality.
                       </p>
                     </div>
 
@@ -1442,13 +1579,13 @@ export default function EmbeddingsPage() {
 
 
 
-            <div />
+              <div />
+            </div>
           </div>
-        </div>
 
-        {/* Try this pipeline Section */}
-            <div className="w-full relative z-10 py-24">
-              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          {/* Try this pipeline Section */}
+          <div className="w-full relative z-10 py-24">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
@@ -1509,8 +1646,9 @@ export default function EmbeddingsPage() {
             <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
               Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
             </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
-              Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
+            <p className="text-[#c7c3b7] text-[15px] md:text-[17px] font-sans text-center max-w-2xl mb-12">
+              Questions about researching, evaluating, and improving intelligence with Horos. Can't find what you're looking for?{" "}
+              <a href="/contact" className="text-[#75bf00] hover:underline font-medium">Get in touch.</a>
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 max-w-4xl mb-12">
@@ -1519,8 +1657,8 @@ export default function EmbeddingsPage() {
                   key={idx}
                   onClick={() => setActiveFaq(idx)}
                   className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                      ? "bg-[#75bf00] text-black"
-                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
+                    ? "bg-[#75bf00] text-black"
+                    : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
                     }`}
                 >
                   {faq.question}
@@ -1551,7 +1689,7 @@ export default function EmbeddingsPage() {
             <div className="absolute inset-0 pointer-events-none z-0">
               <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
               <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-               
+
             </div>
 
             {/* Faint Blueprint Grid Background */}
@@ -1580,21 +1718,20 @@ export default function EmbeddingsPage() {
             </div>
 
             <div className="relative z-20 flex flex-col items-center text-center max-w-4xl px-4 mt-8 pointer-events-auto">
-              <div className="mb-12">
-                <HorosLogo size={40} />
+              <div className="mb-8">
+                <HorosLogo size={36} />
               </div>
 
-              <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
-                Deploy your first optimized<br className="hidden md:block" />
-                model, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
-                ship
+              <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-6 max-w-3xl leading-tight">
+                Deploy your first optimized model,<br className="hidden md:block" />
+                <span className="relative z-10 bg-[#75bf00] text-black px-2.5 py-0.5 rounded-sm">measured</span> before you ship
               </h2>
 
-              <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
+              <p className="text-[#a0a0a0] text-[15px] md:text-[17px] font-sans mb-10 max-w-xl">
                 Describe the goal. Horos builds and optimizes the stack.
               </p>
 
-              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
                 <button className="h-[52px] px-8 bg-[#75bf00] hover:bg-[#8ade00] text-black font-semibold text-[15px] rounded-none transition-all duration-200 shadow-[0_0_20px_rgba(117,191,0,0.2)] hover:shadow-[0_0_30px_rgba(117,191,0,0.4)] flex items-center justify-center">
                   Start Building
                 </button>
@@ -1619,161 +1756,6 @@ export default function EmbeddingsPage() {
                 <div className="flex items-center gap-2.5 text-[#C8C7BA] text-[14px] font-medium border border-[#333] rounded-sm px-5 py-3 bg-[#111]/80 backdrop-blur-md">
                   <ShieldCheck size={16} className="text-[#75bf00]" />
                   SOC 2 Type II
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* --- FOOTER SECTION WRAPPER --- */}
-          <div className="w-full relative bg-[#151515] z-10 flex flex-col items-center">
-
-            {/* Inner Vertical Lines extending through the footer */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-              <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-              <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-               
-            </div>
-
-            {/* --- DIVIDER --- */}
-            <div className="w-full relative flex items-center justify-center my-8 z-10 overflow-hidden" style={{ height: "38px" }}>
-              {/* Custom SVG 5-Line Divider from User */}
-              <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="paint0_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#75BF00" />
-                    <stop offset="0.480769" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint1_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0.110577" stopColor="#333333" />
-                    <stop offset="0.586538" stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint2_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop offset="0.423077" stopColor="#333333" />
-                    <stop offset="0.942308" stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                  <linearGradient id="paint3_linear_55_3" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#75BF00" />
-                    <stop offset="1" stopColor="#333333" />
-                  </linearGradient>
-                </defs>
-                <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="url(#paint0_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="8.5" x2="100%" y2="8.5" stroke="url(#paint1_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="16.5" x2="100%" y2="16.5" stroke="#333333" strokeDasharray="3 3" />
-                <line x1="0" y1="24.5" x2="100%" y2="24.5" stroke="url(#paint2_linear_55_3)" strokeDasharray="3 3" />
-                <line x1="0" y1="32.5" x2="100%" y2="32.5" stroke="url(#paint3_linear_55_3)" strokeDasharray="3 3" />
-              </svg>
-              {/* Center Logo Cutout */}
-              <div className="bg-[#151515] px-4 py-2 text-[#F0EFE2] relative z-20 flex items-center justify-center">
-                <HorosLogo size={25} />
-              </div>
-            </div>
-
-            {/* --- FOOTER CONTENT --- */}
-            <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
-              {/* Top Footer Row */}
-              <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
-                {/* Left Column */}
-                <div className="flex flex-col">
-                  <div className="mb-2 text-[#F0EFE2]">
-                    <HorosWordmarkLogo className="h-[24px] w-auto" />
-                  </div>
-                  <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 horosInfra. All rights reserved.</p>
-
-                  {/* Social Icons */}
-                  <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
-                    <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="GitHub">
-                      <GithubLogo size={18} />
-                    </a>
-                    <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="X (Twitter)">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-                      </svg>
-                    </a>
-                    <a href="#" className="hover:text-[#F0EFE2] transition-colors" aria-label="LinkedIn">
-                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                      </svg>
-                    </a>
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 bg-[#222] hover:bg-[#2a2a2a] text-[#C8C7BA] px-3.5 py-2 rounded-[6px] transition-colors border border-[#333]">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" /></svg>
-                      <span className="text-[12px] font-medium tracking-tight">Join the community</span>
-                    </button>
-                    <button className="flex items-center gap-2 bg-[#222] hover:bg-[#2a2a2a] text-[#C8C7BA] px-3.5 py-2 rounded-[6px] transition-colors border border-[#333]">
-                      <div className="w-1.5 h-1.5 bg-[#75bf00] rounded-full" />
-                      <span className="text-[12px] font-medium tracking-tight">System status</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="flex flex-col items-end">
-                  {/* Nav Links */}
-                  <div className="flex flex-col items-end gap-3 mb-10 w-full">
-                    <div className="flex items-center gap-x-6">
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Intelligence Agent</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Capability Fabric</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Pricing</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Enterprise</a>
-                    </div>
-                    <div className="flex items-center gap-x-6">
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Benchmarks</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Docs</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Research</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">News</a>
-                      <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Contact</a>
-                    </div>
-                  </div>
-
-                  {/* Ask AI about Horos */}
-                  <div className="flex flex-col items-end">
-                    <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Horos</span>
-                    <div className="flex items-center gap-4 text-[#C8C7BA]">
-                      <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
-                      <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
-                      <GoogleLogo size={18} className="text-[#4285f4] hover:brightness-125 transition-all cursor-pointer" />
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors cursor-pointer">
-                        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-                      </svg>
-                      <div className="w-[18px] h-[18px] border-[1.5px] border-current rounded-full flex items-center justify-center text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors cursor-pointer">
-                        <div className="w-1.5 h-1.5 bg-current rounded-full" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Legal / Theme Row */}
-            <div className="w-full border-t border-dashed border-[#333] relative">
-              {/* Tiny HOROS text aligned to the left of the 14% grid line */}
-              <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
-
-              <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto py-4 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
-                <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
-                  <span className="flex items-center gap-1.5 text-[#F0EFE2] font-bold mr-12"><HorosLogo className="h-[40px] w-auto" /></span>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Security</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">DPA</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">AUP</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Cookies</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Terms</a>
-                  <a href="#" className="hover:text-[#F0EFE2] transition-colors">Privacy</a>
-                </div>
-
-                <div className="flex items-center gap-2 text-[#666]">
-                  <button className="p-1.5 rounded-[6px] hover:text-[#F0EFE2] hover:bg-[#222] transition-colors">
-                    <Sun size={15} />
-                  </button>
-                  <button className="p-1.5 rounded-[6px] bg-[#1a1a1a] text-[#F0EFE2] border border-[#333] transition-colors">
-                    <Monitor size={15} />
-                  </button>
-                  <button className="p-1.5 rounded-[6px] hover:text-[#F0EFE2] hover:bg-[#222] transition-colors">
-                    <Moon size={15} />
-                  </button>
                 </div>
               </div>
             </div>

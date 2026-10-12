@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  async redirects() {
+    return [
+      {
+        source: "/use-cases/rag-search",
+        destination: "/use-cases/research-agent",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     const backendOrigin = (process.env.MEMORYOS_API_ORIGIN ?? "http://localhost:3001").replace(/\/$/, "");
     return [
