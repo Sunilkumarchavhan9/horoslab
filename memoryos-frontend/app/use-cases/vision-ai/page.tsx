@@ -204,91 +204,115 @@ const COMPARISON_ROWS: Array<{
 ];
 
 
-const EXTRACT_CODE = `# Schema-driven document extraction with response_format passthrough.
+const EXTRACT_CODE = `# Real-time Vision AI: spatio-temporal tracking and scene understanding
 from openai import OpenAI
 from pydantic import BaseModel
- 
-class Invoice(BaseModel):
-    vendor: str
-    invoice_no: str
-    date: str
-    total_usd: float
-    line_items: list[dict]
- 
+from typing import List, Tuple
+
+class Detection(BaseModel):
+    label: str
+    confidence: float
+    bbox_2d: Tuple[int, int, int, int]  # [ymin, xmin, ymax, xmax]
+    velocity: Tuple[float, float]        # [dx, dy]
+
+class SceneUnderstanding(BaseModel):
+    timestamp_ms: int
+    scene_summary: str
+    detections: List[Detection]
+    spatial_relationships: List[str]
+    predicted_next_action: str
+
 client = OpenAI(base_url="http://localhost:8000/v1")
- 
-def extract(image_b64: str) -> Invoice:
+
+def analyze_video_frame(frame_b64: str) -> SceneUnderstanding:
     res = client.chat.completions.create(
-        model="Qwen/Qwen2.5-VL-7B-Instruct",
+        model="Qwen/Qwen3-VL-8B-Instruct",
         response_format={
             "type": "json_schema",
             "json_schema": {
-                "name": "Invoice",
-                "schema": Invoice.model_json_schema(),
+                "name": "SceneUnderstanding",
+                "schema": SceneUnderstanding.model_json_schema(),
                 "strict": True,
             },
         },
-        messages=[{"role": "user", "content": [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_b64}"}}, {"type": "text", "text": "Extract."}]}],
+        messages=[{"role": "user", "content": [
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{frame_b64}"}},
+            {"type": "text", "text": "Track objects, spatial relationships, and motion."}
+        ]}],
     )
-    return Invoice.model_validate_json(res.choices[0].message.content)`;
+    return SceneUnderstanding.model_validate_json(res.choices[0].message.content)`;
 
 const SERVE_CODE = `#!/usr/bin/env bash
-# Core vLLM fallback behind the generated RunInfra auth proxy
+# Deploy Qwen3-VL-8B with vLLM vision pipeline behind Horos proxy
 set -euo pipefail
- 
-MODEL_ID="Qwen/Qwen2.5-VL-7B-Instruct"
+
+MODEL_ID="Qwen/Qwen3-VL-8B-Instruct"
 HOST="\${HOST:-0.0.0.0}"
 PORT="\${PORT:-8000}"
-MAX_MODEL_LEN="\${MAX_MODEL_LEN:-8192}"
- 
-exec "\${RUNINFRA_PYTHON:-python3}" -m vllm.entrypoints.openai.api_server \\
+MAX_MODEL_LEN="\${MAX_MODEL_LEN:-16384}"
+
+exec python3 -m vllm.entrypoints.openai.api_server \\
   --model "$MODEL_ID" \\
   --tensor-parallel-size 1 \\
   --max-model-len "$MAX_MODEL_LEN" \\
   --port "$PORT" \\
-  --gpu-memory-utilization 0.70 \\
+  --gpu-memory-utilization 0.85 \\
+  --enforce-eager \\
   --host "$HOST"`;
 
 const PIPELINE_CODE = `{
-  "name": "vision-ai",
-  "target_seconds_per_page": 0.4,
-  "model":   "qwen2.5-vl-7b",
-  "engine":  "vllm",
-  "gpu":     "nvidia-l40s",
-  "quant":   "awq-int4",
-  "schemas": ["invoice", "contract", "form"]
+  "name": "vision-ai-pipeline",
+  "target_fps": 30,
+  "primary_model": "qwen3-vl-8b",
+  "prediction_model": "cosmos3-nano",
+  "engine": "vllm-vision",
+  "gpu": "nvidia-l40s",
+  "quantization": "awq-int4",
+  "tasks": [
+    "object_detection",
+    "spatial_relationships",
+    "motion_event_analysis",
+    "temporal_prediction"
+  ]
 }`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS base
- 
-RUN apt-get update && apt-get install -y python3.11 python3-pip poppler-utils
- 
+
+RUN apt-get update && apt-get install -y python3.11 python3-pip ffmpeg libgl1-mesa-glx
+
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
- 
+
 COPY schemas/ /app/schemas/
-COPY extract.py serve.sh pipeline.json .
- 
+COPY track.py serve.sh pipeline.json eval.py .
+
 EXPOSE 8000
 ENTRYPOINT ["/app/serve.sh"]`;
 
-const EVAL_CODE = `# Gold-set eval harness: recall, faithfulness, citation coverage.
+const EVAL_CODE = `# Video benchmark harness: mAP, tracking accuracy (MOTA), and latency.
 import json
-from adapters.retrieve import answer
- 
-def run_eval(gold_path: str) -> dict:
-    """Score a gold set: [{question, reference_answer, relevant_doc_ids}]."""
-    items = json.load(open(gold_path))
-    scores = {"recall_at_5": 0.0, "faithfulness": 0.0, "citation_coverage": 0.0}
-    for item in items:
-        out = answer(item["question"])
-        hit_ids = {c["doc_id"] for c in out["citations"]}
-        scores["recall_at_5"] += len(hit_ids & set(item["relevant_doc_ids"])) / 5
-        scores["faithfulness"] += faithfulness_score(out["answer"], out["citations"])
-        scores["citation_coverage"] += citation_coverage(out["answer"], out["citations"])
-    n = len(items)
-    return {k: v / n for k, v in scores.items()}`;
+import time
+from metrics.vision import compute_map, compute_mota
+
+def run_vision_eval(dataset_manifest: str) -> dict:
+    """Evaluate detections, spatial tracking, and velocity vectors against ground truth."""
+    frames = json.load(open(dataset_manifest))
+    latencies = []
+    predictions = []
+    
+    for item in frames:
+        t0 = time.perf_counter()
+        pred = analyze_video_frame(item["frame_b64"])
+        latencies.append((time.perf_counter() - t0) * 1000)
+        predictions.append(pred)
+        
+    return {
+        "mAP_50_95": compute_map(predictions, frames),
+        "tracking_mota": compute_mota(predictions, frames),
+        "p95_latency_ms": sorted(latencies)[int(len(latencies) * 0.95)],
+        "fps_throughput": round(1000 / (sum(latencies) / len(latencies)), 1)
+    }`;
 
 type VisionAIFile = string;
 
@@ -444,16 +468,16 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I run an embedder and reranker on the same GPU?",
-    answer: "Yes. Our fused memory architecture allows you to run a massive encoder like BGE-M3 alongside a cross-encoder reranker on a single H100 or L40S, eliminating network hops between models.",
+    question: "Can I run scene understanding and temporal prediction on the same GPU?",
+    answer: "Yes. Our optimized pipeline schedules vision models like Qwen3-VL alongside physical world predictors like Cosmos3-Nano on a single L40S or H100 GPU, streaming spatio-temporal embeddings without inter-service latency.",
   },
   {
-    question: "How do you handle massive document ingestion?",
-    answer: "We use aggressive sequence packing and continuous batching. Variable length documents are packed natively to avoid zero-padding waste, dramatically increasing throughput.",
+    question: "How do you handle real-time multi-camera video streaming?",
+    answer: "We use zero-copy GPU video decoding and dynamic frame sampling. High-motion segments are processed at full 60fps while static scenes throttle dynamically, keeping GPU memory and bandwidth strictly bounded.",
   },
   {
-    question: "Do you support direct Vector DB connections?",
-    answer: "Yes. Our pipelines feature zero-copy network paths that stream embeddings directly into pgvector, Milvus, Qdrant, or Pinecone without hitting intermediary APIs.",
+    question: "Do you support structured spatio-temporal JSON output?",
+    answer: "Yes. Our pipelines enforce strict JSON schema decoding directly inside the serving engine, providing verified 2D bounding boxes, velocity vectors, and relational scene graphs with sub-millisecond validation.",
   }
 ];
 
@@ -463,12 +487,12 @@ export default function VisionAIPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<VisionAIFile>("extract.py");
+  const [activeFile, setActiveFile] = useState<VisionAIFile>("track.py");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "extract.py": EXTRACT_CODE,
+    "track.py": EXTRACT_CODE,
     "eval.py": EVAL_CODE,
     "serve.sh": SERVE_CODE,
     "pipeline.json": PIPELINE_CODE,
@@ -476,8 +500,8 @@ export default function VisionAIPage() {
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll profile Qwen2.5-VL on the L40S, wire the JSON schema into the OpenAI-compatible request, then prepare a 500-page eval harness for your gold set.";
-  const AGENT_MSG_2 = "Recipe is ready. Targeting 0.4s/page at $0.018/page on L40S. The endpoint forwards the response_format field to vLLM, and the client validates returned JSON. Field accuracy depends on your schema and forms, run the eval harness on your gold set. Want me to deploy?";
+  const AGENT_MSG_1 = "On it. I'll profile Qwen3-VL on the L40S, optimize dynamic frame sampling to 30fps, fuse spatial patch embeddings with temporal tracking, and prepare a 500-clip visual evaluation harness.";
+  const AGENT_MSG_2 = "Recipe is ready. Processing 30fps multi-camera video streams at $0.004/minute on L40S. The endpoint outputs real-time object tracking, spatial relationships, and predictive event graphs with verified latency benchmarks. Want me to deploy?";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -1012,383 +1036,388 @@ export default function VisionAIPage() {
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0">
+                {/* Sandbox Content Container (SVG Skeleton Architecture) */}
+                <div className="w-full relative mx-auto" style={{ aspectRatio: '1351 / 892' }}>
 
+                  {/* Panes Backgrounds (Z-0) */}
+                  <div className="absolute inset-0 grid" style={{
+                    gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                    gridTemplateRows: '53.5fr 785fr 53.5fr'
+                  }}>
+                    {/* Tabs bg */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
 
+                    {/* Chat bg */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
 
-            {/* Sandbox Content Container (SVG Skeleton Architecture) */}
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+                    {/* Files bg */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
 
-              {/* Panes Backgrounds (Z-0) */}
-              <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-                {/* Tabs bg */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
-
-                {/* Chat bg */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
-
-                {/* Files bg */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
-
-                {/* Code bg */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
-              </div>
-
-              {/* Skeleton Grid Lines (Z-10) */}
-              <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
-
-              {/* Content (Z-20) */}
-              <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-
-                {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
-                    <button
-                      onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <span className="text-[#75bf00]">&gt;_</span> PIPELINE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Code2 size={13} /> CODE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Sliders size={13} /> OPTIMIZATION
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Rocket size={13} /> DEPLOY
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
-                    <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
-                    <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
-                  </div>
-                </div>
-
-                {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Parse invoices and contracts to JSON.
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><QwenLogo size={11} /> Qwen2.5-VL-7B</span>
-                        with our extraction schema on a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> L40S</span>. 
-                        Pass the schema through response_format and validate returned JSON in the client.
-                      </p>
-                    </div>
-
-                    {/* Step 1: Agent Initial Ack */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
-                          {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      {/* Log 1 (Step 2) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen2.5-VL 7B on L40S</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">0.4s/page, FP16 vision encoder</span>
-                        </div>
-                      </div>
-
-                      {/* Log 2 (Step 3) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tiled patch embeddings</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">fused with the LLM step</span>
-                        </div>
-                      </div>
-
-                      {/* Log 3 (Step 4) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned AWQ INT4 on the LLM head</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">FP16 stays on the vision encoder</span>
-                        </div>
-                      </div>
-
-                      {/* Log 4 (Step 5) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Wired JSON schema into response_format</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">response_format forwarded to vLLM</span>
-                        </div>
-                      </div>
-
-                      {/* Log 5 (Step 6) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Prepared reference 500-page harness</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">$0.018/page target, client validation included</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Step 7 (LAST STEP): Agent Final Summary */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Code bg */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
                   </div>
 
-                  {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
-                      <input
-                        type="text"
-                        placeholder="Teach the agent to handle custom chunking strategies..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
-                        readOnly
-                      />
-                      <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                          
-                        </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  {/* Skeleton Grid Lines (Z-10) */}
+                  <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
 
-                {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SCHEMAS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      invoice.json
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      contract.json
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      form.json
-                    </div>
+                  {/* Content (Z-20) */}
+                  <div className="absolute inset-0 grid pointer-events-none z-20" style={{
+                    gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                    gridTemplateRows: '53.5fr 785fr 53.5fr'
+                  }}>
 
-                    {/* Project Tree Folder */}
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> horos-vision-ai/
-                      </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                    {/* Tabs */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
+                      <div className="flex gap-8 h-full items-end pb-2">
                         <button
-                          onClick={() => selectFileManually("extract.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "extract.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => setActiveMainTab("pipeline")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          extract.py
+                          <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                         </button>
-                        <button 
+                        <button
+                          onClick={() => setActiveMainTab("code")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Code2 size={13} /> CODE
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("optimization")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Sliders size={13} /> OPTIMIZATION
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("deploy")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Rocket size={13} /> DEPLOY
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
+                        <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
+                        <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
+                      </div>
+                    </div>
+
+                    {/* Chat Content */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                      <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
+                        <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
+                          <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
+                            Track objects, spatial relationships, and motion across video streams.
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><QwenLogo size={11} /> Qwen3-VL-8B</span>
+                            with spatio-temporal schemas on a single
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> L40S</span>. 
+                            Enforce strict JSON schema validation for bounding boxes and relational graphs.
+                          </p>
+                        </div>
+
+                        {/* Step 1: Agent Initial Ack */}
+                        <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
+                              <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={14} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                              {typedMsg1}
+                              {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
+                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Logs list */}
+                        <div className="flex flex-col gap-4 mt-2">
+                          {/* Log 1 (Step 2) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 2 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen3-VL 8B on L40S</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
+                              </div>
+                              <span className="text-[#666] text-[12px]">30 fps stream, FP16 vision encoder</span>
+                            </div>
+                          </div>
+
+                          {/* Log 2 (Step 3) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 3 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Tiled patch embeddings</span>
+                                <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[12px]">fused with spatial tokens</span>
+                            </div>
+                          </div>
+
+                          {/* Log 3 (Step 4) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 4 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned AWQ INT4 on LLM head</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
+                              </div>
+                              <span className="text-[#666] text-[12px]">FP16 stays on the vision encoder</span>
+                            </div>
+                          </div>
+
+                          {/* Log 4 (Step 5) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 5 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Wired spatio-temporal schema</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
+                              </div>
+                              <span className="text-[#666] text-[12px]">zero-copy frame streaming forwarded to vLLM</span>
+                            </div>
+                          </div>
+
+                          {/* Log 5 (Step 6) */}
+                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 6 ? (
+                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5">
+                              <div className="flex justify-between items-center w-full">
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Prepared 500-clip tracking harness</span>
+                                <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[12px]">mAP 0.84, MOTA 0.91, client validation included</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 7 (LAST STEP): Agent Final Summary */}
+                        <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
+                              <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={14} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                              {typedMsg2}
+                              {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
+                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Prompt input bar */}
+                      <div className="mt-2 shrink-0 mb-2">
+                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
+                          <input
+                            type="text"
+                            placeholder="Teach the agent to handle multi-camera spatial tracking..."
+                            className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
+                            readOnly
+                          />
+                          <div className="flex justify-between items-center px-1">
+                            <div className="flex gap-1.5">
+                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
+                              
+                            </div>
+                            <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                              <ArrowUp size={14} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Files Content */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
+                        <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SCHEMAS</span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+                      </div>
+                      <div className="flex flex-col gap-1.5 text-[13px] font-mono">
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                          detection.json
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                          spatial_graph.json
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                          motion_track.json
+                        </div>
+
+                        {/* Project Tree Folder */}
+                        <div className="mt-2 flex flex-col gap-1.5">
+                          <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
+                            <ChevronDown size={14} className="text-[#777]" /> horos-vision-ai/
+                          </div>
+                          <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                            <button
+                              onClick={() => selectFileManually("track.py")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "track.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              track.py
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("eval.py")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              eval.py
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("serve.sh")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              serve.sh
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("pipeline.json")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              pipeline.json
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("Dockerfile")}
+                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              Dockerfile
+                            </button>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              docker-compose.yml
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              requirements.txt
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              <ChevronRight size={14} className="text-[#333]" /> video_clips/
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              <ChevronRight size={14} className="text-[#333]" /> benchmarks/
+                            </div>
+                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                              README.md
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Code Content */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      {/* Editor top tabs */}
+                      <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                        <button
+                          onClick={() => selectFileManually("track.py")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "track.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          track.py
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("eval.py")}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          eval.py
+                        </button>
+                        <button
                           onClick={() => selectFileManually("serve.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           serve.sh
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           pipeline.json
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           Dockerfile
                         </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          docker-compose.yml
+                      </div>
+
+                      {/* Code Area with Line Numbers */}
+                      <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                        {/* Line numbers column */}
+                        <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                          {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
+                            <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                          ))}
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          requirements.txt
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> corpus/
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> evals/
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          README.md
+
+                        {/* Highlighted code column */}
+                        <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                          {highlightCode(
+                            typedCodeText,
+                            activeFile.endsWith(".py")
+                              ? "python"
+                              : activeFile.endsWith(".sh")
+                                ? "bash"
+                                : activeFile.endsWith(".json")
+                                  ? "json"
+                                  : activeFile === "Dockerfile"
+                                    ? "dockerfile"
+                                    : "typescript",
+                            !isTypingCode
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  {/* Editor top tabs */}
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                    <button
-                      onClick={() => selectFileManually("extract.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "extract.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      extract.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("eval.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      eval.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("serve.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      serve.sh
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      pipeline.json
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("Dockerfile")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      Dockerfile
-                    </button>
-                  </div>
-
-                  {/* Code Area with Line Numbers */}
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    {/* Line numbers column */}
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
-                      {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
-                      ))}
-                    </div>
-
-                    {/* Highlighted code column */}
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
-                      {highlightCode(
-                        typedCodeText,
-                        activeFile.endsWith(".py")
-                          ? "python"
-                          : activeFile.endsWith(".sh")
-                            ? "bash"
-                            : activeFile.endsWith(".json")
-                              ? "json"
-                              : activeFile === "Dockerfile"
-                                ? "dockerfile"
-                                : "typescript",
-                        !isTypingCode
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
+              <div />
             </div>
           </div>
 
           {/* Features Grid Row */}
           <div className="w-full relative z-10">
-            {/* Line 3: Infinite Horizontal Border at bottom of Features Grid */}
-
-
-
             {/* Feature Cards aligned with vertical grid lines */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
@@ -1402,7 +1431,7 @@ export default function VisionAIPage() {
                     </div>
                     <h3 className="text-3xl font-medium text-[#F0EFE2]">Managed Horos</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Our GPUs, per-million-tokens billing from L4 to B200.
+                      Hosted vision endpoints with sub-second video latency from L40S to B200.
                     </p>
                   </div>
 
@@ -1413,7 +1442,7 @@ export default function VisionAIPage() {
                     </div>
                     <h3 className="text-3xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      AWS, GCP, RunPod, bare metal. Same verifier/, your cluster.
+                      AWS, GCP, edge clusters, bare metal. Same vision engine, your private VPC.
                     </p>
                   </div>
 
@@ -1422,9 +1451,9 @@ export default function VisionAIPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Network size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Local workstation</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Local workstation &amp; Edge</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      docker compose up. Full pipeline on a single GPU.
+                      docker compose up. Real-time spatio-temporal video pipeline on a single GPU or Jetson.
                     </p>
                   </div>
                 </div>
