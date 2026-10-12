@@ -706,60 +706,60 @@ export default function AutonomousSoftwareEngineersPage() {
               <div />
               <div className="min-w-0 bg-[#151515]">
                 <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
-                  <div className="hidden md:flex items-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
+                  <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
                   </div>
-                  <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333] relative">
-                    <div className="absolute top-4 right-4 flex items-center">
-                      <span className="text-[9px] font-bold tracking-[0.2em] text-[#75bf00] uppercase">Recommended</span>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="absolute top-2.5 right-3 flex items-center">
+                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
                     </div>
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-12 h-12 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm">
-                        <HorosLogo size={28} />
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <HorosLogo size={16} />
                       </div>
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Horos</span>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[20px]">Autonomous SWE & sandbox verification.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Autonomous SWE & sandbox verification.</p>
                   </div>
-                  <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Key size={28} className="text-[#C8C7BA]" />
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">Closed Copilot APIs</span>
+                      <Key size={16} className="text-[#C8C7BA]" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed Copilot APIs</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[20px]">Inline code autocomplete.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Inline code autocomplete.</p>
                   </div>
-                  <div className="flex flex-col justify-center px-8 py-6 border-b border-dashed border-[#333]">
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={28} className="text-[#C8C7BA]" />
-                      <span className="text-[28px] font-medium text-[#F0EFE2]">DIY Prompt Scripts</span>
+                      <Cpu size={16} className="text-[#C8C7BA]" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY Prompt Scripts</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[20px]">Brittle, manual prompt chaining.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Brittle, manual prompt chaining.</p>
                   </div>
                 </div>
 
                 <div className="border-l border-r border-b border-dashed border-[#333]">
                   {COMPARISON_ROWS.map((row, idx) => (
                     <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                      <div className="flex items-center px-8 py-8 md:border-r border-dashed border-[#333] min-h-[140px]">
+                      <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
                         <div className="flex items-center gap-3">
-                          <span className="text-[#75bf00] font-mono text-[16px] font-bold">{row.num}</span>
-                          <span className="text-[24px] font-medium text-[#F0EFE2]">{row.label}</span>
+                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
+                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
                         </div>
                       </div>
                       
-                      <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[24px] font-medium text-[#75bf00] mb-2">{row.runInfra.title}</h4>
-                        <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.runInfra.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
                       </div>
 
-                      <div className="flex flex-col justify-center px-8 py-8 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.closed.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
                       </div>
 
-                      <div className="flex flex-col justify-center px-8 py-8">
-                        <h4 className="text-[24px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[20px] leading-relaxed">{row.diy.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
+                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
                       </div>
                     </div>
                   ))}

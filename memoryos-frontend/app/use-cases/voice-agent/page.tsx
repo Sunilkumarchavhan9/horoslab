@@ -882,36 +882,36 @@ export default function RagSearchPage() {
                 {/* Header Row */}
                 <div className="flex flex-col md:flex-row items-stretch border-b border-dashed border-[#333]">
                   {/* Col 1: Label */}
-                  <div className="w-full md:w-1/4 p-6 flex items-end border-r-0 md:border-r border-dashed border-[#333]">
+                  <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 flex items-end border-r-0 md:border-r border-dashed border-[#333]">
                     <span className="text-[#C8C7BA] font-bold text-[10px] tracking-[0.15em] uppercase">What Matters</span>
                   </div>
 
                   {/* Col 2: RunInfra (Recommended) */}
-                  <div className="w-full md:w-1/4 p-6 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2 relative bg-[#75bf00]/[0.02]">
-                    <span className="absolute top-4 right-4 text-[#75bf00] font-bold text-[8px] tracking-[0.2em] uppercase">Recommended</span>
+                  <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2 relative bg-[#75bf00]/[0.02]">
+                    <span className="absolute top-2.5 right-3 text-[#75bf00] font-bold text-[8px] tracking-[0.15em] uppercase">Recommended</span>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="bg-[#1a1a1a] p-1 border border-[#333] rounded">
-                        <HorosLogo variant="icon" className="w-5 h-5 text-[#75bf00]" />
+                        <HorosLogo variant="icon" className="w-4 h-4 text-[#75bf00]" />
                       </div>
-                      <span className="text-[#F0EFE2] text-[19px] font-medium tracking-tight">Horos</span>
+                      <span className="text-[#F0EFE2] text-[15px] sm:text-[16px] font-semibold tracking-tight">Horos</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] leading-relaxed">Optimize, verify, teach, evolve.</p>
                   </div>
 
                   {/* Col 3: Closed API */}
-                  <div className="w-full md:w-1/4 p-6 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
+                  <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
                     <div className="flex items-center gap-2 mb-1">
                       <Key size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[#F0EFE2] text-[18px] font-medium tracking-tight">Closed voice APIs</span>
+                      <span className="text-[#F0EFE2] text-[15px] sm:text-[16px] font-semibold tracking-tight">Closed voice APIs</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] leading-relaxed">Consume the provider's intelligence.</p>
                   </div>
 
                   {/* Col 4: DIY */}
-                  <div className="w-full md:w-1/4 p-6 flex flex-col gap-2">
+                  <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 flex flex-col gap-2">
                     <div className="flex items-center gap-2 mb-1">
                       <Cpu size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[#F0EFE2] text-[18px] font-medium tracking-tight">DIY self-hosting</span>
+                      <span className="text-[#F0EFE2] text-[15px] sm:text-[16px] font-semibold tracking-tight">DIY self-hosting</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] leading-relaxed">Build and operate the intelligence stack.</p>
                   </div>
@@ -924,30 +924,30 @@ export default function RagSearchPage() {
                     className="group flex flex-col md:flex-row items-stretch border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors cursor-default"
                   >
                     {/* Col 1: Label */}
-                    <div className="w-full md:w-1/4 p-6 flex items-start justify-between border-r-0 md:border-r border-dashed border-[#333] transition-colors">
+                    <div className="w-full md:w-1/4 px-4 py-3.5 lg:px-5 lg:py-4 flex items-start justify-between border-r-0 md:border-r border-dashed border-[#333] transition-colors">
                       <div className="flex items-center gap-4">
-                        <span className="text-[#75bf00] font-mono text-[11px] font-bold tracking-widest">{row.num}</span>
-                        <span className="text-[#F0EFE2] text-[17px] font-medium group-hover:text-[#75bf00] transition-colors">{row.label}</span>
+                        <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
+                        <span className="text-[#F0EFE2] text-[14px] sm:text-[15px] font-medium group-hover:text-[#75bf00] transition-colors">{row.label}</span>
                       </div>
                       <ChevronRight size={16} className="text-[#75bf00] opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 transform duration-300 mt-0.5" />
                     </div>
 
                     {/* Col 2: RunInfra */}
-                    <div className="w-full md:w-1/4 p-6 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
-                      <span className="text-[#75bf00] text-[17px] font-medium transition-colors">{row.runInfra.title}</span>
-                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.runInfra.desc}</p>
+                    <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
+                      <span className="text-[#75bf00] text-[13.5px] sm:text-[14px] font-medium transition-colors mb-1 leading-snug">{row.runInfra.title}</span>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.runInfra.desc}</p>
                     </div>
 
                     {/* Col 3: Closed API */}
-                    <div className="w-full md:w-1/4 p-6 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
-                      <span className="text-[#F0EFE2] text-[17px] font-medium group-hover:text-[#75bf00] transition-colors">{row.closed.title}</span>
-                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.closed.desc}</p>
+                    <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
+                      <span className="text-[#F0EFE2] text-[14px] sm:text-[15px] font-medium group-hover:text-[#75bf00] transition-colors">{row.closed.title}</span>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.closed.desc}</p>
                     </div>
 
                     {/* Col 4: DIY */}
-                    <div className="w-full md:w-1/4 p-6 flex flex-col gap-2">
-                      <span className="text-[#F0EFE2] text-[17px] font-medium group-hover:text-[#75bf00] transition-colors">{row.diy.title}</span>
-                      <p className="text-[#C8C7BA] text-[15px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.diy.desc}</p>
+                    <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 flex flex-col gap-2">
+                      <span className="text-[#F0EFE2] text-[14px] sm:text-[15px] font-medium group-hover:text-[#75bf00] transition-colors">{row.diy.title}</span>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.diy.desc}</p>
                     </div>
                   </div>
                 ))}
