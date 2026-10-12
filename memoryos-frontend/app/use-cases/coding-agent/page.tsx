@@ -98,11 +98,11 @@ const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY p
 const MEMORY_PY_CODE = `def initialize_memory(agent_id, session_token):
     """
     Sets up the persistent memory context for the agent.
-    Connects to the MemoryOS backend to retrieve historical execution paths.
+    Connects to the Horos backend to retrieve historical execution paths.
     """
     import requests
     response = requests.get(
-        f"http://memoryos-backend.local/api/v1/memory/{agent_id}",
+        f"http://horos-backend.local/api/v1/memory/{agent_id}",
         headers={"Authorization": f"Bearer {session_token}"}
     )
     if response.status_code == 200:
