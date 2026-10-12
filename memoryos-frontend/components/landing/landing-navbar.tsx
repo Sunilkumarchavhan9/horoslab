@@ -174,7 +174,7 @@ export function LandingNavbar({
                       title: "Vision AI",
                       desc: "Models that see and understand the world.",
                       icons: [QwenLogo, MetaLogo, NvidiaLogo],
-                      href: "/use-cases/document-ai"
+                      href: "/use-cases/vision-ai"
                     },
                     {
                       title: "Multimodal AI",
