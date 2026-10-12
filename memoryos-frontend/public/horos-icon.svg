@@ -1,8 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184 184" width="184" height="184">
-  <rect width="184" height="184" rx="42" fill="#151515"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184 184" width="184" height="184" fill="none">
   <g transform="translate(1, 12.5)">
     <path
-      fill="#75bf00"
+      fill="#FFFFFF"
       d="M 113.00 10.50
          Q 111.00 10.00 109.50 10.50
          Q 108.00 11.00 106.50 12.50
@@ -39,7 +38,7 @@
          Z"
     />
     <path
-      fill="#75bf00"
+      fill="#FFFFFF"
       d="M 159.00 83.50
          Q 157.00 82.00 150.50 82.00
          Q 144.00 82.00 143.50 82.50
