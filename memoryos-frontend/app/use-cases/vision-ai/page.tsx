@@ -631,8 +631,8 @@ export default function VisionAIPage() {
             <div className="min-w-0">
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The optimization knobs, the codebase, the model choice. None of it locked away.
+                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-3xl mx-auto mb-16">
+                  Your vision models, visual data, and runtime. Horos helps you optimize how models interpret images, understand scenes, and track changes across video.
                 </p>
               </div>
             </div>
@@ -689,27 +689,27 @@ export default function VisionAIPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Per million tokens,<br/>not per image.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Choose and adapt<br/>vision models.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Closed vision AI charges per image or request. Horos bills compute on your GPU. High-throughput vision becomes cheap.
+                      Compare open vision models for object detection, scene understanding, spatial relationships, and video analysis. Track model versions and measure which capabilities improve.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Your visual data<br/>never leaves.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Your visual data stays<br/>under your control.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Images, video frames, and feeds stay on your runtime. No third-party retention windows.
+                      Bring your own images, video, labels, and sensor observations. Choose your deployment environment and control how visual data is accessed and used.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Tune the model<br/>on your real images.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Measure understanding<br/>against reality.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Bring your visual datasets and labels. The model fine-tunes on your specific camera feeds and objects.
+                      Evaluate object recognition, spatial relationships, and changes across video frames against your own data. Compare quality, latency, GPU memory, and cost before deploying.
                     </p>
                   </div>
                 </div>
