@@ -34,9 +34,12 @@ export const metadata: Metadata = {
   description:
     "HOROS is the agent work control plane for AI-native companies: inheritance, control, proof, and outcome learning before and after agent work.",
   icons: {
-    icon: "/memoryostmlogoofficial.png",
-    shortcut: "/memoryostmlogoofficial.png",
-    apple: "/memoryostmlogoofficial.png",
+    icon: [
+      { url: "/horos-icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" }
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/horos-icon.png",
   },
 };
 
