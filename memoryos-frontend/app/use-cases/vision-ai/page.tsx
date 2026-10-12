@@ -13,48 +13,193 @@ import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-inp
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText } from "lucide-react";
 
-const COMPARISON_ROWS = [
+const COMPARISON_ROWS: Array<{
+  num: string;
+  label: string;
+  runInfra: { title: string; desc: React.ReactNode };
+  closed: { title: string; desc: React.ReactNode };
+  diy: { title: string; desc: React.ReactNode };
+}> = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly and keep the production path open." },
-    closed: { title: "Call provider endpoint", desc: "Fast first demo, but the runtime stays rented." },
-    diy: { title: "Build serving stack first", desc: "Infrastructure work comes before product learning." }
+    label: "System",
+    runInfra: {
+      title: "One vision system.",
+      desc: "Connect models, visual data, runtime, compute, and evaluation."
+    },
+    closed: {
+      title: "Hosted vision endpoint.",
+      desc: "Integrate the API into your application."
+    },
+    diy: {
+      title: "Build the full stack.",
+      desc: "Manage models, serving, and infrastructure."
+    }
   },
   {
     num: "0 2",
-    label: "Model control",
-    runInfra: { title: "Bring the model ID", desc: "Keep model choice and serving decisions visible." },
-    closed: { title: "Provider catalog", desc: "You use what the provider exposes." },
-    diy: { title: "Your model", desc: "Full control if your team maintains the runtime." }
+    label: "Models",
+    runInfra: {
+      title: "Choose open models.",
+      desc: (
+        <>
+          <a
+            href="https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
+          >
+            Qwen3-VL-8B
+          </a>{" "}
+          for visual and video understanding;{" "}
+          <a
+            href="https://huggingface.co/nvidia/Cosmos3-Nano"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
+          >
+            Cosmos3-Nano
+          </a>{" "}
+          for physical-world understanding and prediction.
+        </>
+      )
+    },
+    closed: {
+      title: "Provider catalog.",
+      desc: "Use available proprietary vision models."
+    },
+    diy: {
+      title: "Own model serving.",
+      desc: "Manage weights, versions, and compatibility."
+    }
   },
   {
     num: "0 3",
-    label: "Tuning",
-    runInfra: { title: "Measured latency and GPU cost", desc: "Compare serving choices before deployment." },
-    closed: { title: "Opaque", desc: "Latency and batching stay behind the API." },
-    diy: { title: "Manual profiling", desc: "Your team owns tuning and regressions." }
+    label: "Context",
+    runInfra: {
+      title: "Understand changing scenes.",
+      desc: "Track objects, spatial relationships, motion, and events across frames."
+    },
+    closed: {
+      title: "Provide visual inputs.",
+      desc: "Context depends on supported API capabilities."
+    },
+    diy: {
+      title: "Build temporal context.",
+      desc: "Manage frame selection, tracking, and state yourself."
+    }
   },
   {
     num: "0 4",
-    label: "Export",
-    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first and take the deploy package later." },
-    closed: { title: "Locked endpoint", desc: "You keep calling the provider." },
-    diy: { title: "Already owned", desc: "Export exists because you built everything yourself." }
+    label: "Capabilities",
+    runInfra: {
+      title: "Compose vision capabilities.",
+      desc: "Combine detection, segmentation, tracking, scene understanding, and prediction."
+    },
+    closed: {
+      title: "Use exposed vision features.",
+      desc: "Capabilities vary by provider."
+    },
+    diy: {
+      title: "Integrate separate models.",
+      desc: "Manage perception and tracking components."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, less production control." },
-    diy: { title: "High", desc: "You own infra, failures, upgrades, and serving changes." }
+    label: "Workload",
+    runInfra: {
+      title: "Profile real inputs.",
+      desc: "Measure image resolution, frame rate, clip length, and concurrency."
+    },
+    closed: {
+      title: "Measure API usage.",
+      desc: "Track requests, latency, and provider costs."
+    },
+    diy: {
+      title: "Instrument the pipeline.",
+      desc: "Measure preprocessing, inference, and GPU use."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across access, logging, and incident response." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in the request path." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls." }
+    label: "Optimization",
+    runInfra: {
+      title: "Tune the full pipeline.",
+      desc: "Compare model variants, resolution, frame sampling, precision, and batching."
+    },
+    closed: {
+      title: "Tune exposed settings.",
+      desc: "Internal serving controls remain provider-dependent."
+    },
+    diy: {
+      title: "Profile every layer.",
+      desc: "Optimize model execution and GPU utilization."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: {
+      title: "Test against reality.",
+      desc: "Compare detections, tracking, and predictions against labeled data and observed outcomes."
+    },
+    closed: {
+      title: "Evaluate independently.",
+      desc: "Test outputs against your own visual benchmarks."
+    },
+    diy: {
+      title: "Build your benchmarks.",
+      desc: "Maintain datasets, metrics, and regression tests."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: {
+      title: "Preserve visual evidence.",
+      desc: "Link observations, model versions, predictions, failures, and outcomes."
+    },
+    closed: {
+      title: "Connect API logs.",
+      desc: "Maintain application-level history yourself."
+    },
+    diy: {
+      title: "Build experiment lineage.",
+      desc: "Track outputs and deployment versions."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: {
+      title: "Improve from new evidence.",
+      desc: "Use labels, corrections, rare events, and prediction errors to improve models and world understanding."
+    },
+    closed: {
+      title: "Use available customization.",
+      desc: "Training options depend on the provider."
+    },
+    diy: {
+      title: "Build the learning pipeline.",
+      desc: "Manage data, adaptation, training, and evaluation."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    runInfra: {
+      title: "Control access and actions.",
+      desc: "Govern camera data, credentials, execution permissions, and approvals."
+    },
+    closed: {
+      title: "Apply provider and app controls.",
+      desc: "Manage access and downstream actions."
+    },
+    diy: {
+      title: "Own security controls.",
+      desc: "Implement permissions, auditing, and execution policies."
+    }
   }
 ];
 
@@ -724,7 +869,7 @@ export default function VisionAIPage() {
                 Three ways to deploy Vision AI
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most teams pick between speed and control. Horos keeps both in one workflow.
+                Use hosted vision APIs, optimize open models with Horos, or manage the entire stack yourself.
               </p>
             </div>
 
@@ -796,7 +941,7 @@ export default function VisionAIPage() {
                     <div className="flex flex-col justify-center px-8 py-6 border-b md:border-r border-dashed border-[#333]">
                       <div className="flex items-center gap-3 mb-2">
                         <Key size={28} className="text-[#C8C7BA]" />
-                        <span className="text-[28px] font-medium text-[#F0EFE2]">Closed LLM APIs</span>
+                        <span className="text-[28px] font-medium text-[#F0EFE2]">Closed vision APIs</span>
                       </div>
                       <p className="text-[#C8C7BA] text-[20px]">Per-call, hosted.</p>
                     </div>
