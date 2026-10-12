@@ -74,16 +74,17 @@ export function VisionAIGrid() {
           </div>
 
           {/* Text: Object Detection */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '10%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '12%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
             Object Detection
           </div>
           {/* Text: Scene Understanding */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '77%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '85%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
             Scene Understanding
           </div>
           
-          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '92.5%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
-             <AnthropicLogo size={32} />
+          {/* Top Right: Anthropic Logo positioned cleanly on top row with Qwen */}
+          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '92.5%', top: '5.6%', transform: 'translate(-50%, -50%)' }}>
+             <AnthropicLogo size={28} />
           </div>
 
           {/* Col 1: Microsoft (x=7.6%) */}
@@ -91,11 +92,11 @@ export function VisionAIGrid() {
             <MicrosoftLogo size={24} />
           </div>
 
-          {/* Center: Hugging Face Emoji (x=50%) */}
+          {/* Center: Hugging Face Emoji (Reduced to balanced icon size) */}
           <div className="absolute z-30 flex items-center justify-center pointer-events-auto" style={{ left: '50%', top: '40%', transform: 'translate(-50%, -50%)' }}>
-            <div className="relative hover:scale-105 transition-transform duration-300 drop-shadow-[0_10px_30px_rgba(255,255,255,0.1)]">
-               <div className="absolute inset-0 bg-white/5 blur-[50px] rounded-full scale-125"></div>
-               <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="Hugging Face" className="w-[200px] h-[200px] md:w-[240px] md:h-[240px] relative z-10" />
+            <div className="relative hover:scale-105 transition-transform duration-300 drop-shadow-[0_10px_25px_rgba(255,255,255,0.08)]">
+               <div className="absolute inset-0 bg-white/5 blur-[30px] rounded-full scale-110"></div>
+               <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="Hugging Face" className="w-[100px] h-[100px] md:w-[115px] md:h-[115px] relative z-10" />
             </div>
           </div>
 
@@ -103,20 +104,21 @@ export function VisionAIGrid() {
             Spatial Reasoning
           </div>
 
-          {/* Col 5: Meta (x=78.3%) */}
+          {/* Row 3 Logos: VLLM and Meta cleanly aligned together */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '76%', top: '62.7%', transform: 'translate(-50%, -50%)' }}>
+            <VLLMLogo size={24} />
+          </div>
           <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '92.5%', top: '62.7%', transform: 'translate(-50%, -50%)' }}>
             <MetaLogo size={28} />
           </div>
 
+          {/* Col 2 Bottom: DeepSeek */}
           <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '22.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
             <DeepSeekLogo size={24} />
           </div>
           
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '69%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
-            <VLLMLogo size={24} />
-          </div>
-          
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '88%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
+          {/* Bottom Right Text: Motion & Event Analysis (dedicated unobstructed row) */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#FFF5CE] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '85%', top: '76%', transform: 'translate(-50%, -50%)' }}>
             Motion &amp; Event Analysis
           </div>
           
