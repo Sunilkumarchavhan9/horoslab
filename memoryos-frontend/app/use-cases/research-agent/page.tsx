@@ -708,14 +708,14 @@ export default function EmbeddingsPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
-                  <h1 className="text-4xl lg:text-[46px] font-bold tracking-tight leading-[1.18] text-[#f2efe8]">
+                  <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                     Research that ends in<br />
-                    <span className="bg-[#75bf00] text-black px-2.5 py-0.5 inline-block font-bold mr-1">
+                    <span className="bg-[#75bf00] text-black px-2 py-0 inline-block">
                       evidence
                     </span>
                     , not summaries.
                   </h1>
-                  <p className="text-[#C8C7BA] text-[16px] tracking-wide max-w-lg leading-relaxed">
+                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
                     Connect findings across papers, code, and datasets into testable hypotheses and reproducible experiments.
                   </p>
 

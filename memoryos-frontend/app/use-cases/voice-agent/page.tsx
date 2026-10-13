@@ -747,7 +747,7 @@ export default function RagSearchPage() {
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
-                <div className="flex flex-col gap-6 max-w-lg">
+                <div className="flex flex-col gap-5 max-w-xl">
                   <div className="flex items-center w-fit border border-dashed border-[#333] p-[3px] gap-[3px] rounded-sm mb-2">
                     <div className="flex items-center justify-center border border-dashed border-[#333] bg-[#0a0a0a] p-[5px] rounded-sm">
                       <OpenAILogo size={14} />
@@ -759,10 +759,10 @@ export default function RagSearchPage() {
                       <NvidiaLogo size={14} />
                     </div>
                   </div>
-                  <h1 className="text-5xl lg:text-[54px] font-bold tracking-tight leading-[1.15] mt-[-1rem] text-[#f2efe8]">
+                  <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                       The stack behind faster voice agents.
                     </h1>
-                    <p className="text-[#C8C7BA] text-[16px] tracking-wide max-w-lg mt-2 leading-relaxed font-sans">
+                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide max-w-lg mt-2 leading-relaxed font-sans">
                       Llama, Qwen, or supported open models. Tool use, streaming, routing, and runtime optimization on a single GPU.
                     </p>
                   <div className="flex items-center w-max gap-3 mt-6">

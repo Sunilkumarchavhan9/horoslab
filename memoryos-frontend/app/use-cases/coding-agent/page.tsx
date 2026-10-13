@@ -638,14 +638,14 @@ export default function EmbeddingsPage() {
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
-                <div className="flex flex-col gap-6 max-w-xl">
-                  <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
+                <div className="flex flex-col gap-5 max-w-xl">
+                  <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                     Issues in.{" "}
-                    <span className="bg-[#75bf00] text-black px-2 py-1 leading-[1.3] box-decoration-clone">
+                    <span className="bg-[#75bf00] text-black px-2 py-0.5 leading-[1.2] inline-block box-decoration-clone">
                       Verified patches out.
                     </span>
                   </h1>
-                  <p className="text-[#C8C7BA] text-[17px] tracking-wide mt-4">
+                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
                     Open-weight coding models, repository context, terminal tools, and test execution engineered as one system. Horos measures patch correctness, traces failures, and uses verified outcomes to improve future coding intelligence.
                   </p>
 

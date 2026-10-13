@@ -1062,7 +1062,7 @@ outlines==0.0.46`;
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
-                <div className="flex flex-col gap-6 max-w-lg">
+                <div className="flex flex-col gap-5 max-w-xl">
                   <div className="flex items-center w-fit border border-dashed border-[#333] p-[3px] gap-[3px] rounded-sm mb-2">
                     <div className="flex items-center justify-center border border-dashed border-[#333] bg-[#0a0a0a] p-[5px] rounded-sm">
                       <QwenLogo size={14} />
@@ -1074,13 +1074,13 @@ outlines==0.0.46`;
                       <NvidiaLogo size={14} />
                     </div>
                   </div>
-                  <h1 className="text-4xl lg:text-[44px] font-medium tracking-tight leading-[1.15] mt-[-1rem]">
+                  <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                       Personal AI assistants on the models{" "}
                       <span className="bg-[#75bf00] text-black px-2 py-0 inline-block">
                         you own
                       </span>.
                     </h1>
-                  <p className="text-[#C8C7BA] text-[15px] tracking-wide max-w-md mt-4 leading-relaxed">
+                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
                     <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] text-[13px] whitespace-nowrap align-middle mr-0.5 translate-y-[-1px]">
                       <MetaLogo size={13} /> Llama
                     </span>

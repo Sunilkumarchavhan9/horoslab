@@ -590,14 +590,14 @@ export default function TranscriptionPage() {
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
-                <div className="flex flex-col gap-6 max-w-lg">
-                  <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
+                <div className="flex flex-col gap-5 max-w-xl">
+                  <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                     Transcribe, diarize,<br />
                     redact on <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
                       open Whisper
                     </span>.
                   </h1>
-                  <p className="text-[#C8C7BA] text-[17px] tracking-wide max-w-md mt-2">
+                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
                     Long-form audio to searchable transcripts. Speaker labels, PII redaction, exportable on your stack.
                   </p>
 
