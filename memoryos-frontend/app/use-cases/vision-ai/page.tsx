@@ -683,8 +683,8 @@ export default function VisionAIPage() {
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll configure Qwen3-VL-8B for scene understanding, pair Cosmos3-Nano for temporal motion prediction, fuse spatial patch embeddings with 30fps stream ingestion on the L40S, and prepare a 500-clip visual evaluation harness.";
-  const AGENT_MSG_2 = "Recipe is ready. Processing 30fps multi-camera video streams at $0.004/minute on L40S. The endpoint outputs real-time object tracking, 3D spatial graphs, and predictive event streams with verified latency benchmarks. Want me to deploy?";
+  const AGENT_MSG_1 = "Configuring Qwen3-VL-8B & Cosmos3-Nano on L40S with 30fps stream ingestion and a 500-clip tracking benchmark.";
+  const AGENT_MSG_2 = "Pipeline ready. Streaming 30fps video at $0.004/min on L40S with 0.91 MOTA tracking, 3D spatial graphs, and predictive event streams.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -1287,153 +1287,153 @@ export default function VisionAIPage() {
                     </div>
 
                     {/* Chat Content */}
-                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                      <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                        <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                          <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[25px]">
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                      <div className="flex flex-col gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-3">
+                        <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 rounded-[4px]">
+                          <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-normal leading-[19px]">
                             Deploy multi-camera Vision AI pipeline.{" "}
-                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-0.5">
-                              <QwenLogo size={11} /> Qwen3-VL-8B
+                            <span className="inline-flex items-center gap-1 bg-[#141414] border border-[#2e2e2e] px-1.5 py-0.5 rounded text-[10.5px] font-mono text-[#D4D3C9] align-middle mx-0.5">
+                              <QwenLogo size={10} /> Qwen3-VL-8B
                             </span>{" "}
                             for spatial reasoning paired with{" "}
-                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle mx-0.5">
-                              <NvidiaLogo size={11} /> Cosmos3-Nano
+                            <span className="inline-flex items-center gap-1 bg-[#141414] border border-[#2e2e2e] px-1.5 py-0.5 rounded text-[10.5px] font-mono text-[#75bf00] align-middle mx-0.5">
+                              <NvidiaLogo size={10} /> Cosmos3-Nano
                             </span>{" "}
                             on a single{" "}
-                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle mx-0.5">
-                              <NvidiaLogo size={11} /> L40S
-                            </span>. Verify 3D spatial graphs and predict motion events.
+                            <span className="inline-flex items-center gap-1 bg-[#141414] border border-[#2e2e2e] px-1.5 py-0.5 rounded text-[10.5px] font-mono text-[#75bf00] align-middle mx-0.5">
+                              <NvidiaLogo size={10} /> L40S
+                            </span>. Verify 3D spatial graphs &amp; motion events.
                           </p>
                         </div>
 
                         {/* Step 1: Agent Initial Ack */}
-                        <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                          <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className={`flex gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                             {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                              <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                             ) : (
-                              <Sparkles size={14} className="text-[#75bf00]" />
+                              <Sparkles size={12} className="text-[#75bf00]" />
                             )}
                           </div>
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                            <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] leading-[18px]">
                               {typedMsg1}
                               {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                                <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                               )}
                             </p>
                           </div>
                         </div>
 
                         {/* Logs list */}
-                        <div className="flex flex-col gap-4 mt-2">
+                        <div className="flex flex-col gap-2.5 mt-1">
                           {/* Log 1 (Step 2) */}
-                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                               {visibleStep === 2 ? (
-                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                               ) : (
-                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
                               )}
                             </div>
-                            <div className="flex flex-col flex-1 gap-0.5">
-                              <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen3-VL-8B on L40S</span>
-                                <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] font-medium truncate">Profiled Qwen3-VL-8B on L40S</span>
+                                <span className="text-[#777] text-[10.5px] font-mono shrink-0">1.2s</span>
                               </div>
-                              <span className="text-[#666] text-[12px]">30 fps stream ingestion, FP16 vision encoder</span>
+                              <span className="text-[#666] text-[10.5px] leading-tight">30 fps stream ingestion, FP16 vision encoder</span>
                             </div>
                           </div>
 
                           {/* Log 2 (Step 3) */}
-                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                               {visibleStep === 3 ? (
-                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                               ) : (
-                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
                               )}
                             </div>
-                            <div className="flex flex-col flex-1 gap-0.5">
-                              <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Paired Cosmos3-Nano predictor</span>
-                                <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] font-medium truncate">Paired Cosmos3-Nano predictor</span>
+                                <span className="text-[#777] text-[10.5px] font-mono shrink-0">0.9s</span>
                               </div>
-                              <span className="text-[#75bf00] text-[12px]">fused spatio-temporal lookahead frames</span>
+                              <span className="text-[#75bf00] text-[10.5px] leading-tight">fused spatio-temporal lookahead frames</span>
                             </div>
                           </div>
 
                           {/* Log 3 (Step 4) */}
-                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                               {visibleStep === 4 ? (
-                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                               ) : (
-                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
                               )}
                             </div>
-                            <div className="flex flex-col flex-1 gap-0.5">
-                              <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned AWQ INT4 on LLM head</span>
-                                <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] font-medium truncate">Tuned AWQ INT4 on LLM head</span>
+                                <span className="text-[#777] text-[10.5px] font-mono shrink-0">1.4s</span>
                               </div>
-                              <span className="text-[#666] text-[12px]">FP16 preserved on vision encoder</span>
+                              <span className="text-[#666] text-[10.5px] leading-tight">FP16 preserved on vision encoder</span>
                             </div>
                           </div>
 
                           {/* Log 4 (Step 5) */}
-                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                               {visibleStep === 5 ? (
-                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                               ) : (
-                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
                               )}
                             </div>
-                            <div className="flex flex-col flex-1 gap-0.5">
-                              <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Wired 3D spatial scene graph</span>
-                                <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] font-medium truncate">Wired 3D spatial scene graph</span>
+                                <span className="text-[#777] text-[10.5px] font-mono shrink-0">1.1s</span>
                               </div>
-                              <span className="text-[#666] text-[12px]">zero-copy frame streaming forwarded to vLLM</span>
+                              <span className="text-[#666] text-[10.5px] leading-tight">zero-copy frame streaming forwarded to vLLM</span>
                             </div>
                           </div>
 
                           {/* Log 5 (Step 6) */}
-                          <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                            <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                               {visibleStep === 6 ? (
-                                <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                               ) : (
-                                <CheckCircle2 size={14} className="text-[#75bf00]" />
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
                               )}
                             </div>
-                            <div className="flex flex-col flex-1 gap-0.5">
-                              <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Prepared 500-clip tracking harness</span>
-                                <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] font-medium truncate">Prepared 500-clip tracking harness</span>
+                                <span className="text-[#777] text-[10.5px] font-mono shrink-0">1.5s</span>
                               </div>
-                              <span className="text-[#75bf00] text-[12px]">mAP 0.84, MOTA 0.91, spatial permanence gate passed</span>
+                              <span className="text-[#75bf00] text-[10.5px] leading-tight">mAP 0.84, MOTA 0.91, spatial permanence gate passed</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Step 7 (LAST STEP): Agent Final Summary */}
-                        <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                          <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className={`flex gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                             {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                              <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                             ) : (
-                              <Sparkles size={14} className="text-[#75bf00]" />
+                              <Sparkles size={12} className="text-[#75bf00]" />
                             )}
                           </div>
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                            <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] leading-[18px]">
                               {typedMsg2}
                               {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                                <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                               )}
                             </p>
                           </div>
@@ -1441,22 +1441,21 @@ export default function VisionAIPage() {
                       </div>
 
                       {/* Prompt input bar */}
-                      <div className="mt-2 shrink-0 mb-2">
-                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
+                      <div className="mt-1.5 shrink-0 mb-1">
+                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-1.5">
                           <input
                             type="text"
                             placeholder="Teach the agent to handle multi-camera spatial tracking..."
-                            className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
+                            className="bg-transparent text-[#F0EFE2] text-[11.5px] border-none outline-none w-full px-2 py-1 placeholder:text-[#555]"
                             readOnly
                           />
                           <div className="flex justify-between items-center px-1">
                             <div className="flex gap-1.5">
-                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                              <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                              
+                              <span className="bg-[#222] border border-[#333] text-[8.5px] text-[#A0A098] font-bold px-1.5 py-0.5 rounded-sm">@Capabilities</span>
+                              <span className="bg-[#222] border border-[#333] text-[8.5px] text-[#A0A098] font-bold px-1.5 py-0.5 rounded-sm">@Outcomes</span>
                             </div>
-                            <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                              <ArrowUp size={14} strokeWidth={2.5} />
+                            <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                              <ArrowUp size={12} strokeWidth={2.5} />
                             </button>
                           </div>
                         </div>
@@ -1464,88 +1463,88 @@ export default function VisionAIPage() {
                     </div>
 
                     {/* Files Content */}
-                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-5 flex flex-col items-start gap-3 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
-                      <div className="w-full flex justify-between items-center border-b border-[#252525] pb-2 mb-1">
-                        <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SCHEMAS</span>
-                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-4 flex flex-col items-start gap-2.5 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
+                      <div className="w-full flex justify-between items-center border-b border-[#252525] pb-2 mb-0.5">
+                        <span className="text-[9.5px] font-bold tracking-widest text-[#C8C7BA] uppercase">SCHEMAS</span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[8.5px] font-bold px-1.5 py-0.2 rounded-sm">3</span>
                       </div>
-                      <div className="w-full flex flex-col gap-1 text-[12px] font-mono">
+                      <div className="w-full flex flex-col gap-0.5 text-[11.5px] font-mono">
                         <button
                           onClick={() => selectFileManually("detection.json")}
-                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "detection.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "detection.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
                         >
                           <span className="truncate">detection.json</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("spatial_graph.json")}
-                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "spatial_graph.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "spatial_graph.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
                         >
                           <span className="truncate">spatial_graph.json</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("motion_track.json")}
-                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "motion_track.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "motion_track.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
                         >
                           <span className="truncate">motion_track.json</span>
                         </button>
 
                         {/* Project Tree Folder */}
-                        <div className="mt-2 flex flex-col gap-1 w-full">
-                          <div className="flex items-center gap-1.5 px-1 py-1 text-[#aaa] font-semibold text-[12px]">
-                            <ChevronDown size={13} className="text-[#777] shrink-0" /> <span className="truncate">horos-vision-ai/</span>
+                        <div className="mt-1.5 flex flex-col gap-0.5 w-full">
+                          <div className="flex items-center gap-1.5 px-1 py-0.5 text-[#aaa] font-semibold text-[11.5px]">
+                            <ChevronDown size={12} className="text-[#777] shrink-0" /> <span className="truncate">horos-vision-ai/</span>
                           </div>
-                          <div className="pl-3 flex flex-col gap-1 border-l border-[#252525] ml-2.5 mt-0.5">
+                          <div className="pl-2.5 flex flex-col gap-0.5 border-l border-[#252525] ml-2 mt-0.5">
                             <button
                               onClick={() => selectFileManually("track.py")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "track.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "track.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">track.py</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("eval.py")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">eval.py</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("serve.sh")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">serve.sh</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("pipeline.json")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">pipeline.json</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("Dockerfile")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">Dockerfile</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("docker-compose.yml")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">docker-compose.yml</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("requirements.txt")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">requirements.txt</span>
                             </button>
-                            <div className="flex items-center gap-1 px-2 py-1 text-[#555] truncate">
-                              <ChevronRight size={13} className="text-[#333] shrink-0" /> <span className="truncate">video_clips/</span>
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 text-[#555] truncate">
+                              <ChevronRight size={12} className="text-[#333] shrink-0" /> <span className="truncate">video_clips/</span>
                             </div>
-                            <div className="flex items-center gap-1 px-2 py-1 text-[#555] truncate">
-                              <ChevronRight size={13} className="text-[#333] shrink-0" /> <span className="truncate">benchmarks/</span>
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 text-[#555] truncate">
+                              <ChevronRight size={12} className="text-[#333] shrink-0" /> <span className="truncate">benchmarks/</span>
                             </div>
                             <button 
                               onClick={() => selectFileManually("README.md")}
-                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">README.md</span>
                             </button>
@@ -1557,12 +1556,12 @@ export default function VisionAIPage() {
                     {/* Code Content */}
                     <div className="col-start-4 col-end-5 row-start-2 row-end-4 flex flex-col justify-start overflow-hidden pointer-events-auto min-w-0 min-h-0 bg-[#151515]">
                       {/* Editor top tabs - Pinned at top, never scrolled away! */}
-                      <div className="flex border-b border-[#252525] px-6 pt-5 pb-2.5 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar shrink-0 bg-[#151515]">
+                      <div className="flex border-b border-[#252525] px-4 pt-3.5 pb-2 gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar shrink-0 bg-[#151515]">
                         {["track.py", "eval.py", "serve.sh", "pipeline.json", "Dockerfile"].map((file) => (
                           <button
                             key={file}
                             onClick={() => selectFileManually(file)}
-                            className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === file ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                            className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === file ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                           >
                             {file}
                           </button>
@@ -1570,17 +1569,17 @@ export default function VisionAIPage() {
                       </div>
 
                       {/* Code Area with Line Numbers */}
-                      <div className="flex-1 overflow-auto p-6 pt-4 chat-scroll thin-hover-scrollbar">
-                        <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                      <div className="flex-1 overflow-auto p-4 pt-3 chat-scroll thin-hover-scrollbar">
+                        <div className="flex font-mono text-[12px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
                           {/* Line numbers column */}
-                          <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                          <div className="text-[#444] text-right pr-4 border-r border-[#252525] select-none flex flex-col min-w-[28px]">
                             {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                              <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                              <div key={i} className="min-h-[20px] leading-[20px]">{i + 1}</div>
                             ))}
                           </div>
 
                           {/* Highlighted code column */}
-                          <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                          <div className="pl-4 flex-1 text-[#C8C7BA] leading-[20px]">
                             {highlightCode(
                               typedCodeText,
                               activeFile.endsWith(".py")
