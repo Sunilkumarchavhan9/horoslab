@@ -1803,7 +1803,7 @@ export default function VisionAIPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="min-w-0">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
+                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
                 <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">

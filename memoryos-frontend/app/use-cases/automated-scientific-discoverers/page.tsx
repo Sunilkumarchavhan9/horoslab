@@ -1839,7 +1839,7 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
+                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   Any scientific reasoning or physics verifier model works
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
@@ -1927,7 +1927,7 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
+                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
                 <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
