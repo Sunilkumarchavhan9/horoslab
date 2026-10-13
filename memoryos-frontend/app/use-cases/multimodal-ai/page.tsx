@@ -632,8 +632,8 @@ export default function MultimodalAIPage() {
             <div className="min-w-0">
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The optimization knobs, the codebase, the model choice. None of it locked away.
+                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-3xl mx-auto mb-16">
+                  Your multimodal models, input pipeline, and inference configuration. Horos helps you optimize how intelligence processes and connects information across modalities.
                 </p>
               </div>
             </div>
@@ -690,27 +690,27 @@ export default function MultimodalAIPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Long-form,<br/>not per-minute.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">One model,<br/>multiple modalities.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Closed transcription APIs charge per audio minute and stop at the transcript. RunInfra runs diarization, redaction, and search in the same job for one per-million-tokens unit cost.
+                      Combine text, images, audio, and video with models such as Qwen3.5 and supported multimodal models. Measure which model handles your actual inputs best.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">PII never<br/>leaves your stack.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Context across<br/>modalities.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Phone recordings, meetings, and dictations stay on your runtime. Redaction runs before the transcript ever touches storage or search.
+                      Preserve relationships between speech, video frames, timestamps, and text. Evaluate whether the model connects what was said with what happened.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Search every<br/>call afterward.</h3>
+                    <h3 className="text-[32px] xl:text-4xl font-medium text-[#F0EFE2] leading-tight text-balance">Optimize the<br/>complete pipeline.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      Diarized, redacted transcripts get a hybrid full-text and semantic index. Search, audit, and export the corpus without a second vendor.
+                      Tune input resolution, audio duration, frame sampling, context length, batching, and quantization. Compare quality, latency, memory, and GPU cost before deployment.
                     </p>
                   </div>
                 </div>

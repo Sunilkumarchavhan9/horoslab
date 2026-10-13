@@ -65,7 +65,7 @@ export function DocumentAIGrid() {
         {/* Helper inner container that maintains the exact 1054/740 aspect ratio for precise positioning */}
         <div className="w-full h-full relative" style={{ aspectRatio: '1054/740' }}>
         
-          {/* Top Row */}
+          {/* Top Row Logos */}
           <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '36.5%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
             <OpenAILogo size={24} />
           </div>
@@ -75,20 +75,19 @@ export function DocumentAIGrid() {
           <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '78.3%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
             <SGLangLogo size={32} />
           </div>
-
-          {/* Text: Invoices */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap" style={{ left: '22.3%', top: '29.2%', transform: 'translate(-50%, -50%)' }}>
-            Invoices
-          </div>
-
-          {/* Text: Contracts & Anthropic */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap" style={{ left: '78.3%', top: '29.2%', transform: 'translate(-50%, -50%)' }}>
-            Contracts
-          </div>
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '92.5%', top: '29.2%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '92.5%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
             <AnthropicLogo size={24} />
           </div>
 
+          {/* Text: Audio & Speech */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '22.3%', top: '29.2%', transform: 'translate(-50%, -50%)' }}>
+            Audio &amp; Speech
+          </div>
+
+          {/* Text: Visual Reasoning */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '78.3%', top: '29.2%', transform: 'translate(-50%, -50%)' }}>
+            Visual Reasoning
+          </div>
 
           {/* Center HOROS Logo */}
           <div className="absolute z-30 flex items-center justify-center pointer-events-auto" style={{ left: '50.189%', top: '40%', transform: 'translate(-50%, -50%)' }}>
@@ -107,13 +106,16 @@ export function DocumentAIGrid() {
             <KimiLogo size={24} />
           </div>
 
-          {/* Text: Forms */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap" style={{ left: '50%', top: '68.5%', transform: 'translate(-50%, -50%)' }}>
-            Forms
+          {/* Text: Cross-Modal Fusion */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap" style={{ left: '50%', top: '68.5%', transform: 'translate(-50%, -50%)' }}>
+            Cross-Modal Fusion
           </div>
 
-          {/* Bottom Right */}
-          <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '85.3%', top: '68.5%', transform: 'translate(-50%, -50%)' }}>
+          {/* Bottom Right Logos (placed cleanly on row 63% to avoid overlapping bottom text) */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '76%', top: '63%', transform: 'translate(-50%, -50%)' }}>
+            <VLLMLogo size={24} />
+          </div>
+          <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '91%', top: '63%', transform: 'translate(-50%, -50%)' }}>
             <MetaLogo size={28} />
           </div>
 
@@ -122,11 +124,9 @@ export function DocumentAIGrid() {
             <DeepSeekLogo size={24} />
           </div>
           
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '78.3%', top: '77%', transform: 'translate(-50%, -50%)' }}>
-            <VLLMLogo size={24} />
-          </div>
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-medium whitespace-nowrap text-center leading-tight" style={{ left: '85.3%', top: '77%', transform: 'translate(-50%, -50%)' }}>
-            Tables
+          {/* Text: Video Understanding (isolated on bottom row with zero logos) */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base font-medium whitespace-nowrap text-center leading-tight" style={{ left: '83.5%', top: '77%', transform: 'translate(-50%, -50%)' }}>
+            Video Understanding
           </div>
           
         </div>
@@ -135,3 +135,4 @@ export function DocumentAIGrid() {
     </div>
   );
 }
+export const MultimodalAIGrid = DocumentAIGrid;
