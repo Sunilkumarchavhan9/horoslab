@@ -10,7 +10,7 @@ import { VisionAIGrid } from "@/components/landing/vision-ai-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, GLMLogo, OpenGVLabLogo, Ai2Logo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText } from "lucide-react";
 
 const COMPARISON_ROWS: Array<{
@@ -576,15 +576,78 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "Qwen/Qwen2.5-VL-7B-Instruct", name: "Qwen2.5-VL 7B", author: "Alibaba", downloads: "7B", tag: "Vision" },
-  { id: "Qwen/Qwen2.5-VL-72B-Instruct", name: "Qwen2.5-VL 72B", author: "Alibaba", downloads: "72B", tag: "Vision" },
-  { id: "meta-llama/Llama-3.2-11B-Vision-Instruct", name: "Llama 3.2 11B Vision", author: "Meta", downloads: "11B", tag: "Vision" },
-  { id: "meta-llama/Llama-3.2-90B-Vision-Instruct", name: "Llama 3.2 90B Vision", author: "Meta", downloads: "90B", tag: "Vision" },
-  { id: "mistralai/Pixtral-12B-2409", name: "Pixtral 12B", author: "Mistral AI", downloads: "12B", tag: "Vision" },
-  { id: "microsoft/Phi-3.5-vision-instruct", name: "Phi-3.5 Vision", author: "Microsoft", downloads: "4.2B", tag: "Vision" },
-  { id: "OpenGVLab/InternVL2_5-8B", name: "InternVL2.5 8B", author: "Shanghai AI Lab", downloads: "8B", tag: "Vision" },
-  { id: "OpenGVLab/InternVL2_5-26B", name: "InternVL2.5 26B", author: "Shanghai AI Lab", downloads: "26B", tag: "Vision" },
-  { id: "deepseek-ai/deepseek-vl2", name: "DeepSeek-VL2", author: "DeepSeek", downloads: "27B MoE", tag: "Vision" }
+  {
+    id: "Qwen/Qwen3-VL-235B-A22B-Instruct",
+    name: "Qwen3-VL-235B-A22B-Instruct",
+    author: "Alibaba",
+    downloads: "235B MoE",
+    tag: "Spatial Reasoning",
+    link: "https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Instruct"
+  },
+  {
+    id: "nvidia/Cosmos3-Super",
+    name: "Cosmos3-Super",
+    author: "NVIDIA",
+    downloads: "64B",
+    tag: "World Model",
+    link: "https://huggingface.co/nvidia/Cosmos3-Super"
+  },
+  {
+    id: "zai-org/GLM-4.5V",
+    name: "GLM-4.5V",
+    author: "Z.ai",
+    downloads: "106B MoE",
+    tag: "Visual Reasoning",
+    link: "https://huggingface.co/zai-org/GLM-4.5V"
+  },
+  {
+    id: "OpenGVLab/InternVL3_5-241B-A28B-Instruct",
+    name: "InternVL3.5-241B-A28B-Instruct",
+    author: "OpenGVLab",
+    downloads: "241B MoE",
+    tag: "High-Resolution Vision",
+    link: "https://huggingface.co/OpenGVLab/InternVL3_5-241B-A28B-Instruct"
+  },
+  {
+    id: "Qwen/Qwen3-VL-30B-A3B-Instruct",
+    name: "Qwen3-VL-30B-A3B-Instruct",
+    author: "Alibaba",
+    downloads: "30B MoE",
+    tag: "Video Understanding",
+    link: "https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct"
+  },
+  {
+    id: "nvidia/Cosmos3-Nano",
+    name: "Cosmos3-Nano",
+    author: "NVIDIA",
+    downloads: "16B",
+    tag: "Physical AI",
+    link: "https://huggingface.co/nvidia/Cosmos3-Nano"
+  },
+  {
+    id: "OpenGVLab/InternVL3_5-30B-A3B-Instruct",
+    name: "InternVL3.5-30B-A3B-Instruct",
+    author: "OpenGVLab",
+    downloads: "30B MoE",
+    tag: "Visual Understanding",
+    link: "https://huggingface.co/OpenGVLab/InternVL3_5-30B-A3B-Instruct"
+  },
+  {
+    id: "allenai/Molmo2-8B",
+    name: "Molmo2-8B",
+    author: "Allen Institute for AI",
+    downloads: "8B",
+    tag: "Video Grounding",
+    link: "https://huggingface.co/allenai/Molmo2-8B"
+  },
+  {
+    id: "Qwen/Qwen3-VL-8B-Instruct",
+    name: "Qwen3-VL-8B-Instruct",
+    author: "Alibaba",
+    downloads: "8B",
+    tag: "3D Grounding",
+    link: "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
+  }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -610,10 +673,13 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
+  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
+  if (a.includes('nvidia') || m.includes('cosmos') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
+  if (a.includes('z.ai') || a.includes('zhipu') || a.includes('zai') || m.includes('glm')) return <GLMLogo size={20} />;
+  if (a.includes('opengvlab') || a.includes('shanghai') || m.includes('internvl')) return <OpenGVLabLogo size={20} />;
+  if (a.includes('allen') || a.includes('ai2') || m.includes('molmo')) return <Ai2Logo size={20} />;
   if (a.includes('openai') || m.includes('whisper') || m.includes('gpt')) return <OpenAILogo size={20} />;
   if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
-  if (a.includes('nvidia') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
   if (a.includes('moonshot') || m.includes('kimi')) return <KimiLogo size={20} />;
   if (a.includes('coqui') || a.includes('canopy')) return <span className="text-[18px]">🤗</span>;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
@@ -624,7 +690,6 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('mixedbread')) return <MixedbreadLogo size={20} />;
   if (a.includes('snowflake')) return <SnowflakeLogo size={20} />;
   if (a.includes('nomic')) return <NomicLogo size={20} />;
-  if (a.includes('shanghai') || m.includes('internvl')) return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64006c09330a45b03605bba3/FvdxiTkTqH8rKDOzGZGUE.jpeg" alt="Shanghai AI Lab" className="w-5 h-5 rounded-sm object-cover" />;
 
   return <HuggingFaceLogo size={20} />;
 };
@@ -1697,25 +1762,31 @@ export default function VisionAIPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
+                        <a
+                          key={model.id}
+                          href={model.link || `https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length)}
+                        >
                           {/* Hover Noise Overlay */}
                           <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay">
                             <div className="absolute -inset-[100%] opacity-[0.25] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] animate-noise-shift" />
                           </div>
 
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
-                          <div className="relative z-10 w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                          <div className="relative z-10 w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#151515]">
                             {getLogo(model.author, model.name)}
                           </div>
-                          <div className="relative z-10 flex flex-col gap-1">
-                            <h3 className="text-[20px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>{model.name}</h3>
-                            <span className="text-[#C8C7BA] text-[15px] line-clamp-1" title={model.author}>{model.author}</span>
+                          <div className="relative z-10 flex flex-col gap-1 min-w-0">
+                            <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>{model.name}</h3>
+                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1" title={model.author}>{model.author}</span>
                           </div>
-                          <div className="relative z-10 flex justify-between items-center mt-auto pt-4">
-                            <span className="text-[#F0EFE2] font-medium">{model.downloads}</span>
-                            <span className="text-[#75bf00] text-[12px] font-medium border border-[#2a381a] px-2 py-1 rounded-sm tracking-wide">{model.tag}</span>
+                          <div className="relative z-10 flex justify-between items-center mt-auto pt-4 gap-2">
+                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads}</span>
+                            <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">{model.tag}</span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>

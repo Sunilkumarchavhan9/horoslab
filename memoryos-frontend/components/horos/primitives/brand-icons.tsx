@@ -854,3 +854,27 @@ export function BosonAILogo({ className, size = 14 }: BrandIconProps) {
 export function PipecatLogo({ className, size = 14 }: BrandIconProps) {
   return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64529e7d0a19adf0445eea5f/zK07ZNxEozdIL0w_1mnGL.png" width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Pipecat" />;
 }
+
+export function OpenGVLabLogo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <img
+      src="https://cdn-avatars.huggingface.co/v1/production/uploads/64006c09330a45b03605bba3/FvdxiTkTqH8rKDOzGZGUE.jpeg"
+      width={size}
+      height={size}
+      className={cn("rounded-[2px] object-cover shrink-0 inline-block align-middle", className)}
+      alt="OpenGVLab"
+    />
+  );
+}
+
+export function Ai2Logo({ className, size = 14 }: BrandIconProps) {
+  return (
+    <img
+      src="https://avatars.githubusercontent.com/u/8904797?s=200&v=4"
+      width={size}
+      height={size}
+      className={cn("rounded-[2px] object-cover shrink-0 inline-block align-middle", className)}
+      alt="Ai2"
+    />
+  );
+}
