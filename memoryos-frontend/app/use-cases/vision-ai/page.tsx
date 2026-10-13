@@ -20,188 +20,188 @@ const COMPARISON_ROWS: Array<{
   closed: { title: string; desc: React.ReactNode };
   diy: { title: string; desc: React.ReactNode };
 }> = [
-  {
-    num: "0 1",
-    label: "System",
-    runInfra: {
-      title: "One vision system.",
-      desc: "Connect models, visual data, runtime, compute, and evaluation."
+    {
+      num: "0 1",
+      label: "System",
+      runInfra: {
+        title: "One vision system.",
+        desc: "Connect models, visual data, runtime, compute, and evaluation."
+      },
+      closed: {
+        title: "Hosted vision endpoint.",
+        desc: "Integrate the API into your application."
+      },
+      diy: {
+        title: "Build the full stack.",
+        desc: "Manage models, serving, and infrastructure."
+      }
     },
-    closed: {
-      title: "Hosted vision endpoint.",
-      desc: "Integrate the API into your application."
+    {
+      num: "0 2",
+      label: "Models",
+      runInfra: {
+        title: "Choose open models.",
+        desc: (
+          <>
+            <a
+              href="https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
+            >
+              Qwen3-VL-8B
+            </a>{" "}
+            for visual and video understanding;{" "}
+            <a
+              href="https://huggingface.co/nvidia/Cosmos3-Nano"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
+            >
+              Cosmos3-Nano
+            </a>{" "}
+            for physical-world understanding and prediction.
+          </>
+        )
+      },
+      closed: {
+        title: "Provider catalog.",
+        desc: "Use available proprietary vision models."
+      },
+      diy: {
+        title: "Own model serving.",
+        desc: "Manage weights, versions, and compatibility."
+      }
     },
-    diy: {
-      title: "Build the full stack.",
-      desc: "Manage models, serving, and infrastructure."
+    {
+      num: "0 3",
+      label: "Context",
+      runInfra: {
+        title: "Understand changing scenes.",
+        desc: "Track objects, spatial relationships, motion, and events across frames."
+      },
+      closed: {
+        title: "Provide visual inputs.",
+        desc: "Context depends on supported API capabilities."
+      },
+      diy: {
+        title: "Build temporal context.",
+        desc: "Manage frame selection, tracking, and state yourself."
+      }
+    },
+    {
+      num: "0 4",
+      label: "Capabilities",
+      runInfra: {
+        title: "Compose vision capabilities.",
+        desc: "Combine detection, segmentation, tracking, scene understanding, and prediction."
+      },
+      closed: {
+        title: "Use exposed vision features.",
+        desc: "Capabilities vary by provider."
+      },
+      diy: {
+        title: "Integrate separate models.",
+        desc: "Manage perception and tracking components."
+      }
+    },
+    {
+      num: "0 5",
+      label: "Workload",
+      runInfra: {
+        title: "Profile real inputs.",
+        desc: "Measure image resolution, frame rate, clip length, and concurrency."
+      },
+      closed: {
+        title: "Measure API usage.",
+        desc: "Track requests, latency, and provider costs."
+      },
+      diy: {
+        title: "Instrument the pipeline.",
+        desc: "Measure preprocessing, inference, and GPU use."
+      }
+    },
+    {
+      num: "0 6",
+      label: "Optimization",
+      runInfra: {
+        title: "Tune the full pipeline.",
+        desc: "Compare model variants, resolution, frame sampling, precision, and batching."
+      },
+      closed: {
+        title: "Tune exposed settings.",
+        desc: "Internal serving controls remain provider-dependent."
+      },
+      diy: {
+        title: "Profile every layer.",
+        desc: "Optimize model execution and GPU utilization."
+      }
+    },
+    {
+      num: "0 7",
+      label: "Verification",
+      runInfra: {
+        title: "Test against reality.",
+        desc: "Compare detections, tracking, and predictions against labeled data and observed outcomes."
+      },
+      closed: {
+        title: "Evaluate independently.",
+        desc: "Test outputs against your own visual benchmarks."
+      },
+      diy: {
+        title: "Build your benchmarks.",
+        desc: "Maintain datasets, metrics, and regression tests."
+      }
+    },
+    {
+      num: "0 8",
+      label: "Experience",
+      runInfra: {
+        title: "Preserve visual evidence.",
+        desc: "Link observations, model versions, predictions, failures, and outcomes."
+      },
+      closed: {
+        title: "Connect API logs.",
+        desc: "Maintain application-level history yourself."
+      },
+      diy: {
+        title: "Build experiment lineage.",
+        desc: "Track outputs and deployment versions."
+      }
+    },
+    {
+      num: "0 9",
+      label: "Teaching",
+      runInfra: {
+        title: "Improve from new evidence.",
+        desc: "Use labels, corrections, rare events, and prediction errors to improve models and world understanding."
+      },
+      closed: {
+        title: "Use available customization.",
+        desc: "Training options depend on the provider."
+      },
+      diy: {
+        title: "Build the learning pipeline.",
+        desc: "Manage data, adaptation, training, and evaluation."
+      }
+    },
+    {
+      num: "1 0",
+      label: "Authority",
+      runInfra: {
+        title: "Control access and actions.",
+        desc: "Govern camera data, credentials, execution permissions, and approvals."
+      },
+      closed: {
+        title: "Apply provider and app controls.",
+        desc: "Manage access and downstream actions."
+      },
+      diy: {
+        title: "Own security controls.",
+        desc: "Implement permissions, auditing, and execution policies."
+      }
     }
-  },
-  {
-    num: "0 2",
-    label: "Models",
-    runInfra: {
-      title: "Choose open models.",
-      desc: (
-        <>
-          <a
-            href="https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
-          >
-            Qwen3-VL-8B
-          </a>{" "}
-          for visual and video understanding;{" "}
-          <a
-            href="https://huggingface.co/nvidia/Cosmos3-Nano"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
-          >
-            Cosmos3-Nano
-          </a>{" "}
-          for physical-world understanding and prediction.
-        </>
-      )
-    },
-    closed: {
-      title: "Provider catalog.",
-      desc: "Use available proprietary vision models."
-    },
-    diy: {
-      title: "Own model serving.",
-      desc: "Manage weights, versions, and compatibility."
-    }
-  },
-  {
-    num: "0 3",
-    label: "Context",
-    runInfra: {
-      title: "Understand changing scenes.",
-      desc: "Track objects, spatial relationships, motion, and events across frames."
-    },
-    closed: {
-      title: "Provide visual inputs.",
-      desc: "Context depends on supported API capabilities."
-    },
-    diy: {
-      title: "Build temporal context.",
-      desc: "Manage frame selection, tracking, and state yourself."
-    }
-  },
-  {
-    num: "0 4",
-    label: "Capabilities",
-    runInfra: {
-      title: "Compose vision capabilities.",
-      desc: "Combine detection, segmentation, tracking, scene understanding, and prediction."
-    },
-    closed: {
-      title: "Use exposed vision features.",
-      desc: "Capabilities vary by provider."
-    },
-    diy: {
-      title: "Integrate separate models.",
-      desc: "Manage perception and tracking components."
-    }
-  },
-  {
-    num: "0 5",
-    label: "Workload",
-    runInfra: {
-      title: "Profile real inputs.",
-      desc: "Measure image resolution, frame rate, clip length, and concurrency."
-    },
-    closed: {
-      title: "Measure API usage.",
-      desc: "Track requests, latency, and provider costs."
-    },
-    diy: {
-      title: "Instrument the pipeline.",
-      desc: "Measure preprocessing, inference, and GPU use."
-    }
-  },
-  {
-    num: "0 6",
-    label: "Optimization",
-    runInfra: {
-      title: "Tune the full pipeline.",
-      desc: "Compare model variants, resolution, frame sampling, precision, and batching."
-    },
-    closed: {
-      title: "Tune exposed settings.",
-      desc: "Internal serving controls remain provider-dependent."
-    },
-    diy: {
-      title: "Profile every layer.",
-      desc: "Optimize model execution and GPU utilization."
-    }
-  },
-  {
-    num: "0 7",
-    label: "Verification",
-    runInfra: {
-      title: "Test against reality.",
-      desc: "Compare detections, tracking, and predictions against labeled data and observed outcomes."
-    },
-    closed: {
-      title: "Evaluate independently.",
-      desc: "Test outputs against your own visual benchmarks."
-    },
-    diy: {
-      title: "Build your benchmarks.",
-      desc: "Maintain datasets, metrics, and regression tests."
-    }
-  },
-  {
-    num: "0 8",
-    label: "Experience",
-    runInfra: {
-      title: "Preserve visual evidence.",
-      desc: "Link observations, model versions, predictions, failures, and outcomes."
-    },
-    closed: {
-      title: "Connect API logs.",
-      desc: "Maintain application-level history yourself."
-    },
-    diy: {
-      title: "Build experiment lineage.",
-      desc: "Track outputs and deployment versions."
-    }
-  },
-  {
-    num: "0 9",
-    label: "Teaching",
-    runInfra: {
-      title: "Improve from new evidence.",
-      desc: "Use labels, corrections, rare events, and prediction errors to improve models and world understanding."
-    },
-    closed: {
-      title: "Use available customization.",
-      desc: "Training options depend on the provider."
-    },
-    diy: {
-      title: "Build the learning pipeline.",
-      desc: "Manage data, adaptation, training, and evaluation."
-    }
-  },
-  {
-    num: "1 0",
-    label: "Authority",
-    runInfra: {
-      title: "Control access and actions.",
-      desc: "Govern camera data, credentials, execution permissions, and approvals."
-    },
-    closed: {
-      title: "Apply provider and app controls.",
-      desc: "Manage access and downstream actions."
-    },
-    diy: {
-      title: "Own security controls.",
-      desc: "Implement permissions, auditing, and execution policies."
-    }
-  }
-];
+  ];
 
 
 const TRACK_CODE = `# Vision AI Engine: Scene Understanding, Spatio-Temporal Tracking & Prediction
@@ -700,10 +700,10 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-      classes += " border-b";
-    } else {
-      classes += " border-b md:border-b-0";
-    }
+    classes += " border-b";
+  } else {
+    classes += " border-b md:border-b-0";
+  }
 
   return classes;
 };
@@ -755,7 +755,7 @@ export default function VisionAIPage() {
   const [typedMsg2, setTypedMsg2] = useState("");
   const [visibleStep, setVisibleStep] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  
+
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
@@ -909,24 +909,24 @@ export default function VisionAIPage() {
         }
       ` }} />
 
-            {/* GLOBAL VERTICAL DASHED LINES */}
-        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            {/* Left margin (14%) with 7% line bisecting it */}
-            <div className="relative border-r border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
-              </div>
-            {/* Center content (72%) */}
-            <div />
-            {/* Right margin (14%) with 93% line bisecting it */}
-            <div className="relative border-l border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
-              </div>
+      {/* GLOBAL VERTICAL DASHED LINES */}
+      {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          {/* Left margin (14%) with 7% line bisecting it */}
+          <div className="relative border-r border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+          </div>
+          {/* Center content (72%) */}
+          <div />
+          {/* Right margin (14%) with 93% line bisecting it */}
+          <div className="relative border-l border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
           </div>
         </div>
+      </div>
 
-        <div className="relative z-[100]">
+      <div className="relative z-[100]">
         <LandingNavbar
           onOpenSignIn={() => {
             setAuthModalMode("sign-in");
@@ -940,7 +940,7 @@ export default function VisionAIPage() {
       </div>
 
       <main className="flex-1 flex flex-col relative z-10">
-        
+
         {/* SVG Filter for recoloring the image to brand colors */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <filter id="brand-duotone">
@@ -966,11 +966,11 @@ export default function VisionAIPage() {
           <div className="relative w-[700px] h-[700px]">
             <div className="absolute inset-0 bg-gradient-to-r from-[#151515] via-transparent to-transparent z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#151515] via-transparent to-transparent z-10" />
-            <img 
+            <img
               src="https://a2-us.storyblok.com/f/1019538/1810x1810/75781443b9/hero-hands.png/m/1080x0/filters:quality(85):format(webp)"
               alt="Hero Background"
               className="w-full h-full object-contain object-top mix-blend-screen"
-              style={{ 
+              style={{
                 maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
                 filter: 'url(#brand-duotone)'
               }}
@@ -981,7 +981,7 @@ export default function VisionAIPage() {
         {/* Hero Section Container */}
         <div className="w-full relative mt-20 mb-20 min-h-[600px] flex items-center">
           {/* Infinite Horizontal Lines bounding the hero section */}
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
+          <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
           {/* Crosshairs at exact intersections with the global vertical lines */}
           <div className="absolute inset-0 pointer-events-none z-20">
@@ -1133,134 +1133,134 @@ export default function VisionAIPage() {
         </div>
 
         {/* Comparison Table Section */}
-          <div className="w-full relative z-10 mt-32 mb-32">
-            
+        <div className="w-full relative z-10 mt-32 mb-32">
+
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-            <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to deploy Vision AI
-              </h2>
-              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Use hosted vision APIs, optimize open models with Horos, or manage the entire stack yourself.
-              </p>
-            </div>
-
-            {/* Table with End-to-End Horizontal Lines */}
-            <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-              {/* Double Horizontal Border Top */}
-              
-              {/* Double Horizontal Border Bottom */}
-              
-
-              {/* Double Vertical Borders & Crosshairs */}
-              <div className="absolute inset-0 pointer-events-none z-20">
-                <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
-                  {/* Left Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
-                  </div>
-
-                  <div />
-
-                  {/* Right Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Table Content */}
-              <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
-                <div />
-                <div className="min-w-0 bg-[#151515]">
-                  {/* Table Header */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
-                    <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                      <div className="absolute top-2.5 right-3 flex items-center">
-                        <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
-                      </div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <HorosLogo size={16} />
-                        </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Key size={16} className="text-[#C8C7BA] shrink-0" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed vision APIs</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
-                    </div>
-                  </div>
-
-                  {/* Table Rows */}
-                  <div className="border-l border-r border-b border-dashed border-[#333]">
-                    {COMPARISON_ROWS.map((row, idx) => (
-                      <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                        <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                            <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed">{row.runInfra.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                          <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed">{row.closed.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                          <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed">{row.diy.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div />
-              </div>
-            </div>
+          <div className="flex flex-col items-center mb-16 px-4">
+            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+              Three ways to deploy Vision AI
+            </h2>
+            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
+              Use hosted vision APIs, optimize open models with Horos, or manage the entire stack yourself.
+            </p>
           </div>
 
-{/* Sandbox Showcase Section */}
+          {/* Table with End-to-End Horizontal Lines */}
+          <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
+            {/* Double Horizontal Border Top */}
+
+            {/* Double Horizontal Border Bottom */}
+
+
+            {/* Double Vertical Borders & Crosshairs */}
+            <div className="absolute inset-0 pointer-events-none z-20">
+              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
+                {/* Left Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
+                </div>
+
+                <div />
+
+                {/* Right Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Table Content */}
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
+              <div />
+              <div className="min-w-0 bg-[#151515]">
+                {/* Table Header */}
+                <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
+                  <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="absolute top-2.5 right-3 flex items-center">
+                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <HorosLogo size={16} />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed vision APIs</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
+                  </div>
+                </div>
+
+                {/* Table Rows */}
+                <div className="border-l border-r border-b border-dashed border-[#333]">
+                  {COMPARISON_ROWS.map((row, idx) => (
+                    <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
+                      <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
+                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed">{row.runInfra.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed">{row.closed.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed">{row.diy.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div />
+            </div>
+          </div>
+        </div>
+
+        {/* Sandbox Showcase Section */}
         <div className="w-full relative z-10 mt-32">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
@@ -1565,37 +1565,37 @@ export default function VisionAIPage() {
                             >
                               <span className="truncate">track.py</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("eval.py")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">eval.py</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("serve.sh")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">serve.sh</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("pipeline.json")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">pipeline.json</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("Dockerfile")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">Dockerfile</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("docker-compose.yml")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                             >
                               <span className="truncate">docker-compose.yml</span>
                             </button>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("requirements.txt")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                             >
@@ -1607,7 +1607,7 @@ export default function VisionAIPage() {
                             <div className="flex items-center gap-1 px-1.5 py-0.5 text-[#555] truncate">
                               <ChevronRight size={12} className="text-[#333] shrink-0" /> <span className="truncate">benchmarks/</span>
                             </div>
-                            <button 
+                            <button
                               onClick={() => selectFileManually("README.md")}
                               className={`flex items-center gap-1.5 px-1.5 py-0.5 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
                             >
@@ -1725,7 +1725,7 @@ export default function VisionAIPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[36px] lg:text-[42px] xl:text-[46px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-none md:whitespace-nowrap leading-tight">
                   Supported HF vision-language models work
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
@@ -1750,7 +1750,7 @@ export default function VisionAIPage() {
                 </div>
 
                 {/* Models Grid */}
-              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
@@ -1790,7 +1790,7 @@ export default function VisionAIPage() {
                       ))
                     )}
                   </div>
-                  
+
                 </div>
               </div>
               <div />
@@ -1798,11 +1798,11 @@ export default function VisionAIPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 mt-20 pb-20 md:pb-28">
-          {/* Heading */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            <div className="border-r border-dashed border-[#333]" />
-            <div className="min-w-0">
+          <div className="w-full relative z-10 mt-20 pb-20 md:pb-28">
+            {/* Heading */}
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+              <div className="border-r border-dashed border-[#333]" />
+              <div className="min-w-0">
                 <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
@@ -1813,7 +1813,7 @@ export default function VisionAIPage() {
                 {/* Tunes Grid */}
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
-                    
+
                     {/* Row 1 */}
                     <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
@@ -1880,13 +1880,13 @@ export default function VisionAIPage() {
                 </div>
               </div>
 
-            <div className="border-l border-dashed border-[#333]" />
+              <div className="border-l border-dashed border-[#333]" />
+            </div>
           </div>
-        </div>
 
-        {/* Try this pipeline Section */}
-            <div className="w-full relative z-10 py-24">
-              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          {/* Try this pipeline Section */}
+          <div className="w-full relative z-10 py-24">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
@@ -1957,8 +1957,8 @@ export default function VisionAIPage() {
                   key={idx}
                   onClick={() => setActiveFaq(idx)}
                   className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                      ? "bg-[#75bf00] text-black"
-                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
+                    ? "bg-[#75bf00] text-black"
+                    : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
                     }`}
                 >
                   {faq.question}
