@@ -204,115 +204,271 @@ const COMPARISON_ROWS: Array<{
 ];
 
 
-const EXTRACT_CODE = `# Real-time Vision AI: spatio-temporal tracking and scene understanding
-from openai import OpenAI
-from pydantic import BaseModel
-from typing import List, Tuple
+const TRACK_CODE = `# Vision AI Engine: Scene Understanding, Spatio-Temporal Tracking & Prediction
+import torch
+from horos_vision import (
+    VisionPipelineAgent,
+    SpatialGraphTracker,
+    TemporalPredictor,
+    SceneUnderstandingVerifier,
+    StreamAuditor
+)
 
-class Detection(BaseModel):
-    label: str
-    confidence: float
-    bbox_2d: Tuple[int, int, int, int]  # [ymin, xmin, ymax, xmax]
-    velocity: Tuple[float, float]        # [dx, dy]
+# Connect open models: Qwen3-VL-8B for visual reasoning + Cosmos3-Nano for prediction
+agent = VisionPipelineAgent.from_pretrained(
+    vision_model="Qwen/Qwen3-VL-8B-Instruct",
+    world_predictor="nvidia/Cosmos3-Nano",
+    device="cuda",
+    precision="fp16"
+)
 
-class SceneUnderstanding(BaseModel):
-    timestamp_ms: int
-    scene_summary: str
-    detections: List[Detection]
-    spatial_relationships: List[str]
-    predicted_next_action: str
+tracker = SpatialGraphTracker(tracking_policy="spatio-temporal-continuity")
+predictor = TemporalPredictor(lookahead_frames=15)
+verifier = SceneUnderstandingVerifier(strict_schema=True)
+auditor = StreamAuditor(target_fps=30)
 
-client = OpenAI(base_url="http://localhost:8000/v1")
+def track_and_understand_stream(video_stream_url: str) -> dict:
+    """Ingest live camera video: track objects, spatial graphs, and predict events."""
+    stream = auditor.ingest_stream(video_stream_url, sampling_rate="30fps")
+    
+    # Extract 3D spatial scene graph & track object velocities across frames
+    scene_graph = tracker.build_scene_graph(stream)
+    
+    # Predict physical motion & temporal actions with Cosmos3-Nano
+    future_events = predictor.predict_next_actions(scene_graph)
+    
+    # Mathematically verify spatial relationships and object permanence
+    spatial_proof = verifier.verify_scene(scene_graph, future_events)
+    
+    if spatial_proof.is_valid:
+        return {
+            "status": "TRACKING_ACTIVE",
+            "fps": auditor.measured_fps,
+            "detected_entities": scene_graph.entities,
+            "spatial_relationships": scene_graph.relations,
+            "predicted_events": future_events,
+            "proof_hash": spatial_proof.hash,
+            "tracking_mota": 0.91
+        }
+    return None`;
 
-def analyze_video_frame(frame_b64: str) -> SceneUnderstanding:
-    res = client.chat.completions.create(
-        model="Qwen/Qwen3-VL-8B-Instruct",
-        response_format={
-            "type": "json_schema",
-            "json_schema": {
-                "name": "SceneUnderstanding",
-                "schema": SceneUnderstanding.model_json_schema(),
-                "strict": True,
-            },
-        },
-        messages=[{"role": "user", "content": [
-            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{frame_b64}"}},
-            {"type": "text", "text": "Track objects, spatial relationships, and motion."}
-        ]}],
+const EVAL_CODE = `# Video benchmark harness: measuring understanding against real visual evidence
+from horos_eval import VisionEvaluator, SpatialSafetyGate
+
+def evaluate_vision_pipeline(dataset_manifest: str) -> dict:
+    """Evaluate detections, spatial tracking, and temporal prediction against ground truth."""
+    evaluator = VisionEvaluator(metrics=["mAP_50_95", "MOTA", "spatial_fidelity", "latency_p95"])
+    safety_gate = SpatialSafetyGate(strict_object_permanence=True)
+    
+    # Benchmark open vision pipeline on 500-clip test set
+    benchmark_report = evaluator.benchmark(
+        dataset_manifest,
+        vision_model="Qwen/Qwen3-VL-8B-Instruct",
+        prediction_model="nvidia/Cosmos3-Nano"
     )
-    return SceneUnderstanding.model_validate_json(res.choices[0].message.content)`;
+    
+    # Verify spatial permanence proofs
+    gate_passed = safety_gate.verify_proofs(benchmark_report["proof_hashes"])
+    
+    return {
+        "mAP_50_95": benchmark_report["mAP"],
+        "tracking_mota": benchmark_report["mota"],
+        "temporal_consistency": benchmark_report["temporal_score"],
+        "p95_latency_ms": benchmark_report["p95_latency_ms"],
+        "fps_throughput": benchmark_report["fps"],
+        "gate_passed": gate_passed
+    };`;
 
 const SERVE_CODE = `#!/usr/bin/env bash
-# Deploy Qwen3-VL-8B with vLLM vision pipeline behind Horos proxy
+# Deploy Vision AI pipeline: Qwen3-VL-8B & Cosmos3-Nano with vLLM & Horos runtime
 set -euo pipefail
 
-MODEL_ID="Qwen/Qwen3-VL-8B-Instruct"
+VISION_MODEL="Qwen/Qwen3-VL-8B-Instruct"
+PREDICTOR_MODEL="nvidia/Cosmos3-Nano"
 HOST="\${HOST:-0.0.0.0}"
 PORT="\${PORT:-8000}"
-MAX_MODEL_LEN="\${MAX_MODEL_LEN:-16384}"
+TARGET_FPS="\${TARGET_FPS:-30}"
 
-exec python3 -m vllm.entrypoints.openai.api_server \\
-  --model "$MODEL_ID" \\
-  --tensor-parallel-size 1 \\
-  --max-model-len "$MAX_MODEL_LEN" \\
-  --port "$PORT" \\
+echo "[Horos Vision] Initializing multi-camera video streaming runtime..."
+echo "[Horos Vision] Loading Qwen3-VL-8B (FP16 vision encoder + AWQ INT4 LLM head)..."
+echo "[Horos Vision] Connecting Cosmos3-Nano temporal prediction head..."
+
+exec python3 -m horos_vision.server \\
+  --vision-model "$VISION_MODEL" \\
+  --prediction-model "$PREDICTOR_MODEL" \\
+  --stream-transport webrtc,rtsp \\
+  --target-fps "$TARGET_FPS" \\
   --gpu-memory-utilization 0.85 \\
-  --enforce-eager \\
+  --port "$PORT" \\
   --host "$HOST"`;
 
 const PIPELINE_CODE = `{
   "name": "vision-ai-pipeline",
-  "target_fps": 30,
-  "primary_model": "qwen3-vl-8b",
-  "prediction_model": "cosmos3-nano",
-  "engine": "vllm-vision",
-  "gpu": "nvidia-l40s",
-  "quantization": "awq-int4",
+  "version": "2.4.0",
+  "vision_system": "one-vision-runtime",
+  "models": {
+    "visual_understanding": "Qwen/Qwen3-VL-8B-Instruct",
+    "world_prediction": "nvidia/Cosmos3-Nano"
+  },
+  "runtime": {
+    "engine": "vllm-vision-tensorrt",
+    "gpu": "nvidia-l40s",
+    "precision": "fp16-awq4",
+    "stream_transport": "webrtc-rtsp",
+    "target_fps": 30,
+    "max_concurrent_streams": 8
+  },
   "tasks": [
-    "object_detection",
-    "spatial_relationships",
-    "motion_event_analysis",
-    "temporal_prediction"
-  ]
+    "object_detection_and_segmentation",
+    "spatial_relationship_graph",
+    "motion_and_velocity_tracking",
+    "temporal_future_prediction"
+  ],
+  "verification": {
+    "eval_engine": "horos-eval-v2",
+    "target_mAP": 0.84,
+    "target_MOTA": 0.91,
+    "max_p95_latency_ms": 32.5
+  }
 }`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS base
 
-RUN apt-get update && apt-get install -y python3.11 python3-pip ffmpeg libgl1-mesa-glx
+RUN apt-get update && apt-get install -y \\
+    python3.11 \\
+    python3-pip \\
+    ffmpeg \\
+    libgl1-mesa-glx \\
+    libglib2.0-0 \\
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY schemas/ /app/schemas/
-COPY track.py serve.sh pipeline.json eval.py .
+COPY track.py eval.py serve.sh pipeline.json .
 
-EXPOSE 8000
+EXPOSE 8000 8554
 ENTRYPOINT ["/app/serve.sh"]`;
 
-const EVAL_CODE = `# Video benchmark harness: mAP, tracking accuracy (MOTA), and latency.
-import json
-import time
-from metrics.vision import compute_map, compute_mota
+const DOCKER_COMPOSE_CODE = `version: "3.8"
 
-def run_vision_eval(dataset_manifest: str) -> dict:
-    """Evaluate detections, spatial tracking, and velocity vectors against ground truth."""
-    frames = json.load(open(dataset_manifest))
-    latencies = []
-    predictions = []
-    
-    for item in frames:
-        t0 = time.perf_counter()
-        pred = analyze_video_frame(item["frame_b64"])
-        latencies.append((time.perf_counter() - t0) * 1000)
-        predictions.append(pred)
-        
-    return {
-        "mAP_50_95": compute_map(predictions, frames),
-        "tracking_mota": compute_mota(predictions, frames),
-        "p95_latency_ms": sorted(latencies)[int(len(latencies) * 0.95)],
-        "fps_throughput": round(1000 / (sum(latencies) / len(latencies)), 1)
-    }`;
+services:
+  vision-ai-stream:
+    build: .
+    ports:
+      - "8000:8000"
+      - "8554:8554"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - TARGET_FPS=30
+      - STREAM_POLICY=zero-copy-cuda
+    volumes:
+      - ./schemas:/app/schemas
+      - huggingface_cache:/root/.cache/huggingface
+
+volumes:
+  huggingface_cache:`;
+
+const REQUIREMENTS_CODE = `torch>=2.4.0
+vllm>=0.6.2
+horos-vision>=2.4.0
+horos-eval>=2.4.0
+transformers>=4.45.0
+opencv-python-headless>=4.10.0
+pydantic>=2.9.0
+av>=12.3.0`;
+
+const README_CODE = `# Horos Vision AI
+
+Real-time spatio-temporal video understanding and physical prediction pipeline powered by Qwen3-VL-8B and Cosmos3-Nano.
+
+## Capabilities
+- Multi-camera RTSP/WebRTC zero-copy stream ingestion
+- 3D spatial scene graph extraction & velocity tracking
+- Physical temporal prediction & future action forecasting
+- Verified against ground-truth benchmarks (mAP: 0.84, MOTA: 0.91)`;
+
+const DETECTION_SCHEMA = `{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DetectionSchema",
+  "type": "object",
+  "properties": {
+    "label": { "type": "string" },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "bbox_3d": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "velocity_vector": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    }
+  },
+  "required": ["label", "confidence", "bbox_3d", "velocity_vector"]
+}`;
+
+const SPATIAL_GRAPH_SCHEMA = `{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpatialRelationshipGraph",
+  "type": "object",
+  "properties": {
+    "timestamp_ms": { "type": "integer" },
+    "nodes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": { "type": "string" },
+          "relation": { "type": "string" },
+          "target": { "type": "string" },
+          "distance_m": { "type": "number" }
+        },
+        "required": ["source", "relation", "target"]
+      }
+    }
+  },
+  "required": ["timestamp_ms", "nodes", "edges"]
+}`;
+
+const MOTION_TRACK_SCHEMA = `{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MotionTrackEvent",
+  "type": "object",
+  "properties": {
+    "track_id": { "type": "string" },
+    "trajectory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "frame_idx": { "type": "integer" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "z": { "type": "number" }
+        }
+      }
+    },
+    "predicted_next_action": { "type": "string" }
+  },
+  "required": ["track_id", "trajectory", "predicted_next_action"]
+}`;
 
 type VisionAIFile = string;
 
@@ -367,6 +523,27 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
         }
         return part;
       });
+    } else if (lang === "markdown") {
+      if (content.trim().startsWith("#")) {
+        lineContent = <span className="text-[#75bf00] font-bold">{content}</span>;
+      } else if (content.trim().startsWith("-") || content.trim().startsWith("*")) {
+        lineContent = <span className="text-[#93c5fd]">{content}</span>;
+      } else {
+        lineContent = content;
+      }
+    } else if (lang === "yaml") {
+      const colonIdx = content.indexOf(":");
+      if (colonIdx !== -1) {
+        lineContent = (
+          <>
+            <span className="text-[#93c5fd] font-medium">{content.slice(0, colonIdx)}</span>
+            <span className="text-[#666]">:</span>
+            <span className="text-[#75bf00]">{content.slice(colonIdx + 1)}</span>
+          </>
+        );
+      } else {
+        lineContent = content;
+      }
     } else {
       lineContent = content;
     }
@@ -492,16 +669,22 @@ export default function VisionAIPage() {
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "track.py": EXTRACT_CODE,
+    "track.py": TRACK_CODE,
     "eval.py": EVAL_CODE,
     "serve.sh": SERVE_CODE,
     "pipeline.json": PIPELINE_CODE,
-    "Dockerfile": DOCKERFILE_CODE
+    "Dockerfile": DOCKERFILE_CODE,
+    "docker-compose.yml": DOCKER_COMPOSE_CODE,
+    "requirements.txt": REQUIREMENTS_CODE,
+    "README.md": README_CODE,
+    "detection.json": DETECTION_SCHEMA,
+    "spatial_graph.json": SPATIAL_GRAPH_SCHEMA,
+    "motion_track.json": MOTION_TRACK_SCHEMA
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll profile Qwen3-VL on the L40S, optimize dynamic frame sampling to 30fps, fuse spatial patch embeddings with temporal tracking, and prepare a 500-clip visual evaluation harness.";
-  const AGENT_MSG_2 = "Recipe is ready. Processing 30fps multi-camera video streams at $0.004/minute on L40S. The endpoint outputs real-time object tracking, spatial relationships, and predictive event graphs with verified latency benchmarks. Want me to deploy?";
+  const AGENT_MSG_1 = "On it. I'll configure Qwen3-VL-8B for scene understanding, pair Cosmos3-Nano for temporal motion prediction, fuse spatial patch embeddings with 30fps stream ingestion on the L40S, and prepare a 500-clip visual evaluation harness.";
+  const AGENT_MSG_2 = "Recipe is ready. Processing 30fps multi-camera video streams at $0.004/minute on L40S. The endpoint outputs real-time object tracking, 3D spatial graphs, and predictive event streams with verified latency benchmarks. Want me to deploy?";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -519,7 +702,7 @@ export default function VisionAIPage() {
 
   // Code character-by-character real-time streaming typewriter effect when activeFile changes
   useEffect(() => {
-    const fullCode = FILE_CODE_MAP[activeFile] || EXTRACT_CODE;
+    const fullCode = FILE_CODE_MAP[activeFile] || TRACK_CODE;
 
     setTypedCodeText("");
     setIsTypingCode(true);
@@ -1044,7 +1227,7 @@ export default function VisionAIPage() {
 
                   {/* Panes Backgrounds (Z-0) */}
                   <div className="absolute inset-0 grid" style={{
-                    gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                    gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 430fr) minmax(0, 240fr) minmax(0, 601fr) minmax(0, 39fr)',
                     gridTemplateRows: '53.5fr 785fr 53.5fr'
                   }}>
                     {/* Tabs bg */}
@@ -1065,7 +1248,7 @@ export default function VisionAIPage() {
 
                   {/* Content (Z-20) */}
                   <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                    gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
+                    gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 430fr) minmax(0, 240fr) minmax(0, 601fr) minmax(0, 39fr)',
                     gridTemplateRows: '53.5fr 785fr 53.5fr'
                   }}>
 
@@ -1107,12 +1290,19 @@ export default function VisionAIPage() {
                     <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
                       <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                         <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                          <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                            Track objects, spatial relationships, and motion across video streams.
-                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><QwenLogo size={11} /> Qwen3-VL-8B</span>
-                            with spatio-temporal schemas on a single
-                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> L40S</span>. 
-                            Enforce strict JSON schema validation for bounding boxes and relational graphs.
+                          <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[25px]">
+                            Deploy multi-camera Vision AI pipeline.{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-0.5">
+                              <QwenLogo size={11} /> Qwen3-VL-8B
+                            </span>{" "}
+                            for spatial reasoning paired with{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle mx-0.5">
+                              <NvidiaLogo size={11} /> Cosmos3-Nano
+                            </span>{" "}
+                            on a single{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle mx-0.5">
+                              <NvidiaLogo size={11} /> L40S
+                            </span>. Verify 3D spatial graphs and predict motion events.
                           </p>
                         </div>
 
@@ -1149,10 +1339,10 @@ export default function VisionAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5">
                               <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen3-VL 8B on L40S</span>
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen3-VL-8B on L40S</span>
                                 <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                               </div>
-                              <span className="text-[#666] text-[12px]">30 fps stream, FP16 vision encoder</span>
+                              <span className="text-[#666] text-[12px]">30 fps stream ingestion, FP16 vision encoder</span>
                             </div>
                           </div>
 
@@ -1167,10 +1357,10 @@ export default function VisionAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5">
                               <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Tiled patch embeddings</span>
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Paired Cosmos3-Nano predictor</span>
                                 <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                               </div>
-                              <span className="text-[#75bf00] text-[12px]">fused with spatial tokens</span>
+                              <span className="text-[#75bf00] text-[12px]">fused spatio-temporal lookahead frames</span>
                             </div>
                           </div>
 
@@ -1188,7 +1378,7 @@ export default function VisionAIPage() {
                                 <span className="text-[#C8C7BA] text-[13px] font-medium">Tuned AWQ INT4 on LLM head</span>
                                 <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
                               </div>
-                              <span className="text-[#666] text-[12px]">FP16 stays on the vision encoder</span>
+                              <span className="text-[#666] text-[12px]">FP16 preserved on vision encoder</span>
                             </div>
                           </div>
 
@@ -1203,7 +1393,7 @@ export default function VisionAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5">
                               <div className="flex justify-between items-center w-full">
-                                <span className="text-[#C8C7BA] text-[13px] font-medium">Wired spatio-temporal schema</span>
+                                <span className="text-[#C8C7BA] text-[13px] font-medium">Wired 3D spatial scene graph</span>
                                 <span className="text-[#C8C7BA] text-[12px]">1.1s</span>
                               </div>
                               <span className="text-[#666] text-[12px]">zero-copy frame streaming forwarded to vLLM</span>
@@ -1224,7 +1414,7 @@ export default function VisionAIPage() {
                                 <span className="text-[#C8C7BA] text-[13px] font-medium">Prepared 500-clip tracking harness</span>
                                 <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
                               </div>
-                              <span className="text-[#75bf00] text-[12px]">mAP 0.84, MOTA 0.91, client validation included</span>
+                              <span className="text-[#75bf00] text-[12px]">mAP 0.84, MOTA 0.91, spatial permanence gate passed</span>
                             </div>
                           </div>
                         </div>
@@ -1274,138 +1464,141 @@ export default function VisionAIPage() {
                     </div>
 
                     {/* Files Content */}
-                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                      <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-5 flex flex-col items-start gap-3 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
+                      <div className="w-full flex justify-between items-center border-b border-[#252525] pb-2 mb-1">
                         <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SCHEMAS</span>
                         <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                       </div>
-                      <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          detection.json
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          spatial_graph.json
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          motion_track.json
-                        </div>
+                      <div className="w-full flex flex-col gap-1 text-[12px] font-mono">
+                        <button
+                          onClick={() => selectFileManually("detection.json")}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "detection.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate">detection.json</span>
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("spatial_graph.json")}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "spatial_graph.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate">spatial_graph.json</span>
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("motion_track.json")}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "motion_track.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#777] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate">motion_track.json</span>
+                        </button>
 
                         {/* Project Tree Folder */}
-                        <div className="mt-2 flex flex-col gap-1.5">
-                          <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                            <ChevronDown size={14} className="text-[#777]" /> horos-vision-ai/
+                        <div className="mt-2 flex flex-col gap-1 w-full">
+                          <div className="flex items-center gap-1.5 px-1 py-1 text-[#aaa] font-semibold text-[12px]">
+                            <ChevronDown size={13} className="text-[#777] shrink-0" /> <span className="truncate">horos-vision-ai/</span>
                           </div>
-                          <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                          <div className="pl-3 flex flex-col gap-1 border-l border-[#252525] ml-2.5 mt-0.5">
                             <button
                               onClick={() => selectFileManually("track.py")}
-                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "track.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "track.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
-                              track.py
+                              <span className="truncate">track.py</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("eval.py")}
-                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
-                              eval.py
+                              <span className="truncate">eval.py</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("serve.sh")}
-                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
-                              serve.sh
+                              <span className="truncate">serve.sh</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("pipeline.json")}
-                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
-                              pipeline.json
+                              <span className="truncate">pipeline.json</span>
                             </button>
                             <button 
                               onClick={() => selectFileManually("Dockerfile")}
-                              className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#888] hover:text-[#C8C7BA]"}`}
                             >
-                              Dockerfile
+                              <span className="truncate">Dockerfile</span>
                             </button>
-                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                              docker-compose.yml
+                            <button 
+                              onClick={() => selectFileManually("docker-compose.yml")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">docker-compose.yml</span>
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("requirements.txt")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">requirements.txt</span>
+                            </button>
+                            <div className="flex items-center gap-1 px-2 py-1 text-[#555] truncate">
+                              <ChevronRight size={13} className="text-[#333] shrink-0" /> <span className="truncate">video_clips/</span>
                             </div>
-                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                              requirements.txt
+                            <div className="flex items-center gap-1 px-2 py-1 text-[#555] truncate">
+                              <ChevronRight size={13} className="text-[#333] shrink-0" /> <span className="truncate">benchmarks/</span>
                             </div>
-                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                              <ChevronRight size={14} className="text-[#333]" /> video_clips/
-                            </div>
-                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                              <ChevronRight size={14} className="text-[#333]" /> benchmarks/
-                            </div>
-                            <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                              README.md
-                            </div>
+                            <button 
+                              onClick={() => selectFileManually("README.md")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">README.md</span>
+                            </button>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Code Content */}
-                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                      {/* Editor top tabs */}
-                      <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                        <button
-                          onClick={() => selectFileManually("track.py")}
-                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "track.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                        >
-                          track.py
-                        </button>
-                        <button
-                          onClick={() => selectFileManually("eval.py")}
-                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                        >
-                          eval.py
-                        </button>
-                        <button
-                          onClick={() => selectFileManually("serve.sh")}
-                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                        >
-                          serve.sh
-                        </button>
-                        <button
-                          onClick={() => selectFileManually("pipeline.json")}
-                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                        >
-                          pipeline.json
-                        </button>
-                        <button
-                          onClick={() => selectFileManually("Dockerfile")}
-                          className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                        >
-                          Dockerfile
-                        </button>
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 flex flex-col justify-start overflow-hidden pointer-events-auto min-w-0 min-h-0 bg-[#151515]">
+                      {/* Editor top tabs - Pinned at top, never scrolled away! */}
+                      <div className="flex border-b border-[#252525] px-6 pt-5 pb-2.5 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar shrink-0 bg-[#151515]">
+                        {["track.py", "eval.py", "serve.sh", "pipeline.json", "Dockerfile"].map((file) => (
+                          <button
+                            key={file}
+                            onClick={() => selectFileManually(file)}
+                            className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === file ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          >
+                            {file}
+                          </button>
+                        ))}
                       </div>
 
                       {/* Code Area with Line Numbers */}
-                      <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                        {/* Line numbers column */}
-                        <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
-                          {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                            <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
-                          ))}
-                        </div>
+                      <div className="flex-1 overflow-auto p-6 pt-4 chat-scroll thin-hover-scrollbar">
+                        <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                          {/* Line numbers column */}
+                          <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                            {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
+                              <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                            ))}
+                          </div>
 
-                        {/* Highlighted code column */}
-                        <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
-                          {highlightCode(
-                            typedCodeText,
-                            activeFile.endsWith(".py")
-                              ? "python"
-                              : activeFile.endsWith(".sh")
-                                ? "bash"
-                                : activeFile.endsWith(".json")
-                                  ? "json"
-                                  : activeFile === "Dockerfile"
-                                    ? "dockerfile"
-                                    : "typescript",
-                            !isTypingCode
-                          )}
+                          {/* Highlighted code column */}
+                          <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                            {highlightCode(
+                              typedCodeText,
+                              activeFile.endsWith(".py")
+                                ? "python"
+                                : activeFile.endsWith(".sh")
+                                  ? "bash"
+                                  : activeFile.endsWith(".json")
+                                    ? "json"
+                                    : activeFile === "Dockerfile"
+                                      ? "dockerfile"
+                                      : activeFile.endsWith(".md")
+                                        ? "markdown"
+                                        : activeFile.endsWith(".yml") || activeFile.endsWith(".yaml")
+                                          ? "yaml"
+                                          : "python",
+                              !isTypingCode
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
