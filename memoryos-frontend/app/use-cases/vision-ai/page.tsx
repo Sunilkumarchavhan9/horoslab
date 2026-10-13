@@ -11,7 +11,7 @@ import { VisionAIGrid } from "@/components/landing/vision-ai-grid";
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, GLMLogo, OpenGVLabLogo, Ai2Logo } from "@/components/horos/primitives/brand-icons";
-import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText } from "lucide-react";
+import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText, Boxes } from "lucide-react";
 
 const COMPARISON_ROWS: Array<{
   num: string;
@@ -711,15 +711,27 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "Can I run scene understanding and temporal prediction on the same GPU?",
-    answer: "Yes. Our optimized pipeline schedules vision models like Qwen3-VL alongside physical world predictors like Cosmos3-Nano on a single L40S or H100 GPU, streaming spatio-temporal embeddings without inter-service latency.",
+    answer: "Yes. Our optimized pipeline schedules vision-language models like Qwen3-VL alongside physical world predictors like Cosmos3-Nano on a single L40S or H100 GPU, streaming spatio-temporal embeddings without inter-service latency.",
   },
   {
     question: "How do you handle real-time multi-camera video streaming?",
-    answer: "We use zero-copy GPU video decoding and dynamic frame sampling. High-motion segments are processed at full 60fps while static scenes throttle dynamically, keeping GPU memory and bandwidth strictly bounded.",
+    answer: "We use zero-copy GPU video decoding (NVDEC) and dynamic frame sampling. High-motion segments are processed at full 30/60fps while static scenes throttle dynamically, keeping GPU memory and bandwidth strictly bounded across concurrent feeds.",
   },
   {
     question: "Do you support structured spatio-temporal JSON output?",
-    answer: "Yes. Our pipelines enforce strict JSON schema decoding directly inside the serving engine, providing verified 2D bounding boxes, velocity vectors, and relational scene graphs with sub-millisecond validation.",
+    answer: "Yes. Our pipelines enforce strict JSON schema decoding directly inside the serving engine, providing verified 2D/3D bounding boxes, velocity vectors, and relational scene graphs with sub-millisecond validation.",
+  },
+  {
+    question: "How does Horos handle high-resolution 4K/8K images without downsampling loss?",
+    answer: "We utilize dynamic patch tiling and adaptive aspect-ratio preservation optimized for frontier models like InternVL3.5-241B and GLM-4.5V. High-resolution frames are parallelized into vision tokens with fused cross-attention, capturing minute details without VRAM exhaustion.",
+  },
+  {
+    question: "Can I perform 3D spatial grounding and camera coordinate prediction?",
+    answer: "Yes. Open models like Qwen3-VL-8B and Qwen3-VL-235B natively output 3D oriented bounding boxes, depth-aware camera coordinate frames, and relational scene graphs. Horos validates geometric outputs directly against camera intrinsics in real time.",
+  },
+  {
+    question: "How does long-form video grounding and temporal event localization work?",
+    answer: "Using video grounding models like Molmo2-8B and Qwen3-VL-30B MoE, Horos streams sliding-window keyframe embeddings to pinpoint exact sub-second timestamps, actions, and object trajectories across hours of video footage without recompiling KV caches.",
   }
 ];
 
@@ -1850,19 +1862,19 @@ export default function VisionAIPage() {
                       <div className="text-[#75bf00]">
                         <Cpu size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Page-aware batching</h3>
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Temporal clip batching</h3>
                       <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
-                        Variable-page batches with PagedAttention. No padding waste on long contracts.
+                        Variable-length video batches with PagedAttention. Zero padding waste across streaming camera feeds.
                       </p>
                     </div>
 
                     <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <FileText size={24} strokeWidth={1.5} />
+                        <Boxes size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Multi-page reasoning</h3>
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Spatio-temporal reasoning</h3>
                       <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
-                        KV cache shared across pages so the model sees the full document.
+                        Interleaved cross-attention tuned to preserve 3D geometry and motion context without memory explosion.
                       </p>
                     </div>
 
@@ -1872,7 +1884,7 @@ export default function VisionAIPage() {
                       </div>
                       <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Pipeline scheduling</h3>
                       <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
-                        Render and extract interleaved per page, with client-side validation and backpressure on overload.
+                        Balance vision encoder throughput with physical world prediction to eliminate pipeline stalls.
                       </p>
                     </div>
 
@@ -1974,10 +1986,10 @@ export default function VisionAIPage() {
               </div>
               <div>
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
-                  {FAQ_DATA[activeFaq].question}
+                  {FAQ_DATA[activeFaq]?.question || FAQ_DATA[0].question}
                 </h3>
                 <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
-                  {FAQ_DATA[activeFaq].answer}
+                  {FAQ_DATA[activeFaq]?.answer || FAQ_DATA[0].answer}
                 </p>
               </div>
             </div>
