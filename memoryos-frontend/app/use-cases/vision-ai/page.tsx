@@ -1955,7 +1955,7 @@ export default function VisionAIPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
+          <div className="w-full relative z-10 pt-24 pb-28 md:pb-36 flex flex-col items-center px-4">
             <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
               Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
             </h2>
@@ -1993,10 +1993,13 @@ export default function VisionAIPage() {
                 </p>
               </div>
             </div>
+
+            {/* Bottom Horizontal Border with Brand Logo */}
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
           </div>
 
           {/* Bottom CTA Section */}
-          <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden border-t border-dashed border-[#333]">
+          <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden">
             {/* Container for precise 72% alignment with continuous dashed grid lines */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] absolute inset-0 pointer-events-none z-0">
               {/* Left Column Margin with Inner and Outer dashed lines */}
