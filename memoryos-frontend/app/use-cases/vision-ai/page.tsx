@@ -1682,34 +1682,34 @@ export default function VisionAIPage() {
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Cloud size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-7 sm:py-10 flex flex-col gap-3.5 border-r border-dashed border-[#333] items-start">
+                    <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Cloud size={20} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Managed Horos</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Managed Horos</h3>
+                    <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                       Hosted vision endpoints with sub-second video latency from L40S to B200.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Server size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-7 sm:py-10 flex flex-col gap-3.5 border-r border-dashed border-[#333] items-start">
+                    <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Server size={20} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Your infrastructure</h3>
+                    <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                       AWS, GCP, edge clusters, bare metal. Same vision engine, your private VPC.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Network size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-7 sm:py-10 flex flex-col gap-3.5 items-start">
+                    <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Network size={20} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Local workstation &amp; Edge</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Local workstation &amp; Edge</h3>
+                    <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                       docker compose up. Real-time spatio-temporal video pipeline on a single GPU or Jetson.
                     </p>
                   </div>
@@ -1720,32 +1720,32 @@ export default function VisionAIPage() {
           </div>
 
           {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-24 pb-16">
+          <div className="w-full relative z-10 pt-16 pb-12">
             <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                   Supported HF vision-language models work
                 </h2>
-                <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
                   Supported vision-language models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
-                <div className="w-full max-w-2xl mb-16 relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#C8C7BA]">
-                    <Search size={18} />
+                <div className="w-full max-w-xl mb-12 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#C8C7BA]">
+                    <Search size={16} />
                   </div>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search any vision-language model on Hugging Face"
-                    className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[15px] pl-11 pr-14 py-3.5 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
+                    className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
-                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    <span className="text-[10px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">HF</span>
+                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                    <span className="text-[9.5px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">HF</span>
                   </div>
                 </div>
 
@@ -1798,15 +1798,15 @@ export default function VisionAIPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 mt-32">
+        <div className="w-full relative z-10 mt-20">
           {/* Heading */}
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
+                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
                   Every stage of the pipeline, retuned per model and GPU.
                 </p>
 
@@ -1815,63 +1815,63 @@ export default function VisionAIPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
                     {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <ImageIcon size={32} strokeWidth={1.5} />
+                        <ImageIcon size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Vision encoder fusion</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Vision encoder fusion</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                         Tiled patch embeddings fused with the LLM step. Page-shape preserved.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <ScanSearch size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Schema-request passthrough</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Schema-request passthrough</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                         Send your JSON schema with response_format, then validate the returned JSON in your application.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Layers size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">VLM quantization</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">VLM quantization</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                         AWQ INT4 on the LLM head, FP16 preserved on the vision encoder.
                       </p>
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Cpu size={32} strokeWidth={1.5} />
+                        <Cpu size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Page-aware batching</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Page-aware batching</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                         Variable-page batches with PagedAttention. No padding waste on long contracts.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <FileText size={32} strokeWidth={1.5} />
+                        <FileText size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Multi-page reasoning</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Multi-page reasoning</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                         KV cache shared across pages so the model sees the full document.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Sliders size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Pipeline scheduling</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Pipeline scheduling</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
                         Render and extract interleaved per page, with client-side validation and backpressure on overload.
                       </p>
                     </div>
