@@ -870,7 +870,7 @@ export function OpenGVLabLogo({ className, size = 14 }: BrandIconProps) {
 export function Ai2Logo({ className, size = 14 }: BrandIconProps) {
   return (
     <img
-      src="https://avatars.githubusercontent.com/u/8904797?s=200&v=4"
+      src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png"
       width={size}
       height={size}
       className={cn("rounded-[2px] object-cover shrink-0 inline-block align-middle", className)}
