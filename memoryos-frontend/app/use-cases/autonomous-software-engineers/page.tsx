@@ -1198,27 +1198,27 @@ export default function AutonomousSoftwareEngineersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                   Any code generator or SWE model works
                 </h2>
-                <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
                   Use any open-weights coding model as your SWE engine, and fine-tune any specialized target model. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
-                <div className="w-full max-w-2xl mb-16 relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#C8C7BA]">
-                    <Search size={18} />
+                <div className="w-full max-w-xl mb-12 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#C8C7BA]">
+                    <Search size={16} />
                   </div>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search any coding or SWE model on Hugging Face"
-                    className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[15px] pl-11 pr-14 py-3.5 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
+                    className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
-                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    <span className="text-[10px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">HF</span>
+                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                    <span className="text-[9.5px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">HF</span>
                   </div>
                 </div>
 
@@ -1238,22 +1238,22 @@ export default function AutonomousSoftwareEngineersPage() {
                         <div key={model.id} className={getBorderClasses(index, models.length)}>
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                           
-                          <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center mb-8">
+                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                             {getLogo(model.author, model.name)}
                           </div>
                           
-                          <div className="flex flex-col gap-1.5 mb-8">
-                            <h3 className="text-[22px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                               {model.name}
                             </h3>
-                            <span className="text-[#C8C7BA] text-[15px] font-medium tracking-wide">
+                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1">
                               {model.author}
                             </span>
                           </div>
                           
-                          <div className="flex justify-between items-center mt-auto pt-2">
-                            <span className="text-[#F0EFE2] text-[16px] font-medium"></span>
-                            <span className="text-[#75bf00] text-[12px] font-medium border border-[#2a381a] bg-[#1a2310] px-2.5 py-1 rounded-sm tracking-wide">
+                          <div className="flex justify-between items-center mt-auto pt-4 gap-2">
+                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
+                            <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                               {model.role || model.tag}
                             </span>
                           </div>
@@ -1269,14 +1269,14 @@ export default function AutonomousSoftwareEngineersPage() {
           </div>
 
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-32">
+          <div className="w-full relative z-10 mt-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
+                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
                   Every stage of the pipeline, retuned per model and repository.
                 </p>
 

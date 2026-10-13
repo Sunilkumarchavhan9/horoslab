@@ -1977,29 +1977,29 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-[32px] md:text-[44px] font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                 Supported HF chat models work
               </h2>
-              <p className="text-[#C8C7BA] text-[15px] font-mono leading-relaxed text-center max-w-2xl mb-12">
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
                 Supported chat-capable models on Hugging Face run through the
                 compatible recipe. Search the live catalog above. The examples
                 below are just a starting view.
               </p>
 
               {/* Search Bar */}
-              <div className="w-full max-w-2xl mb-16 relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#C8C7BA]">
-                  <Search size={18} />
+              <div className="w-full max-w-xl mb-12 relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#C8C7BA]">
+                  <Search size={16} />
                 </div>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search any voice-compatible model on Hugging Face"
-                  className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[15px] pl-11 pr-14 py-3.5 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
+                  className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                 />
-                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                  <span className="text-[10px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">
+                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                  <span className="text-[9.5px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">
                     HF
                   </span>
                 </div>
@@ -2029,25 +2029,25 @@ outlines==0.0.46`;
                         <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                           {getLogo(model.author, model.name)}
                         </div>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 min-w-0">
                           <h3
-                            className="text-[20px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1"
+                            className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1"
                             title={model.name}
                           >
                             {model.name}
                           </h3>
                           <span
-                            className="text-[#C8C7BA] text-[15px] line-clamp-1"
+                            className="text-[#C8C7BA] text-[14px] line-clamp-1"
                             title={model.author}
                           >
                             {model.author}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center mt-auto pt-4">
-                          <span className="text-[#F0EFE2] font-medium">
+                        <div className="flex justify-between items-center mt-auto pt-4 gap-2">
+                          <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">
                             {model.downloads}
                           </span>
-                          <span className="text-[#75bf00] text-[12px] font-medium border border-[#2a381a] px-2 py-1 rounded-sm tracking-wide">
+                          <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                             {model.tag}
                           </span>
                         </div>
@@ -2071,10 +2071,10 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-[32px] md:text-[44px] font-medium tracking-tight text-[#F0EFE2] mb-4 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                 What Horos tunes
               </h2>
-              <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed text-center max-w-2xl mb-16">
+              <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
                 Every layer of your assistant, tuned for its model and workload.
               </p>
 
