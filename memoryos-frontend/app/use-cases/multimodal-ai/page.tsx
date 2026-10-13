@@ -592,21 +592,22 @@ export default function MultimodalAIPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    Transcribe, diarize,<br />
-                    redact on <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      open Whisper
+                    Text, vision, audio.<br />
+                    One intelligence{" "}
+                    <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
+                      system
                     </span>.
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
-                    Long-form audio to searchable transcripts. Speaker labels, PII redaction, exportable on your stack.
+                    Engineer open multimodal models to understand mixed inputs, connect information across modalities, and interpret video over time. Horos optimizes the complete system against your workload.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy this pipeline <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Optimize multimodal system <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the stack <ChevronRight size={16} />
+                      Explore stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
