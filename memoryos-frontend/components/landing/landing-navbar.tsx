@@ -180,7 +180,7 @@ export function LandingNavbar({
                       title: "Multimodal AI",
                       desc: "Understand text, images, audio, and video.",
                       icons: [QwenLogo, MetaLogo, MistralLogo],
-                      href: "/use-cases/transcription"
+                      href: "/use-cases/multimodal-ai"
                     },
                     {
                       title: "Reasoning AI",
