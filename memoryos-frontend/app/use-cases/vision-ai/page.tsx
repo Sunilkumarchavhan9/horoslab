@@ -1032,12 +1032,14 @@ export default function VisionAIPage() {
                     Evaluate open vision models on images and video. Optimize scene understanding, object relationships, motion, and temporal prediction against real visual workloads.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Optimize vision system <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                      <span>Optimize vision system</span>
+                      <ChevronRight size={16} className="transition-transform group-hover:translate-x-1 shrink-0" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Explore stack <ChevronRight size={16} />
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                      <span>Explore stack</span>
+                      <ChevronRight size={16} className="shrink-0" />
                     </button>
                   </div>
                 </div>

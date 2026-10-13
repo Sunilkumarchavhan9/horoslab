@@ -602,12 +602,14 @@ export default function MultimodalAIPage() {
                     Engineer open multimodal models to understand mixed inputs, connect information across modalities, and interpret video over time. Horos optimizes the complete system against your workload.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Optimize multimodal system <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                      <span>Optimize multimodal system</span>
+                      <ChevronRight size={16} className="transition-transform group-hover:translate-x-1 shrink-0" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Explore stack <ChevronRight size={16} />
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                      <span>Explore stack</span>
+                      <ChevronRight size={16} className="shrink-0" />
                     </button>
                   </div>
                 </div>
