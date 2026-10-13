@@ -1674,10 +1674,10 @@ export default function VisionAIPage() {
           </div>
 
           {/* Features Grid Row */}
-          <div className="w-full relative z-10">
+          <div className="w-full relative z-10 pb-16 md:pb-20">
             {/* Feature Cards aligned with vertical grid lines */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
-              <div />
+              <div className="border-r border-dashed border-[#333]" />
               {/* Added top horizontal line per user request */}
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
@@ -1715,7 +1715,7 @@ export default function VisionAIPage() {
                   </div>
                 </div>
               </div>
-              <div />
+              <div className="border-l border-dashed border-[#333]" />
             </div>
           </div>
 
@@ -1798,10 +1798,10 @@ export default function VisionAIPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 mt-20">
+        <div className="w-full relative z-10 mt-20 pb-20 md:pb-28">
           {/* Heading */}
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            <div />
+            <div className="border-r border-dashed border-[#333]" />
             <div className="min-w-0">
                 <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-xl mx-auto leading-tight">
                   What Horos tunes
@@ -1846,7 +1846,7 @@ export default function VisionAIPage() {
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-7 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
+                    <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
                         <Cpu size={24} strokeWidth={1.5} />
                       </div>
@@ -1856,7 +1856,7 @@ export default function VisionAIPage() {
                       </p>
                     </div>
 
-                    <div className="px-7 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
+                    <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
                         <FileText size={24} strokeWidth={1.5} />
                       </div>
@@ -1866,7 +1866,7 @@ export default function VisionAIPage() {
                       </p>
                     </div>
 
-                    <div className="px-7 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-4 items-start">
+                    <div className="px-7 py-10 border-b border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
                         <Sliders size={24} strokeWidth={1.5} />
                       </div>
@@ -1880,9 +1880,7 @@ export default function VisionAIPage() {
                 </div>
               </div>
 
-
-
-            <div />
+            <div className="border-l border-dashed border-[#333]" />
           </div>
         </div>
 
