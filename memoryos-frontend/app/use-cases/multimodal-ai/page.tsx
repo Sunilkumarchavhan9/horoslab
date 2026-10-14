@@ -1224,383 +1224,390 @@ export default function MultimodalAIPage() {
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0">
+                {/* Sandbox Content Container (SVG Skeleton Architecture) */}
+                <div className="w-full relative mx-auto" style={{ aspectRatio: '1351 / 892' }}>
 
+                  {/* Panes Backgrounds (Z-0) */}
+                  <div className="absolute inset-0 grid" style={{
+                    gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 430fr) minmax(0, 240fr) minmax(0, 601fr) minmax(0, 39fr)',
+                    gridTemplateRows: '53.5fr 785fr 53.5fr'
+                  }}>
+                    {/* Tabs bg */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
 
+                    {/* Chat bg */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
 
-            {/* Sandbox Content Container (SVG Skeleton Architecture) */}
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+                    {/* Files bg */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
 
-              {/* Panes Backgrounds (Z-0) */}
-              <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-                {/* Tabs bg */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
-
-                {/* Chat bg */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
-
-                {/* Files bg */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
-
-                {/* Code bg */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
-              </div>
-
-              {/* Skeleton Grid Lines (Z-10) */}
-              <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
-
-              {/* Content (Z-20) */}
-              <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-
-                {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
-                    <button
-                      onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <span className="text-[#75bf00]">&gt;_</span> PIPELINE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Code2 size={13} /> CODE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Sliders size={13} /> OPTIMIZATION
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Rocket size={13} /> DEPLOY
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
-                    <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
-                    <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
-                  </div>
-                </div>
-
-                {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Deploy open multimodal reasoning for video, audio, and documents.
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><QwenLogo size={11} /> Qwen3-VL-30B</span>
-                        on
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> 1x L40S</span>. 
-                        Add cross-modal grounding, OCR parsing, and hybrid multimodal search.
-                      </p>
-                    </div>
-
-                    {/* Step 1: Agent Initial Ack */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
-                          {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      {/* Log 1 (Step 2) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Profiled Qwen3-VL-30B on L40S</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">sub-180ms TTFT, dynamic visual token packing</span>
-                        </div>
-                      </div>
-
-                      {/* Log 2 (Step 3) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Fused multi-resolution ViT encoder</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">FlashAttention-3 across visual & text tokens</span>
-                        </div>
-                      </div>
-
-                      {/* Log 3 (Step 4) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Wired cross-modal grounding sidecar</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">2D bounding boxes & temporal video segments</span>
-                        </div>
-                      </div>
-
-                      {/* Log 4 (Step 5) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Compiled high-res OCR parser</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.8s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">markdown tables, LaTeX formulas, 4K docs</span>
-                        </div>
-                      </div>
-
-                      {/* Log 5 (Step 6) */}
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Indexed multimodal records for search</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.5s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">hybrid full-text + vision embeddings, on your stack</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Step 7 (LAST STEP): Agent Final Summary */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Code bg */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
                   </div>
 
-                  {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
-                      <input
-                        type="text"
-                        placeholder="Ask the agent to tune visual token packing, frame sampling, or OCR resolution..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
-                        readOnly
-                      />
-                      <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                          
-                        </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
+                  {/* Skeleton Grid Lines (Z-10) */}
+                  <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
+
+                  {/* Content (Z-20) */}
+                  <div className="absolute inset-0 grid pointer-events-none z-20" style={{
+                    gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 430fr) minmax(0, 240fr) minmax(0, 601fr) minmax(0, 39fr)',
+                    gridTemplateRows: '53.5fr 785fr 53.5fr'
+                  }}>
+
+                    {/* Tabs */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-5 pointer-events-auto">
+                      <div className="flex gap-6 sm:gap-8 h-full items-end pb-2">
+                        <button
+                          onClick={() => setActiveMainTab("pipeline")}
+                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="text-[#75bf00]">&gt;_</span> PIPELINE
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("code")}
+                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Code2 size={12} /> CODE
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("optimization")}
+                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Sliders size={12} /> OPTIMIZATION
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("deploy")}
+                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Rocket size={12} /> DEPLOY
                         </button>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">PIPELINE MODULES</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">5</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      grounding.py
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      ocr_parser.py
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      temporal_align.py
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      multimodal_input.json
-                    </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      grounding_box.json
-                    </div>
-
-                    {/* Project Tree Folder */}
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> horos-multimodal/
+                      <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
+                        <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
+                        <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
                       </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                    </div>
+
+                    {/* Chat Content */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                      <div className="flex flex-col gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-3">
+                        <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 rounded-[4px]">
+                          <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-normal leading-[19px]">
+                            Deploy open multimodal reasoning for video, audio, and documents.{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#141414] border border-[#2e2e2e] px-1.5 py-0.5 rounded text-[10.5px] font-mono text-[#D4D3C9] align-middle mx-0.5">
+                              <QwenLogo size={10} /> Qwen3-VL-30B
+                            </span>{" "}
+                            on{" "}
+                            <span className="inline-flex items-center gap-1 bg-[#141414] border border-[#2e2e2e] px-1.5 py-0.5 rounded text-[10.5px] font-mono text-[#75bf00] align-middle mx-0.5">
+                              <NvidiaLogo size={10} /> 1x L40S
+                            </span>. Add cross-modal grounding, OCR parsing, and hybrid multimodal search.
+                          </p>
+                        </div>
+
+                        {/* Step 1: Agent Initial Ack */}
+                        <div className={`flex gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={12} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] leading-[18px]">
+                              {typedMsg1}
+                              {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
+                                <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Logs list */}
+                        <div className="flex flex-col gap-2 mt-1">
+                          {/* Log 1 (Step 2) */}
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 2 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Profiled Qwen3-VL-30B on L40S</span>
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">1.4s</span>
+                              </div>
+                              <span className="text-[#666] text-[10.5px] sm:text-[11px] truncate">sub-180ms TTFT, dynamic visual token packing</span>
+                            </div>
+                          </div>
+
+                          {/* Log 2 (Step 3) */}
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 3 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Fused multi-resolution ViT encoder</span>
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">0.9s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[10.5px] sm:text-[11px] truncate">FlashAttention-3 across visual & text tokens</span>
+                            </div>
+                          </div>
+
+                          {/* Log 3 (Step 4) */}
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 4 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Wired cross-modal grounding sidecar</span>
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">1.2s</span>
+                              </div>
+                              <span className="text-[#666] text-[10.5px] sm:text-[11px] truncate">2D bounding boxes & temporal video segments</span>
+                            </div>
+                          </div>
+
+                          {/* Log 4 (Step 5) */}
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 5 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Compiled high-res OCR parser</span>
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">0.8s</span>
+                              </div>
+                              <span className="text-[#666] text-[10.5px] sm:text-[11px] truncate">markdown tables, LaTeX formulas, 4K docs</span>
+                            </div>
+                          </div>
+
+                          {/* Log 5 (Step 6) */}
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 6 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Indexed multimodal records for search</span>
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">1.5s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[10.5px] sm:text-[11px] truncate">hybrid full-text + vision embeddings, on your stack</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 7 (LAST STEP): Agent Final Summary */}
+                        <div className={`flex gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={12} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] leading-[18px]">
+                              {typedMsg2}
+                              {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
+                                <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Prompt input bar */}
+                      <div className="mt-1.5 shrink-0 mb-1">
+                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-1.5">
+                          <input
+                            type="text"
+                            placeholder="Ask the agent to tune visual token packing, frame sampling..."
+                            className="bg-transparent text-[#F0EFE2] text-[11.5px] sm:text-[12px] border-none outline-none w-full px-1.5 py-1"
+                            readOnly
+                          />
+                          <div className="flex justify-between items-center px-1">
+                            <div className="flex gap-1">
+                              <span className="bg-[#222] border border-[#333] text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Capabilities</span>
+                              <span className="bg-[#222] border border-[#333] text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Outcomes</span>
+                            </div>
+                            <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                              <ArrowUp size={12} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Files Content */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col items-start gap-3 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-1 w-full">
+                        <span className="text-[9.5px] font-bold tracking-widest text-[#C8C7BA] uppercase">PIPELINE MODULES</span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[8.5px] font-bold px-1.5 py-0.5 rounded-sm">5</span>
+                      </div>
+                      <div className="flex flex-col gap-1 text-[11.5px] sm:text-[12px] font-mono w-full">
+                        <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                          grounding.py
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                          ocr_parser.py
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                          temporal_align.py
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                          multimodal_input.json
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                          grounding_box.json
+                        </div>
+
+                        {/* Project Tree Folder */}
+                        <div className="mt-1.5 flex flex-col gap-1 w-full">
+                          <div className="flex items-center gap-1.5 px-2 py-1 text-[#aaa] font-semibold text-[11.5px] truncate">
+                            <ChevronDown size={13} className="text-[#777] shrink-0" /> horos-multimodal/
+                          </div>
+                          <div className="pl-3 flex flex-col gap-1 border-l border-[#252525] ml-3 mt-0.5">
+                            <button
+                              onClick={() => selectFileManually("multimodal_pipeline.py")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate text-[11.5px] sm:text-[12px] ${activeFile === "multimodal_pipeline.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              multimodal_pipeline.py
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("grounding.py")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate text-[11.5px] sm:text-[12px] ${activeFile === "grounding.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              grounding.py
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("serve.sh")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate text-[11.5px] sm:text-[12px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              serve.sh
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("pipeline.json")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate text-[11.5px] sm:text-[12px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              pipeline.json
+                            </button>
+                            <button 
+                              onClick={() => selectFileManually("Dockerfile")}
+                              className={`flex items-center gap-1.5 px-2 py-1 transition-colors w-full text-left rounded-[4px] truncate text-[11.5px] sm:text-[12px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              Dockerfile
+                            </button>
+                            <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                              docker-compose.yml
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                              requirements.txt
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                              document_ocr.json
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-1 text-[#555] truncate">
+                              README.md
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Code Content */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-4 sm:p-5 flex flex-col justify-start overflow-hidden pointer-events-auto">
+                      {/* Editor top tabs */}
+                      <div className="flex border-b border-[#252525] mb-4 pb-1.5 pt-0.5 gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar shrink-0">
                         <button
                           onClick={() => selectFileManually("multimodal_pipeline.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "multimodal_pipeline.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "multimodal_pipeline.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           multimodal_pipeline.py
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("grounding.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "grounding.py" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "grounding.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           grounding.py
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("serve.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           serve.sh
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           pipeline.json
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#111]" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           Dockerfile
                         </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          docker-compose.yml
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          requirements.txt
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          document_ocr.json
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          README.md
+                      </div>
+
+                      {/* Code Area with Line Numbers */}
+                      <div className="flex-1 overflow-auto chat-scroll thin-hover-scrollbar">
+                        <div className="flex font-mono text-[11.5px] sm:text-[12px] leading-[20px] overflow-x-auto select-text thin-hover-scrollbar">
+                          {/* Line numbers column */}
+                          <div className="text-[#444] text-right pr-3.5 border-r border-[#252525] select-none flex flex-col min-w-[28px]">
+                            {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
+                              <div key={i} className="min-h-[20px] leading-[20px]">{i + 1}</div>
+                            ))}
+                          </div>
+
+                          {/* Highlighted code column */}
+                          <div className="pl-3.5 flex-1 text-[#C8C7BA] leading-[20px]">
+                            {highlightCode(
+                              typedCodeText,
+                              activeFile.endsWith(".py")
+                                ? "python"
+                                : activeFile.endsWith(".sh")
+                                  ? "bash"
+                                  : activeFile.endsWith(".json")
+                                    ? "json"
+                                    : activeFile === "Dockerfile"
+                                      ? "dockerfile"
+                                      : "typescript",
+                              !isTypingCode
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  {/* Editor top tabs */}
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                    <button
-                      onClick={() => selectFileManually("multimodal_pipeline.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "multimodal_pipeline.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      multimodal_pipeline.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("grounding.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "grounding.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      grounding.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("serve.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "serve.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      serve.sh
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      pipeline.json
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("Dockerfile")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      Dockerfile
-                    </button>
-                  </div>
-
-                  {/* Code Area with Line Numbers */}
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    {/* Line numbers column */}
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
-                      {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
-                      ))}
-                    </div>
-
-                    {/* Highlighted code column */}
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
-                      {highlightCode(
-                        typedCodeText,
-                        activeFile.endsWith(".py")
-                          ? "python"
-                          : activeFile.endsWith(".sh")
-                            ? "bash"
-                            : activeFile.endsWith(".json")
-                              ? "json"
-                              : activeFile === "Dockerfile"
-                                ? "dockerfile"
-                                : "typescript",
-                        !isTypingCode
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
+              <div />
             </div>
           </div>
 
