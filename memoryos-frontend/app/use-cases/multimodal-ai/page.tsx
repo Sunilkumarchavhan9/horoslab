@@ -13,48 +13,194 @@ import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-inp
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText } from "lucide-react";
 
-const COMPARISON_ROWS = [
+const COMPARISON_ROWS: Array<{
+  num: string;
+  label: string;
+  runInfra: { title: string; desc: React.ReactNode };
+  closed: { title: string; desc: React.ReactNode };
+  diy: { title: string; desc: React.ReactNode };
+}> = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly and keep the production path open." },
-    closed: { title: "Call provider endpoint", desc: "Fast first demo, but the runtime stays rented." },
-    diy: { title: "Build serving stack first", desc: "Infrastructure work comes before product learning." }
+    label: "System",
+    runInfra: {
+      title: "One multimodal system.",
+      desc: "Connect models, inputs, context, runtime, and compute."
+    },
+    closed: {
+      title: "Hosted model endpoint.",
+      desc: "Integrate the provider API."
+    },
+    diy: {
+      title: "Build the full stack.",
+      desc: "Manage models, serving, and infrastructure."
+    }
   },
   {
     num: "0 2",
-    label: "Model control",
-    runInfra: { title: "Bring the model ID", desc: "Keep model choice and serving decisions visible." },
-    closed: { title: "Provider catalog", desc: "You use what the provider exposes." },
-    diy: { title: "Your model", desc: "Full control if your team maintains the runtime." }
+    label: "Models",
+    runInfra: {
+      title: "Choose open models.",
+      desc: (
+        <>
+          Compare{" "}
+          <a
+            href="https://huggingface.co/Qwen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
+          >
+            Qwen3.5
+          </a>
+          ,{" "}
+          <a
+            href="https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Instruct"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-[#75bf00] transition-colors"
+          >
+            Qwen3-VL
+          </a>
+          , and supported audio-video models against your tasks.
+        </>
+      )
+    },
+    closed: {
+      title: "Provider model catalog.",
+      desc: "Use available multimodal models."
+    },
+    diy: {
+      title: "Manage model weights.",
+      desc: "Handle compatibility, versions, and serving."
+    }
   },
   {
     num: "0 3",
-    label: "Tuning",
-    runInfra: { title: "Measured latency and GPU cost", desc: "Compare serving choices before deployment." },
-    closed: { title: "Opaque", desc: "Latency and batching stay behind the API." },
-    diy: { title: "Manual profiling", desc: "Your team owns tuning and regressions." }
+    label: "Context",
+    runInfra: {
+      title: "Connect modalities.",
+      desc: "Relate text, images, speech, video frames, and timestamps."
+    },
+    closed: {
+      title: "Send supported inputs.",
+      desc: "Context handling depends on the API."
+    },
+    diy: {
+      title: "Build cross-modal context.",
+      desc: "Manage synchronization and state yourself."
+    }
   },
   {
     num: "0 4",
-    label: "Export",
-    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first and take the deploy package later." },
-    closed: { title: "Locked endpoint", desc: "You keep calling the provider." },
-    diy: { title: "Already owned", desc: "Export exists because you built everything yourself." }
+    label: "Capabilities",
+    runInfra: {
+      title: "Compose multimodal skills.",
+      desc: "Combine visual understanding, speech, audio perception, and video analysis."
+    },
+    closed: {
+      title: "Use exposed capabilities.",
+      desc: "Features vary by provider."
+    },
+    diy: {
+      title: "Integrate separate models.",
+      desc: "Build the orchestration layer."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, less production control." },
-    diy: { title: "High", desc: "You own infra, failures, upgrades, and serving changes." }
+    label: "Workload",
+    runInfra: {
+      title: "Profile real inputs.",
+      desc: "Measure image resolution, audio duration, video length, and concurrency."
+    },
+    closed: {
+      title: "Track API usage.",
+      desc: "Measure requests, latency, and provider costs."
+    },
+    diy: {
+      title: "Instrument every modality.",
+      desc: "Track preprocessing, inference, and GPU use."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across access, logging, and incident response." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in the request path." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls." }
+    label: "Optimization",
+    runInfra: {
+      title: "Tune the complete pipeline.",
+      desc: "Optimize resolution, frame sampling, context length, batching, and quantization."
+    },
+    closed: {
+      title: "Tune exposed settings.",
+      desc: "Internal serving controls remain provider-dependent."
+    },
+    diy: {
+      title: "Optimize every layer.",
+      desc: "Profile runtimes, memory, and GPU utilization."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: {
+      title: "Test cross-modal understanding.",
+      desc: "Evaluate grounding, temporal consistency, and task accuracy against your data."
+    },
+    closed: {
+      title: "Run independent evaluations.",
+      desc: "Test provider outputs against your requirements."
+    },
+    diy: {
+      title: "Build your benchmarks.",
+      desc: "Maintain datasets, evaluators, and regression tests."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: {
+      title: "Preserve multimodal evidence.",
+      desc: "Link inputs, model versions, outputs, errors, and observed outcomes."
+    },
+    closed: {
+      title: "Connect API logs.",
+      desc: "Maintain application-level records."
+    },
+    diy: {
+      title: "Track experiment lineage.",
+      desc: "Correlate model, input, and result versions."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: {
+      title: "Improve from observed failures.",
+      desc: "Use corrected labels, difficult examples, and verified outcomes to improve future model versions."
+    },
+    closed: {
+      title: "Use supported customization.",
+      desc: "Training options depend on the provider."
+    },
+    diy: {
+      title: "Build the learning loop.",
+      desc: "Manage data, adaptation, training, and evaluation."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    runInfra: {
+      title: "Control data and execution.",
+      desc: "Govern access to sensitive media, credentials, budgets, and downstream actions."
+    },
+    closed: {
+      title: "Apply provider and app controls.",
+      desc: "Manage data access and tool permissions."
+    },
+    diy: {
+      title: "Own security controls.",
+      desc: "Implement access policies, auditing, and approvals."
+    }
   }
 ];
 
@@ -642,10 +788,6 @@ export default function MultimodalAIPage() {
 
           {/* Grid with End-to-End Horizontal Lines */}
           <div className="w-full relative z-10">
-            {/* Constrained Horizontal Borders */}
-            
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
             {/* Double Vertical Borders & Crosshairs */}
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
@@ -720,131 +862,127 @@ export default function MultimodalAIPage() {
           </div>
         </div>
 
-        {/* Full-width dashed line separator */}
-        <div className="w-full h-px border-t border-dashed border-[#333]" />
-
         {/* Comparison Table Section */}
-          <div className="w-full relative z-10 mt-32 mb-32">
-            
+        <div className="w-full relative z-10 mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-            <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to deploy Document AI
-              </h2>
-              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most teams pick between speed and control. Horos keeps both in one workflow.
-              </p>
-            </div>
+          <div className="flex flex-col items-center mb-16 px-4">
+            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+              Three ways to deploy Multimodal AI
+            </h2>
+            <p className="text-[#C8C7BA] text-[17px] sm:text-[18px] font-sans leading-relaxed text-center max-w-3xl">
+              Hosted APIs give you multimodal intelligence. DIY gives you control over the stack. Horos helps you engineer, optimize, and verify open multimodal models against your real workloads.
+            </p>
+          </div>
 
-            {/* Table with End-to-End Horizontal Lines */}
-            <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-              {/* Double Horizontal Border Top */}
-              
-              {/* Double Horizontal Border Bottom */}
-              
+          {/* Table with End-to-End Horizontal Lines */}
+          <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
+            {/* Double Horizontal Border Top */}
+            
+            {/* Double Horizontal Border Bottom */}
+            
 
-              {/* Double Vertical Borders & Crosshairs */}
-              <div className="absolute inset-0 pointer-events-none z-20">
-                <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
-                  {/* Left Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+            {/* Double Vertical Borders & Crosshairs */}
+            <div className="absolute inset-0 pointer-events-none z-20">
+              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
+                {/* Left Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
 
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
-                  </div>
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
+                </div>
 
-                  <div />
+                <div />
 
-                  {/* Right Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+                {/* Right Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
 
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                  </div>
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
                 </div>
               </div>
+            </div>
 
-              {/* Table Content */}
-              <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
-                <div />
-                <div className="min-w-0 bg-[#151515]">
-                  {/* Table Header */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
-                    <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                      <div className="absolute top-2.5 right-3 flex items-center">
-                        <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <HorosLogo size={16} />
-                        </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Key size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Cpu size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
-                    </div>
+            {/* Table Content */}
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
+              <div />
+              <div className="min-w-0 bg-[#151515]">
+                {/* Table Header */}
+                <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
+                  <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
                   </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="absolute top-2.5 right-3 flex items-center">
+                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <HorosLogo size={16} />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Key size={16} className="text-[#C8C7BA]" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed multimodal APIs</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Cpu size={16} className="text-[#C8C7BA]" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
+                  </div>
+                </div>
 
-                  {/* Table Rows */}
-                  <div className="border-l border-r border-b border-dashed border-[#333]">
-                    {COMPARISON_ROWS.map((row, idx) => (
-                      <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                        <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
-                          <div className="flex items-center gap-3">
-                            <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                            <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                          <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                          <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                {/* Table Rows */}
+                <div className="border-l border-r border-b border-dashed border-[#333]">
+                  {COMPARISON_ROWS.map((row, idx) => (
+                    <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
+                      <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
+                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 </div>
                 <div />
               </div>
