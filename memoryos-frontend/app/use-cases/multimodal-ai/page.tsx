@@ -11,7 +11,7 @@ import { DocumentAIGrid } from "@/components/landing/document-ai-grid";
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/horos/primitives/brand-icons";
-import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText } from "lucide-react";
+import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, ImageIcon, FileText, Video } from "lucide-react";
 
 const COMPARISON_ROWS: Array<{
   num: string;
@@ -1806,64 +1806,64 @@ export default function MultimodalAIPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
                     {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <ImageIcon size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Batch ASR concurrency</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Continuous batching across audio shards. 120x realtime on a single L4 for offline jobs.
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Vision token reduction</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
+                        Tune image resolution, crop count, patch density, and visual token budgets in Qwen3-VL and compatible models. Measure accuracy against prefilling cost and GPU memory.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Cpu size={32} strokeWidth={1.5} />
+                        <Video size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Whisper kernels</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Mel-spectrogram fusion. FlashAttention v2 on the encoder. Same kernels for streaming and batch.
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Video frame selection</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
+                        Sweep frame rates, clip lengths, and sampling strategies. Preserve brief events and motion cues while reducing redundant frames and visual tokens.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Mic size={32} strokeWidth={1.5} />
+                        <Mic size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Speaker diarization</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Pyannote-based speaker turns. Swap diarizers without retuning the ASR step.
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Audio chunking and alignment</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
+                        Tune audio chunk duration, streaming windows, and timestamp handling for supported audio-capable models. Measure transcription or perception quality alongside latency.
                       </p>
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <EyeOff size={32} strokeWidth={1.5} />
+                        <Cpu size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">PII redaction</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Entity-scoped redaction for names, emails, phones, account IDs, and your custom fields.
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Encoder and attention kernels</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
+                        Profile vision encoders, attention kernels, and tensor layouts. Benchmark supported FlashAttention and fused operations against the model's baseline on each GPU.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <Search size={32} strokeWidth={1.5} />
+                        <Layers size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Searchable transcript index</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Hybrid full-text and semantic search across diarized, redacted segments.
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Quantization and serving</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
+                        Compare supported BF16, FP16, FP8, and weight quantization paths. Tune batching, KV cache, concurrency, and memory allocation against quality, throughput, and cost.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-7 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-4 items-start">
                       <div className="text-[#75bf00]">
-                        <FileText size={32} strokeWidth={1.5} />
+                        <ShieldCheck size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Word and segment timestamps</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Per-word time anchors plus speaker-segment ranges. SRT, VTT, JSON, and warehouse exports.
+                      <h3 className="text-xl sm:text-[22px] font-medium text-[#F0EFE2]">Cross-modal regression tests</h3>
+                      <p className="text-[#A0A098] text-[13.5px] sm:text-[14px] leading-relaxed">
+                        Replay fixed image, audio, and video workloads after each change. Compare task accuracy, timestamp alignment, missed events, latency, peak memory, and cost before promoting a version.
                       </p>
                     </div>
 
