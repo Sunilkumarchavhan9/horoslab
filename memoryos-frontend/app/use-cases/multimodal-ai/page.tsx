@@ -552,15 +552,60 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "Qwen/Qwen3-VL-235B-A22B-Instruct", name: "Qwen3-VL-235B", author: "Qwen", downloads: "235B MoE", tag: "Spatial Reasoning" },
-  { id: "nvidia/Cosmos3-Super", name: "Cosmos3-Super", author: "nvidia", downloads: "64B", tag: "World Model" },
-  { id: "zai-org/GLM-4.5V", name: "GLM-4.5V", author: "zai-org", downloads: "106B MoE", tag: "Visual Reasoning" },
-  { id: "OpenGVLab/InternVL3_5-241B-A28B-Instruct", name: "InternVL3.5-241B", author: "OpenGVLab", downloads: "241B MoE", tag: "High-Resolution" },
-  { id: "Qwen/Qwen3-VL-30B-A3B-Instruct", name: "Qwen3-VL-30B", author: "Qwen", downloads: "30B MoE", tag: "Video Understanding" },
-  { id: "nvidia/Cosmos3-Nano", name: "Cosmos3-Nano", author: "nvidia", downloads: "16B", tag: "Physical AI" },
-  { id: "OpenGVLab/InternVL3_5-30B-A3B-Instruct", name: "InternVL3.5-30B", author: "OpenGVLab", downloads: "30B MoE", tag: "Visual Understanding" },
-  { id: "allenai/Molmo2-8B", name: "Molmo2-8B", author: "allenai", downloads: "8B", tag: "Video Grounding" },
-  { id: "Qwen/Qwen3-VL-8B-Instruct", name: "Qwen3-VL-8B", author: "Qwen", downloads: "8B", tag: "3D Grounding" }
+  {
+    id: "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    name: "Qwen3-Omni-30B-A3B-Instruct",
+    author: "Qwen",
+    downloads: "30B MoE",
+    tag: "Omni-modal",
+    description: "Text, images, audio and video",
+    link: "https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct"
+  },
+  {
+    id: "google/gemma-4-12B",
+    name: "Gemma 4 12B",
+    author: "Google",
+    downloads: "12B",
+    tag: "Audio + Vision",
+    description: "Unified audio and visual understanding",
+    link: "https://huggingface.co/google/gemma-4-12B"
+  },
+  {
+    id: "Qwen/Qwen3.5-27B",
+    name: "Qwen3.5-27B",
+    author: "Qwen",
+    downloads: "27B",
+    tag: "Reasoning",
+    description: "Text, image and video reasoning",
+    link: "https://huggingface.co/Qwen/Qwen3.5-27B"
+  },
+  {
+    id: "nvidia/Cosmos3-Super",
+    name: "Cosmos3-Super",
+    author: "NVIDIA",
+    downloads: "64B",
+    tag: "World Model",
+    description: "Physical-world modeling and prediction",
+    link: "https://huggingface.co/nvidia/Cosmos3-Super"
+  },
+  {
+    id: "Qwen/Qwen3-VL-30B-A3B-Instruct",
+    name: "Qwen3-VL-30B-A3B-Instruct",
+    author: "Qwen",
+    downloads: "30B MoE",
+    tag: "Video",
+    description: "Video, spatial and visual grounding",
+    link: "https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct"
+  },
+  {
+    id: "google/gemma-4-E4B",
+    name: "Gemma 4 E4B",
+    author: "Google",
+    downloads: "E4B",
+    tag: "Efficient",
+    description: "Efficient audio, image and text workloads",
+    link: "https://huggingface.co/google/gemma-4-E4B"
+  }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -586,10 +631,11 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
+  if (a.includes('google') || m.includes('gemma')) return <GoogleLogo size={20} />;
+  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
+  if (a.includes('nvidia') || m.includes('nvfp4') || m.includes('cosmos')) return <NvidiaLogo size={20} />;
   if (a.includes('openai') || m.includes('whisper') || m.includes('gpt')) return <OpenAILogo size={20} />;
   if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
-  if (a.includes('nvidia') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
   if (a.includes('moonshot') || m.includes('kimi')) return <KimiLogo size={20} />;
   if (a.includes('coqui') || a.includes('canopy')) return <span className="text-[18px]">🤗</span>;
   if (a.includes('useful sensors') || a.includes('usefulsensors')) return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6509fc8d11afda55cae0b2e7/6tyQ-L7VxHMOSKIOff09A.png" alt="Useful Sensors" className="w-5 h-5 rounded-sm object-cover" />;
@@ -1671,7 +1717,7 @@ export default function MultimodalAIPage() {
                   Supported HF speech models work
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Supported Whisper-class models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
+                  Supported multimodal and omni-modal models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1683,7 +1729,7 @@ export default function MultimodalAIPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any audio model on Hugging Face"
+                    placeholder="Search any multimodal model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1704,25 +1750,34 @@ export default function MultimodalAIPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
+                        <a
+                          key={model.id}
+                          href={model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length)}
+                        >
                           {/* Hover Noise Overlay */}
                           <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay">
                             <div className="absolute -inset-[100%] opacity-[0.25] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] animate-noise-shift" />
                           </div>
 
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
-                          <div className="relative z-10 w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                          <div className="relative z-10 w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#151515]">
                             {getLogo(model.author, model.name)}
                           </div>
                           <div className="relative z-10 flex flex-col gap-1 min-w-0">
                             <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>{model.name}</h3>
-                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1" title={model.author}>{model.author}</span>
+                            <span className="text-[#C8C7BA] text-[13.5px] line-clamp-1" title={model.author}>{model.author}</span>
+                            {model.description && (
+                              <p className="text-[#888] text-[13px] leading-relaxed line-clamp-2 mt-1" title={model.description}>{model.description}</p>
+                            )}
                           </div>
                           <div className="relative z-10 flex justify-between items-center mt-auto pt-4 gap-2">
                             <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads}</span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">{model.tag}</span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
