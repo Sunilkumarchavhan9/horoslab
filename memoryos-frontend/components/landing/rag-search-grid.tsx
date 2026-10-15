@@ -78,83 +78,84 @@ export function RagSearchGrid({
         {/* Helper inner container that maintains the exact 1054/740 aspect ratio for precise positioning */}
         <div className="w-full h-full relative" style={{ aspectRatio: '1054/740' }}>
         
-          {/* Row 1 (y=5.6%) */}
-          {/* Col 2: OpenAI (x=22.3%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '30%', top: '5.6%', transform: 'translate(-50%, -50%)' }}>
-            <OpenAILogo size={28} />
+          {/* Row 1 (y=7%) */}
+          {/* Col 2: OpenAI */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '28%', top: '7%', transform: 'translate(-50%, -50%)' }}>
+            <OpenAILogo size={26} />
           </div>
-          {/* Center (Col 3/4): Mistral (x=50%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '50%', top: '5.6%', transform: 'translate(-50%, -50%)' }}>
-             <MistralLogo size={52} /> 
+          {/* Center: Mistral */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '50%', top: '7%', transform: 'translate(-50%, -50%)' }}>
+            <MistralLogo size={38} /> 
           </div>
-          {/* Col 5: Hex Logo (x=78.3%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '70%', top: '5.6%', transform: 'translate(-50%, -50%)' }}>
-            <QwenLogo size={36} />
+          {/* Col 4: Qwen */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '72%', top: '7%', transform: 'translate(-50%, -50%)' }}>
+            <QwenLogo size={30} />
+          </div>
+          {/* Col 5: Nomic Ghost (moved up to Row 1 so it never collides with label2!) */}
+          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '90%', top: '7%', transform: 'translate(-50%, -50%)' }}>
+            <span className="text-2xl">👻</span>
           </div>
 
-          {/* Row 2 (y=17.4%) */}
+          {/* Row 2 (y=19%) */}
           {/* Text: label1 */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '7.6%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '12%', top: '19%', transform: 'translate(-50%, -50%)' }}>
             {label1}
           </div>
           {/* Text: label2 */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '78.3%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '82%', top: '19%', transform: 'translate(-50%, -50%)' }}>
             {label2}
           </div>
-          {/* Col 6: Nomic Ghost (x=92.5%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '92.5%', top: '17.4%', transform: 'translate(-50%, -50%)' }}>
-             <span className="text-3xl">👻</span>
+
+          {/* Row 3 (y=38%) */}
+          {/* Col 1: Microsoft */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '10%', top: '38%', transform: 'translate(-50%, -50%)' }}>
+            <MicrosoftLogo size={22} />
           </div>
 
-          {/* Row 3 (y=40%) */}
-          {/* Col 1: Microsoft (x=7.6%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '7.6%', top: '40%', transform: 'translate(-50%, -50%)' }}>
-            <MicrosoftLogo size={24} />
-          </div>
-
-          {/* Center (Col 3/4): Huge Emoji (x=50%) */}
-          <div className="absolute z-30 flex items-center justify-center pointer-events-auto" style={{ left: '50%', top: '40%', transform: 'translate(-50%, -50%)' }}>
-            <div className="relative hover:scale-105 transition-transform duration-300 drop-shadow-[0_10px_30px_rgba(255,255,255,0.1)]">
-               <div className="absolute inset-0 bg-white/5 blur-[50px] rounded-full scale-125"></div>
-               <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="Hugging Face" className="w-[200px] h-[200px] md:w-[240px] md:h-[240px] relative z-10" />
+          {/* Center: Hugging Face Logo (Reduced from 240px to balanced ~100px) */}
+          <div className="absolute z-30 flex items-center justify-center pointer-events-auto" style={{ left: '50%', top: '38%', transform: 'translate(-50%, -50%)' }}>
+            <div className="relative hover:scale-105 transition-transform duration-300 drop-shadow-[0_8px_20px_rgba(255,255,255,0.08)]">
+               <div className="absolute inset-0 bg-white/5 blur-[25px] rounded-full scale-110"></div>
+               <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" alt="Hugging Face" className="w-[84px] h-[84px] sm:w-[96px] sm:h-[96px] md:w-[110px] md:h-[110px] relative z-10" />
             </div>
           </div>
 
-          {/* Row 4 (y=62.7%) */}
-          {/* Col 1: Kimi (x=7.6%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '7.6%', top: '62.7%', transform: 'translate(-50%, -50%)' }}>
-            <KimiLogo size={24} />
+          {/* Col 5: Meta */}
+          <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '90%', top: '38%', transform: 'translate(-50%, -50%)' }}>
+            <MetaLogo size={26} />
+          </div>
+
+          {/* Row 4 (y=56%) */}
+          {/* Col 1: Kimi */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '10%', top: '56%', transform: 'translate(-50%, -50%)' }}>
+            <KimiLogo size={22} />
           </div>
           
-          {/* Text: label3 */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '50%', top: '65.7%', transform: 'translate(-50%, -50%)' }}>
+          {/* Center Text: label3 (Directly below Hugging Face logo with clear visibility) */}
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '50%', top: '56%', transform: 'translate(-50%, -50%)' }}>
             {label3}
           </div>
 
-          {/* Col 5: Meta (x=78.3%) */}
-          <div className="absolute flex items-center justify-center text-blue-500 pointer-events-auto" style={{ left: '92.5%', top: '62.7%', transform: 'translate(-50%, -50%)' }}>
-            <MetaLogo size={28} />
-          </div>
-
-          {/* Row 5 (y=74.6%) */}
+          {/* Row 5 (y=75%) */}
           {/* Optional Text: label5 */}
           {label5 && (
-            <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '8.5%', top: '82%', transform: 'translate(-50%, -50%)' }}>
+            <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '12%', top: '75%', transform: 'translate(-50%, -50%)' }}>
               {label5}
             </div>
           )}
 
-          {/* Col 2: DeepSeek (x=22.3%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '22.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
-            <DeepSeekLogo size={24} />
+          {/* Col 2: DeepSeek */}
+          <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '34%', top: '75%', transform: 'translate(-50%, -50%)' }}>
+            <DeepSeekLogo size={22} />
           </div>
           
-          {/* Col 5: VLLM (x=78.3%) */}
-          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '78.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
-            <VLLMLogo size={24} />
+          {/* Col 4: VLLM (Moved inward away from label4 so ZERO overlap) */}
+          <div className="absolute flex items-center justify-center pointer-events-auto" style={{ left: '64%', top: '75%', transform: 'translate(-50%, -50%)' }}>
+            <VLLMLogo size={22} />
           </div>
+
           {/* Text: label4 */}
-          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '92.5%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
+          <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '84%', top: '75%', transform: 'translate(-50%, -50%)' }}>
             {label4}
           </div>
           
