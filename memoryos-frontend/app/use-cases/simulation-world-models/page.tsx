@@ -588,13 +588,15 @@ export default function SimulationWorldModelsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    World models that<br />
-                    predict{" "}
+                    Simulation &<br />
                     <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      what happens next
-                    </span>.
+                      World Models
+                    </span>
                   </h1>
-                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
+                  <p className="text-[#F0EFE2] text-[18px] sm:text-[19px] font-medium tracking-tight leading-snug">
+                    World models that predict what happens next.
+                  </p>
+                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg font-sans">
                     Engineer models that learn physical dynamics, simulate possible futures, and predict how environments change when objects or agents act. Evaluate predictions against observed reality and optimize the system for your workload.
                   </p>
 
