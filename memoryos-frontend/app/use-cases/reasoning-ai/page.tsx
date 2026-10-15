@@ -405,15 +405,96 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B", author: "Meta", description: "Frontier model for generating high-quality synthetic datasets.", role: "Generator" },
-  { id: "meta-llama/Llama-3.1-8B-Instruct", name: "Llama 3.1 8B", author: "Meta", description: "Compact, fast inference target for domain-specific fine-tuning.", role: "Target" },
-  { id: "meta-llama/Llama-3.2-3B-Instruct", name: "Llama 3.2 3B", author: "Meta", description: "Edge-device target perfect for specialized embedded applications.", role: "Target" },
-  { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen 2.5 72B", author: "Alibaba", description: "Strong multilingual synthesizer for complex data factories.", role: "Generator" },
-  { id: "Qwen/Qwen2.5-32B-Instruct", name: "Qwen 2.5 32B", author: "Alibaba", description: "Balanced distillation target or mid-tier generator.", role: "Hybrid" },
-  { id: "Qwen/Qwen2.5-7B-Instruct", name: "Qwen 2.5 7B", author: "Alibaba", description: "Highly capable base model for efficient LoRA adaptation.", role: "Target" },
-  { id: "Qwen/QwQ-32B-Preview", name: "QwQ 32B", author: "Alibaba", description: "Reasoning generator to synthesize step-by-step logic chains.", role: "Generator" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Llama-70B", name: "DeepSeek R1 Distill 70B", author: "DeepSeek", description: "Distilled reasoning data generator for complex tasks.", role: "Generator" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Llama-8B", name: "DeepSeek R1 Distill 8B", author: "DeepSeek", description: "Compact reasoning target for specialized agent deployments.", role: "Target" }
+  {
+    id: "deepseek-ai/DeepSeek-R1-0528",
+    name: "DeepSeek-R1-0528",
+    author: "DeepSeek",
+    downloads: "671B MoE",
+    tag: "Frontier",
+    role: "Frontier",
+    description: "Advanced reasoning",
+    link: "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528"
+  },
+  {
+    id: "Qwen/Qwen3-235B-A22B",
+    name: "Qwen3-235B-A22B",
+    author: "Qwen",
+    downloads: "235B MoE",
+    tag: "Frontier",
+    role: "Frontier",
+    description: "Complex reasoning",
+    link: "https://huggingface.co/Qwen/Qwen3-235B-A22B"
+  },
+  {
+    id: "Qwen/Qwen3-32B",
+    name: "Qwen3-32B",
+    author: "Qwen",
+    downloads: "32B",
+    tag: "Reasoning",
+    role: "Reasoning",
+    description: "Math and logic",
+    link: "https://huggingface.co/Qwen/Qwen3-32B"
+  },
+  {
+    id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+    name: "DeepSeek-R1-Distill-Qwen-32B",
+    author: "DeepSeek",
+    downloads: "32B",
+    tag: "Reasoning",
+    role: "Reasoning",
+    description: "Distilled reasoning",
+    link: "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
+  },
+  {
+    id: "Qwen/QwQ-32B",
+    name: "QwQ-32B",
+    author: "Qwen",
+    downloads: "32B",
+    tag: "Reasoning",
+    role: "Reasoning",
+    description: "Analytical problem-solving",
+    link: "https://huggingface.co/Qwen/QwQ-32B"
+  },
+  {
+    id: "Skywork/Skywork-OR1-32B",
+    name: "Skywork-OR1-32B",
+    author: "Skywork",
+    downloads: "32B",
+    tag: "Specialist",
+    role: "Specialist",
+    description: "Reasoning research",
+    link: "https://huggingface.co/Skywork/Skywork-OR1-32B"
+  },
+  {
+    id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
+    name: "DeepSeek-R1-Distill-Qwen-14B",
+    author: "DeepSeek",
+    downloads: "14B",
+    tag: "Adaptation",
+    role: "Adaptation",
+    description: "Reasoning fine-tuning",
+    link: "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B"
+  },
+  {
+    id: "Qwen/Qwen3-8B",
+    name: "Qwen3-8B",
+    author: "Qwen",
+    downloads: "8B",
+    tag: "Compact",
+    role: "Compact",
+    description: "Efficient reasoning",
+    link: "https://huggingface.co/Qwen/Qwen3-8B"
+  },
+  {
+    id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+    name: "DeepSeek-R1-Distill-Qwen-7B",
+    author: "DeepSeek",
+    downloads: "7B",
+    tag: "Compact",
+    role: "Compact",
+    description: "Lightweight adaptation",
+    link: "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+  }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -441,20 +522,21 @@ const getLogo = (author: string, modelName: string = "") => {
 
   if (a.includes('openai') || m.includes('whisper') || m.includes('gpt')) return <OpenAILogo size={20} />;
   if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
+  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen') || m.includes('qwq')) return <QwenLogo size={20} />;
   if (a.includes('nvidia') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
   if (a.includes('moonshot') || m.includes('kimi')) return <KimiLogo size={20} />;
   if (a.includes('coqui') || a.includes('canopy')) return <span className="text-[18px]">🤗</span>;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
   if (a.includes('mistral') || a.includes('intfloat') || m.includes('mistral') || m.includes('mixtral')) return <MistralLogo size={20} />;
   if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
+  if (a.includes('skywork') || m.includes('skywork')) return <AuthorAvatar author="SkyworkAI" size={20} />;
   if (a.includes('baai')) return <BAAILogo size={20} />;
   if (a.includes('jina')) return <JinaLogo size={20} />;
   if (a.includes('mixedbread')) return <MixedbreadLogo size={20} />;
   if (a.includes('snowflake')) return <SnowflakeLogo size={20} />;
   if (a.includes('nomic')) return <NomicLogo size={20} />;
 
-  return <HuggingFaceLogo size={20} />;
+  return <AuthorAvatar author={author} size={20} />;
 };
 
 const getBorderClasses = (index: number, total: number) => {
@@ -612,17 +694,13 @@ export default function ReasoningAIPage() {
               else dl = m.downloads + " dl";
             }
 
-            let tag = "Model";
-            let description = m.downloads ? `${dl} - Potential distillation target` : "Potential distillation target";
+            let tag = "Reasoning";
+            let description = m.downloads ? `${dl} - Open reasoning model` : "Open reasoning model";
             
             if (m.pipeline_tag) {
               if (m.pipeline_tag.includes("text-generation") || m.pipeline_tag.includes("text2text-generation")) {
-                tag = "Generator / Target";
-                description = `${dl} - Synthetic data generator or fine-tuning target`;
-              }
-              else if (m.pipeline_tag.includes("automatic-speech-recognition") || m.pipeline_tag.includes("text-to-speech") || m.pipeline_tag.includes("audio-classification")) {
-                tag = "Audio Adapter";
-                description = `${dl} - Synthesize or transcribe audio datasets`;
+                tag = "Reasoning";
+                description = `${dl} - Chain-of-thought & reasoning target`;
               }
             }
 
@@ -1474,10 +1552,10 @@ export default function ReasoningAIPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any HF generator or target model works
+                  Any HF reasoning model works
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights frontier model as your synthetic data engine, and fine-tune any compact target model. The examples below are just a starting view.
+                  Deploy open-weight reasoning models through Horos test-time search, verifier suites, and PRM scoring pipelines. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1489,7 +1567,7 @@ export default function ReasoningAIPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any generative model on Hugging Face"
+                    placeholder="Search any reasoning model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1510,22 +1588,34 @@ export default function ReasoningAIPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
-                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <div className="flex items-center gap-2.5 mb-2">
-                            <div className="w-8 h-8 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                        <a
+                          key={model.id}
+                          href={model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
+                        >
+                          {/* Hover Noise Overlay */}
+                          <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay">
+                            <div className="absolute -inset-[100%] opacity-[0.25] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] animate-noise-shift" />
+                          </div>
+
+                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
+                          <div className="relative z-10 flex items-center gap-2.5 mb-2">
+                            <div className="w-8 h-8 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#151515]">
                               {getLogo(model.author, model.name)}
                             </div>
                             <span className="text-[#C8C7BA] text-[13.5px] font-medium tracking-wide line-clamp-1">{model.author}</span>
                           </div>
-                          <div className="flex flex-col gap-1 min-w-0">
+                          <div className="relative z-10 flex flex-col gap-1 min-w-0">
                             <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>{model.name}</h3>
-                            <p className="text-[#888] text-[13px] leading-relaxed line-clamp-2" title={model.description}>{model.description || model.downloads}</p>
+                            <p className="text-[#888] text-[13px] leading-relaxed line-clamp-2" title={model.description}>{model.description}</p>
                           </div>
-                          <div className="flex justify-start items-center mt-auto pt-4">
-                            <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide line-clamp-1">{model.role || model.tag}</span>
+                          <div className="relative z-10 flex justify-between items-center mt-auto pt-4 gap-2">
+                            <span className="text-[#F0EFE2] font-medium text-[13.5px] sm:text-[14px] shrink-0">{model.downloads}</span>
+                            <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">{model.tag || model.role}</span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
