@@ -1081,7 +1081,7 @@ export default function SimulationWorldModelsPage() {
                       <div className="flex flex-col gap-1.5">
                         <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
                         <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
+                          {visibleStep > 1 ? AGENT_MSG_1 : typedMsg1}
                           {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
                             <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                           )}
@@ -1194,7 +1194,7 @@ export default function SimulationWorldModelsPage() {
                       <div className="flex flex-col gap-1.5">
                         <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
                         <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
+                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? typedMsg2 : AGENT_MSG_2}
                           {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
                             <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                           )}
