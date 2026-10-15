@@ -1036,32 +1036,31 @@ export default function ReasoningAIPage() {
                     <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                       <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
                     </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative bg-[#75bf00]/[0.02]">
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <Zap size={15} className="text-[#75bf00]" />
-                        </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Single reasoning model</span>
+                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
+                      <div className="absolute top-2.5 right-3 flex items-center">
+                        <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Single model with optimized inference.</p>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                          <HorosLogo size={16} />
+                        </div>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                      </div>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
                     </div>
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <ScanSearch size={15} className="text-[#C8C7BA]" />
-                        </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Model with search & verifiers</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed reasoning APIs</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Candidate generation, search, and verifiers.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
                     </div>
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <Layers size={15} className="text-[#C8C7BA]" />
-                        </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Adapted model pipeline</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Versioned training and evaluation pipeline.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
                     </div>
                   </div>
 
