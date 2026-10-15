@@ -592,21 +592,22 @@ export default function ReasoningAIPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    Reasoning<br />
+                    Reasoning AI, engineered<br />
+                    to solve{" "}
                     <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      AI
-                    </span>
+                      harder problems
+                    </span>.
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
-                    Models that reason through hard problems. Synthesize verifiable logic traces, reward-guided search, and self-improving active learning loops.
+                    Optimize open-weight reasoning models for complex tasks through test-time compute, verifier-guided search, reward-driven optimization, and measured evaluation.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy this pipeline <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Optimize stack <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the stack <ChevronRight size={16} />
+                      Explore stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
