@@ -9,7 +9,7 @@ import { DocumentAIGrid } from "@/components/landing/document-ai-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, AnthropicLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, AnthropicLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, Ai2Logo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Zap, Loader2, ScanSearch, ImageIcon, FileText, Video } from "lucide-react";
 
 const COMPARISON_ROWS: Array<{
@@ -600,10 +600,37 @@ const DEFAULT_MODELS = [
     id: "google/gemma-4-E4B",
     name: "Gemma 4 E4B",
     author: "Google",
-    downloads: "E4B",
+    downloads: "4.5B effective",
     tag: "Efficient",
     description: "Efficient audio, image and text workloads",
     link: "https://huggingface.co/google/gemma-4-E4B"
+  },
+  {
+    id: "nvidia/Cosmos3-Nano",
+    name: "Cosmos3-Nano",
+    author: "NVIDIA",
+    downloads: "16B",
+    tag: "Physical AI",
+    description: "Physical AI and world state prediction",
+    link: "https://huggingface.co/nvidia/Cosmos3-Nano"
+  },
+  {
+    id: "OpenGVLab/InternVL3_5-30B-A3B",
+    name: "InternVL3.5-30B-A3B",
+    author: "OpenGVLab",
+    downloads: "30.8B total",
+    tag: "Visual Reasoning",
+    description: "Multimodal visual reasoning and instruction following",
+    link: "https://huggingface.co/OpenGVLab/InternVL3_5-30B-A3B"
+  },
+  {
+    id: "allenai/Molmo2-8B",
+    name: "Molmo2-8B",
+    author: "AllenAI",
+    downloads: "8B",
+    tag: "Video Grounding",
+    description: "Open state-of-the-art multimodal video grounding",
+    link: "https://huggingface.co/allenai/Molmo2-8B"
   }
 ];
 
@@ -646,7 +673,8 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('mixedbread')) return <MixedbreadLogo size={20} />;
   if (a.includes('snowflake')) return <SnowflakeLogo size={20} />;
   if (a.includes('nomic')) return <NomicLogo size={20} />;
-  if (a.includes('shanghai') || m.includes('internvl')) return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64006c09330a45b03605bba3/FvdxiTkTqH8rKDOzGZGUE.jpeg" alt="Shanghai AI Lab" className="w-5 h-5 rounded-sm object-cover" />;
+  if (a.includes('opengvlab') || a.includes('shanghai') || m.includes('internvl')) return <img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64006c09330a45b03605bba3/FvdxiTkTqH8rKDOzGZGUE.jpeg" alt="OpenGVLab" className="w-5 h-5 rounded-sm object-cover" />;
+  if (a.includes('allen') || a.includes('ai2') || m.includes('molmo')) return <Ai2Logo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
 };
