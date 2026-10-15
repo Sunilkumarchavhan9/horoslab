@@ -455,8 +455,8 @@ export default function SimulationWorldModelsPage() {
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll spin up Genesis on 8x B200s to rollout 100k driving trajectories, run kinematic coherence checks, and kick off an autoregressive fine-tune on Cosmos-1.0.";
-  const AGENT_MSG_2 = "Simulation is ready. 100k physical trajectories generated at $8.40/hr. The fine-tuned Cosmos world model is ready for embodied deployment. Want me to deploy the edge inference container?";
+  const AGENT_MSG_1 = "Packaging the simulation recipe: environment logic (Genesis + Mujoco), kinematic physics kernels, engine configs, and Cosmos-1.0 world model weights for distributed execution on 8x B200s.";
+  const AGENT_MSG_2 = "Simulation recipe complete. Environment logic, physics kernels, engine configs, and model weights are packaged into a self-contained runtime. Ready to simulate anywhere.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -969,14 +969,14 @@ export default function SimulationWorldModelsPage() {
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           {/* Heading for Sandbox */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-16 mb-16">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-12 md:pt-16 mb-12 md:mb-16">
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">
                   World models you own. <span className="text-[#75bf00]">Simulate anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
                   The full recipe ships with you. Environment logic, physics kernels, engine configs, and model weights. Run it anywhere.
                 </p>
               </div>
@@ -996,8 +996,8 @@ export default function SimulationWorldModelsPage() {
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
+                gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
               }}>
                 {/* Tabs bg */}
                 <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
@@ -1017,8 +1017,8 @@ export default function SimulationWorldModelsPage() {
 
               {/* Content (Z-20) */}
               <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
+                gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
               }}>
 
                 {/* Tabs */}
@@ -1060,11 +1060,11 @@ export default function SimulationWorldModelsPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Rollout 100k continuous driving trajectories in
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">Genesis Sim</span>
-                        with kinematic validation. Fine-tune
+                        Package the full simulation recipe for urban driving:
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">Genesis + Mujoco</span>
+                        environment logic, kinematic physics kernels, engine configs, and
                         <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><NvidiaLogo size={11} /> Cosmos 1.0</span>
-                        using an autoregressive objective on
+                        weights on
                         <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> 8x B200</span>.
                       </p>
                     </div>
@@ -1102,10 +1102,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Bootstrapping Genesis simulation</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Packaging environment logic & scene geometry</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Loaded urban driving environments and HD maps</span>
+                          <span className="text-[#666] text-[12px]">Loaded Genesis urban environments, HD map vectors, and sensor rigs</span>
                         </div>
                       </div>
 
@@ -1120,10 +1120,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Rolling out physical trajectories</span>
-                            <span className="text-[#C8C7BA] text-[12px]">45.2s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Compiling physics kernels & kinematic solvers</span>
+                            <span className="text-[#C8C7BA] text-[12px]">6.4s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Distributed across 8x B200 GPUs at 4500 FPS</span>
+                          <span className="text-[#75bf00] text-[12px]">Mujoco CUDA kernels compiled with rigid-body collision checks</span>
                         </div>
                       </div>
 
@@ -1138,10 +1138,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Kinematic validation and filtering</span>
-                            <span className="text-[#C8C7BA] text-[12px]">8.4s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Generating engine configs & pipeline specs</span>
+                            <span className="text-[#C8C7BA] text-[12px]">3.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Discarded 4% trajectories with invalid collisions</span>
+                          <span className="text-[#666] text-[12px]">Configured 300-step horizon, 30 FPS sampling, and continuous action space</span>
                         </div>
                       </div>
 
@@ -1156,10 +1156,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running autoregressive fine-tune</span>
-                            <span className="text-[#C8C7BA] text-[12px]">48m 12s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Exporting model weights & checkpoint lineage</span>
+                            <span className="text-[#C8C7BA] text-[12px]">18.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Cosmos-1.0-World adapted to driving domain</span>
+                          <span className="text-[#666] text-[12px]">Cosmos-1.0-World autoregressive weights verified and quantized (FP8)</span>
                         </div>
                       </div>
 
@@ -1174,10 +1174,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Temporal coherence evaluation</span>
-                            <span className="text-[#C8C7BA] text-[12px]">34.5s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Simulating & validating physical trajectories</span>
+                            <span className="text-[#C8C7BA] text-[12px]">45.2s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">FVD (Frechet Video Distance) improved by 14%</span>
+                          <span className="text-[#75bf00] text-[12px]">100k rollouts validated at 4500 FPS with 0% collision drift</span>
                         </div>
                       </div>
                     </div>
@@ -1379,35 +1379,35 @@ export default function SimulationWorldModelsPage() {
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
+                  <div className="px-6 py-10 sm:px-8 sm:py-12 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Cloud size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Physics Engine</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Distributed physics engines (Genesis, Mujoco) running at 4500 FPS on our B200 clusters.
+                    <h3 className="text-2xl font-medium text-[#F0EFE2]">Managed Horos</h3>
+                    <p className="text-[#C8C7BA] text-[14.5px] leading-relaxed">
+                      Distributed physics simulation and autoregressive world model rollouts running at 4500 FPS on our B200 clusters.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
+                  <div className="px-6 py-10 sm:px-8 sm:py-12 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Server size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Temporal Weights</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Self-host the autoregressive world models in your own cloud. Full temporal control.
+                    <h3 className="text-2xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
+                    <p className="text-[#C8C7BA] text-[14.5px] leading-relaxed">
+                      Deploy environment logic, physics kernels, and world models on AWS, GCP, RunPod, or on-prem. Your simulators, your hardware.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
+                  <div className="px-6 py-10 sm:px-8 sm:py-12 flex flex-col gap-4 items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Network size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Simulation Trajectories</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Download deterministic physical trajectories and collision records to train edge models.
+                    <h3 className="text-2xl font-medium text-[#F0EFE2]">Zero lock-in</h3>
+                    <p className="text-[#C8C7BA] text-[14.5px] leading-relaxed">
+                      Export the full recipe: environment logic, physics kernels, engine configs, model weights, and container harnesses. Run it anywhere.
                     </p>
                   </div>
                 </div>
