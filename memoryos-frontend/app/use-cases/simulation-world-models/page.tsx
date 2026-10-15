@@ -349,15 +349,96 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "wayveai/GAIA-1", name: "GAIA-1", author: "Wayve", description: "Generative AI for Autonomy. End-to-end driving world model.", role: "World Model" },
-  { id: "nvidia/Cosmos-1.0-World", name: "Cosmos 1.0", author: "NVIDIA", description: "State-of-the-art physics simulation engine and rendering pipeline.", role: "Physics Engine" },
-  { id: "openai/sora-physics-preview", name: "Sora (Physics)", author: "OpenAI", description: "Video generation model with emergent 3D physics capabilities.", role: "Generator" },
-  { id: "tesla/fsd-v12-world", name: "FSD v12 World", author: "Tesla", description: "End-to-end temporal modeling for embodied vehicle agents.", role: "World Model" },
-  { id: "genesis-embodied/Genesis", name: "Genesis Simulation", author: "Genesis", description: "Universal physics engine designed for generalized embodied AI.", role: "Physics Engine" },
-  { id: "deepmind/RoboCat-v1", name: "RoboCat", author: "Google", description: "Self-improving generalist agent for robotic manipulation.", role: "Embodied Agent" },
-  { id: "runwayml/Gen-3-World", name: "Gen-3 World", author: "Runway", description: "High-fidelity spatiotemporal model for synthetic environments.", role: "Generator" },
-  { id: "1x-tech/NEO-brain", name: "NEO Brain", author: "1X", description: "Ultra-low latency humanoid robot control and temporal reasoning.", role: "Embodied Agent" },
-  { id: "meta-llama/Llama-3.2-Vision", name: "Llama 3.2 Vision", author: "Meta", description: "Multimodal evaluator for temporal coherence and world states.", role: "Evaluator" }
+  {
+    id: "nvidia/Cosmos-Predict2.5-14B",
+    name: "Cosmos-Predict2.5-14B",
+    author: "NVIDIA",
+    downloads: "14.4B",
+    tag: "Future Prediction",
+    role: "Future Prediction",
+    description: "State-of-the-art autoregressive world model for high-resolution future prediction.",
+    link: "https://huggingface.co/nvidia/Cosmos-Predict2.5-14B"
+  },
+  {
+    id: "nvidia/Cosmos-Predict2.5-2B",
+    name: "Cosmos-Predict2.5-2B",
+    author: "NVIDIA",
+    downloads: "2.1B",
+    tag: "World Generation",
+    role: "World Generation",
+    description: "Compact physical world generation model optimized for real-time simulation.",
+    link: "https://huggingface.co/nvidia/Cosmos-Predict2.5-2B"
+  },
+  {
+    id: "nvidia/Cosmos-Transfer2.5-2B",
+    name: "Cosmos-Transfer2.5-2B",
+    author: "NVIDIA",
+    downloads: "2.4B",
+    tag: "Scene Transformation",
+    role: "Scene Transformation",
+    description: "Spatiotemporal transfer model for domain adaptation and scene transformation.",
+    link: "https://huggingface.co/nvidia/Cosmos-Transfer2.5-2B"
+  },
+  {
+    id: "nvidia/Cosmos-H-Dreams",
+    name: "Cosmos-H-Dreams",
+    author: "NVIDIA",
+    downloads: "2B backbone",
+    tag: "Action-Conditioned",
+    role: "Action-Conditioned",
+    description: "Action-conditioned physical dreaming model for counterfactual rollouts.",
+    link: "https://huggingface.co/nvidia/Cosmos-H-Dreams"
+  },
+  {
+    id: "nvidia/Cosmos-H-Surgical-Simulator",
+    name: "Cosmos-H-Surgical-Simulator",
+    author: "NVIDIA",
+    downloads: "Cosmos 2B base",
+    tag: "Robot Simulation",
+    role: "Robot Simulation",
+    description: "High-precision physical dynamics simulator for medical and robotic manipulation.",
+    link: "https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator"
+  },
+  {
+    id: "facebook/vjepa2-vitg-fpc64-256",
+    name: "V-JEPA 2",
+    author: "Meta",
+    downloads: "1B-class",
+    tag: "Physical Prediction",
+    role: "Physical Prediction",
+    description: "Video Joint Embedding Predictive Architecture for self-supervised physical prediction.",
+    link: "https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
+  },
+  {
+    id: "tencent/HunyuanWorld-1",
+    name: "HunyuanWorld-1",
+    author: "Tencent",
+    downloads: "1B-class",
+    tag: "3D World Generation",
+    role: "3D World Generation",
+    description: "Generative world model for 3D physical environment synthesis.",
+    link: "https://huggingface.co/tencent/HunyuanWorld-1"
+  },
+  {
+    id: "tencent/HY-WorldPlay",
+    name: "HY-WorldPlay",
+    author: "Tencent",
+    downloads: "Check model card",
+    tag: "Interactive Worlds",
+    role: "Interactive Worlds",
+    description: "Actionable interactive world simulation framework with real-time response.",
+    link: "https://huggingface.co/tencent/HY-WorldPlay"
+  },
+  {
+    id: "Overworld/Waypoint-1.5-1B",
+    name: "Waypoint-1.5-1B",
+    author: "Overworld",
+    downloads: "1B-class",
+    tag: "Interactive World Model",
+    role: "Interactive World Model",
+    description: "Real-time action-conditioned interactive world model for simulation environments.",
+    link: "https://huggingface.co/Overworld/Waypoint-1.5-1B"
+  }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -383,10 +464,34 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
-  if (a.includes('openai') || m.includes('whisper') || m.includes('gpt') || m.includes('sora')) return <OpenAILogo size={20} />;
-  if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('nvidia') || m.includes('nvfp4') || m.includes('cosmos')) return <NvidiaLogo size={20} />;
+  if (a.includes('meta') || a.includes('facebook') || m.includes('llama') || m.includes('vjepa') || m.includes('v-jepa')) return <MetaLogo size={20} />;
+  if (a.includes('tencent') || m.includes('hunyuan')) {
+    return (
+      <img
+        src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.tencent.com&size=256"
+        alt="Tencent"
+        width={20}
+        height={20}
+        className="rounded-xs object-contain"
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
+  if (a.includes('overworld') || m.includes('waypoint')) {
+    return (
+      <img
+        src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://overworld.ai&size=256"
+        alt="Overworld"
+        width={20}
+        height={20}
+        className="rounded-xs object-contain"
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
+  if (a.includes('openai') || m.includes('whisper') || m.includes('gpt') || m.includes('sora')) return <OpenAILogo size={20} />;
+  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('google') || m.includes('robocat') || m.includes('gemini')) return <GoogleLogo size={20} />;
   if (a.includes('tesla') || m.includes('fsd')) return <TeslaLogo size={20} />;
   if (a.includes('1x') || m.includes('neo')) return <OneXLogo size={20} />;
@@ -1442,10 +1547,10 @@ export default function SimulationWorldModelsPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any HF generator or target model works
+                  Any HF simulation & world model works
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights frontier model as your synthetic data engine, and fine-tune any compact target model. The examples below are just a starting view.
+                  Deploy open-weight simulation and world models for physical dynamics, trajectory generation, and robot rollouts. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1457,7 +1562,7 @@ export default function SimulationWorldModelsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any generative model on Hugging Face"
+                    placeholder="Search any simulation & world model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1478,14 +1583,25 @@ export default function SimulationWorldModelsPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
-                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <a
+                          key={model.id}
+                          href={model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
+                        >
+                          {/* Hover Noise Overlay */}
+                          <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay">
+                            <div className="absolute -inset-[100%] opacity-[0.25] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] animate-noise-shift" />
+                          </div>
+
+                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
                           
-                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                          <div className="relative z-10 w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#151515]">
                             {getLogo(model.author, model.name)}
                           </div>
                           
-                          <div className="flex flex-col gap-1 min-w-0">
+                          <div className="relative z-10 flex flex-col gap-1 min-w-0">
                             <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                               {model.name}
                             </h3>
@@ -1494,13 +1610,15 @@ export default function SimulationWorldModelsPage() {
                             </span>
                           </div>
                           
-                          <div className="flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
+                          <div className="relative z-10 flex justify-between items-center mt-auto pt-4 gap-2">
+                            <span className="text-[#F0EFE2] font-medium text-[13.5px] sm:text-[14px] shrink-0">
+                              {model.downloads}
+                            </span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
