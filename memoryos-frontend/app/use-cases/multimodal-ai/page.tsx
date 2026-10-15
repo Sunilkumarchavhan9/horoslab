@@ -1742,7 +1742,7 @@ export default function MultimodalAIPage() {
                 <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
               </div>
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[36px] lg:text-[42px] xl:text-[46px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-none md:whitespace-nowrap leading-tight">
                   Supported HF speech models work
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
