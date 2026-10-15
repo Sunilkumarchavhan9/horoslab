@@ -455,8 +455,8 @@ export default function SimulationWorldModelsPage() {
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "Packaging the simulation recipe: environment logic (Genesis + Mujoco), kinematic physics kernels, engine configs, and Cosmos-1.0 world model weights for distributed execution on 8x B200s.";
-  const AGENT_MSG_2 = "Simulation recipe complete. Environment logic, physics kernels, engine configs, and model weights are packaged into a self-contained runtime. Ready to simulate anywhere.";
+  const AGENT_MSG_1 = "On it. Setting up Genesis simulation environments to generate physical trajectories, fine-tuning Cosmos-1.0 to decode dynamics, and serving with vLLM on 8x B200s with kinematic validation.";
+  const AGENT_MSG_2 = "World model training and serving pipeline live. Cosmos-1.0 is decoding physical dynamics at 4500 FPS via vLLM on 8x B200s with zero collision drift. Full recipe and weights ready to deploy.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -1060,12 +1060,22 @@ export default function SimulationWorldModelsPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Package the full simulation recipe for urban driving:
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">Genesis + Mujoco</span>
-                        environment logic, kinematic physics kernels, engine configs, and
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><NvidiaLogo size={11} /> Cosmos 1.0</span>
-                        weights on
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> 8x B200</span>.
+                        Teach a world model to understand and decode the physical world. Fine-tune{" "}
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">
+                          <NvidiaLogo size={11} /> Cosmos 1.0
+                        </span>{" "}
+                        on driving trajectories, simulate counterfactual actions with{" "}
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">
+                          <HuggingFaceLogo size={11} /> Genesis Sim
+                        </span>{" "}
+                        physics engine, and serve via{" "}
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">
+                          <VLLMLogo size={11} /> vLLM
+                        </span>{" "}
+                        on{" "}
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]">
+                          <NvidiaLogo size={11} /> 8x B200
+                        </span>.
                       </p>
                     </div>
 
@@ -1102,10 +1112,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Packaging environment logic & scene geometry</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Bootstrapping Genesis physics environment</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Loaded Genesis urban environments, HD map vectors, and sensor rigs</span>
+                          <span className="text-[#666] text-[12px]">Loaded urban driving scenes, rigid-body meshes, and collision geometry</span>
                         </div>
                       </div>
 
@@ -1120,10 +1130,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Compiling physics kernels & kinematic solvers</span>
-                            <span className="text-[#C8C7BA] text-[12px]">6.4s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Deploying Cosmos-1.0 serving with vLLM</span>
+                            <span className="text-[#C8C7BA] text-[12px]">4.5s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Mujoco CUDA kernels compiled with rigid-body collision checks</span>
+                          <span className="text-[#75bf00] text-[12px]">Initialized continuous batching and FP8 KV cache on 8x B200</span>
                         </div>
                       </div>
 
@@ -1138,10 +1148,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Generating engine configs & pipeline specs</span>
-                            <span className="text-[#C8C7BA] text-[12px]">3.2s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Teaching physical dynamics & counterfactual rollouts</span>
+                            <span className="text-[#C8C7BA] text-[12px]">45.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Configured 300-step horizon, 30 FPS sampling, and continuous action space</span>
+                          <span className="text-[#666] text-[12px]">Generated 100k physical trajectories to decode real-world kinematics</span>
                         </div>
                       </div>
 
@@ -1156,10 +1166,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Exporting model weights & checkpoint lineage</span>
-                            <span className="text-[#C8C7BA] text-[12px]">18.5s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Kinematic validation & collision verification</span>
+                            <span className="text-[#C8C7BA] text-[12px]">8.4s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Cosmos-1.0-World autoregressive weights verified and quantized (FP8)</span>
+                          <span className="text-[#666] text-[12px]">Verified rigid-body constraints and eliminated spatial prediction drift</span>
                         </div>
                       </div>
 
@@ -1174,10 +1184,10 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Simulating & validating physical trajectories</span>
-                            <span className="text-[#C8C7BA] text-[12px]">45.2s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Exporting containerized inference recipe</span>
+                            <span className="text-[#C8C7BA] text-[12px]">12.8s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">100k rollouts validated at 4500 FPS with 0% collision drift</span>
+                          <span className="text-[#75bf00] text-[12px]">Containerized vLLM serving runtime, physics kernels, and model weights</span>
                         </div>
                       </div>
                     </div>
@@ -1214,9 +1224,15 @@ export default function SimulationWorldModelsPage() {
                       />
                       <div className="flex justify-between items-center px-1">
                         <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                          
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-mono px-2 py-0.5 rounded-sm flex items-center gap-1">
+                            <VLLMLogo size={10} /> @vLLM
+                          </span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-mono px-2 py-0.5 rounded-sm flex items-center gap-1">
+                            <NvidiaLogo size={10} /> @Cosmos-1.0
+                          </span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-mono px-2 py-0.5 rounded-sm flex items-center gap-1">
+                            <HuggingFaceLogo size={10} /> @Genesis
+                          </span>
                         </div>
                         <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
                           <ArrowUp size={14} strokeWidth={2.5} />
