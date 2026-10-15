@@ -634,9 +634,9 @@ export default function ReasoningAIPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your data factory</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The generation pipelines, the evaluation criteria, the synthesized datasets. Complete sovereignty over your model's training curriculum.
+                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
+                <p className="text-[#C8C7BA] text-[18px] md:text-[20px] font-sans leading-relaxed text-center max-w-3xl mx-auto mb-16">
+                  Your reasoning models, search strategy, verification logic, and inference configuration. Horos helps you engineer the complete reasoning pipeline, from generating candidate solutions to measuring which configurations solve problems best.
                 </p>
               </div>
             </div>
@@ -693,27 +693,27 @@ export default function ReasoningAIPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The synthetic<br/>datasets.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the raw JSONL files, instruction-response pairs, and the exact Llama-3.1-405B generator prompts used to synthesize them. No vendor lock-in on your training curriculum.
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Your reasoning<br/>system.</h3>
+                    <p className="text-[#C8C7BA] text-[18px] md:text-[20px] leading-relaxed">
+                      Choose and compare open-weight models such as DeepSeek-R1 and Qwen3. Tune reasoning budgets, sampling, candidate generation, and search depth for your target tasks.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The reward<br/>models.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the LLM-as-a-judge rubrics, filtering logic, and quality scores. When you refine the evaluation criteria, the factory instantly generates better data.
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Your verification<br/>pipeline.</h3>
+                    <p className="text-[#C8C7BA] text-[18px] md:text-[20px] leading-relaxed">
+                      Define correctness checks for mathematical answers, executable code, and structured outputs. Measure pass rates, verifier accuracy, failure cases, and performance on held-out problems.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The fine-tuned<br/>weights.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the final LoRA adapters and the merged Llama-3.1-8B model checkpoints. Export the model binaries and deploy them securely anywhere.
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">Your optimization<br/>results.</h3>
+                    <p className="text-[#C8C7BA] text-[18px] md:text-[20px] leading-relaxed">
+                      Compare accuracy, tokens per solution, latency, GPU memory, and cost. Preserve experiment evidence and use verified failures to guide fine-tuning, distillation, and subsequent model versions.
                     </p>
                   </div>
                 </div>
