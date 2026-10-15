@@ -616,7 +616,7 @@ export default function ReasoningAIPage() {
                 <div className="flex justify-center relative w-full pt-10">
                   <RagSearchGrid 
                     label1="Synthetics"
-                    label2="RLHF Alignment"
+                    label2="HF Alignment"
                     label3="Data Curation"
                     label4="Model Weights"
                   />
