@@ -16,45 +16,163 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Pick a generator, start synthesizing", desc: "Start generating data instantly with frontier models." },
-    closed: { title: "Call a black-box API", desc: "Fast generation, but you can't distill their weights." },
-    diy: { title: "Build scraping & labeling pipelines", desc: "Human annotation comes before product learning." }
+    label: "System",
+    runInfra: {
+      title: "Single reasoning model",
+      desc: "Single reasoning model with optimized inference."
+    },
+    closed: {
+      title: "Model with search & verifiers",
+      desc: "Model with candidate generation, search, and verifiers."
+    },
+    diy: {
+      title: "Adapted model pipeline",
+      desc: "Adapted model with a versioned training and evaluation pipeline."
+    }
   },
   {
     num: "0 2",
-    label: "Model control",
-    runInfra: { title: "Choose your frontier generator", desc: "Use Llama-3.1-405B or Qwen-72B as your engine." },
-    closed: { title: "Locked to vendor's distillation", desc: "You use what the API provider exposes for generation." },
-    diy: { title: "Hand-labeling", desc: "Full control if you maintain human annotators." }
+    label: "Models",
+    runInfra: {
+      title: "Open reasoning models",
+      desc: "DeepSeek-R1, Qwen reasoning models."
+    },
+    closed: {
+      title: "Verifier-paired models",
+      desc: "Reasoning models paired with task-specific verifiers."
+    },
+    diy: {
+      title: "Custom checkpoints",
+      desc: "Open-weight base models and fine-tuned checkpoints."
+    }
   },
   {
     num: "0 3",
-    label: "Tuning",
-    runInfra: { title: "Iterate on synthesis prompts", desc: "Tune prompts and reward models before fine-tuning." },
-    closed: { title: "Opaque data curation", desc: "Data generation and filtering stay behind the API." },
-    diy: { title: "Manual review pipelines", desc: "Your team owns annotator feedback and data regressions." }
+    label: "Context",
+    runInfra: {
+      title: "Task prompt & evidence",
+      desc: "Task prompt, instructions, relevant evidence."
+    },
+    closed: {
+      title: "Problem & search state",
+      desc: "Problem state, candidate solutions, intermediate results."
+    },
+    diy: {
+      title: "Curated dataset",
+      desc: "Curated examples, failure cases, verified solutions."
+    }
   },
   {
     num: "0 4",
-    label: "Export",
-    runInfra: { title: "Export synthetic datasets directly", desc: "Take your generated dataset and weights anytime." },
-    closed: { title: "Locked dataset endpoint", desc: "You keep calling the provider for every query." },
-    diy: { title: "Already owned", desc: "Export exists because you built the stack yourself." }
+    label: "Capabilities",
+    runInfra: {
+      title: "Structured reasoning",
+      desc: "Mathematical reasoning, code generation, structured problem-solving."
+    },
+    closed: {
+      title: "Verifier-guided search",
+      desc: "Best-of-N selection, verifier-guided search, multi-step problem-solving."
+    },
+    diy: {
+      title: "Domain adaptation",
+      desc: "Domain adaptation, distilled reasoning behavior, task-specific improvement."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Automated loops", desc: "Operate automated synthesis-to-training pipelines." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, less control over your data factory." },
-    diy: { title: "High", desc: "You own data storage, labeling pipelines, and scaling." }
+    label: "Workload",
+    runInfra: {
+      title: "Single-pass requests",
+      desc: "Single-pass requests, latency-sensitive tasks, concurrent inference."
+    },
+    closed: {
+      title: "Compute-intensive tasks",
+      desc: "Difficult problems where extra computation can improve success."
+    },
+    diy: {
+      title: "Repeated domain tasks",
+      desc: "Repeated domain-specific tasks where adaptation can justify training cost."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls for access, logging, and storage." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third-party API." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail and access controls." }
+    label: "Optimization",
+    runInfra: {
+      title: "Token budgets & cache",
+      desc: "Quantization, batching, KV cache, reasoning-token budgets."
+    },
+    closed: {
+      title: "Search depth & cost",
+      desc: "Search depth, candidate count, verifier cost, parallel execution."
+    },
+    diy: {
+      title: "Fine-tuning & LoRA",
+      desc: "Fine-tuning, LoRA, distillation, reward-guided training."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: {
+      title: "Held-out accuracy",
+      desc: "Held-out task accuracy, answer correctness, latency and cost."
+    },
+    closed: {
+      title: "Verifier precision & recall",
+      desc: "Verifier precision and recall, pass rate, false acceptance, search success."
+    },
+    diy: {
+      title: "Benchmark evaluations",
+      desc: "Before-and-after evaluations, regression tests, held-out benchmarks."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: {
+      title: "Inference telemetry",
+      desc: "Record prompts, model versions, outputs, latency, and failures."
+    },
+    closed: {
+      title: "Trace outcomes",
+      desc: "Preserve candidates, verifier decisions, search traces, and outcomes."
+    },
+    diy: {
+      title: "Training run lineage",
+      desc: "Track datasets, training runs, checkpoints, evaluation results, and regressions."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: {
+      title: "Configuration routing",
+      desc: "Route difficult cases to better configurations or models."
+    },
+    closed: {
+      title: "Failure pattern synthesis",
+      desc: "Convert verified solutions and failure patterns into training examples."
+    },
+    diy: {
+      title: "Curated evidence training",
+      desc: "Train and evaluate new checkpoints using curated evidence."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    runInfra: {
+      title: "Access & budget gates",
+      desc: "Control model access, token budgets, compute spend, and deployment permissions."
+    },
+    closed: {
+      title: "Search & verifier bounds",
+      desc: "Govern search budgets, tool execution, verifier permissions, and approval gates."
+    },
+    diy: {
+      title: "Lifecycle governance",
+      desc: "Govern dataset access, training budgets, model licenses, promotion, and rollback."
+    }
   }
 ];
 
@@ -724,10 +842,10 @@ export default function ReasoningAIPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to build fine-tuning data
+                Three ways to deploy Reasoning AI
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Workflow comparison for data factories across Horos, closed APIs, and DIY hand-labeling.
+                Most reasoning platforms expose a model endpoint. Horos engineers the model, reasoning strategy, verification, optimization, and learning loop across all three deployment paths.
               </p>
             </div>
 
@@ -784,31 +902,32 @@ export default function ReasoningAIPage() {
                     <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                       <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
                     </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                      <div className="absolute top-2.5 right-3 flex items-center">
-                        <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative bg-[#75bf00]/[0.02]">
+                      <div className="flex items-center gap-2.5 mb-1.5">
                         <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <HorosLogo size={16} />
+                          <Zap size={15} className="text-[#75bf00]" />
                         </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Single reasoning model</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Single model with optimized inference.</p>
                     </div>
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Key size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                          <ScanSearch size={15} className="text-[#C8C7BA]" />
+                        </div>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Model with search & verifiers</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Candidate generation, search, and verifiers.</p>
                     </div>
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Cpu size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                          <Layers size={15} className="text-[#C8C7BA]" />
+                        </div>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Adapted model pipeline</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Versioned training and evaluation pipeline.</p>
                     </div>
                   </div>
 
