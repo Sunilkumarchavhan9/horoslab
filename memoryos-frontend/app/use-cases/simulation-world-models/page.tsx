@@ -599,10 +599,10 @@ export default function SimulationWorldModelsPage() {
 
                   <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
-                      Optimize your world model <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Optimize world model <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
-                      Explore the stack <ChevronRight size={16} />
+                      Explore stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
