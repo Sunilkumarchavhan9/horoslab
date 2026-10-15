@@ -1657,14 +1657,12 @@ export default function MultimodalAIPage() {
           </div>
 
           {/* Features Grid Row */}
-          <div className="w-full relative z-10">
-            {/* Line 3: Infinite Horizontal Border at bottom of Features Grid */}
-
-
-
+          <div className="w-full relative z-10 pb-20 md:pb-28">
             {/* Feature Cards aligned with vertical grid lines */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
-              <div />
+              <div className="border-r border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+              </div>
               {/* Added top horizontal line per user request */}
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
@@ -1702,7 +1700,9 @@ export default function MultimodalAIPage() {
                   </div>
                 </div>
               </div>
-              <div />
+              <div className="border-l border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
+              </div>
             </div>
           </div>
 
@@ -1710,7 +1710,9 @@ export default function MultimodalAIPage() {
           <div className="w-full relative z-10 pt-24 pb-16">
             <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-              <div />
+              <div className="border-r border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+              </div>
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   Supported HF speech models work
@@ -1780,10 +1782,11 @@ export default function MultimodalAIPage() {
                       ))
                     )}
                   </div>
-                  
                 </div>
               </div>
-              <div />
+              <div className="border-l border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
+              </div>
             </div>
           </div>
 
