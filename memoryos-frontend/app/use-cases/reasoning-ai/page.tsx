@@ -645,10 +645,6 @@ export default function ReasoningAIPage() {
 
           {/* Grid with End-to-End Horizontal Lines */}
           <div className="w-full relative z-10">
-            {/* Constrained Horizontal Borders */}
-            
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
             {/* Double Vertical Borders & Crosshairs */}
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
@@ -723,12 +719,8 @@ export default function ReasoningAIPage() {
           </div>
         </div>
 
-        {/* Full-width dashed line separator */}
-        <div className="w-full h-px border-t border-dashed border-[#333]" />
-
         {/* Comparison Table Section */}
-          <div className="w-full relative z-10 mt-32 mb-32">
-            
+        <div className="w-full relative z-10 mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
