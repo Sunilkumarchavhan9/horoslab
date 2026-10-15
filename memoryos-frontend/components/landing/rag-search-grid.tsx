@@ -22,13 +22,15 @@ export interface RagSearchGridProps {
   label2?: string;
   label3?: string;
   label4?: string;
+  label5?: string;
 }
 
 export function RagSearchGrid({
   label1 = "Q&A",
   label2 = "Citations",
   label3 = "Audits",
-  label4 = "Briefs"
+  label4 = "Briefs",
+  label5
 }: RagSearchGridProps = {}) {
   return (
     <div className="w-full mx-auto relative flex justify-center items-center select-none" style={{ aspectRatio: '1054/740' }}>
@@ -135,6 +137,13 @@ export function RagSearchGrid({
           </div>
 
           {/* Row 5 (y=74.6%) */}
+          {/* Optional Text: label5 */}
+          {label5 && (
+            <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-xs sm:text-sm md:text-base xl:text-lg font-bold whitespace-nowrap" style={{ left: '8.5%', top: '82%', transform: 'translate(-50%, -50%)' }}>
+              {label5}
+            </div>
+          )}
+
           {/* Col 2: DeepSeek (x=22.3%) */}
           <div className="absolute flex items-center justify-center pointer-events-auto opacity-70" style={{ left: '22.3%', top: '74.6%', transform: 'translate(-50%, -50%)' }}>
             <DeepSeekLogo size={24} />
