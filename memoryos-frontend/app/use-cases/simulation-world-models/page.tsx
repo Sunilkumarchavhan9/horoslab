@@ -844,12 +844,12 @@ export default function SimulationWorldModelsPage() {
           <div className="w-full relative z-10 mt-32 mb-32">
             
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-            <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+            <div className="flex flex-col items-center mb-10 md:mb-12 px-4">
+              <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-8 md:mt-10">
                 Three ways to deploy Simulation & World Models
               </h2>
-              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Most simulation platforms expose a static rendering API or pre-compiled environments. Horos engineers the world model, simulation integration, physics validation, and continuous training loop across all three deployment paths.
+              <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-xl mx-auto">
+                Deploy world models as standalone predictors, integrated simulator runners, or adapted training pipelines.
               </p>
             </div>
 
