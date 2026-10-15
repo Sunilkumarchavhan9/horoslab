@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         destination: "/use-cases/research-agent",
         permanent: true,
       },
+      {
+        source: "/use-cases/teaching-data-factory",
+        destination: "/use-cases/reasoning-ai",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

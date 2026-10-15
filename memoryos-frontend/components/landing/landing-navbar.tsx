@@ -186,7 +186,7 @@ export function LandingNavbar({
                       title: "Reasoning AI",
                       desc: "Models that reason through hard problems.",
                       icons: [DeepSeekLogo, QwenLogo, MistralLogo],
-                      href: "/use-cases/teaching-data-factory"
+                      href: "/use-cases/reasoning-ai"
                     },
                     {
                       title: "World Models",
