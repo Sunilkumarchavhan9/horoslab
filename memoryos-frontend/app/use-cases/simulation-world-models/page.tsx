@@ -629,10 +629,10 @@ export default function SimulationWorldModelsPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your physical simulations</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The physics environments, the temporal weights, the deterministic trajectories. Complete sovereignty over your embodied AI curriculum.
+              <div className="text-center mb-10 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">What you actually own</h2>
+                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                  The environments, trajectories, and physics parameters used to train and evaluate world models.
                 </p>
               </div>
             </div>
@@ -687,29 +687,29 @@ export default function SimulationWorldModelsPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The simulation<br/>clusters.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the raw Genesis environments, rigid-body parameters, and the exact MPI configurations used to scale them. No vendor lock-in on your physics.
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
+                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">Simulation environments.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
+                      Version scene geometry, object properties, initial conditions, forces, and simulator settings. Reproduce scenarios across controlled physical conditions.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The kinematic<br/>validators.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the collision detection rubrics, gravity filtering logic, and kinematic coherence scores. When you refine the physics parameters, the cluster instantly generates better trajectories.
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
+                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">Physics validation.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
+                      Compare predicted trajectories with simulator outcomes. Measure position and velocity error, collision accuracy, and prediction drift across longer horizons.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The temporal<br/>weights.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the final autoregressive adapters and the compiled Cosmos-1.0 model checkpoints. Export the model binaries and deploy them securely to the edge.
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
+                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">World-model training.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
+                      Build datasets from simulated trajectories, train on difficult scenarios, and compare checkpoints against held-out environments before deployment.
                     </p>
                   </div>
                 </div>
