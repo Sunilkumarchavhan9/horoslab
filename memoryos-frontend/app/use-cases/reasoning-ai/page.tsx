@@ -1636,72 +1636,72 @@ export default function ReasoningAIPage() {
                   What Horos tunes
                 </h2>
                 <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the pipeline, retuned per model and GPU.
+                  Every stage of reasoning, optimized per model, workload, and GPU.
                 </p>
 
                 {/* Tunes Grid */}
-                <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+                <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
                     {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <Gauge size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Synthesis prompts</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        System prompts for data generation models are auto-tuned to generate maximum diversity and edge cases.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Reasoning budget allocation</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Tune maximum reasoning tokens, sampling count, and stopping criteria across DeepSeek-R1 and Qwen3. Measure accuracy gains against tokens per solved problem.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <ScanSearch size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Reward functions</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        LLM-as-a-judge criteria is continually refined to align synthetic data with your exact product needs.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Candidate search and selection</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Compare single-pass generation, best-of-N sampling, majority voting, and verifier-guided selection. Measure when extra candidates improve task success enough to justify their cost.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <ShieldCheck size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Hyperparameters</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        LoRA rank, alpha, learning rate schedules, and batch sizes are profiled per-model.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Outcome verification</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Evaluate mathematical answers against known solutions, code against test suites, and structured outputs against task-specific constraints. Track false acceptance and rejection rates.
                       </p>
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Cpu size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Eval harness</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in comparative eval between the base model, the fine-tuned production model, and the frontier data generator.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Inference kernels and parallelism</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Benchmark attention kernels, tensor parallelism, memory allocation, and supported serving configurations for each checkpoint and GPU. Find configurations that improve throughput without degrading correctness.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Database size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Model compilation</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Weights are quantized (AWQ/GPTQ) and compiled for TensorRT-LLM or vLLM automatically.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Quantization and KV cache</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Compare supported BF16, FP16, FP8, and weight-quantization paths. Tune KV-cache capacity, batching, and concurrency against memory use, latency, and reasoning quality.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <Brain size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Active learning loops</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Production logs stream back to generate targeted synthetic patches for failing queries.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Reasoning training experiments</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Test supervised fine-tuning, LoRA, distillation, and GRPO where appropriate. Compare checkpoints on held-out math, code, and domain-specific tasks before promoting a new version.
                       </p>
                     </div>
 
