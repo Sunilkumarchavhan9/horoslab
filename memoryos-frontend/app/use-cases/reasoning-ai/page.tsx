@@ -555,16 +555,24 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I run an embedder and reranker on the same GPU?",
-    answer: "Yes. Our fused memory architecture allows you to run a massive encoder like BGE-M3 alongside a cross-encoder reranker on a single H100 or L40S, eliminating network hops between models.",
+    question: "How does test-time compute differ from standard chain-of-thought prompting?",
+    answer: "Standard chain-of-thought prompting simply instructs a model to output linear intermediate steps in a single forward pass. Test-time compute (TTC) actively manages the search trajectory: Horos allocates dynamic reasoning token budgets (from 2,048 to 16,384 tokens), branches multiple solution paths via Best-of-N or beam search, scores intermediate logic steps with Process Reward Models (PRMs), and prunes failing derivation paths before final output selection. You trade inference compute for accuracy without model retraining.",
   },
   {
-    question: "How do you handle massive document ingestion?",
-    answer: "We use aggressive sequence packing and continuous batching. Variable length documents are packed natively to avoid zero-padding waste, dramatically increasing throughput.",
+    question: "How do verifiers guarantee that generated reasoning is accurate rather than hallucinated?",
+    answer: "Horos pairs open-weight reasoning models with deterministic execution engines and formal verifiers. For mathematical proofs, candidate expressions are validated against symbolic math engines (SymPy) or ground-truth theorems. For code generation, generated implementations execute in isolated sandboxed microVMs against unit test suites. For structured tasks, strict schema and constraint engines enforce validity. Invalid candidates and false-premise derivations are pruned automatically.",
   },
   {
-    question: "Do you support direct Vector DB connections?",
-    answer: "Yes. Our pipelines feature zero-copy network paths that stream embeddings directly into pgvector, Milvus, Qdrant, or Pinecone without hitting intermediary APIs.",
+    question: "What is the latency and cost trade-off when using candidate search in production?",
+    answer: "Search scaling exhibits logarithmic returns: adding candidates improves pass rates significantly up to an optimal threshold before plateauing. Horos profiles tasks to establish the compute-accuracy boundary—running lightweight single-pass inference for routine queries and triggering deep parallel Best-of-N rollouts for high-ambiguity prompts. Combined with FP8 KV caches and speculative verifier early-exit, teams routinely achieve 85%+ accuracy while cutting median token expenditure by 40–60%.",
+  },
+  {
+    question: "Can I run compact distilled reasoning models (14B or 32B) on a single GPU instead of a 671B cluster?",
+    answer: "Yes. For targeted domains, distilled models such as DeepSeek-R1-Distill-Qwen-32B or QwQ-32B paired with domain verifiers regularly match or exceed frontier 671B models at a fraction of the hardware cost. A 32B model runs comfortably on a single H100 or L40S with FP8 KV caching. Furthermore, verified failure traces from production can be fed back into LoRA adaptation or GRPO distillation pipelines to customize smaller models for your exact schemas.",
+  },
+  {
+    question: "Can we deploy the entire reasoning pipeline and verifiers on our private VPC or on-prem?",
+    answer: "Yes, completely self-hosted and air-gapped. Horos compiles the complete reasoning architecture—including open-weight models, vLLM/SGLang serving engines, sandbox verification runtimes, and PRM scoring sidecars—into standard container images (Docker / OCI) and Kubernetes manifests. Everything runs inside your own AWS, GCP, or bare-metal environment with zero external telemetry, zero API egress, and complete data sovereignty.",
   }
 ];
 
