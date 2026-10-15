@@ -16,45 +16,163 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Pick an engine, start simulating", desc: "Launch Genesis or Mujoco clusters instantly on B200s." },
-    closed: { title: "Call a black-box API", desc: "Fast generation, but you can't access the latent states." },
-    diy: { title: "Build physics clusters", desc: "Spend months configuring MPI and GPU interconnects." }
+    label: "System",
+    runInfra: {
+      title: "World model prediction",
+      desc: "World model for future-state prediction."
+    },
+    closed: {
+      title: "Simulator integration",
+      desc: "Model integrated with a simulator and scenario runner."
+    },
+    diy: {
+      title: "Training & eval pipeline",
+      desc: "Adapted model with training and evaluation pipeline."
+    }
   },
   {
     num: "0 2",
-    label: "Model control",
-    runInfra: { title: "Choose your physics backend", desc: "Use Cosmos, Wayve GAIA, or custom temporal models." },
-    closed: { title: "Locked to vendor's dynamics", desc: "You use what the API provider exposes for their world." },
-    diy: { title: "Full control", desc: "Total control if you maintain the C++ physics solvers." }
+    label: "Models",
+    runInfra: {
+      title: "Open video & world models",
+      desc: "Open video and world models."
+    },
+    closed: {
+      title: "Simulator-compatible models",
+      desc: "World models compatible with the target simulator."
+    },
+    diy: {
+      title: "Checkpoints & variants",
+      desc: "Base checkpoints and adapted variants."
+    }
   },
   {
     num: "0 3",
-    label: "Tuning",
-    runInfra: { title: "Iterate on physical parameters", desc: "Tune friction, gravity, and kinematics directly." },
-    closed: { title: "Opaque simulations", desc: "Temporal dynamics and physics stay behind the API." },
-    diy: { title: "Manual engine tweaks", desc: "Your team owns the physics regressions and edge cases." }
+    label: "Context",
+    runInfra: {
+      title: "Frames & observations",
+      desc: "Historical frames, observations, environment state."
+    },
+    closed: {
+      title: "Initial state & actions",
+      desc: "Initial state, actions, scenario parameters."
+    },
+    diy: {
+      title: "Trajectories & corrections",
+      desc: "Recorded trajectories, corrections, failure cases."
+    }
   },
   {
     num: "0 4",
-    label: "Export",
-    runInfra: { title: "Export collision trajectories", desc: "Take your generated physics dataset and weights anytime." },
-    closed: { title: "Locked video endpoint", desc: "You keep calling the provider for every trajectory." },
-    diy: { title: "Already owned", desc: "Export exists because you built the engine yourself." }
+    label: "Capabilities",
+    runInfra: {
+      title: "Motion & forecasting",
+      desc: "Motion prediction, state forecasting."
+    },
+    closed: {
+      title: "Rollouts & counterfactuals",
+      desc: "Rollouts, counterfactuals, action-conditioned prediction."
+    },
+    diy: {
+      title: "Dynamics adaptation",
+      desc: "Domain-specific dynamics adaptation."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Automated simulation loops", desc: "Operate continuous real-to-sim generation pipelines." },
-    closed: { title: "Low, with lock-in", desc: "Less infra work, but no control over the world state." },
-    diy: { title: "High", desc: "You own the render farm, MPI scaling, and telemetry." }
+    label: "Workload",
+    runInfra: {
+      title: "Sequences & trajectories",
+      desc: "Video sequences and observed trajectories."
+    },
+    closed: {
+      title: "Scenario rollouts",
+      desc: "Large scenario sets and simulated rollouts."
+    },
+    diy: {
+      title: "Target environment tasks",
+      desc: "Repeated tasks in a target environment."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls for access, logging, and storage." },
-    closed: { title: "Varies by vendor", desc: "Compliance depends on the third-party API." },
-    diy: { title: "You build it", desc: "Your team owns the audit trail and access controls." }
+    label: "Optimization",
+    runInfra: {
+      title: "Sampling & horizon",
+      desc: "Frame sampling, prediction horizon, precision."
+    },
+    closed: {
+      title: "Budgets & parallelism",
+      desc: "Rollout budgets, parallelism, inference throughput."
+    },
+    diy: {
+      title: "Distillation & selection",
+      desc: "Fine-tuning, distillation, training-data selection."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: {
+      title: "Error & consistency",
+      desc: "Prediction error and temporal consistency."
+    },
+    closed: {
+      title: "Simulated outcomes",
+      desc: "Predicted versus simulated outcomes."
+    },
+    diy: {
+      title: "Held-out regressions",
+      desc: "Held-out scenarios and regression tests."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: {
+      title: "Observations & errors",
+      desc: "Record observations, predictions, and errors."
+    },
+    closed: {
+      title: "Rollouts & outcomes",
+      desc: "Preserve scenarios, actions, rollouts, and outcomes."
+    },
+    diy: {
+      title: "Datasets & lineage",
+      desc: "Track datasets, experiments, and checkpoint lineage."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: {
+      title: "Data gap identification",
+      desc: "Use prediction errors to identify data gaps."
+    },
+    closed: {
+      title: "Failed scenario synthesis",
+      desc: "Turn failed scenarios into new training examples."
+    },
+    diy: {
+      title: "Verified trajectory tuning",
+      desc: "Adapt models using verified trajectories and outcomes."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    runInfra: {
+      title: "Access & compute governance",
+      desc: "Govern data access, compute, and deployment."
+    },
+    closed: {
+      title: "Budget & action control",
+      desc: "Control simulation budgets, action permissions, and approvals."
+    },
+    diy: {
+      title: "Promotion & rollout gates",
+      desc: "Govern training data, model promotion, and rollout permissions."
+    }
   }
 ];
 
@@ -728,10 +846,10 @@ export default function SimulationWorldModelsPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="flex flex-col items-center mb-16 px-4">
               <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to build physical simulations
+                Three ways to deploy Simulation & World Models
               </h2>
               <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-                Workflow comparison for simulation engines across Horos, closed APIs, and DIY clusters.
+                Most simulation platforms expose a static rendering API or pre-compiled environments. Horos engineers the world model, simulation integration, physics validation, and continuous training loop across all three deployment paths.
               </p>
             </div>
 
@@ -788,31 +906,32 @@ export default function SimulationWorldModelsPage() {
                     <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                       <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
                     </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                      <div className="absolute top-2.5 right-3 flex items-center">
-                        <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative bg-[#75bf00]/[0.02]">
+                      <div className="flex items-center gap-2.5 mb-1.5">
                         <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <HorosLogo size={16} />
+                          <Zap size={15} className="text-[#75bf00]" />
                         </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Future-state prediction</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">World model for future-state prediction.</p>
                     </div>
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Key size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                          <Workflow size={15} className="text-[#C8C7BA]" />
+                        </div>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Simulator & scenario runner</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Model integrated with a simulator and scenario runner.</p>
                     </div>
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Cpu size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
+                      <div className="flex items-center gap-2.5 mb-1.5">
+                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                          <Layers size={15} className="text-[#C8C7BA]" />
+                        </div>
+                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Adapted training pipeline</span>
                       </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Adapted model with training and evaluation pipeline.</p>
                     </div>
                   </div>
 
