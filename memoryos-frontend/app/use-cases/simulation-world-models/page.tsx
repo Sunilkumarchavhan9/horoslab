@@ -593,18 +593,15 @@ export default function SimulationWorldModelsPage() {
                       World Models
                     </span>
                   </h1>
-                  <p className="text-[#F0EFE2] text-[18px] sm:text-[19px] font-medium tracking-tight leading-snug">
-                    World models that predict what happens next.
-                  </p>
-                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg font-sans">
-                    Engineer models that learn physical dynamics, simulate possible futures, and predict how environments change when objects or agents act. Evaluate predictions against observed reality and optimize the system for your workload.
+                  <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
+                    World models that predict what happens next. Learn physical dynamics, simulate futures, and optimize predictions for your workload.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
                       Optimize your world model <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
                       Explore the stack <ChevronRight size={16} />
                     </button>
                   </div>
