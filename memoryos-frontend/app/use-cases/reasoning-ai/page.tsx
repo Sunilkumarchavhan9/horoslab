@@ -177,100 +177,148 @@ const COMPARISON_ROWS = [
 ];
 
 
-const RETRIEVE_CODE = `# Synthesize Q&A datasets using a frontier generator model.
-from openai import OpenAI
-import json
- 
-generator = OpenAI(base_url="http://localhost:8000/v1")
- 
-def synthesize_data(domain_docs: list[str], n_samples: int = 10000) -> list[dict]:
-    """Generate instruction-response pairs and filter with reward model."""
-    dataset = []
-    for doc in domain_docs:
-        prompt = f"Given this text, generate 5 challenging Q&A pairs:\\n{doc}"
-        res = generator.chat.completions.create(model="llama-3.1-405b", messages=[{"role": "user", "content": prompt}])
+const SEARCH_PIPELINE_CODE = `# Verifier-guided test-time search with step-level process reward scoring.
+import torch
+from vllm import LLM, SamplingParams
+from horos.reasoning import VerifierEngine, StepPRMScorer
+
+# Load reasoning model with configured test-time compute budget
+model = LLM(
+    model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+    tensor_parallel_size=1,
+    max_model_len=16384,
+    gpu_memory_utilization=0.92,
+)
+
+prm_scorer = StepPRMScorer(model="Qwen/Qwen2.5-Math-PRM-7B")
+verifier = VerifierEngine(timeout_sec=5.0)
+
+def reason_and_verify(problem: str, n_candidates: int = 8) -> dict:
+    """Generate candidate reasoning rollouts, score steps, and verify outcomes."""
+    params = SamplingParams(
+        n=n_candidates,
+        temperature=0.7,
+        top_p=0.95,
+        max_tokens=4096,
+    )
+    
+    # Generate Best-of-N candidate solution paths
+    outputs = model.generate([problem], params)
+    candidates = [cand.text for cand in outputs[0].outputs]
+    
+    scored_candidates = []
+    for cand in candidates:
+        # Score intermediate reasoning steps with PRM
+        step_scores = prm_scorer.score_steps(problem, cand)
         
-        # Filter generations using a reward model / LLM-as-a-judge
-        for qa in parse_pairs(res.choices[0].message.content):
-            score = generator.chat.completions.create(
-                model="llama-3.1-405b", 
-                messages=[{"role": "user", "content": f"Score this Q&A from 1-10: {qa}"}]
+        # Verify final mathematical or executable code answer
+        is_valid, answer = verifier.verify_solution(cand)
+        
+        confidence = sum(step_scores) / max(len(step_scores), 1)
+        scored_candidates.append({
+            "solution": cand,
+            "answer": answer,
+            "valid": is_valid,
+            "confidence": confidence,
+        })
+        
+    # Select highest-confidence verified solution
+    valid_candidates = [c for c in scored_candidates if c["valid"]]
+    return max(valid_candidates or scored_candidates, key=lambda x: x["confidence"])`;
+
+const VERIFIER_CODE = `# Multi-modal correctness checking: formal math proofs & python execution.
+import subprocess
+from sympy import simplify, parse_expr
+
+class VerifierEngine:
+    def __init__(self, timeout_sec: float = 5.0):
+        self.timeout = timeout_sec
+
+    def verify_math_expression(self, candidate_expr: str, ground_truth: str) -> bool:
+        """Symbolic equivalence check between model proof and expected target."""
+        try:
+            expr_a = parse_expr(candidate_expr.strip())
+            expr_b = parse_expr(ground_truth.strip())
+            return bool(simplify(expr_a - expr_b) == 0)
+        except Exception:
+            return False
+
+    def verify_code_execution(self, code_snippet: str, unit_tests: str) -> bool:
+        """Execute generated code in a sandboxed runtime against unit tests."""
+        test_harness = f"{code_snippet}\\n\\n{unit_tests}\\n"
+        try:
+            result = subprocess.run(
+                ["python3", "-c", test_harness],
+                capture_output=True,
+                text=True,
+                timeout=self.timeout
             )
-            if int(score.choices[0].message.content) >= 8:
-                dataset.append(qa)
-                
-    return dataset[:n_samples]`;
+            return result.returncode == 0
+        except subprocess.TimeoutExpired:
+            return False`;
 
-const SERVE_CODE = `#!/usr/bin/env bash
-# LoRA fine-tuning using torchtune on generated dataset
-set -euo pipefail
- 
-TARGET_MODEL="meta-llama/Llama-3.1-8B-Instruct"
-DATASET_PATH="./synthetic_dataset.jsonl"
- 
-# Run parameter-efficient fine-tuning
-tune run lora_finetune_single_device \\
-  --config llama3_1/8B_lora_single_device \\
-  checkpointer.checkpoint_dir=$TARGET_MODEL \\
-  dataset.path=$DATASET_PATH \\
-  training.hoross=3 \\
-  training.batch_size=8 \\
-  optimizer.lr=2e-4
- 
-# Merge LoRA weights into base model
-tune run lora_merge \\
-  --config llama3_1/8B_lora_merge_single_device`;
+const EVAL_BENCH_CODE = `# Benchmark evaluation harness for reasoning models (MATH-500, AIME).
+import json
+from horos.reasoning import reason_and_verify
 
-const PIPELINE_CODE = `{
-  "name": "reasoning-ai",
-  "target_samples": 10000,
-  "generator_model": "meta-llama/Llama-3.1-405B-Instruct",
-  "target_model": "meta-llama/Llama-3.1-8B-Instruct",
-  "reward_threshold": 8,
-  "engine": "vllm",
-  "trainer": "torchtune",
-  "gpu": "nvidia-h100"
+def run_reasoning_benchmark(dataset_path: str = "evals/math_500.jsonl") -> dict:
+    """Measure Pass@1, tokens-per-solution, and verifier agreement rates."""
+    total, solved = 0, 0
+    total_reasoning_tokens = 0
+
+    with open(dataset_path) as f:
+        benchmarks = [json.loads(line) for line in f]
+
+    for item in benchmarks:
+        result = reason_and_verify(item["problem"], n_candidates=8)
+        total += 1
+        if result["answer"] == item["ground_truth"]:
+            solved += 1
+        total_reasoning_tokens += len(result["solution"].split())
+
+    pass_rate = (solved / total) * 100
+    avg_tokens = total_reasoning_tokens / total
+
+    print(f"MATH-500 Pass@1: {pass_rate:.1f}% | Avg Tokens: {avg_tokens:.0f}")
+    return {"accuracy": pass_rate, "avg_reasoning_tokens": avg_tokens}`;
+
+const REASONING_CONFIG_CODE = `{
+  "pipeline_name": "horos-reasoning-ai",
+  "base_model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+  "prm_model": "Qwen/Qwen2.5-Math-PRM-7B",
+  "search_strategy": "best_of_n",
+  "n_candidates": 8,
+  "max_thinking_budget_tokens": 4096,
+  "temperature": 0.7,
+  "verifier": {
+    "engine": "sandbox_python_and_sympy",
+    "timeout_sec": 5.0,
+    "prune_invalid_branches": true
+  },
+  "runtime": {
+    "engine": "vllm",
+    "kv_cache_dtype": "fp8",
+    "accelerator": "nvidia-h100"
+  }
 }`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS base
- 
-RUN apt-get update && apt-get install -y python3.11 python3-pip
- 
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
- 
-COPY adapters/ /app/adapters/
-COPY corpus/ /app/corpus/
-COPY evals/ /app/evals/
-COPY eval.py train.sh pipeline.json .
- 
-EXPOSE 8000
-ENTRYPOINT ["/app/train.sh"]`;
 
-const EVAL_CODE = `# Eval harness: comparing fine-tuned model vs generator.
-import json
-from openai import OpenAI
- 
-tuned_model = OpenAI(base_url="http://localhost:8001/v1")
-generator = OpenAI(base_url="http://localhost:8000/v1")
- 
-def run_eval(test_set_path: str) -> dict:
-    """Score the fine-tuned model against the generator on holdout set."""
-    items = json.load(open(test_set_path))
-    win_rate = 0.0
-    for item in items:
-        # Generate answer from fine-tuned model
-        tuned_ans = tuned_model.chat.completions.create(model="tuned-8b", messages=[{"role": "user", "content": item["q"]}])
-        
-        # Ask generator to judge tuned model vs reference
-        judge_prompt = f"Question: {item['q']}\\nModel: {tuned_ans}\\nReference: {item['a']}\\nDoes the model match or beat the reference? (Yes/No)"
-        judge_res = generator.chat.completions.create(model="llama-3.1-405b", messages=[{"role": "user", "content": judge_prompt}])
-        
-        if "yes" in judge_res.choices[0].message.content.lower():
-            win_rate += 1.0
-            
-    return {"win_rate": win_rate / len(items)}`;
+RUN apt-get update && apt-get install -y python3.11 python3-pip git
+
+WORKDIR /workspace
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install vLLM, sglang, and symbolic math verifiers
+RUN pip install --no-cache-dir vllm==0.7.2 sympy pytest
+
+COPY horos/ /workspace/horos/
+COPY evals/ /workspace/evals/
+COPY search_pipeline.py verifier.py eval_bench.py reasoning_config.json ./
+
+EXPOSE 8000
+ENTRYPOINT ["python3", "search_pipeline.py"]`;
 
 type DataFactoryFile = string;
 
@@ -444,21 +492,21 @@ export default function ReasoningAIPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<DataFactoryFile>("synthesize.py");
+  const [activeFile, setActiveFile] = useState<DataFactoryFile>("search_pipeline.py");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "synthesize.py": RETRIEVE_CODE,
-    "eval.py": EVAL_CODE,
-    "train.sh": SERVE_CODE,
-    "pipeline.json": PIPELINE_CODE,
+    "search_pipeline.py": SEARCH_PIPELINE_CODE,
+    "verifier.py": VERIFIER_CODE,
+    "eval_bench.py": EVAL_BENCH_CODE,
+    "reasoning_config.json": REASONING_CONFIG_CODE,
     "Dockerfile": DOCKERFILE_CODE
   };
 
   // Sequential Real-Time Character Streaming Animation state for Showcase Chat
-  const AGENT_MSG_1 = "On it. I'll spin up Llama-3.1-405B as a generator to synthesize 10k domain-specific instructions, run a reward model filter, and kick off a LoRA fine-tune on Llama-3.1-8B.";
-  const AGENT_MSG_2 = "Recipe is ready. Synthesis and training completed on H100 at $3.20/hr. The fine-tuned 8B model is ready for export or deployment. Want me to deploy the endpoint?";
+  const AGENT_MSG_1 = "On it. I'll configure test-time compute with DeepSeek-R1-32B, set up rule-based execution verifiers with PRM step validation, and run Best-of-8 search against MATH-500.";
+  const AGENT_MSG_2 = "Reasoning pipeline verified. Pass@1 improved from 74.2% to 89.6% using Best-of-8 with verifier pruning at 280 tokens/sec on 1x H100 ($3.20/hr). Ready to export or deploy endpoint?";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -476,7 +524,7 @@ export default function ReasoningAIPage() {
 
   // Code character-by-character real-time streaming typewriter effect when activeFile changes
   useEffect(() => {
-    const fullCode = FILE_CODE_MAP[activeFile] || RETRIEVE_CODE;
+    const fullCode = FILE_CODE_MAP[activeFile] || SEARCH_PIPELINE_CODE;
 
     setTypedCodeText("");
     setIsTypingCode(true);
@@ -974,11 +1022,11 @@ export default function ReasoningAIPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
-                  Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
+                <h2 className="text-4xl lg:text-[48px] font-medium tracking-tight mb-5">
+                  Reasoning code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
-                  The full recipe ships with you. Codebase, kernels, engine config, weights. Run it anywhere.
+                <p className="text-[#999999] text-[17px] max-w-2xl mx-auto leading-relaxed">
+                  The complete reasoning recipe ships with you: verifiers, search trees, PRM scoring, inference budgets, and distillation pipelines.
                 </p>
               </div>
             </div>
@@ -1061,12 +1109,15 @@ export default function ReasoningAIPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[26px]">
-                        Synthesize a 10k Q&A dataset from our internal docs using
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><MetaLogo size={11} /> Llama-3.1-405B</span>
-                        as a generator. Filter low-quality generations with a reward model, then kick off a LoRA fine-tune on
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><MetaLogo size={11} /> Llama-3.1-8B</span>
-                        using a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1 text-[#75bf00]"><NvidiaLogo size={11} /> H100</span>.
+                        Engineer a test-time reasoning pipeline. Deploy{" "}
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1">
+                          <DeepSeekLogo size={11} /> DeepSeek-R1-32B
+                        </span>{" "}
+                        with Best-of-8 candidate generation, run python execution verifiers and PRM step scoring, then benchmark on{" "}
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle mx-1">
+                          <NvidiaLogo size={11} /> 1x H100
+                        </span>{" "}
+                        against MATH-500.
                       </p>
                     </div>
 
@@ -1103,10 +1154,10 @@ export default function ReasoningAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Parsed raw domain corpus</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.4s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Loading reasoning model</span>
+                            <span className="text-[#C8C7BA] text-[12px]">0.8s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Cleaned markdown and chunked into context windows</span>
+                          <span className="text-[#666] text-[12px]">DeepSeek-R1-Distill-Qwen-32B loaded with FP8 KV cache</span>
                         </div>
                       </div>
 
@@ -1121,10 +1172,10 @@ export default function ReasoningAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Synthesizing instruction pairs</span>
-                            <span className="text-[#C8C7BA] text-[12px]">18.2s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Sampling candidate rollouts</span>
+                            <span className="text-[#C8C7BA] text-[12px]">12.4s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">405B generator producing diverse edge cases</span>
+                          <span className="text-[#75bf00] text-[12px]">Generating N=8 reasoning paths with 4,096 budget tokens</span>
                         </div>
                       </div>
 
@@ -1139,10 +1190,10 @@ export default function ReasoningAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Reward model filtering</span>
-                            <span className="text-[#C8C7BA] text-[12px]">4.1s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Process reward model scoring</span>
+                            <span className="text-[#C8C7BA] text-[12px]">2.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Discarded 12% low-quality samples</span>
+                          <span className="text-[#666] text-[12px]">Scored 64 intermediate reasoning steps with step PRM</span>
                         </div>
                       </div>
 
@@ -1157,10 +1208,10 @@ export default function ReasoningAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running LoRA fine-tune</span>
-                            <span className="text-[#C8C7BA] text-[12px]">12m 45s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Executing sandbox verifiers</span>
+                            <span className="text-[#C8C7BA] text-[12px]">1.3s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">3 hoross, lr=2e-4 on 1x H100</span>
+                          <span className="text-[#666] text-[12px]">Verified math proofs & code; pruned 3 invalid traces</span>
                         </div>
                       </div>
 
@@ -1175,10 +1226,10 @@ export default function ReasoningAIPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ran tuned model vs generator eval</span>
-                            <span className="text-[#C8C7BA] text-[12px]">12.5s</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Benchmark evaluation on MATH-500</span>
+                            <span className="text-[#C8C7BA] text-[12px]">14.2s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Tuned 8B matches Generator 405B 87% of time</span>
+                          <span className="text-[#75bf00] text-[12px]">Pass@1 accuracy reached 89.6% (+15.4% over baseline)</span>
                         </div>
                       </div>
                     </div>
@@ -1209,15 +1260,15 @@ export default function ReasoningAIPage() {
                     <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
                       <input
                         type="text"
-                        placeholder="Teach the agent to optimize for specific reward criteria..."
+                        placeholder="Teach the verifier to validate multi-step logic..."
                         className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
                         readOnly
                       />
                       <div className="flex justify-between items-center px-1">
                         <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                          
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Verifiers</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@SearchBudget</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@PRMScore</span>
                         </div>
                         <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
                           <ArrowUp size={14} strokeWidth={2.5} />
@@ -1230,49 +1281,49 @@ export default function ReasoningAIPage() {
                 {/* Files Content */}
                 <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">DATA ADAPTERS</span>
+                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">VERIFIER SUITE</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      scrape_notion.py
+                      math_verifier.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      pull_slack.py
+                      code_executor.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      github_issues.py
+                      prm_judge.py
                     </div>
 
                     {/* Project Tree Folder */}
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> horos-data-factory/
+                        <ChevronDown size={14} className="text-[#777]" /> horos-reasoning/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
-                          onClick={() => selectFileManually("synthesize.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "synthesize.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("search_pipeline.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "search_pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          synthesize.py
+                          search_pipeline.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("eval.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("verifier.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "verifier.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          eval.py
+                          verifier.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("train.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "train.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("eval_bench.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_bench.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          train.sh
+                          eval_bench.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("reasoning_config.json")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "reasoning_config.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          pipeline.json
+                          reasoning_config.json
                         </button>
                         <button 
                           onClick={() => selectFileManually("Dockerfile")}
@@ -1287,10 +1338,10 @@ export default function ReasoningAIPage() {
                           requirements.txt
                         </div>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> corpus/
+                          <ChevronRight size={14} className="text-[#333]" /> checkpoints/
                         </div>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          <ChevronRight size={14} className="text-[#333]" /> evals/
+                          <ChevronRight size={14} className="text-[#333]" /> traces/
                         </div>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
                           README.md
@@ -1305,28 +1356,28 @@ export default function ReasoningAIPage() {
                   {/* Editor top tabs */}
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
-                      onClick={() => selectFileManually("synthesize.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "synthesize.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("search_pipeline.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "search_pipeline.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      synthesize.py
+                      search_pipeline.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("eval.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("verifier.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "verifier.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      eval.py
+                      verifier.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("train.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "train.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("eval_bench.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval_bench.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      train.sh
+                      eval_bench.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("reasoning_config.json")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "reasoning_config.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      pipeline.json
+                      reasoning_config.json
                     </button>
                     <button
                       onClick={() => selectFileManually("Dockerfile")}
@@ -1369,10 +1420,6 @@ export default function ReasoningAIPage() {
 
           {/* Features Grid Row */}
           <div className="w-full relative z-10">
-            {/* Line 3: Infinite Horizontal Border at bottom of Features Grid */}
-
-
-
             {/* Feature Cards aligned with vertical grid lines */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
@@ -1380,35 +1427,35 @@ export default function ReasoningAIPage() {
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
+                  <div className="px-6 py-10 sm:px-8 sm:py-12 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Cloud size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Managed Horos</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Our GPUs, per-million-tokens billing from L4 to B200.
+                    <h3 className="text-2xl font-medium text-[#F0EFE2]">Managed Horos</h3>
+                    <p className="text-[#C8C7BA] text-[14.5px] leading-relaxed">
+                      High-throughput test-time compute with dynamic reasoning token budgets on H100 to B200 clusters.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
+                  <div className="px-6 py-10 sm:px-8 sm:py-12 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Server size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      AWS, GCP, RunPod, bare metal. Same verifier/, your cluster.
+                    <h3 className="text-2xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
+                    <p className="text-[#C8C7BA] text-[14.5px] leading-relaxed">
+                      Deploy verifiers and search trees on AWS, GCP, RunPod, or bare metal. Same verifiers, your cluster.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
+                  <div className="px-6 py-10 sm:px-8 sm:py-12 flex flex-col gap-4 items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Network size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Local workstation</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      docker compose up. Full pipeline on a single GPU.
+                    <h3 className="text-2xl font-medium text-[#F0EFE2]">Local workstation</h3>
+                    <p className="text-[#C8C7BA] text-[14.5px] leading-relaxed">
+                      Single-GPU development with quantized reasoning models, local test harnesses, and step PRM scoring.
                     </p>
                   </div>
                 </div>
