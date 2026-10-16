@@ -587,9 +587,9 @@ export default function AutonomousSoftwareEngineersPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your autonomous coding pipeline</h2>
+                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">What you actually own</h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The SWE-bench harness, the code reasoning models, the automated PR playbooks. Complete sovereignty over software generation.
+                  The engineering models, simulation environments, and constraint evaluators. Full control over how engineering solutions are generated, tested, and optimized.
                 </p>
               </div>
             </div>
@@ -631,27 +631,27 @@ export default function AutonomousSoftwareEngineersPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The coding<br/>agents.</h3>
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The engineering<br/>models.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the autonomous SWE models, AST parsers, and prompt architectures. No vendor lock-in on your software generation.
+                      You own the model checkpoints, domain adapters, and configurations used for engineering analysis. Version model changes and compare their performance across design, code, and numerical workloads.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The test<br/>validators.</h3>
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The simulation<br/>and validators.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the execution sandboxes, unit test rubrics, and AST linters. Instant code verification when patches are generated.
+                      You define engineering constraints, solver configurations, test scenarios, and acceptance criteria. Compare predicted results against simulation outputs and explicit engineering requirements.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The fine-tuned<br/>weights.</h3>
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The optimized<br/>system versions.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the fine-tuned code LLM weights (Qwen-Coder, DeepSeek-Coder) and compiled containers. Export and run anywhere securely.
+                      You control the validated model versions, runtime configurations, and deployment artifacts. Compare solution quality, execution time, compute requirements, and cost before promoting a configuration.
                     </p>
                   </div>
                 </div>
