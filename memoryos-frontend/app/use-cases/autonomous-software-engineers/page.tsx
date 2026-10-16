@@ -1455,7 +1455,8 @@ export default function AutonomousSoftwareEngineersPage() {
           </div>
 
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-16 md:mt-20">
+          <div className="w-full relative z-10 pt-20 md:pt-24 mt-8 md:mt-12">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
