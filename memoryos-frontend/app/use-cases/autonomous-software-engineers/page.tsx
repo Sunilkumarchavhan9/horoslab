@@ -15,45 +15,73 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Deploy autonomous SWE agents", desc: "Launch repo-wide coding agents that parse issues and write code." },
-    closed: { title: "Basic code completion", desc: "Line-by-line copilot suggestions without repo-level context." },
-    diy: { title: "Build prompt chains", desc: "Spend months stitching OpenAI API prompts and git webhooks." }
+    label: "System",
+    horos: "Engineer the complete workflow from model selection and design exploration to verified results.",
+    closed: "Consume individual model APIs for specific engineering tasks.",
+    diy: "Connect separate models, solvers, scripts, and services yourself."
   },
   {
     num: "0 2",
-    label: "Codebase Context",
-    runInfra: { title: "Repo-wide AST & graph indexing", desc: "Parse tree-sitter symbols, imports, and cross-module calls." },
-    closed: { title: "Truncated file buffer", desc: "Limited context window missing related dependencies." },
-    diy: { title: "Manual prompt concatenation", desc: "High token consumption with missing function definitions." }
+    label: "Models",
+    horos: "Evaluate open-weight models, adapt checkpoints, and develop task-specific intelligence.",
+    closed: "Use provider-supported models with limited control over underlying weights.",
+    diy: "Select and manage models, checkpoints, and training infrastructure manually."
   },
   {
     num: "0 3",
-    label: "Verification",
-    runInfra: { title: "Automated test & lint execution", desc: "Executes unit tests in isolated sandboxes before committing." },
-    closed: { title: "No execution capabilities", desc: "Generates hallucinated code that breaks on compilation." },
-    diy: { title: "Unchecked script execution", desc: "Risk of broken builds and unhandled test regressions." }
+    label: "Context",
+    horos: "Connect engineering specifications, constraints, system state, design artifacts, and historical results.",
+    closed: "Supply context through supported prompts, files, and API integrations.",
+    diy: "Build custom parsers, retrieval pipelines, and context management."
   },
   {
     num: "0 4",
-    label: "Model Control",
-    runInfra: { title: "Fine-tuned code LLMs", desc: "Deploy domain-adapted DeepSeek-Coder, Qwen-Coder, and Llama." },
-    closed: { title: "Locked to vendor API defaults", desc: "Rigid closed models with no custom codebase fine-tuning." },
-    diy: { title: "Prompt-only tuning", desc: "Inability to tune model weights for internal SDKs and conventions." }
+    label: "Design exploration",
+    horos: "Search candidate designs and configurations against explicit requirements and constraints.",
+    closed: "Generate design suggestions within supported model capabilities.",
+    diy: "Implement parameter sweeps, search algorithms, and candidate tracking."
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Autonomous PR & issue loops", desc: "Automate bug triage, patch generation, and pull request creation." },
-    closed: { title: "High developer toil", desc: "Engineers spend hours manually reviewing and fixing suggestions." },
-    diy: { title: "High operational overhead", desc: "Your team owns agent maintenance, prompt drift, and updates." }
+    label: "Simulation",
+    horos: "Connect compatible simulation workloads to model experiments and recorded outcomes.",
+    closed: "Integrate external simulation tools through available interfaces.",
+    diy: "Orchestrate simulation runs, input configurations, and output collection yourself."
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II & On-Prem", desc: "Zero code retention with air-gapped VPC execution options." },
-    closed: { title: "Varies by vendor", desc: "Proprietary code telemetry uploaded to third-party cloud." },
-    diy: { title: "Self-managed security", desc: "Your team owns access controls, secrets scanning, and audits." }
+    label: "Optimization",
+    horos: "Compare model, runtime, and workload configurations against quality, latency, compute, and cost targets.",
+    closed: "Tune supported API parameters and provider-exposed options.",
+    diy: "Build benchmarking, profiling, and optimization loops independently."
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    horos: "Evaluate outputs against engineering constraints, numerical tolerances, solver results, and acceptance tests.",
+    closed: "Use supported evaluations and external validation tools.",
+    diy: "Maintain custom test suites, verification logic, and regression checks."
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    horos: "Preserve experiment configurations, model versions, observations, failures, and measured outcomes.",
+    closed: "Track results across provider APIs and external observability systems.",
+    diy: "Build your own experiment records, lineage, and analysis infrastructure."
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    horos: "Use verified examples and failure cases to drive fine-tuning, adaptation, and subsequent evaluations.",
+    closed: "Depend on provider-supported customization and training options.",
+    diy: "Assemble datasets, training jobs, checkpoint comparisons, and evaluation pipelines."
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    horos: "Govern experiment budgets, data access, deployment permissions, approvals, and model promotion.",
+    closed: "Work within provider capabilities and your own integration controls.",
+    diy: "Implement access control, budget enforcement, approvals, and deployment policies yourself."
   }
 ];
 
@@ -662,12 +690,12 @@ export default function AutonomousSoftwareEngineersPage() {
         {/* Comparison Table Section */}
         <div className="w-full relative z-10 mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to build autonomous coding agents
+          <div className="flex flex-col items-center mb-10 md:mb-12 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-8 md:mt-10">
+              Three ways to build engineering-intelligence
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for AI software engineers across Horos, closed copilot APIs, and DIY scripts.
+            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+              Compare Horos with closed engineering AI APIs and custom-built pipelines across model development, design exploration, simulation, optimization, and verification.
             </p>
           </div>
 
@@ -716,21 +744,21 @@ export default function AutonomousSoftwareEngineersPage() {
                       </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Autonomous SWE & sandbox verification.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full workflow engineering & verification.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Key size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed Copilot APIs</span>
+                      <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed Engineering AI APIs</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Inline code autocomplete.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Individual hosted model APIs.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY Prompt Scripts</span>
+                      <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY Engineering Pipelines</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Brittle, manual prompt chaining.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fragmented models, solvers & scripts.</p>
                   </div>
                 </div>
 
@@ -745,18 +773,15 @@ export default function AutonomousSoftwareEngineersPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                        <p className="text-[#E6E5D8] text-[12.5px] sm:text-[13px] leading-relaxed">{row.horos}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13px] leading-relaxed">{row.closed}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13px] leading-relaxed">{row.diy}</p>
                       </div>
                     </div>
                   ))}
