@@ -23,6 +23,7 @@ export interface RagSearchGridProps {
   label3?: string;
   label4?: string;
   label5?: string;
+  label6?: string;
 }
 
 export function RagSearchGrid({
@@ -30,7 +31,8 @@ export function RagSearchGrid({
   label2 = "Citations",
   label3 = "Audits",
   label4 = "Briefs",
-  label5
+  label5,
+  label6,
 }: RagSearchGridProps = {}) {
   return (
     <div className="w-full mx-auto relative flex justify-center items-center select-none" style={{ aspectRatio: '1054/740' }}>
@@ -135,6 +137,13 @@ export function RagSearchGrid({
           <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '50%', top: '56%', transform: 'translate(-50%, -50%)' }}>
             {label3}
           </div>
+
+          {/* Optional Text: label6 */}
+          {label6 && (
+            <div className="absolute flex items-center justify-center pointer-events-auto text-[#F0EFE2] text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap" style={{ left: '84%', top: '56%', transform: 'translate(-50%, -50%)' }}>
+              {label6}
+            </div>
+          )}
 
           {/* Row 5 (y=75%) */}
           {/* Optional Text: label5 */}
