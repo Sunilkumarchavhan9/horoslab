@@ -1331,34 +1331,34 @@ export default function AutonomousSoftwareEngineersPage() {
               <div className="min-w-0">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Cpu size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Cpu size={20} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Simulation Solvers</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-lg sm:text-xl font-medium text-[#F0EFE2] leading-snug">The Simulation Solvers</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
                       Coupled FEA, CFD, and multiphysics solvers operating directly on high-resolution CAD geometry and boundary meshes.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Server size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Server size={20} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Neural Surrogates</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-lg sm:text-xl font-medium text-[#F0EFE2] leading-snug">The Neural Surrogates</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
                       Self-host fast neural physics surrogates and engineering foundation models on private GPUs with complete IP control.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <ShieldCheck size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 items-start">
+                    <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <ShieldCheck size={20} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Constraint Validators</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-lg sm:text-xl font-medium text-[#F0EFE2] leading-snug">The Constraint Validators</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
                       Evaluate safety factors, yield tolerances, and thermal margins inside isolated simulation sandboxes before promotion.
                     </p>
                   </div>
