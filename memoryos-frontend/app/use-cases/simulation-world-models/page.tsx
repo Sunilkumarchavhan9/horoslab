@@ -1616,73 +1616,73 @@ export default function SimulationWorldModelsPage() {
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the pipeline, retuned per model and GPU.
+                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-xl mx-auto mb-12">
+                  Every stage of world-model prediction, optimized per model, environment, and GPU.
                 </p>
 
                 {/* Tunes Grid */}
-                <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+                <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
                     {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <ScanSearch size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Temporal embeddings</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune Cosmos-1.0 and GAIA context windows for spatiotemporal coherence. Avoids hallucinated futures in long rollouts.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Temporal context and frame sampling</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Tune input frame rate, sequence length, and temporal windows for Cosmos-Predict and V-JEPA 2 workloads. Measure how sampling changes motion prediction and future-state accuracy.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <Sliders size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physics parameters</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Randomize friction and gravity in Genesis and Mujoco. Aligns rigid-body dynamics to real-world edge cases.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Scene conditioning</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Tune supported image, video, depth, segmentation, and spatial controls. Compare scene variations while preserving the geometry and conditions required by each task.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Zap size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Trajectory generation</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Profile autoregressive sampling on H100 clusters. Optimizes beam search latency for continuous physical predictions.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Action-conditioned prediction</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Evaluate models that accept actions or control inputs. Compare predicted future states across action sequences, initial conditions, and environment changes.
                       </p>
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Cpu size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Kinematic validation</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in comparative eval for robotic collisions. Verifies generated kinematics against ground truth telemetry.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Inference kernels and precision</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Benchmark supported BF16, FP8, attention kernels, and hardware-specific execution paths. Measure throughput, memory consumption, and prediction quality per GPU.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Gauge size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Latency optimization</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize FP8 weights and compile to TensorRT. Achieves {">2000"} FPS for live edge robotics inference.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Rollout throughput and memory</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Tune batch size, concurrent sequences, temporal context, and memory allocation to increase simulation throughput without exceeding GPU capacity.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-8 py-8 md:py-9 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <CheckCircle2 size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sensor streams</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Stream live video and force logs back to the cluster. Instantly generates targeted physics patches for failing policies.
+                      <h3 className="text-[19px] md:text-[20px] font-medium text-[#F0EFE2]">Future-state evaluation</h3>
+                      <p className="text-[#A0A0A0] text-[14px] leading-relaxed">
+                        Compare predicted frames, trajectories, and state transitions against held-out video or simulator ground truth. Track temporal drift, position error, and failure cases across prediction horizons.
                       </p>
                     </div>
 
