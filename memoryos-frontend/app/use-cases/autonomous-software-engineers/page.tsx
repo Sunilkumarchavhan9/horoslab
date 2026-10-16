@@ -271,16 +271,140 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
   });
 }
 
+function AutodeskLogo({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 19L11.5 4H15.5L8 19H4Z" fill="#0696D7" />
+      <path d="M12.5 12L16 5H20L13.5 18L10 18L12.5 12Z" fill="#00D2B4" />
+      <path d="M13.5 18H20V19H13.5V18Z" fill="#0696D7" />
+    </svg>
+  );
+}
+
+function HexeraLogo({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L20.5 7V17L12 22L3.5 17V7L12 2Z" stroke="#75bf00" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M12 2V22M3.5 7L20.5 17M3.5 17L20.5 7" stroke="#75bf00" strokeWidth="1" strokeOpacity="0.6" />
+      <circle cx="12" cy="12" r="2" fill="#75bf00" />
+    </svg>
+  );
+}
+
+function CADReasonerLogo({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 7L12 3L20 7L12 11L4 7Z" stroke="#38BDF8" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M4 7V17L12 21V11" stroke="#38BDF8" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M20 7V17L12 21" stroke="#0284C7" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M8 9.5L16 13.5" stroke="#38BDF8" strokeWidth="1.4" strokeDasharray="1.5 1.5" />
+    </svg>
+  );
+}
+
+function FutureCADLogo({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="3" width="18" height="18" rx="2" stroke="#A855F7" strokeWidth="1.6" />
+      <path d="M3 12H21M12 3V21" stroke="#A855F7" strokeWidth="1" strokeDasharray="2 2" strokeOpacity="0.7" />
+      <circle cx="12" cy="12" r="3.5" stroke="#C084FC" strokeWidth="1.6" />
+      <path d="M7 7L17 17" stroke="#A855F7" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+function IndustrialLogo({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 4V2M12 22V20M4 12H2M22 12H20M6.34 6.34L4.93 4.93M19.07 19.07L17.66 17.66M6.34 17.66L4.93 19.07M19.07 4.93L17.66 6.34" stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="4.5" stroke="#F59E0B" strokeWidth="1.8" />
+      <path d="M10 11L11.5 13L14 10" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 const DEFAULT_MODELS = [
-  { id: "deepseek-ai/DeepSeek-R1-Engineering-67B", name: "DeepSeek R1 Engineering 67B", author: "DeepSeek", description: "State-of-the-art open reasoning LLM for engineering design exploration and math.", role: "Engineering Reasoner" },
-  { id: "nvidia/Modulus-PINN-Surrogate-8B", name: "Modulus PINN Surrogate 8B", author: "Nvidia", description: "Physics-informed neural operator for millisecond FEA/CFD field approximation.", role: "Physics Surrogate" },
-  { id: "meta-llama/Llama-3.3-70B-Engineering", name: "Llama 3.3 70B Engineering", author: "Meta", description: "High-capacity frontier model fine-tuned on multiphysics specifications and CAD logic.", role: "Design Reasoner" },
-  { id: "Qwen/Qwen2.5-72B-Physics-Surrogate", name: "Qwen2.5 72B Physics", author: "Qwen", description: "Deep numerical reasoning engine adapted for boundary condition evaluation.", role: "Boundary Solver" },
-  { id: "mistralai/Mistral-Large-Engineering", name: "Mistral Large Engineering", author: "Mistral", description: "Fast multi-objective optimization model for CAD parameter sweeps and tolerances.", role: "Topology Optimizer" },
-  { id: "anthropic/claude-3-5-sonnet-engineering", name: "Claude 3.5 Sonnet (Engineering)", author: "Anthropic", description: "Frontier reasoning model for complex multiphysics verification and safety audits.", role: "Verification Gate" },
-  { id: "microsoft/phi-4-engineering-surrogate", name: "Phi-4 Engineering Surrogate", author: "Microsoft", description: "Compact low-latency physics surrogate for fast real-time interactive design loops.", role: "Fast Surrogate" },
-  { id: "google/gemma-2-27b-multiphysics", name: "Gemma 2 27B Multiphysics", author: "Google", description: "Lightweight physical dynamics model optimized for thermal and structural margins.", role: "Surrogate Model" },
-  { id: "huggingface/openfoam-surrogate-7b", name: "OpenFOAM Surrogate 7B", author: "HuggingFace", description: "Neural surrogate fine-tuned on Navier-Stokes and CFD simulation trajectories.", role: "Fluid Surrogate" }
+  {
+    id: "Qwen/Qwen3.5-397B-A17B",
+    name: "Qwen3.5-397B-A17B",
+    author: "Qwen",
+    size: "397B MoE",
+    role: "Frontier Reasoning",
+    description: "Massive open MoE foundation model with frontier mathematical and physical reasoning capabilities.",
+    hfUrl: "https://huggingface.co/Qwen/Qwen3.5-397B-A17B"
+  },
+  {
+    id: "deepseek-ai/DeepSeek-R1-0528",
+    name: "DeepSeek-R1-0528",
+    author: "DeepSeek",
+    size: "671B MoE",
+    role: "Technical Reasoning",
+    description: "Frontier reasoning model with specialized chain-of-thought verification for technical problem-solving.",
+    hfUrl: "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528"
+  },
+  {
+    id: "Qwen/Qwen3.5-27B",
+    name: "Qwen3.5-27B",
+    author: "Qwen",
+    size: "27B",
+    role: "Engineering Analysis",
+    description: "Dense engineering foundation model tuned for numerical simulation and multi-physics analysis.",
+    hfUrl: "https://huggingface.co/Qwen/Qwen3.5-27B"
+  },
+  {
+    id: "Qwen/Qwen3-Coder-Next",
+    name: "Qwen3-Coder-Next",
+    author: "Qwen",
+    size: "80B / 3B active",
+    role: "Code Optimization",
+    description: "Sparse active MoE architecture specialized in simulation solver code optimization and algorithm synthesis.",
+    hfUrl: "https://huggingface.co/Qwen/Qwen3-Coder-Next"
+  },
+  {
+    id: "Multilingual-Multimodal-NLP/IndustrialCoder-Thinking",
+    name: "IndustrialCoder-Thinking",
+    author: "Multilingual-Multimodal-NLP",
+    size: "32B",
+    role: "Industrial Engineering",
+    description: "Industrial engineering reasoning model fine-tuned for PLC, robotics, and manufacturing workflows.",
+    hfUrl: "https://huggingface.co/Multilingual-Multimodal-NLP/IndustrialCoder-Thinking"
+  },
+  {
+    id: "hexera-org/GmshNet-8B-v0.1",
+    name: "GmshNet-8B-v0.1",
+    author: "Hexera",
+    size: "8B",
+    role: "CAE Meshing",
+    description: "Neural CAE model for automated 2D/3D finite-element mesh generation and boundary discretization.",
+    hfUrl: "https://huggingface.co/hexera-org/GmshNet-8B-v0.1"
+  },
+  {
+    id: "jhlee11/FutureCAD-7B",
+    name: "FutureCAD-7B",
+    author: "jhlee11",
+    size: "7B base",
+    role: "Text-to-CAD",
+    description: "Generative Text-to-CAD model producing parametric STEP and boundary representation geometry.",
+    hfUrl: "https://huggingface.co/jhlee11/FutureCAD-7B"
+  },
+  {
+    id: "kulibinai/cadreasoner",
+    name: "CADReasoner",
+    author: "kulibinai",
+    size: "2B",
+    role: "CAD Reconstruction",
+    description: "Compact neural reasoner for CAD boundary reconstruction, feature tree recovery, and topology repair.",
+    hfUrl: "https://huggingface.co/kulibinai/cadreasoner"
+  },
+  {
+    id: "ADSKAILab/Zero-To-CAD-Qwen3-VL-2B",
+    name: "Zero-To-CAD-Qwen3-VL-2B",
+    author: "Autodesk AI Lab",
+    size: "2B",
+    role: "Image-to-CAD",
+    description: "Autodesk multimodal model converting 2D engineering drawings and sketches directly into 3D CAD models.",
+    hfUrl: "https://huggingface.co/ADSKAILab/Zero-To-CAD-Qwen3-VL-2B"
+  }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -306,14 +430,19 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
+  if (a.includes('autodesk') || a.includes('adska') || m.includes('zero-to-cad')) return <AutodeskLogo size={20} />;
+  if (a.includes('hexera') || m.includes('gmsh')) return <HexeraLogo size={20} />;
+  if (a.includes('kulibin') || m.includes('cadreasoner')) return <CADReasonerLogo size={20} />;
+  if (a.includes('jhlee') || m.includes('futurecad')) return <FutureCADLogo size={20} />;
+  if (a.includes('multilingual') || a.includes('industrial') || m.includes('industrialcoder')) return <IndustrialLogo size={20} />;
+  if (a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
+  if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
   if (a.includes('github') || m.includes('copilot') || m.includes('swe')) return <GithubLogo size={20} />;
   if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('nvidia') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
   if (a.includes('google') || m.includes('gemini') || m.includes('gemma')) return <GoogleLogo size={20} />;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
   if (a.includes('mistral') || m.includes('codestral')) return <MistralLogo size={20} />;
-  if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
   if (a.includes('anthropic') || m.includes('claude')) return <AnthropicLogo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
@@ -462,8 +591,8 @@ export default function AutonomousSoftwareEngineersPage() {
               else dl = m.downloads + " dl";
             }
 
-            let tag = "Code Model";
-            let description = m.downloads ? `${dl} - Code generation target` : "Code generation target";
+            let tag = "Engineering Model";
+            let description = m.downloads ? `${dl} - Engineering model` : "Engineering model";
             
             let author = m.author || m.id.split('/')[0];
             let name = m.id.split('/').pop();
@@ -473,8 +602,11 @@ export default function AutonomousSoftwareEngineersPage() {
               name: name,
               author: author,
               downloads: dl,
+              size: dl,
               description: description,
-              tag: tag
+              tag: tag,
+              role: tag,
+              hfUrl: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -1236,10 +1368,10 @@ export default function AutonomousSoftwareEngineersPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any engineering foundation or surrogate model works
+                  Any HF engineering-intelligence models work
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights engineering model as your optimization engine, and fine-tune specialized surrogates. The examples below are just a starting view.
+                  Use any open-weights engineering intelligence model as your optimization engine, or fine-tune specialized CAD & simulation surrogates. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1251,7 +1383,7 @@ export default function AutonomousSoftwareEngineersPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any engineering or simulation model on Hugging Face"
+                    placeholder="Search any HF engineering-intelligence model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1272,10 +1404,16 @@ export default function AutonomousSoftwareEngineersPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
-                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <a
+                          key={model.id}
+                          href={model.hfUrl || `https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length)}
+                        >
+                          <ArrowUpRight size={18} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                           
-                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#111]">
                             {getLogo(model.author, model.name)}
                           </div>
                           
@@ -1283,18 +1421,20 @@ export default function AutonomousSoftwareEngineersPage() {
                             <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                               {model.name}
                             </h3>
-                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1">
+                            <span className="text-[#C8C7BA] text-[13px] sm:text-[14px] line-clamp-1">
                               {model.author}
                             </span>
                           </div>
                           
                           <div className="flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
+                            <span className="text-[#F0EFE2] font-mono font-medium text-[13px] sm:text-[14px] shrink-0">
+                              {model.size || ""}
+                            </span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
