@@ -325,13 +325,22 @@ function IndustrialLogo({ size = 20 }: { size?: number }) {
 
 const DEFAULT_MODELS = [
   {
-    id: "Qwen/Qwen3.5-397B-A17B",
-    name: "Qwen3.5-397B-A17B",
-    author: "Qwen",
-    size: "397B MoE",
-    role: "Frontier Reasoning",
-    description: "Massive open MoE foundation model with frontier mathematical and physical reasoning capabilities.",
-    hfUrl: "https://huggingface.co/Qwen/Qwen3.5-397B-A17B"
+    id: "ADSKAILab/Zero-To-CAD-Qwen3-VL-2B",
+    name: "Zero-To-CAD-Qwen3-VL-2B",
+    author: "Autodesk AI Lab",
+    size: "2B",
+    role: "Image-to-CAD",
+    description: "Autodesk foundation model converting 2D engineering sketches and drawings directly into 3D CAD models.",
+    hfUrl: "https://huggingface.co/ADSKAILab/Zero-To-CAD-Qwen3-VL-2B"
+  },
+  {
+    id: "nvidia/PhysicalAI-Simulation-VoMP-Model",
+    name: "PhysicalAI-Simulation-VoMP",
+    author: "NVIDIA",
+    size: "VoMP 7B",
+    role: "Physics Simulation",
+    description: "NVIDIA foundation model predicting volumetric mechanical properties and stress tensors directly from 3D geometry.",
+    hfUrl: "https://huggingface.co/nvidia/PhysicalAI-Simulation-VoMP-Model"
   },
   {
     id: "deepseek-ai/DeepSeek-R1-0528",
@@ -339,35 +348,44 @@ const DEFAULT_MODELS = [
     author: "DeepSeek",
     size: "671B MoE",
     role: "Technical Reasoning",
-    description: "Frontier reasoning model with specialized chain-of-thought verification for technical problem-solving.",
+    description: "Frontier reasoning model with specialized chain-of-thought verification for complex engineering and mathematical proofs.",
     hfUrl: "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528"
   },
   {
-    id: "Qwen/Qwen3.5-27B",
-    name: "Qwen3.5-27B",
-    author: "Qwen",
-    size: "27B",
-    role: "Engineering Analysis",
-    description: "Dense engineering foundation model tuned for numerical simulation and multi-physics analysis.",
-    hfUrl: "https://huggingface.co/Qwen/Qwen3.5-27B"
+    id: "microsoft/CADFusion",
+    name: "CADFusion",
+    author: "Microsoft",
+    size: "8B",
+    role: "Text-to-CAD",
+    description: "Microsoft Research generative model translating natural language engineering requirements into parametric CAD operations.",
+    hfUrl: "https://huggingface.co/microsoft/CADFusion"
   },
   {
-    id: "Qwen/Qwen3-Coder-Next",
-    name: "Qwen3-Coder-Next",
+    id: "Qwen/Qwen3.5-397B-A17B",
+    name: "Qwen3.5-397B-A17B",
     author: "Qwen",
-    size: "80B / 3B active",
-    role: "Code Optimization",
-    description: "Sparse active MoE architecture specialized in simulation solver code optimization and algorithm synthesis.",
-    hfUrl: "https://huggingface.co/Qwen/Qwen3-Coder-Next"
+    size: "397B MoE",
+    role: "Frontier Reasoning",
+    description: "Massive open MoE foundation model with frontier mathematical, physical, and engineering analysis capabilities.",
+    hfUrl: "https://huggingface.co/Qwen/Qwen3.5-397B-A17B"
   },
   {
-    id: "Multilingual-Multimodal-NLP/IndustrialCoder-Thinking",
-    name: "IndustrialCoder-Thinking",
-    author: "Multilingual-Multimodal-NLP",
-    size: "32B",
-    role: "Industrial Engineering",
-    description: "Industrial engineering reasoning model fine-tuned for PLC, robotics, and manufacturing workflows.",
-    hfUrl: "https://huggingface.co/Multilingual-Multimodal-NLP/IndustrialCoder-Thinking"
+    id: "meta-llama/Llama-3.3-70B-Instruct",
+    name: "Llama-3.3-70B-Instruct",
+    author: "Meta",
+    size: "70B",
+    role: "Multiphysics Modeling",
+    description: "Meta open flagship model optimized for complex multiphysics modeling, simulation orchestration, and numerical workflows.",
+    hfUrl: "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct"
+  },
+  {
+    id: "mistralai/Codestral-22B-v0.1",
+    name: "Codestral-22B-v0.1",
+    author: "Mistral",
+    size: "22B",
+    role: "Solver Optimization",
+    description: "Mistral AI high-performance model specialized in numerical solver code synthesis, algorithmic tuning, and CUDA kernels.",
+    hfUrl: "https://huggingface.co/mistralai/Codestral-22B-v0.1"
   },
   {
     id: "hexera-org/GmshNet-8B-v0.1",
@@ -375,35 +393,17 @@ const DEFAULT_MODELS = [
     author: "Hexera",
     size: "8B",
     role: "CAE Meshing",
-    description: "Neural CAE model for automated 2D/3D finite-element mesh generation and boundary discretization.",
+    description: "Neural CAE meshing engine for automated 2D/3D finite-element mesh generation and boundary discretization.",
     hfUrl: "https://huggingface.co/hexera-org/GmshNet-8B-v0.1"
   },
   {
-    id: "jhlee11/FutureCAD-7B",
-    name: "FutureCAD-7B",
-    author: "jhlee11",
-    size: "7B base",
-    role: "Text-to-CAD",
-    description: "Generative Text-to-CAD model producing parametric STEP and boundary representation geometry.",
-    hfUrl: "https://huggingface.co/jhlee11/FutureCAD-7B"
-  },
-  {
-    id: "kulibinai/cadreasoner",
-    name: "CADReasoner",
-    author: "kulibinai",
-    size: "2B",
-    role: "CAD Reconstruction",
-    description: "Compact neural reasoner for CAD boundary reconstruction, feature tree recovery, and topology repair.",
-    hfUrl: "https://huggingface.co/kulibinai/cadreasoner"
-  },
-  {
-    id: "ADSKAILab/Zero-To-CAD-Qwen3-VL-2B",
-    name: "Zero-To-CAD-Qwen3-VL-2B",
-    author: "Autodesk AI Lab",
-    size: "2B",
-    role: "Image-to-CAD",
-    description: "Autodesk multimodal model converting 2D engineering drawings and sketches directly into 3D CAD models.",
-    hfUrl: "https://huggingface.co/ADSKAILab/Zero-To-CAD-Qwen3-VL-2B"
+    id: "google/gemma-2-27b-it",
+    name: "Gemma-2-27B-IT",
+    author: "Google",
+    size: "27B",
+    role: "Scientific Analysis",
+    description: "Google DeepMind lightweight open foundation model trained for high-precision scientific analysis and engineering evaluations.",
+    hfUrl: "https://huggingface.co/google/gemma-2-27b-it"
   }
 ];
 
@@ -431,18 +431,18 @@ const getLogo = (author: string, modelName: string = "") => {
   const m = (modelName || "").toLowerCase();
 
   if (a.includes('autodesk') || a.includes('adska') || m.includes('zero-to-cad')) return <AutodeskLogo size={20} />;
+  if (a.includes('nvidia') || m.includes('vomp') || m.includes('physicalai')) return <NvidiaLogo size={20} />;
+  if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
+  if (a.includes('microsoft') || m.includes('cadfusion') || m.includes('flexcad')) return <MicrosoftLogo size={20} />;
+  if (a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
+  if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
+  if (a.includes('mistral') || m.includes('codestral')) return <MistralLogo size={20} />;
   if (a.includes('hexera') || m.includes('gmsh')) return <HexeraLogo size={20} />;
+  if (a.includes('google') || m.includes('gemma')) return <GoogleLogo size={20} />;
+  if (a.includes('multilingual') || a.includes('industrial') || m.includes('industrialcoder')) return <IndustrialLogo size={20} />;
   if (a.includes('kulibin') || m.includes('cadreasoner')) return <CADReasonerLogo size={20} />;
   if (a.includes('jhlee') || m.includes('futurecad')) return <FutureCADLogo size={20} />;
-  if (a.includes('multilingual') || a.includes('industrial') || m.includes('industrialcoder')) return <IndustrialLogo size={20} />;
-  if (a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
-  if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
   if (a.includes('github') || m.includes('copilot') || m.includes('swe')) return <GithubLogo size={20} />;
-  if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
-  if (a.includes('nvidia') || m.includes('nvfp4')) return <NvidiaLogo size={20} />;
-  if (a.includes('google') || m.includes('gemini') || m.includes('gemma')) return <GoogleLogo size={20} />;
-  if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
-  if (a.includes('mistral') || m.includes('codestral')) return <MistralLogo size={20} />;
   if (a.includes('anthropic') || m.includes('claude')) return <AnthropicLogo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
