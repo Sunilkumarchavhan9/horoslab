@@ -85,102 +85,109 @@ const COMPARISON_ROWS = [
   }
 ];
 
-const AGENT_CODE = `# Autonomous Software Engineer Agent for Repository Issue Resolution
-import os
-from horos_swe import AutonomousSWEAgent, CodebaseGraph
+const AGENT_CODE = `# Engineering Intelligence Optimization Pipeline for Multiphysics Design Exploration
+import numpy as np
+from horos_engineering import EngineeringOptimizer, PhysicsSurrogate, ConstraintEvaluator
 
-# Initialize coding agent with tree-sitter codebase indexing
-agent = AutonomousSWEAgent.from_pretrained("Qwen/Qwen2.5-Coder-32B-Instruct")
-graph = CodebaseGraph.index_repository(path="./core-platform", language="python")
+# Initialize physics-guided optimization model with surrogate weights
+optimizer = EngineeringOptimizer.from_pretrained("DeepSeek-R1-Engineering-67B")
+surrogate = PhysicsSurrogate.load_mesh(path="./geometry/wing_bracket.step", format="cad")
 
-def resolve_github_issue(issue_description: str) -> dict:
-    """Parse issue thread, locate bug in AST graph, and generate verified PR."""
+def optimize_design_space(specifications: dict) -> dict:
+    """Explore design space, evaluate aerodynamic & thermal constraints, and verify with FEA."""
     
-    # Locate relevant symbols and call graphs
-    relevant_files = graph.search_symbols(issue_description)
+    # Define design space parameters and boundary conditions
+    boundary_conditions = surrogate.extract_boundaries(specifications["boundary_loads"])
     
-    # Generate bug fix candidate with test suite
-    patch = agent.generate_patch(
-        issue=issue_description, 
-        context=relevant_files
+    # Generate Pareto-optimal candidate geometries under real-world constraints
+    candidates = optimizer.explore_candidates(
+        objectives=["minimize_stress", "minimize_drag"],
+        constraints=specifications["safety_tolerances"],
+        surrogate=surrogate
     )
     
-    # Run test suite inside isolated Docker sandbox
-    test_results = agent.run_sandbox_tests(patch, command="pytest tests/")
+    # Run high-fidelity multiphysics simulation on top candidates
+    simulation_results = optimizer.run_solver_simulation(candidates[0], solver="OpenFOAM-FEA")
     
-    if test_results.passed:
-        return agent.create_pull_request(patch, title=f"Fix: {issue_description[:40]}")
+    if simulation_results.all_constraints_satisfied:
+        return optimizer.export_design_artifact(candidates[0], metrics=simulation_results.metrics)
     else:
-        # Self-correct code based on test output
-        refined_patch = agent.self_correct(patch, test_results.error_log)
-        return agent.create_pull_request(refined_patch)
+        # Refine design parameters using gradient constraint solver
+        refined = optimizer.refine_topology(candidates[0], simulation_results.violations)
+        return optimizer.export_design_artifact(refined)
         
     return None`;
 
 const RUN_SWE_CODE = `#!/usr/bin/env bash
-# Autonomous SWE Agent execution pipeline
+# Engineering Intelligence multi-objective optimization pipeline
 set -euo pipefail
  
-REPO_NAME="org/core-platform"
-ISSUE_ID="142"
+GEOMETRY_SPEC="./specs/wing_bracket_v4.json"
+SOLVER_CONFIG="openfoam-fea-coupled"
 
-# Execute autonomous bug resolution in isolated container
-horos-swe-agent resolve \\
-  --repo $REPO_NAME \\
-  --issue $ISSUE_ID \\
-  --model Qwen/Qwen2.5-Coder-32B-Instruct \\
-  --sandbox docker \\
-  --run-tests enabled \\
-  --output-pr ./pr_summary.json`;
+# Run physics-guided design optimization in isolated GPU container
+horos-engineering-engine optimize \\
+  --spec $GEOMETRY_SPEC \\
+  --model DeepSeek-R1-Engineering-67B \\
+  --surrogate physics-mesh-surrogate \\
+  --solver $SOLVER_CONFIG \\
+  --max-iterations 2500 \\
+  --target-reduction 0.15 \\
+  --output-artifact ./optimized_component.step`;
 
 const PIPELINE_CODE = `{
-  "name": "autonomous-software-engineers",
-  "agent": "swe-agent-v3",
-  "model": "Qwen2.5-Coder-32B-Instruct",
-  "codebase": {
-    "ast_parser": "tree-sitter",
-    "indexing": "vector-graph",
-    "languages": ["python", "typescript", "go"]
+  "name": "engineering-intelligence-optimization",
+  "engine": "multiphysics-optimizer-v4",
+  "model": "DeepSeek-R1-Engineering-67B",
+  "design_space": {
+    "cad_format": "STEP/IGES",
+    "mesh_resolution": "adaptive-tetrahedral",
+    "boundary_solvers": ["FEA", "CFD", "Thermal"]
   },
-  "sandbox": "docker-isolated",
-  "swe_bench_eval": true,
-  "auto_create_pr": true
+  "constraints": {
+    "min_safety_factor": 1.5,
+    "max_von_mises_mpa": 450.0,
+    "thermal_gradient_c": 120.0
+  },
+  "solver_sandbox": "openfoam-fea-isolated",
+  "auto_export_cad": true
 }`;
 
-const DOCKERFILE_CODE = `FROM ubuntu:22.04 AS base
+const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.0-devel-ubuntu22.04 AS base
  
-RUN apt-get update && apt-get install -y python3.11 python3-pip git nodejs golang
+RUN apt-get update && apt-get install -y python3.11 python3-pip git openfoam gmsh
  
 WORKDIR /workspace
 COPY requirements.txt .
 RUN pip install -r requirements.txt
  
-COPY agent/ /workspace/agent/
-COPY agent.py run_swe.sh pipeline.json .
+COPY engines/ /workspace/engines/
+COPY optimize.py run_opt.sh pipeline.json .
  
 EXPOSE 8080
-ENTRYPOINT ["/workspace/run_swe.sh"]`;
+ENTRYPOINT ["/workspace/run_opt.sh"]`;
 
-const EVAL_CODE = `# Evaluation harness: measuring SWE-bench resolution rate and test pass rate
-from horos_eval import SWEBenchEvaluator, CodeQualityGate
+const EVAL_CODE = `# Multiphysics validation harness: verifying structural safety factors and solver convergence
+from horos_eval import PhysicsValidator, ConstraintGate
 
-def evaluate_patch_quality(original_repo: str, patch_diff: str) -> dict:
-    """Verify coding agent accuracy against SWE-bench criteria."""
+def evaluate_solution_quality(baseline_cad: str, optimized_cad: str) -> dict:
+    """Verify engineering design validity against FEA/CFD acceptance criteria."""
     
-    evaluator = SWEBenchEvaluator()
-    quality = CodeQualityGate(strict_linter=True)
+    validator = PhysicsValidator(solver_backend="multiphysics-gpu")
+    quality_gate = ConstraintGate(safety_factor_min=1.5, yield_tolerance_mpa=450.0)
     
-    # Run AST linting and static analysis
-    lint_passed = quality.verify_ast(patch_diff)
+    # Run finite-element stress and thermal load simulation
+    stress_analysis = validator.run_fea_stress(optimized_cad)
     
-    # Run SWE-bench test resolution evaluation
-    swe_score = evaluator.score_resolution(original_repo, patch_diff)
+    # Check yield tolerance and safety margin criteria
+    constraints_met = quality_gate.verify_margins(stress_analysis)
     
     return {
-        "ast_lint_passed": lint_passed,
-        "swe_bench_resolved": swe_score.passed,
-        "regression_risk": swe_score.regression_delta
-    }`;
+        "safety_margin_verified": constraints_met.passed,
+        "max_von_mises_stress": stress_analysis.max_stress_mpa,
+        "weight_reduction_pct": stress_analysis.mass_delta_pct,
+        "solver_converged": stress_analysis.converged
+    };`;
 
 type DataFactoryFile = string;
 
@@ -265,15 +272,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "Qwen/Qwen2.5-Coder-32B-Instruct", name: "Qwen2.5 Coder 32B", author: "Qwen", description: "State-of-the-art open coding LLM with repository-level code reasoning.", role: "Code LLM" },
-  { id: "deepseek-ai/DeepSeek-Coder-V2-Instruct", name: "DeepSeek Coder V2", author: "DeepSeek", description: "Deep reasoning engine tailored for complex multi-file bug fixes and refactoring.", role: "SWE Agent" },
-  { id: "meta-llama/Llama-3.2-11B-Vision-Instruct", name: "Llama 3.2 Multimodal SWE", author: "Meta", description: "Multimodal software engineering agent capable of parsing UI mockups and code.", role: "Multimodal SWE" },
-  { id: "bigcode/starcoder2-15b", name: "StarCoder2 15B", author: "BigCode", description: "Open-weights code generator trained across 80+ programming languages.", role: "Code Generator" },
-  { id: "mistralai/Codestral-22B-v0.1", name: "Codestral 22B", author: "Mistral", description: "Ultra-fast code completion and middle-out fill model for large codebases.", role: "Code LLM" },
-  { id: "anthropic/claude-3-5-sonnet", name: "Claude 3.5 Sonnet (SWE)", author: "Anthropic", description: "Frontier autonomous coding model leading SWE-bench resolution benchmarks.", role: "SWE Agent" },
-  { id: "microsoft/phi-3-mini-4k-instruct", name: "Phi-3 Mini Coder", author: "Microsoft", description: "Compact low-latency coding model for fast local syntax checking and generation.", role: "Fast Coder" },
-  { id: "google/codegemma-7b-it", name: "CodeGemma 7B", author: "Google", description: "Lightweight code model optimized for intelligent completion and unit test creation.", role: "Code Model" },
-  { id: "huggingface/swe-agent-7b", name: "SWE Agent 7B", author: "HuggingFace", description: "Autonomous GitHub issue solver fine-tuned on SWE-bench trajectories.", role: "SWE Agent" }
+  { id: "deepseek-ai/DeepSeek-R1-Engineering-67B", name: "DeepSeek R1 Engineering 67B", author: "DeepSeek", description: "State-of-the-art open reasoning LLM for engineering design exploration and math.", role: "Engineering Reasoner" },
+  { id: "nvidia/Modulus-PINN-Surrogate-8B", name: "Modulus PINN Surrogate 8B", author: "Nvidia", description: "Physics-informed neural operator for millisecond FEA/CFD field approximation.", role: "Physics Surrogate" },
+  { id: "meta-llama/Llama-3.3-70B-Engineering", name: "Llama 3.3 70B Engineering", author: "Meta", description: "High-capacity frontier model fine-tuned on multiphysics specifications and CAD logic.", role: "Design Reasoner" },
+  { id: "Qwen/Qwen2.5-72B-Physics-Surrogate", name: "Qwen2.5 72B Physics", author: "Qwen", description: "Deep numerical reasoning engine adapted for boundary condition evaluation.", role: "Boundary Solver" },
+  { id: "mistralai/Mistral-Large-Engineering", name: "Mistral Large Engineering", author: "Mistral", description: "Fast multi-objective optimization model for CAD parameter sweeps and tolerances.", role: "Topology Optimizer" },
+  { id: "anthropic/claude-3-5-sonnet-engineering", name: "Claude 3.5 Sonnet (Engineering)", author: "Anthropic", description: "Frontier reasoning model for complex multiphysics verification and safety audits.", role: "Verification Gate" },
+  { id: "microsoft/phi-4-engineering-surrogate", name: "Phi-4 Engineering Surrogate", author: "Microsoft", description: "Compact low-latency physics surrogate for fast real-time interactive design loops.", role: "Fast Surrogate" },
+  { id: "google/gemma-2-27b-multiphysics", name: "Gemma 2 27B Multiphysics", author: "Google", description: "Lightweight physical dynamics model optimized for thermal and structural margins.", role: "Surrogate Model" },
+  { id: "huggingface/openfoam-surrogate-7b", name: "OpenFOAM Surrogate 7B", author: "HuggingFace", description: "Neural surrogate fine-tuned on Navier-Stokes and CFD simulation trajectories.", role: "Fluid Surrogate" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -328,34 +335,34 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How do Autonomous Software Engineers safely test and verify code?",
-    answer: "Horos executes all agent-generated patches in isolated Docker sandboxes using your existing test suites (pytest, go test, npm test) and AST linters before creating pull requests.",
+    question: "How does Engineering Intelligence simulate and verify complex physical systems?",
+    answer: "Horos couples neural physics surrogates with high-fidelity multiphysics solvers (FEA, CFD, OpenFOAM). AI models explore vast design spaces at millisecond speeds, while traditional numerical solvers rigorously verify boundary constraints and safety tolerances.",
   },
   {
-    question: "Can the agent index large enterprise monorepos and custom SDKs?",
-    answer: "Yes. Native support for tree-sitter AST parsing and vector graph indexing enables instant code search and cross-module dependency understanding across millions of lines of code.",
+    question: "Can I connect my team's proprietary CAD geometries, solvers, and boundary data?",
+    answer: "Yes. Native support for standard CAD formats (STEP, IGES, STL), mesh formats (tetrahedral, polyhedral), and solver APIs enables seamless integration with your existing simulation pipelines and internal engineering databases.",
   },
   {
-    question: "Can I export fine-tuned coding models to run in my private cloud or on-premise?",
-    answer: "Yes! All fine-tuned code LLM weights and runtime containers can be exported as GGUF or TensorRT binaries and deployed completely inside your private VPC.",
+    question: "Can I deploy optimized engineering models on-premise or in air-gapped environments?",
+    answer: "Yes! All trained surrogate models, fine-tuned engineering weights, and solver containers can be exported as containerized artifacts (Docker, Singularity, TensorRT) and deployed completely inside your private infrastructure.",
   }
 ];
 
 export default function AutonomousSoftwareEngineersPage() {
-  const [activeFile, setActiveFile] = useState<DataFactoryFile>("agent.py" as any);
+  const [activeFile, setActiveFile] = useState<DataFactoryFile>("optimize.py" as any);
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "agent.py": AGENT_CODE,
+    "optimize.py": AGENT_CODE,
     "eval.py": EVAL_CODE,
-    "run_swe.sh": RUN_SWE_CODE,
+    "run_opt.sh": RUN_SWE_CODE,
     "pipeline.json": PIPELINE_CODE,
     "Dockerfile": DOCKERFILE_CODE
   };
 
-  const AGENT_MSG_1 = "On it. I'll clone org/core-platform, search tree-sitter AST index for memory leak sources, write a reproduction unit test, and generate the code patch.";
-  const AGENT_MSG_2 = "Issue resolved. Fixed unclosed socket connection in pool_manager.go. All 142 unit tests passed. PR #892 opened with verified benchmark score.";
+  const AGENT_MSG_1 = "On it. I'll load the wing bracket geometry, parameterize boundary constraints, evaluate 10,000 design candidates, and run coupled FEA stress simulations.";
+  const AGENT_MSG_2 = "Optimization complete. Candidate #418 achieves 18.4% mass reduction while meeting all safety margins. Validated CAD model ready for deployment.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -874,17 +881,17 @@ export default function AutonomousSoftwareEngineersPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[28px]">
-                        Resolve GitHub issue #142 in{" "}
+                        Optimize structural wing bracket in{" "}
                         <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[12px]">
-                          <GithubLogo size={11} /> org/core-platform
+                          <Workflow size={11} /> cad/wing-bracket-v4
                         </span>{" "}
-                        run unit test suite with{" "}
+                        run coupled FEA & CFD solver with{" "}
                         <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[12px]">
-                          <QwenLogo size={11} /> Qwen2.5-Coder-32B (4x A100 GPU)
+                          <DeepSeekLogo size={11} /> DeepSeek-R1-Engineering-67B (8x H100 GPU)
                         </span>{" "}
-                        and open verified PR on{" "}
+                        and verify constraints on{" "}
                         <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-0.5 rounded text-[#75bf00] align-middle font-mono text-[12px]">
-                          <MetaLogo size={11} /> SWE Sandbox
+                          <Cpu size={11} /> Multiphysics Sandbox
                         </span>.
                       </p>
                     </div>
@@ -921,10 +928,10 @@ export default function AutonomousSoftwareEngineersPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Indexing codebase AST & symbols</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Parameterizing design space & boundary loads</span>
                             <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Parsed 1,420 files with tree-sitter symbol graph</span>
+                          <span className="text-[#666] text-[12px]">Loaded CAD mesh with 384,000 tetrahedral elements</span>
                         </div>
                       </div>
 
@@ -938,10 +945,10 @@ export default function AutonomousSoftwareEngineersPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Locating memory leak root cause</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Surrogate model candidate exploration</span>
                             <span className="text-[#C8C7BA] text-[12px]">3.5s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Isolated unclosed socket in pool_manager.go:L142</span>
+                          <span className="text-[#75bf00] text-[12px]">Screened 10,000 design candidates via neural surrogate</span>
                         </div>
                       </div>
 
@@ -955,10 +962,10 @@ export default function AutonomousSoftwareEngineersPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Generating unit test reproduce case</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Coupled FEA & multiphysics simulation</span>
                             <span className="text-[#C8C7BA] text-[12px]">7.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">TestPoolMemoryLeak failed as expected</span>
+                          <span className="text-[#666] text-[12px]">Simulated top 50 candidates in OpenFOAM & FEA solver</span>
                         </div>
                       </div>
 
@@ -972,10 +979,10 @@ export default function AutonomousSoftwareEngineersPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Applying code patch & compiling AST</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Constraint verification & safety margin audit</span>
                             <span className="text-[#C8C7BA] text-[12px]">14.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Zero syntax or compilation errors</span>
+                          <span className="text-[#666] text-[12px]">Verified von Mises stress &lt; 450 MPa, safety factor &gt; 1.65</span>
                         </div>
                       </div>
 
@@ -989,10 +996,10 @@ export default function AutonomousSoftwareEngineersPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Running test suite in sandbox</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Synthesizing optimized CAD artifact</span>
                             <span className="text-[#C8C7BA] text-[12px]">22.8s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">142/142 unit tests passed. PR #892 ready</span>
+                          <span className="text-[#75bf00] text-[12px]">Mass reduced by 18.4%. Exported verified STEP to pipeline</span>
                         </div>
                       </div>
                     </div>
@@ -1023,14 +1030,15 @@ export default function AutonomousSoftwareEngineersPage() {
                     <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
                       <input
                         type="text"
-                        placeholder="Teach the agent to follow your team's code review guidelines..."
+                        placeholder="Define engineering constraints, solver configurations, or design objectives..."
                         className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
                         readOnly
                       />
                       <div className="flex justify-between items-center px-1">
                         <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@CodeStyle</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Constraints</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Solvers</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Objectives</span>
                         </div>
                         <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
                           <ArrowUp size={14} strokeWidth={2.5} />
@@ -1043,30 +1051,30 @@ export default function AutonomousSoftwareEngineersPage() {
                 {/* Files Content */}
                 <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SWE ENGINES</span>
+                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">ENGINEERING ENGINES</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      ast_indexer.py
+                      design_search.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      code_solver.py
+                      fea_solver.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      pr_generator.py
+                      constraint_eval.py
                     </div>
 
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> swe-agent-factory/
+                        <ChevronDown size={14} className="text-[#777]" /> engineering-factory/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
-                          onClick={() => selectFileManually("agent.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "agent.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("optimize.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "optimize.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          agent.py
+                          optimize.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("eval.py")}
@@ -1075,10 +1083,10 @@ export default function AutonomousSoftwareEngineersPage() {
                           eval.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("run_swe.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_swe.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("run_opt.sh")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_opt.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          run_swe.sh
+                          run_opt.sh
                         </button>
                         <button 
                           onClick={() => selectFileManually("pipeline.json")}
@@ -1093,10 +1101,10 @@ export default function AutonomousSoftwareEngineersPage() {
                           Dockerfile
                         </button>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          docker-compose.yml
+                          boundary_mesh.step
                         </div>
                         <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                          requirements.txt
+                          tolerances.yaml
                         </div>
                       </div>
                     </div>
@@ -1107,10 +1115,10 @@ export default function AutonomousSoftwareEngineersPage() {
                 <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
-                      onClick={() => selectFileManually("agent.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "agent.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("optimize.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "optimize.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      agent.py
+                      optimize.py
                     </button>
                     <button
                       onClick={() => selectFileManually("eval.py")}
@@ -1119,10 +1127,10 @@ export default function AutonomousSoftwareEngineersPage() {
                       eval.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("run_swe.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_swe.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("run_opt.sh")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_opt.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      run_swe.sh
+                      run_opt.sh
                     </button>
                     <button
                       onClick={() => selectFileManually("pipeline.json")}
@@ -1179,11 +1187,11 @@ export default function AutonomousSoftwareEngineersPage() {
                   {/* Card 1 */}
                   <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Cloud size={28} strokeWidth={1.5} />
+                      <Cpu size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Codebase Index</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Simulation Solvers</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Tree-sitter AST symbol graphs operating directly across millions of lines of code.
+                      Coupled FEA, CFD, and multiphysics solvers operating directly on high-resolution CAD geometry and boundary meshes.
                     </p>
                   </div>
 
@@ -1192,20 +1200,20 @@ export default function AutonomousSoftwareEngineersPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Server size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Reasoning Weights</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Neural Surrogates</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Self-host the fine-tuned coding models (Qwen-Coder, DeepSeek-Coder) in your own cloud. Full IP privacy.
+                      Self-host fast neural physics surrogates and engineering foundation models on private GPUs with complete IP control.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="px-8 py-16 flex flex-col gap-4 items-start">
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Network size={28} strokeWidth={1.5} />
+                      <ShieldCheck size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Test Sandboxes</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Constraint Validators</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Execute automated pytest and AST linter suites inside sandboxed Docker containers before opening PRs.
+                      Evaluate safety factors, yield tolerances, and thermal margins inside isolated simulation sandboxes before promotion.
                     </p>
                   </div>
                 </div>
@@ -1221,10 +1229,10 @@ export default function AutonomousSoftwareEngineersPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any code generator or SWE model works
+                  Any engineering foundation or surrogate model works
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights coding model as your SWE engine, and fine-tune any specialized target model. The examples below are just a starting view.
+                  Use any open-weights engineering model as your optimization engine, and fine-tune specialized surrogates. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1236,7 +1244,7 @@ export default function AutonomousSoftwareEngineersPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any coding or SWE model on Hugging Face"
+                    placeholder="Search any engineering or simulation model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1299,7 +1307,7 @@ export default function AutonomousSoftwareEngineersPage() {
                   What Horos tunes
                 </h2>
                 <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the pipeline, retuned per model and repository.
+                  Every stage of the engineering pipeline, retuned per model, geometry, and solver.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
@@ -1310,9 +1318,9 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="text-[#75bf00]">
                         <ScanSearch size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Repo AST Indexing</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">CAD Mesh Parameterization</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune tree-sitter symbol graphs for instant retrieval of relevant function definitions and interfaces.
+                        Tune mesh discretization and boundary load representations for instant evaluation of complex geometric topologies.
                       </p>
                     </div>
 
@@ -1320,9 +1328,9 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="text-[#75bf00]">
                         <Zap size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Multi-File Reasoning</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Coupled Multiphysics Reasoning</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Correlate cross-module calls and type signatures to generate multi-file PR diffs without breaking changes.
+                        Correlate structural, aerodynamic, and thermal physics to generate unified engineering designs without boundary conflicts.
                       </p>
                     </div>
 
@@ -1330,9 +1338,9 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="text-[#75bf00]">
                         <Sliders size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sandboxed Test Execution</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sandboxed Solver Execution</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Profile isolated Docker test harnesses to execute pytest/go test suites and verify patch stability.
+                        Profile isolated containerized solver harnesses (OpenFOAM, FEA, Gmsh) to verify physical stability and convergence.
                       </p>
                     </div>
 
@@ -1341,9 +1349,9 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="text-[#75bf00]">
                         <Layers size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">SWE-Bench Optimization</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Pareto-Front Optimization</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in issue resolution harness benchmarked on real GitHub repositories and complex bug reports.
+                        Built-in multi-objective exploration harness balancing mass reduction, stiffness, and thermal dissipation under hard constraints.
                       </p>
                     </div>
 
@@ -1351,9 +1359,9 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="text-[#75bf00]">
                         <Database size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Automated PR Generation</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Automated CAD & STEP Generation</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize coding LLM weights (FP8/INT8) and compile for rapid execution. Generates clean git commits in seconds.
+                        Quantize neural surrogate weights for rapid inference and synthesize manufacturing-ready STEP/IGES CAD artifacts in seconds.
                       </p>
                     </div>
 
@@ -1361,9 +1369,9 @@ export default function AutonomousSoftwareEngineersPage() {
                       <div className="text-[#75bf00]">
                         <Workflow size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Codebase Fine-Tuning</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Surrogate Fine-Tuning</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Fine-tune Qwen-Coder and DeepSeek-Coder on your proprietary codebases and internal engineering conventions.
+                        Fine-tune neural physics models on your proprietary simulation datasets, test benches, and internal engineering standards.
                       </p>
                     </div>
 
@@ -1384,7 +1392,7 @@ export default function AutonomousSoftwareEngineersPage() {
                   Try this pipeline
                 </h2>
                 <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
-                  Edit the model, repository, or agent inline. Send to retune the stack in the dashboard.
+                  Edit the model, solver, or constraints inline. Send to retune the stack in the dashboard.
                 </p>
 
                 <div className="relative z-50 flex justify-center items-center mb-24 w-full h-[261px]">
@@ -1504,13 +1512,13 @@ export default function AutonomousSoftwareEngineersPage() {
               </div>
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
-                Deploy your first coding<br className="hidden md:block" />
-                agent, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
+                Deploy your first engineering<br className="hidden md:block" />
+                model, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
                 ship
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the task or issue. Horos builds and optimizes the SWE stack.
+                Define the geometry, boundary loads, or constraints. Horos builds and optimizes the engineering stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
