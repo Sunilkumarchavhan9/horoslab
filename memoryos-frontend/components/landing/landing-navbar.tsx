@@ -147,94 +147,94 @@ export function LandingNavbar({
                 <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[720px] border border-dashed border-[#333] bg-[#151515] shadow-2xl z-50 text-left font-sans grid grid-cols-3 whitespace-normal">
                   {[
                     {
-                      title: "Voice Agents",
-                      desc: "Understand and respond to voice in real time.",
+                      title: "Voice AI",
+                      desc: "Speech recognition, perception, and generation.",
                       icons: [OpenAILogo, QwenLogo, NvidiaLogo],
-                      href: "/use-cases/voice-agent"
+                      href: "/use-cases/voice-ai"
                     },
                     {
-                      title: "AI Assistants",
-                      desc: "Build assistants that understand and act.",
+                      title: "Language Models",
+                      desc: "Instruction following, dialogue, and tool use.",
                       icons: [MetaLogo, QwenLogo, MistralLogo],
-                      href: "/use-cases/ai-assistant"
+                      href: "/use-cases/language-models"
                     },
                     {
-                      title: "Coding Agents",
-                      desc: "Agents that write, test, and improve code.",
+                      title: "Code Intelligence",
+                      desc: "Code generation, debugging, and verification.",
                       icons: [QwenLogo, DeepSeekLogo, MistralLogo],
-                      href: "/use-cases/coding-agent"
+                      href: "/use-cases/code-intelligence"
                     },
                     {
-                      title: "Research Agents",
-                      desc: "Agents that research, reason, and discover.",
+                      title: "Research AI",
+                      desc: "Research, experiments, and model development.",
                       icons: [DeepSeekLogo, QwenLogo, MistralLogo],
-                      href: "/use-cases/research-agent"
+                      href: "/use-cases/research-ai"
                     },
                     {
                       title: "Vision AI",
-                      desc: "Models that see and understand the world.",
+                      desc: "Visual understanding, objects, and motion.",
                       icons: [QwenLogo, MetaLogo, NvidiaLogo],
                       href: "/use-cases/vision-ai"
                     },
                     {
                       title: "Multimodal AI",
-                      desc: "Understand text, images, audio, and video.",
+                      desc: "Reason across text, images, audio, and video.",
                       icons: [QwenLogo, MetaLogo, MistralLogo],
                       href: "/use-cases/multimodal-ai"
                     },
                     {
                       title: "Reasoning AI",
-                      desc: "Models that reason through hard problems.",
+                      desc: "Solve difficult problems with measurable correctness.",
                       icons: [DeepSeekLogo, QwenLogo, MistralLogo],
                       href: "/use-cases/reasoning-ai"
                     },
                     {
                       title: "World Models",
-                      desc: "Models that learn how worlds behave.",
+                      desc: "Predict physical dynamics and future states.",
                       icons: [NvidiaLogo, GoogleLogo, MetaLogo],
-                      href: "/use-cases/simulation-world-models"
+                      href: "/use-cases/world-models"
+                    },
+                    {
+                      title: "Engineering Intelligence",
+                      desc: "Solve complex engineering and optimization problems.",
+                      icons: [QwenLogo, MetaLogo, NvidiaLogo],
+                      href: "/use-cases/engineering-intelligence"
                     },
                     {
                       title: "Autonomous Agents",
-                      desc: "Agents that plan, act, and adapt.",
+                      desc: "Agents that plan, use tools, execute tasks, and adapt from feedback.",
                       icons: [MetaLogo, QwenLogo, DeepSeekLogo],
-                      href: "/use-cases/continuous-auto-diagnosis"
-                    },
-                    {
-                      title: "Engineering AI",
-                      desc: "AI for complex engineering problems.",
-                      icons: [QwenLogo, MetaLogo, NvidiaLogo],
-                      href: "/use-cases/autonomous-software-engineers"
+                      href: "/use-cases/autonomous-agents"
                     },
                     {
                       title: "Autonomous Systems",
                       desc: "Systems that perceive, decide, and act.",
                       icons: [NvidiaLogo, MetaLogo, QwenLogo],
-                      href: "/use-cases/verifiable-legal-agents"
+                      href: "/use-cases/autonomous-systems"
                     },
                     {
                       title: "Scientific AI",
-                      desc: "AI for science and discovery.",
+                      desc: "Scientific modeling, simulation, and discovery.",
                       icons: [DeepSeekLogo, QwenLogo, NvidiaLogo],
-                      href: "/use-cases/automated-scientific-discoverers"
+                      href: "/use-cases/scientific-ai"
                     },
                     {
                       title: "Physical AI",
-                      desc: "Teach models to understand the physical world.",
+                      desc: "Learn and predict how the physical world behaves.",
                       icons: [NvidiaLogo, QwenLogo, MetaLogo],
-                      href: "/use-cases/decoding-physical-reality"
+                      href: "/use-cases/physical-ai"
                     },
                     {
                       title: "Synthetic Reality",
-                      desc: "Create worlds to train and test models.",
+                      desc: "Generate environments for training and evaluation.",
                       icons: [NvidiaLogo, GoogleLogo, MetaLogo],
-                      href: "/use-cases/generative-video-and-physics"
+                      href: "/use-cases/synthetic-reality"
                     },
                     {
                       title: "Robotics",
-                      desc: "Intelligence for robots and machines.",
+                      desc: "Deploy and evaluate intelligence on robots.",
                       icons: [NvidiaLogo, GoogleLogo],
-                      href: "/use-cases/embodied-humanoid-robots"
+                      href: "/use-cases/robotics"
                     }
                   ].map((uc, i) => {
                     const content = (
