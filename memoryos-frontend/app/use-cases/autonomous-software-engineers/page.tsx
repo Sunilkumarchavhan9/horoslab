@@ -822,12 +822,16 @@ export default function AutonomousSoftwareEngineersPage() {
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0">
+                {/* Sandbox Content Container (SVG Skeleton Architecture) */}
+                <div className="w-full relative mx-auto" style={{ aspectRatio: '1351 / 892' }}>
 
               {/* Panes Backgrounds */}
               <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
+                gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
               }}>
                 <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
                 <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
@@ -838,36 +842,36 @@ export default function AutonomousSoftwareEngineersPage() {
               <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
 
               <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
+                gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
               }}>
 
                 {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
+                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-4 sm:px-5 pointer-events-auto">
+                  <div className="flex gap-4 sm:gap-6 h-full items-end pb-2">
                     <button
                       onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                     </button>
                     <button
                       onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      <Code2 size={13} /> CODE
+                      <Code2 size={12} /> CODE
                     </button>
                     <button
                       onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      <Sliders size={13} /> OPTIMIZATION
+                      <Sliders size={12} /> OPTIMIZATION
                     </button>
                     <button
                       onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      <Rocket size={13} /> DEPLOY
+                      <Rocket size={12} /> DEPLOY
                     </button>
                   </div>
                   <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
@@ -877,148 +881,148 @@ export default function AutonomousSoftwareEngineersPage() {
                 </div>
 
                 {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[13px] font-medium mb-1 leading-[28px]">
+                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                  <div className="flex flex-col gap-3 sm:gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-2 sm:pb-3">
+                    <div className="bg-[#1a1a1a] border border-[#252525] p-3 sm:p-3.5 rounded-[4px]">
+                      <p className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium mb-1 leading-[18px] sm:leading-[19px]">
                         Optimize structural wing bracket in{" "}
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[12px]">
-                          <Workflow size={11} /> cad/wing-bracket-v4
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[10.5px]">
+                          <Workflow size={10} /> cad/wing-bracket-v4
                         </span>{" "}
                         run coupled FEA & CFD solver with{" "}
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[12px]">
-                          <DeepSeekLogo size={11} /> DeepSeek-R1-Engineering-67B (8x H100 GPU)
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[10.5px]">
+                          <DeepSeekLogo size={10} /> DeepSeek-R1-67B
                         </span>{" "}
                         and verify constraints on{" "}
-                        <span className="inline-flex items-center gap-1.5 bg-[#151515] border border-[#333] px-2 py-0.5 rounded text-[#75bf00] align-middle font-mono text-[12px]">
-                          <Cpu size={11} /> Multiphysics Sandbox
+                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#75bf00] align-middle font-mono text-[10.5px]">
+                          <Cpu size={10} /> Multiphysics Sandbox
                         </span>.
                       </p>
                     </div>
 
                     {/* Step 1 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                    <div className={`flex gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                      <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                         {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                          <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                         ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
+                          <Sparkles size={12} className="text-[#75bf00]" />
                         )}
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                        <p className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] leading-[18px]">
+                          {visibleStep > 1 ? AGENT_MSG_1 : typedMsg1}
                           {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                            <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                           )}
                         </p>
                       </div>
                     </div>
 
                     {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                    <div className="flex flex-col gap-2 mt-1">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={12} className="text-[#75bf00]" />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Parameterizing design space & boundary loads</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium truncate">Parameterizing design space & boundary loads</span>
+                            <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">1.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Loaded CAD mesh with 384,000 tetrahedral elements</span>
+                          <span className="text-[#666] text-[10px] sm:text-[10.5px] truncate">Loaded CAD mesh with 384,000 tetrahedral elements</span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={12} className="text-[#75bf00]" />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Surrogate model candidate exploration</span>
-                            <span className="text-[#C8C7BA] text-[12px]">3.5s</span>
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium truncate">Surrogate model candidate exploration</span>
+                            <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">3.5s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Screened 10,000 design candidates via neural surrogate</span>
+                          <span className="text-[#75bf00] text-[10px] sm:text-[10.5px] truncate">Screened 10,000 design candidates via neural surrogate</span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={12} className="text-[#75bf00]" />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Coupled FEA & multiphysics simulation</span>
-                            <span className="text-[#C8C7BA] text-[12px]">7.1s</span>
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium truncate">Coupled FEA & multiphysics simulation</span>
+                            <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">7.1s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Simulated top 50 candidates in OpenFOAM & FEA solver</span>
+                          <span className="text-[#666] text-[10px] sm:text-[10.5px] truncate">Simulated top 50 candidates in OpenFOAM & FEA solver</span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={12} className="text-[#75bf00]" />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Constraint verification & safety margin audit</span>
-                            <span className="text-[#C8C7BA] text-[12px]">14.2s</span>
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium truncate">Constraint verification & safety margin audit</span>
+                            <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">14.2s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Verified von Mises stress &lt; 450 MPa, safety factor &gt; 1.65</span>
+                          <span className="text-[#666] text-[10px] sm:text-[10.5px] truncate">Verified von Mises stress &lt; 450 MPa, safety factor &gt; 1.65</span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={12} className="text-[#75bf00]" />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Synthesizing optimized CAD artifact</span>
-                            <span className="text-[#C8C7BA] text-[12px]">22.8s</span>
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium truncate">Synthesizing optimized CAD artifact</span>
+                            <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">22.8s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Mass reduced by 18.4%. Exported verified STEP to pipeline</span>
+                          <span className="text-[#75bf00] text-[10px] sm:text-[10.5px] truncate">Mass reduced by 18.4%. Exported verified STEP to pipeline</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Step 7 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                    <div className={`flex gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                      <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                         {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                          <Loader2 size={12} className="text-[#75bf00] animate-spin" />
                         ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
+                          <Sparkles size={12} className="text-[#75bf00]" />
                         )}
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                        <p className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] leading-[18px]">
+                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? typedMsg2 : AGENT_MSG_2}
                           {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                            <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                           )}
                         </p>
                       </div>
@@ -1026,22 +1030,22 @@ export default function AutonomousSoftwareEngineersPage() {
                   </div>
 
                   {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
+                  <div className="mt-2 shrink-0 mb-1">
+                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-1.5">
                       <input
                         type="text"
                         placeholder="Define engineering constraints, solver configurations, or design objectives..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
+                        className="bg-transparent text-[#F0EFE2] text-[11px] sm:text-[11.5px] border-none outline-none w-full px-1.5 py-1"
                         readOnly
                       />
                       <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Constraints</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Solvers</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Objectives</span>
+                        <div className="flex gap-1">
+                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Constraints</span>
+                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Solvers</span>
+                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Objectives</span>
                         </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
+                        <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                          <ArrowUp size={12} strokeWidth={2.5} />
                         </button>
                       </div>
                     </div>
@@ -1049,61 +1053,61 @@ export default function AutonomousSoftwareEngineersPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">ENGINEERING ENGINES</span>
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col items-start gap-2.5 sm:gap-3 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-1 w-full">
+                    <span className="text-[9.5px] sm:text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">ENGINEERING ENGINES</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                  <div className="flex flex-col gap-1 text-[11px] sm:text-[11.5px] font-mono w-full">
+                    <div className="flex items-center gap-2 px-1.5 py-1 text-[#555] truncate">
                       design_search.py
                     </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                    <div className="flex items-center gap-2 px-1.5 py-1 text-[#555] truncate">
                       fea_solver.py
                     </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                    <div className="flex items-center gap-2 px-1.5 py-1 text-[#555] truncate">
                       constraint_eval.py
                     </div>
 
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> engineering-factory/
+                    <div className="mt-1 flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#aaa] font-semibold">
+                        <ChevronDown size={13} className="text-[#777]" /> engineering-factory/
                       </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                      <div className="pl-3 flex flex-col gap-1 border-l border-[#252525] ml-2.5 mt-0.5">
                         <button
                           onClick={() => selectFileManually("optimize.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "optimize.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "optimize.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           optimize.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("eval.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           eval.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("run_opt.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_opt.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "run_opt.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           run_opt.sh
                         </button>
                         <button 
                           onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           pipeline.json
                         </button>
                         <button 
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] truncate ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           Dockerfile
                         </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                        <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#555] truncate">
                           boundary_mesh.step
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                        <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#555] truncate">
                           tolerances.yaml
                         </div>
                       </div>
@@ -1112,48 +1116,48 @@ export default function AutonomousSoftwareEngineersPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-5 sm:p-6 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                  <div className="flex border-b border-[#252525] mb-4 pb-2 pt-1 gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
                       onClick={() => selectFileManually("optimize.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "optimize.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "optimize.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       optimize.py
                     </button>
                     <button
                       onClick={() => selectFileManually("eval.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       eval.py
                     </button>
                     <button
                       onClick={() => selectFileManually("run_opt.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_opt.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "run_opt.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       run_opt.sh
                     </button>
                     <button
                       onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       pipeline.json
                     </button>
                     <button
                       onClick={() => selectFileManually("Dockerfile")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       Dockerfile
                     </button>
                   </div>
 
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                  <div className="flex font-mono text-[11.5px] sm:text-[12px] leading-[20px] overflow-x-auto select-text thin-hover-scrollbar">
+                    <div className="text-[#444] text-right pr-4 border-r border-[#252525] select-none flex flex-col min-w-[28px]">
                       {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                        <div key={i} className="min-h-[20px] leading-[20px]">{i + 1}</div>
                       ))}
                     </div>
 
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                    <div className="pl-4 flex-1 text-[#C8C7BA] leading-[20px]">
                       {highlightCode(
                         typedCodeText,
                         activeFile.endsWith(".py")
@@ -1171,6 +1175,9 @@ export default function AutonomousSoftwareEngineersPage() {
                   </div>
                 </div>
               </div>
+            </div>
+            </div>
+            <div />
             </div>
           </div>
 
