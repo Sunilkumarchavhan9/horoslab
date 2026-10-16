@@ -1453,83 +1453,88 @@ export default function AutonomousSoftwareEngineersPage() {
           </div>
 
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-20">
+          <div className="w-full relative z-10 mt-16 md:mt-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                <h2 className="text-3xl sm:text-4xl md:text-[42px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the engineering pipeline, retuned per model, geometry, and solver.
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-xl mx-auto mb-10">
+                  Every stage of engineering intelligence, optimized per model, solver, workload, and compute configuration.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
-                    {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 1 */}
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <Brain size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">CAD Mesh Parameterization</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune mesh discretization and boundary load representations for instant evaluation of complex geometric topologies.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Engineering model adaptation</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
+                        Compare technical reasoning and engineering code models. Tune prompts, domain context, fine-tuning data, and model configurations against actual engineering tasks.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 2 */}
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <ScanSearch size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Coupled Multiphysics Reasoning</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Correlate structural, aerodynamic, and thermal physics to generate unified engineering designs without boundary conflicts.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Design-space exploration</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
+                        Search design parameters, boundary conditions, and competing configurations against engineering objectives, tolerances, and constraints.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 3 */}
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Gauge size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sandboxed Solver Execution</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Profile isolated containerized solver harnesses (OpenFOAM, FEA, Gmsh) to verify physical stability and convergence.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Solver configuration</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
+                        Tune supported mesh resolution, timestep, convergence tolerances, and solver settings. Measure their effects on numerical accuracy and execution time.
                       </p>
                     </div>
 
-                    {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 4 */}
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Zap size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Pareto-Front Optimization</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in multi-objective exploration harness balancing mass reduction, stiffness, and thermal dissipation under hard constraints.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Surrogate-model accuracy</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
+                        Evaluate learned approximations against reference solver results. Measure prediction error across parameter ranges and identify where full simulation remains necessary.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 5 */}
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Server size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Automated CAD & STEP Generation</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize neural surrogate weights for rapid inference and synthesize manufacturing-ready STEP/IGES CAD artifacts in seconds.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Compute and execution</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
+                        Tune supported inference precision, batching, parallel experiment execution, and CPU/GPU placement. Compare throughput, memory use, and cost per experiment.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 6 */}
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <ShieldCheck size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Surrogate Fine-Tuning</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Fine-tune neural physics models on your proprietary simulation datasets, test benches, and internal engineering standards.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Engineering verification</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed">
+                        Check outputs against reference solutions, numerical tolerances, physical constraints, and regression tests. Preserve evidence for each candidate before promotion.
                       </p>
                     </div>
 
                   </div>
+                  <div className="w-full h-px border-t border-dashed border-[#333]" />
                 </div>
               </div>
               <div />
