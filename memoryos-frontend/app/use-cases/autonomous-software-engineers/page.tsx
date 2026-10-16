@@ -471,16 +471,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How does Engineering Intelligence simulate and verify complex physical systems?",
-    answer: "Horos couples neural physics surrogates with high-fidelity multiphysics solvers (FEA, CFD, OpenFOAM). AI models explore vast design spaces at millisecond speeds, while traditional numerical solvers rigorously verify boundary constraints and safety tolerances.",
+    question: "What is Engineering Intelligence and what problems does it solve?",
+    answer: "Engineering Intelligence brings AI directly into physical engineering and product design. Instead of engineers spending weeks manually creating CAD variations and waiting hours for simulations, AI explores thousands of design alternatives in seconds—optimizing for weight, strength, aerodynamics, and thermal efficiency under strict real-world physical constraints."
   },
   {
-    question: "Can I connect my team's proprietary CAD geometries, solvers, and boundary data?",
-    answer: "Yes. Native support for standard CAD formats (STEP, IGES, STL), mesh formats (tetrahedral, polyhedral), and solver APIs enables seamless integration with your existing simulation pipelines and internal engineering databases.",
+    question: "What are the primary real-world use cases?",
+    answer: "Teams use Horos across physical engineering disciplines:\n• Structural Lightweighting: Reducing part mass for aerospace brackets and automotive chassis while maintaining structural strength.\n• Aerodynamic Optimization: Iterating wing, fuselage, and drone geometries to minimize drag and turbulence.\n• Thermal Management: Designing micro-cooling channels and heat sinks for EV batteries and high-power electronics.\n• Generative CAD: Synthesizing ready-to-manufacture 3D geometry from functional engineering specifications."
   },
   {
-    question: "Can I deploy optimized engineering models on-premise or in air-gapped environments?",
-    answer: "Yes! All trained surrogate models, fine-tuned engineering weights, and solver containers can be exported as containerized artifacts (Docker, Singularity, TensorRT) and deployed completely inside your private infrastructure.",
+    question: "How does Horos ensure designs are physically safe?",
+    answer: "Unlike generative AI that produces unbuildable images or hallucinations, Horos combines fast AI surrogates with proven numerical solvers (FEA, CFD, OpenFOAM). Every candidate design is automatically tested against Von Mises stress limits, thermal margins, and manufacturing tolerances before acceptance."
+  },
+  {
+    question: "How does it speed up simulation from hours to seconds?",
+    answer: "Traditional physics simulations solve massive equation systems on fine meshes, which can take hours or days per run. Horos trains neural physics surrogates that estimate physical behavior in milliseconds. This allows engineering teams to screen 10,000+ candidates in minutes, reserving expensive full-fidelity solver runs only for the top finalists."
+  },
+  {
+    question: "Can I connect our existing CAD files and solvers?",
+    answer: "Yes. Horos is designed to augment your existing toolchain rather than replace it. It natively imports standard CAD formats (STEP, IGES, STL) and integrates seamlessly with solvers like OpenFOAM, Ansys, Gmsh, or your company's proprietary in-house simulation scripts."
+  },
+  {
+    question: "Is our proprietary CAD and engineering IP protected?",
+    answer: "Yes, 100%. We understand engineering IP is mission-critical. All model weights, surrogate neural networks, and solver workflows can run entirely on-premise or within an isolated private VPC (AWS, Azure, GCP) with zero external network egress. Your CAD geometries, material properties, and simulation data never leave your control."
   }
 ];
 
@@ -1629,7 +1641,7 @@ export default function AutonomousSoftwareEngineersPage() {
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
                   {FAQ_DATA[activeFaq].question}
                 </h3>
-                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
+                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl whitespace-pre-line">
                   {FAQ_DATA[activeFaq].answer}
                 </p>
               </div>
