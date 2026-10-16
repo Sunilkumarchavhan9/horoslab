@@ -1321,17 +1321,15 @@ export default function AutonomousSoftwareEngineersPage() {
           </div>
 
           {/* Features Grid Row */}
-          <div className="w-full relative z-10">
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
+          <div className="w-full relative z-10 mb-16 md:mb-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
               
 
               <div className="min-w-0">
-                <div className="grid grid-cols-1 md:grid-cols-3 h-full">
+                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-dashed border-[#333]">
                   {/* Card 1 */}
-                  <div className="px-6 pt-7 pb-16 sm:px-8 sm:pt-8 sm:pb-20 md:pb-24 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                  <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
                     <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Cpu size={20} strokeWidth={1.5} />
                     </div>
@@ -1342,7 +1340,7 @@ export default function AutonomousSoftwareEngineersPage() {
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-6 pt-7 pb-16 sm:px-8 sm:pt-8 sm:pb-20 md:pb-24 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                  <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
                     <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Server size={20} strokeWidth={1.5} />
                     </div>
@@ -1353,7 +1351,7 @@ export default function AutonomousSoftwareEngineersPage() {
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-6 pt-7 pb-16 sm:px-8 sm:pt-8 sm:pb-20 md:pb-24 flex flex-col gap-3 items-start">
+                  <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 items-start">
                     <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <ShieldCheck size={20} strokeWidth={1.5} />
                     </div>
@@ -1366,6 +1364,11 @@ export default function AutonomousSoftwareEngineersPage() {
               </div>
               <div />
             </div>
+          </div>
+
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-24">
+            <SectionDivider position="top" className="w-full" />
           </div>
 
           {/* Hugging Face Catalog Section */}
