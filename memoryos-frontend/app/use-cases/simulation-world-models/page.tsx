@@ -1793,10 +1793,13 @@ export default function SimulationWorldModelsPage() {
                 </p>
               </div>
             </div>
+
+            {/* Bottom Horizontal Border with Brand Logo & Crosses */}
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
           </div>
 
           {/* Bottom CTA Section */}
-          <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden border-t border-dashed border-[#333]">
+          <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden">
             {/* Container for precise 72% alignment with continuous dashed grid lines */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] absolute inset-0 pointer-events-none z-0">
               {/* Left Column Margin with Inner and Outer dashed lines */}
