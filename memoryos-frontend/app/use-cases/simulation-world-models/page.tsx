@@ -506,16 +506,24 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Do I need to maintain my own physics engines?",
-    answer: "No. Horos handles the heavy lifting of orchestrating Genesis, Mujoco, and Isaac Gym across massive GPU clusters using MPI, abstracting away the complex interconnects.",
+    question: "What is a world model, and how does it differ from a physics simulator?",
+    answer: "Traditional simulators (like Isaac Gym or MuJoCo) require explicit 3D CAD assets and hand-crafted rigid-body rules. World models (such as NVIDIA Cosmos, Meta V-JEPA, and Waypoint) learn real-world physics directly from video, sensor streams, and action data. They predict future visual frames and physical states, allowing you to simulate complex real-world dynamics, unmodeled environments, and edge cases without building manual 3D assets.",
   },
   {
-    question: "How do you evaluate hallucinated physics?",
-    answer: "We run automated kinematics validators on all generated trajectories. Every synthetic scenario is checked for rigid-body collisions, gravity violations, and temporal consistency before being used to train the edge model.",
+    question: "How does Horos connect physics engines with neural world models?",
+    answer: "Horos bridges both worlds into a unified pipeline. It orchestrates physics engines like Genesis, MuJoCo, and Isaac Gym to generate synthetic trajectory data and ground-truth physics baselines, then uses that data to train, fine-tune, and align neural world models across your GPU cluster—handling synchronization, camera viewpoints, and action conditioning automatically.",
   },
   {
-    question: "Can I deploy the fine-tuned world model to the edge?",
-    answer: "Yes! The output of the factory is an autoregressive model tailored to your embodied agent's control space, quantized (FP8/INT8) and compiled for TensorRT to run at >2000 FPS.",
+    question: "How do you detect and eliminate hallucinated or unrealistic physics?",
+    answer: "Every generated trajectory passes through automated kinematics and physics validators. Horos checks predicted future rollouts for rigid-body collisions, gravity and momentum violations, surface friction consistency, and temporal drift against ground-truth benchmarks. Any rollout that violates physical laws is flagged or pruned before training your edge policies.",
+  },
+  {
+    question: "Which simulation and world models are supported out of the box?",
+    answer: "Horos supports any open-weight model from Hugging Face or private repositories, including the NVIDIA Cosmos family (Predict, Transfer, Dreams), Meta V-JEPA 2, Tencent HunyuanWorld, and Overworld Waypoint-1.5. You can benchmark different model checkpoints, tune frame sampling and attention kernels, and swap architectures with zero vendor lock-in.",
+  },
+  {
+    question: "Can I deploy the fine-tuned world model to private clouds or edge devices?",
+    answer: "Yes. You own the full recipe—including environment logic, physics kernels, engine configs, and model weights. Horos compiles the optimized pipeline into self-contained Docker/OCI containers and Kubernetes manifests. With FP8 quantization and TensorRT compilation, models run at >2000 FPS for live edge inference on NVIDIA Jetson, robot controllers, or inside your own air-gapped VPC.",
   }
 ];
 
