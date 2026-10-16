@@ -1374,10 +1374,10 @@ export default function AutonomousSoftwareEngineersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-xl sm:text-2xl md:text-[30px] lg:text-[34px] xl:text-[36px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-4xl mx-auto leading-tight sm:whitespace-nowrap hyphens-none">
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] lg:text-[42px] xl:text-[45px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-5xl mx-auto leading-tight sm:whitespace-nowrap hyphens-none">
                   Any HF engineering-intelligence models work
                 </h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-10">
                   Use any open-weights engineering intelligence model as your optimization engine, or fine-tune specialized CAD & simulation surrogates. The examples below are just a starting view.
                 </p>
 
