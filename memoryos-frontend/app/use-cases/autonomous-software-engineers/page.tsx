@@ -274,9 +274,10 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 function AutodeskLogo({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 19L11.5 4H15.5L8 19H4Z" fill="#0696D7" />
-      <path d="M12.5 12L16 5H20L13.5 18L10 18L12.5 12Z" fill="#00D2B4" />
-      <path d="M13.5 18H20V19H13.5V18Z" fill="#0696D7" />
+      <path
+        d="m.129 20.202 14.7-9.136h7.625c.235 0 .445.188.445.445 0 .21-.092.305-.21.375l-7.222 4.323c-.47.283-.633.845-.633 1.265l-.008 2.725H24V4.362a.561.561 0 0 0-.585-.562h-8.752L0 12.893V20.2h.129z"
+        fill="#0696D7"
+      />
     </svg>
   );
 }
