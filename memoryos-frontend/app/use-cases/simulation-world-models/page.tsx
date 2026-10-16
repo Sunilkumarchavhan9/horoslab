@@ -10,7 +10,7 @@ import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, TencentLogo, OverworldLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -464,32 +464,10 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
-  if (a.includes('nvidia') || m.includes('nvfp4') || m.includes('cosmos')) return <NvidiaLogo size={20} />;
-  if (a.includes('meta') || a.includes('facebook') || m.includes('llama') || m.includes('vjepa') || m.includes('v-jepa')) return <MetaLogo size={20} />;
-  if (a.includes('tencent') || m.includes('hunyuan')) {
-    return (
-      <img
-        src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.tencent.com&size=256"
-        alt="Tencent"
-        width={20}
-        height={20}
-        className="rounded-xs object-contain"
-        referrerPolicy="no-referrer"
-      />
-    );
-  }
-  if (a.includes('overworld') || m.includes('waypoint')) {
-    return (
-      <img
-        src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://overworld.ai&size=256"
-        alt="Overworld"
-        width={20}
-        height={20}
-        className="rounded-xs object-contain"
-        referrerPolicy="no-referrer"
-      />
-    );
-  }
+  if (a.includes('nvidia') || m.includes('nvfp4') || m.includes('cosmos')) return <NvidiaLogo size={22} />;
+  if (a.includes('meta') || a.includes('facebook') || m.includes('llama') || m.includes('vjepa') || m.includes('v-jepa')) return <MetaLogo size={22} />;
+  if (a.includes('tencent') || m.includes('hunyuan')) return <TencentLogo size={26} />;
+  if (a.includes('overworld') || m.includes('waypoint')) return <OverworldLogo size={22} />;
   if (a.includes('openai') || m.includes('whisper') || m.includes('gpt') || m.includes('sora')) return <OpenAILogo size={20} />;
   if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('google') || m.includes('robocat') || m.includes('gemini')) return <GoogleLogo size={20} />;
