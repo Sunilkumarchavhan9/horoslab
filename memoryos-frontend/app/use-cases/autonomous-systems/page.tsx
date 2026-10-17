@@ -778,13 +778,13 @@ export default function VerifiableLegalAgentsPage() {
         <div className="w-full h-px border-t border-dashed border-[#333]" />
 
         {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mt-24 mb-28">
+        <div className="w-full relative z-10 mt-20 mb-24">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-14 px-4">
-            <h2 className="text-[34px] sm:text-[42px] md:text-[50px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-12">
+          <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">
               Three ways to engineer autonomous systems
             </h2>
-            <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-2xl">
+            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
               Build physical-world intelligence, validate its behavior in unfamiliar environments, and optimize its execution for real-world hardware.
             </p>
           </div>
