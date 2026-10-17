@@ -16,72 +16,162 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    horos: "Engineer the complete agent lifecycle from reasoning model fine-tuning to verified multi-step tool execution.",
-    closed: "Consume individual model or agent APIs with fixed reasoning depth and provider-controlled tool calling.",
-    diy: "Stitch together separate prompt templates, Python scripts, vector stores, and fragile API wrappers yourself."
+    horos: {
+      title: "Complete agent lifecycle",
+      desc: "Engineer reasoning models, tools, sandbox execution, and verifiers as one unified system."
+    },
+    closed: {
+      title: "Black-box hosted APIs",
+      desc: "Consume individual model or agent APIs with fixed reasoning depth and provider-controlled tool calling."
+    },
+    diy: {
+      title: "Fragile glue-code scripts",
+      desc: "Stitch together separate prompt templates, Python scripts, vector stores, and fragile API wrappers yourself."
+    }
   },
   {
     num: "0 2",
     label: "Models",
-    horos: "Evaluate open-weight reasoning models, adapt tool-calling checkpoints, and develop task-specific intelligence.",
-    closed: "Depend on proprietary black-box models with silent prompt drift and no control over underlying weights.",
-    diy: "Select, quantize, and host reasoning models manually across heterogeneous GPU clusters."
+    horos: {
+      title: "Open-weight reasoning models",
+      desc: "Evaluate open-weight models, adapt tool-calling checkpoints, and develop task-specific intelligence."
+    },
+    closed: {
+      title: "Proprietary black-box models",
+      desc: "Depend on proprietary models with silent prompt drift and no control over underlying weights."
+    },
+    diy: {
+      title: "Manual model hosting",
+      desc: "Select, quantize, and host reasoning models manually across heterogeneous GPU clusters."
+    }
   },
   {
     num: "0 3",
     label: "Memory & State",
-    horos: "Maintain hierarchical context, episodic memory, execution history, and state across long-horizon tasks.",
-    closed: "Rely on basic context windows or stateless API calls requiring manual re-injection of session state.",
-    diy: "Implement custom database schemas, vector embedding retrieval, and state pruning logic."
+    horos: {
+      title: "Hierarchical episodic memory",
+      desc: "Maintain hierarchical context, episodic memory, execution history, and state across long-horizon tasks."
+    },
+    closed: {
+      title: "Stateless context windows",
+      desc: "Rely on basic context windows or stateless API calls requiring manual re-injection of session state."
+    },
+    diy: {
+      title: "Custom vector & DB logic",
+      desc: "Implement custom database schemas, vector embedding retrieval, and state pruning logic."
+    }
   },
   {
     num: "0 4",
     label: "Planning",
-    horos: "Decompose complex objectives into structured sub-goals with tree-of-thought exploration and backtracking.",
-    closed: "Generate linear step-by-step completions with limited capacity to explore alternative solutions.",
-    diy: "Handcraft heuristic state machines, graph orchestrators, and prompt chains."
+    horos: {
+      title: "Tree-of-thought exploration",
+      desc: "Decompose complex objectives into structured sub-goals with tree-of-thought exploration and backtracking."
+    },
+    closed: {
+      title: "Linear step completions",
+      desc: "Generate linear step-by-step completions with limited capacity to explore alternative solutions."
+    },
+    diy: {
+      title: "Heuristic state machines",
+      desc: "Handcraft heuristic state machines, graph orchestrators, and prompt chains."
+    }
   },
   {
     num: "0 5",
     label: "Tool Execution",
-    horos: "Execute sandboxed tool calls with strict Pydantic schemas, parameter validation, and rate-limit handling.",
-    closed: "Pass tool outputs back and forth through external HTTP endpoints without sandbox isolation.",
-    diy: "Build custom tool execution runtimes, input sanitization, and security sandboxes from scratch."
+    horos: {
+      title: "Sandboxed tool validation",
+      desc: "Execute sandboxed tool calls with strict Pydantic schemas, parameter validation, and rate-limit handling."
+    },
+    closed: {
+      title: "Unsandboxed API passthroughs",
+      desc: "Pass tool outputs back and forth through external HTTP endpoints without sandbox isolation."
+    },
+    diy: {
+      title: "Custom execution runtimes",
+      desc: "Build custom tool execution runtimes, input sanitization, and security sandboxes from scratch."
+    }
   },
   {
     num: "0 6",
     label: "Failure Recovery",
-    horos: "Autonomously reflect on tool errors, retry with exponential backoff, adjust arguments, or route to fallbacks.",
-    closed: "Halt task execution on tool errors or return unhandled 500 exceptions to the end user.",
-    diy: "Write extensive try/except handlers and recovery heuristics for every possible API failure."
+    horos: {
+      title: "Autonomous self-reflection",
+      desc: "Autonomously reflect on tool errors, retry with exponential backoff, adjust arguments, or route to fallbacks."
+    },
+    closed: {
+      title: "Unhandled runtime halts",
+      desc: "Halt task execution on tool errors or return unhandled 500 exceptions to the end user."
+    },
+    diy: {
+      title: "Manual try/except heuristics",
+      desc: "Write extensive try/except handlers and recovery heuristics for every possible API failure."
+    }
   },
   {
     num: "0 7",
     label: "Optimization",
-    horos: "Tune tool schemas, KV prompt caching, speculative decoding, and routing against speed, cost, and accuracy targets.",
-    closed: "Tune supported provider parameters like temperature with no control over KV cache or runtime batching.",
-    diy: "Profile inference latencies, token consumption, and system bottlenecks manually."
+    horos: {
+      title: "Full-stack runtime tuning",
+      desc: "Tune tool schemas, KV prompt caching, speculative decoding, and routing against speed, cost, and accuracy targets."
+    },
+    closed: {
+      title: "Coarse provider parameters",
+      desc: "Tune supported provider parameters like temperature with no control over KV cache or runtime batching."
+    },
+    diy: {
+      title: "Manual latency profiling",
+      desc: "Profile inference latencies, token consumption, and system bottlenecks manually."
+    }
   },
   {
     num: "0 8",
     label: "Verification",
-    horos: "Evaluate actions against deterministic safety policies, financial invariants, loop detectors, and human gates.",
-    closed: "Rely on generic content moderation filters without domain-specific business invariant checks.",
-    diy: "Maintain custom assertion libraries, unit tests, and validation scripts."
+    horos: {
+      title: "Deterministic policy gates",
+      desc: "Evaluate actions against deterministic safety policies, financial invariants, loop detectors, and human gates."
+    },
+    closed: {
+      title: "Generic moderation filters",
+      desc: "Rely on generic content moderation filters without domain-specific business invariant checks."
+    },
+    diy: {
+      title: "Custom assertion suites",
+      desc: "Maintain custom assertion libraries, unit tests, and validation scripts."
+    }
   },
   {
     num: "0 9",
     label: "Experience",
-    horos: "Preserve execution trajectories, tool call traces, error recovery logs, and measured outcomes for telemetry.",
-    closed: "Inspect fragmented request logs in vendor dashboards with limited export and analysis capabilities.",
-    diy: "Build your own trajectory storage, OpenTelemetry pipelines, and debugging visualizers."
+    horos: {
+      title: "Execution trajectory traces",
+      desc: "Preserve execution trajectories, tool call traces, error recovery logs, and measured outcomes for telemetry."
+    },
+    closed: {
+      title: "Fragmented vendor logs",
+      desc: "Inspect fragmented request logs in vendor dashboards with limited export and analysis capabilities."
+    },
+    diy: {
+      title: "Custom telemetry pipelines",
+      desc: "Build your own trajectory storage, OpenTelemetry pipelines, and debugging visualizers."
+    }
   },
   {
     num: "1 0",
     label: "Authority",
-    horos: "Deploy completely on-premise or in private VPCs with strict token budgets, tool whitelists, and zero data egress.",
-    closed: "Send sensitive internal workflows and proprietary customer data to third-party cloud infrastructure.",
-    diy: "Implement access controls, secrets management, budget limits, and audit trails independently."
+    horos: {
+      title: "Zero-egress private VPC",
+      desc: "Deploy completely on-premise or in private VPCs with strict token budgets, tool whitelists, and zero data egress."
+    },
+    closed: {
+      title: "Third-party cloud exposure",
+      desc: "Send sensitive internal workflows and proprietary customer data to third-party cloud infrastructure."
+    },
+    diy: {
+      title: "Manual security controls",
+      desc: "Implement access controls, secrets management, budget limits, and audit trails independently."
+    }
   }
 ];
 
@@ -808,15 +898,18 @@ export default function AutonomousAgentsPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.horos}</p>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.horos.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed}</p>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy}</p>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
                       </div>
                     </div>
                   ))}

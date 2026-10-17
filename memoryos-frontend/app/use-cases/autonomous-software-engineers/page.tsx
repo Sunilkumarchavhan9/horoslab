@@ -16,72 +16,162 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    horos: "Engineer the complete workflow from model selection and design exploration to verified results.",
-    closed: "Consume individual model APIs for specific engineering tasks.",
-    diy: "Connect separate models, solvers, scripts, and services yourself."
+    horos: {
+      title: "Unified engineering loop",
+      desc: "Engineer the complete workflow from model selection and design exploration to verified results."
+    },
+    closed: {
+      title: "Individual model APIs",
+      desc: "Consume individual model APIs for specific engineering tasks."
+    },
+    diy: {
+      title: "Manual stack assembly",
+      desc: "Connect separate models, solvers, scripts, and services yourself."
+    }
   },
   {
     num: "0 2",
     label: "Models",
-    horos: "Evaluate open-weight models, adapt checkpoints, and develop task-specific intelligence.",
-    closed: "Use provider-supported models with limited control over underlying weights.",
-    diy: "Select and manage models, checkpoints, and training infrastructure manually."
+    horos: {
+      title: "Open-weight models & checkpoints",
+      desc: "Evaluate open-weight models, adapt checkpoints, and develop task-specific intelligence."
+    },
+    closed: {
+      title: "Provider-supported models",
+      desc: "Use provider-supported models with limited control over underlying weights."
+    },
+    diy: {
+      title: "Manual model management",
+      desc: "Select and manage models, checkpoints, and training infrastructure manually."
+    }
   },
   {
     num: "0 3",
     label: "Context",
-    horos: "Connect engineering specifications, constraints, system state, design artifacts, and historical results.",
-    closed: "Supply context through supported prompts, files, and API integrations.",
-    diy: "Build custom parsers, retrieval pipelines, and context management."
+    horos: {
+      title: "Integrated design state",
+      desc: "Connect engineering specifications, constraints, system state, design artifacts, and historical results."
+    },
+    closed: {
+      title: "Ad-hoc context inputs",
+      desc: "Supply context through supported prompts, files, and API integrations."
+    },
+    diy: {
+      title: "Custom parsers & retrieval",
+      desc: "Build custom parsers, retrieval pipelines, and context management."
+    }
   },
   {
     num: "0 4",
     label: "Design exploration",
-    horos: "Search candidate designs and configurations against explicit requirements and constraints.",
-    closed: "Generate design suggestions within supported model capabilities.",
-    diy: "Implement parameter sweeps, search algorithms, and candidate tracking."
+    horos: {
+      title: "Automated space search",
+      desc: "Search candidate designs and configurations against explicit requirements and constraints."
+    },
+    closed: {
+      title: "Basic design prompts",
+      desc: "Generate design suggestions within supported model capabilities."
+    },
+    diy: {
+      title: "Custom parameter sweeps",
+      desc: "Implement parameter sweeps, search algorithms, and candidate tracking."
+    }
   },
   {
     num: "0 5",
     label: "Simulation",
-    horos: "Connect compatible simulation workloads to model experiments and recorded outcomes.",
-    closed: "Integrate external simulation tools through available interfaces.",
-    diy: "Orchestrate simulation runs, input configurations, and output collection yourself."
+    horos: {
+      title: "Coupled simulation pipelines",
+      desc: "Connect compatible simulation workloads to model experiments and recorded outcomes."
+    },
+    closed: {
+      title: "External tool bridges",
+      desc: "Integrate external simulation tools through available interfaces."
+    },
+    diy: {
+      title: "Orchestrated solver jobs",
+      desc: "Orchestrate simulation runs, input configurations, and output collection yourself."
+    }
   },
   {
     num: "0 6",
     label: "Optimization",
-    horos: "Compare model, runtime, and workload configurations against quality, latency, compute, and cost targets.",
-    closed: "Tune supported API parameters and provider-exposed options.",
-    diy: "Build benchmarking, profiling, and optimization loops independently."
+    horos: {
+      title: "Full system search",
+      desc: "Compare model, runtime, and workload configurations against quality, latency, compute, and cost targets."
+    },
+    closed: {
+      title: "Provider parameter tuning",
+      desc: "Tune supported API parameters and provider-exposed options."
+    },
+    diy: {
+      title: "Independent benchmarking loops",
+      desc: "Build benchmarking, profiling, and optimization loops independently."
+    }
   },
   {
     num: "0 7",
     label: "Verification",
-    horos: "Evaluate outputs against engineering constraints, numerical tolerances, solver results, and acceptance tests.",
-    closed: "Use supported evaluations and external validation tools.",
-    diy: "Maintain custom test suites, verification logic, and regression checks."
+    horos: {
+      title: "Deterministic engineering checks",
+      desc: "Evaluate outputs against engineering constraints, numerical tolerances, solver results, and acceptance tests."
+    },
+    closed: {
+      title: "Generic validation tools",
+      desc: "Use supported evaluations and external validation tools."
+    },
+    diy: {
+      title: "Custom test suites",
+      desc: "Maintain custom test suites, verification logic, and regression checks."
+    }
   },
   {
     num: "0 8",
     label: "Experience",
-    horos: "Preserve experiment configurations, model versions, observations, failures, and measured outcomes.",
-    closed: "Track results across provider APIs and external observability systems.",
-    diy: "Build your own experiment records, lineage, and analysis infrastructure."
+    horos: {
+      title: "Lineage & outcome tracking",
+      desc: "Preserve experiment configurations, model versions, observations, failures, and measured outcomes."
+    },
+    closed: {
+      title: "Fragmented observability",
+      desc: "Track results across provider APIs and external observability systems."
+    },
+    diy: {
+      title: "Custom experiment storage",
+      desc: "Build your own experiment records, lineage, and analysis infrastructure."
+    }
   },
   {
     num: "0 9",
     label: "Teaching",
-    horos: "Use verified examples and failure cases to drive fine-tuning, adaptation, and subsequent evaluations.",
-    closed: "Depend on provider-supported customization and training options.",
-    diy: "Assemble datasets, training jobs, checkpoint comparisons, and evaluation pipelines."
+    horos: {
+      title: "Continuous adaptation",
+      desc: "Use verified examples and failure cases to drive fine-tuning, adaptation, and subsequent evaluations."
+    },
+    closed: {
+      title: "Provider-limited options",
+      desc: "Depend on provider-supported customization and training options."
+    },
+    diy: {
+      title: "Manual dataset assembly",
+      desc: "Assemble datasets, training jobs, checkpoint comparisons, and evaluation pipelines."
+    }
   },
   {
     num: "1 0",
     label: "Authority",
-    horos: "Govern experiment budgets, data access, deployment permissions, approvals, and model promotion.",
-    closed: "Work within provider capabilities and your own integration controls.",
-    diy: "Implement access control, budget enforcement, approvals, and deployment policies yourself."
+    horos: {
+      title: "Enterprise governance",
+      desc: "Govern experiment budgets, data access, deployment permissions, approvals, and model promotion."
+    },
+    closed: {
+      title: "Vendor access controls",
+      desc: "Work within provider capabilities and your own integration controls."
+    },
+    diy: {
+      title: "Custom permission systems",
+      desc: "Implement access control, budget enforcement, approvals, and deployment policies yourself."
+    }
   }
 ];
 
@@ -931,15 +1021,18 @@ export default function AutonomousSoftwareEngineersPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <p className="text-[#E6E5D8] text-[12.5px] sm:text-[13px] leading-relaxed">{row.horos}</p>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.horos.title}</h4>
+                        <p className="text-[#E6E5D8] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13px] leading-relaxed">{row.closed}</p>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">{row.closed.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13px] leading-relaxed">{row.diy}</p>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">{row.diy.desc}</p>
                       </div>
                     </div>
                   ))}
