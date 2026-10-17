@@ -575,14 +575,16 @@ export default function VerifiableLegalAgentsPage() {
         </div>
 
         {/* Features Section */}
-        <div className="w-full relative z-10 mt-16">
+        <div className="w-full relative z-10 mt-12 md:mt-16">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your verifiable legal pipeline</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The ZK audit harness, the legal reasoning models, the statutory verification playbooks. Complete sovereignty over legal compliance.
+              <div className="text-center mb-8 md:mb-10">
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">
+                  What you actually own
+                </h2>
+                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                  The world models, physical-dynamics evaluations, and optimized inference runtimes behind systems that must understand and act in the physical world.
                 </p>
               </div>
             </div>
@@ -622,29 +624,29 @@ export default function VerifiableLegalAgentsPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The legal<br/>agents.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the legal reasoning models, AST clause parsers, and citation verification engines. No vendor lock-in on your legal AI.
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
+                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">The world models.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed font-sans">
+                      Train and adapt models that learn how objects move, interact, and respond to actions. Measure whether physical understanding transfers to unfamiliar environments not just familiar visual patterns.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The proof<br/>validators.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the zero-knowledge proof verifiers, statutory compliance checkers, and audit logs. Zero hallucinated precedent guaranteed.
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
+                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">The evaluation harness.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed font-sans">
+                      Evaluate models across simulation and real-world workloads. Measure prediction accuracy, task success, robustness to unfamiliar conditions, and sim-to-real transfer before deployment.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The fine-tuned<br/>weights.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the fine-tuned legal model weights (GPT-4o Legal, DeepSeek-Legal) and compiled containers. Export and run anywhere securely.
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
+                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">The optimized runtime.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed font-sans">
+                      Optimize inference across target hardware. Tune quantization, kernels, memory movement, batching, and serving configurations to meet latency, throughput, and cost targets from cloud infrastructure to edge devices.
                     </p>
                   </div>
                 </div>
