@@ -889,15 +889,15 @@ export default function VerifiableLegalAgentsPage() {
         <div className="w-full relative z-10 mt-32">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-16 mb-16">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-12 md:pt-16 mb-12 md:mb-16">
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[44px] font-medium tracking-tight mb-4 text-[#F0EFE2]">
-                  Autonomous systems you own. <span className="text-[#75bf00]">Deploy physical intelligence anywhere.</span>
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">
+                  Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[15px] sm:text-[16px] max-w-2xl mx-auto leading-relaxed font-sans">
-                  The full recipe ships with you. World models, evaluation harnesses, optimized runtimes, and deployment configurations. Run it anywhere from cloud infrastructure to edge devices.
+                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                  The full recipe ships with you. World models, simulation harnesses, planning and control pipelines, and optimized runtimes. Run it anywhere.
                 </p>
               </div>
             </div>
