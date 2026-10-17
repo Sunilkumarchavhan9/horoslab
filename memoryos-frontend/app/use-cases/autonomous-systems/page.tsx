@@ -559,7 +559,14 @@ export default function VerifiableLegalAgentsPage() {
 
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
-                  <RagSearchGrid />
+                  <RagSearchGrid 
+                    label1="Perception"
+                    label2="Prediction"
+                    label3="Decisions"
+                    label4="Control"
+                    label5="Sensor Fusion"
+                    label6="Planning"
+                  />
                 </div>
               </div>
             </div>
