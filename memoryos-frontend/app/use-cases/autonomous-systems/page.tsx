@@ -541,9 +541,7 @@ export default function VerifiableLegalAgentsPage() {
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                     Intelligence for<br />
-                    <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      Autonomous Systems
-                    </span>
+                    Autonomous Systems
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
                     Build and optimize models that perceive their environment, predict what happens next, and make decisions in dynamic real-world conditions.
