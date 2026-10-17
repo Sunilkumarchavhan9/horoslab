@@ -893,11 +893,11 @@ export default function VerifiableLegalAgentsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
-                  Legal agents you own. <span className="text-[#75bf00]">Verify compliance anywhere.</span>
+                <h2 className="text-3xl sm:text-4xl md:text-[44px] font-medium tracking-tight mb-4 text-[#F0EFE2]">
+                  Autonomous systems you own. <span className="text-[#75bf00]">Deploy physical intelligence anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
-                  The full recipe ships with you. ZK verifiers, legal reasoning models, statutory playbooks, and model weights. Run it anywhere.
+                <p className="text-[#999999] text-[15px] sm:text-[16px] max-w-2xl mx-auto leading-relaxed font-sans">
+                  The full recipe ships with you. World models, evaluation harnesses, optimized runtimes, and deployment configurations. Run it anywhere from cloud infrastructure to edge devices.
                 </p>
               </div>
             </div>
