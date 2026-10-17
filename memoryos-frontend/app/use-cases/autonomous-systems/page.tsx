@@ -175,35 +175,34 @@ const COMPARISON_ROWS = [
   }
 ];
 
-const VERIFY_CODE = `# Train and adapt world models for physical environment dynamics
+const VERIFY_CODE = `# Verifiable Autonomy Agent with Mathematical Physics Proof
 import torch
-from horos_autonomy import WorldModelEngine, TrajectoryEvaluator, KinematicPriors
+from horos_autonomy import VerifiableAutonomyAgent, PhysicsProofVerifier
 
-# Initialize world model engine with physical-dynamics priors
-world_model = WorldModelEngine.from_pretrained("nvidia/Cosmos-1.0-WorldModel")
-evaluator = TrajectoryEvaluator(policy="strict-physics-consistency")
+# Initialize autonomy reasoning engine with physics verifier
+agent = VerifiableAutonomyAgent.from_pretrained("nvidia/Cosmos-1.0-WorldModel")
+physics_verifier = PhysicsProofVerifier(policy="strict-zero-collision")
 
-def evaluate_environment_step(sensor_observations: dict, action_history: torch.Tensor):
-    """Predict future physical states and optimize goal-to-action planning."""
-    
-    # Encode multi-modal camera, LiDAR, and IMU sensor telemetry
-    latent_state = world_model.encode_observations(sensor_observations)
-    
-    # Generate counterfactual physical rollouts across candidate actions
-    predicted_trajectory = world_model.predict_future_states(latent_state, action_history)
-    
-    # Verify trajectory against kinematic limits and collision boundaries
-    eval_results = evaluator.verify_kinematics(predicted_trajectory)
-    
-    if eval_results.is_valid:
+def audit_trajectory_compliance(trajectory_data: dict, operational_domain: str):
+    """Audit trajectory dynamics and compute mathematical physics proofs."""
+
+    # Parse sensor streams and trajectory into AST graph
+    trajectories = KinematicGraph.parse_trajectories(trajectory_data)
+
+    # Run compliance audit against ISO 26262 and dynamic safety bounds
+    audit_results = agent.analyze_compliance(trajectories, operational_domain)
+
+    # Generate physics-consistency proof for every predicted waypoint
+    physics_proof = physics_verifier.generate_proof(audit_results.waypoints)
+
+    if physics_proof.is_valid:
         return {
-            "planning_status": "optimal",
-            "prediction_drift": eval_results.drift_score,
-            "collision_probability": 0.0,
-            "control_frequency_hz": 120.0,
-            "recommended_action": eval_results.best_action
+            "compliance_status": audit_results.status,
+            "flagged_risks": audit_results.risks,
+            "physics_proof_hash": physics_proof.hash,
+            "collision_rate": 0.0
         }
-        
+
     return None`;
 
 const AUDIT_CODE = `#!/usr/bin/env bash
@@ -224,13 +223,40 @@ horos-autonomy run \\
 
 const PIPELINE_CODE = `{
   "name": "autonomous-systems-pipeline",
-  "world_model": "cosmos-1.0-worldmodel",
+  "world_model": "nvidia/Cosmos-1.0-WorldModel",
   "perception": ["rgb_camera_4k", "lidar_pointcloud", "imu_telemetry"],
   "control_frequency": "120Hz",
   "physics_verification": true,
   "collision_threshold": 0.0,
   "evaluations": ["sim2real_transfer", "kinematic_constraints", "prediction_drift"]
 }`;
+
+const README_CODE = `# Autonomous Systems Runtime
+
+Production stack for physical world models, sim-to-real verification, and hardware-accelerated closed-loop control.
+
+## Overview
+- **World Model**: \`nvidia/Cosmos-1.0-WorldModel\` (spatial-temporal dynamics)
+- **Physics Engine**: Genesis-Sim & Isaac Sim integration
+- **Verification**: Strict zero-collision kinematic bounds & drift checks
+- **Target Hardware**: NVIDIA H100 / Jetson AGX Orin at 120Hz control frequency
+
+## Quick Start
+\`\`\`bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the verified autonomy simulation loop
+./run_autonomy_loop.sh --config pipeline.json
+
+# Launch evaluation harness
+python eval.py --scenario urban_navigation_dense
+\`\`\`
+
+## Architecture
+- \`verify_autonomy.py\`: Trajectory planning and physical constraint verification.
+- \`eval.py\`: Sim-to-real transfer validation across held-out conditions.
+- \`pipeline.json\`: Sensor fusion and inference serving topology.`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 AS base
  
@@ -241,19 +267,41 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
  
 COPY runtime/ /autonomy/runtime/
-COPY train_world_model.py run_autonomy_loop.sh pipeline.json .
+COPY verify_autonomy.py eval.py run_autonomy_loop.sh pipeline.json README.md .
  
 EXPOSE 8080
 ENTRYPOINT ["/autonomy/run_autonomy_loop.sh"]`;
 
+const COMPOSE_CODE = `version: '3.8'
+services:
+  autonomy-runtime:
+    build: .
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CONTROL_FREQ=120Hz
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./eval_telemetry:/autonomy/eval_telemetry`;
+
+const REQUIREMENTS_CODE = `torch>=2.4.0
+torchaudio
+torchvision
+numpy>=1.26.0
+genesis-sim>=0.2.1
+horos-autonomy>=1.4.0
+pydantic>=2.7.0
+pyyaml`;
+
 const EVAL_CODE = `# Evaluation harness: measuring prediction drift and sim-to-real transfer
-from horos_eval import SimToRealHarness, PhysicalSafetyGate
+from horos_eval import SimToRealHarness, KinematicSafetyGate
 
 def evaluate_autonomy_safety(simulation_trajectories: list, real_telemetry: dict) -> dict:
     """Verify prediction accuracy and sim-to-real transfer robustness."""
     
     harness = SimToRealHarness()
-    safety_gate = PhysicalSafetyGate(tolerance="strict-zero-collision")
+    safety_gate = KinematicSafetyGate(tolerance="strict-zero-collision")
     
     # Benchmark candidate trajectories against unfamiliar physical conditions
     safety_passed = safety_gate.verify_boundaries(real_telemetry["trajectory"])
@@ -282,12 +330,23 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
     let content = line;
     let lineContent: React.ReactNode;
 
-    if (content.trim().startsWith("//") || content.trim().startsWith("#")) {
+    if (content.trim().startsWith("//") || (content.trim().startsWith("#") && lang !== "markdown")) {
       lineContent = <span className="text-[#666] italic">{content}</span>;
+    } else if (lang === "markdown") {
+      if (content.trim().startsWith("#")) {
+        lineContent = <span className="text-[#75bf00] font-bold">{content}</span>;
+      } else if (content.trim().startsWith("```")) {
+        lineContent = <span className="text-[#a855f7]">{content}</span>;
+      } else if (content.includes("`")) {
+        const parts = content.split(/(`[^`]+`)/);
+        lineContent = parts.map((p, pi) => p.startsWith("`") ? <span key={pi} className="text-[#93c5fd] font-mono">{p}</span> : p);
+      } else {
+        lineContent = content;
+      }
     } else if (lang === "python") {
-      const parts = content.split(/(\bimport\b|\bfrom\b|\bdef\b|\breturn\b|"[^"]*"|'[^']*'|"""[\s\S]*?""")/);
+      const parts = content.split(/(\bimport\b|\bfrom\b|\bdef\b|\breturn\b|\bif\b|\bNone\b|"[^"]*"|'[^']*'|"""[\s\S]*?""")/);
       lineContent = parts.map((part, pi) => {
-        if (["import", "from", "def", "return"].includes(part)) {
+        if (["import", "from", "def", "return", "if", "None"].includes(part)) {
           return <span key={pi} className="text-[#a855f7] font-semibold">{part}</span>;
         }
         if ((part.startsWith('"') && part.endsWith('"')) || (part.startsWith("'") && part.endsWith("'")) || part.startsWith('"""')) {
@@ -310,7 +369,7 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
         return part;
       });
     } else if (lang === "json") {
-      const parts = line.split(/("[^"]*"\s*:|"[^"]*"|\b\d+\b|\btrue\b|\bfalse\b)/);
+      const parts = line.split(/("[^"]*"\s*:|"[^"]*"|\b\d+(?:\.\d+)?\b|\btrue\b|\bfalse\b)/);
       lineContent = parts.map((part, pi) => {
         if (part.endsWith(":")) {
           return <span key={pi} className="text-[#93c5fd]">{part}</span>;
@@ -318,7 +377,7 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
         if (part.startsWith('"') && part.endsWith('"')) {
           return <span key={pi} className="text-[#75bf00]">{part}</span>;
         }
-        if (["true", "false"].includes(part)) {
+        if (["true", "false"].includes(part) || /^\d/.test(part)) {
           return <span key={pi} className="text-[#a855f7]">{part}</span>;
         }
         return part;
@@ -353,15 +412,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "openai/gpt-4o-legal-verifier", name: "GPT-4o Legal Verifier", author: "OpenAI", description: "Frontier legal reasoning model with zero-knowledge citation proofs.", role: "Legal Agent" },
-  { id: "nvidia/NeMo-Legal-8B", name: "NeMo Legal 8B", author: "NVIDIA", description: "Accelerated statutory verification model compiled for zero-latency audits.", role: "Citation Proofs" },
-  { id: "meta-llama/Llama-3.2-11B-Legal-Instruct", name: "Llama 3.2 Legal", author: "Meta", description: "Open-weights legal compliance agent for contract parsing and risk scoring.", role: "Legal LLM" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Legal", name: "DeepSeek R1 Legal", author: "DeepSeek", description: "Deep reasoning engine for complex M&A, patent, and regulatory analysis.", role: "Legal Reasoning" },
-  { id: "harvey-ai/harvey-contract-reasoner", name: "Harvey Contract Reasoner", author: "Harvey", description: "Enterprise legal AI agent fine-tuned on corporate law and contract playbooks.", role: "Contract Audit" },
-  { id: "thomson-reuters/westlaw-reasoner-7b", name: "Westlaw Reasoner", author: "Thomson Reuters", description: "Case law retrieval model integrated with authoritative legal databases.", role: "Case Law Agent" },
-  { id: "mistralai/Mixtral-8x7B-Legal", name: "Mixtral Legal MoE", author: "Mistral", description: "High-throughput mixture-of-experts model for multi-jurisdictional compliance.", role: "Regulatory LLM" },
-  { id: "google/legal-palmyra-32b", name: "Legal Palmyra 32B", author: "Google", description: "Specialized legal model for statutory interpretation and treaty analysis.", role: "Legal Model" },
-  { id: "qwen/Qwen2.5-14B-Legal", name: "Qwen2.5 Legal", author: "Qwen", description: "Multilingual contract verifier and zero-hallucination compliance engine.", role: "Compliance Agent" }
+  { id: "nvidia/Cosmos-1.0-WorldModel", name: "Cosmos-1.0 WorldModel", author: "NVIDIA", description: "Frontier spatial-temporal world foundation model for physical dynamics prediction.", role: "World Model" },
+  { id: "openvla/openvla-7b", name: "OpenVLA 7B", author: "OpenVLA", description: "Open-weight vision-language-action model for robotic manipulation and control.", role: "VLA Policy" },
+  { id: "physical-intelligence/pi0-base", name: "Pi0 Base", author: "Physical Intelligence", description: "Generalist robot foundation model with high-frequency tactile and visual policy control.", role: "Physical AI" },
+  { id: "microsoft/MagenticBrain-15B", name: "MagenticBrain 15B", author: "Microsoft", description: "Multi-agent autonomous systems reasoning and physical world planning model.", role: "Autonomy Planner" },
+  { id: "nousresearch/Hermes-4-14B", name: "Hermes 4 14B", author: "Nous Research", description: "Advanced reasoning and tool-use model adapted for robotic decision execution.", role: "Decision Engine" },
+  { id: "browseruse/bu-30b-a3b", name: "BU-30B-A3B", author: "Browser Use", description: "Compact decision agent optimized for structured environments and sequential action selection.", role: "Action Policy" },
+  { id: "qwen/Qwen3-Coder-Next", name: "Qwen3 Coder Next", author: "Qwen", description: "High-capacity code and kinematics generation model for motion planning algorithms.", role: "Kinematic Code" },
+  { id: "mistralai/Devstral-Small-2", name: "Devstral Small 24B", author: "Mistral", description: "Fast, low-latency reasoning engine optimized for edge-device autonomy runtimes.", role: "Edge Runtime" },
+  { id: "xlang/OpenCUA-7B", name: "OpenCUA 7B", author: "xLang AI", description: "Compact cross-modal policy model for real-time sensor-action loop execution.", role: "Control Loop" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -430,23 +489,24 @@ const FAQ_DATA = [
 ];
 
 export default function AutonomousSystemsPage() {
-  const [activeFile, setActiveFile] = useState<DataFactoryFile>("train_world_model.py" as any);
+  const [activeFile, setActiveFile] = useState<DataFactoryFile>("verify_autonomy.py" as any);
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "train_world_model.py": VERIFY_CODE,
-    "eval_sim2real.py": EVAL_CODE,
+    "verify_autonomy.py": VERIFY_CODE,
+    "eval.py": EVAL_CODE,
     "run_autonomy_loop.sh": AUDIT_CODE,
     "pipeline.json": PIPELINE_CODE,
-    "Dockerfile": DOCKERFILE_CODE
+    "README.md": README_CODE,
+    "Dockerfile": DOCKERFILE_CODE,
+    "docker-compose.yml": COMPOSE_CODE,
+    "requirements.txt": REQUIREMENTS_CODE
   };
 
-  const AGENT_MSG_1 = "On it. Ingesting multi-modal sensor telemetry, compiling 4D world dynamics, evaluating candidate actions against physical constraints, and benchmarking sim-to-real latency.";
-  const AGENT_MSG_2 = "Autonomy loop verified. Passed 500 physical test scenarios with 0 collision violations. Inference latency: 8.2ms at 120Hz control frequency. Containerized stack ready for deployment.";
+  const AGENT_MSG_1 = "On it. I'll parse trajectory #8042, check kinematic dependencies against ISO 26262 and dynamic collision limits, and compute sim-to-real proofs.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
-  const [typedMsg2, setTypedMsg2] = useState("");
   const [visibleStep, setVisibleStep] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   
@@ -492,25 +552,18 @@ export default function AutonomousSystemsPage() {
           setTypedMsg1(AGENT_MSG_1.slice(0, typedMsg1.length + 2));
         }, 18);
       } else {
-        timer = setTimeout(() => setVisibleStep(2), 450);
+        timer = setTimeout(() => setVisibleStep(2), 500);
       }
-    } else if (visibleStep >= 2 && visibleStep <= 6) {
-      timer = setTimeout(() => setVisibleStep(prev => prev + 1), 450);
-    } else if (visibleStep === 7) {
-      if (typedMsg2.length < AGENT_MSG_2.length) {
-        timer = setTimeout(() => {
-          setTypedMsg2(AGENT_MSG_2.slice(0, typedMsg2.length + 2));
-        }, 18);
-      }
+    } else if (visibleStep >= 2 && visibleStep <= 4) {
+      timer = setTimeout(() => setVisibleStep(prev => prev + 1), 600);
     }
 
     return () => clearTimeout(timer);
-  }, [visibleStep, typedMsg1, typedMsg2, isAutoPlay]);
+  }, [visibleStep, typedMsg1, isAutoPlay]);
 
   const replayAnimation = () => {
     setIsAutoPlay(true);
     setTypedMsg1("");
-    setTypedMsg2("");
     setVisibleStep(0);
   };
 
@@ -972,15 +1025,15 @@ export default function AutonomousSystemsPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[15px] font-sans leading-[28px]">
-                        Teach a world model to understand and decode the physical world. Fine-tune{" "}
+                        Audit closed-loop trajectory #8042 for collision & dynamic stability. Hybrid spatial-temporal parser with{" "}
                         <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
                           <NvidiaLogo size={13} /> Cosmos-1.0
                         </span>{" "}
-                        on driving trajectories, simulate counterfactual actions with{" "}
+                        plus physics engine verifier,{" "}
                         <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
                           <HuggingFaceLogo size={13} /> Genesis-Sim
                         </span>{" "}
-                        physics engine, and serve via{" "}
+                        grounded with 4D sensor rollouts. Compute sim-to-real transfer on{" "}
                         <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#75bf00] font-mono text-[13px] align-baseline whitespace-nowrap">
                           <NvidiaLogo size={13} /> 8x H100 GPU
                         </span>.
@@ -1019,10 +1072,10 @@ export default function AutonomousSystemsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Bootstrapping Genesis physics environment</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ingesting sensor AST & kinematic scene graph</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Loaded urban driving scenes, rigid-body meshes, and collision geometry</span>
+                          <span className="text-[#666] text-[12px]">Parsed 148 spatial-temporal nodes & lidar sweeps <span className="text-[#C8C7BA]">[Cosmos-1.0]</span></span>
                         </div>
                       </div>
 
@@ -1036,10 +1089,10 @@ export default function AutonomousSystemsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Deploying Cosmos-1.0 serving with vLLM</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Checking dynamic constraint precision</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.1s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Initialized continuous batching and FP8 KV cache on 8x NVIDIA H100</span>
+                          <span className="text-[#75bf00] text-[12px]">100% physical bounds match against ISO 26262 & Kinematics [8x NVIDIA H100 GPU]</span>
                         </div>
                       </div>
 
@@ -1053,10 +1106,10 @@ export default function AutonomousSystemsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Simulating physical dynamics & counterfactual rollouts</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Computing counterfactual trajectory rollouts</span>
                             <span className="text-[#C8C7BA] text-[12px]">4.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Generated 500 physical trajectories to evaluate real-world kinematics</span>
+                          <span className="text-[#666] text-[12px]">Generated 500 physics rollouts #0x8f2a99c1d0 [Genesis Physics Engine | CUDA 12.4]</span>
                         </div>
                       </div>
 
@@ -1070,48 +1123,11 @@ export default function AutonomousSystemsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Kinematic validation & collision verification</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Flagging trajectory clearance risk anomaly</span>
                             <span className="text-[#C8C7BA] text-[12px]">9.8s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Verified rigid-body constraints and eliminated spatial prediction drift</span>
+                          <span className="text-[#666] text-[12px]">Lateral acceleration boundary exceeded at waypoint 14.2 (99.7% confidence)</span>
                         </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Exporting containerized inference recipe</span>
-                            <span className="text-[#C8C7BA] text-[12px]">14.2s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">Containerized vLLM serving runtime, physics kernels, and model weights</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Step 7 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -1121,13 +1137,13 @@ export default function AutonomousSystemsPage() {
                     <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
                       <input
                         type="text"
-                        placeholder="Teach the agent to optimize for specific reward criteria..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
+                        placeholder="Teach the agent to audit against specific kinematic constraints..."
+                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2 placeholder:text-[#555]"
                         readOnly
                       />
                       <div className="flex justify-between items-center px-1">
                         <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@WorldModel</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
                           <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Kinematics</span>
                         </div>
                         <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
@@ -1140,37 +1156,37 @@ export default function AutonomousSystemsPage() {
 
                 {/* Files Content */}
                 <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SYSTEM ENGINES</span>
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2 w-full">
+                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">AUTONOMY ENGINES</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
+                  <div className="flex flex-col gap-1.5 text-[13px] font-mono w-full">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      world_model.py
+                      kinematic_ast.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      dynamics_verifier.py
+                      physics_prover.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      trajectory_planner.py
+                      trajectory_auditor.py
                     </div>
 
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> autonomy-runtime/
+                        <ChevronDown size={14} className="text-[#777]" /> autonomy-agent-factory/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
-                          onClick={() => selectFileManually("train_world_model.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "train_world_model.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("verify_autonomy.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "verify_autonomy.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          train_world_model.py
+                          verify_autonomy.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("eval_sim2real.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_sim2real.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("eval.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          eval_sim2real.py
+                          eval.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("run_autonomy_loop.sh")}
@@ -1185,17 +1201,29 @@ export default function AutonomousSystemsPage() {
                           pipeline.json
                         </button>
                         <button 
+                          onClick={() => selectFileManually("README.md")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
+                          README.md
+                        </button>
+                        <button 
                           onClick={() => selectFileManually("Dockerfile")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           Dockerfile
                         </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                        <button 
+                          onClick={() => selectFileManually("docker-compose.yml")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
                           docker-compose.yml
-                        </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                        </button>
+                        <button 
+                          onClick={() => selectFileManually("requirements.txt")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
                           requirements.txt
-                        </div>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1205,34 +1233,34 @@ export default function AutonomousSystemsPage() {
                 <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
-                      onClick={() => selectFileManually("train_world_model.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "train_world_model.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("verify_autonomy.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "verify_autonomy.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      train_world_model.py
+                      verify_autonomy.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("eval_sim2real.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval_sim2real.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("eval.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      eval_sim2real.py
+                      eval.py
                     </button>
                     <button
                       onClick={() => selectFileManually("run_autonomy_loop.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       run_autonomy_loop.sh
                     </button>
                     <button
                       onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       pipeline.json
                     </button>
                     <button
-                      onClick={() => selectFileManually("Dockerfile")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("README.md")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "README.md" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      Dockerfile
+                      README.md
                     </button>
                   </div>
 
@@ -1254,7 +1282,9 @@ export default function AutonomousSystemsPage() {
                               ? "json"
                               : activeFile === "Dockerfile"
                                 ? "dockerfile"
-                                : "typescript",
+                                : activeFile.endsWith(".md")
+                                  ? "markdown"
+                                  : "text",
                         !isTypingCode
                       )}
                     </div>
@@ -1279,9 +1309,9 @@ export default function AutonomousSystemsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Cloud size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Statutory Index</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Physical World Graph</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Statutory AST graphs cross-referencing US Code, SEC regulations, and EU directives.
+                      Spatial-temporal 4D scene graphs cross-referencing sensor observations, kinematics, and dynamic scene limits.
                     </p>
                   </div>
 
@@ -1290,9 +1320,9 @@ export default function AutonomousSystemsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Server size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Reasoning Weights</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The World Model Weights</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Self-host the legal models (GPT-4o Legal, DeepSeek-Legal) in your own cloud. Full privilege privacy.
+                      Self-host open-weights world models (Cosmos-1.0, OpenVLA, Pi0) in your own cloud or on edge compute. Full data sovereignty.
                     </p>
                   </div>
 
@@ -1301,9 +1331,9 @@ export default function AutonomousSystemsPage() {
                     <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                       <Network size={28} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The ZK Proof Harness</h3>
+                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Sim-to-Real Harness</h3>
                     <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Generate verifiable ZK-SNARK citation proofs guaranteeing zero hallucinations.
+                      Generate physics-consistency proofs and counterfactual simulations guaranteeing zero dynamic collision violations.
                     </p>
                   </div>
                 </div>
@@ -1319,10 +1349,10 @@ export default function AutonomousSystemsPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any legal generator or citation verifier model works
+                  Any world model or physical-dynamics predictor works
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights legal model as your audit engine, and fine-tune any compact target model. The examples below are just a starting view.
+                  Use any open-weights foundation model as your perception and world engine, and optimize any compact control policy. The models below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1334,7 +1364,7 @@ export default function AutonomousSystemsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any legal or regulatory model on Hugging Face"
+                    placeholder="Search any world model or robotics policy on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1397,7 +1427,7 @@ export default function AutonomousSystemsPage() {
                   What Horos tunes
                 </h2>
                 <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the pipeline, retuned per model and jurisdiction.
+                  Every stage of the autonomy pipeline, retuned per model and operational domain.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
@@ -1408,9 +1438,9 @@ export default function AutonomousSystemsPage() {
                       <div className="text-[#75bf00]">
                         <ScanSearch size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Statutory AST Indexing</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Spatial-Temporal Scene Indexing</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune clause AST graphs for instant retrieval of relevant statutory codes and precedent.
+                        Tune 4D scene graphs for instant spatial retrieval, coordinate transformations, and obstacle representations.
                       </p>
                     </div>
 
@@ -1418,9 +1448,9 @@ export default function AutonomousSystemsPage() {
                       <div className="text-[#75bf00]">
                         <Zap size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Zero-Knowledge Proofs</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical-Dynamics Proofs</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Generate verifiable ZK-SNARK proofs for every case law citation to guarantee zero hallucinations.
+                        Generate verifiable kinematic proofs for every trajectory waypoint to guarantee boundary-safe navigation.
                       </p>
                     </div>
 
@@ -1428,9 +1458,9 @@ export default function AutonomousSystemsPage() {
                       <div className="text-[#75bf00]">
                         <Sliders size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Clause Risk Analysis</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Counterfactual Risk Analysis</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Profile risk evaluation rules to highlight indemnification, liability caps, and GDPR compliance gaps.
+                        Simulate unobserved scenarios and test collision boundaries, rollover limits, and emergency braking margins.
                       </p>
                     </div>
 
@@ -1439,9 +1469,9 @@ export default function AutonomousSystemsPage() {
                       <div className="text-[#75bf00]">
                         <Layers size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Citation Verification</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sim-to-Real Verification</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in verification harness cross-referencing legal precedents against authoritative case repositories.
+                        Built-in verification harness measuring prediction drift and kinematic transfer between neural physics and real hardware.
                       </p>
                     </div>
 
@@ -1449,9 +1479,9 @@ export default function AutonomousSystemsPage() {
                       <div className="text-[#75bf00]">
                         <Database size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Zero-Hallucination Audit</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Zero-Collision Policy Runtime</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize legal LLM weights (FP8/INT8) and apply strict sampling constraints to eliminate hallucinations.
+                        Quantize world model weights (FP8/INT8) and compile TensorRT kernels for 120Hz deterministic real-time control.
                       </p>
                     </div>
 
@@ -1459,9 +1489,9 @@ export default function AutonomousSystemsPage() {
                       <div className="text-[#75bf00]">
                         <Workflow size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Compliance Fine-Tuning</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Continuous Telemetry Adaptation</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Fine-tune GPT-4o Legal and DeepSeek-Legal on your law firm's proprietary playbooks and precedents.
+                        Fine-tune Cosmos and VLA models on your proprietary vehicle telemetry, sensor logs, and operational edge cases.
                       </p>
                     </div>
 
@@ -1482,7 +1512,7 @@ export default function AutonomousSystemsPage() {
                   Try this pipeline
                 </h2>
                 <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
-                  Edit the model, jurisdiction, or agent inline. Send to retune the stack in the dashboard.
+                  Edit the model, sensor configuration, or operational constraints inline. Send to retune the autonomy stack in the dashboard.
                 </p>
 
                 <div className="relative z-50 flex justify-center items-center mb-24 w-full h-[261px]">
@@ -1603,12 +1633,12 @@ export default function AutonomousSystemsPage() {
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
                 Deploy your first verifiable<br className="hidden md:block" />
-                legal agent, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
+                world model, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
                 ship
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the contract or compliance task. Horos builds and optimizes the ZK legal stack.
+                Describe the environment or robotic task. Horos builds, simulates, and optimizes the autonomous systems stack.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
