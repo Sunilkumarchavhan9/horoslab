@@ -388,15 +388,96 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen2.5 72B Instruct", author: "Qwen", downloads: "2.8M dl", description: "State-of-the-art open-weights model for multi-step reasoning, tool-use, and agent planning.", tag: "Agent Backbone", role: "Reasoning & Tools", hfUrl: "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct" },
-  { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B Instruct", author: "Meta", downloads: "4.1M dl", description: "Industry-standard open foundation model for complex task decomposition and function calling.", tag: "Foundation Model", role: "Task Planning", hfUrl: "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct" },
-  { id: "deepseek-ai/DeepSeek-R1", name: "DeepSeek R1", author: "DeepSeek", downloads: "3.5M dl", description: "Frontier reasoning model with reinforced test-time compute for deep planning and error recovery.", tag: "Reasoning Engine", role: "Deep Reflection", hfUrl: "https://huggingface.co/deepseek-ai/DeepSeek-R1" },
-  { id: "mistralai/Mistral-Large-Instruct-2411", name: "Mistral Large 2411", author: "Mistral", downloads: "1.2M dl", description: "High-precision multilingual reasoning model with native JSON schema and structured tool calling.", tag: "Agent Model", role: "Schema Fidelity", hfUrl: "https://huggingface.co/mistralai/Mistral-Large-Instruct-2411" },
-  { id: "microsoft/Phi-4", name: "Phi-4 14B", author: "Microsoft", downloads: "950k dl", description: "Highly efficient reasoning model with synthetic training for low-latency agent tool orchestration.", tag: "Efficient Agent", role: "Fast Execution", hfUrl: "https://huggingface.co/microsoft/Phi-4" },
-  { id: "google/gemma-2-27b-it", name: "Gemma 2 27B", author: "Google", downloads: "820k dl", description: "Compact open-weights architecture built for structured reasoning and fast agent loops.", tag: "Open Weights", role: "Fast Inference", hfUrl: "https://huggingface.co/google/gemma-2-27b-it" },
-  { id: "nvidia/Llama-3.1-Nemotron-70B-Instruct", name: "Nemotron 70B", author: "Nvidia", downloads: "640k dl", description: "NVIDIA-aligned model optimized for complex tool-calling workflows and reward-guided execution.", tag: "Tool Calling", role: "Execution Engine", hfUrl: "https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct" },
-  { id: "THUDM/glm-4-9b-chat", name: "GLM-4 9B Chat", author: "THUDM", downloads: "510k dl", description: "Bilingual general-purpose agent backbone with specialized function call training.", tag: "Agent Model", role: "Function Calling", hfUrl: "https://huggingface.co/THUDM/glm-4-9b-chat" },
-  { id: "01-ai/Yi-1.5-34B-Chat", name: "Yi-1.5 34B Chat", author: "01-ai", downloads: "390k dl", description: "Balanced open-weight model with 200k context window for long-horizon agent state tracking.", tag: "Long Context", role: "Episodic State", hfUrl: "https://huggingface.co/01-ai/Yi-1.5-34B-Chat" }
+  {
+    id: "microsoft/MagenticBrain",
+    name: "MagenticBrain",
+    author: "Microsoft",
+    downloads: "15B",
+    description: "Frontier multi-agent coordination backbone for planning, role decomposition, and dynamic agent orchestration.",
+    tag: "Agent Orchestration",
+    role: "Agent Orchestration",
+    hfUrl: "https://huggingface.co/microsoft/MagenticBrain"
+  },
+  {
+    id: "NousResearch/Hermes-4-14B",
+    name: "Hermes-4-14B",
+    author: "Nous Research",
+    downloads: "14B",
+    description: "Open-weights reasoning model optimized for structured JSON schemas, function routing, and robust tool calling.",
+    tag: "Tool Calling",
+    role: "Tool Calling",
+    hfUrl: "https://huggingface.co/NousResearch/Hermes-4-14B"
+  },
+  {
+    id: "browser-use/bu-30b-a3b-preview",
+    name: "BU-30B-A3B-Preview",
+    author: "Browser Use",
+    downloads: "30B · 3B active",
+    description: "Sparse mixture-of-experts model specifically trained for autonomous web browsing, DOM parsing, and interactive workflows.",
+    tag: "Browser Automation",
+    role: "Browser Automation",
+    hfUrl: "https://huggingface.co/browser-use/bu-30b-a3b-preview"
+  },
+  {
+    id: "microsoft/Fara1.5-27B",
+    name: "Fara1.5-27B",
+    author: "Microsoft",
+    downloads: "27B",
+    description: "Multimodal foundation model for computer-use agents, ground-level OS interaction, and graphical interface navigation.",
+    tag: "Computer Use",
+    role: "Computer Use",
+    hfUrl: "https://huggingface.co/microsoft/Fara1.5-27B"
+  },
+  {
+    id: "meituan/EvoCUA-32B-20260105",
+    name: "EvoCUA-32B",
+    author: "Meituan",
+    downloads: "32B class",
+    description: "Continuous desktop agent model trained for long-horizon operating system task execution and UI problem solving.",
+    tag: "Desktop Task Execution",
+    role: "Desktop Task Execution",
+    hfUrl: "https://huggingface.co/meituan/EvoCUA-32B-20260105"
+  },
+  {
+    id: "xlangai/OpenCUA-7B",
+    name: "OpenCUA-7B",
+    author: "xLang AI",
+    downloads: "7B class",
+    description: "Ultra-compact computer-use agent architecture designed for lightweight, low-latency execution and local deployment.",
+    tag: "Lightweight Computer Use",
+    role: "Lightweight Computer Use",
+    hfUrl: "https://huggingface.co/xlangai/OpenCUA-7B"
+  },
+  {
+    id: "Qwen/Qwen3-Coder-Next",
+    name: "Qwen3-Coder-Next",
+    author: "Qwen",
+    downloads: "80B · 3B active",
+    description: "Next-gen MoE code reasoning backbone built for long-horizon repository refactoring, multi-file edits, and tool use.",
+    tag: "Long-Horizon Coding",
+    role: "Long-Horizon Coding",
+    hfUrl: "https://huggingface.co/Qwen/Qwen3-Coder-Next"
+  },
+  {
+    id: "mistralai/Devstral-Small-2-24B-Instruct-2512",
+    name: "Devstral Small 2",
+    author: "Mistral AI",
+    downloads: "24B",
+    description: "High-speed software engineering model fine-tuned for code synthesis, terminal operations, and automated test repair.",
+    tag: "Software Engineering",
+    role: "Software Engineering",
+    hfUrl: "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512"
+  },
+  {
+    id: "SWE-bench/SWE-agent-LM-32B",
+    name: "SWE-agent-LM-32B",
+    author: "SWE-bench",
+    downloads: "32B class",
+    description: "Benchmark-proven agent model specialized for autonomous GitHub issue resolution, repository debugging, and patch generation.",
+    tag: "Repository Repair",
+    role: "Repository Repair",
+    hfUrl: "https://huggingface.co/SWE-bench/SWE-agent-LM-32B"
+  }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -425,12 +506,17 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('meta') || a.includes('llama') || m.includes('llama')) return <MetaLogo size={20} />;
   if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
-  if (a.includes('mistral') || m.includes('mistral')) return <MistralLogo size={20} />;
-  if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
+  if (a.includes('mistral') || m.includes('mistral') || m.includes('devstral')) return <MistralLogo size={20} />;
+  if (a.includes('microsoft') || m.includes('phi') || m.includes('magentic') || m.includes('fara')) return <MicrosoftLogo size={20} />;
   if (a.includes('google') || m.includes('gemma')) return <GoogleLogo size={20} />;
   if (a.includes('nvidia') || m.includes('nemotron')) return <NvidiaLogo size={20} />;
   if (a.includes('thudm') || m.includes('glm')) return <BAAILogo size={20} />;
   if (a.includes('01-ai') || m.includes('yi')) return <KimiLogo size={20} />;
+  if (a.includes('nous') || m.includes('hermes')) return <Sparkles size={16} className="text-[#e2b714]" />;
+  if (a.includes('browser-use') || m.includes('browser') || m.includes('bu-')) return <Monitor size={16} className="text-[#75bf00]" />;
+  if (a.includes('meituan') || m.includes('evocua')) return <Activity size={16} className="text-[#75bf00]" />;
+  if (a.includes('xlang') || m.includes('opencua')) return <Terminal size={16} className="text-[#75bf00]" />;
+  if (a.includes('swe-bench') || m.includes('swe-agent')) return <GithubLogo size={16} />;
 
   return <HuggingFaceLogo size={20} />;
 };
@@ -1307,7 +1393,12 @@ export default function AutonomousAgentsPage() {
 
                     <div className="flex items-center justify-between pt-3 border-t border-[#252525] text-[11px] text-[#777]">
                       <span className="bg-[#1e1e1e] px-2 py-0.5 rounded text-[#75bf00] font-mono">{model.role || model.tag}</span>
-                      <span className="font-mono">{model.downloads}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-[#a09d94]">{model.downloads}</span>
+                        <span className="text-[11px] text-[#75bf00] flex items-center gap-0.5 group-hover:underline">
+                          View on HF <ArrowUpRight size={11} />
+                        </span>
+                      </div>
                     </div>
                   </a>
                 ))}
