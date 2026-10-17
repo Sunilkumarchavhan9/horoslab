@@ -175,94 +175,99 @@ const COMPARISON_ROWS = [
   }
 ];
 
-const VERIFY_CODE = `# Verifiable Legal Agent with Mathematical ZK Citation Proofs
+const VERIFY_CODE = `# Train and adapt world models for physical environment dynamics
 import torch
-from horos_legal import VerifiableLegalAgent, ZKProofVerifier, StatutoryGraph
+from horos_autonomy import WorldModelEngine, TrajectoryEvaluator, KinematicPriors
 
-# Initialize legal reasoning engine with ZK citation verifier
-agent = VerifiableLegalAgent.from_pretrained("openai/gpt-4o-legal-verifier")
-zk_verifier = ZKProofVerifier(policy="strict-zero-hallucination")
+# Initialize world model engine with physical-dynamics priors
+world_model = WorldModelEngine.from_pretrained("nvidia/Cosmos-1.0-WorldModel")
+evaluator = TrajectoryEvaluator(policy="strict-physics-consistency")
 
-def audit_contract_compliance(contract_text: str, jurisdiction: str = "US-Federal"):
-    """Audit contract clauses and compute mathematical ZK citation proofs."""
+def evaluate_environment_step(sensor_observations: dict, action_history: torch.Tensor):
+    """Predict future physical states and optimize goal-to-action planning."""
     
-    # Parse contract clauses into AST graph
-    clauses = StatutoryGraph.parse_clauses(contract_text)
+    # Encode multi-modal camera, LiDAR, and IMU sensor telemetry
+    latent_state = world_model.encode_observations(sensor_observations)
     
-    # Run compliance audit against SEC and GDPR regulations
-    audit_results = agent.analyze_compliance(clauses, jurisdiction=jurisdiction)
+    # Generate counterfactual physical rollouts across candidate actions
+    predicted_trajectory = world_model.predict_future_states(latent_state, action_history)
     
-    # Generate ZK-SNARK proof for every case citation
-    zk_proof = zk_verifier.generate_proof(audit_results.citations)
+    # Verify trajectory against kinematic limits and collision boundaries
+    eval_results = evaluator.verify_kinematics(predicted_trajectory)
     
-    if zk_proof.is_valid:
+    if eval_results.is_valid:
         return {
-            "compliance_status": audit_results.status,
-            "flagged_risks": audit_results.risks,
-            "zk_proof_hash": zk_proof.hash,
-            "hallucination_rate": 0.0
+            "planning_status": "optimal",
+            "prediction_drift": eval_results.drift_score,
+            "collision_probability": 0.0,
+            "control_frequency_hz": 120.0,
+            "recommended_action": eval_results.best_action
         }
         
     return None`;
 
 const AUDIT_CODE = `#!/usr/bin/env bash
-# Verifiable legal agent batch compliance audit runner
+# Autonomous systems closed-loop simulation & runtime runner
 set -euo pipefail
  
-CONTRACT_DIR="./contracts/m_and_a_2026"
-JURISDICTION="US-SEC-Federal"
+CONFIG_PATH="./configs/autonomous_system_v1.yaml"
+SIM_ENVIRONMENT="genesis-physics-v2"
 
-# Execute zero-hallucination contract audit with ZK proof generation
-horos-legal-agent audit \\
-  --input-dir $CONTRACT_DIR \\
-  --jurisdiction $JURISDICTION \\
-  --zk-proofs enabled \\
-  --zero-hallucination strict \\
-  --output-json ./legal_audit_report.json`;
+# Execute closed-loop world model prediction & safety evaluation
+horos-autonomy run \\
+  --config $CONFIG_PATH \\
+  --sim-env $SIM_ENVIRONMENT \\
+  --control-frequency 120Hz \\
+  --physics-verification strict \\
+  --output-dir ./eval_telemetry/ \\
+  --export-runtime ./runtime_binary/`;
 
 const PIPELINE_CODE = `{
-  "name": "verifiable-legal-agents",
-  "agent": "legal-verifier-v1",
-  "model": "gpt-4o-legal-verifier",
-  "jurisdiction": "US-SEC-Federal",
-  "zk_proofs": true,
-  "hallucination_threshold": 0.0,
-  "clause_audit": ["indemnification", "liability_cap", "gdpr_data_transfer"]
+  "name": "autonomous-systems-pipeline",
+  "world_model": "cosmos-1.0-worldmodel",
+  "perception": ["rgb_camera_4k", "lidar_pointcloud", "imu_telemetry"],
+  "control_frequency": "120Hz",
+  "physics_verification": true,
+  "collision_threshold": 0.0,
+  "evaluations": ["sim2real_transfer", "kinematic_constraints", "prediction_drift"]
 }`;
 
-const DOCKERFILE_CODE = `FROM ubuntu:22.04 AS base
+const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 AS base
  
-RUN apt-get update && apt-get install -y python3.11 python3-pip snarkjs
+RUN apt-get update && apt-get install -y python3.11 python3-pip libgl1-mesa-glx
  
-WORKDIR /legal
+WORKDIR /autonomy
 COPY requirements.txt .
 RUN pip install -r requirements.txt
  
-COPY agent/ /legal/agent/
-COPY verify_contract.py run_legal_audit.sh pipeline.json .
+COPY runtime/ /autonomy/runtime/
+COPY train_world_model.py run_autonomy_loop.sh pipeline.json .
  
 EXPOSE 8080
-ENTRYPOINT ["/legal/run_legal_audit.sh"]`;
+ENTRYPOINT ["/autonomy/run_autonomy_loop.sh"]`;
 
-const EVAL_CODE = `# Evaluation harness: measuring citation precision and ZK proof latency
-from horos_eval import CitationEvaluator, ZKSafetyGate
+const EVAL_CODE = `# Evaluation harness: measuring prediction drift and sim-to-real transfer
+from horos_eval import SimToRealHarness, PhysicalSafetyGate
 
-def evaluate_legal_accuracy(original_contract: str, audit_report: dict) -> dict:
-    """Verify legal agent accuracy and zero-hallucination guarantee."""
+def evaluate_autonomy_safety(simulation_trajectories: list, real_telemetry: dict) -> dict:
+    """Verify prediction accuracy and sim-to-real transfer robustness."""
     
-    evaluator = CitationEvaluator()
-    safety = ZKSafetyGate(policy="zero-hallucination")
+    harness = SimToRealHarness()
+    safety_gate = PhysicalSafetyGate(tolerance="strict-zero-collision")
     
-    # Mathematically verify ZK-SNARK citation proofs
-    proof_passed = safety.verify_proof(audit_report["zk_proof_hash"])
+    # Benchmark candidate trajectories against unfamiliar physical conditions
+    safety_passed = safety_gate.verify_boundaries(real_telemetry["trajectory"])
     
-    # Calculate statutory accuracy and hallucination rate
-    accuracy_score = evaluator.score_citations(audit_report)
+    # Score physical dynamics prediction error across longer horizons
+    metrics = harness.benchmark_transfer(
+        sim_data=simulation_trajectories,
+        real_data=real_telemetry
+    )
     
     return {
-        "zk_proof_verified": proof_passed,
-        "citation_accuracy_pct": accuracy_score.precision,
-        "hallucinated_citations": 0
+        "sim_to_real_score": metrics.transfer_fidelity,
+        "max_kinematic_error": metrics.kinematic_error,
+        "safety_constraints_met": safety_passed
     }`;
 
 type DataFactoryFile = string;
@@ -411,34 +416,34 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How do Verifiable Legal Agents guarantee zero hallucinations?",
-    answer: "Horos uses deterministic statutory AST graphs combined with ZK-SNARK mathematical citation proofs to ensure every case citation and statutory quote is 100% verified.",
+    question: "How do Autonomous Systems world models handle sim-to-real transfer?",
+    answer: "Horos pairs physical-dynamics neural simulators with uncertainty-aware trajectory estimators, measuring prediction drift and kinematic constraint violations before hardware deployment.",
   },
   {
-    question: "Can the agent audit complex M&A, IP, and regulatory compliance documents?",
-    answer: "Yes. Native support for SEC filings, GDPR/CCPA regulations, M&A merger agreements, and patent disclosures allows instant automated risk identification.",
+    question: "Can I evaluate and deploy custom open-weight VLA and robotics models?",
+    answer: "Yes. Native support for Cosmos, OpenVLA, Pi0, and custom physical-dynamics checkpoints allows rapid benchmarking against real-world telemetry.",
   },
   {
-    question: "Can I export fine-tuned legal models to run in my private cloud or air-gapped environment?",
-    answer: "Yes! All fine-tuned legal model weights and runtime containers can be exported as GGUF or TensorRT binaries and deployed completely inside your private VPC with zero third-party data access.",
+    question: "Can I export optimized runtimes to run directly on edge robotics hardware?",
+    answer: "Yes! All fine-tuned models, quantization kernels, and closed-loop control pipelines can be compiled into containerized runtimes and deployed directly to edge computing units.",
   }
 ];
 
-export default function VerifiableLegalAgentsPage() {
-  const [activeFile, setActiveFile] = useState<DataFactoryFile>("verify_contract.py" as any);
+export default function AutonomousSystemsPage() {
+  const [activeFile, setActiveFile] = useState<DataFactoryFile>("train_world_model.py" as any);
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "verify_contract.py": VERIFY_CODE,
-    "eval.py": EVAL_CODE,
-    "run_legal_audit.sh": AUDIT_CODE,
+    "train_world_model.py": VERIFY_CODE,
+    "eval_sim2real.py": EVAL_CODE,
+    "run_autonomy_loop.sh": AUDIT_CODE,
     "pipeline.json": PIPELINE_CODE,
     "Dockerfile": DOCKERFILE_CODE
   };
 
-  const AGENT_MSG_1 = "On it. I'll parse MSA #4092, check clause dependencies against SEC Rule 10b-5 and GDPR Article 28, and compute ZK citation proofs.";
-  const AGENT_MSG_2 = "Audit complete. Identified unlimited liability risk in Clause 14.2. ZK proof #0x8f2a... verified against SEC regulations. Report ready for counsel sign-off.";
+  const AGENT_MSG_1 = "On it. Ingesting multi-modal sensor telemetry, compiling 4D world dynamics, evaluating candidate actions against physical constraints, and benchmarking sim-to-real latency.";
+  const AGENT_MSG_2 = "Autonomy loop verified. Passed 500 physical test scenarios with 0 collision violations. Inference latency: 8.2ms at 120Hz control frequency. Containerized stack ready for deployment.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -967,15 +972,15 @@ export default function VerifiableLegalAgentsPage() {
                   <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
                     <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[15px] font-sans leading-[28px]">
-                        Audit Master Service Agreement #4092 for GDPR & SEC compliance. Hybrid statutory parser with{" "}
+                        Teach a world model to understand and decode the physical world. Fine-tune{" "}
                         <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <OpenAILogo size={13} /> GPT-4o-Legal
+                          <NvidiaLogo size={13} /> Cosmos-1.0
                         </span>{" "}
-                        plus case law verifier,{" "}
+                        on driving trajectories, simulate counterfactual actions with{" "}
                         <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <DeepSeekLogo size={13} /> DeepSeek-R1-Legal
+                          <HuggingFaceLogo size={13} /> Genesis-Sim
                         </span>{" "}
-                        grounded with citation spans. Compute ZK proofs on{" "}
+                        physics engine, and serve via{" "}
                         <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#75bf00] font-mono text-[13px] align-baseline whitespace-nowrap">
                           <NvidiaLogo size={13} /> 8x H100 GPU
                         </span>.
@@ -1014,10 +1019,10 @@ export default function VerifiableLegalAgentsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ingesting contract AST & clause tree</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Bootstrapping Genesis physics environment</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Parsed 148 contract clauses & definitions [GPT-4o Legal]</span>
+                          <span className="text-[#666] text-[12px]">Loaded urban driving scenes, rigid-body meshes, and collision geometry</span>
                         </div>
                       </div>
 
@@ -1031,10 +1036,10 @@ export default function VerifiableLegalAgentsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Checking statutory citation precision</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Deploying Cosmos-1.0 serving with vLLM</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.1s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">100% citation match against US Code & GDPR [8x NVIDIA H100 GPU]</span>
+                          <span className="text-[#75bf00] text-[12px]">Initialized continuous batching and FP8 KV cache on 8x NVIDIA H100</span>
                         </div>
                       </div>
 
@@ -1048,10 +1053,10 @@ export default function VerifiableLegalAgentsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Computing ZK-SNARK mathematical proof</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Simulating physical dynamics & counterfactual rollouts</span>
                             <span className="text-[#C8C7BA] text-[12px]">4.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Generated ZK proof hash #0x8f2a99c1d0 [ZK Audit Engine | CUDA 12.4]</span>
+                          <span className="text-[#666] text-[12px]">Generated 500 physical trajectories to evaluate real-world kinematics</span>
                         </div>
                       </div>
 
@@ -1065,10 +1070,10 @@ export default function VerifiableLegalAgentsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Flagging indemnification risk anomaly</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Kinematic validation & collision verification</span>
                             <span className="text-[#C8C7BA] text-[12px]">9.8s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Unlimited liability cap detected in Clause 14.2 (99.7% confidence)</span>
+                          <span className="text-[#666] text-[12px]">Verified rigid-body constraints and eliminated spatial prediction drift</span>
                         </div>
                       </div>
 
@@ -1082,10 +1087,10 @@ export default function VerifiableLegalAgentsPage() {
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Generating zero-hallucination audit report</span>
+                            <span className="text-[#C8C7BA] text-[13px] font-medium">Exporting containerized inference recipe</span>
                             <span className="text-[#C8C7BA] text-[12px]">14.2s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Audit verified. Report ready for counsel sign-off [Model: GPT-4o Legal]</span>
+                          <span className="text-[#75bf00] text-[12px]">Containerized vLLM serving runtime, physics kernels, and model weights</span>
                         </div>
                       </div>
                     </div>
@@ -1116,14 +1121,14 @@ export default function VerifiableLegalAgentsPage() {
                     <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
                       <input
                         type="text"
-                        placeholder="Teach the agent to audit against specific jurisdiction laws..."
+                        placeholder="Teach the agent to optimize for specific reward criteria..."
                         className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
                         readOnly
                       />
                       <div className="flex justify-between items-center px-1">
                         <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Jurisdiction</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@WorldModel</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Kinematics</span>
                         </div>
                         <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
                           <ArrowUp size={14} strokeWidth={2.5} />
@@ -1136,42 +1141,42 @@ export default function VerifiableLegalAgentsPage() {
                 {/* Files Content */}
                 <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">LEGAL ENGINES</span>
+                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">SYSTEM ENGINES</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
                   <div className="flex flex-col gap-1.5 text-[13px] font-mono">
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      statutory_ast.py
+                      world_model.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      zk_prover.py
+                      dynamics_verifier.py
                     </div>
                     <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
-                      clause_auditor.py
+                      trajectory_planner.py
                     </div>
 
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> legal-agent-factory/
+                        <ChevronDown size={14} className="text-[#777]" /> autonomy-runtime/
                       </div>
                       <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
                         <button
-                          onClick={() => selectFileManually("verify_contract.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "verify_contract.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("train_world_model.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "train_world_model.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          verify_contract.py
+                          train_world_model.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("eval.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("eval_sim2real.py")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_sim2real.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          eval.py
+                          eval_sim2real.py
                         </button>
                         <button 
-                          onClick={() => selectFileManually("run_legal_audit.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_legal_audit.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("run_autonomy_loop.sh")}
+                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          run_legal_audit.sh
+                          run_autonomy_loop.sh
                         </button>
                         <button 
                           onClick={() => selectFileManually("pipeline.json")}
@@ -1200,22 +1205,22 @@ export default function VerifiableLegalAgentsPage() {
                 <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                   <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
-                      onClick={() => selectFileManually("verify_contract.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "verify_contract.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("train_world_model.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "train_world_model.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      verify_contract.py
+                      train_world_model.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("eval.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("eval_sim2real.py")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "eval_sim2real.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      eval.py
+                      eval_sim2real.py
                     </button>
                     <button
-                      onClick={() => selectFileManually("run_legal_audit.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_legal_audit.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      onClick={() => selectFileManually("run_autonomy_loop.sh")}
+                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      run_legal_audit.sh
+                      run_autonomy_loop.sh
                     </button>
                     <button
                       onClick={() => selectFileManually("pipeline.json")}
