@@ -1467,7 +1467,7 @@ export default function AutonomousSoftwareEngineersPage() {
           </div>
 
           {/* Tuning Section */}
-          <div className="w-full relative z-10 pt-20 md:pt-24 mt-8 md:mt-12">
+          <div className="w-full relative z-10 pt-20 md:pt-24 mt-8 md:mt-12 mb-16 md:mb-20">
             <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
@@ -1556,9 +1556,13 @@ export default function AutonomousSoftwareEngineersPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-24">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Try this pipeline Section */}
-            <div className="w-full relative z-10 py-24">
-              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full relative z-10 py-24">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">

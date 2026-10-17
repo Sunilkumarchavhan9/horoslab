@@ -1261,8 +1261,13 @@ export default function AutonomousAgentsPage() {
           </div>
         </div>
 
+        {/* Section End Divider with Brand Logo */}
+        <div className="w-full relative z-20 my-16 md:my-24">
+          <SectionDivider position="top" className="w-full" />
+        </div>
+
         {/* Try This Pipeline Section */}
-        <div className="w-full relative z-10 py-24 border-t border-b border-dashed border-[#333]">
+        <div className="w-full relative z-10 py-24 border-b border-dashed border-[#333]">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
