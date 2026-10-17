@@ -15,45 +15,163 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Deploy verifiable legal agents", desc: "Launch legal agents with verifiable ZK proofs and statutory verification." },
-    closed: { title: "Basic chat completions", desc: "Per-call API responses without citation verification or audit trails." },
-    diy: { title: "Build prompt chains", desc: "Spend months configuring brittle regex parsers and OpenAI webhooks." }
+    label: "System",
+    runInfra: {
+      title: "Unified autonomy workflow",
+      desc: "Connect perception, world modeling, prediction, planning, control, and evaluation in one engineering loop."
+    },
+    closed: {
+      title: "Individual model endpoints",
+      desc: "Call separate models for vision, prediction, action, and reasoning."
+    },
+    diy: {
+      title: "Custom autonomy stack",
+      desc: "Integrate models, controllers, sensor pipelines, simulators, and robotics middleware yourself."
+    }
   },
   {
     num: "0 2",
-    label: "Verification",
-    runInfra: { title: "Verifiable ZK citation proofs", desc: "Every citation is mathematically verified against authoritative case law." },
-    closed: { title: "Unverified text output", desc: "High risk of hallucinated legal precedent and incorrect statute quotes." },
-    diy: { title: "Manual human proofreading", desc: "Associates must manually double-check every single case reference." }
+    label: "Models",
+    runInfra: {
+      title: "Open-weight model engineering",
+      desc: "Evaluate, adapt, and optimize world models, vision-language-action models, and physical-dynamics predictors."
+    },
+    closed: {
+      title: "Provider-hosted models",
+      desc: "Use available hosted models with limited control over model weights and internal architecture."
+    },
+    diy: {
+      title: "Manual model management",
+      desc: "Source checkpoints, manage dependencies, configure training, and maintain model versions independently."
+    }
   },
   {
     num: "0 3",
-    label: "Statutory Audit",
-    runInfra: { title: "Clause-level compliance audit", desc: "Automated risk analysis for indemnification, liability caps, and GDPR." },
-    closed: { title: "Black-box summaries", desc: "Opaque summaries that miss subtle contract ambiguities and edge cases." },
-    diy: { title: "Ad-hoc regex matching", desc: "Fragile regex patterns unable to parse complex legal legalese." }
+    label: "Context",
+    runInfra: {
+      title: "Unified environment state",
+      desc: "Connect sensor observations, spatial representations, robot state, task constraints, and interaction history."
+    },
+    closed: {
+      title: "Model-specific inputs",
+      desc: "Supply supported images, video, text, and structured state through individual model interfaces."
+    },
+    diy: {
+      title: "Custom sensor integration",
+      desc: "Build perception adapters, coordinate transforms, state estimators, and context pipelines yourself."
+    }
   },
   {
     num: "0 4",
-    label: "Model Control",
-    runInfra: { title: "Fine-tuned legal reasoning models", desc: "Deploy domain-adapted Legal-Llama, DeepSeek-Legal, and GPT-Legal." },
-    closed: { title: "Locked to vendor API defaults", desc: "Standard generalist models without specialized legal fine-tuning." },
-    diy: { title: "Prompt-only tuning", desc: "Inability to adapt model weights to your law firm's internal playbooks." }
+    label: "Planning",
+    runInfra: {
+      title: "Goal-to-action engineering",
+      desc: "Evaluate candidate actions against task objectives, physical constraints, predicted outcomes, and operating limits."
+    },
+    closed: {
+      title: "Model-generated actions",
+      desc: "Request plans or action proposals within the model's supported capabilities."
+    },
+    diy: {
+      title: "Custom planning algorithms",
+      desc: "Implement planners, trajectory search, control policies, and action-selection logic independently."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Autonomous compliance loops", desc: "Automate contract review, regulatory filing audits, and ZK reporting." },
-    closed: { title: "High legal associate toil", desc: "Legal teams spent hours manually reviewing AI-generated drafts." },
-    diy: { title: "High operational overhead", desc: "Your team owns model maintenance, prompt drift, and compliance updates." }
+    label: "Simulation",
+    runInfra: {
+      title: "Simulation-to-reality evaluation",
+      desc: "Run controlled physical scenarios, compare predicted and actual outcomes, and test transfer to unfamiliar conditions."
+    },
+    closed: {
+      title: "External simulation integrations",
+      desc: "Send model inputs to separate simulators and process their outputs."
+    },
+    diy: {
+      title: "Custom simulation pipelines",
+      desc: "Orchestrate environments, physics engines, scenario generation, trajectory collection, and evaluation jobs yourself."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II & On-Prem ZK Guards", desc: "Zero privilege data retention with air-gapped execution options." },
-    closed: { title: "Third-party data storage", desc: "Privileged client contracts uploaded to third-party SaaS servers." },
-    diy: { title: "Self-managed security", desc: "Your team owns attorney-client privilege data guards and compliance." }
+    label: "Optimization",
+    runInfra: {
+      title: "Model-to-hardware optimization",
+      desc: "Compare quantization, inference kernels, memory movement, batching, runtimes, and hardware configurations against workload targets."
+    },
+    closed: {
+      title: "Provider parameter tuning",
+      desc: "Adjust exposed inference settings and available deployment options."
+    },
+    diy: {
+      title: "Independent optimization loops",
+      desc: "Build profiling, benchmarking, compiler tuning, deployment configuration, and performance tracking from scratch."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    runInfra: {
+      title: "Physical-behavior verification",
+      desc: "Test prediction error, action validity, task success, robustness, safety constraints, and generalization on held-out scenarios."
+    },
+    closed: {
+      title: "Model-level evaluations",
+      desc: "Use supported model benchmarks and external validation tools."
+    },
+    diy: {
+      title: "Custom test infrastructure",
+      desc: "Develop test scenarios, acceptance criteria, regression suites, and physical-system validation independently."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    runInfra: {
+      title: "End-to-end observability",
+      desc: "Track model versions, sensor inputs, predicted outcomes, actions, failures, recovery, latency, and measured task results."
+    },
+    closed: {
+      title: "Fragmented model observability",
+      desc: "Monitor individual endpoint responses and provider-level performance metrics."
+    },
+    diy: {
+      title: "Custom experiment infrastructure",
+      desc: "Build telemetry pipelines, experiment stores, trace collection, and cross-system analysis yourself."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    runInfra: {
+      title: "Continuous model adaptation",
+      desc: "Use verified trajectories, demonstrations, and failure cases to guide fine-tuning, adaptation, and subsequent evaluations."
+    },
+    closed: {
+      title: "Provider-limited adaptation",
+      desc: "Depend on supported fine-tuning, prompting, and model customization options."
+    },
+    diy: {
+      title: "Manual training pipelines",
+      desc: "Assemble datasets, demonstrations, training jobs, checkpoints, and evaluation workflows independently."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    runInfra: {
+      title: "Controlled autonomous execution",
+      desc: "Define action limits, deployment policies, hardware access, approval gates, rollback procedures, and human intervention boundaries."
+    },
+    closed: {
+      title: "Provider access controls",
+      desc: "Combine available API permissions and deployment controls with your own execution safeguards."
+    },
+    diy: {
+      title: "Custom control infrastructure",
+      desc: "Implement permissions, safety interlocks, operational budgets, approvals, audit logs, and deployment policies yourself."
+    }
   }
 ];
 
@@ -660,14 +778,14 @@ export default function VerifiableLegalAgentsPage() {
         <div className="w-full h-px border-t border-dashed border-[#333]" />
 
         {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mt-32 mb-32">
+        <div className="w-full relative z-10 mt-24 mb-28">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to build verifiable legal AI
+          <div className="flex flex-col items-center mb-14 px-4">
+            <h2 className="text-[34px] sm:text-[42px] md:text-[50px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-12">
+              Three ways to engineer autonomous systems
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for legal agents across Horos, closed LLM APIs, and DIY prompt chains.
+            <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-2xl">
+              Build physical-world intelligence, validate its behavior in unfamiliar environments, and optimize its execution for real-world hardware.
             </p>
           </div>
 
@@ -716,21 +834,21 @@ export default function VerifiableLegalAgentsPage() {
                       </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Verifiable ZK proofs & 0 hallucination.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Unified autonomy engineering.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Key size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
+                      <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Individual model endpoints</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Opaque legal text generation.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fragmented, provider-hosted.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY Prompt Scripts</span>
+                      <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Custom autonomy stack</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Brittle regex parsing.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">DIY infrastructure, high maintenance.</p>
                   </div>
                 </div>
 
