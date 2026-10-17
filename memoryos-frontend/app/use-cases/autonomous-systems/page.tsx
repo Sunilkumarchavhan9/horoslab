@@ -175,47 +175,51 @@ const COMPARISON_ROWS = [
   }
 ];
 
-const VERIFY_CODE = `# Verifiable Autonomy Agent with Mathematical Physics Proof
+const VERIFY_CODE = `# Verifiable Autonomy Agent with Physics Proof
 import torch
-from horos_autonomy import VerifiableAutonomyAgent, PhysicsProofVerifier
+from horos_autonomy import (
+    AutonomyAgent,
+    PhysicsVerifier,
+    KinematicGraph,
+)
 
-# Initialize autonomy reasoning engine with physics verifier
-agent = VerifiableAutonomyAgent.from_pretrained("nvidia/Cosmos-1.0-WorldModel")
-physics_verifier = PhysicsProofVerifier(policy="strict-zero-collision")
+# Initialize world model with physics verifier
+agent = AutonomyAgent.load("nvidia/Cosmos-1.0")
+verifier = PhysicsVerifier(policy="zero-collision")
 
-def audit_trajectory_compliance(trajectory_data: dict, operational_domain: str):
-    """Audit trajectory dynamics and compute mathematical physics proofs."""
+def audit_trajectory(trajectory: dict, domain: str):
+    """Audit dynamics and compute physics proofs."""
 
-    # Parse sensor streams and trajectory into AST graph
-    trajectories = KinematicGraph.parse_trajectories(trajectory_data)
+    # Parse sensor telemetry into AST graph
+    graph = KinematicGraph.parse(trajectory)
 
-    # Run compliance audit against ISO 26262 and dynamic safety bounds
-    audit_results = agent.analyze_compliance(trajectories, operational_domain)
+    # Run compliance audit against safety bounds
+    audit = agent.analyze_compliance(graph, domain)
 
-    # Generate physics-consistency proof for every predicted waypoint
-    physics_proof = physics_verifier.generate_proof(audit_results.waypoints)
+    # Generate physics proof for waypoints
+    proof = verifier.generate_proof(audit.waypoints)
 
-    if physics_proof.is_valid:
+    if proof.is_valid:
         return {
-            "compliance_status": audit_results.status,
-            "flagged_risks": audit_results.risks,
-            "physics_proof_hash": physics_proof.hash,
+            "status": audit.status,
+            "risks": audit.risks,
+            "proof_hash": proof.hash,
             "collision_rate": 0.0
         }
 
     return None`;
 
 const AUDIT_CODE = `#!/usr/bin/env bash
-# Autonomous systems closed-loop simulation & runtime runner
+# Autonomous systems simulation runner
 set -euo pipefail
  
-CONFIG_PATH="./configs/autonomous_system_v1.yaml"
-SIM_ENVIRONMENT="genesis-physics-v2"
+CONFIG="./configs/autonomy_v1.yaml"
+SIM_ENV="genesis-physics-v2"
 
-# Execute closed-loop world model prediction & safety evaluation
+# Execute closed-loop world model prediction
 horos-autonomy run \\
-  --config $CONFIG_PATH \\
-  --sim-env $SIM_ENVIRONMENT \\
+  --config $CONFIG \\
+  --sim-env $SIM_ENV \\
   --control-frequency 120Hz \\
   --physics-verification strict \\
   --output-dir ./eval_telemetry/ \\
@@ -223,51 +227,54 @@ horos-autonomy run \\
 
 const PIPELINE_CODE = `{
   "name": "autonomous-systems-pipeline",
-  "world_model": "nvidia/Cosmos-1.0-WorldModel",
-  "perception": ["rgb_camera_4k", "lidar_pointcloud", "imu_telemetry"],
+  "world_model": "nvidia/Cosmos-1.0",
+  "sensors": ["camera_4k", "lidar", "imu"],
   "control_frequency": "120Hz",
   "physics_verification": true,
   "collision_threshold": 0.0,
-  "evaluations": ["sim2real_transfer", "kinematic_constraints", "prediction_drift"]
+  "evaluations": [
+    "sim2real_transfer",
+    "kinematic_constraints",
+    "prediction_drift"
+  ]
 }`;
 
 const README_CODE = `# Autonomous Systems Runtime
 
-Production stack for physical world models, sim-to-real verification, and hardware-accelerated closed-loop control.
+Production stack for physical world models,
+sim-to-real verification, and real-time control.
 
 ## Overview
-- **World Model**: \`nvidia/Cosmos-1.0-WorldModel\` (spatial-temporal dynamics)
-- **Physics Engine**: Genesis-Sim & Isaac Sim integration
-- **Verification**: Strict zero-collision kinematic bounds & drift checks
-- **Target Hardware**: NVIDIA H100 / Jetson AGX Orin at 120Hz control frequency
+- **Model**: \`nvidia/Cosmos-1.0\` (dynamics)
+- **Engine**: Genesis-Sim & Isaac Sim
+- **Safety**: Zero-collision kinematic bounds
+- **Hardware**: NVIDIA H100 / Jetson AGX Orin
 
 ## Quick Start
 \`\`\`bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Run the verified autonomy simulation loop
 ./run_autonomy_loop.sh --config pipeline.json
-
-# Launch evaluation harness
-python eval.py --scenario urban_navigation_dense
+python eval.py --scenario urban_navigation
 \`\`\`
 
 ## Architecture
-- \`verify_autonomy.py\`: Trajectory planning and physical constraint verification.
-- \`eval.py\`: Sim-to-real transfer validation across held-out conditions.
-- \`pipeline.json\`: Sensor fusion and inference serving topology.`;
+- \`verify_autonomy.py\`: Trajectory constraints.
+- \`eval.py\`: Sim-to-real validation.
+- \`pipeline.json\`: Sensor topology.`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 AS base
  
-RUN apt-get update && apt-get install -y python3.11 python3-pip libgl1-mesa-glx
+RUN apt-get update && apt-get install -y \\
+    python3.11 python3-pip libgl1-mesa-glx
  
 WORKDIR /autonomy
 COPY requirements.txt .
 RUN pip install -r requirements.txt
  
 COPY runtime/ /autonomy/runtime/
-COPY verify_autonomy.py eval.py run_autonomy_loop.sh pipeline.json README.md .
+COPY verify_autonomy.py eval.py \\
+     run_autonomy_loop.sh pipeline.json \\
+     README.md .
  
 EXPOSE 8080
 ENTRYPOINT ["/autonomy/run_autonomy_loop.sh"]`;
@@ -294,28 +301,25 @@ horos-autonomy>=1.4.0
 pydantic>=2.7.0
 pyyaml`;
 
-const EVAL_CODE = `# Evaluation harness: measuring prediction drift and sim-to-real transfer
-from horos_eval import SimToRealHarness, KinematicSafetyGate
+const EVAL_CODE = `# Evaluation harness: sim-to-real transfer
+from horos_eval import (
+    SimToRealHarness,
+    KinematicSafetyGate,
+)
 
-def evaluate_autonomy_safety(simulation_trajectories: list, real_telemetry: dict) -> dict:
-    """Verify prediction accuracy and sim-to-real transfer robustness."""
-    
+def evaluate_autonomy(sim_data: list, telemetry: dict):
+    """Verify prediction and sim-to-real transfer."""
     harness = SimToRealHarness()
-    safety_gate = KinematicSafetyGate(tolerance="strict-zero-collision")
-    
-    # Benchmark candidate trajectories against unfamiliar physical conditions
-    safety_passed = safety_gate.verify_boundaries(real_telemetry["trajectory"])
-    
-    # Score physical dynamics prediction error across longer horizons
-    metrics = harness.benchmark_transfer(
-        sim_data=simulation_trajectories,
-        real_data=real_telemetry
-    )
-    
+    gate = KinematicSafetyGate(policy="zero-collision")
+
+    # Benchmark against unfamiliar conditions
+    passed = gate.verify(telemetry["trajectory"])
+    metrics = harness.benchmark(sim_data, telemetry)
+
     return {
-        "sim_to_real_score": metrics.transfer_fidelity,
-        "max_kinematic_error": metrics.kinematic_error,
-        "safety_constraints_met": safety_passed
+        "sim_to_real_score": metrics.fidelity,
+        "max_kinematic_error": metrics.error,
+        "safety_passed": passed
     }`;
 
 type DataFactoryFile = string;
@@ -389,22 +393,22 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
     return (
       <div
         key={i}
-        className={`min-h-[22px] leading-[22px] flex items-center transition-colors rounded-sm px-1 ${isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
+        className={`min-h-[20px] leading-[20px] flex items-center transition-colors rounded-sm px-1 ${isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
           }`}
       >
         {isCurrentActiveLine && !isComplete ? (
-          <span className="w-[3.5px] h-[16px] bg-[#75bf00] animate-pulse inline-block mr-2.5 rounded-full shrink-0 align-middle" />
+          <span className="w-[3px] h-[14px] bg-[#75bf00] animate-pulse inline-block mr-2 rounded-full shrink-0 align-middle" />
         ) : (
-          <span className="w-[3.5px] h-[16px] bg-transparent inline-block mr-2.5 shrink-0" />
+          <span className="w-[3px] h-[14px] bg-transparent inline-block mr-2 shrink-0" />
         )}
 
         <span className="flex-1 whitespace-pre">{lineContent}</span>
 
         {isCurrentActiveLine && !isComplete && (
-          <span className="inline-block w-[7px] h-[16px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
+          <span className="inline-block w-[6px] h-[14px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
         )}
         {i === totalLines - 1 && isComplete && (
-          <span className="inline-block w-[8px] h-[16px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
+          <span className="inline-block w-[7px] h-[14px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
         )}
       </div>
     );
@@ -966,7 +970,7 @@ export default function AutonomousSystemsPage() {
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+            <div className="w-full relative mx-auto max-w-[1240px] px-2 sm:px-4" style={{ aspectRatio: '1351 / 892' }}>
 
               {/* Panes Backgrounds */}
               <div className="absolute inset-0 grid" style={{
@@ -1021,37 +1025,37 @@ export default function AutonomousSystemsPage() {
                 </div>
 
                 {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[15px] font-sans leading-[28px]">
+                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                  <div className="flex flex-col gap-5 overflow-y-auto chat-scroll pr-1 pb-3">
+                    <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 sm:p-4 rounded-[4px]">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-[24px]">
                         Audit closed-loop trajectory #8042 for collision & dynamic stability. Hybrid spatial-temporal parser with{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <NvidiaLogo size={13} /> Cosmos-1.0
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[11.5px] align-baseline whitespace-nowrap">
+                          <NvidiaLogo size={12} /> Cosmos-1.0
                         </span>{" "}
                         plus physics engine verifier,{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <HuggingFaceLogo size={13} /> Genesis-Sim
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[11.5px] align-baseline whitespace-nowrap">
+                          <HuggingFaceLogo size={12} /> Genesis-Sim
                         </span>{" "}
                         grounded with 4D sensor rollouts. Compute sim-to-real transfer on{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#75bf00] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <NvidiaLogo size={13} /> 8x H100 GPU
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[11.5px] align-baseline whitespace-nowrap">
+                          <NvidiaLogo size={12} /> 8x H100 GPU
                         </span>.
                       </p>
                     </div>
 
                     {/* Step 1 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                    <div className={`flex gap-3 mt-1 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                      <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
                         {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                          <Loader2 size={13} className="text-[#75bf00] animate-spin" />
                         ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
+                          <Sparkles size={13} className="text-[#75bf00]" />
                         )}
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13px] leading-relaxed">
                           {typedMsg1}
                           {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
                             <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
@@ -1061,93 +1065,93 @@ export default function AutonomousSystemsPage() {
                     </div>
 
                     {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                    <div className="flex flex-col gap-3 mt-1">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
                           {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={13} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={13} className="text-[#75bf00]" />
                           )}
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Ingesting sensor AST & kinematic scene graph</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.9s</span>
+                            <span className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-medium">Ingesting sensor AST & kinematic scene graph</span>
+                            <span className="text-[#C8C7BA] text-[11px]">0.9s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Parsed 148 spatial-temporal nodes & lidar sweeps <span className="text-[#C8C7BA]">[Cosmos-1.0]</span></span>
+                          <span className="text-[#666] text-[11px] sm:text-[11.5px]">Parsed 148 spatial-temporal nodes & lidar sweeps <span className="text-[#C8C7BA]">[Cosmos-1.0]</span></span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
                           {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={13} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={13} className="text-[#75bf00]" />
                           )}
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Checking dynamic constraint precision</span>
-                            <span className="text-[#C8C7BA] text-[12px]">2.1s</span>
+                            <span className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-medium">Checking dynamic constraint precision</span>
+                            <span className="text-[#C8C7BA] text-[11px]">2.1s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">100% physical bounds match against ISO 26262 & Kinematics [8x NVIDIA H100 GPU]</span>
+                          <span className="text-[#75bf00] text-[11px] sm:text-[11.5px]">100% physical bounds match against ISO 26262 & Kinematics [8x NVIDIA H100 GPU]</span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
                           {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={13} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={13} className="text-[#75bf00]" />
                           )}
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Computing counterfactual trajectory rollouts</span>
-                            <span className="text-[#C8C7BA] text-[12px]">4.5s</span>
+                            <span className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-medium">Computing counterfactual trajectory rollouts</span>
+                            <span className="text-[#C8C7BA] text-[11px]">4.5s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Generated 500 physics rollouts #0x8f2a99c1d0 [Genesis Physics Engine | CUDA 12.4]</span>
+                          <span className="text-[#666] text-[11px] sm:text-[11.5px]">Generated 500 physics rollouts #0x8f2a99c1d0 [Genesis Physics Engine | CUDA 12.4]</span>
                         </div>
                       </div>
 
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
                           {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                            <Loader2 size={13} className="text-[#75bf00] animate-spin" />
                           ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
+                            <CheckCircle2 size={13} className="text-[#75bf00]" />
                           )}
                         </div>
                         <div className="flex flex-col flex-1 gap-0.5">
                           <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Flagging trajectory clearance risk anomaly</span>
-                            <span className="text-[#C8C7BA] text-[12px]">9.8s</span>
+                            <span className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-medium">Flagging trajectory clearance risk anomaly</span>
+                            <span className="text-[#C8C7BA] text-[11px]">9.8s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Lateral acceleration boundary exceeded at waypoint 14.2 (99.7% confidence)</span>
+                          <span className="text-[#666] text-[11px] sm:text-[11.5px]">Lateral acceleration boundary exceeded at waypoint 14.2 (99.7% confidence)</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
+                  <div className="mt-1 shrink-0 mb-1">
+                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-1.5">
                       <input
                         type="text"
                         placeholder="Teach the agent to audit against specific kinematic constraints..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2 placeholder:text-[#555]"
+                        className="bg-transparent text-[#F0EFE2] text-[12.5px] border-none outline-none w-full px-1.5 py-1.5 placeholder:text-[#555]"
                         readOnly
                       />
                       <div className="flex justify-between items-center px-1">
                         <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Kinematics</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Capabilities</span>
+                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Kinematics</span>
                         </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
+                        <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                          <ArrowUp size={13} strokeWidth={2.5} />
                         </button>
                       </div>
                     </div>
@@ -1155,72 +1159,72 @@ export default function AutonomousSystemsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2 w-full">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">AUTONOMY ENGINES</span>
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col items-start gap-3.5 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-2.5 mb-1 w-full">
+                    <span className="text-[9.5px] font-bold tracking-widest text-[#C8C7BA] uppercase">AUTONOMY ENGINES</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono w-full">
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                  <div className="flex flex-col gap-1 text-[12px] font-mono w-full">
+                    <div className="flex items-center gap-2 px-2 py-1 text-[#555]">
                       kinematic_ast.py
                     </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                    <div className="flex items-center gap-2 px-2 py-1 text-[#555]">
                       physics_prover.py
                     </div>
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-[#555]">
+                    <div className="flex items-center gap-2 px-2 py-1 text-[#555]">
                       trajectory_auditor.py
                     </div>
 
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> autonomy-agent-factory/
+                    <div className="mt-1.5 flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 px-2 py-1 text-[#aaa] font-semibold text-[11.5px]">
+                        <ChevronDown size={13} className="text-[#777]" /> autonomy-agent-factory/
                       </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                      <div className="pl-3.5 flex flex-col gap-1 border-l border-[#252525] ml-3 mt-0.5">
                         <button
                           onClick={() => selectFileManually("verify_autonomy.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "verify_autonomy.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "verify_autonomy.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           verify_autonomy.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("eval.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval.py" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           eval.py
                         </button>
                         <button 
                           onClick={() => selectFileManually("run_autonomy_loop.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           run_autonomy_loop.sh
                         </button>
                         <button 
                           onClick={() => selectFileManually("pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "pipeline.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           pipeline.json
                         </button>
                         <button 
                           onClick={() => selectFileManually("README.md")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           README.md
                         </button>
                         <button 
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           Dockerfile
                         </button>
                         <button 
                           onClick={() => selectFileManually("docker-compose.yml")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           docker-compose.yml
                         </button>
                         <button 
                           onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-2 px-2 py-1 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           requirements.txt
                         </button>
@@ -1230,48 +1234,48 @@ export default function AutonomousSystemsPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-4 sm:p-5 md:p-6 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                  <div className="flex border-b border-[#252525] mb-4 pb-2 pt-0.5 gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     <button
                       onClick={() => selectFileManually("verify_autonomy.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "verify_autonomy.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "verify_autonomy.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       verify_autonomy.py
                     </button>
                     <button
                       onClick={() => selectFileManually("eval.py")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "eval.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       eval.py
                     </button>
                     <button
                       onClick={() => selectFileManually("run_autonomy_loop.sh")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "run_autonomy_loop.sh" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       run_autonomy_loop.sh
                     </button>
                     <button
                       onClick={() => selectFileManually("pipeline.json")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "pipeline.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       pipeline.json
                     </button>
                     <button
                       onClick={() => selectFileManually("README.md")}
-                      className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === "README.md" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "README.md" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       README.md
                     </button>
                   </div>
 
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                  <div className="flex font-mono text-[11.5px] sm:text-[12px] leading-[20px] overflow-x-auto select-text thin-hover-scrollbar">
+                    <div className="text-[#444] text-right pr-3 border-r border-[#252525] select-none flex flex-col min-w-[28px] text-[11px]">
                       {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                        <div key={i} className="min-h-[20px] leading-[20px]">{i + 1}</div>
                       ))}
                     </div>
 
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                    <div className="pl-3.5 flex-1 text-[#C8C7BA] leading-[20px]">
                       {highlightCode(
                         typedCodeText,
                         activeFile.endsWith(".py")
