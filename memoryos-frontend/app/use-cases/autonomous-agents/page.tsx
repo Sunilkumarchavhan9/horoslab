@@ -392,90 +392,90 @@ const DEFAULT_MODELS = [
     id: "microsoft/MagenticBrain",
     name: "MagenticBrain",
     author: "Microsoft",
+    size: "15B",
     downloads: "15B",
-    description: "Frontier multi-agent coordination backbone for planning, role decomposition, and dynamic agent orchestration.",
-    tag: "Agent Orchestration",
     role: "Agent Orchestration",
+    tag: "Agent Orchestration",
     hfUrl: "https://huggingface.co/microsoft/MagenticBrain"
   },
   {
     id: "NousResearch/Hermes-4-14B",
     name: "Hermes-4-14B",
     author: "Nous Research",
+    size: "14B",
     downloads: "14B",
-    description: "Open-weights reasoning model optimized for structured JSON schemas, function routing, and robust tool calling.",
-    tag: "Tool Calling",
     role: "Tool Calling",
+    tag: "Tool Calling",
     hfUrl: "https://huggingface.co/NousResearch/Hermes-4-14B"
   },
   {
     id: "browser-use/bu-30b-a3b-preview",
     name: "BU-30B-A3B-Preview",
     author: "Browser Use",
+    size: "30B · 3B active",
     downloads: "30B · 3B active",
-    description: "Sparse mixture-of-experts model specifically trained for autonomous web browsing, DOM parsing, and interactive workflows.",
-    tag: "Browser Automation",
     role: "Browser Automation",
+    tag: "Browser Automation",
     hfUrl: "https://huggingface.co/browser-use/bu-30b-a3b-preview"
   },
   {
     id: "microsoft/Fara1.5-27B",
     name: "Fara1.5-27B",
     author: "Microsoft",
+    size: "27B",
     downloads: "27B",
-    description: "Multimodal foundation model for computer-use agents, ground-level OS interaction, and graphical interface navigation.",
-    tag: "Computer Use",
     role: "Computer Use",
+    tag: "Computer Use",
     hfUrl: "https://huggingface.co/microsoft/Fara1.5-27B"
   },
   {
     id: "meituan/EvoCUA-32B-20260105",
     name: "EvoCUA-32B",
     author: "Meituan",
+    size: "32B class",
     downloads: "32B class",
-    description: "Continuous desktop agent model trained for long-horizon operating system task execution and UI problem solving.",
-    tag: "Desktop Task Execution",
     role: "Desktop Task Execution",
+    tag: "Desktop Task Execution",
     hfUrl: "https://huggingface.co/meituan/EvoCUA-32B-20260105"
   },
   {
     id: "xlangai/OpenCUA-7B",
     name: "OpenCUA-7B",
     author: "xLang AI",
+    size: "7B class",
     downloads: "7B class",
-    description: "Ultra-compact computer-use agent architecture designed for lightweight, low-latency execution and local deployment.",
-    tag: "Lightweight Computer Use",
     role: "Lightweight Computer Use",
+    tag: "Lightweight Computer Use",
     hfUrl: "https://huggingface.co/xlangai/OpenCUA-7B"
   },
   {
     id: "Qwen/Qwen3-Coder-Next",
     name: "Qwen3-Coder-Next",
     author: "Qwen",
+    size: "80B · 3B active",
     downloads: "80B · 3B active",
-    description: "Next-gen MoE code reasoning backbone built for long-horizon repository refactoring, multi-file edits, and tool use.",
-    tag: "Long-Horizon Coding",
     role: "Long-Horizon Coding",
+    tag: "Long-Horizon Coding",
     hfUrl: "https://huggingface.co/Qwen/Qwen3-Coder-Next"
   },
   {
     id: "mistralai/Devstral-Small-2-24B-Instruct-2512",
     name: "Devstral Small 2",
     author: "Mistral AI",
+    size: "24B",
     downloads: "24B",
-    description: "High-speed software engineering model fine-tuned for code synthesis, terminal operations, and automated test repair.",
-    tag: "Software Engineering",
     role: "Software Engineering",
+    tag: "Software Engineering",
     hfUrl: "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512"
   },
   {
     id: "SWE-bench/SWE-agent-LM-32B",
     name: "SWE-agent-LM-32B",
     author: "SWE-bench",
+    size: "32B class",
     downloads: "32B class",
-    description: "Benchmark-proven agent model specialized for autonomous GitHub issue resolution, repository debugging, and patch generation.",
-    tag: "Repository Repair",
     role: "Repository Repair",
+    tag: "Repository Repair",
     hfUrl: "https://huggingface.co/SWE-bench/SWE-agent-LM-32B"
   }
 ];
@@ -1329,79 +1329,86 @@ export default function AutonomousAgentsPage() {
         </div>
 
         {/* Hugging Face Models Catalog Section */}
-        <div className="w-full relative z-10 pt-16 pb-16">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-12 md:pt-16 mb-8 md:mb-10">
+        <div className="w-full relative z-10 pt-24 pb-16">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
-            <div className="min-w-0">
-              <div className="flex flex-col items-center justify-center text-center">
-                <h2 className="text-xl sm:text-2xl md:text-[30px] font-medium tracking-tight text-[#f2efe8] mb-3 text-center whitespace-nowrap">
-                  Any HF autonomous-agent models work
-                </h2>
-                <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
-                  Connect any open-weight agent model from Hugging Face. Fine-tune for tool calling, multi-step reasoning, and robust error recovery.
-                </p>
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl sm:text-3xl md:text-[38px] lg:text-[42px] xl:text-[45px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-5xl mx-auto leading-tight sm:whitespace-nowrap hyphens-none">
+                Any HF autonomous-agent models work
+              </h2>
+              <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-10">
+                Use any open-weights autonomous agent model as your reasoning engine, or fine-tune specialized tool-calling & computer-use models. The examples below are just a starting view.
+              </p>
 
-                <div className="w-full max-w-md mt-6 relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search Hugging Face agent models..."
-                    className="w-full bg-[#1c1c1c] border border-[#333] px-4 py-2 text-[13px] text-[#f2efe8] placeholder-[#666] focus:outline-none focus:border-[#75bf00] transition-colors rounded-sm"
-                  />
-                  {isLoading && (
-                    <div className="absolute right-3 top-2.5">
-                      <Loader2 size={16} className="text-[#75bf00] animate-spin" />
-                    </div>
+              {/* Search Bar */}
+              <div className="w-full max-w-xl mb-12 relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#C8C7BA]">
+                  <Search size={16} />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search any HF autonomous-agent model on Hugging Face"
+                  className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
+                />
+                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                  {isLoading ? (
+                    <Loader2 size={16} className="text-[#75bf00] animate-spin" />
+                  ) : (
+                    <span className="text-[9.5px] font-bold text-[#C8C7BA] border border-dashed border-[#333] px-1.5 py-0.5 rounded-sm">HF</span>
                   )}
                 </div>
               </div>
-            </div>
-            <div />
-          </div>
 
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mb-16">
-            <div />
-            <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
-              <div className="grid grid-cols-1 md:grid-cols-3">
-                {models.map((model, idx) => (
-                  <a
-                    key={model.id || idx}
-                    href={model.hfUrl || `https://huggingface.co/${model.id}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={getBorderClasses(idx, models.length)}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded border border-[#333] bg-[#111] flex items-center justify-center shrink-0">
+              {/* Models Grid */}
+              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="grid grid-cols-1 md:grid-cols-3">
+                  {isLoading ? (
+                    <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
+                      Loading models from Hugging Face...
+                    </div>
+                  ) : models.length === 0 ? (
+                    <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
+                      No models found for "{searchQuery}"
+                    </div>
+                  ) : (
+                    models.map((model, index) => (
+                      <a
+                        key={model.id || index}
+                        href={model.hfUrl || `https://huggingface.co/${model.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={getBorderClasses(index, models.length)}
+                      >
+                        <ArrowUpRight size={18} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        
+                        <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#111]">
                           {getLogo(model.author, model.name)}
                         </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-[14px] font-medium text-[#f2efe8] truncate group-hover:text-[#75bf00] transition-colors">
+                        
+                        <div className="flex flex-col gap-1 min-w-0">
+                          <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                             {model.name}
+                          </h3>
+                          <span className="text-[#C8C7BA] text-[13px] sm:text-[14px] line-clamp-1">
+                            {model.author}
                           </span>
-                          <span className="text-[11px] text-[#777] font-mono">{model.author}</span>
                         </div>
-                      </div>
-                      <ArrowUpRight size={16} className="text-[#555] group-hover:text-[#75bf00] transition-colors" />
-                    </div>
-
-                    <p className="text-[#a09d94] text-[12.5px] leading-relaxed line-clamp-2">
-                      {model.description}
-                    </p>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-[#252525] text-[11px] text-[#777]">
-                      <span className="bg-[#1e1e1e] px-2 py-0.5 rounded text-[#75bf00] font-mono">{model.role || model.tag}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-[#a09d94]">{model.downloads}</span>
-                        <span className="text-[11px] text-[#75bf00] flex items-center gap-0.5 group-hover:underline">
-                          View on HF <ArrowUpRight size={11} />
-                        </span>
-                      </div>
-                    </div>
-                  </a>
-                ))}
+                        
+                        <div className="flex justify-between items-center mt-auto pt-4 gap-2">
+                          <span className="text-[#F0EFE2] font-mono font-medium text-[13px] sm:text-[14px] shrink-0">
+                            {model.size || model.downloads || ""}
+                          </span>
+                          <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
+                            {model.role || model.tag}
+                          </span>
+                        </div>
+                      </a>
+                    ))
+                  )}
+                </div>
+                <div className="w-full h-px border-t border-dashed border-[#333]" />
               </div>
             </div>
             <div />
