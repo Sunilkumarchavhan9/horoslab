@@ -498,6 +498,19 @@ const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) 
   );
 };
 
+const BrandImage = ({ src, alt }: { src: string; alt: string }) => {
+  const [error, setError] = useState(false);
+  if (error) return <HuggingFaceLogo size={20} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="w-5 h-5 rounded-[3px] object-cover"
+      onError={() => setError(true)}
+    />
+  );
+};
+
 const getLogo = (author: string, modelName: string = "") => {
   if (!author && !modelName) return <HuggingFaceLogo size={20} />;
   const a = (author || "").toLowerCase();
@@ -512,11 +525,23 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('nvidia') || m.includes('nemotron')) return <NvidiaLogo size={20} />;
   if (a.includes('thudm') || m.includes('glm')) return <BAAILogo size={20} />;
   if (a.includes('01-ai') || m.includes('yi')) return <KimiLogo size={20} />;
-  if (a.includes('nous') || m.includes('hermes')) return <Sparkles size={16} className="text-[#e2b714]" />;
-  if (a.includes('browser-use') || m.includes('browser') || m.includes('bu-')) return <Monitor size={16} className="text-[#75bf00]" />;
-  if (a.includes('meituan') || m.includes('evocua')) return <Activity size={16} className="text-[#75bf00]" />;
-  if (a.includes('xlang') || m.includes('opencua')) return <Terminal size={16} className="text-[#75bf00]" />;
-  if (a.includes('swe-bench') || m.includes('swe-agent')) return <GithubLogo size={16} />;
+  
+  // Real Hugging Face brand logos
+  if (a.includes('nous') || m.includes('hermes')) {
+    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317aade83d8d2fd903192d9/tPLjYEeP6q1w0j_G2TJG_.png" alt="Nous Research" />;
+  }
+  if (a.includes('browser-use') || m.includes('browser') || m.includes('bu-')) {
+    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/6846f77025b1107aa791f771/cDBZBLJL8l-huATZV1xB1.png" alt="Browser Use" />;
+  }
+  if (a.includes('meituan') || m.includes('evocua')) {
+    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/61ac8f8a00d01045fca0ad2f/4TJKRXMsRyZsyi4H3rWsh.jpeg" alt="Meituan" />;
+  }
+  if (a.includes('xlang') || m.includes('opencua')) {
+    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/628f6e5ab90dde28ef57d293/PHIYPvE_tCM94SgoUzd7l.jpeg" alt="xLang AI" />;
+  }
+  if (a.includes('swe-bench') || m.includes('swe-agent') || m.includes('swe')) {
+    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e2fe09f9435f568d86092e7/3XnsKZbpWjE7HHAltO2P7.png" alt="SWE-bench" />;
+  }
 
   return <HuggingFaceLogo size={20} />;
 };
