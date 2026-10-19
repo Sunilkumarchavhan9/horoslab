@@ -1071,11 +1071,11 @@ export default function AutomatedScientificDiscoverersPage() {
         {/* Comparison Table Section */}
         <div className="w-full relative z-10 mt-28 md:mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+          <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">
               Three ways to build Scientific AI
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-3xl">
+            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
               Build scientific intelligence from pretrained models, simulation-generated data, or real experimental results. Horos lets you adapt models, test predictions, and measure improvements against scientific evidence.
             </p>
           </div>
