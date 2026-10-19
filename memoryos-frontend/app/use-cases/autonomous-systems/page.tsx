@@ -1494,15 +1494,19 @@ export default function AutonomousSystemsPage() {
                       ))
                     )}
                   </div>
-                  <div className="w-full h-px border-t border-dashed border-[#333]" />
                 </div>
               </div>
               <div />
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-20">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-16 sm:mt-20">
+          <div className="w-full relative z-10">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
