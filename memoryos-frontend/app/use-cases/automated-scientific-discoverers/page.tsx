@@ -1982,7 +1982,7 @@ export default function AutomatedScientificDiscoverersPage() {
                   model, dataset, simulation, and compute budget.
                 </p>
 
-                <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+                <div className="flex flex-col w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     {/* Row 1 */}
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
@@ -2078,12 +2078,13 @@ export default function AutomatedScientificDiscoverersPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-24">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Try this pipeline Section */}
-          <div className="w-full relative z-10 py-24">
-            <SectionDivider
-              position="top"
-              className="absolute top-0 left-0 w-full"
-            />
+          <div className="w-full relative z-10 pb-24">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
