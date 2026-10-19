@@ -12,49 +12,145 @@ import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-inp
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
-const COMPARISON_ROWS = [
+interface ComparisonRow {
+  num: string;
+  label: string;
+  perception: React.ReactNode;
+  worldModels: React.ReactNode;
+  actionPolicies: React.ReactNode;
+}
+
+const COMPARISON_ROWS: ComparisonRow[] = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Stream sensor & edge telemetry", desc: "Ingest multi-camera RTSP video, LiDAR point clouds, thermal arrays, and IMU streams directly into physical AI world models." },
-    closed: { title: "Basic visual LLM APIs", desc: "Single-frame text API prompts without temporal continuity, 3D spatial occupancy grids, or physical dynamics." },
-    diy: { title: "Build custom C++ ROS2 & ffmpeg pipelines", desc: "Spend months configuring fragile RTSP ingestion wrappers, custom OpenCV scripts, and unvalidated video frames." }
+    label: "System",
+    perception: "Sensor inputs to estimated world state",
+    worldModels: "Current state to predicted future states",
+    actionPolicies: "Observations and goals to physical actions",
   },
   {
     num: "0 2",
-    label: "Verification",
-    runInfra: { title: "Verifiable spatial & physical telemetry", desc: "Every physical trajectory and object position is mathematically verified by matching model predictions against live sensor observations." },
-    closed: { title: "Unverified visual predictions", desc: "High risk of phantom objects, hallucinated physical depth, and impossible spatial trajectories in critical operations." },
-    diy: { title: "Manual video tagging & frame review", desc: "Operations teams must manually audit thousands of hours of camera footage to identify sensor drift and false detections." }
+    label: "Models",
+    perception: (
+      <>
+        <a
+          href="https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
+        >
+          Qwen3-VL
+        </a>
+        {", "}
+        <a
+          href="https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
+        >
+          V-JEPA 2
+        </a>
+      </>
+    ),
+    worldModels: (
+      <>
+        <a
+          href="https://huggingface.co/nvidia/Cosmos-Predict2.5-14B"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
+        >
+          Cosmos Predict 2.5
+        </a>
+        {", "}
+        <a
+          href="https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
+        >
+          V-JEPA 2
+        </a>
+      </>
+    ),
+    actionPolicies: (
+      <>
+        <a
+          href="https://huggingface.co/nvidia/GR00T-N1.5-3B"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
+        >
+          GR00T N1.5
+        </a>
+        {", "}
+        <a
+          href="https://huggingface.co/lerobot/pi05_base"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
+        >
+          π0.5
+        </a>
+      </>
+    ),
   },
   {
     num: "0 3",
-    label: "Multi-Sensor Audit",
-    runInfra: { title: "4D Spatial & multi-modal sensor audit", desc: "Automated real-time risk, latency, and sensor fusion analysis across optical, thermal, radar, and acoustic telemetry." },
-    closed: { title: "Black-box frame summaries", desc: "Opaque image summaries that miss subtle frame drops, calibration drift, lens distortion, and edge latency spikes." },
-    diy: { title: "Ad-hoc regex & OpenCV scripts", desc: "Fragile Python scripts unable to align asynchronous sensor timestamps across distributed Jetson edge devices." }
+    label: "Context",
+    perception: "Camera frames, LiDAR, IMU, robot state",
+    worldModels: "Observation history, scene state, previous actions",
+    actionPolicies: "Camera views, task instructions, robot state, action history",
   },
   {
     num: "0 4",
-    label: "Model Control",
-    runInfra: { title: "Fine-tuned physical world & VLA models", desc: "Deploy domain-adapted NVIDIA Cosmos-1, Meta V-JEPA, Tesla-Occupancy, and RT-2 models optimized for physical perception." },
-    closed: { title: "Locked to cloud API defaults", desc: "Generic vision models lacking fine-tuning for your facility's spatial layout, sensor placements, or industrial robotics." },
-    diy: { title: "Prompt-only visual tuning", desc: "Inability to adapt model weights for low-latency TensorRT edge inference on Jetson Orin and Thor hardware." }
+    label: "Capabilities",
+    perception: "Object recognition, scene understanding, motion perception",
+    worldModels: "Future-state prediction, dynamics modeling, counterfactuals",
+    actionPolicies: "Manipulation, action sequencing, feedback-driven control",
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Autonomous physical feedback loops", desc: "Automate sensor stream ingestion, spatial model fine-tuning, anomaly detection, and edge actuation commands." },
-    closed: { title: "High human operator toil", desc: "Security and maintenance personnel spend hours manually parsing camera feeds and logging physical state changes." },
-    diy: { title: "High operational overhead", desc: "Your team owns edge driver compatibility, RTSP server scaling, ROS2 topic bridging, and camera calibration maintenance." }
+    label: "Workload",
+    perception: "Object tracking, scene changes, sensor interpretation",
+    worldModels: "Trajectory prediction, simulated futures, scenario evaluation",
+    actionPolicies: "Pick-and-place, assembly, navigation, robot manipulation",
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "SOC 2 Type II & Local Edge Privacy", desc: "Zero data leakage with air-gapped local Jetson cluster execution and private edge storage options." },
-    closed: { title: "Cloud video upload risks", desc: "Sensitive facility camera streams and IP video footage uploaded continuously to third-party public cloud APIs." },
-    diy: { title: "Self-managed edge security", desc: "Your team owns video encryption, camera network isolation, edge node privilege guards, and compliance." }
-  }
+    label: "Optimization",
+    perception: "Resolution, sensor fusion, frame sampling, inference latency",
+    worldModels: "Prediction horizon, temporal context, precision, rollout cost",
+    actionPolicies: "Action horizon, control frequency, batching, policy latency",
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    perception: "Detection accuracy, state-estimation error, tracking consistency",
+    worldModels: "Trajectory error, temporal drift, simulated versus observed outcomes",
+    actionPolicies: "Task completion, action error, safety constraints, repeated trials",
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    perception: "Record sensor readings, estimated states, and perception errors",
+    worldModels: "Preserve predictions, scenarios, actions, and observed outcomes",
+    actionPolicies: "Record commands, robot states, execution traces, and task results",
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    perception: "Adapt models using corrected labels and difficult observations",
+    worldModels: "Train on verified trajectories and prediction failures",
+    actionPolicies: "Fine-tune policies using robot demonstrations and evaluated rollouts",
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    perception: "Govern sensor access, data retention, and model permissions",
+    worldModels: "Control simulation budgets, scenario execution, and deployment approval",
+    actionPolicies: "Enforce robot action limits, operating zones, approvals, and emergency stops",
+  },
 ];
 
 const README_CODE = `# Physical Reality Decoding Engine
@@ -812,23 +908,19 @@ export default function DecodingPhysicalRealityPage() {
             </div>
           </div>
         </div>
-
-        {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mt-32 mb-32">
+        {/* Comparison Table Section */}
+        <div className="w-full relative z-10 mt-28 md:mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to decode physical reality
+          <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">
+              Three ways to build Physical AI
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+              Engineer intelligence that reads physical observations, predicts what happens next, and learns to control real systems. Horos connects model development to experiments, measured outcomes, and verified deployment.
             </p>
           </div>
 
           <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-            
-            
-
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
                 <div className="relative h-full">
@@ -858,59 +950,93 @@ export default function DecodingPhysicalRealityPage() {
               <div className="min-w-0 bg-[#151515]">
                 <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
                   <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
-                  </div>
-                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                    <div className="absolute top-2.5 right-3 flex items-center">
-                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
-                    </div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                        <HorosLogo size={16} />
-                      </div>
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
-                    </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Verified sensor telemetry & 0 spatial drift.</p>
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">
+                      Dimension
+                    </span>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Key size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <ScanSearch size={16} className="text-[#75bf00]" />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
+                        Perception models
+                      </span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Opaque text/vision APIs without spatial proofs.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
+                      Sensor inputs to estimated world state.
+                    </p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <Cpu size={16} className="text-[#C8C7BA]" />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
+                        World models
+                      </span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
+                      Current state to predicted future states.
+                    </p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY C++ ROS2</span>
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <Workflow size={16} className="text-[#C8C7BA]" />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
+                        Action policies
+                      </span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Brittle ROS2 wrappers & manual stream parsing.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
+                      Observations and goals to physical actions.
+                    </p>
                   </div>
                 </div>
 
                 <div className="border-l border-r border-b border-dashed border-[#333]">
                   {COMPARISON_ROWS.map((row, idx) => (
-                    <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
+                    <div
+                      key={idx}
+                      className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200"
+                    >
                       <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
                         <div className="flex items-center gap-3">
-                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
+                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">
+                            {row.num}
+                          </span>
+                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">
+                            {row.label}
+                          </span>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#75bf00] uppercase mb-1">
+                          Perception models
+                        </span>
+                        <div className="text-[#F0EFE2] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
+                          {row.perception}
+                        </div>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
+                          World models
+                        </span>
+                        <div className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
+                          {row.worldModels}
+                        </div>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
+                          Action policies
+                        </span>
+                        <div className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
+                          {row.actionPolicies}
+                        </div>
                       </div>
                     </div>
                   ))}
