@@ -545,92 +545,112 @@ function highlightCode(
 
 const DEFAULT_MODELS = [
   {
-    id: "OneScience-Group/MatterSim",
-    name: "MatterSim",
-    author: "OneScience",
+    id: "tsinghua-sigs-robot-lab/VeriLoop-E2",
+    name: "VeriLoop-E2",
+    author: "Tsinghua SIGS Robot Lab",
+    downloads: "28B",
+    params: "28B",
+    role: "Math & Physics",
+    tag: "Math & Physics",
+    url: "https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2",
     description:
-      "Deep learning potential for materials science, predicting atomic forces and energy.",
-    role: "Materials Model",
+      "Mathematical and physical reasoning verification model with self-improving loops.",
   },
   {
-    id: "mace-foundations/mace-mp-0",
-    name: "MACE-MP-0",
-    author: "MACE",
+    id: "SciReason/SciReasoner-8B",
+    name: "SciReasoner-8B",
+    author: "SciReason",
+    downloads: "8B",
+    params: "8B",
+    role: "Scientific Reasoning",
+    tag: "Scientific Reasoning",
+    url: "https://huggingface.co/SciReason/SciReasoner-8B",
     description:
-      "Equivariant foundation potential for atomistic simulations and materials screening.",
-    role: "Force Fields",
+      "8B scientific reasoning model optimized for scientific problem solving and discovery.",
   },
   {
-    id: "facebook/esm2_t33_650M_UR50D",
-    name: "ESM-2 650M",
-    author: "Meta",
+    id: "MegaScience/Qwen3-8B-MegaScience",
+    name: "Qwen3-8B-MegaScience",
+    author: "MegaScience",
+    downloads: "8B",
+    params: "8B",
+    role: "Science Q&A",
+    tag: "Science Q&A",
+    url: "https://huggingface.co/MegaScience/Qwen3-8B-MegaScience",
     description:
-      "Evolutionary Scale Modeling protein language model for sequence analysis and representation.",
-    role: "Protein Model",
+      "8B science Q&A and cross-disciplinary scientific discovery model.",
   },
   {
-    id: "microsoft/biogpt",
-    name: "BioGPT",
-    author: "Microsoft",
+    id: "yasserrmd/SciReason-LFM2-2.6B",
+    name: "SciReason-LFM2-2.6B",
+    author: "yasserrmd",
+    downloads: "2.6B",
+    params: "2.6B",
+    role: "Compact Reasoning",
+    tag: "Compact Reasoning",
+    url: "https://huggingface.co/yasserrmd/SciReason-LFM2-2.6B",
     description:
-      "Generative biomedical language model for scientific literature mining and domain reasoning.",
-    role: "Biomedical LLM",
+      "Compact 2.6B reasoning model fine-tuned for efficient scientific reasoning.",
   },
   {
-    id: "nvidia/BioNeMo-OpenMM-8B",
-    name: "BioNeMo OpenMM 8B",
-    author: "NVIDIA",
+    id: "MegaScience/Qwen3-1.7B-MegaScience",
+    name: "Qwen3-1.7B-MegaScience",
+    author: "MegaScience",
+    downloads: "1.7B",
+    params: "1.7B",
+    role: "Small Science Model",
+    tag: "Small Science Model",
+    url: "https://huggingface.co/MegaScience/Qwen3-1.7B-MegaScience",
     description:
-      "Accelerated molecular dynamics solver compiled for zero-latency CUDA audits.",
-    role: "MD Proofs",
+      "Ultra-compact 1.7B scientific assistant for rapid inference and embedded workloads.",
   },
   {
-    id: "deepseek-ai/DeepSeek-R1-Distill-Science",
-    name: "DeepSeek R1 Science",
+    id: "deepseek-ai/DeepSeek-R1-0528",
+    name: "DeepSeek-R1-0528",
     author: "DeepSeek",
+    downloads: "671B MoE",
+    params: "671B MoE",
+    role: "Frontier Reasoning",
+    tag: "Frontier Reasoning",
+    url: "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528",
     description:
-      "Deep reasoning engine for complex DFT, catalysis, and reaction dynamics.",
-    role: "Science Reasoning",
+      "671B MoE frontier reasoning model with deep chain-of-thought verification.",
   },
   {
-    id: "materials-project/GraphNet-Materials-32B",
-    name: "GraphNet Materials 32B",
-    author: "Materials Project",
-    description:
-      "Inorganic crystal structure predictor and quantum mechanical bandgap verifier.",
-    role: "Crystal Agent",
-  },
-  {
-    id: "openfold/OpenFold-2-CUDA",
-    name: "OpenFold-2 CUDA",
-    author: "OpenFold",
-    description:
-      "Open-weights RNA and protein structural modeling agent with force field safety.",
-    role: "Open Structural AI",
-  },
-  {
-    id: "mistralai/Mixtral-8x7B-Science",
-    name: "Mixtral Science MoE",
-    author: "Mistral",
-    description:
-      "High-throughput mixture-of-experts model for automated reaction synthesis.",
-    role: "Synthesis LLM",
-  },
-  {
-    id: "qwen/Qwen2.5-14B-Science",
-    name: "Qwen2.5 Science",
+    id: "Qwen/Qwen3-235B-A22B",
+    name: "Qwen3-235B-A22B",
     author: "Qwen",
+    downloads: "235B MoE",
+    params: "235B MoE",
+    role: "Complex Problem Solving",
+    tag: "Complex Problem Solving",
+    url: "https://huggingface.co/Qwen/Qwen3-235B-A22B",
     description:
-      "Multilingual chemical property auditor and zero-drift trajectory verifier.",
-    role: "Property Agent",
+      "235B mixture-of-experts model activating 22B parameters for advanced problem solving.",
   },
   {
-    id: "microsoft/Phi-3.5-Science-Instruct",
-    name: "Phi-3.5 Science",
-    author: "Microsoft",
+    id: "Qwen/Qwen3.5-27B",
+    name: "Qwen3.5-27B",
+    author: "Qwen",
+    downloads: "27B",
+    params: "27B",
+    role: "Multimodal Science",
+    tag: "Multimodal Science",
+    url: "https://huggingface.co/Qwen/Qwen3.5-27B",
     description:
-      "Compact physics solver and ab-initio density functional theory verifier.",
-    role: "DFT Solver",
+      "27B dense multimodal scientific reasoning and vision-language comprehension model.",
+  },
+  {
+    id: "BioMistral/BioMistral-7B",
+    name: "BioMistral-7B",
+    author: "BioMistral",
+    downloads: "7B",
+    params: "7B",
+    role: "Biomedical Research",
+    tag: "Biomedical Research",
+    url: "https://huggingface.co/BioMistral/BioMistral-7B",
+    description:
+      "Open-source 7B medical language model adapted for biomedical domains and literature.",
   },
 ];
 
@@ -654,9 +674,14 @@ const getLogo = (author: string, modelName: string = "") => {
     return <DeepSeekLogo size={20} />;
   if (a.includes("google") || m.includes("alphafold") || m.includes("palmyra"))
     return <GoogleLogo size={20} />;
-  if (a.includes("mistral") || m.includes("mixtral"))
+  if (a.includes("mistral") || m.includes("mixtral") || m.includes("mistral"))
     return <MistralLogo size={20} />;
-  if (a.includes("alibaba") || a.includes("qwen") || m.includes("qwen"))
+  if (
+    a.includes("alibaba") ||
+    a.includes("qwen") ||
+    m.includes("qwen") ||
+    a.includes("megascience")
+  )
     return <QwenLogo size={20} />;
   if (a.includes("anthropic") || m.includes("claude"))
     return <AnthropicLogo size={20} />;
@@ -1851,12 +1876,12 @@ export default function AutomatedScientificDiscoverersPage() {
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any scientific reasoning or physics verifier model works
+                  Supported HF chat models work
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
-                  Use any open-weights scientific model as your simulation
-                  engine, and fine-tune any compact solver target model. The
-                  examples below are just a starting view.
+                  Supported chat-capable models on Hugging Face run through the
+                  compatible recipe. Search the live catalog above. The examples
+                  below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1894,6 +1919,12 @@ export default function AutomatedScientificDiscoverersPage() {
                         <div
                           key={model.id}
                           className={getBorderClasses(index, models.length)}
+                          onClick={() => {
+                            const url =
+                              model.url ||
+                              `https://huggingface.co/${model.id}`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }}
                         >
                           <ArrowUpRight
                             size={20}
@@ -1911,13 +1942,18 @@ export default function AutomatedScientificDiscoverersPage() {
                             >
                               {model.name}
                             </h3>
-                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1">
+                            <span
+                              className="text-[#C8C7BA] text-[14px] line-clamp-1"
+                              title={model.author}
+                            >
                               {model.author}
                             </span>
                           </div>
 
                           <div className="flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
+                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">
+                              {model.downloads || model.params || ""}
+                            </span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                               {model.role || model.tag}
                             </span>
