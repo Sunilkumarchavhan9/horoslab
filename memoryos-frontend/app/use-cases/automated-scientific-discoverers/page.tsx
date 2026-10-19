@@ -704,7 +704,7 @@ const FAQ_DATA = [
 
 export default function AutomatedScientificDiscoverersPage() {
   const [activeFile, setActiveFile] = useState<DataFactoryFile>(
-    "run_simulation.py" as any,
+    "simulate.py" as any,
   );
   const [activeMainTab, setActiveMainTab] = useState<
     "pipeline" | "code" | "optimization" | "deploy"
@@ -713,25 +713,33 @@ export default function AutomatedScientificDiscoverersPage() {
 
   const FILE_CODE_MAP: Record<string, string> = {
     "README.md": README_CODE,
+    "dft_ast.py": DFT_AST_CODE,
     "dft_lattice.py": DFT_AST_CODE,
     "dft_lattice_ast.py": DFT_AST_CODE,
+    "prover.py": PHYSICS_PROVER_CODE,
     "physics_prover.py": PHYSICS_PROVER_CODE,
+    "forcefield.py": FORCEFIELD_CODE,
     "forcefield_audit.py": FORCEFIELD_CODE,
     "forcefield_auditor.py": FORCEFIELD_CODE,
+    "simulate.py": RUN_SIMULATION_CODE,
     "run_simulation.py": RUN_SIMULATION_CODE,
+    "eval.py": EVAL_PHYSICS_CODE,
     "eval_physics.py": EVAL_PHYSICS_CODE,
+    "dft_run.sh": RUN_DFT_AUDIT_CODE,
     "run_dft_audit.sh": RUN_DFT_AUDIT_CODE,
     "pipeline.json": SIMULATION_PIPELINE_CODE,
     "simulation_pipeline.json": SIMULATION_PIPELINE_CODE,
     Dockerfile: DOCKERFILE_CODE,
+    "compose.yml": DOCKER_COMPOSE_CODE,
     "docker-compose.yml": DOCKER_COMPOSE_CODE,
+    "deps.txt": REQUIREMENTS_CODE,
     "requirements.txt": REQUIREMENTS_CODE,
   };
 
   const AGENT_MSG_1 =
-    "On it. Benchmarking pretrained scientific foundation models (MatterSim, MACE-MP-0, ESM-2). Predicting atomic forces and running OpenMM trajectory simulations against experimental benchmarks on 8x H100 GPUs.";
+    "Benchmarking MatterSim & MACE force fields. Running OpenMM dynamics on 8x H100 GPUs.";
   const AGENT_MSG_2 =
-    "Simulation and adaptation complete. Identified high thermodynamic stability and force accuracy in Candidate #14. Trajectory verified against reference benchmarks. Fine-tuned checkpoint ready for experimental deployment.";
+    "Simulation complete. Candidate #14 verified with zero drift. Checkpoint promoted.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -1345,22 +1353,16 @@ export default function AutomatedScientificDiscoverersPage() {
                 {/* Chat Content */}
                 <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-3 sm:p-4 md:p-5 flex flex-col justify-between overflow-hidden min-w-0 pointer-events-auto">
                   <div className="flex flex-col gap-3 sm:gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-2 min-w-0">
-                    <div className="bg-[#181818] border border-[#262626] p-2.5 sm:p-3 rounded-[4px] min-w-0">
-                      <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-sans leading-[17px] sm:leading-[19px]">
-                        Predict atomic forces and evaluate crystal stability across candidate structures.
-                        Hybrid scientific pipeline with{" "}
-                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[9px] sm:text-[10px] align-middle whitespace-nowrap">
-                          <MetaLogo size={11} /> MatterSim & MACE
+                    <div className="bg-[#181818] border border-[#262626] p-2 sm:p-2.5 rounded-[4px] min-w-0">
+                      <p className="text-[#C8C7BA] text-[10px] sm:text-[11px] font-sans leading-[15px] sm:leading-[17px]">
+                        Predict atomic forces & crystal stability using{" "}
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[8.5px] sm:text-[9.5px] align-middle whitespace-nowrap">
+                          <MetaLogo size={10} /> MatterSim & MACE
                         </span>{" "}
-                        plus OpenMM force fields,{" "}
-                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[9px] sm:text-[10px] align-middle whitespace-nowrap">
-                          <MetaLogo size={11} /> ESM-2 & BioGPT
-                        </span>{" "}
-                        for sequence analysis and biomedical reasoning. Validate predictions on{" "}
-                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[9px] sm:text-[10px] align-middle whitespace-nowrap">
-                          <NvidiaLogo size={11} /> 8x H100 GPU
-                        </span>
-                        .
+                        with OpenMM dynamics on{" "}
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[8.5px] sm:text-[9.5px] align-middle whitespace-nowrap">
+                          <NvidiaLogo size={10} /> 8x H100 GPU
+                        </span>.
                       </p>
                     </div>
 
@@ -1394,7 +1396,7 @@ export default function AutomatedScientificDiscoverersPage() {
                     </div>
 
                     {/* Logs list */}
-                    <div className="flex flex-col gap-2.5 sm:gap-3 mt-1 min-w-0">
+                    <div className="flex flex-col gap-2 sm:gap-2.5 mt-1 min-w-0">
                       <div
                         className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                       >
@@ -1586,20 +1588,20 @@ export default function AutomatedScientificDiscoverersPage() {
                     <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-1.5 sm:p-2 flex flex-col gap-1.5 min-w-0">
                       <input
                         type="text"
-                        placeholder="Teach scientific AI to predict forces & adapt to experimental data..."
-                        className="bg-transparent text-[#F0EFE2] text-[10.5px] sm:text-[11.5px] border-none outline-none w-full px-1 py-0.5"
+                        placeholder="Predict atomic forces & stability..."
+                        className="bg-transparent text-[#F0EFE2] text-[10px] sm:text-[11px] border-none outline-none w-full px-1 py-0.5 placeholder:text-[#555]"
                         readOnly
                       />
-                      <div className="flex justify-between items-center px-0.5 gap-1 min-w-0">
-                        <div className="flex gap-1 min-w-0 overflow-hidden">
-                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
+                      <div className="flex items-center justify-between px-1 gap-1 min-w-0">
+                        <div className="flex items-center gap-1 min-w-0">
+                          <span className="bg-[#202020] border border-[#333] text-[8px] sm:text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap">
                             @Models
                           </span>
-                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
+                          <span className="bg-[#202020] border border-[#333] text-[8px] sm:text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap">
                             @Solvers
                           </span>
-                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
-                            @Experiments
+                          <span className="bg-[#202020] border border-[#333] text-[8px] sm:text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap">
+                            @Verify
                           </span>
                         </div>
                         <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm shrink-0">
@@ -1620,87 +1622,87 @@ export default function AutomatedScientificDiscoverersPage() {
                       11
                     </span>
                   </div>
-                  <div className="flex flex-col gap-0.5 sm:gap-1 text-[10.5px] sm:text-[11px] font-mono w-full min-w-0">
+                  <div className="flex flex-col gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-mono w-full min-w-0">
                     <button
                       onClick={() => selectFileManually("README.md")}
-                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
                     >
-                      README.md
+                      <span className="truncate min-w-0 flex-1">README.md</span>
                     </button>
                     <button
-                      onClick={() => selectFileManually("dft_lattice.py")}
-                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "dft_lattice.py" || activeFile === "dft_lattice_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                      onClick={() => selectFileManually("dft_ast.py")}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "dft_ast.py" || activeFile === "dft_lattice.py" || activeFile === "dft_lattice_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                     >
-                      dft_lattice.py
+                      <span className="truncate min-w-0 flex-1">dft_ast.py</span>
                     </button>
                     <button
-                      onClick={() => selectFileManually("physics_prover.py")}
-                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "physics_prover.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                      onClick={() => selectFileManually("prover.py")}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "prover.py" || activeFile === "physics_prover.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                     >
-                      physics_prover.py
+                      <span className="truncate min-w-0 flex-1">prover.py</span>
                     </button>
                     <button
                       onClick={() =>
-                        selectFileManually("forcefield_audit.py")
+                        selectFileManually("forcefield.py")
                       }
-                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "forcefield_audit.py" || activeFile === "forcefield_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "forcefield.py" || activeFile === "forcefield_audit.py" || activeFile === "forcefield_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                     >
-                      forcefield_audit.py
+                      <span className="truncate min-w-0 flex-1">forcefield.py</span>
                     </button>
 
                     <div className="mt-1 flex flex-col gap-0.5 sm:gap-1 w-full min-w-0">
                       <div className="flex items-center gap-1 px-1.5 py-0.5 text-[#aaa] font-semibold text-[10px] sm:text-[11px] truncate min-w-0">
                         <ChevronDown size={12} className="text-[#777] shrink-0" />{" "}
-                        scientific-ai/
+                        science-ai/
                       </div>
                       <div className="pl-2.5 flex flex-col gap-0.5 sm:gap-1 border-l border-[#252525] ml-2 mt-0.5 w-full min-w-0">
                         <button
                           onClick={() =>
-                            selectFileManually("run_simulation.py")
+                            selectFileManually("simulate.py")
                           }
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "run_simulation.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "simulate.py" || activeFile === "run_simulation.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          run_simulation.py
+                          <span className="truncate min-w-0 flex-1">simulate.py</span>
                         </button>
                         <button
-                          onClick={() => selectFileManually("eval_physics.py")}
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "eval_physics.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("eval.py")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "eval.py" || activeFile === "eval_physics.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          eval_physics.py
+                          <span className="truncate min-w-0 flex-1">eval.py</span>
                         </button>
                         <button
-                          onClick={() => selectFileManually("run_dft_audit.sh")}
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "run_dft_audit.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("dft_run.sh")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "dft_run.sh" || activeFile === "run_dft_audit.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          run_dft_audit.sh
+                          <span className="truncate min-w-0 flex-1">dft_run.sh</span>
                         </button>
                         <button
                           onClick={() =>
                             selectFileManually("pipeline.json")
                           }
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "pipeline.json" || activeFile === "simulation_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "pipeline.json" || activeFile === "simulation_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          pipeline.json
+                          <span className="truncate min-w-0 flex-1">pipeline.json</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          Dockerfile
+                          <span className="truncate min-w-0 flex-1">Dockerfile</span>
                         </button>
                         <button
                           onClick={() =>
-                            selectFileManually("docker-compose.yml")
+                            selectFileManually("compose.yml")
                           }
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "compose.yml" || activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          docker-compose.yml
+                          <span className="truncate min-w-0 flex-1">compose.yml</span>
                         </button>
                         <button
-                          onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("deps.txt")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "deps.txt" || activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          requirements.txt
+                          <span className="truncate min-w-0 flex-1">deps.txt</span>
                         </button>
                       </div>
                     </div>
@@ -1711,27 +1713,40 @@ export default function AutomatedScientificDiscoverersPage() {
                 <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-3 sm:p-4 md:p-5 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
                   <div className="flex border-b border-[#252525] mb-3 pb-1.5 pt-0.5 gap-1 sm:gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     {[
-                      "run_simulation.py",
-                      "eval_physics.py",
-                      "physics_prover.py",
-                      "docker-compose.yml",
+                      "simulate.py",
+                      "eval.py",
+                      "prover.py",
+                      "compose.yml",
                       ...(activeFile && ![
+                        "simulate.py",
                         "run_simulation.py",
+                        "eval.py",
                         "eval_physics.py",
+                        "prover.py",
                         "physics_prover.py",
+                        "compose.yml",
                         "docker-compose.yml",
                       ].includes(activeFile)
                         ? [activeFile]
                         : []),
-                    ].map((fileName) => (
-                      <button
-                        key={fileName}
-                        onClick={() => selectFileManually(fileName)}
-                        className={`shrink-0 whitespace-nowrap text-[9.5px] sm:text-[11px] font-mono font-bold px-2 sm:px-2.5 py-1 border-b-2 transition-colors ${activeFile === fileName ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                      >
-                        {fileName}
-                      </button>
-                    ))}
+                    ].map((fileName) => {
+                      const isSelected =
+                        activeFile === fileName ||
+                        (fileName === "simulate.py" && activeFile === "run_simulation.py") ||
+                        (fileName === "eval.py" && activeFile === "eval_physics.py") ||
+                        (fileName === "prover.py" && activeFile === "physics_prover.py") ||
+                        (fileName === "compose.yml" && activeFile === "docker-compose.yml");
+
+                      return (
+                        <button
+                          key={fileName}
+                          onClick={() => selectFileManually(fileName)}
+                          className={`shrink-0 whitespace-nowrap text-[9.5px] sm:text-[11px] font-mono font-bold px-2 sm:px-2.5 py-1 border-b-2 transition-colors ${isSelected ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          {fileName}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <div className="flex font-mono text-[9.5px] sm:text-[11px] leading-[17px] sm:leading-[19px] overflow-x-auto select-text thin-hover-scrollbar min-w-0 flex-1">
