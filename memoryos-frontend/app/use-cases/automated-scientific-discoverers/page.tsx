@@ -951,25 +951,25 @@ export default function AutomatedScientificDiscoverersPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    Automated Scientific &<br />
+                    Scientific Models<br />
                     <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      Discoverers
+                      for Discovery
                     </span>
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
-                    Agents that run massive physics simulations.
+                    Develop models for molecular dynamics, material properties, and complex physical systems. Compare predictions against simulation results and experimental measurements to identify where models work, where they fail, and what to improve next.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy this agent{" "}
+                      Engineer scientific models{" "}
                       <ChevronRight
                         size={16}
                         className="transition-transform group-hover:translate-x-1"
                       />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the stack <ChevronRight size={16} />
+                      Explore the stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
@@ -977,10 +977,12 @@ export default function AutomatedScientificDiscoverersPage() {
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
                   <RagSearchGrid
-                    label1="Simulations"
-                    label2="Trajectories"
-                    label3="Force Fields"
-                    label4="Wet-Lab"
+                    label1="Molecular Dynamics"
+                    label2="Material Properties"
+                    label3="Physical Simulations"
+                    label4="Experimental Measurements"
+                    label5="Prediction Error"
+                    label6="Model Adaptation"
                   />
                 </div>
               </div>
