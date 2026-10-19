@@ -526,9 +526,8 @@ function highlightCode(
     return (
       <div
         key={i}
-        className={`min-h-[22px] leading-[22px] flex items-center transition-colors rounded-sm px-1 ${
-          isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
-        }`}
+        className={`min-h-[22px] leading-[22px] flex items-center transition-colors rounded-sm px-1 ${isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
+          }`}
       >
         {isCurrentActiveLine && !isComplete ? (
           <span className="w-[3.5px] h-[16px] bg-[#75bf00] animate-pulse inline-block mr-2.5 rounded-full shrink-0 align-middle" />
@@ -663,10 +662,10 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-      classes += " border-b";
-    } else {
-      classes += " border-b md:border-b-0";
-    }
+    classes += " border-b";
+  } else {
+    classes += " border-b md:border-b-0";
+  }
 
   return classes;
 };
@@ -863,24 +862,24 @@ export default function AutomatedScientificDiscoverersPage() {
         }}
       />
 
-            {/* GLOBAL VERTICAL DASHED LINES */}
-        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            {/* Left margin (14%) with 7% line bisecting it */}
-            <div className="relative border-r border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
-              </div>
-            {/* Center content (72%) */}
-            <div />
-            {/* Right margin (14%) with 93% line bisecting it */}
-            <div className="relative border-l border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
-              </div>
+      {/* GLOBAL VERTICAL DASHED LINES */}
+      {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          {/* Left margin (14%) with 7% line bisecting it */}
+          <div className="relative border-r border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+          </div>
+          {/* Center content (72%) */}
+          <div />
+          {/* Right margin (14%) with 93% line bisecting it */}
+          <div className="relative border-l border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
           </div>
         </div>
+      </div>
 
-        <div className="relative z-[100]">
+      <div className="relative z-[100]">
         <LandingNavbar />
       </div>
 
@@ -960,16 +959,17 @@ export default function AutomatedScientificDiscoverersPage() {
                     Develop models for molecular dynamics, material properties, and complex physical systems. Compare predictions against simulation results and experimental measurements to identify where models work, where they fail, and what to improve next.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Engineer scientific models{" "}
+                  <div className="flex flex-wrap items-center gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                      <span>Engineer scientific models</span>
                       <ChevronRight
                         size={16}
-                        className="transition-transform group-hover:translate-x-1"
+                        className="transition-transform group-hover:translate-x-1 shrink-0"
                       />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Explore the stack <ChevronRight size={16} />
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                      <span>Explore the stack</span>
+                      <ChevronRight size={16} className="shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -1010,7 +1010,7 @@ export default function AutomatedScientificDiscoverersPage() {
           </div>
 
           <div className="w-full relative z-10">
-            
+
             <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
             <div className="absolute inset-0 pointer-events-none z-20">
@@ -1113,8 +1113,8 @@ export default function AutomatedScientificDiscoverersPage() {
           </div>
 
           <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-            
-            
+
+
 
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
@@ -1369,7 +1369,7 @@ export default function AutomatedScientificDiscoverersPage() {
                     >
                       <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                         {visibleStep === 1 &&
-                        typedMsg1.length < AGENT_MSG_1.length ? (
+                          typedMsg1.length < AGENT_MSG_1.length ? (
                           <Loader2
                             size={14}
                             className="text-[#75bf00] animate-spin"
@@ -1562,7 +1562,7 @@ export default function AutomatedScientificDiscoverersPage() {
                     >
                       <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                         {visibleStep === 7 &&
-                        typedMsg2.length < AGENT_MSG_2.length ? (
+                          typedMsg2.length < AGENT_MSG_2.length ? (
                           <Loader2
                             size={14}
                             className="text-[#75bf00] animate-spin"
@@ -1760,7 +1760,7 @@ export default function AutomatedScientificDiscoverersPage() {
                                 : activeFile === "Dockerfile"
                                   ? "dockerfile"
                                   : activeFile.endsWith(".yml") ||
-                                      activeFile.endsWith(".yaml")
+                                    activeFile.endsWith(".yaml")
                                     ? "bash"
                                     : "typescript",
                         !isTypingCode,
@@ -1778,7 +1778,7 @@ export default function AutomatedScientificDiscoverersPage() {
 
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
-              
+
 
               <div className="min-w-0">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
@@ -1870,7 +1870,7 @@ export default function AutomatedScientificDiscoverersPage() {
                 </div>
 
                 {/* Models Grid */}
-              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
@@ -2212,11 +2212,10 @@ export default function AutomatedScientificDiscoverersPage() {
                 <button
                   key={idx}
                   onClick={() => setActiveFaq(idx)}
-                  className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${
-                    activeFaq === idx
+                  className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
                       ? "bg-[#75bf00] text-black"
                       : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
-                  }`}
+                    }`}
                 >
                   {faq.question}
                 </button>
