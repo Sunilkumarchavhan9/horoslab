@@ -1977,9 +1977,9 @@ export default function AutomatedScientificDiscoverersPage() {
                 <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
-                  Every stage of the pipeline, retuned per model and simulation
-                  workflow.
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
+                  Every stage of scientific model development, optimized per
+                  model, dataset, simulation, and compute budget.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
@@ -1987,82 +1987,88 @@ export default function AutomatedScientificDiscoverersPage() {
                     {/* Row 1 */}
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={26} strokeWidth={1.5} />
+                        <FlaskConical size={26} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                        Crystal Lattice AST Indexing
+                        Scientific data preparation
                       </h3>
                       <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                        Tune molecular AST graphs for instant retrieval of
-                        relevant PDB structures, bond topologies, and precedent
-                        experiments.
+                        Prepare molecular structures, protein sequences,
+                        equations, and research text for model-specific
+                        training. Track dataset versions, units, labels, and data
+                        provenance.
                       </p>
                     </div>
 
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={26} strokeWidth={1.5} />
+                        <Sliders size={26} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                        Physics Trajectory Proofs
+                        Model adaptation
                       </h3>
                       <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                        Generate verifiable energy conservation proofs for every
-                        molecular simulation to guarantee zero unphysical drift.
+                        Compare SciReasoner, MegaScience, and BioMistral on target
+                        tasks. Tune fine-tuning data, LoRA configurations, and
+                        training objectives for each scientific domain.
                       </p>
                     </div>
 
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={26} strokeWidth={1.5} />
+                        <Workflow size={26} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                        Property Risk Analysis
+                        Simulation integration
                       </h3>
                       <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                        Profile stability rules to highlight bandgap anomalies,
-                        steric clash, and binding affinity gaps.
+                        Connect compatible models to scientific solvers and
+                        simulation workflows. Track input parameters, solver
+                        settings, outputs, and failed runs for reproducible
+                        experiments.
                       </p>
                     </div>
 
                     {/* Row 2 */}
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={26} strokeWidth={1.5} />
+                        <ShieldCheck size={26} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                        Force Field Verification
+                        Scientific verification
                       </h3>
                       <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                        Built-in verification harness cross-referencing atomic
-                        force vectors against authoritative OpenMM & DFT
-                        solvers.
+                        Compare predictions with reference calculations and
+                        experimental measurements. Check units, numerical error,
+                        physical constraints, and performance on held-out data.
                       </p>
                     </div>
 
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={26} strokeWidth={1.5} />
+                        <Gauge size={26} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                        Zero-Unphysical-Drift Audit
+                        Training and inference efficiency
                       </h3>
                       <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                        Quantize scientific LLM weights (FP8/INT8) and apply
-                        strict force constraints to eliminate hallucinations.
+                        Tune precision, batching, sequence lengths, memory usage,
+                        and GPU placement. Measure the trade-offs between
+                        scientific accuracy, throughput, and cost.
                       </p>
                     </div>
 
                     <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={26} strokeWidth={1.5} />
+                        <Activity size={26} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                        Domain Fine-Tuning
+                        Experiment-driven improvement
                       </h3>
                       <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                        Fine-tune ESMFold-3 and AlphaFold-Physics on your lab's
-                        proprietary molecular data and synthesis playbooks.
+                        Track prediction errors across datasets and conditions.
+                        Compare model checkpoints, identify weak cases, and use
+                        verified examples to guide the next training run.
                       </p>
                     </div>
                   </div>
