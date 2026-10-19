@@ -1790,14 +1790,11 @@ export default function AutomatedScientificDiscoverersPage() {
       </div>
 
           {/* Features Grid Row */}
-          <div className="w-full relative z-10">
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
+          <div className="w-full relative z-10 mb-16 md:mb-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
 
-
-              <div className="min-w-0">
+              <div className="min-w-0 border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
                   <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
@@ -1843,9 +1840,13 @@ export default function AutomatedScientificDiscoverersPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-24">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-24 pb-16">
-            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full relative z-10 pt-10 md:pt-14 pb-16">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
