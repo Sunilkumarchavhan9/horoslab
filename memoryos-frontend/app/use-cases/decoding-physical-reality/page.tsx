@@ -680,15 +680,15 @@ export default function DecodingPhysicalRealityPage() {
                     </span>
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
-                    Process sensor streams to teach AI models. Construct versioned 4D spatial world models from cameras, LiDAR, and physical telemetry.
+                    Turn camera, LiDAR, IMU, and robot telemetry into models that understand physical states, predict motion, and learn from real-world outcomes.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy physical agent <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Deploy Physical AI <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the architecture <ChevronRight size={16} />
+                      Explore the stack <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
@@ -697,9 +697,11 @@ export default function DecodingPhysicalRealityPage() {
                 <div className="flex justify-center relative w-full pt-10">
                   <RagSearchGrid 
                     label1="Sensor Streams"
-                    label2="4D Voxel Grids"
-                    label3="Spatial Telemetry"
-                    label4="Edge Actuation"
+                    label2="3D Scene Understanding"
+                    label3="State Estimation"
+                    label4="Robot Telemetry"
+                    label5="Motion & Dynamics"
+                    label6="Action Outcomes"
                   />
                 </div>
               </div>
