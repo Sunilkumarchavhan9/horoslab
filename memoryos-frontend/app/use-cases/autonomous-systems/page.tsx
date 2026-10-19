@@ -555,16 +555,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How do Autonomous Systems world models handle sim-to-real transfer?",
-    answer: "Horos pairs physical-dynamics neural simulators with uncertainty-aware trajectory estimators, measuring prediction drift and kinematic constraint violations before hardware deployment.",
+    question: "What is Horos for Autonomous Systems and how does it fit into our robotics stack?",
+    answer: "Horos is an engineering optimization platform designed specifically for autonomous systems, robotics, and physical AI. Rather than replacing your existing controllers, Horos unifies open-weight world models, vision-language-action (VLA) policies, neural perception, and physics simulation into a reproducible optimization loop—allowing you to benchmark, adapt, and verify policies before running on physical hardware.",
   },
   {
-    question: "Can I evaluate and deploy custom open-weight VLA and robotics models?",
-    answer: "Yes. Native support for Cosmos, OpenVLA, Pi0, and custom physical-dynamics checkpoints allows rapid benchmarking against real-world telemetry.",
+    question: "How does Horos close the sim-to-real gap for world models and VLA policies?",
+    answer: "Horos bridges neural world models (like NVIDIA Cosmos and Physical Intelligence π₀) with ground-truth simulators (MuJoCo, Isaac Gym, Genesis) and real telemetry. It applies automated domain randomization, physical-dynamics consistency proofs, and counterfactual trajectory perturbation to measure prediction drift and eliminate catastrophic out-of-distribution behaviors before physical deployment.",
   },
   {
-    question: "Can I export optimized runtimes to run directly on edge robotics hardware?",
-    answer: "Yes! All fine-tuned models, quantization kernels, and closed-loop control pipelines can be compiled into containerized runtimes and deployed directly to edge computing units.",
+    question: "Which models, sensory inputs, and robotics middlewares are supported?",
+    answer: "Horos natively supports top frontier models including NVIDIA Cosmos, Physical Intelligence π₀, NVIDIA GR00T, OpenVLA 7B, UniAD, Octo Base, SmolVLA, Depth Anything V2, and SAM 2.1. It seamlessly ingests multi-camera video, depth maps, LiDAR point clouds, IMU streams, and joint state telemetry, featuring native export bridges to ROS2, Zenoh, and DDS middleware.",
+  },
+  {
+    question: "How do you verify kinematic constraints, collision avoidance, and safety bounds?",
+    answer: "Every candidate policy and world predictor is evaluated inside an isolated simulation harness against hard kinematic boundary limits, maximum joint velocities, torque envelopes, and obstacle tolerances. Horos computes mathematical non-collision guarantees and preserves verifiable evidence logs for every run before any candidate is cleared for hardware testing.",
+  },
+  {
+    question: "Can we evaluate surrogate neural physics models against full numerical simulators?",
+    answer: "Yes. Horos evaluates learned neural approximations against high-fidelity reference numerical solvers (FEA, CFD, rigid-body contact dynamics). It measures prediction error, energy conservation, and drift across diverse operating parameters—empowering your team to explore thousands of trajectory or design candidates in seconds while identifying where full numerical simulation is still required.",
+  },
+  {
+    question: "Can I export optimized runtimes to run directly on air-gapped edge hardware?",
+    answer: "Yes. Horos compiles fine-tuned perception models, world predictors, and action policies into containerized runtimes with custom TensorRT and CUDA kernels tailored for embedded hardware like NVIDIA Jetson Orin, Thor, Drive AGX, and custom robotic compute modules—delivering low-latency inference with zero cloud dependency.",
   }
 ];
 
@@ -1683,7 +1695,7 @@ export default function AutonomousSystemsPage() {
                 <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
                   {FAQ_DATA[activeFaq].question}
                 </h3>
-                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
+                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl whitespace-pre-line">
                   {FAQ_DATA[activeFaq].answer}
                 </p>
               </div>
