@@ -1020,23 +1020,23 @@ export default function AutomatedScientificDiscoverersPage() {
                     <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
                       Materials models
                     </h3>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-mono">
+                    <div className="text-[13.5px] sm:text-[14px] font-sans">
                       <a
                         href="https://huggingface.co/OneScience-Group/MatterSim"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                        className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
-                        MatterSim <ArrowUpRight size={12} />
+                        MatterSim
                       </a>
-                      <span className="text-[#555]">·</span>
+                      <span className="text-[#666] mx-1.5">·</span>
                       <a
                         href="https://huggingface.co/mace-foundations/mace-mp-0"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                        className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
-                        MACE-MP-0 <ArrowUpRight size={12} />
+                        MACE-MP-0
                       </a>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
@@ -1052,23 +1052,23 @@ export default function AutomatedScientificDiscoverersPage() {
                     <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
                       Protein models
                     </h3>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-mono">
+                    <div className="text-[13.5px] sm:text-[14px] font-sans">
                       <a
                         href="https://huggingface.co/facebook/esm2_t33_650M_UR50D"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                        className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
-                        ESM-2 <ArrowUpRight size={12} />
+                        ESM-2
                       </a>
-                      <span className="text-[#555]">·</span>
+                      <span className="text-[#666] mx-1.5">·</span>
                       <a
                         href="https://huggingface.co/microsoft/biogpt"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                        className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
-                        BioGPT <ArrowUpRight size={12} />
+                        BioGPT
                       </a>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
@@ -1084,18 +1084,12 @@ export default function AutomatedScientificDiscoverersPage() {
                     <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
                       Model improvement
                     </h3>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[12px] font-mono text-[#A0A098]">
-                      <span className="bg-[#1f1f1f] border border-[#333] px-2 py-0.5 rounded-sm text-[#C8C7BA]">
-                        Fine-tune
-                      </span>
-                      <span className="text-[#555]">·</span>
-                      <span className="bg-[#1f1f1f] border border-[#333] px-2 py-0.5 rounded-sm text-[#C8C7BA]">
-                        Evaluate
-                      </span>
-                      <span className="text-[#555]">·</span>
-                      <span className="bg-[#1f1f1f] border border-[#333] px-2 py-0.5 rounded-sm text-[#C8C7BA]">
-                        Compare
-                      </span>
+                    <div className="text-[13.5px] sm:text-[14px] font-sans text-[#E0DFD5]">
+                      <span>Fine-tune</span>
+                      <span className="text-[#666] mx-1.5">·</span>
+                      <span>Evaluate</span>
+                      <span className="text-[#666] mx-1.5">·</span>
+                      <span>Compare</span>
                     </div>
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
                       Compare predictions with scientific reference data, track errors, and test adapted checkpoints before using them in new experiments.
