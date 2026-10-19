@@ -711,14 +711,16 @@ export default function DecodingPhysicalRealityPage() {
         </div>
 
         {/* Features Section */}
-        <div className="w-full relative z-10 mt-16">
+        <div className="w-full relative z-10 mt-12 md:mt-16">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your physical perception stack</h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The sensor ingestion pipelines, the physical world models, the zero-drift spatial telemetry verifiers. Complete sovereignty over physical intelligence.
+              <div className="text-center mb-10 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
+                  What you actually own
+                </h2>
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                  Your sensor data, physical-world models, and evaluation results. Horos helps you turn real-world observations into models that predict motion, understand changing states, and improve from measured outcomes.
                 </p>
               </div>
             </div>
@@ -758,29 +760,53 @@ export default function DecodingPhysicalRealityPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The physical<br/>perception models.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the physical world models (NVIDIA Cosmos-1, Meta V-JEPA), 3D spatial occupancy grids, and VLA agents. Zero vendor lock-in on your perception AI.
+                  <div className="px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">01</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Your physical data
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Bring camera feeds, LiDAR scans, IMU readings, and robot telemetry. Keep sensor timestamps, calibration, and recorded trajectories linked to each experiment.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The spatial<br/>verifiers.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the prediction-vs-observation measurement engines, spatial trajectory verifiers, and telemetry logs. Zero spatial hallucination guaranteed.
+                  <div className="px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">02</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Your world models
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Evaluate models such as{" "}
+                      <a
+                        href="https://huggingface.co/nvidia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#75bf00] hover:underline underline-offset-2"
+                      >
+                        NVIDIA Cosmos
+                      </a>{" "}
+                      and{" "}
+                      <a
+                        href="https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#75bf00] hover:underline underline-offset-2"
+                      >
+                        V-JEPA 2
+                      </a>{" "}
+                      on scene changes, motion prediction, and physical-state understanding.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The edge<br/>containers.</h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the compiled TensorRT binaries and Docker/ROS2 containers. Deploy on NVIDIA Jetson Orin, Jetson Thor, or edge gateways seamlessly.
+                  <div className="px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">03</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Your real-world results
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Compare predicted motion and states against robot logs or simulator ground truth. Track failures across scenarios and use verified examples to evaluate improved model versions.
                     </p>
                   </div>
                 </div>
