@@ -959,15 +959,15 @@ export default function AutomatedScientificDiscoverersPage() {
                     Develop models for molecular dynamics, material properties, and complex physical systems. Compare predictions against simulation results and experimental measurements to identify where models work, where they fail, and what to improve next.
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                  <div className="flex flex-row items-center gap-3 sm:gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[13.5px] sm:text-[14px] whitespace-nowrap shrink-0">
                       <span>Engineer scientific models</span>
                       <ChevronRight
                         size={16}
                         className="transition-transform group-hover:translate-x-1 shrink-0"
                       />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px] whitespace-nowrap shrink-0">
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-4 sm:px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[13.5px] sm:text-[14px] whitespace-nowrap shrink-0">
                       <span>Explore the stack</span>
                       <ChevronRight size={16} className="shrink-0" />
                     </button>
