@@ -75,104 +75,79 @@ import {
   Zap,
   Loader2,
   ScanSearch,
+  FlaskConical,
 } from "lucide-react";
 
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: {
-      title: "Deploy automated scientific discoverers",
-      desc: "Launch physics-guided scientific discovery agents with GPU trajectory verification and DFT simulation loops.",
-    },
-    closed: {
-      title: "Basic chat completions",
-      desc: "Per-call text API responses without physics verification, energy conservation checks, or molecular trajectory bounds.",
-    },
-    diy: {
-      title: "Build prompt chains & Slurm scripts",
-      desc: "Spend months configuring brittle Python parsers, manual Slurm submission scripts, and unvalidated webhooks.",
-    },
+    label: "System",
+    pretrained: "Start with a pretrained scientific model and evaluate its capabilities.",
+    simulation: "Generate training examples from computational simulations.",
+    experimental: "Adapt a model using measured experimental data and verified results.",
   },
   {
     num: "0 2",
-    label: "Verification",
-    runInfra: {
-      title: "Verifiable physics & trajectory proofs",
-      desc: "Every atomic trajectory and crystal lattice is mathematically verified against ground-truth OpenMM and Quantum ESPRESSO solvers.",
-    },
-    closed: {
-      title: "Unverified text output",
-      desc: "High risk of hallucinated chemical structures, unstable energy states, and physically impossible atomic geometry.",
-    },
-    diy: {
-      title: "Manual human simulation proofreading",
-      desc: "Postdocs and computational chemists must manually double-check every single force field and MD simulation log.",
-    },
+    label: "Models",
+    pretrained: "MatterSim, MACE-MP-0, ESM-2",
+    simulation: "MatterSim, MACE-MP-0, domain-specific predictors",
+    experimental: "ESM-2, BioGPT, or a compatible scientific checkpoint",
   },
   {
     num: "0 3",
-    label: "Quantum Audit",
-    runInfra: {
-      title: "Ab-initio DFT & molecular compliance audit",
-      desc: "Automated risk and stability analysis for bandgaps, binding affinity, reaction pathways, and energy conservation.",
-    },
-    closed: {
-      title: "Black-box summaries",
-      desc: "Opaque molecular summaries that miss subtle thermodynamic instability, structural overlap, and phase boundary edge cases.",
-    },
-    diy: {
-      title: "Ad-hoc regex matching",
-      desc: "Fragile custom regex scripts unable to parse complex VASP, LAMMPS, or GROMACS output logs.",
-    },
+    label: "Data",
+    pretrained: "Scientific datasets, molecular structures, protein sequences, and domain literature.",
+    simulation: "Atomic trajectories, simulated properties, molecular configurations, and solver outputs.",
+    experimental: "Laboratory measurements, assay results, material properties, and experimental observations.",
   },
   {
     num: "0 4",
-    label: "Model Control",
-    runInfra: {
-      title: "Fine-tuned scientific reasoning models",
-      desc: "Deploy domain-adapted ESMFold-3, AlphaFold-Physics, OpenFold-2, and Materials-Graph-Net models.",
-    },
-    closed: {
-      title: "Locked to vendor API defaults",
-      desc: "Standard generalist LLMs without specialized molecular dynamics, quantum mechanics, or crystal graph fine-tuning.",
-    },
-    diy: {
-      title: "Prompt-only tuning",
-      desc: "Inability to adapt model weights to your lab's proprietary force fields, material synthesis playbooks, or wet-lab instruments.",
-    },
+    label: "Capabilities",
+    pretrained: "Predict properties, represent scientific structures, and analyze domain-specific inputs.",
+    simulation: "Learn patterns from simulated systems and predict outcomes for new configurations.",
+    experimental: "Adapt predictions to specific experimental conditions and scientific domains.",
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: {
-      title: "Autonomous research loops",
-      desc: "Automate hypothesis generation, multi-GPU physics simulations, property scoring, and Opentrons lab synthesis reporting.",
-    },
-    closed: {
-      title: "High researcher toil",
-      desc: "Scientific research teams spend hours manually re-running failed HPC jobs and formatting simulation datasets.",
-    },
-    diy: {
-      title: "High operational overhead",
-      desc: "Your team owns Slurm cluster maintenance, CUDA driver compatibility, force field updates, and GPU scaling.",
-    },
+    label: "Workload",
+    pretrained: "Molecular property prediction, protein analysis, and materials screening.",
+    simulation: "Molecular dynamics, materials simulation, and computational experiments.",
+    experimental: "Protein property prediction, experimental outcome prediction, and materials characterization.",
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: {
-      title: "SOC 2 Type II & On-Prem HPC Guards",
-      desc: "Zero privilege data retention with air-gapped Slurm cluster and private cloud execution options.",
-    },
-    closed: {
-      title: "Third-party data storage",
-      desc: "Proprietary drug target sequences and patented catalyst formulations uploaded to third-party SaaS servers.",
-    },
-    diy: {
-      title: "Self-managed security",
-      desc: "Your team owns IP data retention, research data guards, and HPC compute node compliance.",
-    },
+    label: "Training",
+    pretrained: "Benchmark pretrained models and select suitable checkpoints.",
+    simulation: "Generate synthetic examples, filter them, and fine-tune target models.",
+    experimental: "Fine-tune on experimental datasets using suitable training objectives.",
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    pretrained: "Compare predictions against established scientific benchmarks.",
+    simulation: "Validate against held-out simulations and higher-fidelity calculations.",
+    experimental: "Evaluate against held-out experimental measurements and reference results.",
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    pretrained: "Record checkpoints, datasets, predictions, and baseline results.",
+    simulation: "Track simulation settings, generated data, training runs, and model errors.",
+    experimental: "Preserve experimental provenance, dataset versions, predictions, and observed outcomes.",
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    pretrained: "Identify capability gaps and select targeted adaptation experiments.",
+    simulation: "Use verified synthetic examples to improve the target model.",
+    experimental: "Use experimental errors and new measurements to refine subsequent model versions.",
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    pretrained: "Govern model licenses, dataset access, and compute budgets.",
+    simulation: "Control simulation budgets, synthetic-data acceptance, and training runs.",
+    experimental: "Enforce experimental-data permissions, training approvals, and checkpoint promotion.",
   },
 ];
 
@@ -1098,11 +1073,10 @@ export default function AutomatedScientificDiscoverersPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-16 px-4">
             <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to build automated scientific discoverers
+              Three ways to build Scientific AI
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for scientific discovery agents across Horos,
-              closed LLM APIs, and DIY Slurm scripts.
+            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-3xl">
+              Build scientific intelligence from pretrained models, simulation-generated data, or real experimental results. Horos lets you adapt models, test predictions, and measure improvements against scientific evidence.
             </p>
           </div>
 
@@ -1144,43 +1118,42 @@ export default function AutomatedScientificDiscoverersPage() {
                     </span>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                    <div className="absolute top-2.5 right-3 flex items-center">
-                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">
-                        Recommended
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-2.5 mb-1.5">
                       <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                        <HorosLogo size={16} />
+                        <Brain size={16} className="text-[#75bf00]" />
                       </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        Horos
+                        Pretrained models
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Verified simulation telemetry & 0 unphysical drift.
+                      Start with pretrained models & evaluate capabilities.
                     </p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Key size={16} className="text-[#C8C7BA]" />
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <Cpu size={16} className="text-[#C8C7BA]" />
+                      </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        Closed LLM APIs
+                        Simulation-generated data
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Opaque text generation without physics checks.
+                      Generate training examples from simulations.
                     </p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={16} className="text-[#C8C7BA]" />
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <FlaskConical size={16} className="text-[#C8C7BA]" />
+                      </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        DIY Slurm Scripts
+                        Real experimental results
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Brittle Slurm scripts & manual DFT runs.
+                      Adapt models on measured lab & verified results.
                     </p>
                   </div>
                 </div>
@@ -1203,29 +1176,20 @@ export default function AutomatedScientificDiscoverersPage() {
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">
-                          {row.runInfra.title}
-                        </h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">
-                          {row.runInfra.desc}
+                        <p className="text-[#F0EFE2] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
+                          {row.pretrained}
                         </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">
-                          {row.closed.title}
-                        </h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">
-                          {row.closed.desc}
+                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
+                          {row.simulation}
                         </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">
-                          {row.diy.title}
-                        </h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">
-                          {row.diy.desc}
+                        <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
+                          {row.experimental}
                         </p>
                       </div>
                     </div>
