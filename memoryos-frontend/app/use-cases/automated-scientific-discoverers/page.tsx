@@ -151,24 +151,22 @@ const COMPARISON_ROWS = [
   },
 ];
 
-const README_CODE = `# Automated Scientific Discoverers Engine
+const README_CODE = `# Scientific AI Engine
+Autonomous intelligence pipeline by Horos.
 
-Autonomous physics-guided scientific discovery pipeline powered by Horos.
+## Architecture
+- Models: MatterSim, MACE-MP-0, ESM-2, BioGPT
+- Solvers: OpenMM 8.1 CUDA & Quantum ESPRESSO
+- Tasks: Molecular prediction, force audit
+- Proofs: Zero-unphysical-drift guarantees
 
-## Architecture Overview
-- Physics Solvers: OpenMM 8.1 CUDA & Quantum ESPRESSO v7.2 DFT
-- Scientific Models: ESMFold-3-Physics, AlphaFold-3, DeepSeek-R1-Science
-- AST Topology: Ab-initio 3D crystal lattice & molecular bond graphs
-- Verification: Zero-unphysical-drift CUDA trajectory energy conservation proofs
-- Wet-Lab Automation: Opentrons OT-3 liquid handling protocol triggers
+## Batch Run
+$ horos-science-ai train-and-eval \\
+    --models MatterSim,MACE-MP-0,ESM-2 \\
+    --solver OpenMM-CUDA-v8.1 \\
+    --benchmarks ./benchmarks/materials_2026`;
 
-## Batch Execution
-$ horos-science-agent simulate \\
-    --input-dir ./candidates/catalysts_2026 \\
-    --solver Quantum-ESPRESSO-v7.2 \\
-    --physics-proofs enabled`;
-
-const DFT_AST_CODE = `# Ab-initio Density Functional Theory (DFT) Crystal Lattice AST Builder
+const DFT_AST_CODE = `# Ab-initio DFT Crystal Lattice AST Builder
 import numpy as np
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
@@ -178,155 +176,170 @@ class AtomicNode:
     symbol: str
     position: Tuple[float, float, float]
     charge: float
-    hybridization: str
 
 class DFTGraphEngine:
-    """Parses PDB/CIF structures into 3D crystal lattice AST topology graphs."""
+    """Parses structures into 3D lattice graphs."""
     
     @staticmethod
-    def build_lattice(pdb_sequence: str) -> Dict[str, any]:
-        """Generate atomic bond vectors and unit cell lattice parameters."""
+    def build_lattice(pdb_seq: str) -> Dict[str, any]:
+        """Generate atomic bond vectors."""
         nodes = [
-            AtomicNode("Fe", (0.0, 0.0, 0.0), 2.0, "d2sp3"),
-            AtomicNode("N", (1.2, 0.5, 0.0), -1.0, "sp2"),
-            AtomicNode("C", (2.4, 1.1, 0.2), 0.0, "sp2"),
+            AtomicNode("Fe", (0.0, 0.0, 0.0), 2.0),
+            AtomicNode("N", (1.2, 0.5, 0.0), -1.0),
+            AtomicNode("C", (2.4, 1.1, 0.2), 0.0),
         ]
         return {
             "lattice_vectors": np.eye(3).tolist(),
             "atomic_nodes": nodes,
             "space_group": "P6/mmm",
-            "bandgap_estimate_ev": 1.42
+            "bandgap_ev": 1.42
         }`;
 
-const PHYSICS_PROVER_CODE = `# Zero-Unphysical-Drift CUDA Trajectory Verifier
+const PHYSICS_PROVER_CODE = `# Zero-Drift CUDA Physics Verifier
 import torch
 from typing import List, Dict
 
 class PhysicsVerifier:
-    """Mathematical force field and energy conservation verifier."""
+    """Mathematical force field verifier."""
     
-    def __init__(self, policy: str = "strict-energy-conservation"):
+    def __init__(self, policy: str = "strict-energy"):
         self.policy = policy
-        self.max_drift_kcal_mol = 0.001
+        self.max_drift = 0.001
 
-    def verify_trajectory(self, trajectories: List[Dict]) -> Dict[str, any]:
-        """Verify kinetic and potential energy conservation across MD frames."""
-        total_drift = sum(frame.get("drift", 0.0) for frame in trajectories)
-        
-        is_valid = total_drift <= self.max_drift_kcal_mol
+    def verify_trajectory(self, frames: List[Dict]):
+        """Verify kinetic & potential energy."""
+        total_drift = sum(f.get("drift", 0.0) for f in frames)
+        is_valid = total_drift <= self.max_drift
         return {
             "is_valid": is_valid,
             "hash": "0x8f2a99c1d0e4f3a7",
-            "drift_kcal_mol": total_drift,
-            "policy_enforced": self.policy
+            "drift_kcal_mol": round(total_drift, 5),
+            "policy": self.policy,
+            "status": "PASSED"
         }`;
 
-const FORCEFIELD_CODE = `# OpenMM & AMBER Force Field Compliance Auditor
+const FORCEFIELD_CODE = `# OpenMM & AMBER Force Field Auditor
 from typing import Dict
 
 class ForceFieldAuditor:
-    """Audits steric hindrance, van der Waals overlaps, and electrostatic bounds."""
+    """Audits steric clash & stability."""
     
-    def __init__(self, forcefield: str = "amber14-all.xml"):
-        self.forcefield = forcefield
+    def __init__(self, ff: str = "amber14.xml"):
+        self.forcefield = ff
 
-    def audit_stability(self, structure_data: Dict) -> Dict[str, float]:
-        """Calculate thermodynamic stability and binding affinity energy delta."""
+    def audit_stability(self, struct: Dict) -> Dict:
+        """Calculate stability & binding delta."""
         return {
-            "binding_energy_kcal_mol": -14.28,
+            "binding": -14.28,
             "steric_clash_score": 0.0,
             "van_der_waals_energy": -42.1,
             "thermodynamic_stability_pct": 99.7
         }`;
 
-const RUN_SIMULATION_CODE = `# Automated Scientific Discoverer with Physics Trajectory Verification
+const RUN_SIMULATION_CODE = `# Scientific AI Pipeline: Models & Solvers
 import torch
-from horos_science import ScientificDiscovererAgent, PhysicsVerifier, DFTGraphEngine, ForceFieldAuditor
+from horos_science import (
+    ScientificAIEngine,
+    PhysicsVerifier,
+    ForceFieldAuditor,
+)
 
-# Initialize scientific reasoning engine with OpenMM physics verifier
-agent = ScientificDiscovererAgent.from_pretrained("meta/esmfold-3-physics-verifier")
-physics_verifier = PhysicsVerifier(policy="strict-energy-conservation")
-auditor = ForceFieldAuditor(forcefield="amber14-all.xml")
+# Load scientific models with OpenMM solver
+engine = ScientificAIEngine.from_pretrained(
+    materials="MatterSim",
+    forcefield="MACE-MP-0",
+    proteins="ESM-2-650M"
+)
+verifier = PhysicsVerifier(policy="strict-energy")
+auditor = ForceFieldAuditor(ff="amber14.xml")
 
-def run_molecular_discovery(pdb_sequence: str, target_bandgap_ev: float = 1.4):
-    """Run ab-initio DFT simulation and verify energy conservation bounds."""
+def run_scientific_evaluation(pdb: str, target_ev: float = 1.4):
+    """Predict atomic forces and run simulation."""
     
-    # Parse protein sequence into 3D crystal lattice AST graph
-    crystal_graph = DFTGraphEngine.build_lattice(pdb_sequence)
+    # Predict atomic forces with MatterSim & MACE
+    forces = engine.predict_forces(pdb)
     
-    # Audit thermodynamic force field stability
-    stability = auditor.audit_stability(crystal_graph)
+    # Audit thermodynamic stability & bounds
+    stability = auditor.audit_stability(forces)
     
-    # Run molecular dynamics simulation on 8x H100 GPU cluster
-    sim_results = agent.simulate_dynamics(crystal_graph, bandgap=target_bandgap_ev)
+    # Run molecular dynamics on 8x H100 cluster
+    sim = engine.simulate(forces, bandgap=target_ev)
     
-    # Mathematically verify quantum energy state and force vectors
-    physics_proof = physics_verifier.verify_trajectory(sim_results.trajectories)
+    # Verify energy conservation proofs
+    proof = verifier.verify_trajectory(sim.frames)
     
-    if physics_proof["is_valid"]:
+    if proof["is_valid"]:
         return {
-            "simulation_status": "SUCCESS",
-            "binding_energy_kcal": stability["binding_energy_kcal_mol"],
-            "trajectory_hash": physics_proof["hash"],
-            "unphysical_drift_rate": 0.0,
-            "wetlab_trigger": "opentrons_ot3_synthesis.py"
+            "status": "VERIFIED_ACCURATE",
+            "binding_energy_kcal": stability["binding"],
+            "force_mae_ev": 0.0012,
+            "proof_hash": proof["hash"],
+            "unphysical_drift": 0.0,
+            "checkpoint_ready": True
         }
-        
     return None`;
 
 const RUN_DFT_AUDIT_CODE = `#!/usr/bin/env bash
-# Automated scientific discoverer batch physics simulation runner
+# Scientific AI batch simulation runner
 set -euo pipefail
 
-DATASET_DIR="./candidates/catalysts_2026"
+DATASET_DIR="./candidates/materials_2026"
 SOLVER="Quantum-ESPRESSO-v7.2"
 
-echo "[Horos Science] Initializing 8x H100 GPU Cluster CUDA 12.4 solver..."
-echo "[Horos Science] Running OpenMM molecular dynamics simulation..."
+echo "[Horos] Initializing 8x H100 GPU Cluster..."
+echo "[Horos] Benchmarking MatterSim & MACE-MP-0..."
+echo "[Horos] Running OpenMM molecular dynamics..."
 
-# Execute zero-unphysical-drift MD simulation with CUDA acceleration
-horos-science-agent simulate \\
+# Run zero-unphysical-drift simulation
+horos-science-ai train-and-eval \\
   --input-dir $DATASET_DIR \\
+  --models MatterSim,MACE-MP-0,ESM-2 \\
   --solver $SOLVER \\
-  --physics-proofs enabled \\
-  --energy-drift strict \\
-  --output-json ./simulation_audit_report.json`;
+  --drift-policy strict \\
+  --output ./evaluation_report.json`;
 
 const SIMULATION_PIPELINE_CODE = `{
-  "name": "automated-scientific-discoverers",
+  "name": "scientific-ai-pipeline",
   "version": "2.4.0",
-  "agent": "physics-discoverer-v1",
-  "model": "esmfold-3-physics-verifier",
-  "solver": "OpenMM-CUDA-8.1",
-  "dft_engine": "Quantum-ESPRESSO-v7.2",
-  "physics_proofs": true,
-  "energy_drift_threshold": 0.0,
-  "property_audits": [
-    "bandgap",
-    "binding_affinity",
-    "thermodynamic_stability",
-    "opentrons_synthesis"
+  "foundation_models": [
+    "MatterSim",
+    "MACE-MP-0",
+    "ESM-2",
+    "BioGPT"
+  ],
+  "solvers": {
+    "molecular_dynamics": "OpenMM-CUDA-8.1",
+    "dft_engine": "Quantum-ESPRESSO"
+  },
+  "training": {
+    "synthetic_sim_data": true,
+    "experimental_data": true,
+    "drift_threshold": 0.001
+  },
+  "benchmarks": [
+    "atomic_forces",
+    "stability",
+    "binding_affinity"
   ]
 }`;
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.0-devel-ubuntu22.04 AS base
 
-RUN apt-get update && apt-get install -y python3.11 openmm quantum-espresso
+RUN apt-get update && apt-get install -y \\
+    python3.11 openmm quantum-espresso
 
 WORKDIR /science
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY agent/ /science/agent/
-COPY README.md run_simulation.py run_dft_audit.sh simulation_pipeline.json .
-
+COPY . /science/
 EXPOSE 8080
 ENTRYPOINT ["/science/run_dft_audit.sh"]`;
 
 const DOCKER_COMPOSE_CODE = `version: "3.8"
 
 services:
-  science-discoverer:
+  scientific-ai:
     build: .
     ports:
       - "8080:8080"
@@ -338,36 +351,42 @@ services:
               count: all
               capabilities: [gpu]
     environment:
-      - SOLVER_POLICY=strict-energy-conservation
-      - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7`;
+      - SOLVER_POLICY=strict-energy
+      - CUDA_DEVICES=0,1,2,3,4,5,6,7
+      - PRECISION=fp16-cuda12.4`;
 
 const REQUIREMENTS_CODE = `torch>=2.4.0
+mattersim>=1.0.0
+mace-torch>=0.3.5
+fair-esm>=2.0.0
 openmm>=8.1.1
-numpy>=1.26.0
+horos-scientific-ai>=2.4.0
 biopython>=1.83
-horos-science-agent>=2.4.0
-opentrons>=7.0.0
 scipy>=1.13.0`;
 
-const EVAL_PHYSICS_CODE = `# Evaluation harness: measuring trajectory precision and physics conservation
-from horos_eval import TrajectoryEvaluator, PhysicsSafetyGate
+const EVAL_PHYSICS_CODE = `# Benchmark predictions against reference data
+from horos_eval import (
+    BenchmarkEvaluator,
+    PhysicsSafetyGate,
+)
 
-def evaluate_discoverer_accuracy(pdb_structure: str, sim_report: dict) -> dict:
-    """Verify scientific discoverer accuracy and energy conservation guarantee."""
+def evaluate_scientific_accuracy(checkpoint: str, dataset: str):
+    """Verify prediction accuracy and energy proofs."""
+    evaluator = BenchmarkEvaluator()
+    safety = PhysicsSafetyGate(policy="zero-drift")
     
-    evaluator = TrajectoryEvaluator()
-    safety = PhysicsSafetyGate(policy="zero-unphysical-drift")
+    # Verify CUDA trajectory energy conservation
+    proof = safety.verify_proofs(checkpoint)
     
-    # Mathematically verify CUDA trajectory energy proofs
-    proof_passed = safety.verify_proof(sim_report["trajectory_hash"])
-    
-    # Calculate structural RMSD precision and thermodynamic accuracy
-    accuracy_score = evaluator.score_trajectories(sim_report)
+    # Score predictions against reference data
+    metrics = evaluator.score_model(checkpoint, dataset)
     
     return {
-        "physics_proof_verified": proof_passed,
-        "rmsd_precision_angstrom": accuracy_score.rmsd,
-        "unphysical_trajectories": 0
+        "physics_verified": proof,
+        "energy_mae_ev": metrics.energy_mae,
+        "force_rmse": metrics.force_rmse,
+        "unphysical_drift": 0.0,
+        "promoted_to_registry": True
     }`;
 
 type DataFactoryFile = string;
@@ -501,22 +520,23 @@ function highlightCode(
     return (
       <div
         key={i}
-        className={`min-h-[22px] leading-[22px] flex items-center transition-colors rounded-sm px-1 ${isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
-          }`}
+        className={`min-h-[17px] sm:min-h-[19px] leading-[17px] sm:leading-[19px] flex items-center transition-colors rounded-sm px-1 ${
+          isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
+        }`}
       >
         {isCurrentActiveLine && !isComplete ? (
-          <span className="w-[3.5px] h-[16px] bg-[#75bf00] animate-pulse inline-block mr-2.5 rounded-full shrink-0 align-middle" />
+          <span className="w-[3px] h-[12px] bg-[#75bf00] animate-pulse inline-block mr-1.5 rounded-full shrink-0 align-middle" />
         ) : (
-          <span className="w-[3.5px] h-[16px] bg-transparent inline-block mr-2.5 shrink-0" />
+          <span className="w-[3px] h-[12px] bg-transparent inline-block mr-1.5 shrink-0" />
         )}
 
         <span className="flex-1 whitespace-pre">{lineContent}</span>
 
         {isCurrentActiveLine && !isComplete && (
-          <span className="inline-block w-[7px] h-[16px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
+          <span className="inline-block w-[5px] h-[12px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
         )}
         {i === totalLines - 1 && isComplete && (
-          <span className="inline-block w-[8px] h-[16px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
+          <span className="inline-block w-[5px] h-[12px] bg-[#75bf00] animate-pulse ml-1 align-middle shrink-0" />
         )}
       </div>
     );
@@ -525,12 +545,36 @@ function highlightCode(
 
 const DEFAULT_MODELS = [
   {
-    id: "meta/ESMFold-3-Physics-Verifier",
-    name: "ESMFold-3 Physics",
+    id: "OneScience-Group/MatterSim",
+    name: "MatterSim",
+    author: "OneScience",
+    description:
+      "Deep learning potential for materials science, predicting atomic forces and energy.",
+    role: "Materials Model",
+  },
+  {
+    id: "mace-foundations/mace-mp-0",
+    name: "MACE-MP-0",
+    author: "MACE",
+    description:
+      "Equivariant foundation potential for atomistic simulations and materials screening.",
+    role: "Force Fields",
+  },
+  {
+    id: "facebook/esm2_t33_650M_UR50D",
+    name: "ESM-2 650M",
     author: "Meta",
     description:
-      "Frontier protein structure prediction model with GPU trajectory verification.",
-    role: "Physics Agent",
+      "Evolutionary Scale Modeling protein language model for sequence analysis and representation.",
+    role: "Protein Model",
+  },
+  {
+    id: "microsoft/biogpt",
+    name: "BioGPT",
+    author: "Microsoft",
+    description:
+      "Generative biomedical language model for scientific literature mining and domain reasoning.",
+    role: "Biomedical LLM",
   },
   {
     id: "nvidia/BioNeMo-OpenMM-8B",
@@ -547,14 +591,6 @@ const DEFAULT_MODELS = [
     description:
       "Deep reasoning engine for complex DFT, catalysis, and reaction dynamics.",
     role: "Science Reasoning",
-  },
-  {
-    id: "google/AlphaFold-3-Physics-Instruct",
-    name: "AlphaFold 3 Physics",
-    author: "Google",
-    description:
-      "Biomolecular structure discovery agent fine-tuned on ligand binding & thermodynamics.",
-    role: "Biomolecule Agent",
   },
   {
     id: "materials-project/GraphNet-Materials-32B",
@@ -648,21 +684,21 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question:
-      "How do Automated Scientific Discoverers guarantee zero unphysical drift?",
+      "How does Scientific AI guarantee zero unphysical drift?",
     answer:
       "Horos uses GPU-accelerated OpenMM and Quantum ESPRESSO physics solvers combined with mathematical force field verification to ensure every atomic trajectory and energy state adheres to thermodynamics.",
   },
   {
     question:
-      "Can the agent simulate complex protein folding, catalyst design, and crystal lattices?",
+      "Can Scientific AI predict material structures, protein sequences, and reaction dynamics?",
     answer:
-      "Yes. Native support for PDB files, CIF crystal graphs, DFT bandgap calculations, and Opentrons wet-lab automation protocols allows instant end-to-end scientific discovery.",
+      "Yes. Native support for MatterSim, MACE-MP-0, and ESM-2 enables high-accuracy atomic force prediction, sequence embeddings, and end-to-end scientific evaluation.",
   },
   {
     question:
-      "Can I export fine-tuned scientific models to run on my HPC cluster or supercomputer?",
+      "Can I export fine-tuned scientific checkpoints to run on my HPC cluster or supercomputer?",
     answer:
-      "Yes! All fine-tuned scientific model weights and CUDA containers can be exported as TensorRT binaries and deployed on Slurm, Kubernetes, or air-gapped HPC supercomputers.",
+      "Yes! All adapted checkpoints and CUDA simulation containers can be exported as TensorRT binaries and deployed on Slurm, Kubernetes, or air-gapped HPC supercomputers.",
   },
 ];
 
@@ -677,12 +713,15 @@ export default function AutomatedScientificDiscoverersPage() {
 
   const FILE_CODE_MAP: Record<string, string> = {
     "README.md": README_CODE,
+    "dft_lattice.py": DFT_AST_CODE,
     "dft_lattice_ast.py": DFT_AST_CODE,
     "physics_prover.py": PHYSICS_PROVER_CODE,
+    "forcefield_audit.py": FORCEFIELD_CODE,
     "forcefield_auditor.py": FORCEFIELD_CODE,
     "run_simulation.py": RUN_SIMULATION_CODE,
     "eval_physics.py": EVAL_PHYSICS_CODE,
     "run_dft_audit.sh": RUN_DFT_AUDIT_CODE,
+    "pipeline.json": SIMULATION_PIPELINE_CODE,
     "simulation_pipeline.json": SIMULATION_PIPELINE_CODE,
     Dockerfile: DOCKERFILE_CODE,
     "docker-compose.yml": DOCKER_COMPOSE_CODE,
@@ -690,9 +729,9 @@ export default function AutomatedScientificDiscoverersPage() {
   };
 
   const AGENT_MSG_1 =
-    "On it. Running ab-initio DFT simulation over candidate structures. Initializing ESMFold-3-Physics & DeepSeek-R1-Science with OpenMM force field bounds on 8x H100 GPUs.";
+    "On it. Benchmarking pretrained scientific foundation models (MatterSim, MACE-MP-0, ESM-2). Predicting atomic forces and running OpenMM trajectory simulations against experimental benchmarks on 8x H100 GPUs.";
   const AGENT_MSG_2 =
-    "Simulation complete. Identified high binding energy & thermodynamic stability in Candidate #14. Trajectory proof #0x8f2a... verified against Quantum ESPRESSO solvers. Report ready for wet-lab synthesis.";
+    "Simulation and adaptation complete. Identified high thermodynamic stability and force accuracy in Candidate #14. Trajectory verified against reference benchmarks. Fine-tuned checkpoint ready for experimental deployment.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -1114,47 +1153,46 @@ export default function AutomatedScientificDiscoverersPage() {
                 <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
                   <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">
-                      What Matters
+                      Dimension
                     </span>
                   </div>
-                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                    <div className="absolute top-2.5 right-3 flex items-center">
-                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">
-                        Recommended
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 mb-2">
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
                       <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                        <HorosLogo size={16} />
+                        <Brain size={16} className="text-[#75bf00]" />
                       </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        Horos
+                        Pretrained models
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Fast path with model control and export.
+                      Start with a foundation checkpoint and benchmark capabilities.
                     </p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <Cpu size={16} className="text-[#C8C7BA]" />
+                      </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        Closed model APIs
+                        Simulation data
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Per-call, hosted.
+                      Generate synthetic training examples from physical simulations.
                     </p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <FlaskConical size={16} className="text-[#C8C7BA]" />
+                      </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        DIY self-hosting
+                        Experimental results
                       </span>
                     </div>
                     <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Full control, heavy operations.
+                      Adapt checkpoints using measured lab and assay data.
                     </p>
                   </div>
                 </div>
@@ -1177,18 +1215,27 @@ export default function AutomatedScientificDiscoverersPage() {
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#75bf00] uppercase mb-1">
+                          Pretrained models
+                        </span>
                         <p className="text-[#F0EFE2] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
                           {row.pretrained}
                         </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
+                          Simulation data
+                        </span>
                         <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
                           {row.simulation}
                         </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
+                          Experimental results
+                        </span>
                         <p className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
                           {row.experimental}
                         </p>
@@ -1209,39 +1256,35 @@ export default function AutomatedScientificDiscoverersPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight mb-3 text-center">
-                  Scientific discoverers you own.{" "}
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight mb-2.5 sm:mb-3 text-center">
+                  Scientific AI you own.{" "}
                   <span className="text-[#75bf00]">
                     Simulate physics anywhere.
                   </span>
                 </h2>
                 <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
-                  The full recipe ships with you. OpenMM CUDA solvers, DFT AST
-                  graphs, ESMFold models, and Opentrons wet-lab protocols. Run
-                  it anywhere.
+                  The complete scientific AI stack ships with you. Pretrained foundation models (MatterSim, MACE-MP-0, ESM-2), physics simulation solvers, training pipelines, and experimental verifiers.
                 </p>
               </div>
             </div>
             <div />
           </div>
 
-          <SectionDivider
-            position="top"
-            className="absolute top-0 left-0 right-0 z-20"
-          />
-
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div
-              className="w-full relative mx-auto max-w-[1351px]"
-              style={{ aspectRatio: "1351 / 892" }}
-            >
+          <div className="w-full relative z-10 bg-[#151515]/20 py-12 md:py-16">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0 px-1 md:px-2">
+                <div
+                  className="w-full relative mx-auto"
+                  style={{ aspectRatio: "1351 / 892" }}
+                >
               {/* Panes Backgrounds */}
               <div
                 className="absolute inset-0 grid"
                 style={{
-                  gridTemplateColumns: "41fr 443fr 226fr 602fr 39fr",
-                  gridTemplateRows: "53.5fr 785fr 53.5fr",
+                  gridTemplateColumns: "minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)",
+                  gridTemplateRows: "minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)",
                 }}
               >
                 <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
@@ -1255,36 +1298,36 @@ export default function AutomatedScientificDiscoverersPage() {
               <div
                 className="absolute inset-0 grid pointer-events-none z-20"
                 style={{
-                  gridTemplateColumns: "41fr 443fr 226fr 602fr 39fr",
-                  gridTemplateRows: "53.5fr 785fr 53.5fr",
+                  gridTemplateColumns: "minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)",
+                  gridTemplateRows: "minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)",
                 }}
               >
                 {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
+                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-3 sm:px-5 pointer-events-auto">
+                  <div className="flex gap-3 sm:gap-6 h-full items-end pb-2">
                     <button
                       onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
                       <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                     </button>
                     <button
                       onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      <Code2 size={13} /> CODE
+                      <Code2 size={12} /> CODE
                     </button>
                     <button
                       onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      <Sliders size={13} /> OPTIMIZATION
+                      <Sliders size={12} /> OPTIMIZATION
                     </button>
                     <button
                       onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                     >
-                      <Rocket size={13} /> DEPLOY
+                      <Rocket size={12} /> DEPLOY
                     </button>
                   </div>
                   <div
@@ -1293,30 +1336,29 @@ export default function AutomatedScientificDiscoverersPage() {
                     title="Replay Animation"
                   >
                     <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
-                    <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">
+                    <span className="text-[9.5px] sm:text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">
                       Live
                     </span>
                   </div>
                 </div>
 
                 {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[15px] font-sans leading-[28px]">
-                        Run ab-initio DFT simulation over candidate structures.
-                        Hybrid physics solver with{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <MetaLogo size={13} /> ESMFold-3-Physics
+                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-3 sm:p-4 md:p-5 flex flex-col justify-between overflow-hidden min-w-0 pointer-events-auto">
+                  <div className="flex flex-col gap-3 sm:gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-2 min-w-0">
+                    <div className="bg-[#181818] border border-[#262626] p-2.5 sm:p-3 rounded-[4px] min-w-0">
+                      <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-sans leading-[17px] sm:leading-[19px]">
+                        Predict atomic forces and evaluate crystal stability across candidate structures.
+                        Hybrid scientific pipeline with{" "}
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[9px] sm:text-[10px] align-middle whitespace-nowrap">
+                          <MetaLogo size={11} /> MatterSim & MACE
                         </span>{" "}
                         plus OpenMM force fields,{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <DeepSeekLogo size={13} /> DeepSeek-R1-Science
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[9px] sm:text-[10px] align-middle whitespace-nowrap">
+                          <MetaLogo size={11} /> ESM-2 & BioGPT
                         </span>{" "}
-                        grounded with force field bounds. Score energy stability
-                        on{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#75bf00] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <NvidiaLogo size={13} /> 8x H100 GPU
+                        for sequence analysis and biomedical reasoning. Validate predictions on{" "}
+                        <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[9px] sm:text-[10px] align-middle whitespace-nowrap">
+                          <NvidiaLogo size={11} /> 8x H100 GPU
                         </span>
                         .
                       </p>
@@ -1324,192 +1366,186 @@ export default function AutomatedScientificDiscoverersPage() {
 
                     {/* Step 1 */}
                     <div
-                      className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                      className={`flex gap-2 sm:gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                     >
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                         {visibleStep === 1 &&
                           typedMsg1.length < AGENT_MSG_1.length ? (
                           <Loader2
-                            size={14}
+                            size={12}
                             className="text-[#75bf00] animate-spin"
                           />
                         ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
+                          <Sparkles size={12} className="text-[#75bf00]" />
                         )}
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">
                           Agent
                         </span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                        <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] leading-[16px] sm:leading-[18px]">
                           {typedMsg1}
                           {visibleStep === 1 &&
                             typedMsg1.length < AGENT_MSG_1.length && (
-                              <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                             )}
                         </p>
                       </div>
                     </div>
 
                     {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
+                    <div className="flex flex-col gap-2.5 sm:gap-3 mt-1 min-w-0">
                       <div
-                        className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                        className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                       >
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 2 ? (
                             <Loader2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00] animate-spin"
                             />
                           ) : (
                             <CheckCircle2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00]"
                             />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">
-                              Ingesting molecular AST & crystal structure tree
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">
+                              Ingesting atomic coordinates & structures
                             </span>
-                            <span className="text-[#C8C7BA] text-[12px]">
+                            <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">
                               0.9s
                             </span>
                           </div>
-                          <span className="text-[#666] text-[12px]">
-                            Parsed 148 atomic coordinates & bond angles
-                            [ESMFold-3-Physics]
+                          <span className="text-[#666] text-[9.5px] sm:text-[10px] truncate">
+                            Parsed 148 atomic coordinates [MatterSim & MACE-MP-0]
                           </span>
                         </div>
                       </div>
 
                       <div
-                        className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                        className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                       >
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 3 ? (
                             <Loader2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00] animate-spin"
                             />
                           ) : (
                             <CheckCircle2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00]"
                             />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">
-                              Checking DFT quantum simulation accuracy
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">
+                              Running computational physics & force solver
                             </span>
-                            <span className="text-[#C8C7BA] text-[12px]">
+                            <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">
                               2.1s
                             </span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">
-                            100% force field match against OpenMM & Quantum
-                            ESPRESSO [8x NVIDIA H100 GPU]
+                          <span className="text-[#75bf00] text-[9.5px] sm:text-[10px] truncate">
+                            100% force match in OpenMM [8x NVIDIA H100 GPU]
                           </span>
                         </div>
                       </div>
 
                       <div
-                        className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                        className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                       >
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 4 ? (
                             <Loader2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00] animate-spin"
                             />
                           ) : (
                             <CheckCircle2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00]"
                             />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">
-                              Computing GPU mathematical trajectory proof
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">
+                              Analyzing protein sequences & biomedical literature
                             </span>
-                            <span className="text-[#C8C7BA] text-[12px]">
+                            <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">
                               4.5s
                             </span>
                           </div>
-                          <span className="text-[#666] text-[12px]">
-                            Generated physics proof hash #0x8f2a99c1d0
-                            [DeepSeek-R1-Science | CUDA 12.4]
+                          <span className="text-[#666] text-[9.5px] sm:text-[10px] truncate">
+                            Cross-referenced sequence embeddings [ESM-2 / BioGPT]
                           </span>
                         </div>
                       </div>
 
                       <div
-                        className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                        className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                       >
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 5 ? (
                             <Loader2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00] animate-spin"
                             />
                           ) : (
                             <CheckCircle2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00]"
                             />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">
-                              Flagging thermodynamic stability anomaly
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">
+                              Evaluating predictions against benchmarks
                             </span>
-                            <span className="text-[#C8C7BA] text-[12px]">
+                            <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">
                               9.8s
                             </span>
                           </div>
-                          <span className="text-[#666] text-[12px]">
-                            High binding affinity candidate detected in
-                            Structure 14.2 (99.7% confidence)
+                          <span className="text-[#666] text-[9.5px] sm:text-[10px] truncate">
+                            High binding candidate in Structure 14.2 (99.7%)
                           </span>
                         </div>
                       </div>
 
                       <div
-                        className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                        className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                       >
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                           {visibleStep === 6 ? (
                             <Loader2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00] animate-spin"
                             />
                           ) : (
                             <CheckCircle2
-                              size={14}
+                              size={12}
                               className="text-[#75bf00]"
                             />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">
-                              Generating zero-unphysical-drift simulation report
+                        <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                          <div className="flex justify-between items-center w-full gap-2">
+                            <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">
+                              Generating evaluation report & checkpoint
                             </span>
-                            <span className="text-[#C8C7BA] text-[12px]">
+                            <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">
                               14.2s
                             </span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">
-                            Simulation verified. Report ready for wet-lab
-                            synthesis [Model: ESMFold-3-Physics &
-                            DeepSeek-R1-Science]
+                          <span className="text-[#75bf00] text-[9.5px] sm:text-[10px] truncate">
+                            Simulation verified. Checkpoint promoted
                           </span>
                         </div>
                       </div>
@@ -1517,28 +1553,28 @@ export default function AutomatedScientificDiscoverersPage() {
 
                     {/* Step 7 */}
                     <div
-                      className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
+                      className={`flex gap-2 sm:gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}
                     >
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                      <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
                         {visibleStep === 7 &&
                           typedMsg2.length < AGENT_MSG_2.length ? (
                           <Loader2
-                            size={14}
+                            size={12}
                             className="text-[#75bf00] animate-spin"
                           />
                         ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
+                          <Sparkles size={12} className="text-[#75bf00]" />
                         )}
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">
                           Agent
                         </span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                        <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] leading-[16px] sm:leading-[18px]">
                           {typedMsg2}
                           {visibleStep === 7 &&
                             typedMsg2.length < AGENT_MSG_2.length && (
-                              <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
                             )}
                         </p>
                       </div>
@@ -1546,25 +1582,28 @@ export default function AutomatedScientificDiscoverersPage() {
                   </div>
 
                   {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
+                  <div className="mt-1.5 shrink-0 mb-1 min-w-0">
+                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-1.5 sm:p-2 flex flex-col gap-1.5 min-w-0">
                       <input
                         type="text"
-                        placeholder="Teach the agent to run DFT simulations against custom force fields..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
+                        placeholder="Teach scientific AI to predict forces & adapt to experimental data..."
+                        className="bg-transparent text-[#F0EFE2] text-[10.5px] sm:text-[11.5px] border-none outline-none w-full px-1 py-0.5"
                         readOnly
                       />
-                      <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">
-                            @Capabilities
+                      <div className="flex justify-between items-center px-0.5 gap-1 min-w-0">
+                        <div className="flex gap-1 min-w-0 overflow-hidden">
+                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
+                            @Models
                           </span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">
-                            @ForceField
+                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
+                            @Solvers
+                          </span>
+                          <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
+                            @Experiments
                           </span>
                         </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
+                        <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm shrink-0">
+                          <ArrowUp size={12} strokeWidth={2.5} />
                         </button>
                       </div>
                     </div>
@@ -1572,80 +1611,80 @@ export default function AutomatedScientificDiscoverersPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">
-                      PHYSICS SOLVERS
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-2.5 sm:p-3 md:p-3.5 flex flex-col items-start gap-2 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-1 w-full shrink-0">
+                    <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#C8C7BA] uppercase truncate">
+                      SCIENTIFIC AI STACK
                     </span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">
+                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[8.5px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
                       11
                     </span>
                   </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
+                  <div className="flex flex-col gap-0.5 sm:gap-1 text-[10.5px] sm:text-[11px] font-mono w-full min-w-0">
                     <button
                       onClick={() => selectFileManually("README.md")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
                     >
                       README.md
                     </button>
                     <button
-                      onClick={() => selectFileManually("dft_lattice_ast.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "dft_lattice_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                      onClick={() => selectFileManually("dft_lattice.py")}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "dft_lattice.py" || activeFile === "dft_lattice_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                     >
-                      dft_lattice_ast.py
+                      dft_lattice.py
                     </button>
                     <button
                       onClick={() => selectFileManually("physics_prover.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "physics_prover.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "physics_prover.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                     >
                       physics_prover.py
                     </button>
                     <button
                       onClick={() =>
-                        selectFileManually("forcefield_auditor.py")
+                        selectFileManually("forcefield_audit.py")
                       }
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "forcefield_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                      className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "forcefield_audit.py" || activeFile === "forcefield_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                     >
-                      forcefield_auditor.py
+                      forcefield_audit.py
                     </button>
 
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" />{" "}
-                        scientific-agent-factory/
+                    <div className="mt-1 flex flex-col gap-0.5 sm:gap-1 w-full min-w-0">
+                      <div className="flex items-center gap-1 px-1.5 py-0.5 text-[#aaa] font-semibold text-[10px] sm:text-[11px] truncate min-w-0">
+                        <ChevronDown size={12} className="text-[#777] shrink-0" />{" "}
+                        scientific-ai/
                       </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                      <div className="pl-2.5 flex flex-col gap-0.5 sm:gap-1 border-l border-[#252525] ml-2 mt-0.5 w-full min-w-0">
                         <button
                           onClick={() =>
                             selectFileManually("run_simulation.py")
                           }
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_simulation.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "run_simulation.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           run_simulation.py
                         </button>
                         <button
                           onClick={() => selectFileManually("eval_physics.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_physics.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "eval_physics.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           eval_physics.py
                         </button>
                         <button
                           onClick={() => selectFileManually("run_dft_audit.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_dft_audit.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "run_dft_audit.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           run_dft_audit.sh
                         </button>
                         <button
                           onClick={() =>
-                            selectFileManually("simulation_pipeline.json")
+                            selectFileManually("pipeline.json")
                           }
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "simulation_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "pipeline.json" || activeFile === "simulation_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          simulation_pipeline.json
+                          pipeline.json
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           Dockerfile
                         </button>
@@ -1653,13 +1692,13 @@ export default function AutomatedScientificDiscoverersPage() {
                           onClick={() =>
                             selectFileManually("docker-compose.yml")
                           }
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           docker-compose.yml
                         </button>
                         <button
                           onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] truncate min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
                           requirements.txt
                         </button>
@@ -1669,43 +1708,44 @@ export default function AutomatedScientificDiscoverersPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-3 sm:p-4 md:p-5 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
+                  <div className="flex border-b border-[#252525] mb-3 pb-1.5 pt-0.5 gap-1 sm:gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     {[
-                      "README.md",
                       "run_simulation.py",
                       "eval_physics.py",
-                      "run_dft_audit.sh",
-                      "simulation_pipeline.json",
-                      "dft_lattice_ast.py",
                       "physics_prover.py",
-                      "forcefield_auditor.py",
-                      "Dockerfile",
                       "docker-compose.yml",
-                      "requirements.txt",
+                      ...(activeFile && ![
+                        "run_simulation.py",
+                        "eval_physics.py",
+                        "physics_prover.py",
+                        "docker-compose.yml",
+                      ].includes(activeFile)
+                        ? [activeFile]
+                        : []),
                     ].map((fileName) => (
                       <button
                         key={fileName}
                         onClick={() => selectFileManually(fileName)}
-                        className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === fileName ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        className={`shrink-0 whitespace-nowrap text-[9.5px] sm:text-[11px] font-mono font-bold px-2 sm:px-2.5 py-1 border-b-2 transition-colors ${activeFile === fileName ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                       >
                         {fileName}
                       </button>
                     ))}
                   </div>
 
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                  <div className="flex font-mono text-[9.5px] sm:text-[11px] leading-[17px] sm:leading-[19px] overflow-x-auto select-text thin-hover-scrollbar min-w-0 flex-1">
+                    <div className="text-[#444] text-right pr-2 sm:pr-2.5 border-r border-[#252525] select-none flex flex-col min-w-[20px] sm:min-w-[24px] text-[9px] sm:text-[10px]">
                       {Array.from({
                         length: typedCodeText.split("\n").length,
                       }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">
+                        <div key={i} className="min-h-[17px] sm:min-h-[19px] leading-[17px] sm:leading-[19px]">
                           {i + 1}
                         </div>
                       ))}
                     </div>
 
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                    <div className="pl-2 sm:pl-2.5 flex-1 text-[#C8C7BA] leading-[17px] sm:leading-[19px] whitespace-pre min-w-0">
                       {highlightCode(
                         typedCodeText,
                         activeFile.endsWith(".md")
@@ -1730,6 +1770,9 @@ export default function AutomatedScientificDiscoverersPage() {
               </div>
             </div>
           </div>
+          <div />
+        </div>
+      </div>
 
           {/* Features Grid Row */}
           <div className="w-full relative z-10">
@@ -1747,12 +1790,10 @@ export default function AutomatedScientificDiscoverersPage() {
                       <Cloud size={24} strokeWidth={1.5} />
                     </div>
                     <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                      The OpenMM CUDA Solvers
+                      Pretrained Scientific Models
                     </h3>
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                      OpenMM CUDA solvers and DFT AST graphs cross-referencing
-                      Materials Project, Protein Data Bank (PDB), and PubChem
-                      databases.
+                      Deploy and evaluate foundation models including MatterSim, MACE-MP-0, and ESM-2. Predict atomic energies, forces, and protein sequences with full checkpoint ownership.
                     </p>
                   </div>
 
@@ -1762,11 +1803,10 @@ export default function AutomatedScientificDiscoverersPage() {
                       <Server size={24} strokeWidth={1.5} />
                     </div>
                     <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                      The ESMFold & Science Weights
+                      Simulation & Physics Solvers
                     </h3>
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                      Self-host ESMFold models and AlphaFold-Physics in your own
-                      HPC cloud. Full IP privacy and model weight ownership.
+                      Generate synthetic training data and atomic trajectories from GPU-accelerated OpenMM and Quantum ESPRESSO solvers. Learn physical dynamics from simulations.
                     </p>
                   </div>
 
@@ -1776,12 +1816,10 @@ export default function AutomatedScientificDiscoverersPage() {
                       <Network size={24} strokeWidth={1.5} />
                     </div>
                     <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
-                      The Opentrons Wet-Lab Protocols
+                      Experimental Data & Adaptation
                     </h3>
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
-                      Generate verifiable CUDA trajectory proofs and Opentrons
-                      wet-lab automation protocols guaranteeing zero unphysical
-                      drift.
+                      Fine-tune models using laboratory measurements, assay results, and domain literature. Track errors, benchmark checkpoints, and verify improvements on unseen scientific tasks.
                     </p>
                   </div>
                 </div>
@@ -1793,10 +1831,6 @@ export default function AutomatedScientificDiscoverersPage() {
           {/* Hugging Face Catalog Section */}
           <div className="w-full relative z-10 pt-24 pb-16">
             <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-            <SectionDivider
-              position="top"
-              className="absolute top-0 left-0 w-full"
-            />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
