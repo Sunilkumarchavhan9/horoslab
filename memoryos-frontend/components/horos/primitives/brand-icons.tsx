@@ -811,7 +811,15 @@ export function FireworksAILogo({ className, size = 24 }: BrandIconProps) {
 
 // Robotics / Physical Intelligence
 export function PhysicalIntelligenceLogo({ className, size = 24 }: BrandIconProps) {
-  return <img src={getFaviconUrl("https://www.physicalintelligence.company/")} width={size} height={size} className={cn("rounded-[2px] object-contain bg-white", className)} alt="Physical Intelligence" />;
+  return (
+    <img
+      src="/brand-logos/physical_intelligence.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[2px] object-contain bg-[#181818] shrink-0 inline-block align-middle", className)}
+      alt="Physical Intelligence"
+    />
+  );
 }
 export function SkildAILogo({ className, size = 24 }: BrandIconProps) {
   return <img src={getFaviconUrl("https://skild.ai/")} width={size} height={size} className={cn("rounded-[2px] object-contain", className)} alt="Skild AI" />;
@@ -908,5 +916,113 @@ export function OverworldLogo({ className, size = 22 }: BrandIconProps) {
         fill="currentColor"
       />
     </svg>
+  );
+}
+
+export function NousResearchLogo({ className, size = 22 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/nousresearch.png"
+      width={size}
+      height={size}
+      className={cn("rounded-sm object-cover shrink-0 inline-block align-middle", className)}
+      alt="Nous Research"
+    />
+  );
+}
+
+export function BrowserUseLogo({ className, size = 22 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/browseruse.png"
+      width={size}
+      height={size}
+      className={cn("rounded-sm object-cover shrink-0 inline-block align-middle", className)}
+      alt="Browser Use"
+    />
+  );
+}
+
+export function XLangLogo({ className, size = 22 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/xlang.png"
+      width={size}
+      height={size}
+      className={cn("rounded-sm object-cover shrink-0 inline-block align-middle", className)}
+      alt="xLang AI"
+    />
+  );
+}
+
+export function MeituanLogo({ className, size = 22 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/meituan.png"
+      width={size}
+      height={size}
+      className={cn("rounded-sm object-cover shrink-0 inline-block align-middle", className)}
+      alt="Meituan"
+    />
+  );
+}
+
+export function SWEBenchLogo({ className, size = 22 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/swebench.png"
+      width={size}
+      height={size}
+      className={cn("rounded-sm object-cover shrink-0 inline-block align-middle", className)}
+      alt="SWE-bench"
+    />
+  );
+}
+
+export function LeRobotLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/lerobot.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-cover shrink-0 inline-block align-middle", className)}
+      alt="LeRobot"
+    />
+  );
+}
+
+export function OpenDriveLabLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/opendrivelab.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-cover shrink-0 inline-block align-middle", className)}
+      alt="OpenDriveLab"
+    />
+  );
+}
+
+export function RailBerkeleyLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/rail_berkeley.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-cover shrink-0 inline-block align-middle", className)}
+      alt="UC Berkeley RAIL"
+    />
+  );
+}
+
+export function DepthAnythingLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/depth_anything.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-cover shrink-0 inline-block align-middle", className)}
+      alt="Depth Anything"
+    />
   );
 }

@@ -9,7 +9,7 @@ import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, NousResearchLogo, BrowserUseLogo, XLangLogo, MeituanLogo, SWEBenchLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -526,21 +526,21 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('thudm') || m.includes('glm')) return <BAAILogo size={20} />;
   if (a.includes('01-ai') || m.includes('yi')) return <KimiLogo size={20} />;
   
-  // Real Hugging Face brand logos
+  // Real brand logos
   if (a.includes('nous') || m.includes('hermes')) {
-    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317aade83d8d2fd903192d9/tPLjYEeP6q1w0j_G2TJG_.png" alt="Nous Research" />;
+    return <NousResearchLogo size={20} />;
   }
   if (a.includes('browser-use') || m.includes('browser') || m.includes('bu-')) {
-    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/6846f77025b1107aa791f771/cDBZBLJL8l-huATZV1xB1.png" alt="Browser Use" />;
+    return <BrowserUseLogo size={20} />;
   }
   if (a.includes('meituan') || m.includes('evocua')) {
-    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/61ac8f8a00d01045fca0ad2f/4TJKRXMsRyZsyi4H3rWsh.jpeg" alt="Meituan" />;
+    return <MeituanLogo size={20} />;
   }
   if (a.includes('xlang') || m.includes('opencua')) {
-    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/628f6e5ab90dde28ef57d293/PHIYPvE_tCM94SgoUzd7l.jpeg" alt="xLang AI" />;
+    return <XLangLogo size={20} />;
   }
   if (a.includes('swe-bench') || m.includes('swe-agent') || m.includes('swe')) {
-    return <BrandImage src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e2fe09f9435f568d86092e7/3XnsKZbpWjE7HHAltO2P7.png" alt="SWE-bench" />;
+    return <SWEBenchLogo size={20} />;
   }
 
   return <HuggingFaceLogo size={20} />;
