@@ -991,18 +991,16 @@ export default function AutomatedScientificDiscoverersPage() {
           </div>
         </div>
         {/* Features Section */}
-        <div className="w-full relative z-10 mt-16">
+        <div className="w-full relative z-10 mt-12 md:mt-16">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">
-                  Own your scientific simulation pipeline
+              <div className="text-center mb-10 md:mb-12">
+                <h2 className="text-3xl sm:text-4xl md:text-[42px] font-medium tracking-tight text-[#F0EFE2] mb-3">
+                  What you actually own
                 </h2>
-                <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The physics engine solvers, the scientific reasoning models,
-                  the molecular dynamics playbooks. Complete sovereignty over
-                  scientific discovery.
+                <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                  Your scientific models, simulation data, and experimental results. Train and evaluate models such as MatterSim, MACE-MP-0, and ESM-2 against real scientific tasks.
                 </p>
               </div>
             </div>
@@ -1010,85 +1008,97 @@ export default function AutomatedScientificDiscoverersPage() {
           </div>
 
           <div className="w-full relative z-10">
-
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
-            <div className="absolute inset-0 pointer-events-none z-20">
-              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
-                <div className="relative h-full">
-                  <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
-                  <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                  <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                  <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
-                </div>
-
-                <div />
-
-                <div className="relative h-full">
-                  <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
-                  <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-                  <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                  <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                </div>
-              </div>
-            </div>
-
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
-              <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
+              <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">
-                      0 1
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="text-[#75bf00] font-mono text-[13.5px] font-bold tracking-wider">
+                      01
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      The scientific
-                      <br />
-                      discoverers.
+                    <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
+                      Materials models
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the scientific reasoning models (ESMFold-3,
-                      AlphaFold-Physics), molecular dynamics solvers, and DFT
-                      AST graphs. No vendor lock-in on your research AI.
+                    <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-mono">
+                      <a
+                        href="https://huggingface.co/OneScience-Group/MatterSim"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                      >
+                        MatterSim <ArrowUpRight size={12} />
+                      </a>
+                      <span className="text-[#555]">·</span>
+                      <a
+                        href="https://huggingface.co/mace-foundations/mace-mp-0"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                      >
+                        MACE-MP-0 <ArrowUpRight size={12} />
+                      </a>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
+                      Predict atomic energies and forces to study material structures and molecular behavior.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">
-                      0 2
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="text-[#75bf00] font-mono text-[13.5px] font-bold tracking-wider">
+                      02
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      The physics
-                      <br />
-                      solvers.
+                    <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
+                      Protein models
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the GPU CUDA physics verifiers (OpenMM, LAMMPS,
-                      Quantum ESPRESSO), trajectory analyzers, and energy logs.
-                      Zero unphysical energy drift guaranteed.
+                    <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-mono">
+                      <a
+                        href="https://huggingface.co/facebook/esm2_t33_650M_UR50D"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                      >
+                        ESM-2 <ArrowUpRight size={12} />
+                      </a>
+                      <span className="text-[#555]">·</span>
+                      <a
+                        href="https://huggingface.co/microsoft/biogpt"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#75bf00] hover:underline inline-flex items-center gap-1 bg-[#1a2412] border border-[#2a381a] px-2 py-0.5 rounded-sm"
+                      >
+                        BioGPT <ArrowUpRight size={12} />
+                      </a>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
+                      Analyze protein sequences and work with biomedical research text.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-16 min-h-[300px] flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">
-                      0 3
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 flex flex-col gap-3 items-start">
+                    <div className="text-[#75bf00] font-mono text-[13.5px] font-bold tracking-wider">
+                      03
                     </div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">
-                      The fine-tuned
-                      <br />
-                      weights.
+                    <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
+                      Model improvement
                     </h3>
-                    <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the fine-tuned scientific model weights
-                      (ESMFold-Physics, Materials-Graph-Net) and compiled
-                      Docker/Slurm containers. Export and run anywhere securely.
+                    <div className="flex flex-wrap items-center gap-1.5 text-[12px] font-mono text-[#A0A098]">
+                      <span className="bg-[#1f1f1f] border border-[#333] px-2 py-0.5 rounded-sm text-[#C8C7BA]">
+                        Fine-tune
+                      </span>
+                      <span className="text-[#555]">·</span>
+                      <span className="bg-[#1f1f1f] border border-[#333] px-2 py-0.5 rounded-sm text-[#C8C7BA]">
+                        Evaluate
+                      </span>
+                      <span className="text-[#555]">·</span>
+                      <span className="bg-[#1f1f1f] border border-[#333] px-2 py-0.5 rounded-sm text-[#C8C7BA]">
+                        Compare
+                      </span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
+                      Compare predictions with scientific reference data, track errors, and test adapted checkpoints before using them in new experiments.
                     </p>
                   </div>
                 </div>
@@ -1097,10 +1107,14 @@ export default function AutomatedScientificDiscoverersPage() {
             </div>
           </div>
         </div>
-        {/* Full-width dashed line separator */}
-        <div className="w-full h-px border-t border-dashed border-[#333]" />
+
+        {/* Section Divider between What you actually own and Comparison Table */}
+        <div className="w-full relative z-20 my-16 md:my-20">
+          <SectionDivider position="top" className="w-full" />
+        </div>
+
         {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mt-32 mb-32">
+        <div className="w-full relative z-10 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-16 px-4">
             <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
