@@ -709,21 +709,39 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question:
-      "How does Scientific AI guarantee zero unphysical drift?",
+      "How does Scientific AI guarantee zero unphysical drift in simulations and predictions?",
     answer:
-      "Horos uses GPU-accelerated OpenMM and Quantum ESPRESSO physics solvers combined with mathematical force field verification to ensure every atomic trajectory and energy state adheres to thermodynamics.",
+      "Horos integrates neural surrogate models with GPU-accelerated OpenMM, Quantum ESPRESSO, and ab-initio DFT physics solvers. By enforcing mathematical force field verification, virial stress bounds, and continuous energy conservation proofs throughout each trajectory, Horos guarantees that generated molecular configurations and physical dynamics adhere strictly to the laws of thermodynamics without unphysical hallucinations.",
   },
   {
     question:
-      "Can Scientific AI predict material structures, protein sequences, and reaction dynamics?",
+      "Which scientific reasoning, chemistry, and biomolecular models are supported?",
     answer:
-      "Yes. Native support for MatterSim, MACE-MP-0, and ESM-2 enables high-accuracy atomic force prediction, sequence embeddings, and end-to-end scientific evaluation.",
+      "Horos natively supports open-weight models from Hugging Face—including VeriLoop-E2 (28B), SciReasoner-8B, Qwen3-8B-MegaScience, SciReason-LFM2-2.6B, Qwen3-1.7B, DeepSeek-R1-0528 (671B MoE), Qwen3-235B-A22B, Qwen3.5-27B, and BioMistral-7B—along with foundational protein, material crystal, and atomistic potential models. You can also paste any custom Hugging Face model repository ID to benchmark and fine-tune it through the compatible recipe.",
   },
   {
     question:
-      "Can I export fine-tuned scientific checkpoints to run on my HPC cluster or supercomputer?",
+      "How does Horos prepare, normalize, and track scientific training data?",
     answer:
-      "Yes! All adapted checkpoints and CUDA simulation containers can be exported as TensorRT binaries and deployed on Slurm, Kubernetes, or air-gapped HPC supercomputers.",
+      "Horos automates data ingestion across molecular structures (PDB, SDF, CIF), chemical notations (SMILES, SELFIES, InChI), physics equations, and scientific literature into model-ready token streams and AST graphs. It automatically validates physical dimensions and units, enforces strict provenance and lineage records, and cross-references synthetic training candidates against reference experimental measurements.",
+  },
+  {
+    question:
+      "Can we integrate our proprietary physics solvers, simulation pipelines, and wet-lab assays?",
+    answer:
+      "Yes. Horos is designed to embed directly into existing computational chemistry and laboratory workflows. You can connect custom C++/CUDA physics solvers, simulation pipelines, automated synthesis playbooks, and experimental assay measurements. Horos manages experiment lineage, solver parameter logging, failed run diagnostics, and active learning loops to guide subsequent simulation and training runs.",
+  },
+  {
+    question:
+      "How does Horos optimize GPU efficiency, precision, and training throughput?",
+    answer:
+      "Horos profiles every stage of the GPU compute pipeline—tuning FP8/INT8 quantization, FlashAttention kernels, speculative decoding, sequence lengths, memory usage, and distributed tensor parallelism across NVIDIA H100, H200, and B200 clusters. This enables research teams to maximize simulation and inference throughput while reducing compute costs by up to 70% without sacrificing numerical fidelity.",
+  },
+  {
+    question:
+      "Can I export fine-tuned scientific checkpoints to run on our HPC cluster or supercomputer?",
+    answer:
+      "Yes. All adapted models, simulation harnesses, and inference engines compile into standalone Docker/Singularity containers, ONNX graphs, or TensorRT-LLM binaries. They deploy seamlessly on Slurm-managed HPC clusters, Kubernetes environments, or completely air-gapped lab supercomputers with zero cloud telemetry, end-to-end encryption, and full SOC 2 Type II compliance.",
   },
 ];
 
@@ -1969,8 +1987,13 @@ export default function AutomatedScientificDiscoverersPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-24">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-20">
+          <div className="w-full relative z-10 pt-4">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
