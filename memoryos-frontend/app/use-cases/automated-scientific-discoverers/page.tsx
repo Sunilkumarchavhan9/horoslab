@@ -1018,9 +1018,10 @@ export default function AutomatedScientificDiscoverersPage() {
                       01
                     </div>
                     <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
-                      Materials models
+                      Materials discovery
                     </h3>
-                    <div className="text-[13.5px] sm:text-[14px] font-sans">
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
+                      Use{" "}
                       <a
                         href="https://huggingface.co/OneScience-Group/MatterSim"
                         target="_blank"
@@ -1028,8 +1029,8 @@ export default function AutomatedScientificDiscoverersPage() {
                         className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
                         MatterSim
-                      </a>
-                      <span className="text-[#666] mx-1.5">·</span>
+                      </a>{" "}
+                      and{" "}
                       <a
                         href="https://huggingface.co/mace-foundations/mace-mp-0"
                         target="_blank"
@@ -1037,10 +1038,8 @@ export default function AutomatedScientificDiscoverersPage() {
                         className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
                         MACE-MP-0
-                      </a>
-                    </div>
-                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
-                      Predict atomic energies and forces to study material structures and molecular behavior.
+                      </a>{" "}
+                      to predict atomic energies and forces, and investigate material structures.
                     </p>
                   </div>
 
@@ -1050,9 +1049,10 @@ export default function AutomatedScientificDiscoverersPage() {
                       02
                     </div>
                     <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
-                      Protein models
+                      Protein and biology models
                     </h3>
-                    <div className="text-[13.5px] sm:text-[14px] font-sans">
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
+                      Use{" "}
                       <a
                         href="https://huggingface.co/facebook/esm2_t33_650M_UR50D"
                         target="_blank"
@@ -1060,8 +1060,8 @@ export default function AutomatedScientificDiscoverersPage() {
                         className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
                         ESM-2
-                      </a>
-                      <span className="text-[#666] mx-1.5">·</span>
+                      </a>{" "}
+                      to analyze protein sequences and{" "}
                       <a
                         href="https://huggingface.co/microsoft/biogpt"
                         target="_blank"
@@ -1069,10 +1069,8 @@ export default function AutomatedScientificDiscoverersPage() {
                         className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
                       >
                         BioGPT
-                      </a>
-                    </div>
-                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
-                      Analyze protein sequences and work with biomedical research text.
+                      </a>{" "}
+                      to work with biomedical research text.
                     </p>
                   </div>
 
@@ -1082,17 +1080,10 @@ export default function AutomatedScientificDiscoverersPage() {
                       03
                     </div>
                     <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
-                      Model improvement
+                      Scientific model improvement
                     </h3>
-                    <div className="text-[13.5px] sm:text-[14px] font-sans text-[#E0DFD5]">
-                      <span>Fine-tune</span>
-                      <span className="text-[#666] mx-1.5">·</span>
-                      <span>Evaluate</span>
-                      <span className="text-[#666] mx-1.5">·</span>
-                      <span>Compare</span>
-                    </div>
-                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans mt-0.5">
-                      Compare predictions with scientific reference data, track errors, and test adapted checkpoints before using them in new experiments.
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
+                      Fine-tune these models on domain-specific data, compare predictions with reference results, and evaluate improved checkpoints on unseen scientific tasks.
                     </p>
                   </div>
                 </div>
