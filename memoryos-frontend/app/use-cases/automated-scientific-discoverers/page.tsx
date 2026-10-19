@@ -970,11 +970,11 @@ export default function AutomatedScientificDiscoverersPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-              <div className="text-center mb-10 md:mb-12">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] font-medium tracking-tight text-[#F0EFE2] mb-3">
+              <div className="text-center mb-8 md:mb-10">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3">
                   What you actually own
                 </h2>
-                <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
                   Your scientific models, simulation data, and experimental results. Train and evaluate models such as MatterSim, MACE-MP-0, and ESM-2 against real scientific tasks.
                 </p>
               </div>
@@ -1209,13 +1209,13 @@ export default function AutomatedScientificDiscoverersPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight mb-3 text-center">
                   Scientific discoverers you own.{" "}
                   <span className="text-[#75bf00]">
                     Simulate physics anywhere.
                   </span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The full recipe ships with you. OpenMM CUDA solvers, DFT AST
                   graphs, ESMFold models, and Opentrons wet-lab protocols. Run
                   it anywhere.
@@ -1742,14 +1742,14 @@ export default function AutomatedScientificDiscoverersPage() {
               <div className="min-w-0">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Cloud size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Cloud size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                       The OpenMM CUDA Solvers
                     </h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       OpenMM CUDA solvers and DFT AST graphs cross-referencing
                       Materials Project, Protein Data Bank (PDB), and PubChem
                       databases.
@@ -1757,28 +1757,28 @@ export default function AutomatedScientificDiscoverersPage() {
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Server size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Server size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                       The ESMFold & Science Weights
                     </h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Self-host ESMFold models and AlphaFold-Physics in your own
                       HPC cloud. Full IP privacy and model weight ownership.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Network size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Network size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                       The Opentrons Wet-Lab Protocols
                     </h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Generate verifiable CUDA trajectory proofs and Opentrons
                       wet-lab automation protocols guaranteeing zero unphysical
                       drift.
@@ -1800,10 +1800,10 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                   Any scientific reasoning or physics verifier model works
                 </h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                   Use any open-weights scientific model as your simulation
                   engine, and fine-tune any compact solver target model. The
                   examples below are just a starting view.
@@ -1888,10 +1888,10 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                   Every stage of the pipeline, retuned per model and simulation
                   workflow.
                 </p>
@@ -1899,82 +1899,82 @@ export default function AutomatedScientificDiscoverersPage() {
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <ScanSearch size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                         Crystal Lattice AST Indexing
                       </h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                         Tune molecular AST graphs for instant retrieval of
                         relevant PDB structures, bond topologies, and precedent
                         experiments.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <Zap size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                         Physics Trajectory Proofs
                       </h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                         Generate verifiable energy conservation proofs for every
                         molecular simulation to guarantee zero unphysical drift.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Sliders size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                         Property Risk Analysis
                       </h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                         Profile stability rules to highlight bandgap anomalies,
                         steric clash, and binding affinity gaps.
                       </p>
                     </div>
 
                     {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Layers size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                         Force Field Verification
                       </h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                         Built-in verification harness cross-referencing atomic
                         force vectors against authoritative OpenMM & DFT
                         solvers.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Database size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                         Zero-Unphysical-Drift Audit
                       </h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                         Quantize scientific LLM weights (FP8/INT8) and apply
                         strict force constraints to eliminate hallucinations.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    <div className="px-6 py-8 sm:px-8 sm:py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <Workflow size={26} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                         Domain Fine-Tuning
                       </h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                         Fine-tune ESMFold-3 and AlphaFold-Physics on your lab's
                         proprietary molecular data and synthesis playbooks.
                       </p>
@@ -1995,10 +1995,10 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
-                <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] lg:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-6 md:mt-8">
                   Try this pipeline
                 </h2>
-                <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
+                <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] md:text-[16px] font-sans leading-relaxed text-center max-w-2xl mb-10 md:mb-14 mx-auto">
                   Edit the model, solver, or agent inline. Send to retune the
                   stack in the dashboard.
                 </p>
@@ -2153,13 +2153,13 @@ export default function AutomatedScientificDiscoverersPage() {
 
           {/* FAQ Section */}
           <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center">
               Common{" "}
               <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">
                 questions
               </span>
             </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] font-sans text-center mb-8 md:mb-10">
               Can't find what you're looking for?{" "}
               <a href="#" className="text-[#75bf00] hover:underline">
                 Get in touch
@@ -2255,7 +2255,7 @@ export default function AutomatedScientificDiscoverersPage() {
                 <HorosLogo size={40} />
               </div>
 
-              <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] xl:text-[54px] leading-[1.12] font-medium tracking-tight text-[#F0EFE2] mb-4 sm:mb-6">
                 Deploy your first automated
                 <br className="hidden md:block" />
                 scientific discoverer,{" "}
@@ -2267,7 +2267,7 @@ export default function AutomatedScientificDiscoverersPage() {
                 ship
               </h2>
 
-              <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
+              <p className="text-[#a0a0a0] text-[14px] sm:text-[15px] md:text-[16px] font-sans mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Describe the physics simulation or molecular discovery task.
                 Horos builds and optimizes the GPU science stack.
               </p>

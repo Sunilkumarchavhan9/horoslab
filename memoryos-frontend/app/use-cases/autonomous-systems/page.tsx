@@ -1616,10 +1616,10 @@ export default function AutonomousSystemsPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
-                <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-6 md:mt-8">
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] lg:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-6 md:mt-8">
                   Try this pipeline
                 </h2>
-                <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
+                <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] md:text-[16px] font-sans leading-relaxed text-center max-w-2xl mb-10 md:mb-14 mx-auto">
                   Edit the model, sensor configuration, or operational constraints inline. Send to retune the autonomy stack in the dashboard.
                 </p>
 
@@ -1663,10 +1663,10 @@ export default function AutonomousSystemsPage() {
 
           {/* FAQ Section */}
           <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center">
               Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
             </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] font-sans text-center mb-8 md:mb-10">
               Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
             </p>
 
@@ -1740,13 +1740,13 @@ export default function AutonomousSystemsPage() {
                 <HorosLogo size={40} />
               </div>
 
-              <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] xl:text-[54px] leading-[1.12] font-medium tracking-tight text-[#F0EFE2] mb-4 sm:mb-6">
                 Deploy your first verifiable<br className="hidden md:block" />
                 world model, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
                 ship
               </h2>
 
-              <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
+              <p className="text-[#a0a0a0] text-[14px] sm:text-[15px] md:text-[16px] font-sans mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Describe the environment or robotic task. Horos builds, simulates, and optimizes the autonomous systems stack.
               </p>
 
