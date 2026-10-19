@@ -1093,13 +1093,8 @@ export default function AutomatedScientificDiscoverersPage() {
           </div>
         </div>
 
-        {/* Section Divider between What you actually own and Comparison Table */}
-        <div className="w-full relative z-20 my-16 md:my-20">
-          <SectionDivider position="top" className="w-full" />
-        </div>
-
         {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mb-32">
+        <div className="w-full relative z-10 mt-28 md:mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-16 px-4">
             <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
