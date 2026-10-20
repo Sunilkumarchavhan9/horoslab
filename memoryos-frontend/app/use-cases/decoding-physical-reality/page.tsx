@@ -1482,7 +1482,7 @@ export default function DecodingPhysicalRealityPage() {
           {/* Features Grid Row */}
           <div className="w-full relative z-10 mb-16 md:mb-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
-              <div className="border-t border-b border-dashed border-[#333]" />
+              <div />
 
               <div className="min-w-0 border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
@@ -1527,7 +1527,7 @@ export default function DecodingPhysicalRealityPage() {
                 </div>
               </div>
 
-              <div className="border-t border-b border-dashed border-[#333]" />
+              <div />
             </div>
           </div>
 
