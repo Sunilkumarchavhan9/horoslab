@@ -1482,9 +1482,9 @@ export default function DecodingPhysicalRealityPage() {
           {/* Features Grid Row */}
           <div className="w-full relative z-10 mb-16 md:mb-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
-              <div />
+              <div className="border-t border-b border-dashed border-[#333]" />
 
-              <div className="min-w-0 border-b border-dashed border-[#333]">
+              <div className="min-w-0 border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
                   <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
@@ -1526,7 +1526,8 @@ export default function DecodingPhysicalRealityPage() {
                   </div>
                 </div>
               </div>
-              <div />
+
+              <div className="border-t border-b border-dashed border-[#333]" />
             </div>
           </div>
 
