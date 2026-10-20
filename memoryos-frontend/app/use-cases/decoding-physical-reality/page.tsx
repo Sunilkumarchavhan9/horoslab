@@ -15,142 +15,172 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 interface ComparisonRow {
   num: string;
   label: string;
-  perception: React.ReactNode;
-  worldModels: React.ReactNode;
-  actionPolicies: React.ReactNode;
+  horos: { title: string; desc: string };
+  closed: { title: string; desc: string };
+  diy: { title: string; desc: string };
 }
 
 const COMPARISON_ROWS: ComparisonRow[] = [
   {
     num: "0 1",
     label: "System",
-    perception: "Sensor inputs to estimated world state",
-    worldModels: "Current state to predicted future states",
-    actionPolicies: "Observations and goals to physical actions",
+    horos: {
+      title: "Unified physical AI loop",
+      desc: "Connect sensor streams, world model prediction, action policies, and edge control in one verifiable loop."
+    },
+    closed: {
+      title: "Individual model APIs",
+      desc: "Call separate black-box APIs for vision, prediction, and action with no unified physical state."
+    },
+    diy: {
+      title: "Fragmented custom pipelines",
+      desc: "Handcrafted ROS/Zenoh glue scripts bridging separate vision, prediction, and planning libraries."
+    }
   },
   {
     num: "0 2",
     label: "Models",
-    perception: (
-      <>
-        <a
-          href="https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
-        >
-          Qwen3-VL
-        </a>
-        {", "}
-        <a
-          href="https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
-        >
-          V-JEPA 2
-        </a>
-      </>
-    ),
-    worldModels: (
-      <>
-        <a
-          href="https://huggingface.co/nvidia/Cosmos-Predict2.5-14B"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
-        >
-          Cosmos Predict 2.5
-        </a>
-        {", "}
-        <a
-          href="https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
-        >
-          V-JEPA 2
-        </a>
-      </>
-    ),
-    actionPolicies: (
-      <>
-        <a
-          href="https://huggingface.co/nvidia/GR00T-N1.5-3B"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
-        >
-          GR00T N1.5
-        </a>
-        {", "}
-        <a
-          href="https://huggingface.co/lerobot/pi05_base"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#75bf00] underline underline-offset-4 decoration-[#75bf00]/70 hover:decoration-[#8ade00] hover:text-[#8ade00] transition-colors"
-        >
-          π0.5
-        </a>
-      </>
-    ),
+    horos: {
+      title: "Open weight physical models & policies",
+      desc: "Train, fine-tune, and deploy Cosmos Predict 2.5, V-JEPA 2, GR00T N1.5, and π0.5 on your target hardware."
+    },
+    closed: {
+      title: "Vendor-hosted models",
+      desc: "Use closed proprietary endpoints with zero weight access, high cloud latency, and no edge runtime."
+    },
+    diy: {
+      title: "Manual model management",
+      desc: "Assemble checkpoints, bespoke PyTorch scripts, and incompatible dependencies independently."
+    }
   },
   {
     num: "0 3",
     label: "Context",
-    perception: "Camera frames, LiDAR, IMU, robot state",
-    worldModels: "Observation history, scene state, previous actions",
-    actionPolicies: "Camera views, task instructions, robot state, action history",
+    horos: {
+      title: "4D spatial & sensor state",
+      desc: "Unified 4D voxel occupancy grids, camera feeds, LiDAR point clouds, IMU telemetry, and joint state history."
+    },
+    closed: {
+      title: "Stateless prompt payloads",
+      desc: "Submit individual image frames or text prompts with no persistent physical spatial memory."
+    },
+    diy: {
+      title: "Custom sensor integration",
+      desc: "Maintain custom drivers, coordinate transforms, and uncalibrated sensor buffer queues yourself."
+    }
   },
   {
     num: "0 4",
     label: "Capabilities",
-    perception: "Object recognition, scene understanding, motion perception",
-    worldModels: "Future-state prediction, dynamics modeling, counterfactuals",
-    actionPolicies: "Manipulation, action sequencing, feedback-driven control",
+    horos: {
+      title: "Perception-to-action reasoning",
+      desc: "End-to-end multi-modal spatial reasoning, future-state rollout prediction, and closed-loop robot control."
+    },
+    closed: {
+      title: "Disconnected inference",
+      desc: "Independent prompt responses with no coordinate grounding or physical action synthesis."
+    },
+    diy: {
+      title: "Heuristic motion scripts",
+      desc: "Stitch together separate perception detectors, trajectory planners, and PID controllers."
+    }
   },
   {
     num: "0 5",
     label: "Workload",
-    perception: "Object tracking, scene changes, sensor interpretation",
-    worldModels: "Trajectory prediction, simulated futures, scenario evaluation",
-    actionPolicies: "Pick-and-place, assembly, navigation, robot manipulation",
+    horos: {
+      title: "Continuous real-time streaming",
+      desc: "Sub-10ms real-time sensor ingestion, dynamic prediction evaluation, and deterministic action dispatch."
+    },
+    closed: {
+      title: "High-latency cloud requests",
+      desc: "Variable cloud round-trip latency (200ms–2s) that violates real-time physical control deadlines."
+    },
+    diy: {
+      title: "Unoptimized CPU/GPU pipeline",
+      desc: "Frequent bottlenecking from host-to-device memory copies, thread contention, and frame drops."
+    }
   },
   {
     num: "0 6",
     label: "Optimization",
-    perception: "Resolution, sensor fusion, frame sampling, inference latency",
-    worldModels: "Prediction horizon, temporal context, precision, rollout cost",
-    actionPolicies: "Action horizon, control frequency, batching, policy latency",
+    horos: {
+      title: "Full physical stack tuning",
+      desc: "Joint optimization of sensor frame rates, precision (FP8/INT8), TensorRT compilation, and control latency."
+    },
+    closed: {
+      title: "Opaque parameter dials",
+      desc: "Restricted to vendor temperature and top-p settings with no edge compilation or sensor tuning."
+    },
+    diy: {
+      title: "Manual profiling loops",
+      desc: "Time-consuming manual CUDA kernel profiling, custom quantization, and fragmented runtimes."
+    }
   },
   {
     num: "0 7",
     label: "Verification",
-    perception: "Detection accuracy, state-estimation error, tracking consistency",
-    worldModels: "Trajectory error, temporal drift, simulated versus observed outcomes",
-    actionPolicies: "Task completion, action error, safety constraints, repeated trials",
+    horos: {
+      title: "Zero-drift mathematical proofs",
+      desc: "Real-time observation verifier comparing sensor telemetry against model predictions to eliminate spatial drift."
+    },
+    closed: {
+      title: "Qualitative visual output",
+      desc: "No deterministic spatial verification or ground-truth telemetry comparison."
+    },
+    diy: {
+      title: "Ad-hoc trial and error",
+      desc: "Manual inspection of camera recordings and post-hoc error calculations with no mathematical proofs."
+    }
   },
   {
     num: "0 8",
     label: "Experience",
-    perception: "Record sensor readings, estimated states, and perception errors",
-    worldModels: "Preserve predictions, scenarios, actions, and observed outcomes",
-    actionPolicies: "Record commands, robot states, execution traces, and task results",
+    horos: {
+      title: "Physical lineage & telemetry logging",
+      desc: "Cryptographic sensor-to-action audit trails, replayable failure cases, and real-world rollout telemetry."
+    },
+    closed: {
+      title: "Vendor request logs",
+      desc: "Episodic API logs with no physical telemetry, trajectory data, or unified sensor state."
+    },
+    diy: {
+      title: "Scattered rosbags & flat files",
+      desc: "Unindexed bag files, fragmented disk logs, and disconnected experiment notes."
+    }
   },
   {
     num: "0 9",
     label: "Teaching",
-    perception: "Adapt models using corrected labels and difficult observations",
-    worldModels: "Train on verified trajectories and prediction failures",
-    actionPolicies: "Fine-tune policies using robot demonstrations and evaluated rollouts",
+    horos: {
+      title: "Trajectory-guided adaptation",
+      desc: "Continuous model adaptation using real-world demonstration traces, hard physical edge cases, and simulation rollouts."
+    },
+    closed: {
+      title: "Provider-limited options",
+      desc: "Limited to basic cloud fine-tuning with no access to low-level weights or edge deployment."
+    },
+    diy: {
+      title: "Manual dataset assembly",
+      desc: "Hand-labeling failure frames and running custom training scripts without systematic regression benchmarks."
+    }
   },
   {
     num: "1 0",
     label: "Authority",
-    perception: "Govern sensor access, data retention, and model permissions",
-    worldModels: "Control simulation budgets, scenario execution, and deployment approval",
-    actionPolicies: "Enforce robot action limits, operating zones, approvals, and emergency stops",
-  },
+    horos: {
+      title: "Safety gates & hardware interlocks",
+      desc: "Enforce robot operational envelopes, emergency stops, safety constraints, and automated hardware approvals."
+    },
+    closed: {
+      title: "Vendor access controls",
+      desc: "Generic token-based access with no robot safety envelopes, interlocks, or real-time guardrails."
+    },
+    diy: {
+      title: "Brittle software assertions",
+      desc: "Ad-hoc software assertions and manual supervisor intervention without hardware-enforced guarantees."
+    }
+  }
 ];
 
 const README_CODE = `# Physical Reality Decoding Engine
@@ -578,10 +608,10 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-      classes += " border-b";
-    } else {
-      classes += " border-b md:border-b-0";
-    }
+    classes += " border-b";
+  } else {
+    classes += " border-b md:border-b-0";
+  }
 
   return classes;
 };
@@ -627,7 +657,7 @@ export default function DecodingPhysicalRealityPage() {
   const [typedMsg2, setTypedMsg2] = useState("");
   const [visibleStep, setVisibleStep] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  
+
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
@@ -723,7 +753,7 @@ export default function DecodingPhysicalRealityPage() {
 
             let tag = "Physical AI Target";
             let description = m.downloads ? `${dl} - Verifiable perception target` : "Verifiable perception target";
-            
+
             let author = m.author || m.id.split('/')[0];
             let name = m.id.split('/').pop();
 
@@ -755,29 +785,29 @@ export default function DecodingPhysicalRealityPage() {
         .chat-scroll:hover::-webkit-scrollbar-thumb { background-color: #666666; }
       ` }} />
 
-            {/* GLOBAL VERTICAL DASHED LINES */}
-        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            {/* Left margin (14%) with 7% line bisecting it */}
-            <div className="relative border-r border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
-              </div>
-            {/* Center content (72%) */}
-            <div />
-            {/* Right margin (14%) with 93% line bisecting it */}
-            <div className="relative border-l border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
-              </div>
+      {/* GLOBAL VERTICAL DASHED LINES */}
+      {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          {/* Left margin (14%) with 7% line bisecting it */}
+          <div className="relative border-r border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+          </div>
+          {/* Center content (72%) */}
+          <div />
+          {/* Right margin (14%) with 93% line bisecting it */}
+          <div className="relative border-l border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
           </div>
         </div>
+      </div>
 
-        <div className="relative z-[100]">
+      <div className="relative z-[100]">
         <LandingNavbar />
       </div>
 
       <main className="flex-1 flex flex-col relative z-10">
-        
+
         {/* SVG Filter for recoloring the background image to brand green colors */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <filter id="brand-duotone-physical-bg">
@@ -805,12 +835,12 @@ export default function DecodingPhysicalRealityPage() {
             <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#151515] via-[#151515]/90 to-transparent z-10" />
             {/* Left and Right Side Mist Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#151515] via-transparent to-[#151515] z-10" />
-            
-            <img 
+
+            <img
               src="/images/physical-jet-engine.png"
               alt="Decoding Physical Reality Jet Engine Background"
               className="w-full h-full object-contain object-center"
-              style={{ 
+              style={{
                 maskImage: 'radial-gradient(ellipse 70% 55% at 50% 50%, black 25%, transparent 95%)',
                 WebkitMaskImage: 'radial-gradient(ellipse 70% 55% at 50% 50%, black 25%, transparent 95%)',
                 filter: 'url(#brand-duotone-physical-bg)'
@@ -866,7 +896,7 @@ export default function DecodingPhysicalRealityPage() {
 
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
-                  <RagSearchGrid 
+                  <RagSearchGrid
                     label1="Sensor Streams"
                     label2="3D Scene Understanding"
                     label3="State Estimation"
@@ -983,7 +1013,8 @@ export default function DecodingPhysicalRealityPage() {
             </div>
           </div>
         </div>
-        {/* Comparison Table Section */}
+
+        {/* Comparison Table Section */}
         <div className="w-full relative z-10 mt-28 md:mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
@@ -1025,48 +1056,33 @@ export default function DecodingPhysicalRealityPage() {
               <div className="min-w-0 bg-[#151515]">
                 <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
                   <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">
-                      Dimension
-                    </span>
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="absolute top-2.5 right-3 flex items-center">
+                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <HorosLogo size={16} />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full workflow engineering & verification.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
-                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                        <ScanSearch size={16} className="text-[#75bf00]" />
-                      </div>
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        Perception models
-                      </span>
+                    <div className="flex items-center gap-3 mb-2">
+                      <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed Engineering AI APIs</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Sensor inputs to estimated world state.
-                    </p>
-                  </div>
-                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
-                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                        <Cpu size={16} className="text-[#C8C7BA]" />
-                      </div>
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        World models
-                      </span>
-                    </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Current state to predicted future states.
-                    </p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Individual hosted model APIs.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                    <div className="flex items-center gap-2.5 sm:gap-3 mb-1.5 sm:mb-2">
-                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                        <Workflow size={16} className="text-[#C8C7BA]" />
-                      </div>
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">
-                        Action policies
-                      </span>
+                    <div className="flex items-center gap-3 mb-2">
+                      <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY Engineering Pipelines</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">
-                      Observations and goals to physical actions.
-                    </p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fragmented models, solvers & scripts.</p>
                   </div>
                 </div>
 
@@ -1089,29 +1105,38 @@ export default function DecodingPhysicalRealityPage() {
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
                         <span className="md:hidden text-[10px] font-mono font-bold text-[#75bf00] uppercase mb-1">
-                          Perception models
+                          Horos
                         </span>
-                        <div className="text-[#F0EFE2] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
-                          {row.perception}
-                        </div>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">
+                          {row.horos.title}
+                        </h4>
+                        <p className="text-[#E6E5D8] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">
+                          {row.horos.desc}
+                        </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
                         <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
-                          World models
+                          Closed Engineering AI APIs
                         </span>
-                        <div className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
-                          {row.worldModels}
-                        </div>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">
+                          {row.closed.title}
+                        </h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">
+                          {row.closed.desc}
+                        </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
                         <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
-                          Action policies
+                          DIY Engineering Pipelines
                         </span>
-                        <div className="text-[#C8C7BA] text-[12.5px] sm:text-[13.5px] leading-relaxed font-sans">
-                          {row.actionPolicies}
-                        </div>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">
+                          {row.diy.title}
+                        </h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">
+                          {row.diy.desc}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -1640,7 +1665,7 @@ export default function DecodingPhysicalRealityPage() {
                 </div>
 
                 {/* Models Grid */}
-              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
@@ -1661,11 +1686,11 @@ export default function DecodingPhysicalRealityPage() {
                           }}
                         >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          
+
                           <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                             {getLogo(model.author, model.name)}
                           </div>
-                          
+
                           <div className="flex flex-col gap-1 min-w-0">
                             <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                               {model.name}
@@ -1674,7 +1699,7 @@ export default function DecodingPhysicalRealityPage() {
                               {model.author}
                             </span>
                           </div>
-                          
+
                           <div className="flex justify-between items-center mt-auto pt-4 gap-2">
                             <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0 font-mono">
                               {model.params || model.downloads || ""}
@@ -1695,7 +1720,7 @@ export default function DecodingPhysicalRealityPage() {
           </div>
 
           {/* Section End Divider with Brand Logo */}
-          <div className="w-full relative z-20 my-16 md:my-20">
+          <div className="w-full relative z-20 my-10 md:my-14">
             <SectionDivider position="top" className="w-full" />
           </div>
 
@@ -1704,78 +1729,80 @@ export default function DecodingPhysicalRealityPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  What Horos tunes
-                </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-12">
-                  Every stage of physical intelligence, optimized per model, sensor stack, robot platform, and edge hardware.
-                </p>
+                <div className="max-w-[800px] mx-auto w-full">
+                  <h2 className="text-lg sm:text-xl md:text-[22px] font-medium tracking-tight text-[#F0EFE2] mb-1.5 text-center leading-tight">
+                    What Horos tunes
+                  </h2>
+                  <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] font-sans leading-normal text-center max-w-md mx-auto mb-5 sm:mb-6">
+                    Every stage of physical intelligence, optimized per model, sensor stack, robot platform, and edge hardware.
+                  </p>
 
-                <div className="flex flex-col w-full border-t border-dashed border-[#333]">
-                  <div className="grid grid-cols-1 md:grid-cols-3 w-full">
-                    
-                    {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
-                      <div className="text-[#75bf00]">
-                        <Radio size={32} strokeWidth={1.5} />
+                  <div className="border border-dashed border-[#333] w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-3 w-full">
+
+                      {/* Row 1 */}
+                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
+                        <div className="text-[#75bf00]">
+                          <Radio size={16} strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Sensor-to-state processing</h3>
+                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
+                          Tune camera resolution, LiDAR sampling, IMU rates, and timestamp alignment. Measure how sensor quality and synchronization affect state estimation.
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sensor-to-state processing</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune camera resolution, LiDAR sampling, IMU rates, and timestamp alignment. Measure how sensor quality and synchronization affect state estimation.
-                      </p>
-                    </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
-                      <div className="text-[#75bf00]">
-                        <Eye size={32} strokeWidth={1.5} />
+                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
+                        <div className="text-[#75bf00]">
+                          <Eye size={16} strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Physical-world representations</h3>
+                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
+                          Evaluate V-JEPA 2 and NVIDIA Cosmos on scene changes, motion, and future-state prediction. Compare temporal context and input sampling against prediction error.
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical-world representations</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Evaluate V-JEPA 2 and NVIDIA Cosmos on scene changes, motion, and future-state prediction. Compare temporal context and input sampling against prediction error.
-                      </p>
-                    </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
-                      <div className="text-[#75bf00]">
-                        <Cpu size={32} strokeWidth={1.5} />
+                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b border-dashed border-[#333] flex flex-col gap-1.5 items-start">
+                        <div className="text-[#75bf00]">
+                          <Cpu size={16} strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Robot policy inference</h3>
+                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
+                          Benchmark GR00T, π0, and OpenVLA on supported robot tasks. Tune action chunking, observation history, and inference frequency against task success and control latency.
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Robot policy inference</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Benchmark GR00T, π0, and OpenVLA on supported robot tasks. Tune action chunking, observation history, and inference frequency against task success and control latency.
-                      </p>
-                    </div>
 
-                    {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
-                      <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                      {/* Row 2 */}
+                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
+                        <div className="text-[#75bf00]">
+                          <Zap size={16} strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Edge inference optimization</h3>
+                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
+                          Compare supported precision modes, quantization, inference kernels, and memory allocation on target hardware. Measure latency, throughput, and power consumption.
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Edge inference optimization</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Compare supported precision modes, quantization, inference kernels, and memory allocation on target hardware. Measure latency, throughput, and power consumption.
-                      </p>
-                    </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
-                      <div className="text-[#75bf00]">
-                        <Activity size={32} strokeWidth={1.5} />
+                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
+                        <div className="text-[#75bf00]">
+                          <Activity size={16} strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Closed-loop control</h3>
+                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
+                          Measure perception-to-action latency, missed control deadlines, action consistency, and recovery after unexpected observations. Test under realistic robot workloads.
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Closed-loop control</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Measure perception-to-action latency, missed control deadlines, action consistency, and recovery after unexpected observations. Test under realistic robot workloads.
-                      </p>
-                    </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
-                      <div className="text-[#75bf00]">
-                        <ShieldCheck size={32} strokeWidth={1.5} />
+                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 flex flex-col gap-1.5 items-start">
+                        <div className="text-[#75bf00]">
+                          <ShieldCheck size={16} strokeWidth={1.5} />
+                        </div>
+                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Physical-world verification</h3>
+                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
+                          Replay sensor recordings and evaluate in simulation before robot trials. Compare predicted states, task completion, constraint violations, and failure rates across model versions.
+                        </p>
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical-world verification</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Replay sensor recordings and evaluate in simulation before robot trials. Compare predicted states, task completion, constraint violations, and failure rates across model versions.
-                      </p>
-                    </div>
 
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1784,8 +1811,8 @@ export default function DecodingPhysicalRealityPage() {
           </div>
 
           {/* Try this pipeline Section */}
-            <div className="w-full relative z-10 py-24">
-              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full relative z-10 py-24">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
@@ -1849,8 +1876,8 @@ export default function DecodingPhysicalRealityPage() {
                   key={idx}
                   onClick={() => setActiveFaq(idx)}
                   className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                      ? "bg-[#75bf00] text-black"
-                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
+                    ? "bg-[#75bf00] text-black"
+                    : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
                     }`}
                 >
                   {faq.question}
