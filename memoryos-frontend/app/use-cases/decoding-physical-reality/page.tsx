@@ -1707,8 +1707,8 @@ export default function DecodingPhysicalRealityPage() {
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
+                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-12">
+                  Every stage of physical intelligence, optimized per model, sensor stack, robot platform, and edge hardware.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
@@ -1717,62 +1717,62 @@ export default function DecodingPhysicalRealityPage() {
                     {/* Row 1 */}
                     <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <Radio size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">4D Voxel AST Indexing</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sensor-to-state processing</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune 3D spatial occupancy grids and temporal sensor trees for instant alignment of multi-camera and LiDAR streams.
+                        Tune camera resolution, LiDAR sampling, IMU rates, and timestamp alignment. Measure how sensor quality and synchronization affect state estimation.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <Eye size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Spatial Telemetry Proofs</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical-world representations</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Generate verifiable observation matching proofs for every physical trajectory to guarantee zero spatial drift.
+                        Evaluate V-JEPA 2 and NVIDIA Cosmos on scene changes, motion, and future-state prediction. Compare temporal context and input sampling against prediction error.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Cpu size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sensor Stream Fusion</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Robot policy inference</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Profile multi-sensor alignment rules to highlight frame drops, lens distortion, and thermal/optical skew.
+                        Benchmark GR00T, π0, and OpenVLA on supported robot tasks. Tune action chunking, observation history, and inference frequency against task success and control latency.
                       </p>
                     </div>
 
                     {/* Row 2 */}
                     <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Zap size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Prediction vs. Observation</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Edge inference optimization</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in measurement engine continuously comparing physical world model predictions against ground-truth sensor telemetry.
+                        Compare supported precision modes, quantization, inference kernels, and memory allocation on target hardware. Measure latency, throughput, and power consumption.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Activity size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Zero-Spatial-Hallucination Audit</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Closed-loop control</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize vision-action weights (FP8/INT8) and compile low-latency TensorRT binaries for Jetson edge nodes.
+                        Measure perception-to-action latency, missed control deadlines, action consistency, and recovery after unexpected observations. Test under realistic robot workloads.
                       </p>
                     </div>
 
                     <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <ShieldCheck size={32} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical Fine-Tuning</h3>
+                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical-world verification</h3>
                       <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Fine-tune NVIDIA Cosmos-1 and Meta V-JEPA on your facility's proprietary camera feeds, spatial maps, and robotics logs.
+                        Replay sensor recordings and evaluate in simulation before robot trials. Compare predicted states, task completion, constraint violations, and failure rates across model versions.
                       </p>
                     </div>
 
