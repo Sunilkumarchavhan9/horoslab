@@ -9,7 +9,7 @@ import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo, OpenVLALogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
 interface ComparisonRow {
@@ -566,8 +566,8 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('mistral') || m.includes('pixtral')) return <MistralLogo size={20} />;
   if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
-  if (a.includes('physical intelligence') || m.includes('π0')) return <Cpu size={20} className="text-[#75bf00]" />;
-  if (a.includes('openvla') || m.includes('openvla')) return <Network size={20} className="text-[#75bf00]" />;
+  if (a.includes('physical intelligence') || m.includes('π0') || a.includes('lerobot')) return <PhysicalIntelligenceLogo size={20} />;
+  if (a.includes('openvla') || m.includes('openvla')) return <OpenVLALogo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
 };
@@ -1694,8 +1694,13 @@ export default function DecodingPhysicalRealityPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-20">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-20">
+          <div className="w-full relative z-10">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">

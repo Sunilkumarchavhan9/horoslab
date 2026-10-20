@@ -9,7 +9,7 @@ import { RagSearchGrid } from "@/components/landing/rag-search-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, NousResearchLogo, BrowserUseLogo, XLangLogo, MeituanLogo, SWEBenchLogo, AppleLogo, LeRobotLogo, OpenDriveLabLogo, PhysicalIntelligenceLogo, RailBerkeleyLogo, DepthAnythingLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, NousResearchLogo, BrowserUseLogo, XLangLogo, MeituanLogo, SWEBenchLogo, AppleLogo, LeRobotLogo, OpenDriveLabLogo, PhysicalIntelligenceLogo, OpenVLALogo, RailBerkeleyLogo, DepthAnythingLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -428,37 +428,7 @@ const DEFAULT_MODELS = [
 ];
 
 
-const OpenVLALogo = ({ size = 22 }: { size?: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="shrink-0 inline-block align-middle"
-  >
-    <rect width="24" height="24" rx="4" fill="#121820" stroke="#253242" strokeWidth="1" />
-    <path
-      d="M7 6v5a5 5 0 0010 0V6"
-      stroke="#38bdf8"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M6 6h2.5M15.5 6h2.5"
-      stroke="#38bdf8"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <circle cx="12" cy="11" r="2" fill="#75bf00" />
-    <path
-      d="M12 16v3M9 19h6"
-      stroke="#38bdf8"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
-  </svg>
-);
+
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
   const [error, setError] = useState(false);

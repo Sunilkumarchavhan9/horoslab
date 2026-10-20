@@ -816,8 +816,20 @@ export function PhysicalIntelligenceLogo({ className, size = 24 }: BrandIconProp
       src="/brand-logos/physical_intelligence.png"
       width={size}
       height={size}
-      className={cn("rounded-[2px] object-contain bg-[#181818] shrink-0 inline-block align-middle", className)}
+      className={cn("rounded-[2px] object-contain invert shrink-0 inline-block align-middle", className)}
       alt="Physical Intelligence"
+    />
+  );
+}
+
+export function OpenVLALogo({ className, size = 24 }: BrandIconProps) {
+  return (
+    <img
+      src="/brand-logos/openvla.png"
+      width={size}
+      height={size}
+      className={cn("rounded-full object-contain shrink-0 inline-block align-middle", className)}
+      alt="OpenVLA"
     />
   );
 }
