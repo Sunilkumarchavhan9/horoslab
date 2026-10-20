@@ -1720,7 +1720,7 @@ export default function DecodingPhysicalRealityPage() {
           </div>
 
           {/* Section End Divider with Brand Logo */}
-          <div className="w-full relative z-20 my-10 md:my-14">
+          <div className="w-full relative z-20 my-16 md:my-20">
             <SectionDivider position="top" className="w-full" />
           </div>
 
@@ -1729,81 +1729,84 @@ export default function DecodingPhysicalRealityPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <div className="max-w-[800px] mx-auto w-full">
-                  <h2 className="text-lg sm:text-xl md:text-[22px] font-medium tracking-tight text-[#F0EFE2] mb-1.5 text-center leading-tight">
-                    What Horos tunes
-                  </h2>
-                  <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] font-sans leading-normal text-center max-w-md mx-auto mb-5 sm:mb-6">
-                    Every stage of physical intelligence, optimized per model, sensor stack, robot platform, and edge hardware.
-                  </p>
+                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                  What Horos tunes
+                </h2>
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-xl mx-auto mb-10">
+                  Every stage of physical intelligence, optimized per model, sensor stack, robot platform, and edge hardware.
+                </p>
 
-                  <div className="border border-dashed border-[#333] w-full">
-                    <div className="grid grid-cols-1 md:grid-cols-3 w-full">
+                <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+                  <div className="grid grid-cols-1 md:grid-cols-3 w-full">
 
-                      {/* Row 1 */}
-                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
-                        <div className="text-[#75bf00]">
-                          <Radio size={16} strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Sensor-to-state processing</h3>
-                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
-                          Tune camera resolution, LiDAR sampling, IMU rates, and timestamp alignment. Measure how sensor quality and synchronization affect state estimation.
-                        </p>
+                    {/* Card 1 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Radio size={22} strokeWidth={1.5} />
                       </div>
-
-                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
-                        <div className="text-[#75bf00]">
-                          <Eye size={16} strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Physical-world representations</h3>
-                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
-                          Evaluate V-JEPA 2 and NVIDIA Cosmos on scene changes, motion, and future-state prediction. Compare temporal context and input sampling against prediction error.
-                        </p>
-                      </div>
-
-                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b border-dashed border-[#333] flex flex-col gap-1.5 items-start">
-                        <div className="text-[#75bf00]">
-                          <Cpu size={16} strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Robot policy inference</h3>
-                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
-                          Benchmark GR00T, π0, and OpenVLA on supported robot tasks. Tune action chunking, observation history, and inference frequency against task success and control latency.
-                        </p>
-                      </div>
-
-                      {/* Row 2 */}
-                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
-                        <div className="text-[#75bf00]">
-                          <Zap size={16} strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Edge inference optimization</h3>
-                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
-                          Compare supported precision modes, quantization, inference kernels, and memory allocation on target hardware. Measure latency, throughput, and power consumption.
-                        </p>
-                      </div>
-
-                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-1.5 items-start">
-                        <div className="text-[#75bf00]">
-                          <Activity size={16} strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Closed-loop control</h3>
-                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
-                          Measure perception-to-action latency, missed control deadlines, action consistency, and recovery after unexpected observations. Test under realistic robot workloads.
-                        </p>
-                      </div>
-
-                      <div className="px-3.5 py-3.5 sm:px-4 sm:py-4 flex flex-col gap-1.5 items-start">
-                        <div className="text-[#75bf00]">
-                          <ShieldCheck size={16} strokeWidth={1.5} />
-                        </div>
-                        <h3 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] leading-snug">Physical-world verification</h3>
-                        <p className="text-[#9A998E] text-[11px] sm:text-[11.5px] font-sans leading-relaxed">
-                          Replay sensor recordings and evaluate in simulation before robot trials. Compare predicted states, task completion, constraint violations, and failure rates across model versions.
-                        </p>
-                      </div>
-
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Sensor-to-state processing</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Tune camera resolution, LiDAR sampling, IMU rates, and timestamp alignment. Measure how sensor quality and synchronization affect state estimation.
+                      </p>
                     </div>
+
+                    {/* Card 2 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Eye size={22} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Physical-world representations</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Evaluate V-JEPA 2 and NVIDIA Cosmos on scene changes, motion, and future-state prediction. Compare temporal context and input sampling against prediction error.
+                      </p>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Cpu size={22} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Robot policy inference</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Benchmark GR00T, π0, and OpenVLA on supported robot tasks. Tune action chunking, observation history, and inference frequency against task success and control latency.
+                      </p>
+                    </div>
+
+                    {/* Card 4 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Zap size={22} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Edge inference optimization</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Compare supported precision modes, quantization, inference kernels, and memory allocation on target hardware. Measure latency, throughput, and power consumption.
+                      </p>
+                    </div>
+
+                    {/* Card 5 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Activity size={22} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Closed-loop control</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Measure perception-to-action latency, missed control deadlines, action consistency, and recovery after unexpected observations. Test under realistic robot workloads.
+                      </p>
+                    </div>
+
+                    {/* Card 6 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
+                      <div className="text-[#75bf00]">
+                        <ShieldCheck size={22} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Physical-world verification</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Replay sensor recordings and evaluate in simulation before robot trials. Compare predicted states, task completion, constraint violations, and failure rates across model versions.
+                      </p>
+                    </div>
+
                   </div>
+                  <div className="w-full h-px border-t border-dashed border-[#333]" />
                 </div>
               </div>
               <div />
@@ -1811,7 +1814,7 @@ export default function DecodingPhysicalRealityPage() {
           </div>
 
           {/* Section Divider between What Horos tunes and Try this pipeline */}
-          <div className="w-full relative z-20 my-16 md:my-24">
+          <div className="w-full relative z-20 my-16 md:my-20">
             <SectionDivider position="top" className="w-full" />
           </div>
 
