@@ -468,15 +468,87 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "nvidia/Cosmos-1-Vision-WorldModel", name: "Cosmos-1 WorldModel", author: "NVIDIA", description: "Frontier physical world model for real-time sensor stream perception & 3D spatial decoding.", role: "World Model" },
-  { id: "tesla/FSD-Perception-V12", name: "FSD Perception V12", author: "Tesla", description: "Multi-camera spatial occupancy grid model compiled for zero-latency CUDA edge execution.", role: "Spatial Occupancy" },
-  { id: "deepseek-ai/DeepSeek-R1-Spatial-Reasoning", name: "DeepSeek R1 Spatial", author: "DeepSeek", description: "Deep reasoning engine for multi-sensor stream fusion, spatial dynamics, and trajectory proofs.", role: "Spatial Reasoning" },
-  { id: "meta/V-JEPA-2-Physical-World", name: "V-JEPA 2 Physical", author: "Meta", description: "Joint-embedding predictive architecture for self-supervised physical world model encoding.", role: "JEPA Predictive" },
-  { id: "google/RT-2-Vision-Language-Action", name: "RT-2 VLA Model", author: "Google", description: "Robotic vision-language-action agent fine-tuned on multi-modal physical sensor streams.", role: "VLA Agent" },
-  { id: "onex/Humanoid-Perception-8B", name: "Humanoid Perception 8B", author: "1X Tech", description: "Spatial point-cloud & actuator feedback decoder for autonomous physical embodiment.", role: "Robot Perception" },
-  { id: "mistralai/Pixtral-12B-Physical", name: "Pixtral Physical MoE", author: "Mistral", description: "High-throughput multimodal vision-spatial model for real-time thermal & camera stream audits.", role: "Multimodal MoE" },
-  { id: "qwen/Qwen2.5-VL-72B-Physical", name: "Qwen2.5 VL Physical", author: "Qwen", description: "Frontier vision-language model fine-tuned on physical world dynamics and sensor telemetry.", role: "Vision-Action LLM" },
-  { id: "microsoft/Phi-3.5-Vision-Spatial", name: "Phi-3.5 Vision Spatial", author: "Microsoft", description: "Compact physical sensor solver and low-power edge TPU spatial telemetry verifier.", role: "Edge Performer" }
+  {
+    id: "nvidia/GR00T-N1.7-3B",
+    name: "Isaac GR00T N1.7",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/GR00T-N1.7-3B",
+    params: "3B",
+    role: "Humanoid Robotics",
+    description: "Humanoid robotics foundation policy for multi-modal sensor perception and whole-body motor control."
+  },
+  {
+    id: "nvidia/Cosmos3-Super",
+    name: "Cosmos3-Super",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos3-Super",
+    params: "65B",
+    role: "World Model",
+    description: "Frontier physical world model for photorealistic dynamics simulation and continuous state prediction."
+  },
+  {
+    id: "nvidia/Cosmos3-Nano",
+    name: "Cosmos3-Nano",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos3-Nano",
+    params: "16B",
+    role: "Physical AI",
+    description: "High-throughput physical AI engine optimized for real-time edge execution and spatial scene reasoning."
+  },
+  {
+    id: "nvidia/Cosmos-Predict2.5-14B",
+    name: "Cosmos Predict 2.5",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos-Predict2.5-14B",
+    params: "14B",
+    role: "Future Prediction",
+    description: "Autoregressive 4D future-state prediction model conditioned on real-time multi-camera sensor history."
+  },
+  {
+    id: "nvidia/Cosmos-Transfer2.5-2B",
+    name: "Cosmos Transfer 2.5",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos-Transfer2.5-2B",
+    params: "2B",
+    role: "World Generation",
+    description: "World generation and spatial domain transfer engine for sim-to-real sensor stream synthesis."
+  },
+  {
+    id: "nvidia/Cosmos-Policy-LIBERO-Predict2-2B",
+    name: "Cosmos Policy",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos-Policy-LIBERO-Predict2-2B",
+    params: "2B",
+    role: "Robot Manipulation",
+    description: "Spatial policy model for precision robotic arm manipulation and zero-drift trajectory execution."
+  },
+  {
+    id: "facebook/vjepa2-vitg-fpc64-256",
+    name: "V-JEPA 2",
+    author: "META",
+    url: "https://huggingface.co/facebook/vjepa2-vitg-fpc64-256",
+    params: "1B",
+    role: "Physical Prediction",
+    description: "Self-supervised Joint-Embedding Predictive Architecture for feature-space physical world dynamics."
+  },
+  {
+    id: "lerobot/pi05_base",
+    name: "π0.5",
+    author: "PHYSICAL INTELLIGENCE",
+    url: "https://huggingface.co/lerobot/pi05_base",
+    params: "4B",
+    role: "Robot Foundation Model",
+    description: "General-purpose physical robot foundation model for dexterity, manipulation, and real-world task autonomy."
+  },
+  {
+    id: "openvla/openvla-7b",
+    name: "OpenVLA",
+    author: "OPENVLA COLLABORATION",
+    url: "https://huggingface.co/openvla/openvla-7b",
+    params: "7B-class",
+    role: "Vision-Language-Action",
+    description: "Open-source vision-language-action model trained on real robot manipulation datasets and camera feeds."
+  }
 ];
 
 const getLogo = (author: string, modelName: string = "") => {
@@ -485,15 +557,17 @@ const getLogo = (author: string, modelName: string = "") => {
   const m = (modelName || "").toLowerCase();
 
   if (a.includes('openai') || m.includes('gpt')) return <OpenAILogo size={20} />;
-  if (a.includes('nvidia') || m.includes('cosmos') || m.includes('nemo')) return <NvidiaLogo size={20} />;
+  if (a.includes('nvidia') || m.includes('cosmos') || m.includes('nemo') || m.includes('gr00t')) return <NvidiaLogo size={20} />;
   if (a.includes('tesla') || m.includes('fsd')) return <TeslaLogo size={20} />;
   if (a.includes('1x') || a.includes('onex') || m.includes('humanoid')) return <OneXLogo size={20} />;
-  if (a.includes('meta') || m.includes('v-jepa')) return <MetaLogo size={20} />;
+  if (a.includes('meta') || a.includes('facebook') || m.includes('v-jepa')) return <MetaLogo size={20} />;
   if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
   if (a.includes('google') || m.includes('rt-2')) return <GoogleLogo size={20} />;
   if (a.includes('mistral') || m.includes('pixtral')) return <MistralLogo size={20} />;
   if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
+  if (a.includes('physical intelligence') || m.includes('π0')) return <Cpu size={20} className="text-[#75bf00]" />;
+  if (a.includes('openvla') || m.includes('openvla')) return <Network size={20} className="text-[#75bf00]" />;
 
   return <HuggingFaceLogo size={20} />;
 };
@@ -1541,11 +1615,11 @@ export default function DecodingPhysicalRealityPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any physical world or spatial perception model works
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
+                  Supported HF chat models work
                 </h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights physical world model as your perception engine, and fine-tune any compact edge target model. The examples below are just a starting view.
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
+                  Supported chat-capable models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1578,7 +1652,14 @@ export default function DecodingPhysicalRealityPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
+                        <div
+                          key={model.id}
+                          className={getBorderClasses(index, models.length)}
+                          onClick={() => {
+                            const url = model.url || `https://huggingface.co/${model.id}`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }}
+                        >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                           
                           <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
@@ -1589,13 +1670,15 @@ export default function DecodingPhysicalRealityPage() {
                             <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                               {model.name}
                             </h3>
-                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1">
+                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1" title={model.author}>
                               {model.author}
                             </span>
                           </div>
                           
                           <div className="flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
+                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0 font-mono">
+                              {model.params || model.downloads || ""}
+                            </span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                               {model.role || model.tag}
                             </span>
