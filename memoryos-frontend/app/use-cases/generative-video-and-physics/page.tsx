@@ -501,82 +501,91 @@ const DEFAULT_MODELS = [
     id: "nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
     name: "Cosmos 1.0 Diffusion",
     author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
+    link: "https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
     downloads: "7B DiT",
     role: "Physical World Model",
-    description: "Physical world foundation model for photorealistic dynamics simulation and continuous state prediction.",
-    link: "https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World"
+    description: "Physical world foundation model for photorealistic dynamics simulation and continuous state prediction."
   },
   {
     id: "facebook/vjepa2-vitg-fpc64-256",
     name: "V-JEPA 2",
     author: "Meta",
+    url: "https://huggingface.co/facebook/vjepa2-vitg-fpc64-256",
+    link: "https://huggingface.co/facebook/vjepa2-vitg-fpc64-256",
     downloads: "1B-class",
     role: "Joint-Embedding Predictor",
-    description: "Self-supervised Joint-Embedding Predictive Architecture for feature-space physical world dynamics.",
-    link: "https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
+    description: "Self-supervised Joint-Embedding Predictive Architecture for feature-space physical world dynamics."
   },
   {
     id: "tencent/HunyuanVideo",
     name: "HunyuanVideo",
     author: "Tencent",
+    url: "https://huggingface.co/tencent/HunyuanVideo",
+    link: "https://huggingface.co/tencent/HunyuanVideo",
     downloads: "13B DiT",
     role: "4D Spatio-Temporal",
-    description: "Frontier open-weights video generation model with physical spatio-temporal dynamics and kinematic continuity.",
-    link: "https://huggingface.co/tencent/HunyuanVideo"
+    description: "Frontier open-weights video generation model with physical spatio-temporal dynamics and kinematic continuity."
   },
   {
     id: "genmo/mochi-1-preview",
     name: "Mochi 1",
     author: "Genmo",
+    url: "https://huggingface.co/genmo/mochi-1-preview",
+    link: "https://huggingface.co/genmo/mochi-1-preview",
     downloads: "10B params",
     role: "Physics Dynamics DiT",
-    description: "Asymmetric diffusion transformer engineered for photorealistic physical motion, fluid dynamics, and rigid bodies.",
-    link: "https://huggingface.co/genmo/mochi-1-preview"
+    description: "Asymmetric diffusion transformer engineered for photorealistic physical motion, fluid dynamics, and rigid bodies."
   },
   {
     id: "Lightricks/LTX-Video",
     name: "LTX-Video",
     author: "Lightricks",
+    url: "https://huggingface.co/Lightricks/LTX-Video",
+    link: "https://huggingface.co/Lightricks/LTX-Video",
     downloads: "Real-Time",
     role: "Real-Time Simulator",
-    description: "Real-time transformer-based video generator capable of 50 FPS physics dynamics on edge & workstation GPUs.",
-    link: "https://huggingface.co/Lightricks/LTX-Video"
+    description: "Real-time transformer-based video generator capable of 50 FPS physics dynamics on edge & workstation GPUs."
   },
   {
-    id: "hpcai-tech/Open-Sora-v1.2",
+    id: "hpcai-tech/Open-Sora",
     name: "Open-Sora 1.2",
     author: "HPCAITech",
+    url: "https://huggingface.co/hpcai-tech/Open-Sora",
+    link: "https://huggingface.co/hpcai-tech/Open-Sora",
     downloads: "1.2B ST-DiT",
     role: "Video World Simulator",
-    description: "Open-weights diffusion transformer for high-fidelity physical video synthesis and temporal object permanence.",
-    link: "https://huggingface.co/hpcai-tech/Open-Sora-v1.2"
+    description: "Open-weights diffusion transformer for high-fidelity physical video synthesis and temporal object permanence."
   },
   {
     id: "black-forest-labs/FLUX.1-Depth-dev",
     name: "FLUX.1 Depth",
     author: "Black Forest Labs",
+    url: "https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev",
+    link: "https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev",
     downloads: "12B flow",
     role: "Spatial Geometry",
-    description: "Spatial depth conditioning rectified flow model for metric 3D geometry and physical surface reconstruction.",
-    link: "https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev"
+    description: "Spatial depth conditioning rectified flow model for metric 3D geometry and physical surface reconstruction."
   },
   {
     id: "Wan-AI/Wan2.1-T2V-14B",
     name: "Wan 2.1 Video",
     author: "Wan-AI",
+    url: "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B",
+    link: "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B",
     downloads: "14B DiT",
     role: "Visual-Tactile World",
-    description: "State-of-the-art open video foundation model with visual-tactile physics simulation and spatio-temporal flow.",
-    link: "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B"
+    description: "State-of-the-art open video foundation model with visual-tactile physics simulation and spatio-temporal flow."
   },
   {
     id: "depth-anything/Depth-Anything-V2-Large",
     name: "Depth Anything V2",
     author: "Depth Anything",
+    url: "https://huggingface.co/depth-anything/Depth-Anything-V2-Large",
+    link: "https://huggingface.co/depth-anything/Depth-Anything-V2-Large",
     downloads: "335M params",
     role: "Dense Geometry",
-    description: "Dense monocular depth estimation foundation model for extracting metric 3D point clouds and collision meshes.",
-    link: "https://huggingface.co/depth-anything/Depth-Anything-V2-Large"
+    description: "Dense monocular depth estimation foundation model for extracting metric 3D point clouds and collision meshes."
   }
 ];
 
@@ -762,7 +771,9 @@ export default function GenerativeVideoAndPhysicsPage() {
               author: author,
               downloads: dl,
               description: description,
-              tag: tag
+              tag: tag,
+              url: `https://huggingface.co/${m.id}`,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -976,7 +987,7 @@ export default function GenerativeVideoAndPhysicsPage() {
                     <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Evaluate models such as{" "}
                       <a
-                        href="https://huggingface.co/nvidia"
+                        href="https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[#75bf00] hover:underline underline-offset-2"
@@ -1662,14 +1673,16 @@ export default function GenerativeVideoAndPhysicsPage() {
                         No models found for "{searchQuery}"
                       </div>
                     ) : (
-                      models.map((model, index) => (
-                        <a
-                          key={model.id}
-                          href={model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={getBorderClasses(index, models.length) + " block no-underline"}
-                        >
+                      models.map((model, index) => {
+                        const modelUrl = model.url || model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`);
+                        return (
+                          <a
+                            key={model.id}
+                            href={modelUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={getBorderClasses(index, models.length) + " block no-underline"}
+                          >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
                           
                           <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#151515]">
@@ -1693,8 +1706,9 @@ export default function GenerativeVideoAndPhysicsPage() {
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </a>
-                      ))
+                          </a>
+                        );
+                      })
                     )}
                   </div>
                   <div className="w-full h-px border-t border-dashed border-[#333]" />
