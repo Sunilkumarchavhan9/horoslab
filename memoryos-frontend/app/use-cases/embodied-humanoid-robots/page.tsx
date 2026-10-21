@@ -778,11 +778,11 @@ export default function EmbodiedHumanoidsPage() {
                     Low-latency brains for physical robotics. Train, optimize, and deploy Vision-Language-Action (VLA) foundation models, cross-embodiment policies, and spatial world models — zero hardware lock-in.
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
+                  <div className="flex items-center gap-3 sm:gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] whitespace-nowrap shrink-0">
                       Deploy robotics policy <ChevronRight size={16} className="transition-transform group-hover:translate-x-1 shrink-0" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] whitespace-nowrap shrink-0">
                       Read architecture <ChevronRight size={16} className="shrink-0" />
                     </button>
                   </div>
@@ -1765,11 +1765,11 @@ export default function EmbodiedHumanoidsPage() {
                 Deploy open-weights VLA models and cross-embodiment policies to edge hardware. Zero hardware lock-in, zero motor hallucination.
               </p>
 
-              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
-                <button className="h-[52px] px-8 bg-[#75bf00] hover:bg-[#8ade00] text-black font-semibold text-[15px] rounded-none transition-all duration-200 shadow-[0_0_20px_rgba(117,191,0,0.2)] hover:shadow-[0_0_30px_rgba(117,191,0,0.4)] flex items-center justify-center">
+              <div className="relative z-10 flex flex-row items-center justify-center gap-3 sm:gap-4 mb-24">
+                <button className="h-[48px] sm:h-[52px] px-6 sm:px-8 bg-[#75bf00] hover:bg-[#8ade00] text-black font-semibold text-[14px] sm:text-[15px] rounded-none transition-all duration-200 shadow-[0_0_20px_rgba(117,191,0,0.2)] hover:shadow-[0_0_30px_rgba(117,191,0,0.4)] flex items-center justify-center whitespace-nowrap shrink-0">
                   Start Building
                 </button>
-                <button className="h-[52px] px-8 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] text-[#F0EFE2] font-semibold text-[15px] rounded-none transition-all duration-200 flex items-center justify-center">
+                <button className="h-[48px] sm:h-[52px] px-6 sm:px-8 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] text-[#F0EFE2] font-semibold text-[14px] sm:text-[15px] rounded-none transition-all duration-200 flex items-center justify-center whitespace-nowrap shrink-0">
                   View Pricing
                 </button>
               </div>
