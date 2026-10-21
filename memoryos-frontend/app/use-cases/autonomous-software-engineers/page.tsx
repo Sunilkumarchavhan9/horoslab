@@ -1706,39 +1706,36 @@ export default function AutonomousSoftwareEngineersPage() {
               Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
             </p>
 
+            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mb-12">
+              {FAQ_DATA.map((faq, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveFaq(idx)}
+                  className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
+                      ? "bg-[#75bf00] text-black"
+                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
+                    }`}
+                >
+                  {faq.question}
+                </button>
+              ))}
+            </div>
 
+            <div className="w-full max-w-4xl h-px border-t border-dashed border-[#333] mb-12" />
 
-                <div className="w-full max-w-3xl flex flex-col">
-                  {FAQ_DATA.map((faq, idx) => (
-                    <div
-                      key={idx}
-                      className="flex flex-col border-b border-dashed border-[#333] py-7 sm:py-8"
-                    >
-                      <button
-                        onClick={() => setActiveFaq(activeFaq === idx ? -1 : idx)}
-                        className="flex items-center justify-between w-full text-left group"
-                      >
-                        <span
-                          className={`text-[17px] sm:text-[18px] font-medium transition-colors ${activeFaq === idx ? "text-[#F0EFE2]" : "text-[#C8C7BA] group-hover:text-[#F0EFE2]"}`}
-                        >
-                          {faq.question}
-                        </span>
-                        <div
-                          className={`w-6 h-6 rounded-full border border-[#333] flex items-center justify-center transition-all shrink-0 ml-4 ${activeFaq === idx ? "bg-[#75bf00] border-[#75bf00] text-black rotate-180" : "bg-transparent text-[#C8C7BA] group-hover:border-[#666]"}`}
-                        >
-                          <ChevronDown size={14} strokeWidth={2} />
-                        </div>
-                      </button>
-                      <div
-                        className={`overflow-hidden transition-all duration-300 ease-in-out ${activeFaq === idx ? "max-h-[300px] opacity-100 mt-4" : "max-h-0 opacity-0"}`}
-                      >
-                        <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15px] leading-relaxed pr-8">
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <div className="flex items-start gap-4 max-w-4xl w-full text-left">
+              <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
+                <HorosLogo size={20} />
+              </div>
+              <div>
+                <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
+                  {FAQ_DATA[activeFaq].question}
+                </h3>
+                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl whitespace-pre-line">
+                  {FAQ_DATA[activeFaq].answer}
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Bottom CTA Section */}
