@@ -626,16 +626,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How does Horos synthesize the physical world to train models?",
-    answer: "Horos ingests massive datasets of generated video from engines like OpenAI Sora, extracting continuous prediction mechanics, depth maps, and object permanence to create unified 4D spatial training data.",
+    question: "How does Horos synthesize physical world environments and sensor streams?",
+    answer: "Horos connects generative world models (NVIDIA Cosmos, Meta V-JEPA 2, HunyuanVideo, Mochi 1) with GPU physics solvers (Genesis, MuJoCo, Isaac Gym). It generates synchronized multi-camera video, depth fields, 3D point clouds, and IMU telemetry with deterministic seeds—allowing you to simulate millions of diverse training scenarios without manual 3D asset modeling.",
   },
   {
-    question: "Can the generative physics engine run on local edge clusters?",
-    answer: "Yes. All video generation models, spatial telemetry extraction, and verifiers compile directly into TensorRT-LLM binaries for fast, private deployment on local NVIDIA GPU clusters.",
+    question: "How do you detect and eliminate hallucinated or physically impossible video?",
+    answer: "Every generated frame and trajectory passes through automated kinematics and physics verifiers. Horos extracts 3D voxel AST graphs, surface normals, and depth trajectories, mathematically checking for rigid-body collision violations, gravity and momentum anomalies, surface friction consistency, and temporal geometry morphing before data touches downstream models.",
   },
   {
-    question: "How does it ensure physical accuracy in generated video?",
-    answer: "The Physics Validation Engine continuously computes prediction error against known physical priors, generating zero-hallucination spatial proofs to filter out physically impossible generated trajectories.",
+    question: "Can generative physics models and world simulators run on local edge clusters?",
+    answer: "Yes. All diffusion transformers, world models, and spatial verifiers compile into high-throughput TensorRT and TensorRT-LLM engines with FP8/INT8 quantization. You can self-host the entire simulation and video generation pipeline on local NVIDIA H100/B200 clusters or Jetson Thor edge workstations with zero cloud dependency.",
+  },
+  {
+    question: "Which open-weight generative video and world models are supported out of the box?",
+    answer: "Horos natively supports top open-weight models from Hugging Face—including NVIDIA Cosmos 1.0 (Diffusion & Autoregressive), Meta V-JEPA 2, Tencent HunyuanVideo, Genmo Mochi 1, Lightricks LTX-Video, HPCAITech Open-Sora, Black Forest Labs FLUX.1 Depth, Wan 2.1 Video, and Depth Anything V2. Custom diffusion and world model checkpoints can be loaded via Hugging Face IDs or local directories.",
+  },
+  {
+    question: "How does Horos bridge the sim-to-real gap for robotics and autonomous systems?",
+    answer: "Horos benchmarks generated video and physics rollouts directly against real-world robot logs and sensor telemetry. By computing distribution shift, optical lens distortion, and contact dynamics drift, Horos surfaces edge-case failure modes and produces verified SIM2REAL transfer evidence for safe physical deployment.",
+  },
+  {
+    question: "Do I own the full simulation recipe, code, and generated datasets?",
+    answer: "Yes. You own 100% of the recipe: environment seeds, physics parameters, CUDA kernels, Docker/OCI container harnesses, and generated synthetic datasets. There are no proprietary API fees, usage caps, or third-party telemetry requirements.",
   }
 ];
 
@@ -1866,42 +1878,61 @@ export default function GenerativeVideoAndPhysicsPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-              Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-            </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
-              Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mb-12">
-              {FAQ_DATA.map((faq, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveFaq(idx)}
-                  className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                      ? "bg-[#75bf00] text-black"
-                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
-                    }`}
-                >
-                  {faq.question}
-                </button>
-              ))}
-            </div>
-
-            <div className="w-full max-w-4xl h-px border-t border-dashed border-[#333] mb-12" />
-
-            <div className="flex items-start gap-4 max-w-4xl w-full text-left">
-              <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <HorosLogo size={20} />
+          <div className="w-full relative z-10 border-t border-dashed border-[#333]">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+              {/* Left Column Margin with Inner and Outer dashed lines */}
+              <div className="border-r border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
               </div>
-              <div>
-                <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
-                  {FAQ_DATA[activeFaq].question}
-                </h3>
-                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
-                  {FAQ_DATA[activeFaq].answer}
+
+              {/* Center Column: FAQ Content */}
+              <div className="py-20 md:py-24 flex flex-col items-center px-4 md:px-8">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">
+                  Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
+                </h2>
+                <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
+                  Can&apos;t find what you&apos;re looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
                 </p>
+
+                {/* Vertical Question Buttons */}
+                <div className="flex flex-col items-center gap-2.5 w-full mb-10">
+                  {FAQ_DATA.map((faq, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveFaq(idx)}
+                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${
+                        activeFaq === idx
+                          ? "bg-[#75bf00] text-black font-medium"
+                          : "bg-[#1c1c1c] text-[#d4cfbf] hover:bg-[#252525] hover:text-[#f2efe8] font-normal"
+                      }`}
+                    >
+                      {faq.question}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Horizontal Dashed Divider */}
+                <div className="w-full max-w-3xl border-t border-dashed border-[#333] mb-10" />
+
+                {/* Active FAQ Item with Icon and Text */}
+                <div className="flex items-start gap-4 max-w-3xl w-full text-left">
+                  <div className="mt-0.5 flex-shrink-0 text-[#f2efe8] bg-[#1c1c1c] border border-[#2a2a2a] rounded-full flex items-center justify-center h-10 w-10">
+                    <HorosLogo size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2 leading-snug">
+                      {FAQ_DATA[activeFaq]?.question || FAQ_DATA[0].question}
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[15px] md:text-[16px] leading-relaxed whitespace-pre-line">
+                      {FAQ_DATA[activeFaq]?.answer || FAQ_DATA[0].answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column Margin with Inner and Outer dashed lines */}
+              <div className="border-l border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
               </div>
             </div>
           </div>
