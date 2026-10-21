@@ -16,45 +16,163 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS = [
   {
     num: "0 1",
-    label: "Latency",
-    runInfra: { title: "Sub-10ms edge execution", desc: "Execute complex VLA models directly on the robot's local Jetson Thor with zero network latency round-trips." },
-    closed: { title: "High-latency cloud APIs", desc: "Sending camera frames to the cloud takes 500ms+, causing robotic stuttering and critical control failures." },
-    diy: { title: "Unoptimized ROS nodes", desc: "Running heavy PyTorch models on raw edge hardware without TensorRT optimization." }
+    label: "Latency & Speed",
+    runInfra: {
+      title: "Sub-10ms edge execution",
+      desc: "Compiled TensorRT-LLM VLA models executing directly on-robot (Jetson Thor/Orin) at 50Hz–100Hz with zero network round-trip delay."
+    },
+    closed: {
+      title: "High-latency cloud APIs",
+      desc: "Sending camera frames to remote cloud APIs incurs 400–800ms latency, causing dropped action steps and robotic stutter."
+    },
+    diy: {
+      title: "Unoptimized PyTorch nodes",
+      desc: "Running unquantized Python/PyTorch inference nodes inside ROS2, struggling to achieve stable real-time control frequencies."
+    }
   },
   {
     num: "0 2",
-    label: "Safety",
-    runInfra: { title: "Verified kinematics guards", desc: "Mathematical verification ensures predicted joint angles never violate hardware torque limits or collision boundaries." },
-    closed: { title: "Unpredictable hallucinations", desc: "Cloud LLMs can hallucinate impossible movements, potentially destroying expensive robotic actuators." },
-    diy: { title: "Manual hardcoded rules", desc: "Fragile C++ scripts trying to manually catch out-of-bounds joint commands before they execute." }
+    label: "Model Ownership",
+    runInfra: {
+      title: "Open-weight robotics policies",
+      desc: "Direct weight access to OpenVLA 7B, Physical Intelligence π0, Octo Base, SmolVLA, and LeRobot architectures with 100% adaptation rights."
+    },
+    closed: {
+      title: "Black-box vision endpoints",
+      desc: "Opaque endpoints without action heads, tokenized motor chunking, or custom low-level continuous control policies."
+    },
+    diy: {
+      title: "Fragmented research ports",
+      desc: "Manually porting research checkpoints across incompatible Hugging Face transformers, JAX, and custom policy repos."
+    }
   },
   {
     num: "0 3",
-    label: "Perception",
-    runInfra: { title: "Multi-modal sensor fusion", desc: "Fuse high-res RGB, depth maps, proprioception, and tactile feedback into a unified 4D spatial world state." },
-    closed: { title: "RGB-only vision", desc: "Basic visual summaries that lack crucial spatial depth, force feedback, and fine motor telemetry." },
-    diy: { title: "Asynchronous data streams", desc: "Struggling to temporally align camera frames with high-frequency tactile sensors in ROS." }
+    label: "Kinematic Safety",
+    runInfra: {
+      title: "Formal kinematics verification",
+      desc: "Mathematical safety envelopes enforce joint torque limits, collision boundaries, and velocity constraints before policy execution."
+    },
+    closed: {
+      title: "Unchecked motor hallucinations",
+      desc: "Cloud LLMs produce physically impossible target trajectories, risking catastrophic actuator overload and collisions."
+    },
+    diy: {
+      title: "Fragile manual heuristics",
+      desc: "Hardcoded C++ clamp scripts that fail to model non-linear dynamics, varying payloads, or contact transitions."
+    }
   },
   {
     num: "0 4",
-    label: "Model Control",
-    runInfra: { title: "Fine-tuned robotics policies", desc: "Deploy domain-adapted Google RT-2, Pixtral Physical MoE, or 1X Humanoid models." },
-    closed: { title: "Generic chat models", desc: "Locked to text-heavy models that lack fine-tuning for spatial robotics or physical affordances." },
-    diy: { title: "Prompt-only adaptation", desc: "Inability to adapt underlying model weights for fast, high-frequency motor control loops." }
+    label: "Perception & Fusion",
+    runInfra: {
+      title: "Synchronous 4D spatial state",
+      desc: "Synchronous fusion of multi-camera RGB feeds, metric depth, proprioception, and tactile telemetry into unified spatial representations."
+    },
+    closed: {
+      title: "Stateless 2D camera feeds",
+      desc: "Single-frame 2D visual summaries lacking 3D metric depth, coordinate frames, force sensing, and fine tactile feedback."
+    },
+    diy: {
+      title: "Asynchronous topic queues",
+      desc: "Struggling with temporal drift, buffer underruns, and message drops between camera topics and IMU/encoder feeds in ROS."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Autonomous edge deployment", desc: "Seamlessly push new control policies and safety rules to fleets of distributed humanoid robots." },
-    closed: { title: "Network-dependent operation", desc: "Robots completely shut down and fail tasks when facility Wi-Fi or cellular networks drop." },
-    diy: { title: "High operational overhead", desc: "Your team spends months managing OTA updates, driver compatibility, and edge OS configurations." }
+    label: "Cross-Embodiment",
+    runInfra: {
+      title: "Universal embodiment adapters",
+      desc: "Transfer learned manipulation skills across single-arm, bimanual, mobile, and humanoid topologies via normalized action tokens."
+    },
+    closed: {
+      title: "Zero topology flexibility",
+      desc: "Generic prompt APIs cannot adapt to custom degrees of freedom, tool center points, or non-standard joint kinematics."
+    },
+    diy: {
+      title: "Siloed per-robot models",
+      desc: "Training bespoke neural policies from scratch for each mechanical design without cross-morphology knowledge transfer."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "Air-gapped edge privacy", desc: "Zero data leakage. All sensory data and facility maps stay strictly on the robot's local hardware." },
-    closed: { title: "Cloud API IP risks", desc: "Sensitive facility maps, proprietary workflows, and camera feeds uploaded to third-party servers." },
-    diy: { title: "Self-managed OS security", desc: "Your team owns OS hardening, local storage encryption, and privileged access management." }
+    label: "Action Chunking",
+    runInfra: {
+      title: "Visuomotor diffusion kernels",
+      desc: "Generate temporally consistent action chunks (16–64 steps) with smooth jerk minimization and fast real-time denoising."
+    },
+    closed: {
+      title: "Step-by-step token stutter",
+      desc: "Autoregressive token generation emits jerky point-by-point target poses, inducing severe actuator resonance and vibration."
+    },
+    diy: {
+      title: "Hand-tuned spline filters",
+      desc: "Post-hoc cubic spline smoothing that dampens policy responsiveness and introduces critical obstacle reaction lag."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Runtime Engine",
+    runInfra: {
+      title: "TensorRT-LLM edge compilation",
+      desc: "FP8/INT8 quantization, FlashAttention-3 kernels, and CUDA graph execution tailored for on-robot Jetson and edge accelerators."
+    },
+    closed: {
+      title: "Opaque cloud infrastructure",
+      desc: "Zero control over runtime precision, batching, or GPU execution kernels; entirely subject to cloud provider rate limits."
+    },
+    diy: {
+      title: "Manual CUDA debugging",
+      desc: "Weeks spent writing custom C++ inference bindings, troubleshooting memory leaks, and resolving CUDA kernel panics."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Data & Telemetry",
+    runInfra: {
+      title: "Cryptographic policy lineage",
+      desc: "Verifiable audit trails linking every action chunk to camera inputs, model checkpoint weights, safety checks, and telemetry logs."
+    },
+    closed: {
+      title: "Ephemeral vendor logs",
+      desc: "No verifiable audit trails, missing action seeds, and proprietary provider retention policies that put your IP at risk."
+    },
+    diy: {
+      title: "Unindexed MCAP/bag files",
+      desc: "Terabytes of unindexed ROS bag files scattered across hard drives with no unified query engine or provenance tracking."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Simulation & Sim2Real",
+    runInfra: {
+      title: "Automated sim-to-real transfer",
+      desc: "Domain randomization, Cosmos world model evaluation, and physical reality gap calibration before edge hardware deployment."
+    },
+    closed: {
+      title: "Zero simulation grounding",
+      desc: "Black-box models untested against physical dynamics, risking immediate collision and hardware failure on live robots."
+    },
+    diy: {
+      title: "Manual trial & error",
+      desc: "Slow, risky physical experimentation directly on live robots, risking broken gearboxes, bent linkages, and expensive downtime."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Fleet Sovereignty",
+    runInfra: {
+      title: "100% air-gapped on-robot privacy",
+      desc: "Run entirely locally on disconnected robot hardware. Secure OTA policy rollouts with zero camera feeds or telemetry leaving premises."
+    },
+    closed: {
+      title: "Mandatory cloud streaming",
+      desc: "Sensitive factory floor video feeds, facility maps, and proprietary workflows are constantly streamed to third-party public clouds."
+    },
+    diy: {
+      title: "Manual SSH deployments",
+      desc: "Engineers manually SSH into robots to push updates, struggling with environment drift, broken packages, and insecure networks."
+    }
   }
 ];
 
@@ -895,14 +1013,14 @@ export default function EmbodiedHumanoidsPage() {
         <div className="w-full h-px border-t border-dashed border-[#333]" />
 
         {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mt-32 mb-32">
+        <div className="w-full relative z-10 mt-20 md:mt-24 mb-20 md:mb-24">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
+          <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">
               Three ways to run robotics AI models
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for robotics policy models across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+              Workflow comparison for robotics foundation models and policies across Horos, closed vision APIs, and DIY C++ ROS2 nodes.
             </p>
           </div>
 
@@ -951,47 +1069,47 @@ export default function EmbodiedHumanoidsPage() {
                       </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Verified sensor telemetry & 0 spatial drift.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Low-latency VLA policy serving & verification.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
                       <Key size={16} className="text-[#C8C7BA]" />
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Opaque text/vision APIs without spatial proofs.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Opaque vision-only APIs without action heads.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
                       <Cpu size={16} className="text-[#C8C7BA]" />
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY C++ ROS2</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Brittle ROS2 wrappers & manual stream parsing.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fragmented ROS2 nodes & manual PyTorch loops.</p>
                   </div>
                 </div>
 
                 <div className="border-l border-r border-b border-dashed border-[#333]">
                   {COMPARISON_ROWS.map((row, idx) => (
                     <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                      <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
+                      <div className="flex items-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333] min-h-[58px]">
                         <div className="flex items-center gap-3">
                           <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
+                          <span className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2]">{row.label}</span>
                         </div>
                       </div>
                       
-                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.runInfra.desc}</p>
                       </div>
 
-                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.closed.desc}</p>
                       </div>
 
-                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5">
+                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.diy.desc}</p>
                       </div>
                     </div>
                   ))}
