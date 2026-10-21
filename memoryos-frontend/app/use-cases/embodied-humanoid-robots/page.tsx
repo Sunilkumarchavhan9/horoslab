@@ -10,7 +10,7 @@ import { EmbodiedHumanoidBgAnimation } from "@/components/landing/embodied-human
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -369,15 +369,96 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "google/RT-2-Vision-Language-Action", name: "RT-2 VLA Model", author: "Google", description: "Robotic vision-language-action agent fine-tuned on multi-modal physical sensor streams.", role: "VLA Agent" },
-  { id: "onex/Humanoid-Perception-8B", name: "Humanoid Perception 8B", author: "1X Tech", description: "Spatial point-cloud & actuator feedback decoder for autonomous physical embodiment.", role: "Robot Perception" },
-  { id: "nvidia/Cosmos-1-Vision-WorldModel", name: "Cosmos-1 WorldModel", author: "NVIDIA", description: "Frontier physical world model for real-time sensor stream perception.", role: "World Model" },
-  { id: "deepseek-ai/DeepSeek-R1-Spatial-Reasoning", name: "DeepSeek R1 Spatial", author: "DeepSeek", description: "Deep reasoning engine for multi-sensor stream fusion and trajectory proofs.", role: "Spatial Reasoning" },
-  { id: "meta/V-JEPA-2-Physical-World", name: "V-JEPA 2 Physical", author: "Meta", description: "Joint-embedding predictive architecture for self-supervised physical world model encoding.", role: "JEPA Predictive" },
-  { id: "mistralai/Pixtral-12B-Physical", name: "Pixtral Physical MoE", author: "Mistral", description: "High-throughput multimodal vision-spatial model for real-time thermal & camera stream audits.", role: "Multimodal MoE" },
-  { id: "qwen/Qwen2.5-VL-72B-Physical", name: "Qwen2.5 VL Physical", author: "Qwen", description: "Frontier vision-language model fine-tuned on physical world dynamics and actuator telemetry.", role: "Vision-Action LLM" },
-  { id: "microsoft/Phi-3.5-Vision-Spatial", name: "Phi-3.5 Vision Spatial", author: "Microsoft", description: "Compact physical sensor solver and low-power edge TPU spatial telemetry verifier.", role: "Edge Performer" },
-  { id: "tesla/Optimus-Brain-V2", name: "Optimus Brain V2", author: "Tesla", description: "Multi-camera spatial occupancy grid model compiled for zero-latency CUDA edge execution.", role: "Spatial Occupancy" }
+  {
+    id: "openvla/openvla-7b",
+    name: "OpenVLA 7B",
+    author: "OpenVLA",
+    url: "https://huggingface.co/openvla/openvla-7b",
+    link: "https://huggingface.co/openvla/openvla-7b",
+    downloads: "7B VLA",
+    role: "Vision-Language-Action",
+    description: "Open-source 7B Vision-Language-Action foundation model fine-tuned on Open X-Embodiment for diverse robotic manipulation."
+  },
+  {
+    id: "lerobot/pi0_base",
+    name: "Physical Intelligence π0 Base",
+    author: "Physical Intelligence",
+    url: "https://huggingface.co/lerobot/pi0_base",
+    link: "https://huggingface.co/lerobot/pi0_base",
+    downloads: "3.1B VLA",
+    role: "Flow-Matching Policy",
+    description: "Flow-matching Vision-Language-Action foundation policy trained on multi-robot dexterous manipulation and agile trajectories."
+  },
+  {
+    id: "rail-berkeley/octo-base",
+    name: "Octo Base Policy",
+    author: "RAIL Berkeley",
+    url: "https://huggingface.co/rail-berkeley/octo-base",
+    link: "https://huggingface.co/rail-berkeley/octo-base",
+    downloads: "93M diffusion",
+    role: "Generalist Policy",
+    description: "Generalist robot policy trained on 800k trajectories in Open X-Embodiment with diffusion-based continuous action heads."
+  },
+  {
+    id: "lerobot/smolvla_base",
+    name: "SmolVLA Base",
+    author: "LeRobot",
+    url: "https://huggingface.co/lerobot/smolvla_base",
+    link: "https://huggingface.co/lerobot/smolvla_base",
+    downloads: "500M VLM",
+    role: "Compact Edge VLA",
+    description: "High-frequency low-latency Vision-Language-Action policy designed for real-time edge execution on Jetson and workstation GPUs."
+  },
+  {
+    id: "lerobot/diffusion_pusht",
+    name: "Diffusion Policy (PushT)",
+    author: "LeRobot",
+    url: "https://huggingface.co/lerobot/diffusion_pusht",
+    link: "https://huggingface.co/lerobot/diffusion_pusht",
+    downloads: "Diffusion policy",
+    role: "Action Chunking",
+    description: "Visuomotor policy model representing complex multimodal action distributions via denoising diffusion process."
+  },
+  {
+    id: "lerobot/xvla-base",
+    name: "Cross-Embodiment X-VLA",
+    author: "LeRobot",
+    url: "https://huggingface.co/lerobot/xvla-base",
+    link: "https://huggingface.co/lerobot/xvla-base",
+    downloads: "Cross-embodiment",
+    role: "Multi-Robot Policy",
+    description: "Unified cross-embodiment robot policy capable of zero-shot skill transfer across distinct kinematics topologies and grippers."
+  },
+  {
+    id: "Qwen/Qwen2-VL-7B-Instruct",
+    name: "Qwen2-VL 7B Spatial",
+    author: "Qwen",
+    url: "https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct",
+    link: "https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct",
+    downloads: "7B Vision LLM",
+    role: "Spatial Perception",
+    description: "Multimodal foundation model for high-resolution visual perception, 2D/3D bounding affordances, and spatial task planning."
+  },
+  {
+    id: "google/paligemma-3b-pt-224",
+    name: "PaliGemma 3B Robotics",
+    author: "Google",
+    url: "https://huggingface.co/google/paligemma-3b-pt-224",
+    link: "https://huggingface.co/google/paligemma-3b-pt-224",
+    downloads: "3B backbone",
+    role: "VLA Backbone",
+    description: "Vision-language foundation backbone standard in robotic policies (π0, OpenVLA variants) for spatial tokens and action prediction."
+  },
+  {
+    id: "nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
+    name: "Cosmos 1.0 World Model",
+    author: "NVIDIA",
+    url: "https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
+    link: "https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
+    downloads: "7B DiT",
+    role: "Robotic World Simulator",
+    description: "Frontier physical world foundation model for predictive simulation rollouts and counterfactual robotic action verification."
+  }
 ];
 
 const getLogo = (author: string, modelName: string = "") => {
@@ -385,16 +466,16 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
-  if (a.includes('openai') || m.includes('gpt')) return <OpenAILogo size={20} />;
-  if (a.includes('nvidia') || m.includes('cosmos') || m.includes('nemo')) return <NvidiaLogo size={20} />;
-  if (a.includes('tesla') || m.includes('fsd')) return <TeslaLogo size={20} />;
-  if (a.includes('1x') || a.includes('onex') || m.includes('humanoid')) return <OneXLogo size={20} />;
-  if (a.includes('meta') || m.includes('v-jepa')) return <MetaLogo size={20} />;
-  if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
-  if (a.includes('google') || m.includes('rt-2')) return <GoogleLogo size={20} />;
+  if (a.includes('nvidia') || m.includes('cosmos')) return <NvidiaLogo size={20} />;
+  if (a.includes('meta') || a.includes('facebook') || m.includes('vjepa') || m.includes('v-jepa')) return <MetaLogo size={20} />;
+  if (a.includes('deepseek')) return <DeepSeekLogo size={20} />;
+  if (a.includes('google') || m.includes('paligemma') || m.includes('rt-2')) return <GoogleLogo size={20} />;
   if (a.includes('mistral') || m.includes('pixtral')) return <MistralLogo size={20} />;
   if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
+  if (a.includes('lerobot') || a.includes('huggingface') || m.includes('lerobot') || m.includes('smolvla')) return <HuggingFaceLogo size={20} />;
+  if (a.includes('openvla') || a.includes('stanford') || a.includes('berkeley') || a.includes('rail') || m.includes('openvla') || m.includes('octo')) return <AuthorMonogram label="VLA" size={20} />;
+  if (a.includes('physical') || m.includes('pi0') || m.includes('pi05')) return <PhysicalIntelligenceLogo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
 };
@@ -405,26 +486,38 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-      classes += " border-b";
-    } else {
-      classes += " border-b md:border-b-0";
-    }
+    classes += " border-b";
+  } else {
+    classes += " border-b md:border-b-0";
+  }
 
   return classes;
 };
 
 const FAQ_DATA = [
   {
-    question: "How does Horos deploy models to physical robots?",
-    answer: "Horos compiles massive VLA models down into optimized TensorRT-LLM binaries that run directly on local edge nodes like the NVIDIA Jetson Thor, allowing for sub-10ms inference loops without network dependencies.",
+    question: "Does Horos manufacture or sell physical robot hardware?",
+    answer: "No. Horos is strictly a software and AI model intelligence platform. We focus exclusively on the models: Vision-Language-Action (VLA) foundation models, cross-embodiment neural policies, robotic world simulators, and ultra-low-latency edge inference runtimes. Horos interfaces seamlessly with any physical robot or robotic arm via standard ROS2, Zenoh, and gRPC protocols."
   },
   {
-    question: "How do you prevent AI hallucinations from causing physical damage?",
-    answer: "Every predicted joint trajectory passes through the Kinematics Validation Engine before execution. It mathematically verifies that the commands will not violate hardware torque limits, self-collide, or breach safety boundaries.",
+    question: "What open robotics and Vision-Language-Action (VLA) models are supported?",
+    answer: "Horos natively supports OpenVLA (7B), Physical Intelligence π0, LeRobot policy architectures (Diffusion Policy, SmolVLA, ACT), RAIL Berkeley Octo, Google RT-1/RT-2 style backbones, and PaliGemma robotics adaptations. You can also import any custom PyTorch or Hugging Face policy model and compile it for edge inference."
   },
   {
-    question: "Can it handle multi-modal inputs beyond just vision?",
-    answer: "Yes, the Humanoid AST Engine fuses high-resolution RGB, LiDAR depth maps, proprioception (joint states), and tactile feedback into a unified 4D spatial world state for the VLA model to reason over.",
+    question: "How does Horos achieve real-time sub-10ms policy execution on edge hardware?",
+    answer: "By quantizing models to FP8/INT8 and compiling them into specialized TensorRT-LLM CUDA kernels with fused action heads and pre-allocated memory buffers, Horos achieves sub-10ms forward pass latency on edge GPUs (NVIDIA Jetson Thor, Orin AGX, and workstation GPUs). This enables high-frequency control loops (100Hz–1000Hz) required for dynamic manipulation."
+  },
+  {
+    question: "How does the Kinematics Verification Engine prevent physical hardware damage?",
+    answer: "Before any model-predicted action chunk is dispatched to motor controllers, our mathematical kinematics verifier checks joint velocity limits, torque boundaries, and 3D self-collision envelopes against a rigid-body URDF model. Unsafe or out-of-bounds trajectory predictions are clipped or rejected with a zero-delay deterministic safety gate."
+  },
+  {
+    question: "Can we fine-tune foundation models on our proprietary teleoperation logs?",
+    answer: "Yes. Horos includes high-throughput fine-tuning pipelines compatible with LeRobot dataset formats, Open X-Embodiment schemas, HDF5 demonstrations, and ROS2 bag files. You can apply parameter-efficient LoRA, full fine-tuning, or Direct Preference Optimization (DPO) to tailor generalist models to your specific manipulation tasks."
+  },
+  {
+    question: "How does cross-embodiment policy transfer work across different robots?",
+    answer: "Horos decouples high-level task understanding and visual spatial tokens from low-level joint kinematics. Using morphology-agnostic action spaces and modular kinematics adapter heads, a policy trained on one robot setup can be transferred to arms with different degrees of freedom, gripper types, or camera mounting angles with minimal demonstration data."
   }
 ];
 
@@ -548,8 +641,8 @@ export default function EmbodiedHumanoidsPage() {
               else dl = m.downloads + " dl";
             }
 
-            let tag = "Generative Video AI Target";
-            let description = m.downloads ? `${dl} - Verifiable perception target` : "Verifiable perception target";
+            let tag = "Robotics Policy Model";
+            let description = m.downloads ? `${dl} - Verifiable robotics policy` : "Verifiable robotics policy";
             
             let author = m.author || m.id.split('/')[0];
             let name = m.id.split('/').pop();
@@ -558,8 +651,11 @@ export default function EmbodiedHumanoidsPage() {
               id: m.id,
               name: name,
               author: author,
+              url: `https://huggingface.co/${m.id}`,
+              link: `https://huggingface.co/${m.id}`,
               downloads: dl,
               description: description,
+              role: tag,
               tag: tag
             };
           });
@@ -569,6 +665,8 @@ export default function EmbodiedHumanoidsPage() {
       .catch(err => console.error(err))
       .finally(() => setIsLoading(false));
   }, [debouncedQuery]);
+
+  const displayedModels = debouncedQuery.trim() ? models : DEFAULT_MODELS;
 
   return (
     <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col relative">
@@ -671,18 +769,18 @@ export default function EmbodiedHumanoidsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    Embodied Humanoid<br />
+                    Robotics Foundation<br />
                     <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      Robots
+                      Models
                     </span>
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
-                    Low-latency brains for physical embodiment. Train and deploy Vision-Language-Action (VLA) models and spatial control policies directly to the edge.
+                    Low-latency brains for physical robotics. Train, optimize, and deploy Vision-Language-Action (VLA) foundation models, cross-embodiment policies, and spatial world models — zero hardware lock-in.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy humanoid policy <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Deploy robotics policy <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
                       Read the architecture <ChevronRight size={16} />
@@ -711,9 +809,9 @@ export default function EmbodiedHumanoidsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your humanoid robotic stack</h2>
+                <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-[#F0EFE2] mb-4">Own your robotics model stack</h2>
                 <p className="text-[#C8C7BA] text-[20px] font-sans leading-relaxed text-center max-w-2xl mx-auto mb-16">
-                  The Vision-Language-Action models, the kinematics verification engines, the robust multi-modal data streams. Complete sovereignty over your physical embodied agents.
+                  The Vision-Language-Action models, the kinematics verification engines, the robust multi-modal data streams. Complete sovereignty over your robotics intelligence.
                 </p>
               </div>
             </div>
@@ -755,25 +853,25 @@ export default function EmbodiedHumanoidsPage() {
                   {/* Card 1 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The physical<br/>perception models.</h3>
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The robotics<br/>policy models.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the physical world models (NVIDIA Cosmos-1, Meta V-JEPA), 3D spatial occupancy grids, and VLA agents. Zero vendor lock-in on your perception AI.
+                      You own the open-weight Vision-Language-Action models (OpenVLA, π0, Octo, LeRobot) and neural policies. Zero vendor lock-in on your robotic brains.
                     </p>
                   </div>
 
                   {/* Card 2 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The spatial<br/>verifiers.</h3>
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The kinematics<br/>verifiers.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
-                      You own the prediction-vs-observation measurement engines, spatial trajectory verifiers, and telemetry logs. Zero spatial hallucination guaranteed.
+                      You own the prediction-vs-observation measurement engines, spatial trajectory verifiers, and torque limits. Zero motor hallucination guaranteed.
                     </p>
                   </div>
 
                   {/* Card 3 */}
                   <div className="p-16 min-h-[300px] flex flex-col gap-4">
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The edge<br/>containers.</h3>
+                    <h3 className="text-4xl font-medium text-[#F0EFE2] leading-tight">The edge<br/>engines.</h3>
                     <p className="text-[#C8C7BA] text-[20px] leading-relaxed">
                       You own the compiled TensorRT binaries and Docker/ROS2 containers. Deploy on NVIDIA Jetson Orin, Jetson Thor, or edge gateways seamlessly.
                     </p>
@@ -793,10 +891,10 @@ export default function EmbodiedHumanoidsPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-16 px-4">
             <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to decode physical reality
+              Three ways to run robotics AI models
             </h2>
             <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+              Workflow comparison for robotics policy models across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
             </p>
           </div>
 
@@ -905,10 +1003,10 @@ export default function EmbodiedHumanoidsPage() {
             <div className="min-w-0">
               <div className="text-center">
                 <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
-                  Physical agents you own. <span className="text-[#75bf00]">Decode reality anywhere.</span>
+                  Robotics models you own. <span className="text-[#75bf00]">Run policies anywhere.</span>
                 </h2>
                 <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
-                  The full recipe ships with you. TensorRT CUDA engines, 4D spatial AST graphs, Cosmos-1 models, and ROS2 edge controllers. Run it on any physical node.
+                  The full recipe ships with you. TensorRT CUDA engines, VLA action tokenizers, OpenVLA models, and ROS2 edge drivers. Run it on any compute node.
                 </p>
               </div>
             </div>
@@ -1275,45 +1373,48 @@ export default function EmbodiedHumanoidsPage() {
           </div>
 
           {/* Features Grid Row */}
-          <div className="w-full relative z-10">
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
+          <div className="w-full relative z-10 mb-16 md:mb-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
-              
 
-              <div className="min-w-0">
+              <div className="min-w-0 border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Camera size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Camera size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Sensor Stream Ingestion</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Multi-camera RTSP, LiDAR point clouds, thermal sensor arrays, and IMU telemetry feeds cross-referenced in real-time 4D spatial graphs.
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Multi-Modal Sensor Tokenization
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Tokenize multi-view RTSP camera streams, depth fields, joint encoders, and tactile arrays into synchronized spatial tokens for VLA transformer backbones.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Radio size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Brain size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Cosmos-1 & World Weights</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Self-host physical world models (NVIDIA Cosmos-1, Meta V-JEPA) in your edge cloud. Complete IP privacy and local weight ownership.
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Open-Weights VLA & Policy Backbones
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Self-host foundation policy models (OpenVLA, π0, Octo, LeRobot) with full weight ownership. Zero black-box API lock-in and zero sensory data exfiltration.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Network size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Zap size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The ROS2 Edge Automation</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Generate zero-drift spatial telemetry proofs and ROS2 robotics actuation commands guaranteeing verified physical operation.
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Sub-10ms Edge TensorRT Inference
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Compile action diffusion heads and VLA transformer blocks to FP8 TensorRT-LLM binaries. Execute high-frequency control loops (100Hz–1000Hz) on Jetson or edge nodes.
                     </p>
                   </div>
                 </div>
@@ -1323,16 +1424,16 @@ export default function EmbodiedHumanoidsPage() {
           </div>
 
           {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-24 pb-16">
+          <div className="w-full relative z-10 pt-10 md:pt-14 pb-16">
             <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
                 <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any physical world or spatial perception model works
+                  Any robotics foundation or vision-language-action model works
                 </h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights physical world model as your perception engine, and fine-tune any compact edge target model. The examples below are just a starting view.
+                  Deploy open-weights VLA models, cross-embodiment policies, or fine-tune neural control backbones on your trajectory datasets. Search the catalog above.
                 </p>
 
                 {/* Search Bar */}
@@ -1344,7 +1445,7 @@ export default function EmbodiedHumanoidsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any physical AI, spatial perception, or world model on Hugging Face"
+                    placeholder="Search any robotics, VLA, or spatial policy model on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1353,42 +1454,51 @@ export default function EmbodiedHumanoidsPage() {
                 </div>
 
                 {/* Models Grid */}
-              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
                         Loading models from Hugging Face...
                       </div>
-                    ) : models.length === 0 ? (
+                    ) : displayedModels.length === 0 ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
                         No models found for "{searchQuery}"
                       </div>
                     ) : (
-                      models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
-                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          
-                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
-                            {getLogo(model.author, model.name)}
-                          </div>
-                          
-                          <div className="flex flex-col gap-1 min-w-0">
-                            <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
-                              {model.name}
-                            </h3>
-                            <span className="text-[#C8C7BA] text-[14px] line-clamp-1">
-                              {model.author}
-                            </span>
-                          </div>
-                          
-                          <div className="flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
-                            <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
-                              {model.role || model.tag}
-                            </span>
-                          </div>
-                        </div>
-                      ))
+                      displayedModels.map((model, index) => {
+                        const modelHref = model.url || model.link || `https://huggingface.co/${model.id}`;
+                        return (
+                          <a
+                            key={model.id || index}
+                            href={modelHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={getBorderClasses(index, displayedModels.length)}
+                          >
+                            <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            
+                            <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                              {getLogo(model.author, model.name)}
+                            </div>
+                            
+                            <div className="flex flex-col gap-1 min-w-0">
+                              <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
+                                {model.name}
+                              </h3>
+                              <span className="text-[#C8C7BA] text-[14px] line-clamp-1">
+                                {model.author}
+                              </span>
+                            </div>
+                            
+                            <div className="flex justify-between items-center mt-auto pt-4 gap-2">
+                              <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads || ""}</span>
+                              <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
+                                {model.role || model.tag}
+                              </span>
+                            </div>
+                          </a>
+                        );
+                      })
                     )}
                   </div>
                   <div className="w-full h-px border-t border-dashed border-[#333]" />
@@ -1398,101 +1508,115 @@ export default function EmbodiedHumanoidsPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-14 md:my-16">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-20">
+          <div className="w-full relative z-10">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
-                  Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
+                  Every stage of the robotics policy and inference pipeline, retuned per model and edge compute target.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
-                    {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 1 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <ScanSearch size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">4D Voxel AST Indexing</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Tune 3D spatial occupancy grids and temporal sensor trees for instant alignment of multi-camera and LiDAR streams.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">VLA Tokenization & Action Heads</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Tune multi-modal sensor tokenizers, action chunk horizon sizes, and temporal ensembling across RGB cameras, LiDAR, and joint encoders.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 2 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <Zap size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Spatial Telemetry Proofs</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Generate verifiable observation matching proofs for every physical trajectory to guarantee zero spatial drift.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Visuomotor Diffusion Kernels</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Accelerate denoising diffusion policy steps using fused TensorRT CUDA kernels and CUDA graph capture for sub-10ms deterministic forward passes.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 3 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Sliders size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sensor Stream Fusion</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Profile multi-sensor alignment rules to highlight frame drops, lens distortion, and thermal/optical skew.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Cross-Embodiment Adapters</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Profile and adapt generalist pre-trained backbones across distinct arm configurations, DOFs, and gripper morphologies with zero-shot transfer heads.
                       </p>
                     </div>
 
-                    {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 4 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Layers size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Prediction vs. Observation</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Built-in measurement engine continuously comparing physical world model predictions against ground-truth sensor telemetry.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Closed-Loop Latency & Jitter</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Measure and audit end-to-end loop latency from camera shutter exposure to motor velocity command output at 100Hz–1000Hz without drift.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 5 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Database size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Zero-Spatial-Hallucination Audit</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize vision-action weights (FP8/INT8) and compile low-latency TensorRT binaries for Jetson edge nodes.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Kinematic Safety Bounds</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Enforce deterministic URDF joint angle envelopes, velocity limits, and self-collision guards before neural action execution.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 6 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <Workflow size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical Fine-Tuning</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Fine-tune NVIDIA Cosmos-1 and Meta V-JEPA on your facility's proprietary camera feeds, spatial maps, and robotics logs.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Policy Fine-Tuning & DPO</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Fine-tune open-weights VLA models on teleoperation demonstrations, LeRobot datasets, and preference-aligned reinforcement learning.
                       </p>
                     </div>
 
                   </div>
+                  <div className="w-full h-px border-t border-dashed border-[#333]" />
                 </div>
               </div>
               <div />
             </div>
           </div>
 
+          {/* Section Divider between What Horos tunes and Try this robotics pipeline */}
+          <div className="w-full relative z-20 my-16 md:my-20">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Try this pipeline Section */}
-            <div className="w-full relative z-10 py-24">
-              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full relative z-10 pt-4 md:pt-8 pb-24">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
                 <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                  Try this physical pipeline
+                  Try this robotics pipeline
                 </h2>
                 <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
-                  Edit the world model, sensor verifier, or physical agent inline. Send to retune the stack in the dashboard.
+                  Edit the policy model, action chunker, or kinematics verifier inline. Send to retune the stack in the dashboard.
                 </p>
 
                 <div className="relative z-50 flex justify-center items-center mb-24 w-full h-[261px]">
@@ -1534,42 +1658,61 @@ export default function EmbodiedHumanoidsPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-              Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-            </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
-              Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mb-12">
-              {FAQ_DATA.map((faq, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveFaq(idx)}
-                  className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                      ? "bg-[#75bf00] text-black"
-                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
-                    }`}
-                >
-                  {faq.question}
-                </button>
-              ))}
-            </div>
-
-            <div className="w-full max-w-4xl h-px border-t border-dashed border-[#333] mb-12" />
-
-            <div className="flex items-start gap-4 max-w-4xl w-full text-left">
-              <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <HorosLogo size={20} />
+          <div className="w-full relative z-10 border-t border-dashed border-[#333]">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+              {/* Left Column Margin with Inner and Outer dashed lines */}
+              <div className="border-r border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
               </div>
-              <div>
-                <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
-                  {FAQ_DATA[activeFaq].question}
-                </h3>
-                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
-                  {FAQ_DATA[activeFaq].answer}
+
+              {/* Center Column: FAQ Content */}
+              <div className="py-20 md:py-24 flex flex-col items-center px-4 md:px-8">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">
+                  Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
+                </h2>
+                <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
+                  Can&apos;t find what you&apos;re looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
                 </p>
+
+                {/* Vertical Question Buttons */}
+                <div className="flex flex-col items-center gap-2.5 w-full mb-10">
+                  {FAQ_DATA.map((faq, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveFaq(idx)}
+                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${
+                        activeFaq === idx
+                          ? "bg-[#75bf00] text-black font-medium"
+                          : "bg-[#1c1c1c] text-[#d4cfbf] hover:bg-[#252525] hover:text-[#f2efe8] font-normal"
+                      }`}
+                    >
+                      {faq.question}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Horizontal Dashed Divider */}
+                <div className="w-full max-w-3xl border-t border-dashed border-[#333] mb-10" />
+
+                {/* Active FAQ Item with Icon and Text */}
+                <div className="flex items-start gap-4 max-w-3xl w-full text-left">
+                  <div className="mt-0.5 flex-shrink-0 text-[#f2efe8] bg-[#1c1c1c] border border-[#2a2a2a] rounded-full flex items-center justify-center h-10 w-10">
+                    <HorosLogo size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2 leading-snug">
+                      {FAQ_DATA[activeFaq]?.question || FAQ_DATA[0].question}
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[15px] md:text-[16px] leading-relaxed whitespace-pre-line">
+                      {FAQ_DATA[activeFaq]?.answer || FAQ_DATA[0].answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column Margin with Inner and Outer dashed lines */}
+              <div className="border-l border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
               </div>
             </div>
           </div>
@@ -1613,13 +1756,13 @@ export default function EmbodiedHumanoidsPage() {
               </div>
 
               <h2 className="text-[48px] md:text-[64px] leading-[1.1] font-medium tracking-tight text-[#F0EFE2] mb-8">
-                Deploy your first physical<br className="hidden md:block" />
-                reality agent, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
+                Deploy your first robotics<br className="hidden md:block" />
+                policy model, <span className="relative z-10 bg-[#75bf00] text-black px-3 py-1">measured</span> before you<br className="hidden md:block" />
                 ship
               </h2>
 
               <p className="text-[#a0a0a0] text-[18px] md:text-[20px] font-sans mb-12">
-                Describe the sensor stream ingestion or spatial perception task. Horos builds and optimizes the edge physical stack.
+                Deploy open-weights VLA models and cross-embodiment policies to edge hardware. Zero hardware lock-in, zero motor hallucination.
               </p>
 
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
