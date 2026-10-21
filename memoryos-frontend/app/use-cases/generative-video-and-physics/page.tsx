@@ -1720,84 +1720,94 @@ export default function GenerativeVideoAndPhysicsPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-14 md:my-16">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-20">
+          <div className="w-full relative z-10">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                   What Horos tunes
                 </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Every stage of the physical perception pipeline, retuned per model and edge sensor workflow.
                 </p>
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
                     
-                    {/* Row 1 */}
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 1 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <ScanSearch size={32} strokeWidth={1.5} />
+                        <ScanSearch size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">4D Voxel AST Indexing</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">4D Voxel AST Indexing</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
                         Tune 3D spatial occupancy grids and temporal sensor trees for instant alignment of multi-camera and LiDAR streams.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 2 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Zap size={32} strokeWidth={1.5} />
+                        <Zap size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Spatial Telemetry Proofs</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Spatial Telemetry Proofs</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
                         Generate verifiable observation matching proofs for every physical trajectory to guarantee zero spatial drift.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 3 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Sliders size={32} strokeWidth={1.5} />
+                        <Sliders size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Sensor Stream Fusion</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Sensor Stream Fusion</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
                         Profile multi-sensor alignment rules to highlight frame drops, lens distortion, and thermal/optical skew.
                       </p>
                     </div>
 
-                    {/* Row 2 */}
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 4 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Layers size={32} strokeWidth={1.5} />
+                        <Layers size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Prediction vs. Observation</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Prediction vs. Observation</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
                         Built-in measurement engine continuously comparing physical world model predictions against ground-truth sensor telemetry.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 5 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Database size={32} strokeWidth={1.5} />
+                        <Database size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Zero-Spatial-Hallucination Audit</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Quantize vision-action weights (FP8/INT8) and compile low-latency TensorRT binaries for Jetson edge nodes.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Zero-Spatial-Hallucination Audit</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Audit physics consistency, detect impossible momentum or collisions, and prune visual hallucinations before policy training.
                       </p>
                     </div>
 
-                    <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                    {/* Card 6 */}
+                    <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
-                        <Workflow size={32} strokeWidth={1.5} />
+                        <Workflow size={22} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-medium text-[#F0EFE2]">Physical Fine-Tuning</h3>
-                      <p className="text-[#C8C7BA] text-[18px] leading-relaxed">
-                        Fine-tune NVIDIA Cosmos-1 and Meta V-JEPA on your facility's proprietary camera feeds, spatial maps, and robotics logs.
+                      <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Physical Fine-Tuning</h3>
+                      <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] font-sans leading-relaxed">
+                        Fine-tune NVIDIA Cosmos and Meta V-JEPA on your facility's proprietary camera feeds, spatial maps, and robotics logs.
                       </p>
                     </div>
 
                   </div>
+                  <div className="w-full h-px border-t border-dashed border-[#333]" />
                 </div>
               </div>
               <div />
