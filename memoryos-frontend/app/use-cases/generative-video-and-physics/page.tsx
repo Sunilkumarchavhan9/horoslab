@@ -674,21 +674,21 @@ export default function GenerativeVideoAndPhysicsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    Generative Video<br />
+                    Synthetic<br />
                     <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">
-                      & Physics
+                      Reality
                     </span>
                   </h1>
                   <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
-                    Synthesize the physical world to train AI models. Construct generative video and physics pipelines to train next-generation spatial models.
+                    Generate physics-grounded environments, scenarios, and world states for training and evaluation. Synthesize future trajectories, rare failure modes, and verified SIM2REAL evidence.
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
                     <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy video physics agent <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                      Deploy synthetic reality agent <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
                     </button>
                     <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the architecture <ChevronRight size={16} />
+                      Explore the architecture <ChevronRight size={16} />
                     </button>
                   </div>
                 </div>
@@ -696,10 +696,12 @@ export default function GenerativeVideoAndPhysicsPage() {
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
                   <RagSearchGrid 
-                    label1="Video Generation"
-                    label2="Physics Engines"
-                    label3="Spatial Synthesis"
-                    label4="Model Training"
+                    label1="Environment Factory"
+                    label2="World Lab Scenarios"
+                    label3="Future Trajectories"
+                    label4="Rare Failure Modes"
+                    label5="SIM2REAL Gap Engine"
+                    label6="Policy Evaluation"
                   />
                 </div>
               </div>
