@@ -380,7 +380,7 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
     return (
       <div
         key={i}
-        className={`min-h-[20px] leading-[20px] flex items-center transition-colors rounded-sm px-1 ${isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
+        className={`min-h-[22px] leading-[22px] flex items-center transition-colors rounded-sm px-1 ${isCurrentActiveLine && !isComplete ? "bg-[#75bf00]/10" : ""
           }`}
       >
         {/* Flickering green vertical line indicator at the front of every active line */}
@@ -886,8 +886,8 @@ export default function ReasoningAIPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-10 md:mb-12">
-                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">What you actually own</h2>
-                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What you actually own</h2>
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Your reasoning models, search strategy, verification logic, and inference configuration. Horos helps you engineer the complete reasoning pipeline, from generating candidate solutions to measuring which configurations solve problems best.
                 </p>
               </div>
@@ -941,7 +941,7 @@ export default function ReasoningAIPage() {
                   {/* Card 1 */}
                   <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
-                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">Your reasoning system.</h3>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Your reasoning system.</h3>
                     <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Choose and compare open-weight models such as DeepSeek-R1 and Qwen3. Tune reasoning budgets, sampling, candidate generation, and search depth for your target tasks.
                     </p>
@@ -950,7 +950,7 @@ export default function ReasoningAIPage() {
                   {/* Card 2 */}
                   <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
-                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">Your verification pipeline.</h3>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Your verification pipeline.</h3>
                     <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Define correctness checks for mathematical answers, executable code, and structured outputs. Measure pass rates, verifier accuracy, failure cases, and performance on held-out problems.
                     </p>
@@ -959,7 +959,7 @@ export default function ReasoningAIPage() {
                   {/* Card 3 */}
                   <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
                     <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
-                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">Your optimization results.</h3>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Your optimization results.</h3>
                     <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Compare accuracy, tokens per solution, latency, GPU memory, and cost. Preserve experiment evidence and use verified failures to guide fine-tuning, distillation, and subsequent model versions.
                     </p>
@@ -975,10 +975,9 @@ export default function ReasoningAIPage() {
         <div className="w-full relative z-10 mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Three ways to deploy Reasoning AI
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to deploy Reasoning AI
               </h2>
-              <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
+              <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
                 Most reasoning platforms expose a model endpoint. Horos engineers the model, reasoning strategy, verification, optimization, and learning loop across all three deployment paths.
               </p>
             </div>
@@ -1071,23 +1070,23 @@ export default function ReasoningAIPage() {
                         <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
                           <div className="flex items-center gap-3">
                             <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                            <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
+                            <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
                           </div>
                         </div>
                         
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
                         </div>
 
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                          <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.closed.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.closed.desc}</p>
                         </div>
 
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                          <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                          <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.diy.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.diy.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -1110,7 +1109,7 @@ export default function ReasoningAIPage() {
                 <h2 className="text-4xl lg:text-[48px] font-medium tracking-tight mb-5">
                   Reasoning code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[17px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The complete reasoning recipe ships with you: verifiers, search trees, PRM scoring, inference budgets, and distillation pipelines.
                 </p>
               </div>
@@ -1160,25 +1159,25 @@ export default function ReasoningAIPage() {
                       <div className="flex gap-6 sm:gap-8 h-full items-end pb-2">
                         <button
                           onClick={() => setActiveMainTab("pipeline")}
-                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                         </button>
                         <button
                           onClick={() => setActiveMainTab("code")}
-                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <Code2 size={12} /> CODE
                         </button>
                         <button
                           onClick={() => setActiveMainTab("optimization")}
-                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <Sliders size={12} /> OPTIMIZATION
                         </button>
                         <button
                           onClick={() => setActiveMainTab("deploy")}
-                          className={`flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <Rocket size={12} /> DEPLOY
                         </button>
@@ -1193,7 +1192,7 @@ export default function ReasoningAIPage() {
                     <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
                       <div className="flex flex-col gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-3">
                         <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 rounded-[4px]">
-                          <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-normal leading-[19px]">
+                          <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-sans leading-[21px] sm:leading-[22px]">
                             Engineer a test-time reasoning pipeline. Deploy{" "}
                             <span className="inline-flex items-center gap-1 bg-[#141414] border border-[#2e2e2e] px-1.5 py-0.5 rounded text-[10.5px] font-mono text-[#D4D3C9] align-middle mx-0.5">
                               <DeepSeekLogo size={10} /> DeepSeek-R1-32B
@@ -1216,8 +1215,8 @@ export default function ReasoningAIPage() {
                             )}
                           </div>
                           <div className="flex flex-col gap-1 min-w-0">
-                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] leading-[18px]">
+                            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[22px]">
                               {typedMsg1}
                               {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
                                 <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
@@ -1239,10 +1238,10 @@ export default function ReasoningAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5 min-w-0">
                               <div className="flex justify-between items-center w-full gap-2">
-                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Loading reasoning model</span>
-                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">0.8s</span>
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Loading reasoning model</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">0.8s</span>
                               </div>
-                              <span className="text-[#666] text-[10.5px] sm:text-[11px] truncate">DeepSeek-R1-Distill-Qwen-32B loaded with FP8 KV cache</span>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">DeepSeek-R1-Distill-Qwen-32B loaded with FP8 KV cache</span>
                             </div>
                           </div>
 
@@ -1257,10 +1256,10 @@ export default function ReasoningAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5 min-w-0">
                               <div className="flex justify-between items-center w-full gap-2">
-                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Sampling candidate rollouts</span>
-                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">12.4s</span>
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Sampling candidate rollouts</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">12.4s</span>
                               </div>
-                              <span className="text-[#75bf00] text-[10.5px] sm:text-[11px] truncate">Generating N=8 reasoning paths with 4,096 budget tokens</span>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Generating N=8 reasoning paths with 4,096 budget tokens</span>
                             </div>
                           </div>
 
@@ -1275,10 +1274,10 @@ export default function ReasoningAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5 min-w-0">
                               <div className="flex justify-between items-center w-full gap-2">
-                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Process reward model scoring</span>
-                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">2.1s</span>
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Process reward model scoring</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">2.1s</span>
                               </div>
-                              <span className="text-[#666] text-[10.5px] sm:text-[11px] truncate">Scored 64 intermediate reasoning steps with step PRM</span>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Scored 64 intermediate reasoning steps with step PRM</span>
                             </div>
                           </div>
 
@@ -1293,10 +1292,10 @@ export default function ReasoningAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5 min-w-0">
                               <div className="flex justify-between items-center w-full gap-2">
-                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Executing sandbox verifiers</span>
-                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">1.3s</span>
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Executing sandbox verifiers</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">1.3s</span>
                               </div>
-                              <span className="text-[#666] text-[10.5px] sm:text-[11px] truncate">Verified math proofs & code; pruned 3 invalid traces</span>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Verified math proofs & code; pruned 3 invalid traces</span>
                             </div>
                           </div>
 
@@ -1311,10 +1310,10 @@ export default function ReasoningAIPage() {
                             </div>
                             <div className="flex flex-col flex-1 gap-0.5 min-w-0">
                               <div className="flex justify-between items-center w-full gap-2">
-                                <span className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] font-medium truncate">Benchmark evaluation on MATH-500</span>
-                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11px] shrink-0">14.2s</span>
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Benchmark evaluation on MATH-500</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">14.2s</span>
                               </div>
-                              <span className="text-[#75bf00] text-[10.5px] sm:text-[11px] truncate">Pass@1 accuracy reached 89.6% (+15.4% over baseline)</span>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Pass@1 accuracy reached 89.6% (+15.4% over baseline)</span>
                             </div>
                           </div>
                         </div>
@@ -1329,8 +1328,8 @@ export default function ReasoningAIPage() {
                             )}
                           </div>
                           <div className="flex flex-col gap-1 min-w-0">
-                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12px] leading-[18px]">
+                            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[22px]">
                               {typedMsg2}
                               {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
                                 <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
@@ -1346,14 +1345,14 @@ export default function ReasoningAIPage() {
                           <input
                             type="text"
                             placeholder="Teach the verifier to validate multi-step logic..."
-                            className="bg-transparent text-[#F0EFE2] text-[11.5px] sm:text-[12px] border-none outline-none w-full px-1.5 py-1"
+                            className="bg-transparent text-[#F0EFE2] text-[11.5px] sm:text-[12.5px] border-none outline-none w-full px-1.5 py-1"
                             readOnly
                           />
                           <div className="flex justify-between items-center px-1">
                             <div className="flex gap-1">
-                              <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Verifiers</span>
-                              <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@SearchBudget</span>
-                              <span className="bg-[#222] border border-[#333] text-[8.5px] sm:text-[9px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@PRMScore</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] sm:text-[9.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Verifiers</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] sm:text-[9.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@SearchBudget</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] sm:text-[9.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@PRMScore</span>
                             </div>
                             <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
                               <ArrowUp size={12} strokeWidth={2.5} />
@@ -1366,10 +1365,10 @@ export default function ReasoningAIPage() {
                     {/* Files Content */}
                     <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col items-start gap-3 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
                       <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-1 w-full">
-                        <span className="text-[9.5px] sm:text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">VERIFIER SUITE</span>
-                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+                        <span className="text-[9.5px] sm:text-[10px] font-bold tracking-wider text-[#C8C7BA] uppercase">VERIFIER SUITE</span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] sm:text-[9.5px] font-bold px-1.5 py-0.2 rounded-sm">3</span>
                       </div>
-                      <div className="flex flex-col gap-1 text-[11.5px] sm:text-[12px] font-mono w-full">
+                      <div className="flex flex-col gap-1 text-[11px] sm:text-[11.5px] font-mono w-full">
                         <div className="flex items-center gap-2 px-1.5 py-1 text-[#555] truncate">
                           math_verifier.py
                         </div>
@@ -1442,47 +1441,47 @@ export default function ReasoningAIPage() {
                       <div className="flex border-b border-[#252525] mb-4 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                         <button
                           onClick={() => selectFileManually("search_pipeline.py")}
-                          className={`shrink-0 whitespace-nowrap text-[11px] sm:text-[11.5px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "search_pipeline.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[10.5px] sm:text-[11.5px] font-mono font-bold px-2.5 sm:px-3 py-1 border-b-2 transition-colors ${activeFile === "search_pipeline.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           search_pipeline.py
                         </button>
                         <button
                           onClick={() => selectFileManually("verifier.py")}
-                          className={`shrink-0 whitespace-nowrap text-[11px] sm:text-[11.5px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "verifier.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[10.5px] sm:text-[11.5px] font-mono font-bold px-2.5 sm:px-3 py-1 border-b-2 transition-colors ${activeFile === "verifier.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           verifier.py
                         </button>
                         <button
                           onClick={() => selectFileManually("eval_bench.py")}
-                          className={`shrink-0 whitespace-nowrap text-[11px] sm:text-[11.5px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "eval_bench.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[10.5px] sm:text-[11.5px] font-mono font-bold px-2.5 sm:px-3 py-1 border-b-2 transition-colors ${activeFile === "eval_bench.py" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           eval_bench.py
                         </button>
                         <button
                           onClick={() => selectFileManually("reasoning_config.json")}
-                          className={`shrink-0 whitespace-nowrap text-[11px] sm:text-[11.5px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "reasoning_config.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[10.5px] sm:text-[11.5px] font-mono font-bold px-2.5 sm:px-3 py-1 border-b-2 transition-colors ${activeFile === "reasoning_config.json" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           reasoning_config.json
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`shrink-0 whitespace-nowrap text-[11px] sm:text-[11.5px] font-mono font-bold px-2.5 py-1 border-b-2 transition-colors ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`shrink-0 whitespace-nowrap text-[10.5px] sm:text-[11.5px] font-mono font-bold px-2.5 sm:px-3 py-1 border-b-2 transition-colors ${activeFile === "Dockerfile" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           Dockerfile
                         </button>
                       </div>
 
                       {/* Code Area with Line Numbers */}
-                      <div className="flex font-mono text-[11.5px] sm:text-[12px] leading-[20px] overflow-x-auto select-text thin-hover-scrollbar">
+                      <div className="flex font-mono text-[12px] sm:text-[12.5px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
                         {/* Line numbers column */}
                         <div className="text-[#444] text-right pr-3.5 border-r border-[#252525] select-none flex flex-col min-w-[28px]">
                           {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                            <div key={i} className="min-h-[20px] leading-[20px]">{i + 1}</div>
+                            <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
                           ))}
                         </div>
 
                         {/* Highlighted code column */}
-                        <div className="pl-3.5 flex-1 text-[#C8C7BA] leading-[20px]">
+                        <div className="pl-3.5 flex-1 text-[#C8C7BA] leading-[22px]">
                           {highlightCode(
                             typedCodeText,
                             activeFile.endsWith(".py")
@@ -1558,9 +1557,7 @@ export default function ReasoningAIPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any HF reasoning model works
-                </h2>
+                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">Any HF reasoning model works</h2>
                 <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
                   Deploy open-weight reasoning models through Horos test-time search, verifier suites, and PRM scoring pipelines. The examples below are just a starting view.
                 </p>
@@ -1619,7 +1616,7 @@ export default function ReasoningAIPage() {
                             <p className="text-[#888] text-[13px] leading-relaxed line-clamp-2" title={model.description}>{model.description}</p>
                           </div>
                           <div className="relative z-10 flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[13.5px] sm:text-[14px] shrink-0">{model.downloads}</span>
+                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads}</span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">{model.tag || model.role}</span>
                           </div>
                         </a>
@@ -1639,10 +1636,8 @@ export default function ReasoningAIPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  What Horos tunes
-                </h2>
-                <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What Horos tunes</h2>
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Every stage of reasoning, optimized per model, workload, and GPU.
                 </p>
 
@@ -1728,9 +1723,7 @@ export default function ReasoningAIPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
-                <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                  Try this pipeline
-                </h2>
+                <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
                 <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
                   Edit the model, engine, or GPU inline. Send to retune the stack in the dashboard.
                 </p>
@@ -1782,10 +1775,8 @@ export default function ReasoningAIPage() {
 
           {/* FAQ Section */}
           <div className="w-full relative z-10 pt-24 pb-28 md:pb-36 flex flex-col items-center px-4">
-            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-              Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-            </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span></h2>
+            <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
               Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
             </p>
 

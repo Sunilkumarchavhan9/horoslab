@@ -1061,10 +1061,9 @@ export default function AutomatedScientificDiscoverersPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-8 md:mb-10">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3">
-                  What you actually own
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What you actually own
                 </h2>
-                <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Your scientific models, simulation data, and experimental results. Train and evaluate models such as MatterSim, MACE-MP-0, and ESM-2 against real scientific tasks.
                 </p>
               </div>
@@ -1082,10 +1081,10 @@ export default function AutomatedScientificDiscoverersPage() {
                     <div className="text-[#75bf00] font-mono text-[13.5px] font-bold tracking-wider">
                       01
                     </div>
-                    <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                       Materials discovery
                     </h3>
-                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Use{" "}
                       <a
                         href="https://huggingface.co/OneScience-Group/MatterSim"
@@ -1113,10 +1112,10 @@ export default function AutomatedScientificDiscoverersPage() {
                     <div className="text-[#75bf00] font-mono text-[13.5px] font-bold tracking-wider">
                       02
                     </div>
-                    <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                       Protein and biology models
                     </h3>
-                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Use{" "}
                       <a
                         href="https://huggingface.co/facebook/esm2_t33_650M_UR50D"
@@ -1144,10 +1143,10 @@ export default function AutomatedScientificDiscoverersPage() {
                     <div className="text-[#75bf00] font-mono text-[13.5px] font-bold tracking-wider">
                       03
                     </div>
-                    <h3 className="text-[19px] sm:text-[20px] font-medium text-[#F0EFE2] leading-snug">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
                       Scientific model improvement
                     </h3>
-                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Fine-tune these models on domain-specific data, compare predictions with reference results, and evaluate improved checkpoints on unseen scientific tasks.
                     </p>
                   </div>
@@ -1162,10 +1161,9 @@ export default function AutomatedScientificDiscoverersPage() {
         <div className="w-full relative z-10 mt-28 md:mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">
-              Three ways to build Scientific AI
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to build Scientific AI
             </h2>
-            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
               Build scientific intelligence from pretrained models, simulation-generated data, or real experimental results. Horos lets you adapt models, test predictions, and measure improvements against scientific evidence.
             </p>
           </div>
@@ -1259,7 +1257,7 @@ export default function AutomatedScientificDiscoverersPage() {
                           <span className="text-[#75bf00] font-mono text-[12px] font-bold">
                             {row.num}
                           </span>
-                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">
+                          <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">
                             {row.label}
                           </span>
                         </div>
@@ -1313,7 +1311,7 @@ export default function AutomatedScientificDiscoverersPage() {
                     Simulate physics anywhere.
                   </span>
                 </h2>
-                <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The complete scientific AI stack ships with you. Pretrained foundation models (MatterSim, MACE-MP-0, ESM-2), physics simulation solvers, training pipelines, and experimental verifiers.
                 </p>
               </div>
@@ -1425,10 +1423,10 @@ export default function AutomatedScientificDiscoverersPage() {
                         )}
                       </div>
                       <div className="flex flex-col gap-1 min-w-0">
-                        <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">
+                        <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">
                           Agent
                         </span>
-                        <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] leading-[16px] sm:leading-[18px]">
+                        <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[22px]">
                           {typedMsg1}
                           {visibleStep === 1 &&
                             typedMsg1.length < AGENT_MSG_1.length && (
@@ -1612,10 +1610,10 @@ export default function AutomatedScientificDiscoverersPage() {
                         )}
                       </div>
                       <div className="flex flex-col gap-1 min-w-0">
-                        <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">
+                        <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">
                           Agent
                         </span>
-                        <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] leading-[16px] sm:leading-[18px]">
+                        <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[22px]">
                           {typedMsg2}
                           {visibleStep === 7 &&
                             typedMsg2.length < AGENT_MSG_2.length && (
@@ -1997,10 +1995,8 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="min-w-0">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  What Horos tunes
-                </h2>
-                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What Horos tunes</h2>
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Every stage of scientific model development, optimized per
                   model, dataset, simulation, and compute budget.
                 </p>
@@ -2111,10 +2107,8 @@ export default function AutomatedScientificDiscoverersPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
-                <h2 className="text-2xl sm:text-3xl md:text-[38px] lg:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-6 md:mt-8">
-                  Try this pipeline
-                </h2>
-                <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] md:text-[16px] font-sans leading-relaxed text-center max-w-2xl mb-10 md:mb-14 mx-auto">
+                <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
+                <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
                   Edit the model, solver, or agent inline. Send to retune the
                   stack in the dashboard.
                 </p>

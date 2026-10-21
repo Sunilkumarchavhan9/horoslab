@@ -1141,10 +1141,9 @@ outlines==0.0.46`;
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
-                  What you actually own
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What you actually own
                 </h2>
-                <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed max-w-2xl mx-auto">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   The intelligence, its experience, and the system that runs it. Horos keeps the model, context, tools, decisions, evidence, and versions traceable as one evolving assistant.
                 </p>
               </div>
@@ -1220,10 +1219,9 @@ outlines==0.0.46`;
           <div />
           <div className="min-w-0">
             <div className="text-center">
-              <h2 className="text-3xl md:text-[44px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
-                Three ways to ship AI assistants
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to ship AI assistants
               </h2>
-              <p className="text-[#C8C7BA] text-[16px] font-sans leading-relaxed max-w-2xl mx-auto">
+              <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
                 Most teams either consume a hosted intelligence API or build the assistant stack themselves. Horos lets you compose, optimize, verify, and evolve the intelligence system around the assistant.
               </p>
             </div>
@@ -1311,14 +1309,14 @@ outlines==0.0.46`;
                         <span className="text-[#75bf00] font-mono text-[12px] font-bold">
                           {row.num}
                         </span>
-                        <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors">
+                        <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">
                           {row.label}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                      <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] transition-colors mb-1 leading-snug">
+                      <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">
                         {row.runInfra.title}
                       </h4>
                       <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
@@ -1327,7 +1325,7 @@ outlines==0.0.46`;
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333]">
-                      <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors mb-1 leading-snug">
+                      <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">
                         {row.closed.title}
                       </h4>
                       <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
@@ -1336,7 +1334,7 @@ outlines==0.0.46`;
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5">
-                      <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors mb-1 leading-snug">
+                      <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">
                         {row.diy.title}
                       </h4>
                       <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
@@ -1364,7 +1362,7 @@ outlines==0.0.46`;
                   Code you own.{" "}
                   <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[16px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The full recipe ships with you. Codebase, kernels, engine
                   config, weights. Run it anywhere.
                 </p>
@@ -1703,7 +1701,7 @@ outlines==0.0.46`;
                         <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">
                           TOOL DEFINITIONS
                         </span>
-                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm shrink-0">
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] sm:text-[9.5px] font-bold px-1.5 py-0.2 rounded-sm shrink-0">
                           3
                         </span>
                       </div>
@@ -2071,10 +2069,8 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                What Horos tunes
-              </h2>
-              <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What Horos tunes</h2>
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                 Every layer of your assistant, tuned for its model and workload.
               </p>
 
@@ -2171,9 +2167,7 @@ outlines==0.0.46`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
-              <h2 className="text-[44px] md:text-[52px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Try this pipeline
-              </h2>
+              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
               <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
                 Edit the model, engine, or GPU inline. Send to retune the stack
                 in the dashboard.

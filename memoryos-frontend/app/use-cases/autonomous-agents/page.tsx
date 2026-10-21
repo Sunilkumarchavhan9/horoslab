@@ -859,8 +859,8 @@ export default function AutonomousAgentsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-10 md:mb-12">
-                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">What you actually own</h2>
-                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What you actually own</h2>
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   The agent reasoning models, sandboxed tool harnesses, and execution policies. Complete sovereignty over how autonomous systems plan, act, and resolve tasks.
                 </p>
               </div>
@@ -898,7 +898,7 @@ export default function AutonomousAgentsPage() {
                   {/* Card 1 */}
                   <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
-                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">The agent models.</h3>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">The agent models.</h3>
                     <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       You own the model checkpoints, reasoning fine-tunes, and system prompts. Compare planning fidelity, tool selection accuracy, and token efficiency across multi-step agent workloads.
                     </p>
@@ -907,7 +907,7 @@ export default function AutonomousAgentsPage() {
                   {/* Card 2 */}
                   <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
                     <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
-                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">The tools and sandbox environments.</h3>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">The tools and sandbox environments.</h3>
                     <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       You define API schemas, sandbox execution boundaries, persistent memory stores, and safety gates. Test how agents recover from tool failures, schema mismatches, and unexpected outputs.
                     </p>
@@ -916,7 +916,7 @@ export default function AutonomousAgentsPage() {
                   {/* Card 3 */}
                   <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
                     <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
-                    <h3 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#F0EFE2] leading-snug">The verified autonomous policies.</h3>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">The verified autonomous policies.</h3>
                     <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       You control the production policy versions, runtime configurations, and deployment artifacts. Compare task completion rates, loop prevention, latency, and compute cost before promoting.
                     </p>
@@ -932,10 +932,9 @@ export default function AutonomousAgentsPage() {
         <div className="w-full relative z-10 mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-10 md:mb-12 px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#f2efe8] mb-3 text-center mt-8 md:mt-10">
-              Three ways to build autonomous-agents
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to build autonomous-agents
             </h2>
-            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
               Compare Horos with closed agent APIs and custom DIY frameworks across planning, tool calling, failure recovery, memory, verification, and data sovereignty.
             </p>
           </div>
@@ -1004,23 +1003,23 @@ export default function AutonomousAgentsPage() {
                       <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
                         <div className="flex items-center gap-3">
                           <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
+                          <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
                         </div>
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.horos.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.horos.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.closed.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.closed.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.diy.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.diy.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -1041,7 +1040,7 @@ export default function AutonomousAgentsPage() {
                 <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">
                   Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The full recipe ships with you. Autonomous agent models, tool-calling harnesses, sandbox environments, and execution runtimes. Run it anywhere.
                 </p>
               </div>
@@ -1114,7 +1113,7 @@ export default function AutonomousAgentsPage() {
                     <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
                       <div className="flex flex-col gap-3 sm:gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-2 sm:pb-3">
                         <div className="bg-[#1a1a1a] border border-[#252525] p-3 sm:p-3.5 rounded-[4px]">
-                          <p className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] font-medium mb-1 leading-[18px] sm:leading-[19px]">
+                          <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-sans leading-[21px] sm:leading-[22px]">
                             Reconcile customer refund discrepancies across{" "}
                             <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle font-mono text-[10.5px]">
                               <Database size={10} /> postgres/ledger
@@ -1140,8 +1139,8 @@ export default function AutonomousAgentsPage() {
                             )}
                           </div>
                           <div className="flex flex-col gap-1 min-w-0">
-                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                            <p className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] leading-[18px]">
+                            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[22px]">
                               {visibleStep > 1 ? AGENT_MSG_1 : typedMsg1}
                               {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
                                 <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
@@ -1248,8 +1247,8 @@ export default function AutonomousAgentsPage() {
                             )}
                           </div>
                           <div className="flex flex-col gap-1 min-w-0">
-                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                            <p className="text-[#C8C7BA] text-[11px] sm:text-[11.5px] leading-[18px]">
+                            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[22px]">
                               {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? typedMsg2 : AGENT_MSG_2}
                               {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
                                 <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
@@ -1451,10 +1450,8 @@ export default function AutonomousAgentsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl md:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-3">
-                  What Horos tunes
-                </h2>
-                <p className="text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What Horos tunes</h2>
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Every stage of autonomous agents, optimized per model, tool schema, failure pattern, and compute configuration.
                 </p>
               </div>
@@ -1535,10 +1532,8 @@ export default function AutonomousAgentsPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-                Try this pipeline
-              </h2>
-              <p className="text-[#c7c3b7] text-base sm:text-lg font-sans text-center max-w-2xl mb-12 mx-auto">
+              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
+              <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
                 Edit the agent model, tools, or policy gates inline. Send to retune the agent stack in the dashboard.
               </p>
 
@@ -1552,10 +1547,8 @@ export default function AutonomousAgentsPage() {
 
         {/* FAQ Section */}
         <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-          <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-            Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-          </h2>
-          <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span></h2>
+          <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
             Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
           </p>
 

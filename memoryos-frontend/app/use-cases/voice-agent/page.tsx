@@ -762,7 +762,7 @@ export default function RagSearchPage() {
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
                       The stack behind faster voice agents.
                     </h1>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide max-w-lg mt-2 leading-relaxed font-sans">
+                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] tracking-wide leading-relaxed max-w-lg mt-2 font-sans">
                       Llama, Qwen, or supported open models. Tool use, streaming, routing, and runtime optimization on a single GPU.
                     </p>
                   <div className="flex items-center w-max gap-3 mt-6">
@@ -793,10 +793,9 @@ export default function RagSearchPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16 px-4">
-                <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4">
-                  What you actually own
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What you actually own
                 </h2>
-                <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed max-w-2xl mx-auto">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   The model, the runtime, and the workload. Horos gives you the controls to understand and optimize the system behind your voice agent.
                 </p>
               </div>
@@ -858,10 +857,9 @@ export default function RagSearchPage() {
         <div className="w-full relative z-10 mt-32 mb-16">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to ship voice agents
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to ship voice agents
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
               Most teams either use a managed voice API or build the stack themselves. Horos optimizes the intelligence system, connects it to real-world signals, and turns verified experience into better intelligence.
             </p>
           </div>
@@ -927,7 +925,7 @@ export default function RagSearchPage() {
                     <div className="w-full md:w-1/4 px-4 py-3.5 lg:px-5 lg:py-4 flex items-start justify-between border-r-0 md:border-r border-dashed border-[#333] transition-colors">
                       <div className="flex items-center gap-4">
                         <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                        <span className="text-[#F0EFE2] text-[14px] sm:text-[15px] font-medium group-hover:text-[#75bf00] transition-colors">{row.label}</span>
+                        <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
                       </div>
                       <ChevronRight size={16} className="text-[#75bf00] opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 transform duration-300 mt-0.5" />
                     </div>
@@ -970,7 +968,7 @@ export default function RagSearchPage() {
                 <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
                   Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The full recipe ships with you. Codebase, kernels, engine config, weights. Run it anywhere.
                 </p>
               </div>
@@ -1237,7 +1235,7 @@ export default function RagSearchPage() {
                 <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll">
                   <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
                     <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase whitespace-nowrap shrink-0 truncate">GENERATED KERNELS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] sm:text-[9.5px] font-bold px-1.5 py-0.2 rounded-sm">3</span>
                   </div>
 
                   <div className="flex flex-col gap-1 text-[13px] font-mono">
@@ -1584,10 +1582,8 @@ export default function RagSearchPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                What Horos tunes
-              </h2>
-              <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What Horos tunes</h2>
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                 Every layer of the voice pipeline, measured against latency, quality, throughput, memory, and cost.
               </p>
 
@@ -1671,9 +1667,7 @@ export default function RagSearchPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
-              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Try this pipeline
-              </h2>
+              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
               <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
                 Edit the model, engine, or GPU inline. Send to retune the stack in the dashboard.
               </p>
@@ -1729,10 +1723,8 @@ export default function RagSearchPage() {
 
         {/* FAQ Section */}
         <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-          <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-            Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-          </h2>
-          <p className="text-[#C8C7BA] text-[16px] mb-16 text-center max-w-lg">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span></h2>
+          <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
             Everything you need to know about deploying and operating personal AI assistants.
           </p>
 

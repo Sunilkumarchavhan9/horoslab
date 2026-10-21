@@ -867,7 +867,7 @@ aiohttp==3.10.5`;
           <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6 text-center">
             Three ways to ship <span className="text-[#75bf00]">real-time streaming.</span>
           </h2>
-          <p className="text-[#C8C7BA] text-base md:text-[17px] lg:text-[18px] font-sans leading-relaxed text-center max-w-2xl">
+          <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
             Workflow comparison for streaming pipelines across Horos, closed-source APIs, and DIY orchestration.
           </p>
         </div>
@@ -938,17 +938,17 @@ aiohttp==3.10.5`;
 
                     <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.05]">
                       <h4 className="text-[13.5px] sm:text-[14px] font-medium !text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                      <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                      <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                      <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.closed.title}</h4>
+                      <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.closed.desc}</p>
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                      <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                      <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.diy.title}</h4>
+                      <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.diy.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -970,7 +970,7 @@ aiohttp==3.10.5`;
                 <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6 text-[#C8C7BA]">
                   Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-base md:text-[17px] lg:text-[18px] max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
                   The full recipe ships with you. Codebase, kernels, engine config, weights. Run it anywhere.
                 </p>
               </div>
@@ -1420,7 +1420,7 @@ aiohttp==3.10.5`;
               <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
                 What Horos tunes for Real-Time
               </h2>
-              <p className="text-[#A0A098] text-[15px] sm:text-[16px] font-sans leading-relaxed text-center max-w-lg mx-auto mb-12">
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
                 Every stage of the pipeline, retuned per model and GPU.
               </p>
 
@@ -1504,10 +1504,8 @@ aiohttp==3.10.5`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
-              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-                Try this pipeline
-              </h2>
-              <p className="text-[#c7c3b7] text-[18px] md:text-[20px] lg:text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
+              <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
+              <p className="text-[#c7c3b7] text-[22px] font-sans leading-relaxed text-center max-w-2xl mb-16 mx-auto">
                 Edit the model, engine, or GPU inline. Send to retune the stack in the dashboard.
               </p>
 
@@ -1558,10 +1556,8 @@ aiohttp==3.10.5`;
 
         {/* FAQ Section */}
         <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-          <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-            Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-          </h2>
-          <p className="text-[#C8C7BA] text-[14px] md:text-[15px] lg:text-[16px] mb-16 text-center max-w-lg">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span></h2>
+          <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
             Everything you need to know about deploying and operating real-time AI pipelines.
           </p>
 
