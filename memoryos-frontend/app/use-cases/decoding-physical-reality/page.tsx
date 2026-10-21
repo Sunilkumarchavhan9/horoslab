@@ -1903,11 +1903,10 @@ export default function DecodingPhysicalRealityPage() {
                     <button
                       key={idx}
                       onClick={() => setActiveFaq(idx)}
-                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${
-                        activeFaq === idx
-                          ? "bg-[#75bf00] text-black font-medium"
-                          : "bg-[#1c1c1c] text-[#d4cfbf] hover:bg-[#252525] hover:text-[#f2efe8] font-normal"
-                      }`}
+                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${activeFaq === idx
+                        ? "bg-[#75bf00] text-black font-medium"
+                        : "bg-[#1c1c1c] text-[#d4cfbf] hover:bg-[#252525] hover:text-[#f2efe8] font-normal"
+                        }`}
                     >
                       {faq.question}
                     </button>
