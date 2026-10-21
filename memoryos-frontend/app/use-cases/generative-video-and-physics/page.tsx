@@ -732,7 +732,7 @@ export default function GenerativeVideoAndPhysicsPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [models, setModels] = useState<any[]>(DEFAULT_MODELS);
+  const [searchResults, setSearchResults] = useState<any[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -742,7 +742,7 @@ export default function GenerativeVideoAndPhysicsPage() {
 
   useEffect(() => {
     if (!debouncedQuery.trim()) {
-      setModels(DEFAULT_MODELS);
+      setSearchResults(null);
       return;
     }
 
@@ -776,12 +776,14 @@ export default function GenerativeVideoAndPhysicsPage() {
               link: `https://huggingface.co/${m.id}`
             };
           });
-          setModels(mapped);
+          setSearchResults(mapped);
         }
       })
       .catch(err => console.error(err))
       .finally(() => setIsLoading(false));
   }, [debouncedQuery]);
+
+  const displayedModels = (debouncedQuery.trim() && searchResults !== null) ? searchResults : DEFAULT_MODELS;
 
   return (
     <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col relative">
@@ -1668,12 +1670,12 @@ export default function GenerativeVideoAndPhysicsPage() {
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
                         Loading models from Hugging Face...
                       </div>
-                    ) : models.length === 0 ? (
+                    ) : displayedModels.length === 0 ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
                         No models found for "{searchQuery}"
                       </div>
                     ) : (
-                      models.map((model, index) => {
+                      displayedModels.map((model, index) => {
                         const modelUrl = model.url || model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`);
                         return (
                           <a
@@ -1681,7 +1683,7 @@ export default function GenerativeVideoAndPhysicsPage() {
                             href={modelUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={getBorderClasses(index, models.length) + " block no-underline"}
+                            className={getBorderClasses(index, displayedModels.length) + " block no-underline"}
                           >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
                           
