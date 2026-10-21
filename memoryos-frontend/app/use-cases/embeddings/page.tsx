@@ -1475,9 +1475,10 @@ export default function EmbeddingsPage() {
           </div>
 
           {/* Bottom CTA Section */}
-          <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center overflow-hidden border-t border-dashed border-[#333]">
+          <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             {/* Container for precise 72% alignment with continuous dashed grid lines */}
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] absolute inset-0 pointer-events-none z-0">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] absolute inset-0 pointer-events-none z-0 overflow-hidden">
               {/* Left Column Margin with Inner and Outer dashed lines */}
               <div className="border-r border-dashed border-[#333] relative">
                 <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
