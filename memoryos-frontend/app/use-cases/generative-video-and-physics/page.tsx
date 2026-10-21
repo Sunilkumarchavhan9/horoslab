@@ -10,7 +10,7 @@ import { GenerativeVideoBgAnimation } from "@/components/landing/generative-vide
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, FluxLogo, TencentLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
 interface ComparisonRow {
@@ -497,15 +497,87 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "openai/sora-1-worldmodel", name: "Sora WorldModel", author: "OpenAI", description: "Frontier generative video model for hyper-realistic physics and temporal consistency.", role: "World Model" },
-  { id: "runwayml/Gen-3-Alpha", name: "Gen-3 Alpha", author: "Runway", description: "High-fidelity video generation model compiled for rapid multi-modal physics simulation.", role: "Physics Engine" },
-  { id: "kuaishou/Kling-Video-1.5", name: "Kling Video", author: "Kuaishou", description: "Advanced spatial reasoning engine for complex physical object permanence.", role: "Spatial Reasoning" },
-  { id: "meta/MovieGen-World", name: "MovieGen World", author: "Meta", description: "Joint-embedding architecture for self-supervised physical world rendering.", role: "Generative Predictive" },
-  { id: "google/Lumiere-Video", name: "Lumiere Video", author: "Google", description: "Space-time U-Net agent fine-tuned on multi-modal physical video streams.", role: "Video Agent" },
-  { id: "lumaai/Dream-Machine", name: "Dream Machine", author: "Luma AI", description: "Spatial rendering & temporal physics decoder for autonomous video synthesis.", role: "Video Rendering" },
-  { id: "mistralai/Pixtral-12B-Physical", name: "Pixtral Physical MoE", author: "Mistral", description: "High-throughput multimodal vision-spatial model for real-time video generation audits.", role: "Multimodal MoE" },
-  { id: "qwen/Qwen2.5-VL-72B-Video", name: "Qwen2.5 VL Video", author: "Qwen", description: "Frontier vision-language model fine-tuned on video world dynamics and synthesis.", role: "Vision-Action LLM" },
-  { id: "microsoft/Phi-3.5-Vision-Spatial", name: "Phi-3.5 Vision Spatial", author: "Microsoft", description: "Compact video physics solver and low-power edge TPU trajectory verifier.", role: "Edge Performer" }
+  {
+    id: "nvidia/Cosmos-1.0-Diffusion-7B-Video2World",
+    name: "Cosmos 1.0 Diffusion",
+    author: "NVIDIA",
+    downloads: "7B DiT",
+    role: "Physical World Model",
+    description: "Physical world foundation model for photorealistic dynamics simulation and continuous state prediction.",
+    link: "https://huggingface.co/nvidia/Cosmos-1.0-Diffusion-7B-Video2World"
+  },
+  {
+    id: "facebook/vjepa2-vitg-fpc64-256",
+    name: "V-JEPA 2",
+    author: "Meta",
+    downloads: "1B-class",
+    role: "Joint-Embedding Predictor",
+    description: "Self-supervised Joint-Embedding Predictive Architecture for feature-space physical world dynamics.",
+    link: "https://huggingface.co/facebook/vjepa2-vitg-fpc64-256"
+  },
+  {
+    id: "tencent/HunyuanVideo",
+    name: "HunyuanVideo",
+    author: "Tencent",
+    downloads: "13B DiT",
+    role: "4D Spatio-Temporal",
+    description: "Frontier open-weights video generation model with physical spatio-temporal dynamics and kinematic continuity.",
+    link: "https://huggingface.co/tencent/HunyuanVideo"
+  },
+  {
+    id: "genmo/mochi-1-preview",
+    name: "Mochi 1",
+    author: "Genmo",
+    downloads: "10B params",
+    role: "Physics Dynamics DiT",
+    description: "Asymmetric diffusion transformer engineered for photorealistic physical motion, fluid dynamics, and rigid bodies.",
+    link: "https://huggingface.co/genmo/mochi-1-preview"
+  },
+  {
+    id: "Lightricks/LTX-Video",
+    name: "LTX-Video",
+    author: "Lightricks",
+    downloads: "Real-Time",
+    role: "Real-Time Simulator",
+    description: "Real-time transformer-based video generator capable of 50 FPS physics dynamics on edge & workstation GPUs.",
+    link: "https://huggingface.co/Lightricks/LTX-Video"
+  },
+  {
+    id: "hpcai-tech/Open-Sora-v1.2",
+    name: "Open-Sora 1.2",
+    author: "HPCAITech",
+    downloads: "1.2B ST-DiT",
+    role: "Video World Simulator",
+    description: "Open-weights diffusion transformer for high-fidelity physical video synthesis and temporal object permanence.",
+    link: "https://huggingface.co/hpcai-tech/Open-Sora-v1.2"
+  },
+  {
+    id: "black-forest-labs/FLUX.1-Depth-dev",
+    name: "FLUX.1 Depth",
+    author: "Black Forest Labs",
+    downloads: "12B flow",
+    role: "Spatial Geometry",
+    description: "Spatial depth conditioning rectified flow model for metric 3D geometry and physical surface reconstruction.",
+    link: "https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev"
+  },
+  {
+    id: "Wan-AI/Wan2.1-T2V-14B",
+    name: "Wan 2.1 Video",
+    author: "Wan-AI",
+    downloads: "14B DiT",
+    role: "Visual-Tactile World",
+    description: "State-of-the-art open video foundation model with visual-tactile physics simulation and spatio-temporal flow.",
+    link: "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B"
+  },
+  {
+    id: "depth-anything/Depth-Anything-V2-Large",
+    name: "Depth Anything V2",
+    author: "Depth Anything",
+    downloads: "335M params",
+    role: "Dense Geometry",
+    description: "Dense monocular depth estimation foundation model for extracting metric 3D point clouds and collision meshes.",
+    link: "https://huggingface.co/depth-anything/Depth-Anything-V2-Large"
+  }
 ];
 
 const getLogo = (author: string, modelName: string = "") => {
@@ -513,15 +585,17 @@ const getLogo = (author: string, modelName: string = "") => {
   const a = (author || "").toLowerCase();
   const m = (modelName || "").toLowerCase();
 
-  if (a.includes('openai') || m.includes('gpt')) return <OpenAILogo size={20} />;
   if (a.includes('nvidia') || m.includes('cosmos') || m.includes('nemo')) return <NvidiaLogo size={20} />;
+  if (a.includes('meta') || a.includes('facebook') || m.includes('vjepa') || m.includes('v-jepa')) return <MetaLogo size={20} />;
+  if (a.includes('tencent') || m.includes('hunyuan')) return <TencentLogo size={24} />;
+  if (a.includes('black-forest') || a.includes('flux') || m.includes('flux')) return <FluxLogo size={20} />;
+  if (a.includes('openai') || m.includes('gpt') || m.includes('sora')) return <OpenAILogo size={20} />;
+  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen') || a.includes('wan')) return <QwenLogo size={20} />;
   if (a.includes('tesla') || m.includes('fsd')) return <TeslaLogo size={20} />;
   if (a.includes('1x') || a.includes('onex') || m.includes('humanoid')) return <OneXLogo size={20} />;
-  if (a.includes('meta') || m.includes('v-jepa')) return <MetaLogo size={20} />;
   if (a.includes('deepseek') || m.includes('deepseek')) return <DeepSeekLogo size={20} />;
-  if (a.includes('google') || m.includes('rt-2')) return <GoogleLogo size={20} />;
+  if (a.includes('google') || m.includes('rt-2') || m.includes('lumiere')) return <GoogleLogo size={20} />;
   if (a.includes('mistral') || m.includes('pixtral')) return <MistralLogo size={20} />;
-  if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
@@ -1547,16 +1621,16 @@ export default function GenerativeVideoAndPhysicsPage() {
           </div>
 
           {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-24 pb-16">
+          <div className="w-full relative z-10 pt-10 md:pt-14 pb-16">
             <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
-                  Any physical world or spatial perception model works
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
+                  Supported HF world models & physics engines work
                 </h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
-                  Use any open-weights physical world model as your perception engine, and fine-tune any compact edge target model. The examples below are just a starting view.
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
+                  Supported world models, video generation engines, and physics simulators on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
                 </p>
 
                 {/* Search Bar */}
@@ -1568,7 +1642,7 @@ export default function GenerativeVideoAndPhysicsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any physical AI, spatial perception, or world model on Hugging Face"
+                    placeholder="Search any world model, physics engine, or video generator on Hugging Face"
                     className="w-full bg-[#1a1a1a] border border-dashed border-[#333] text-[#C8C7BA] text-[13.5px] sm:text-[14px] pl-10 pr-12 py-3 rounded-[4px] outline-none focus:border-[#555] transition-colors font-sans placeholder:text-[#666]"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
@@ -1589,10 +1663,16 @@ export default function GenerativeVideoAndPhysicsPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
-                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <a
+                          key={model.id}
+                          href={model.link || (model.id.startsWith("http") ? model.id : `https://huggingface.co/${model.id}`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
+                        >
+                          <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity z-20" />
                           
-                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
+                          <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center bg-[#151515]">
                             {getLogo(model.author, model.name)}
                           </div>
                           
@@ -1606,12 +1686,14 @@ export default function GenerativeVideoAndPhysicsPage() {
                           </div>
                           
                           <div className="flex justify-between items-center mt-auto pt-4 gap-2">
-                            <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0"></span>
+                            <span className="text-[#A0A098] font-mono text-[12px] shrink-0">
+                              {model.downloads || model.params || ""}
+                            </span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
