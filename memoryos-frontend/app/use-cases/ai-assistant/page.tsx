@@ -570,20 +570,29 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I bring my own fine-tuned model?",
-    answer:
-      "Yes, for supported chat-capable models. Paste the Hugging Face ID; unsupported or untuned shapes show baseline-only or gated status instead of a tuned run.",
+    question: "What is Horos for AI Assistants and how does it differ from traditional chatbot APIs?",
+    answer: "Horos is a Frontier Intelligence Engineering System for deploying governed, task-capable AI assistants. Unlike closed black-box APIs, Horos gives you complete ownership over the entire intelligence loop: open-weight model selection, native tool execution, custom CUDA kernels, runtime infrastructure, and verifiable output contracts."
   },
   {
-    question: "Does this support tool calling?",
-    answer:
-      "Yes. Models like Llama 3.1 and Hermes that are trained for tool use are fully supported. Tool definitions are passed dynamically and executed natively.",
+    question: "Which open-source language and reasoning models are supported?",
+    answer: "Horos natively supports frontier open-weight models including Llama 3.3 (70B), Qwen 2.5 (7B to 72B), Mistral Nemo, DeepSeek V3, and Hermes 3. You can import any fine-tuned checkpoint from Hugging Face or private registries and compile it into optimized vLLM or TensorRT-LLM runtimes."
   },
   {
-    question: "Can I run this on a smaller GPU?",
-    answer:
-      "Yes. By applying FP8 or INT4 quantization, you can fit an 8B chat model on a single L4 or RTX 4000 Ada with plenty of room left over for KV cache and context.",
+    question: "How does native tool calling and sandboxed action execution work?",
+    answer: "Tool schemas (JSON Schema, OpenAPI, Python functions) are ingested into native grammar-constrained decoding. Horos executes actions inside isolated microVM sandboxes, feeding execution traces and environment observations directly back into the model loop until the mission achieves verified completion."
   },
+  {
+    question: "How does the Mission Authority layer prevent unauthorized actions and hallucinations?",
+    answer: "Horos decouples capability from authority. Before consequential execution (such as database mutations, API dispatches, or file writes), our policy engine checks mission credentials, preconditions, and safety boundaries—returning deterministic ALLOW, DENY, or REQUIRES_APPROVAL verdicts."
+  },
+  {
+    question: "Can I deploy AI assistants completely on-premise or in an air-gapped private VPC?",
+    answer: "Yes, 100%. Horos is built for true data sovereignty. The complete stack—model weights, inference engine, tool executors, and policy verifiers—runs inside your private AWS/GCP/Azure VPC or bare-metal GPU servers with zero external telemetry or data egress."
+  },
+  {
+    question: "Do I own the full codebase, engine configs, and deployment recipes?",
+    answer: "Yes. The entire intelligence recipe ships with you: Dockerfiles, Kubernetes manifests, kernel compile scripts, tool definitions, and policy verifiers. You have complete independence with zero vendor lock-in."
+  }
 ];
 
 export default function AIAssistantPage() {

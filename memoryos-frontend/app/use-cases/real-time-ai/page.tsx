@@ -289,16 +289,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I bring my own fine-tuned model?",
-    answer: "Yes, for supported agent-capable models. Paste the Hugging Face ID; unsupported or untuned shapes show baseline-only or gated status instead of a tuned run.",
+    question: "What constitutes a 'real-time' AI pipeline in Horos?",
+    answer: "In Horos, real-time AI denotes deterministic sub-50ms time-to-first-token (TTFT) and high-frequency stream processing (>60 FPS for vision, <20ms for audio, >100Hz for robotics). We replace traditional request-response batching with continuous chunked prefill, speculative decoding, and fused CUDA kernels."
   },
   {
-    question: "Does this support tool calling?",
-    answer: "Yes. Models like Llama 3.1 and Hermes that are trained for tool use are fully supported. Tool definitions are passed dynamically and executed natively.",
+    question: "Which streaming protocols and message brokers are supported out of the box?",
+    answer: "Horos natively connects with WebRTC, gRPC streaming, Apache Kafka, Apache Pulsar, Redis Streams, and raw WebSocket connections. Zero-copy ring buffers and shared memory IPC allow microservices to consume high-throughput multi-gigabit sensor streams with near-zero latency overhead."
   },
   {
-    question: "Can I run this on a smaller GPU?",
-    answer: "Yes. By applying FP8 or INT4 quantization, you can fit an 8B agent model on a single L4 or RTX 4000 Ada with plenty of room left over for KV cache and context.",
+    question: "How does speculative decoding accelerate real-time token generation?",
+    answer: "A lightweight draft model (e.g. 1B parameter) proposes candidate token sequences in parallel, which are then validated in a single forward pass by the larger target model (e.g. 8B or 70B). This achieves 2.5x to 3.8x faster token generation per stream without any loss in output accuracy or mathematical precision."
+  },
+  {
+    question: "How do you handle traffic spikes, backpressure, and network jitter?",
+    answer: "Horos implements adaptive dynamic batching and priority-aware queue management. Under load spikes, low-priority non-interactive requests are dynamically throttled while interactive real-time streams receive guaranteed GPU kernel priority. Backpressure signals automatically adjust client streaming rates to prevent buffer overflow."
+  },
+  {
+    question: "Can I perform hot model reloads and zero-downtime updates in live production?",
+    answer: "Yes. Horos supports dual-buffer GPU memory allocation. A new model checkpoint or quantized weight set can be loaded into secondary VRAM while the active model serves live streams; switching occurs atomically at the packet boundary with zero dropped frames or interrupted sessions."
+  },
+  {
+    question: "Can I deploy Horos Real-Time AI on edge hardware and private clusters?",
+    answer: "Yes. Horos compiles into standalone TensorRT-LLM and ONNX Runtime containers optimized for NVIDIA Jetson Orin/Thor edge devices, edge gateways, or private on-premise GPU clusters (A10G, L4, L40S, H100) with complete air-gap compliance."
   }
 ];
 

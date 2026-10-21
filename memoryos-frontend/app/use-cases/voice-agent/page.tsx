@@ -445,16 +445,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I bring my own fine-tuned model?",
-    answer: "Yes, for supported chat-capable models. Paste the Hugging Face ID; unsupported or untuned shapes show baseline-only or gated status instead of a tuned run.",
+    question: "How does Horos achieve sub-100ms end-to-end voice latency?",
+    answer: "Horos utilizes fused streaming audio pipelines that combine full-duplex neural acoustic codecs with streaming language models (such as Moshi, Mini-Omni, or Whisper-v3-Turbo + CosyVoice). By processing audio in 20ms frame chunks with FlashAttention CUDA kernels and zero-copy IPC, we eliminate the latency penalty of cascading separate STT, LLM, and TTS models."
   },
   {
-    question: "Does this support tool calling?",
-    answer: "Yes. Models like Llama 3.1 and Hermes that are trained for tool use are fully supported. Tool definitions are passed dynamically and executed natively.",
+    question: "Which open-source speech, voice cloning, and audio models are supported?",
+    answer: "Horos natively supports Kyutai Moshi, Mini-Omni, OpenAI Whisper v3 / Whisper-Turbo, ElevenLabs-compatible architectures, CosyVoice 2, XTTS v2, F5-TTS, and Chatterbox. Custom acoustic checkpoints and quantized GGUF/TensorRT voice weights can be imported directly from Hugging Face."
   },
   {
-    question: "Can I run this on a smaller GPU?",
-    answer: "Yes. By applying FP8 or INT4 quantization, you can fit an 8B chat model on a single L4 or RTX 4000 Ada with plenty of room left over for KV cache and context.",
+    question: "How does Horos handle natural interruptions, backchanneling, and turn-taking?",
+    answer: "Our neural Voice Activity Detection (Silero VAD) and acoustic turn-taking classifier run concurrently on audio streams at 50Hz. When user speech onset is detected during synthesis, Horos instantly truncates the outgoing audio buffer, resets the decoder KV-cache, and initiates immediate context assimilation without audio stutter."
+  },
+  {
+    question: "Can I clone custom brand voices from short reference audio samples?",
+    answer: "Yes. With our zero-shot voice cloning engine, providing 3 to 10 seconds of clear reference audio is sufficient to extract speaker timbre, pitch embeddings, and cadence vectors. You can also fine-tune voice heads using LoRA on proprietary multi-speaker studio datasets."
+  },
+  {
+    question: "Does Horos support WebRTC, SIP, and telephony trunk integrations?",
+    answer: "Yes. Horos provides production-ready WebRTC gateways, SIP/RTP connectors for Asterisk and Twilio, and WebSocket streaming protocols. Audio packets are processed natively with jitter buffer management, packet loss concealment (PLC), and acoustic echo cancellation (AEC)."
+  },
+  {
+    question: "Can the voice agent pipeline run completely on-premise without external cloud APIs?",
+    answer: "Absolutely. The entire pipeline—from speech recognition and dialogue reasoning to neural voice synthesis—runs in self-contained Docker containers on local GPUs (e.g., single NVIDIA L4, RTX 4090, or L40S). No audio data or customer voice recordings ever leave your infrastructure."
   }
 ];
 

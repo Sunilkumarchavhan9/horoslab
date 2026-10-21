@@ -431,16 +431,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I compare model experiments against the same baseline?",
-    answer: "Yes. Horos tracks model versions, datasets, training configurations, compute, and evaluation results. Compare experiments under defined conditions to establish which changes improve capability, which cause regressions, and what the evidence supports.",
+    question: "How do Research Agents automate literature review and paper discovery?",
+    answer: "Horos connects directly with arXiv, PubMed, Semantic Scholar, and OpenAlex APIs. Agents crawl citation graphs, extract mathematical equations and experimental tables, identify consensus and contradictions across hundreds of papers, and synthesize structured literature reviews with verified bibliographic citations."
   },
   {
-    question: "Can Horos help develop models that understand the physical world?",
-    answer: "That's a core research direction. Investigate models using video, sensor data, spatial and temporal relationships, and physical-world observations. Evaluate whether models can represent changing states and predict outcomes against observed reality.",
+    question: "Can I compare model experiments and ablation studies against identical baselines?",
+    answer: "Yes. Horos automatically tracks dataset splits, hyperparameter seeds, tokenizers, learning rate schedules, and GPU resource usage. Automated ablation suites run experiments under strictly controlled conditions, outputting standardized markdown/LaTeX comparison tables with statistical significance tests."
   },
   {
-    question: "Do I need to build the entire training and evaluation stack myself?",
-    answer: "No. Horos is designed to connect model research, training and adaptation, experiment execution, evaluation, and verification in one workflow. You can work with supported model and compute infrastructure while preserving experiment records, model lineage, and evidence.",
+    question: "How does Horos eliminate mathematical hallucinations in research derivations?",
+    answer: "Our research pipeline routes mathematical claims and symbolic equations through computer algebra systems (SymPy, Lean 4, Mathematica, and Wolfram Engine). Derivations are verified step-by-step for formal mathematical consistency before being included in experimental reports."
+  },
+  {
+    question: "Can Horos launch and manage jobs on Slurm, Kubernetes, or cloud compute?",
+    answer: "Yes. Horos features automated cluster dispatch. Agents formulate experiment scripts, package dependencies into Docker containers, submit batch jobs to Slurm HPC clusters or Kubernetes GPU nodes, monitor loss curves in real time, and alert on gradient explosions or hardware failures."
+  },
+  {
+    question: "How are experiment artifacts, checkpoints, and model lineage preserved?",
+    answer: "Every run creates an immutable cryptographic manifest containing exact Git commit hashes, environment dependencies, dataset checksums, model weights, and tensorboard logs. Experiments can be reproduced bit-for-bit at any time in the future."
+  },
+  {
+    question: "Can research agents assist with manuscript drafting and LaTeX formatting?",
+    answer: "Yes. Agents generate publication-ready LaTeX manuscripts, formatted according to specific conference templates (NeurIPS, ICML, CVPR, ICLR, Nature). Figures, vector diagrams, and verified citation keys are compiled and validated automatically with latexmk."
   }
 ];
 

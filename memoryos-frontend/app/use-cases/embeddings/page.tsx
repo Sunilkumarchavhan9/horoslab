@@ -276,16 +276,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Can I run an embedder and reranker on the same GPU?",
-    answer: "Yes. Our fused memory architecture allows you to run a massive encoder like BGE-M3 alongside a cross-encoder reranker on a single H100 or L40S, eliminating network hops between models.",
+    question: "Can I run an embedder and cross-encoder reranker on the same GPU?",
+    answer: "Yes. Horos co-locates massive dense encoder models (such as BGE-M3, GTE-Qwen2, or nomic-embed) alongside cross-encoder rerankers on a single NVIDIA L40S, A100, or H100. Shared GPU memory eliminates inter-node network serialization hops and reduces end-to-end retrieval latency by up to 70%."
   },
   {
-    question: "How do you handle massive document ingestion?",
-    answer: "We use aggressive sequence packing and continuous batching. Variable length documents are packed natively to avoid zero-padding waste, dramatically increasing throughput.",
+    question: "Which embedding architectures and modalities are supported out of the box?",
+    answer: "Horos natively supports BAAI BGE-M3, Alibaba GTE-Qwen, Cohere-style architectures, Snowflake Arctic Embed, ColBERT v2 late-interaction representations, and CLIP/SigLIP multimodal vision embeddings. Both dense vectors and sparse lexical representations (BM25/SPLADE) are generated simultaneously."
   },
   {
-    question: "Do you support direct Vector DB connections?",
-    answer: "Yes. Our pipelines feature zero-copy network paths that stream embeddings directly into pgvector, Milvus, Qdrant, or Pinecone without hitting intermediary APIs.",
+    question: "How do you handle massive document ingestion at scale?",
+    answer: "We use sequence packing, continuous dynamic batching, and FlashAttention-2 kernels. Variable-length documents are packed into contiguous tensor buffers without zero-padding overhead, delivering up to 40,000 tokens/sec throughput per GPU during large-scale corpus indexing."
+  },
+  {
+    question: "Do you support direct vector database integrations and zero-copy streaming?",
+    answer: "Yes. Horos features zero-copy streaming connectors for pgvector, Milvus, Qdrant, Pinecone, LanceDB, and OpenSearch. Embeddings stream directly from GPU memory over high-speed Arrow/gRPC channels straight into vector indexes with automated HNSW indexing."
+  },
+  {
+    question: "How does Matryoshka Representation Learning (MRL) save storage and compute?",
+    answer: "With Matryoshka embeddings, high-dimensional vector representations (e.g. 1024 or 4096 dims) can be truncated to 256 or 512 dimensions with minimal degradation in recall accuracy. This cuts vector index RAM and disk storage by up to 75% and accelerates vector search speeds."
+  },
+  {
+    question: "Can I fine-tune embeddings on proprietary company search logs and clickstreams?",
+    answer: "Yes. Horos includes automated contrastive learning pipelines with MultipleNegativesRankingLoss, hard negative mining, and InfoNCE loss. You can fine-tune base encoders on user query-document pairs, support tickets, or domain-specific taxonomies in just a few hours."
   }
 ];
 

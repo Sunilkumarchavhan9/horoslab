@@ -293,16 +293,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "How do Verifiable Legal Agents guarantee zero hallucinations?",
-    answer: "Horos uses deterministic statutory AST graphs combined with ZK-SNARK mathematical citation proofs to ensure every case citation and statutory quote is 100% verified.",
+    question: "How do Verifiable Legal Agents guarantee zero hallucinations in statutory citations?",
+    answer: "Horos utilizes deterministic statutory Abstract Syntax Tree (AST) graphs combined with zero-knowledge (ZK-SNARK) mathematical citation proofs. Every cited statute, judicial precedent, and regulation is cross-referenced against authoritative legal codices (e.g., US Code, CFR, EUR-Lex); unverified citations are rejected at the logit level."
   },
   {
-    question: "Can the agent audit complex M&A, IP, and regulatory compliance documents?",
-    answer: "Yes. Native support for SEC filings, GDPR/CCPA regulations, M&A merger agreements, and patent disclosures allows instant automated risk identification.",
+    question: "Can the agent audit complex M&A due diligence, IP agreements, and vendor contracts?",
+    answer: "Yes. The engine parses thousands of pages of merger agreements, IP assignment contracts, and NDAs in parallel. It maps clause dependencies, flags non-standard indemnification liabilities, highlights uncapped damages, and identifies conflicting termination covenants in minutes."
   },
   {
-    question: "Can I export fine-tuned legal models to run in my private cloud or air-gapped environment?",
-    answer: "Yes! All fine-tuned legal model weights and runtime containers can be exported as GGUF or TensorRT binaries and deployed completely inside your private VPC with zero third-party data access.",
+    question: "How does Horos handle multi-jurisdictional compliance (GDPR, CCPA, SEC, HIPAA)?",
+    answer: "Horos maintains continuous vector graphs of jurisdictional regulatory frameworks. Contracts and data processing addenda (DPAs) are checked against specific articles (e.g., GDPR Art. 28, SEC Rule 10b-5) with automated clause redlining that aligns terms with current regulatory standards."
+  },
+  {
+    question: "Can I run legal audits on massive multi-gigabyte litigation discovery corpuses?",
+    answer: "Yes. Horos features high-throughput document ingestion capable of parsing scanned PDFs, OCR records, TIFFs, email threads, and spreadsheets. Deduplication, privilege log generation, and responsive document classification occur with verifiable audit trails."
+  },
+  {
+    question: "How is attorney-client privilege and strict data confidentiality protected?",
+    answer: "Horos deploys completely within your private, SOC2/HIPAA-compliant VPC or on-premise air-gapped server. No contract clauses, client names, or financial terms are ever sent to public model APIs, and all temporary embeddings are wiped from memory after processing."
+  },
+  {
+    question: "Can legal teams export fine-tuned models and custom clause taxonomies?",
+    answer: "Yes. All domain-specific fine-tuned legal weights, custom risk-scoring matrices, and organizational clause playbooks can be exported as standalone containers or encrypted checkpoints for internal distribution across global practice groups."
   }
 ];
 

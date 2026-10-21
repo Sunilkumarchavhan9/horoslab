@@ -393,20 +393,28 @@ const getBorderClasses = (index: number, total: number) => {
 
 const FAQ_DATA = [
   {
-    question: "Do I have to use a specific model?",
-    answer: "No. You can use Devstral, Qwen Coder, DeepSeek, or any custom fine-tune. Horos manages the context injection and tool execution regardless of the underlying LLM."
+    question: "Which open-weight coding models and architectures are supported?",
+    answer: "Horos natively supports Qwen 2.5 Coder (7B, 14B, 32B), DeepSeek Coder V2 / V3, Mistral Devstral, Llama 3 Code, CodeLlama, and StarCoder2. Custom checkpoints and instruction-tuned coding LoRA weights can be imported directly from Hugging Face with automatic grammar formatting."
   },
   {
-    question: "Can I run the execution environment locally?",
-    answer: "Yes. You can use docker-compose to run the complete Horos sandbox and verifier on your local workstation."
+    question: "How does Horos safely isolate code execution, unit tests, and terminal tools?",
+    answer: "All code synthesis, shell execution, and test suites run in hardened, ephemeral Docker/gVisor microVM sandboxes with restricted network access, isolated memory limits, and file system snapshots. Malicious scripts or destructive commands are blocked deterministically by our AST security filter."
   },
   {
-    question: "How does it handle tests and builds?",
-    answer: "Horos isolates execution. It mounts your codebase into a sandbox, applies the proposed patch, and runs your native test commands (e.g. npm run test). The outputs are fed back into the agent loop."
+    question: "How does the agent parse and index large, multi-repository codebases?",
+    answer: "Horos generates comprehensive Tree-sitter Abstract Syntax Tree (AST) graphs, symbol cross-references, and dense semantic embeddings of your entire repository. The agent navigates definitions, call hierarchies, and import dependencies across thousands of files without exceeding context limits."
   },
   {
-    question: "Is my code sent to third-party servers?",
-    answer: "If you self-host the LLM and the Horos execution engine, your code never leaves your VPC. You have complete data sovereignty."
+    question: "How does iterative self-debugging and automated error recovery work?",
+    answer: "When a generated patch fails a unit test, linter check, or build script, the compiler stderr and stack trace are captured and injected back into the agent's feedback loop. The agent reasons through the failure trace, inspects the failing AST node, and synthesizes a corrective patch until all tests pass green."
+  },
+  {
+    question: "Can Horos integrate into Git workflows, CI/CD pipelines, and pull requests?",
+    answer: "Yes. Horos connects natively with GitHub, GitLab, and local Git repositories. It can automatically check out branches, commit atomic diffs, run local test suites, generate human-readable pull request descriptions, and respond to code review comments."
+  },
+  {
+    question: "Is our proprietary source code ever sent to external cloud providers?",
+    answer: "Never. When running Horos in self-hosted or air-gapped environments, your code, AST symbol graphs, test logs, and model inferences stay 100% on your local workstation, VPC, or private on-premise compute cluster."
   }
 ];
 

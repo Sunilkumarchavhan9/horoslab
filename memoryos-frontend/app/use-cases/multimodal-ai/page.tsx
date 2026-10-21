@@ -696,15 +696,27 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "Can I run vision, audio, and reasoning models on the same GPU?",
-    answer: "Yes. Horos co-locates multimodal vision-language models (like Qwen3-VL or InternVL3.5) alongside audio encoder and OCR parsing kernels on a single NVIDIA L40S or H100, eliminating inter-node network data transfer.",
+    answer: "Yes. Horos co-locates multimodal vision-language models (such as Qwen 2.5-VL, InternVL 2.5, or Pixtral) alongside audio encoders and OCR parsing kernels on a single NVIDIA L40S or H100 GPU, eliminating inter-node network data serialization and reducing TTFT."
   },
   {
-    question: "How do you optimize 4K high-res images and long video streams?",
-    answer: "We use dynamic visual token packing and sequence chunking. Video frames and high-resolution image tiles are packed natively without zero-padding overhead, cutting token memory by up to 60% and enabling sub-180ms TTFT.",
+    question: "Which multimodal foundation models are supported out of the box?",
+    answer: "Horos natively supports Qwen 2.5-VL (7B, 72B), InternVL 2.5, Mistral Pixtral 12B, Llama 3.2 Vision (11B, 90B), Google PaliGemma 2, DeepSeek-VL2, and Whisper-v3-Turbo for audio. Custom vision-encoder and projection-adapter architectures can be loaded directly from Hugging Face."
   },
   {
-    question: "Can I deploy the multimodal pipeline on our private VPC?",
-    answer: "Yes. The complete Horos multimodal recipe exports to standard Docker containers, vLLM engine configurations, and Kubernetes manifests with full data privacy and zero external API dependencies.",
+    question: "How do you optimize high-resolution 4K images and long video streams?",
+    answer: "We use dynamic visual token packing, native 2D RoPE, and adaptive resolution scaling. Images and video frames are sliced into native aspect-ratio tiles without distortion or zero-padding waste, cutting visual token counts by up to 60% and enabling sub-200ms forward-pass latencies."
+  },
+  {
+    question: "Does Horos support 2D/3D spatial grounding and object coordinate prediction?",
+    answer: "Yes. Horos models output normalized bounding boxes [ymin, xmin, ymax, xmax], point coordinates, and polygonal segmentation masks. The runtime translates model token coordinates directly into pixel coordinates and spatial vector layers for downstream computer vision pipelines."
+  },
+  {
+    question: "How does multimodal OCR and structured document extraction work?",
+    answer: "Horos natively extracts hierarchical tables, dense formulas (LaTeX), and spatial form fields from complex scanned documents, architectural blueprints, and financial reports, returning strictly validated JSON schemas without requiring external OCR engines like Tesseract."
+  },
+  {
+    question: "Can the multimodal pipeline be deployed on private VPCs or edge clusters?",
+    answer: "Yes. The entire multimodal stack compiles into self-contained Docker containers and vLLM/TensorRT-LLM runtimes. It can be deployed on private AWS/GCP/Azure VPCs or edge appliances with complete air-gap compliance and zero outbound data transmission."
   }
 ];
 
