@@ -26,16 +26,16 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     num: "0 1",
     label: "System",
     horos: {
-      title: "Unified robotics intelligence stack",
-      desc: "Connect multi-modal sensor tokens, VLA foundation models, kinematic safety verifiers, and on-robot control policies in one verifiable loop."
+      title: "Unified physical intelligence",
+      desc: "End-to-end VLA models, safety verifiers, and on-robot control policies in one loop."
     },
     closed: {
-      title: "Disconnected visual chat APIs",
-      desc: "Call remote black-box vision APIs lacking action chunking, continuous joint outputs, or deterministic robot control loops."
+      title: "Disconnected visual APIs",
+      desc: "Remote black-box APIs with no action heads or deterministic control loops."
     },
     diy: {
       title: "Fragmented ROS2 scripts",
-      desc: "Handcrafted ROS2 glue nodes bridging separate perception packages, uncalibrated kinematic solvers, and custom PyTorch scripts."
+      desc: "Handcrafted glue nodes bridging separate perception packages and custom scripts."
     }
   },
   {
@@ -43,79 +43,79 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Models",
     horos: {
       title: "Open-weight robotics policies",
-      desc: "Train, fine-tune, and deploy OpenVLA 7B, Physical Intelligence π0, Octo Base, SmolVLA, and LeRobot architectures with full policy ownership."
+      desc: "Deploy OpenVLA, π0, Octo, and LeRobot architectures with full policy ownership."
     },
     closed: {
-      title: "Vendor-locked hosted endpoints",
-      desc: "Generic hosted models with zero weight access, high per-call API pricing, rigid filters, and no local edge compilation."
+      title: "Vendor-locked endpoints",
+      desc: "Hosted models with zero weight access, high API costs, and no edge compilation."
     },
     diy: {
       title: "Manual checkpoint juggling",
-      desc: "Manually porting research checkpoints across incompatible Hugging Face transformers, JAX, and custom research repos."
+      desc: "Manually porting checkpoints across conflicting PyTorch and JAX repositories."
     }
   },
   {
     num: "0 3",
     label: "Context",
     horos: {
-      title: "Multi-modal 4D spatial representation",
-      desc: "Synchronous fusion of multi-camera RGB feeds, metric depth, proprioception, and tactile sensor tokens into unified spatial state tokens."
+      title: "4D multi-modal spatial state",
+      desc: "Synchronous fusion of multi-camera RGB, depth, and tactile sensor tokens."
     },
     closed: {
       title: "Stateless 2D prompt payloads",
-      desc: "Submit individual flat image frames or text prompts with no persistent metric depth, coordinate frames, or tactile history."
+      desc: "Flat image frames lacking metric depth, coordinate frames, or tactile history."
     },
     diy: {
       title: "Asynchronous topic queues",
-      desc: "Struggling with temporal drift, buffer underruns, and message drops between camera topics and IMU/encoder feeds in unmanaged ROS queues."
+      desc: "Temporal drift and message drops across unmanaged ROS sensor queues."
     }
   },
   {
     num: "0 4",
     label: "Capabilities",
     horos: {
-      title: "Visuomotor action chunking & diffusion",
-      desc: "Generate smooth, temporally consistent 16–64 step action chunks via diffusion policy kernels with zero actuator resonance or jitter."
+      title: "Diffusion action chunking",
+      desc: "Smooth 16–64 step action chunks with zero motor jitter or resonance."
     },
     closed: {
       title: "Point-by-point token stutter",
-      desc: "Autoregressive token-by-token generation emits jerky discrete waypoints that induce severe vibration and motor stalling."
+      desc: "Autoregressive generation emitting jerky discrete targets that stall actuators."
     },
     diy: {
       title: "Hand-tuned spline filters",
-      desc: "Post-hoc cubic spline smoothing that dampens policy responsiveness and introduces critical obstacle reaction lag."
+      desc: "Heuristic spline filters that dampen response and introduce reaction lag."
     }
   },
   {
     num: "0 5",
     label: "Workload",
     horos: {
-      title: "Sub-10ms deterministic edge inference",
-      desc: "Execute compiled TensorRT-LLM VLA models directly on Jetson Thor/Orin at 50Hz–100Hz with zero cloud network jitter."
+      title: "Sub-10ms edge inference",
+      desc: "TensorRT-LLM execution directly on Jetson Thor/Orin at 50Hz–100Hz."
     },
     closed: {
-      title: "High-latency cloud round trips",
-      desc: "Sending high-res camera frames to cloud endpoints adds 400–800ms latency, causing control dropouts and robotic stutter."
+      title: "High-latency cloud APIs",
+      desc: "400–800ms cloud round trips causing control dropouts and robotic stutter."
     },
     diy: {
-      title: "Unoptimized Python/PyTorch loops",
-      desc: "Running unquantized PyTorch models on raw edge hardware, struggling with host-to-device memory copies and missing real-time deadlines."
+      title: "Unoptimized PyTorch loops",
+      desc: "Raw Python loops missing real-time deadlines and GPU execution budgets."
     }
   },
   {
     num: "0 6",
     label: "Optimization",
     horos: {
-      title: "End-to-end edge policy compilation",
-      desc: "FP8/INT8 quantization, FlashAttention-3 kernels, and CUDA graph execution optimized for NVIDIA Jetson and edge accelerators."
+      title: "Full edge policy compilation",
+      desc: "FP8/INT8 quantization, FlashAttention-3, and CUDA graphs for edge chips."
     },
     closed: {
-      title: "Opaque vendor inference dials",
-      desc: "Zero access to runtime precision, batching, or GPU execution kernels; entirely subject to cloud provider rate limits."
+      title: "Opaque inference dials",
+      desc: "Zero access to precision or kernels; locked to vendor rate limits."
     },
     diy: {
-      title: "Manual CUDA profiling & patching",
-      desc: "Endless trial-and-error profiling memory leaks, writing custom C++ inference bindings, and debugging CUDA kernel crashes."
+      title: "Manual CUDA profiling",
+      desc: "Tedious trial-and-error debugging memory leaks and kernel crashes."
     }
   },
   {
@@ -123,63 +123,63 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Verification",
     horos: {
       title: "Formal kinematics verification",
-      desc: "Mathematical safety envelopes continuously verify predicted joint angles, velocity limits, and torques before dispatch to avoid collisions."
+      desc: "Mathematical bounds checking verifying joint limits and torques before dispatch."
     },
     closed: {
-      title: "Unchecked motor hallucinations",
-      desc: "Generative models produce physically impossible target trajectories, risking severe mechanical damage to robot actuators."
+      title: "Unchecked hallucinations",
+      desc: "Impossible motion targets risking severe mechanical damage to hardware."
     },
     diy: {
-      title: "Fragile manual heuristics",
-      desc: "Hardcoded C++ clamp scripts that fail to model non-linear dynamics, changing payloads, or multi-limb coordination."
+      title: "Fragile manual clamps",
+      desc: "Hardcoded C++ rules that fail under non-linear loads or payload changes."
     }
   },
   {
     num: "0 8",
     label: "Experience",
     horos: {
-      title: "Cryptographic policy lineage & audit",
-      desc: "Complete verifiable audit trails linking every action chunk to camera inputs, model weights, safety checks, and telemetry logs."
+      title: "Cryptographic policy lineage",
+      desc: "Audit trails linking each action chunk to camera inputs, weights, and logs."
     },
     closed: {
-      title: "Transient vendor request logs",
-      desc: "Ephemeral cloud API logs without action seeds, sensor records, or reproducible execution lineage, compromising safety auditability."
+      title: "Transient vendor logs",
+      desc: "Ephemeral request logs without action seeds or reproducible history."
     },
     diy: {
-      title: "Unindexed MCAP/rosbag storage",
-      desc: "Terabytes of unindexed ROS bag files scattered across local hard drives with no unified query engine or provenance tracking."
+      title: "Unindexed MCAP/rosbags",
+      desc: "Terabytes of loose bag files scattered across drives with no query index."
     }
   },
   {
     num: "0 9",
     label: "Teaching",
     horos: {
-      title: "Cross-embodiment & DPO fine-tuning",
-      desc: "Adapt foundation policies across single-arm, bimanual, and mobile morphologies via universal adapters and direct preference optimization."
+      title: "Cross-embodiment & DPO",
+      desc: "Adapt policies across arm, bimanual, and mobile morphologies via DPO."
     },
     closed: {
-      title: "Prompt-only superficial tuning",
-      desc: "Prompt adjustments with no weight adaptation, zero cross-embodiment transfer, and no custom joint topology support."
+      title: "Prompt-only adjustments",
+      desc: "Superficial prompt tweaks with no weight adaptation or topology support."
     },
     diy: {
       title: "Siloed per-robot training",
-      desc: "Training bespoke models from scratch for each mechanical configuration with zero knowledge sharing across robot morphologies."
+      desc: "Training bespoke models from scratch with zero cross-morphology transfer."
     }
   },
   {
     num: "1 0",
     label: "Authority",
     horos: {
-      title: "100% air-gapped on-robot sovereignty",
-      desc: "Run entirely locally on disconnected robot hardware. Zero camera feeds, facility layouts, or proprietary trajectories leave your premise."
+      title: "Air-gapped on-robot privacy",
+      desc: "Runs 100% locally. Zero camera feeds or facility maps leave the premises."
     },
     closed: {
       title: "Mandatory cloud streaming",
-      desc: "Sensitive factory floor video feeds, facility maps, and proprietary workflows are constantly streamed to third-party public clouds."
+      desc: "Facility maps and sensitive camera feeds uploaded to public cloud servers."
     },
     diy: {
       title: "Manual SSH deployments",
-      desc: "Engineers manually SSH into robots to push updates, struggling with environment drift, broken packages, and insecure networks."
+      desc: "Engineers manually SSH into robots, fighting version drift and open ports."
     }
   }
 ];
@@ -1098,26 +1098,26 @@ export default function EmbodiedHumanoidsPage() {
                 <div className="border-l border-r border-b border-dashed border-[#333]">
                   {COMPARISON_ROWS.map((row, idx) => (
                     <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                      <div className="flex items-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333] min-h-[58px]">
+                      <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[54px]">
                         <div className="flex items-center gap-3">
                           <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                          <span className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2]">{row.label}</span>
+                          <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
                         </div>
                       </div>
                       
-                      <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#75bf00] mb-1 leading-snug">{row.horos.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.horos.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                       </div>
 
-                      <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.closed.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.closed.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.closed.desc}</p>
                       </div>
 
-                      <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5">
-                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2] mb-1 leading-snug">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.diy.desc}</p>
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.diy.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.diy.desc}</p>
                       </div>
                     </div>
                   ))}
