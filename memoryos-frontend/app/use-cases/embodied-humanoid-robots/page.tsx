@@ -26,16 +26,16 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     num: "0 1",
     label: "System",
     horos: {
-      title: "Unified physical intelligence",
-      desc: "End-to-end VLA models, safety verifiers, and on-robot control policies in one loop."
+      title: "Unified physical AI loop",
+      desc: "VLA policy, kinematics verifier & ROS2 control in one loop."
     },
     closed: {
       title: "Disconnected visual APIs",
-      desc: "Remote black-box APIs with no action heads or deterministic control loops."
+      desc: "Remote black-box APIs with no real-time action heads."
     },
     diy: {
       title: "Fragmented ROS2 scripts",
-      desc: "Handcrafted glue nodes bridging separate perception packages and custom scripts."
+      desc: "Custom glue nodes bridging perception and motor drivers."
     }
   },
   {
@@ -43,15 +43,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Models",
     horos: {
       title: "Open-weight robotics policies",
-      desc: "Deploy OpenVLA, π0, Octo, and LeRobot architectures with full policy ownership."
+      desc: "OpenVLA 7B, π0, Octo & LeRobot with weight ownership."
     },
     closed: {
       title: "Vendor-locked endpoints",
-      desc: "Hosted models with zero weight access, high API costs, and no edge compilation."
+      desc: "Hosted models with zero weight access or edge export."
     },
     diy: {
       title: "Manual checkpoint juggling",
-      desc: "Manually porting checkpoints across conflicting PyTorch and JAX repositories."
+      desc: "Unversioned weights across conflicting PyTorch repos."
     }
   },
   {
@@ -59,15 +59,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Context",
     horos: {
       title: "4D multi-modal spatial state",
-      desc: "Synchronous fusion of multi-camera RGB, depth, and tactile sensor tokens."
+      desc: "Synchronous fusion of multi-camera RGB-D and tactile tokens."
     },
     closed: {
-      title: "Stateless 2D prompt payloads",
-      desc: "Flat image frames lacking metric depth, coordinate frames, or tactile history."
+      title: "Stateless 2D prompt frames",
+      desc: "Flat image inputs without metric depth or joint state."
     },
     diy: {
       title: "Asynchronous topic queues",
-      desc: "Temporal drift and message drops across unmanaged ROS sensor queues."
+      desc: "Temporal drift and message drops across unmanaged queues."
     }
   },
   {
@@ -75,15 +75,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Capabilities",
     horos: {
       title: "Diffusion action chunking",
-      desc: "Smooth 16–64 step action chunks with zero motor jitter or resonance."
+      desc: "Smooth 50Hz action chunks with zero motor jitter."
     },
     closed: {
-      title: "Point-by-point token stutter",
-      desc: "Autoregressive generation emitting jerky discrete targets that stall actuators."
+      title: "Discrete token stutter",
+      desc: "Autoregressive outputs causing jerky actuator stops."
     },
     diy: {
-      title: "Hand-tuned spline filters",
-      desc: "Heuristic spline filters that dampen response and introduce reaction lag."
+      title: "Heuristic spline filters",
+      desc: "Hand-tuned filters adding reaction lag and phase delay."
     }
   },
   {
@@ -91,15 +91,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Workload",
     horos: {
       title: "Sub-10ms edge inference",
-      desc: "TensorRT-LLM execution directly on Jetson Thor/Orin at 50Hz–100Hz."
+      desc: "TensorRT execution on Jetson Thor at 50Hz–100Hz."
     },
     closed: {
       title: "High-latency cloud APIs",
-      desc: "400–800ms cloud round trips causing control dropouts and robotic stutter."
+      desc: "400–800ms cloud latency violating real-time deadlines."
     },
     diy: {
       title: "Unoptimized PyTorch loops",
-      desc: "Raw Python loops missing real-time deadlines and GPU execution budgets."
+      desc: "Raw Python loops missing real-time hardware budgets."
     }
   },
   {
@@ -107,31 +107,31 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Optimization",
     horos: {
       title: "Full edge policy compilation",
-      desc: "FP8/INT8 quantization, FlashAttention-3, and CUDA graphs for edge chips."
+      desc: "FP8 quantization, FlashAttention-3 & CUDA graphs."
     },
     closed: {
       title: "Opaque inference dials",
-      desc: "Zero access to precision or kernels; locked to vendor rate limits."
+      desc: "Zero kernel access; bound to vendor API rate limits."
     },
     diy: {
       title: "Manual CUDA profiling",
-      desc: "Tedious trial-and-error debugging memory leaks and kernel crashes."
+      desc: "Trial-and-error debugging memory leaks and kernel crashes."
     }
   },
   {
     num: "0 7",
     label: "Verification",
     horos: {
-      title: "Formal kinematics verification",
-      desc: "Mathematical bounds checking verifying joint limits and torques before dispatch."
+      title: "Formal kinematics bounds",
+      desc: "Mathematical proof of joint limits before motor dispatch."
     },
     closed: {
       title: "Unchecked hallucinations",
-      desc: "Impossible motion targets risking severe mechanical damage to hardware."
+      desc: "Impossible motion targets risking physical robot damage."
     },
     diy: {
-      title: "Fragile manual clamps",
-      desc: "Hardcoded C++ rules that fail under non-linear loads or payload changes."
+      title: "Hardcoded clamp rules",
+      desc: "Static C++ clamps failing under non-linear payload shifts."
     }
   },
   {
@@ -139,15 +139,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Experience",
     horos: {
       title: "Cryptographic policy lineage",
-      desc: "Audit trails linking each action chunk to camera inputs, weights, and logs."
+      desc: "Audit trails linking each action chunk to camera inputs."
     },
     closed: {
       title: "Transient vendor logs",
-      desc: "Ephemeral request logs without action seeds or reproducible history."
+      desc: "Ephemeral request IDs without action seeds or weights."
     },
     diy: {
       title: "Unindexed MCAP/rosbags",
-      desc: "Terabytes of loose bag files scattered across drives with no query index."
+      desc: "Loose bag files across drives with zero query index."
     }
   },
   {
@@ -155,15 +155,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Teaching",
     horos: {
       title: "Cross-embodiment & DPO",
-      desc: "Adapt policies across arm, bimanual, and mobile morphologies via DPO."
+      desc: "Rapid adaptation across arm and humanoid topologies."
     },
     closed: {
       title: "Prompt-only adjustments",
-      desc: "Superficial prompt tweaks with no weight adaptation or topology support."
+      desc: "Shallow prompt tweaks with no policy weight updating."
     },
     diy: {
       title: "Siloed per-robot training",
-      desc: "Training bespoke models from scratch with zero cross-morphology transfer."
+      desc: "Training from scratch with zero cross-morphology transfer."
     }
   },
   {
@@ -171,15 +171,15 @@ const COMPARISON_ROWS: ComparisonRow[] = [
     label: "Authority",
     horos: {
       title: "Air-gapped on-robot privacy",
-      desc: "Runs 100% locally. Zero camera feeds or facility maps leave the premises."
+      desc: "100% on-device execution; zero camera feeds leave."
     },
     closed: {
       title: "Mandatory cloud streaming",
-      desc: "Facility maps and sensitive camera feeds uploaded to public cloud servers."
+      desc: "Sensitive facility maps and video streamed to public cloud."
     },
     diy: {
-      title: "Manual SSH deployments",
-      desc: "Engineers manually SSH into robots, fighting version drift and open ports."
+      title: "Unverified edge scripts",
+      desc: "Ad-hoc firewall rules and unmonitored socket listeners."
     }
   }
 ];
@@ -666,14 +666,14 @@ export default function EmbodiedHumanoidsPage() {
     "requirements.txt": REQUIREMENTS_CODE
   };
 
-  const AGENT_MSG_1 = "On it. Initializing edge policy cluster. Loading Vision-Language-Action models (OpenVLA 7B & π0) and connecting to joint actuator telemetry over local ROS2 network.";
-  const AGENT_MSG_2 = "Policy active. 4D spatial awareness verified. Kinematics safety guards engaged. Operating at 1000Hz control loop. Actuator safety proof #0x8f2c... valid.";
+  const AGENT_MSG_1 = "Initializing edge node. Loading OpenVLA 7B & π0 policy loop over local ROS2.";
+  const AGENT_MSG_2 = "Policy active at 1000Hz. Kinematics verified. Safety proof #0x8f2c valid.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
   const [visibleStep, setVisibleStep] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  
+
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
@@ -769,7 +769,7 @@ export default function EmbodiedHumanoidsPage() {
 
             let tag = "Robotics Policy Model";
             let description = m.downloads ? `${dl} - Verifiable robotics policy` : "Verifiable robotics policy";
-            
+
             let author = m.author || m.id.split('/')[0];
             let name = m.id.split('/').pop();
 
@@ -806,29 +806,29 @@ export default function EmbodiedHumanoidsPage() {
         .chat-scroll:hover::-webkit-scrollbar-thumb { background-color: #666666; }
       ` }} />
 
-            {/* GLOBAL VERTICAL DASHED LINES */}
-        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
-            {/* Left margin (14%) with 7% line bisecting it */}
-            <div className="relative border-r border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
-              </div>
-            {/* Center content (72%) */}
-            <div />
-            {/* Right margin (14%) with 93% line bisecting it */}
-            <div className="relative border-l border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
-              </div>
+      {/* GLOBAL VERTICAL DASHED LINES */}
+      {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          {/* Left margin (14%) with 7% line bisecting it */}
+          <div className="relative border-r border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+          </div>
+          {/* Center content (72%) */}
+          <div />
+          {/* Right margin (14%) with 93% line bisecting it */}
+          <div className="relative border-l border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
           </div>
         </div>
+      </div>
 
-        <div className="relative z-[100]">
+      <div className="relative z-[100]">
         <LandingNavbar />
       </div>
 
       <main className="flex-1 flex flex-col relative z-10">
-        
+
         {/* SVG Filter for recoloring the background image to brand green colors */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <filter id="brand-duotone-physical-bg">
@@ -856,10 +856,10 @@ export default function EmbodiedHumanoidsPage() {
             <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#151515] via-[#151515]/90 to-transparent z-10" />
             {/* Left and Right Side Mist Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#151515] via-transparent to-[#151515] z-10" />
-            
-            <div 
+
+            <div
               className="w-full h-full opacity-30"
-              style={{ 
+              style={{
                 maskImage: 'radial-gradient(ellipse 70% 55% at 50% 50%, black 25%, transparent 95%)',
                 WebkitMaskImage: 'radial-gradient(ellipse 70% 55% at 50% 50%, black 25%, transparent 95%)'
               }}
@@ -916,7 +916,7 @@ export default function EmbodiedHumanoidsPage() {
 
                 {/* Right: Graphic Grid */}
                 <div className="flex justify-center relative w-full pt-10">
-                  <RagSearchGrid 
+                  <RagSearchGrid
                     label1="VLA Models"
                     label2="Kinematics Verifier"
                     label3="Spatial Telemetry"
@@ -947,7 +947,7 @@ export default function EmbodiedHumanoidsPage() {
           </div>
 
           <div className="w-full relative z-10">
-            
+
             <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
             <div className="absolute inset-0 pointer-events-none z-20">
@@ -1033,8 +1033,8 @@ export default function EmbodiedHumanoidsPage() {
           </div>
 
           <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-            
-            
+
+
 
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
@@ -1104,7 +1104,7 @@ export default function EmbodiedHumanoidsPage() {
                           <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
                         <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
                         <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
@@ -1174,30 +1174,31 @@ export default function EmbodiedHumanoidsPage() {
                     gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
                   }}>
 
+
                     {/* Tabs */}
-                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                      <div className="flex gap-8 h-full items-end pb-2">
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-4 sm:px-6 pointer-events-auto">
+                      <div className="flex gap-4 sm:gap-7 h-full items-end pb-2">
                         <button
                           onClick={() => setActiveMainTab("pipeline")}
-                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                         </button>
                         <button
                           onClick={() => setActiveMainTab("code")}
-                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <Code2 size={13} /> CODE
                         </button>
                         <button
                           onClick={() => setActiveMainTab("optimization")}
-                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <Sliders size={13} /> OPTIMIZATION
                         </button>
                         <button
                           onClick={() => setActiveMainTab("deploy")}
-                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-[11.5px] font-bold uppercase tracking-wider transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
                           <Rocket size={13} /> DEPLOY
                         </button>
@@ -1209,308 +1210,319 @@ export default function EmbodiedHumanoidsPage() {
                     </div>
 
                     {/* Chat Content */}
-                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                      <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                        <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 sm:p-5 rounded-[4px]">
-                          <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-[26px]">
-                            Deploy VLA models to embodied hardware. Spatial perception and actuator control loop with{" "}
-                            <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[11.5px] sm:text-[12.5px] align-baseline whitespace-nowrap">
-                              <OpenVLALogo size={13} /> OpenVLA 7B
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                      <div className="flex flex-col gap-3 sm:gap-3.5 overflow-y-auto chat-scroll pr-1 pb-2">
+                        <div className="bg-[#1a1a1a] border border-[#252525] p-3 sm:p-3.5 rounded-[4px]">
+                          <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-sans leading-[21px] sm:leading-[22px]">
+                            Deploy embodied VLA models with{" "}
+                            <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[10.5px] sm:text-[11px] align-baseline whitespace-nowrap">
+                              <OpenVLALogo size={11} /> OpenVLA 7B
                             </span>{" "}
-                            policy plus{" "}
-                            <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[11.5px] sm:text-[12.5px] align-baseline whitespace-nowrap">
-                              <PhysicalIntelligenceLogo size={13} /> Physical Intelligence π0
+                            &{" "}
+                            <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[10.5px] sm:text-[11px] align-baseline whitespace-nowrap">
+                              <PhysicalIntelligenceLogo size={11} /> π0 Policy
                             </span>{" "}
-                            kinematics verification on{" "}
-                            <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[11.5px] sm:text-[12.5px] align-baseline whitespace-nowrap">
-                              <NvidiaLogo size={13} /> Jetson Thor Edge Node
+                            on{" "}
+                            <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[10.5px] sm:text-[11px] align-baseline whitespace-nowrap">
+                              <NvidiaLogo size={11} /> Jetson Thor
                             </span>.
                           </p>
                         </div>
 
-                    {/* Step 1 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
+                        {/* Step 1 */}
+                        <div className={`flex gap-2.5 mt-0.5 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                            {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={12} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[20px]">
+                              {typedMsg1}
+                              {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
+                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Logs list */}
+                        <div className="flex flex-col gap-2 mt-0.5">
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                              {visibleStep === 2 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-1">
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Booting VLA on edge node</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">0.4s</span>
+                              </div>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Initialized 1000Hz motor loop <span className="text-[#C8C7BA]">[OpenVLA 7B]</span></span>
+                            </div>
+                          </div>
+
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                              {visibleStep === 3 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-1">
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Verifying kinematics bounds</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">1.2s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[10px] sm:text-[10.5px] leading-tight truncate">Joint torques within 120Nm limits <span className="text-[#C8C7BA]">[Thor]</span></span>
+                            </div>
+                          </div>
+
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                              {visibleStep === 4 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-1">
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Zero-collision safety proof</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">2.8s</span>
+                              </div>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Generated safety hash #0x8f2c <span className="text-[#C8C7BA]">[π0 Guard]</span></span>
+                            </div>
+                          </div>
+
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                              {visibleStep === 5 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-1">
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Tactile latency sync</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">4.1s</span>
+                              </div>
+                              <span className="text-[#777] text-[10px] sm:text-[10.5px] leading-tight truncate">Compensated 0.002s actuator delay</span>
+                            </div>
+                          </div>
+
+                          <div className={`flex items-start gap-2.5 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                              {visibleStep === 6 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-1">
+                                <span className="text-[#C8C7BA] text-[11px] sm:text-[12px] font-medium truncate">Executing actuator commands</span>
+                                <span className="text-[#C8C7BA] text-[10px] sm:text-[10.5px] shrink-0">6.5s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[10px] sm:text-[10.5px] leading-tight truncate">Control loop active. Emitting to ROS2</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 7 */}
+                        <div className={`flex gap-2.5 mt-0.5 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0 mt-0.5">
+                            {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={12} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <span className="text-[9px] sm:text-[9.5px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[11.5px] sm:text-[12.5px] leading-[19px] sm:leading-[20px]">
+                              {typedMsg2}
+                              {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
+                                <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
-                          {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
+
+                      {/* Prompt input bar */}
+                      <div className="mt-1.5 shrink-0">
+                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-1.5">
+                          <input
+                            type="text"
+                            placeholder="Teach agent to decode sensor streams..."
+                            className="bg-transparent text-[#F0EFE2] text-[11.5px] sm:text-[12.5px] border-none outline-none w-full px-1 py-0.5"
+                            readOnly
+                          />
+                          <div className="flex justify-between items-center px-0.5">
+                            <div className="flex gap-1.5">
+                              <span className="bg-[#222] border border-[#333] text-[9px] sm:text-[9.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@Capabilities</span>
+                              <span className="bg-[#222] border border-[#333] text-[9px] sm:text-[9.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm">@SensorStreams</span>
+                            </div>
+                            <button className="w-5 h-5 sm:w-6 sm:h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
+                              <ArrowUp size={13} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Booting VLA model on edge node</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.4s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">Initialized 1000Hz motor control loop [OpenVLA 7B]</span>
-                        </div>
+                    {/* Files Content */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 px-2 py-3 sm:px-2.5 sm:py-3.5 flex flex-col items-start gap-2.5 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-0.5 w-full">
+                        <span className="text-[9.5px] sm:text-[10px] font-bold tracking-wider text-[#C8C7BA] uppercase">PHYSICAL SOLVERS</span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] sm:text-[9.5px] font-bold px-1.5 py-0.2 rounded-sm shrink-0">11</span>
                       </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Verifying hardware kinematics guards</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">Predicted joint angles are within strict 120Nm torque limits [NVIDIA Thor]</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Computing zero-collision safety proof</span>
-                            <span className="text-[#C8C7BA] text-[12px]">2.8s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">Generated safety validity hash #0x8f2c44b9a1 [π0 Policy Guard]</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Flagging tactile sensor latency</span>
-                            <span className="text-[#C8C7BA] text-[12px]">4.1s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">Detected 0.002s latency spike on left actuator (automatically compensated)</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Executing verified actuator commands</span>
-                            <span className="text-[#C8C7BA] text-[12px]">6.5s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">Control loop active. Emitting commands to ROS2 [Model: OpenVLA & π0]</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Step 7 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
-                      <input
-                        type="text"
-                        placeholder="Teach the agent to decode multi-camera sensor streams against spatial verifiers..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
-                        readOnly
-                      />
-                      <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@SensorStreams</span>
-                        </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">PHYSICAL SOLVERS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">11</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <button
-                      onClick={() => selectFileManually("README.md")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
-                    >
-                      README.md
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("robot_ast.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "robot_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                    >
-                      robot_ast.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("kinematics_verifier.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "kinematics_verifier.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                    >
-                      kinematics_verifier.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("safety_auditor.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "safety_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                    >
-                      safety_auditor.py
-                    </button>
-
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> physical-agent-factory/
-                      </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                      <div className="flex flex-col gap-0.5 text-[11px] sm:text-[11.5px] font-mono w-full">
                         <button
-                          onClick={() => selectFileManually("run_embodied_agent.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_embodied_agent.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("README.md")}
+                          title="README.md"
+                          className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
                         >
-                          run_embodied_agent.py
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("eval_policy.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_policy.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          eval_policy.py
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("run_robot_pipeline.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_robot_pipeline.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          run_robot_pipeline.sh
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("robot_pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "robot_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          robot_pipeline.json
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          Dockerfile
+                          <span className="truncate">README.md</span>
                         </button>
                         <button
-                          onClick={() => selectFileManually("docker-compose.yml")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("robot_ast.py")}
+                          title="robot_ast.py"
+                          className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "robot_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          docker-compose.yml
+                          <span className="truncate">robot_ast.py</span>
                         </button>
                         <button
-                          onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => selectFileManually("kinematics_verifier.py")}
+                          title="kinematics_verifier.py"
+                          className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "kinematics_verifier.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
-                          requirements.txt
+                          <span className="truncate">kinematics_verifier.py</span>
                         </button>
+                        <button
+                          onClick={() => selectFileManually("safety_auditor.py")}
+                          title="safety_auditor.py"
+                          className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "safety_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate">safety_auditor.py</span>
+                        </button>
+
+                        <div className="mt-1 flex flex-col gap-0.5 w-full">
+                          <div className="flex items-center gap-1 px-1 py-0.5 text-[#aaa] font-semibold text-[10px] sm:text-[10.5px] min-w-0 truncate" title="physical-agent-factory/">
+                            <ChevronDown size={12} className="text-[#777] shrink-0" /> <span className="truncate">physical-agent-factory/</span>
+                          </div>
+                          <div className="pl-2 flex flex-col gap-0.5 border-l border-[#252525] ml-1 mt-0.5 w-[calc(100%-4px)]">
+                            <button
+                              onClick={() => selectFileManually("run_embodied_agent.py")}
+                              title="run_embodied_agent.py"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "run_embodied_agent.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">run_embodied_agent.py</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("eval_policy.py")}
+                              title="eval_policy.py"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "eval_policy.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">eval_policy.py</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("run_robot_pipeline.sh")}
+                              title="run_robot_pipeline.sh"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "run_robot_pipeline.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">run_robot_pipeline.sh</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("robot_pipeline.json")}
+                              title="robot_pipeline.json"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "robot_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">robot_pipeline.json</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("Dockerfile")}
+                              title="Dockerfile"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">Dockerfile</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("docker-compose.yml")}
+                              title="docker-compose.yml"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">docker-compose.yml</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("requirements.txt")}
+                              title="requirements.txt"
+                              className={`flex items-center gap-1 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate">requirements.txt</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                    {["README.md", "run_embodied_agent.py", "eval_policy.py", "run_robot_pipeline.sh", "robot_pipeline.json", "robot_ast.py", "kinematics_verifier.py", "safety_auditor.py", "Dockerfile", "docker-compose.yml", "requirements.txt"].map(fileName => (
-                      <button
-                        key={fileName}
-                        onClick={() => selectFileManually(fileName)}
-                        className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === fileName ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                      >
-                        {fileName}
-                      </button>
-                    ))}
-                  </div>
+                    {/* Code Content */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-4 sm:p-5 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
+                      <div className="flex border-b border-[#252525] mb-4 pb-2.5 pt-0.5 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                        {["README.md", "run_embodied_agent.py", "eval_policy.py", "run_robot_pipeline.sh", "robot_pipeline.json", "robot_ast.py", "kinematics_verifier.py", "safety_auditor.py", "Dockerfile", "docker-compose.yml", "requirements.txt"].map(fileName => (
+                          <button
+                            key={fileName}
+                            onClick={() => selectFileManually(fileName)}
+                            className={`shrink-0 whitespace-nowrap text-[10.5px] sm:text-[11.5px] font-mono font-bold px-2.5 sm:px-3 py-1 border-b-2 transition-colors shrink-0 ${activeFile === fileName ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                          >
+                            {fileName}
+                          </button>
+                        ))}
+                      </div>
 
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
-                      {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
-                      ))}
-                    </div>
+                      <div className="flex font-mono text-[12px] sm:text-[12.5px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                        <div className="text-[#444] text-right pr-4 border-r border-[#252525] select-none flex flex-col min-w-[30px]">
+                          {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
+                            <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
+                          ))}
+                        </div>
 
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
-                      {highlightCode(
-                        typedCodeText,
-                        activeFile.endsWith(".md")
-                          ? "markdown"
-                          : activeFile.endsWith(".py")
-                            ? "python"
-                            : activeFile.endsWith(".sh")
-                              ? "bash"
-                              : activeFile.endsWith(".json")
-                                ? "json"
-                                : activeFile === "Dockerfile"
-                                  ? "dockerfile"
-                                  : activeFile.endsWith(".yml") || activeFile.endsWith(".yaml")
-                                    ? "bash"
-                                    : "typescript",
-                        !isTypingCode
-                      )}
+                        <div className="pl-4 flex-1 text-[#C8C7BA] leading-[22px]">
+                          {highlightCode(
+                            typedCodeText,
+                            activeFile.endsWith(".md")
+                              ? "markdown"
+                              : activeFile.endsWith(".py")
+                                ? "python"
+                                : activeFile.endsWith(".sh")
+                                  ? "bash"
+                                  : activeFile.endsWith(".json")
+                                    ? "json"
+                                    : activeFile === "Dockerfile"
+                                      ? "dockerfile"
+                                      : activeFile.endsWith(".yml") || activeFile.endsWith(".yaml")
+                                        ? "bash"
+                                        : "typescript",
+                            !isTypingCode
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <div />
             </div>
           </div>
-          <div />
-        </div>
-      </div>
 
           {/* Features Grid Row */}
           <div className="w-full relative z-10 mb-16 md:mb-20">
@@ -1616,11 +1628,11 @@ export default function EmbodiedHumanoidsPage() {
                             className={getBorderClasses(index, displayedModels.length)}
                           >
                             <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            
+
                             <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                               {getLogo(model.author, model.name)}
                             </div>
-                            
+
                             <div className="flex flex-col gap-1 min-w-0">
                               <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors line-clamp-1" title={model.name}>
                                 {model.name}
@@ -1629,7 +1641,7 @@ export default function EmbodiedHumanoidsPage() {
                                 {model.author}
                               </span>
                             </div>
-                            
+
                             <div className="flex justify-between items-center mt-auto pt-4 gap-2">
                               <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads || ""}</span>
                               <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">
@@ -1667,7 +1679,7 @@ export default function EmbodiedHumanoidsPage() {
 
                 <div className="flex flex-col w-full border-t border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3 w-full">
-                    
+
                     {/* Card 1 */}
                     <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                       <div className="text-[#75bf00]">
@@ -1820,11 +1832,10 @@ export default function EmbodiedHumanoidsPage() {
                     <button
                       key={idx}
                       onClick={() => setActiveFaq(idx)}
-                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${
-                        activeFaq === idx
+                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${activeFaq === idx
                           ? "bg-[#75bf00] text-black font-medium"
                           : "bg-[#1c1c1c] text-[#d4cfbf] hover:bg-[#252525] hover:text-[#f2efe8] font-normal"
-                      }`}
+                        }`}
                     >
                       {faq.question}
                     </button>
