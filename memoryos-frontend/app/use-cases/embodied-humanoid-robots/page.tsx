@@ -778,12 +778,12 @@ export default function EmbodiedHumanoidsPage() {
                     Low-latency brains for physical robotics. Train, optimize, and deploy Vision-Language-Action (VLA) foundation models, cross-embodiment policies, and spatial world models — zero hardware lock-in.
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4">
-                    <button className="group bg-[#75bf00] text-black font-semibold px-5 py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-2 text-[14px]">
-                      Deploy robotics policy <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4">
+                    <button className="group bg-[#75bf00] text-black font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm hover:bg-[#85cf00] transition-all flex items-center gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
+                      Deploy robotics policy <ChevronRight size={16} className="transition-transform group-hover:translate-x-1 shrink-0" />
                     </button>
-                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-5 py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-2 text-[14px]">
-                      Read the architecture <ChevronRight size={16} />
+                    <button className="bg-[#222] text-[#F0EFE2] font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm hover:bg-[#333] transition-colors flex items-center gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] whitespace-nowrap">
+                      Read architecture <ChevronRight size={16} className="shrink-0" />
                     </button>
                   </div>
                 </div>
