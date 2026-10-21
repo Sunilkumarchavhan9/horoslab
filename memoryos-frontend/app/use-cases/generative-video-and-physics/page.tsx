@@ -13,48 +13,174 @@ import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-inp
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
-const COMPARISON_ROWS = [
+interface ComparisonRow {
+  num: string;
+  label: string;
+  horos: { title: string; desc: string };
+  closed: { title: string; desc: string };
+  diy: { title: string; desc: string };
+}
+
+const COMPARISON_ROWS: ComparisonRow[] = [
   {
     num: "0 1",
-    label: "Launch",
-    runInfra: { title: "Synthesize 4D world models", desc: "Ingest massive raw video datasets and physically render 4D world models from diverse camera modalities." },
-    closed: { title: "Single-prompt video generation", desc: "Generate short, single-prompt clips without temporal consistency or underlying physical dynamics." },
-    diy: { title: "Build custom render clusters", desc: "Spend months configuring fragile Unreal/Blender rendering farms and custom physics plugins." }
+    label: "System",
+    horos: {
+      title: "Unified synthetic reality engine",
+      desc: "Connect multi-modal telemetry, 4D environment synthesis, physics proofs, and counterfactual simulation rollouts in one verifiable loop."
+    },
+    closed: {
+      title: "Black-box generative APIs",
+      desc: "Call disconnected video generation endpoints with hallucinated physics, zero temporal consistency, and no persistent spatial state."
+    },
+    diy: {
+      title: "Fragmented rendering farms",
+      desc: "Handcraft fragile Unreal and Blender render pipelines, glue scripts, and uncalibrated custom physics plugins."
+    }
   },
   {
     num: "0 2",
-    label: "Verification",
-    runInfra: { title: "Verified physical consistency", desc: "Every physical trajectory and object permanence is mathematically verified against known physics priors." },
-    closed: { title: "Hallucinated physical depth", desc: "High risk of phantom objects, hallucinated physics, and impossible trajectories in generated outputs." },
-    diy: { title: "Manual frame-by-frame review", desc: "Teams must manually audit thousands of hours of rendered video to identify physics violations." }
+    label: "Models",
+    horos: {
+      title: "Open-weight generative world models",
+      desc: "Train, fine-tune, and deploy Cosmos Predict, Open-Sora, MovieGen, and HunyuanWorld optimized for physical dynamics and camera control."
+    },
+    closed: {
+      title: "Vendor-locked endpoints",
+      desc: "Generic hosted models with zero weight access, high per-second API costs, rigid prompt filters, and no local GPU execution."
+    },
+    diy: {
+      title: "Manual model management",
+      desc: "Source checkpoints manually, resolve divergent PyTorch/CUDA dependencies, and struggle with custom diffusion architectures."
+    }
   },
   {
     num: "0 3",
-    label: "Multi-Modal Audit",
-    runInfra: { title: "Multi-modal synthetic data", desc: "Synthesize rich training telemetry including depth maps, optical flow, and temporal object permanence." },
-    closed: { title: "RGB-only outputs", desc: "Basic visual summaries that lack spatial depth, occlusion logic, and temporal telemetry." },
-    diy: { title: "Ad-hoc rendering scripts", desc: "Fragile scripts unable to consistently extract aligned multi-modal telemetry across distributed rendering nodes." }
+    label: "Context",
+    horos: {
+      title: "Multi-modal 4D scene representations",
+      desc: "Synthesize aligned RGB video, depth maps, surface normals, optical flow, and 3D voxel occupancy grids with temporal permanence."
+    },
+    closed: {
+      title: "Stateless 2D pixel streams",
+      desc: "Flat 2D video outputs lacking underlying 3D spatial depth, camera coordinate frames, and multi-modal ground truth telemetry."
+    },
+    diy: {
+      title: "Ad-hoc sensor extraction scripts",
+      desc: "Fragile custom render passes struggling to extract synchronized depth and motion vectors across distributed compute nodes."
+    }
   },
   {
     num: "0 4",
-    label: "Model Control",
-    runInfra: { title: "Fine-tuned generative world models", desc: "Deploy domain-adapted Open Sora, Meta MovieGen, and Cosmos-1 models optimized for realistic physics." },
-    closed: { title: "Locked to cloud API defaults", desc: "Generic models lacking fine-tuning for your specific spatial physics requirements or camera angles." },
-    diy: { title: "Prompt-only tuning", desc: "Inability to adapt underlying model weights for fast, high-resolution edge video generation." }
+    label: "Capabilities",
+    horos: {
+      title: "Closed-loop physical simulation",
+      desc: "Simulate physics-grounded collisions, gravity, fluid dynamics, and counterfactual 'what-if' action trajectories for robot learning."
+    },
+    closed: {
+      title: "Hallucinated physics & visual drift",
+      desc: "Phantom object generation, morphing geometry, floating objects, and impossible kinematics that corrupt downstream training data."
+    },
+    diy: {
+      title: "Hand-tuned heuristic physics",
+      desc: "Approximate game-engine physics solvers that fail to capture real-world material deformation, friction, and contact dynamics."
+    }
   },
   {
     num: "0 5",
-    label: "Operations",
-    runInfra: { title: "Autonomous synthetic pipelines", desc: "Automate video generation, physics validation, and spatial telemetry extraction for model training." },
-    closed: { title: "High human operator toil", desc: "Data teams spend hours manually parsing generated videos to filter out physically impossible clips." },
-    diy: { title: "High operational overhead", desc: "Your team owns driver compatibility, render queue scaling, and maintaining the physics engine configurations." }
+    label: "Workload",
+    horos: {
+      title: "Scalable distributed scenario synthesis",
+      desc: "Generate millions of diverse edge-case training scenarios in parallel across multi-GPU clusters with deterministic seeding."
+    },
+    closed: {
+      title: "Cloud rate limits & queuing latency",
+      desc: "Severe generation concurrency caps, minutes-long generation queues, and per-second API costs that prohibit large-scale dataset creation."
+    },
+    diy: {
+      title: "Unstable batch rendering queues",
+      desc: "Frequent render worker crashes, host-to-device memory exhaustion, and slow serialization bottlenecks."
+    }
   },
   {
     num: "0 6",
-    label: "Security",
-    runInfra: { title: "Private synthetic datasets", desc: "Zero data leakage with air-gapped local cluster execution for secure proprietary video synthesis." },
-    closed: { title: "Cloud API IP risks", desc: "Sensitive training data and prompts uploaded continuously to third-party public cloud APIs." },
-    diy: { title: "Self-managed farm security", desc: "Your team owns storage encryption, render node isolation, and compliance for the physics cluster." }
+    label: "Optimization",
+    horos: {
+      title: "End-to-end GPU & physics acceleration",
+      desc: "Joint optimization with TensorRT-LLM, FlashAttention-3, INT8/FP8 quantization, and custom CUDA physics kernels for real-time synthesis."
+    },
+    closed: {
+      title: "Opaque vendor inference dials",
+      desc: "Zero access to model compilation, precision switches, or kernel tuning; locked to vendor inference hardware and latency."
+    },
+    diy: {
+      title: "Manual profiling & kernel patching",
+      desc: "Endless trial-and-error profiling CUDA memory leaks, writing custom C++ extensions, and optimizing fragmented pipelines."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    horos: {
+      title: "Zero-drift mathematical physics proofs",
+      desc: "Automated verification engines that mathematically test generated trajectories against conservation of energy, momentum, and collision laws."
+    },
+    closed: {
+      title: "Unverified visual guessing",
+      desc: "No mathematical consistency guarantees, impossible object teleportation, and zero formal validation."
+    },
+    diy: {
+      title: "Labor-intensive manual auditing",
+      desc: "Data engineers spending hundreds of hours reviewing rendered video clips frame-by-frame to filter impossible physical artifacts."
+    }
+  },
+  {
+    num: "0 8",
+    label: "Experience",
+    horos: {
+      title: "Cryptographic scenario lineage & audit",
+      desc: "Complete provenance tracking linking every generated video frame to its random seed, physics parameters, prompt, and model weights."
+    },
+    closed: {
+      title: "Transient vendor request histories",
+      desc: "Ephemeral cloud API logs without scene graphs, generation seeds, or verifiable dataset reproducibility."
+    },
+    diy: {
+      title: "Scattered local folders & render logs",
+      desc: "Disconnected folders of MP4s, unindexed JSON metadata files, and untracked experiment parameter configurations."
+    }
+  },
+  {
+    num: "0 9",
+    label: "Teaching",
+    horos: {
+      title: "Active curriculum & edge-case synthesis",
+      desc: "Automatically synthesize the exact physical edge cases and hard corner cases where your autonomous policies or vision models fail."
+    },
+    closed: {
+      title: "Prompt-only superficial variations",
+      desc: "Re-prompting with natural language with no systematic mechanism to target specific physical failure distributions."
+    },
+    diy: {
+      title: "Manual 3D scene modeling",
+      desc: "3D artists manually authoring environments, placing obstacles, and animating scenarios by hand in Blender."
+    }
+  },
+  {
+    num: "1 0",
+    label: "Authority",
+    horos: {
+      title: "Automated SIM2REAL gap validation",
+      desc: "Measure distribution shift against real-world test logs, enforce physics bounds, and qualify synthetic datasets for real-world deployment."
+    },
+    closed: {
+      title: "Zero physical safety guarantees",
+      desc: "Black-box video with no bounds checking, risking catastrophic deployment failures if trained on flawed physics."
+    },
+    diy: {
+      title: "Brittle assertion scripts",
+      desc: "Handcrafted heuristic thresholds that fail to detect subtle physics domain shifts between simulation and reality."
+    }
   }
 ];
 
@@ -808,21 +934,18 @@ export default function GenerativeVideoAndPhysicsPage() {
         <div className="w-full h-px border-t border-dashed border-[#333]" />
 
         {/* Comparison Table Section */}
-        <div className="w-full relative z-10 mt-32 mb-32">
+        <div className="w-full relative z-10 mt-28 md:mt-32 mb-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="flex flex-col items-center mb-16 px-4">
-            <h2 className="text-[40px] md:text-[56px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">
-              Three ways to decode physical reality
+          <div className="flex flex-col items-center mb-8 md:mb-10 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">
+              Three ways to build Synthetic Reality
             </h2>
-            <p className="text-[#C8C7BA] text-[18px] font-sans leading-relaxed text-center max-w-2xl">
-              Workflow comparison for physical intelligence agents across Horos, closed visual LLM APIs, and DIY C++ ROS2 scripts.
+            <p className="text-[#C8C7BA] text-[14px] sm:text-[15px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+              Engineer synthetic environments, counterfactual rollouts, and physics-grounded world states. Horos connects generative video to physics validation, SIM2REAL gap analysis, and verified model deployment.
             </p>
           </div>
 
           <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-            
-            
-
             <div className="absolute inset-0 pointer-events-none z-20">
               <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
                 <div className="relative h-full">
@@ -864,47 +987,75 @@ export default function GenerativeVideoAndPhysicsPage() {
                       </div>
                       <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Verified sensor telemetry & 0 spatial drift.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full workflow engineering & verification.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Key size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed LLM APIs</span>
+                      <Key size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed World Model APIs</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Opaque text/vision APIs without spatial proofs.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Individual hosted video & physics APIs.</p>
                   </div>
                   <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
                     <div className="flex items-center gap-3 mb-2">
-                      <Cpu size={16} className="text-[#C8C7BA]" />
-                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY C++ ROS2</span>
+                      <Cpu size={16} className="text-[#C8C7BA] shrink-0" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY Rendering Pipelines</span>
                     </div>
-                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Brittle ROS2 wrappers & manual stream parsing.</p>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fragmented models, renderers & scripts.</p>
                   </div>
                 </div>
 
                 <div className="border-l border-r border-b border-dashed border-[#333]">
                   {COMPARISON_ROWS.map((row, idx) => (
-                    <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
+                    <div
+                      key={idx}
+                      className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200"
+                    >
                       <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
                         <div className="flex items-center gap-3">
-                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">{row.label}</span>
+                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">
+                            {row.num}
+                          </span>
+                          <span className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2]">
+                            {row.label}
+                          </span>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.runInfra.desc}</p>
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#75bf00] uppercase mb-1">
+                          Horos
+                        </span>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#75bf00] mb-1 leading-snug">
+                          {row.horos.title}
+                        </h4>
+                        <p className="text-[#E6E5D8] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">
+                          {row.horos.desc}
+                        </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.closed.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.closed.desc}</p>
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
+                          Closed World Model APIs
+                        </span>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">
+                          {row.closed.title}
+                        </h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">
+                          {row.closed.desc}
+                        </p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                        <h4 className="text-[14px] sm:text-[15px] font-medium text-[#F0EFE2] mb-2">{row.diy.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed">{row.diy.desc}</p>
+                        <span className="md:hidden text-[10px] font-mono font-bold text-[#C8C7BA] uppercase mb-1">
+                          DIY Rendering Pipelines
+                        </span>
+                        <h4 className="text-[13.5px] sm:text-[14px] font-medium text-[#F0EFE2] mb-1 leading-snug">
+                          {row.diy.title}
+                        </h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug leading-relaxed">
+                          {row.diy.desc}
+                        </p>
                       </div>
                     </div>
                   ))}
