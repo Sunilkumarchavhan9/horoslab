@@ -10,7 +10,7 @@ import { EmbodiedHumanoidBgAnimation } from "@/components/landing/embodied-human
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo, OpenVLALogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
 interface ComparisonRow {
@@ -184,20 +184,20 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   }
 ];
 
-const README_CODE = `# Embodied Humanoid Robots Engine
+const README_CODE = `# Robotics Foundation Policy Engine
 
-Low-latency brains for physical embodiment. Deploy Vision-Language-Action (VLA) models and spatial control policies directly to the edge.
+Low-latency brains for physical robotics. Deploy Vision-Language-Action (VLA) foundation models and spatial control policies directly to the edge.
 
 ## Architecture Overview
-- VLA Models: Google RT-2, Pixtral Physical, 1X Humanoid Perception
+- VLA Models: OpenVLA 7B, Physical Intelligence π0, LeRobot Diffusion Policy
 - Edge Hardware: NVIDIA Jetson Thor / Orin & TensorRT-LLM
 - Safety Guards: Mathematical verification of kinematics and torque limits
 - Perception: Multi-modal fusion (cameras, proprioception, tactile)
 
 ## Local Edge Deployment
 $ horos-robot-agent deploy \\
-    --robot-id humanoid-01 \\
-    --vla-model google-rt-2 \\
+    --robot-id robot-01 \\
+    --vla-model openvla/openvla-7b \\
     --kinematics-verifier strict`;
 
 const ROBOT_AST_CODE = `# 4D Spatial World State & Sensor AST Builder
@@ -276,13 +276,13 @@ const RUN_EMBODIED_AGENT_CODE = `# VLA Control Loop with Kinematics Verification
 import torch
 from horos_robotics import EmbodiedAgent, KinematicsVerifier, HumanoidASTEngine, SafetyAuditor
 
-# Initialize Vision-Language-Action agent with Google RT-2
-agent = EmbodiedAgent.from_pretrained("google/rt-2-vla-model")
+# Initialize Vision-Language-Action agent with OpenVLA 7B
+agent = EmbodiedAgent.from_pretrained("openvla/openvla-7b")
 kinematics_verifier = KinematicsVerifier(policy="strict-collision-avoidance")
 auditor = SafetyAuditor(target_hz=1000)
 
 def execute_robotic_task(sensor_streams: list, task_prompt: str):
-    """Execute high-frequency control loop on humanoid hardware."""
+    """Execute high-frequency control loop on robot edge hardware."""
     
     # Parse multi-modal sensors into 4D world state
     world_state = HumanoidASTEngine.extract_world_graph(sensor_streams)
@@ -308,11 +308,11 @@ def execute_robotic_task(sensor_streams: list, task_prompt: str):
     return None`;
 
 const RUN_ROBOT_PIPELINE_CODE = `#!/usr/bin/env bash
-# Embodied Humanoid edge deployment and safety verification runner
+# Robotics edge deployment and safety verification runner
 set -euo pipefail
 
-SENSOR_TOPIC="ros2://humanoid-01/sensors"
-VLA_MODEL="Google-RT-2"
+SENSOR_TOPIC="ros2://robot-01/sensors"
+VLA_MODEL="openvla/openvla-7b"
 
 echo "[Horos Robotics] Initializing NVIDIA Jetson Thor Edge cluster..."
 echo "[Horos Robotics] Starting 1000Hz Vision-Language-Action control loop..."
@@ -329,7 +329,7 @@ const ROBOT_PIPELINE_CODE = `{
   "name": "embodied-humanoid-robots",
   "version": "1.2.0",
   "agent": "humanoid-control-v1",
-  "vla_model": "google-rt-2-vla",
+  "vla_model": "openvla/openvla-7b",
   "edge_runtime": "TensorRT-LLM-CUDA-12.4",
   "safety_engine": "Horos-Kinematics-Verifier",
   "kinematics_guards": true,
@@ -666,8 +666,8 @@ export default function EmbodiedHumanoidsPage() {
     "requirements.txt": REQUIREMENTS_CODE
   };
 
-  const AGENT_MSG_1 = "On it. Initializing humanoid edge cluster. Loading Vision-Language-Action models (Google RT-2 & Pixtral) and connecting to joint actuator telemetry over local ROS2 network.";
-  const AGENT_MSG_2 = "Embodiment active. 4D spatial awareness verified. Kinematics safety guards engaged. Operating at 1000Hz control loop. Actuator safety proof #0x8f2c... valid.";
+  const AGENT_MSG_1 = "On it. Initializing edge policy cluster. Loading Vision-Language-Action models (OpenVLA 7B & π0) and connecting to joint actuator telemetry over local ROS2 network.";
+  const AGENT_MSG_2 = "Policy active. 4D spatial awareness verified. Kinematics safety guards engaged. Operating at 1000Hz control loop. Actuator safety proof #0x8f2c... valid.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
   const [typedMsg2, setTypedMsg2] = useState("");
@@ -1129,18 +1129,18 @@ export default function EmbodiedHumanoidsPage() {
         </div>
 
         {/* Sandbox Showcase Section */}
-        <div className="w-full relative z-10 mt-32">
+        <div className="w-full relative z-10 mt-20 md:mt-24">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-16 mb-16">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-12 md:pt-16 mb-8 md:mb-12">
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
-                  Robotics models you own. <span className="text-[#75bf00]">Run policies anywhere.</span>
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight mb-2.5 sm:mb-3 text-center">
+                  Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
-                  The full recipe ships with you. TensorRT CUDA engines, VLA action tokenizers, OpenVLA models, and ROS2 edge drivers. Run it on any compute node.
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
+                  The full robotics policy stack ships with you. Open-weight VLA models (OpenVLA, π0, Octo), TensorRT CUDA engines, kinematics verifiers, and closed-loop ROS2 edge drivers. Run on any compute node.
                 </p>
               </div>
             </div>
@@ -1150,80 +1150,83 @@ export default function EmbodiedHumanoidsPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 right-0 z-20" />
 
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+          <div className="w-full relative z-10 bg-[#151515]/20 py-10 md:py-14">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0 px-1 md:px-2">
+                <div className="w-full relative mx-auto" style={{ aspectRatio: '1351 / 892' }}>
 
-              {/* Panes Backgrounds */}
-              <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
-              </div>
-
-              <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
-
-              <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-
-                {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
-                    <button
-                      onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <span className="text-[#75bf00]">&gt;_</span> PIPELINE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Code2 size={13} /> CODE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Sliders size={13} /> OPTIMIZATION
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Rocket size={13} /> DEPLOY
-                    </button>
+                  {/* Panes Backgrounds */}
+                  <div className="absolute inset-0 grid" style={{
+                    gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                    gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
+                  }}>
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
                   </div>
-                  <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
-                    <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
-                    <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
-                  </div>
-                </div>
 
-                {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[15px] font-sans leading-[28px]">
-                        Deploy VLA models to embodied hardware. Spatial perception and actuator control loop with{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <GoogleLogo size={13} /> Google RT-2
-                        </span>{" "}
-                        policy plus{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <MistralLogo size={13} /> Pixtral Physical MoE
-                        </span>{" "}
-                        kinematics verification on{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#75bf00] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <NvidiaLogo size={13} /> Jetson Thor Edge Node
-                        </span>.
-                      </p>
+                  <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
+
+                  <div className="absolute inset-0 grid pointer-events-none z-20" style={{
+                    gridTemplateColumns: 'minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)',
+                    gridTemplateRows: 'minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)'
+                  }}>
+
+                    {/* Tabs */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
+                      <div className="flex gap-8 h-full items-end pb-2">
+                        <button
+                          onClick={() => setActiveMainTab("pipeline")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <span className="text-[#75bf00]">&gt;_</span> PIPELINE
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("code")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Code2 size={13} /> CODE
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("optimization")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Sliders size={13} /> OPTIMIZATION
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("deploy")}
+                          className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Rocket size={13} /> DEPLOY
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
+                        <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
+                        <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
+                      </div>
                     </div>
+
+                    {/* Chat Content */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
+                      <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
+                        <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 sm:p-5 rounded-[4px]">
+                          <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-[26px]">
+                            Deploy VLA models to embodied hardware. Spatial perception and actuator control loop with{" "}
+                            <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[11.5px] sm:text-[12.5px] align-baseline whitespace-nowrap">
+                              <OpenVLALogo size={13} /> OpenVLA 7B
+                            </span>{" "}
+                            policy plus{" "}
+                            <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[11.5px] sm:text-[12.5px] align-baseline whitespace-nowrap">
+                              <PhysicalIntelligenceLogo size={13} /> Physical Intelligence π0
+                            </span>{" "}
+                            kinematics verification on{" "}
+                            <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[11.5px] sm:text-[12.5px] align-baseline whitespace-nowrap">
+                              <NvidiaLogo size={13} /> Jetson Thor Edge Node
+                            </span>.
+                          </p>
+                        </div>
 
                     {/* Step 1 */}
                     <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
@@ -1260,7 +1263,7 @@ export default function EmbodiedHumanoidsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Booting VLA model on edge node</span>
                             <span className="text-[#C8C7BA] text-[12px]">0.4s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Initialized 1000Hz motor control loop [Google RT-2]</span>
+                          <span className="text-[#666] text-[12px]">Initialized 1000Hz motor control loop [OpenVLA 7B]</span>
                         </div>
                       </div>
 
@@ -1294,7 +1297,7 @@ export default function EmbodiedHumanoidsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Computing zero-collision safety proof</span>
                             <span className="text-[#C8C7BA] text-[12px]">2.8s</span>
                           </div>
-                          <span className="text-[#666] text-[12px]">Generated safety validity hash #0x8f2c44b9a1 [Pixtral Physical MoE]</span>
+                          <span className="text-[#666] text-[12px]">Generated safety validity hash #0x8f2c44b9a1 [π0 Policy Guard]</span>
                         </div>
                       </div>
 
@@ -1328,7 +1331,7 @@ export default function EmbodiedHumanoidsPage() {
                             <span className="text-[#C8C7BA] text-[13px] font-medium">Executing verified actuator commands</span>
                             <span className="text-[#C8C7BA] text-[12px]">6.5s</span>
                           </div>
-                          <span className="text-[#75bf00] text-[12px]">Control loop active. Emitting commands to ROS2 [Model: RT-2 & Pixtral]</span>
+                          <span className="text-[#75bf00] text-[12px]">Control loop active. Emitting commands to ROS2 [Model: OpenVLA & π0]</span>
                         </div>
                       </div>
                     </div>
@@ -1505,6 +1508,9 @@ export default function EmbodiedHumanoidsPage() {
               </div>
             </div>
           </div>
+          <div />
+        </div>
+      </div>
 
           {/* Features Grid Row */}
           <div className="w-full relative z-10 mb-16 md:mb-20">
