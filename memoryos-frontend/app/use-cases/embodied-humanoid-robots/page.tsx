@@ -10,7 +10,7 @@ import { EmbodiedHumanoidBgAnimation } from "@/components/landing/embodied-human
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo, OpenVLALogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo, OpenVLALogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
 interface ComparisonRow {
@@ -600,7 +600,6 @@ const getLogo = (author: string, modelName: string = "") => {
   if (a.includes('alibaba') || a.includes('qwen') || m.includes('qwen')) return <QwenLogo size={20} />;
   if (a.includes('microsoft') || m.includes('phi')) return <MicrosoftLogo size={20} />;
   if (a.includes('lerobot') || a.includes('huggingface') || m.includes('lerobot') || m.includes('smolvla')) return <HuggingFaceLogo size={20} />;
-  if (a.includes('openvla') || a.includes('stanford') || a.includes('berkeley') || a.includes('rail') || m.includes('openvla') || m.includes('octo')) return <AuthorMonogram label="VLA" size={20} />;
   if (a.includes('physical') || m.includes('pi0') || m.includes('pi05')) return <PhysicalIntelligenceLogo size={20} />;
 
   return <HuggingFaceLogo size={20} />;
