@@ -346,22 +346,22 @@ const SIMULATION_PIPELINE_CODE = `{
 
 const DOCKERFILE_CODE = `FROM nvidia/cuda:12.4.0-devel-ubuntu22.04 AS base
 
-RUN apt-get update && apt-get install -y python3.11 ros-humble-ros-base ffmpeg libopenal-dev
+RUN apt-get update && apt-get install -y python3.11 ffmpeg libopenal-dev
 
-WORKDIR /physical
+WORKDIR /synthetic
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY agent/ /physical/agent/
-COPY README.md run_physical_decoding.py run_sensor_ingestion.sh decoding_pipeline.json .
+COPY engine/ /synthetic/engine/
+COPY README.md run_synthetic_world.py run_batch_synthesis.sh synthetic_pipeline.json .
 
 EXPOSE 8080 8554
-ENTRYPOINT ["/physical/run_sensor_ingestion.sh"]`;
+ENTRYPOINT ["/synthetic/run_batch_synthesis.sh"]`;
 
 const DOCKER_COMPOSE_CODE = `version: "3.8"
 
 services:
-  physical-decoder:
+  synthetic-reality-engine:
     build: .
     ports:
       - "8080:8080"
@@ -374,7 +374,7 @@ services:
               count: all
               capabilities: [gpu]
     environment:
-      - SENSOR_SYNC_POLICY=strict-observation-matching
+      - PHYSICS_PROOF_POLICY=strict-zero-drift
       - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7`;
 
 const REQUIREMENTS_CODE = `torch>=2.4.0
@@ -557,7 +557,7 @@ const FAQ_DATA = [
 ];
 
 export default function GenerativeVideoAndPhysicsPage() {
-  const [activeFile, setActiveFile] = useState<DataFactoryFile>("run_physical_decoding.py" as any);
+  const [activeFile, setActiveFile] = useState<DataFactoryFile>("run_synthetic_world.py" as any);
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
@@ -566,16 +566,16 @@ export default function GenerativeVideoAndPhysicsPage() {
     "sensor_ast.py": SENSOR_AST_CODE,
     "spatial_verifier.py": SPATIAL_VERIFIER_CODE,
     "sensor_auditor.py": SENSOR_AUDITOR_CODE,
-    "run_physical_decoding.py": RUN_SIMULATION_CODE,
-    "eval_perception.py": EVAL_PHYSICS_CODE,
-    "run_sensor_ingestion.sh": RUN_DFT_AUDIT_CODE,
-    "decoding_pipeline.json": SIMULATION_PIPELINE_CODE,
+    "run_synthetic_world.py": RUN_SIMULATION_CODE,
+    "eval_physics.py": EVAL_PHYSICS_CODE,
+    "run_batch_synthesis.sh": RUN_DFT_AUDIT_CODE,
+    "synthetic_pipeline.json": SIMULATION_PIPELINE_CODE,
     "Dockerfile": DOCKERFILE_CODE,
     "docker-compose.yml": DOCKER_COMPOSE_CODE,
     "requirements.txt": REQUIREMENTS_CODE
   };
 
-  const AGENT_MSG_1 = "On it. Initializing generative video synthesis pipeline. Running OpenAI Sora WorldModel & Runway Gen-3 over TensorRT-LLM H100 cluster for batch spatial training data generation.";
+  const AGENT_MSG_1 = "On it. Initializing generative world model pipeline. Running OpenAI Sora & NVIDIA Cosmos Predict over TensorRT H100 cluster for batch synthetic reality synthesis.";
   const AGENT_MSG_2 = "Generation complete. Constructed synthetic 4D spatial dataset with 99.98% physical realism. Object permanence and trajectories mathematically verified against physics priors. Spatial proof #0x4e9b... verified for training ingestion.";
 
   const [typedMsg1, setTypedMsg1] = useState("");
@@ -1067,18 +1067,19 @@ export default function GenerativeVideoAndPhysicsPage() {
         </div>
 
         {/* Sandbox Showcase Section */}
-        <div className="w-full relative z-10 mt-32">
+        <div className="w-full relative z-10 mt-28 md:mt-32">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-16 mb-16">
+          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-12 md:pt-16 mb-10 md:mb-12">
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
-                  Physical agents you own. <span className="text-[#75bf00]">Decode reality anywhere.</span>
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight mb-2.5 sm:mb-3 text-center">
+                  Synthetic reality you own.{" "}
+                  <span className="text-[#75bf00]">Simulate reality anywhere.</span>
                 </h2>
-                <p className="text-[#999999] text-[18px] max-w-2xl mx-auto leading-relaxed">
-                  The full recipe ships with you. TensorRT CUDA engines, 4D spatial AST graphs, Cosmos-1 models, and ROS2 edge controllers. Run it on any physical node.
+                <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
+                  The complete synthetic reality stack ships with you. 4D environment synthesis, generative physics engines (NVIDIA Cosmos, OpenAI Sora), SIM2REAL gap verifiers, and multi-modal telemetry pipelines. Run it on any GPU cluster or edge simulator.
                 </p>
               </div>
             </div>
@@ -1088,402 +1089,455 @@ export default function GenerativeVideoAndPhysicsPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 right-0 z-20" />
 
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
-
-              {/* Panes Backgrounds */}
-              <div className="absolute inset-0 grid" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
-              </div>
-
-              <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
-
-              <div className="absolute inset-0 grid pointer-events-none z-20" style={{
-                gridTemplateColumns: '41fr 443fr 226fr 602fr 39fr',
-                gridTemplateRows: '53.5fr 785fr 53.5fr'
-              }}>
-
-                {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
-                    <button
-                      onClick={() => setActiveMainTab("pipeline")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <span className="text-[#75bf00]">&gt;_</span> PIPELINE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("code")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Code2 size={13} /> CODE
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("optimization")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Sliders size={13} /> OPTIMIZATION
-                    </button>
-                    <button
-                      onClick={() => setActiveMainTab("deploy")}
-                      className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
-                    >
-                      <Rocket size={13} /> DEPLOY
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={replayAnimation} title="Replay Animation">
-                    <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
-                    <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
-                  </div>
-                </div>
-
-                {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
-                      <p className="text-[#C8C7BA] text-[15px] font-sans leading-[28px]">
-                        Generate physically grounded synthetic video datasets in batch. Generative physics pipeline with{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <OpenAILogo size={13} /> OpenAI Sora
-                        </span>{" "}
-                        world model plus{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#F0EFE2] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <HuggingFaceLogo size={13} /> Runway Gen-3
-                        </span>{" "}
-                        physics verification on{" "}
-                        <span className="inline-flex items-center gap-1.5 border border-[#333] bg-[#202020] px-2 py-0.5 rounded text-[#75bf00] font-mono text-[13px] align-baseline whitespace-nowrap">
-                          <NvidiaLogo size={13} /> H100 TensorRT Cluster
-                        </span>.
-                      </p>
-                    </div>
-
-                    {/* Step 1 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg1}
-                          {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Logs list */}
-                    <div className="flex flex-col gap-4 mt-2">
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 2 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Batch generating 4D video datasets</span>
-                            <span className="text-[#C8C7BA] text-[12px]">0.4s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">Generated 1,000x 60fps video clips with varied physics permutations [OpenAI Sora WorldModel]</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 3 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Validating physical object permanence</span>
-                            <span className="text-[#C8C7BA] text-[12px]">1.2s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">100% coherence maintained across temporal frames [NVIDIA H100 Cluster]</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 4 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Computing zero-hallucination physics proof</span>
-                            <span className="text-[#C8C7BA] text-[12px]">2.8s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">Generated physics validity hash #0x4e9b77a2f1 [Runway Gen-3 | TensorRT-LLM]</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 5 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Flagging depth-map distortion anomaly</span>
-                            <span className="text-[#C8C7BA] text-[12px]">4.1s</span>
-                          </div>
-                          <span className="text-[#666] text-[12px]">Detected 0.05% occlusion violation in frame 42 (automatically rejected from dataset)</span>
-                        </div>
-                      </div>
-
-                      <div className={`flex items-start gap-3 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                        <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                          {visibleStep === 6 ? (
-                            <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                          ) : (
-                            <CheckCircle2 size={14} className="text-[#75bf00]" />
-                          )}
-                        </div>
-                        <div className="flex flex-col flex-1 gap-0.5">
-                          <div className="flex justify-between items-center w-full">
-                            <span className="text-[#C8C7BA] text-[13px] font-medium">Packaging synthetic multi-modal training data</span>
-                            <span className="text-[#C8C7BA] text-[12px]">6.5s</span>
-                          </div>
-                          <span className="text-[#75bf00] text-[12px]">Synthesis verified. Ready for spatial model training [Model: Sora & Gen-3]</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Step 7 */}
-                    <div className={`flex gap-3 mt-2 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                      <div className="w-6 h-6 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
-                        {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
-                          <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                        ) : (
-                          <Sparkles size={14} className="text-[#75bf00]" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
-                        <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
-                          {typedMsg2}
-                          {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
-                            <span className="inline-block w-1.5 h-3.5 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
-                          )}
-                        </p>
-                      </div>
-                    </div>
+          <div className="w-full relative z-10 bg-[#151515]/20 py-12 md:py-16">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+              <div />
+              <div className="w-full relative min-w-0 px-1 md:px-2">
+                <div
+                  className="w-full relative mx-auto"
+                  style={{ aspectRatio: "1351 / 892" }}
+                >
+                  {/* Panes Backgrounds */}
+                  <div
+                    className="absolute inset-0 grid"
+                    style={{
+                      gridTemplateColumns: "minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)",
+                      gridTemplateRows: "minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)",
+                    }}
+                  >
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 bg-[#151515]" />
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 bg-[#151515]" />
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 bg-[#151515]" />
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 bg-[#151515]" />
                   </div>
 
-                  {/* Prompt input bar */}
-                  <div className="mt-2 shrink-0 mb-2">
-                    <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-2 flex flex-col gap-2">
-                      <input
-                        type="text"
-                        placeholder="Teach the agent to decode multi-camera sensor streams against spatial verifiers..."
-                        className="bg-transparent text-[#F0EFE2] text-[13px] border-none outline-none w-full px-2 py-2"
-                        readOnly
-                      />
-                      <div className="flex justify-between items-center px-1">
-                        <div className="flex gap-1.5">
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
-                          <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@SensorStreams</span>
-                        </div>
-                        <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
-                          <ArrowUp size={14} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  <SkeletonGrid className="absolute inset-0 w-full h-full z-10" />
 
-                {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-6 flex flex-col items-start gap-4 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase">PHYSICAL SOLVERS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.5 rounded-sm">11</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono">
-                    <button
-                      onClick={() => selectFileManually("README.md")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
-                    >
-                      README.md
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("sensor_ast.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "sensor_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                    >
-                      sensor_ast.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("spatial_verifier.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "spatial_verifier.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                    >
-                      spatial_verifier.py
-                    </button>
-                    <button
-                      onClick={() => selectFileManually("sensor_auditor.py")}
-                      className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "sensor_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                    >
-                      sensor_auditor.py
-                    </button>
-
-                    <div className="mt-2 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 px-2 py-1.5 text-[#aaa] font-semibold">
-                        <ChevronDown size={14} className="text-[#777]" /> physical-agent-factory/
-                      </div>
-                      <div className="pl-4 flex flex-col gap-1.5 border-l border-[#252525] ml-3.5 mt-1">
+                  <div
+                    className="absolute inset-0 grid pointer-events-none z-20"
+                    style={{
+                      gridTemplateColumns: "minmax(0, 41fr) minmax(0, 443fr) minmax(0, 226fr) minmax(0, 602fr) minmax(0, 39fr)",
+                      gridTemplateRows: "minmax(0, 53.5fr) minmax(0, 785fr) minmax(0, 53.5fr)",
+                    }}
+                  >
+                    {/* Tabs */}
+                    <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-3 sm:px-5 pointer-events-auto">
+                      <div className="flex gap-3 sm:gap-6 h-full items-end pb-2">
                         <button
-                          onClick={() => selectFileManually("run_physical_decoding.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_physical_decoding.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => setActiveMainTab("pipeline")}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          run_physical_decoding.py
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("eval_perception.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "eval_perception.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          eval_perception.py
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("run_sensor_ingestion.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "run_sensor_ingestion.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          run_sensor_ingestion.sh
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("decoding_pipeline.json")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "decoding_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          decoding_pipeline.json
-                        </button>
-                        <button 
-                          onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
-                        >
-                          Dockerfile
+                          <span className="text-[#75bf00]">&gt;_</span> PIPELINE
                         </button>
                         <button
-                          onClick={() => selectFileManually("docker-compose.yml")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => setActiveMainTab("code")}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "code" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          docker-compose.yml
+                          <Code2 size={12} /> CODE
                         </button>
                         <button
-                          onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                          onClick={() => setActiveMainTab("optimization")}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "optimization" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                         >
-                          requirements.txt
+                          <Sliders size={12} /> OPTIMIZATION
+                        </button>
+                        <button
+                          onClick={() => setActiveMainTab("deploy")}
+                          className={`flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "deploy" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        >
+                          <Rocket size={12} /> DEPLOY
                         </button>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar">
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
-                    {["README.md", "run_physical_decoding.py", "eval_perception.py", "run_sensor_ingestion.sh", "decoding_pipeline.json", "sensor_ast.py", "spatial_verifier.py", "sensor_auditor.py", "Dockerfile", "docker-compose.yml", "requirements.txt"].map(fileName => (
-                      <button
-                        key={fileName}
-                        onClick={() => selectFileManually(fileName)}
-                        className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors shrink-0 ${activeFile === fileName ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                      <div
+                        className="flex items-center gap-2 mt-4 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={replayAnimation}
+                        title="Replay Animation"
                       >
-                        {fileName}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
-                      {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
-                        <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
-                      ))}
+                        <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
+                        <span className="text-[9.5px] sm:text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
+                      </div>
                     </div>
 
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
-                      {highlightCode(
-                        typedCodeText,
-                        activeFile.endsWith(".md")
-                          ? "markdown"
-                          : activeFile.endsWith(".py")
-                            ? "python"
-                            : activeFile.endsWith(".sh")
-                              ? "bash"
-                              : activeFile.endsWith(".json")
-                                ? "json"
-                                : activeFile === "Dockerfile"
-                                  ? "dockerfile"
-                                  : activeFile.endsWith(".yml") || activeFile.endsWith(".yaml")
-                                    ? "bash"
-                                    : "typescript",
-                        !isTypingCode
-                      )}
+                    {/* Chat Content */}
+                    <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-3 sm:p-4 md:p-5 flex flex-col justify-between overflow-hidden min-w-0 pointer-events-auto">
+                      <div className="flex flex-col gap-3 sm:gap-3.5 overflow-y-auto chat-scroll pr-1.5 pb-2 min-w-0">
+                        <div className="bg-[#181818] border border-[#262626] p-2 sm:p-2.5 rounded-[4px] min-w-0">
+                          <p className="text-[#C8C7BA] text-[10px] sm:text-[11px] font-sans leading-[15px] sm:leading-[17px]">
+                            Generate physically grounded synthetic video datasets in batch. Generative physics pipeline with{" "}
+                            <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[8.5px] sm:text-[9.5px] align-middle whitespace-nowrap">
+                              <OpenAILogo size={10} /> OpenAI Sora
+                            </span>{" "}
+                            world model plus{" "}
+                            <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#F0EFE2] font-mono text-[8.5px] sm:text-[9.5px] align-middle whitespace-nowrap">
+                              <NvidiaLogo size={10} /> Cosmos Predict 2.5
+                            </span>{" "}
+                            physics verification on{" "}
+                            <span className="inline-flex items-center gap-1 border border-[#333] bg-[#202020] px-1.5 py-0.5 rounded text-[#75bf00] font-mono text-[8.5px] sm:text-[9.5px] align-middle whitespace-nowrap">
+                              <NvidiaLogo size={10} /> H100 TensorRT Cluster
+                            </span>.
+                          </p>
+                        </div>
+
+                        {/* Step 1 */}
+                        <div className={`flex gap-2 sm:gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length ? (
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={12} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] leading-[16px] sm:leading-[18px]">
+                              {typedMsg1}
+                              {visibleStep === 1 && typedMsg1.length < AGENT_MSG_1.length && (
+                                <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Logs list */}
+                        <div className="flex flex-col gap-2 sm:gap-2.5 mt-1 min-w-0">
+                          {/* Step 2 */}
+                          <div className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 2 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">Batch synthesizing 4D world environments</span>
+                                <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">0.4s</span>
+                              </div>
+                              <span className="text-[#666] text-[9.5px] sm:text-[10px] truncate">Generated 1,000x 60fps video clips with varied physics permutations [OpenAI Sora & Cosmos]</span>
+                            </div>
+                          </div>
+
+                          {/* Step 3 */}
+                          <div className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 3 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">Validating physical object permanence & momentum</span>
+                                <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">1.2s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[9.5px] sm:text-[10px] truncate">100% coherence maintained across temporal frames [NVIDIA H100 Cluster]</span>
+                            </div>
+                          </div>
+
+                          {/* Step 4 */}
+                          <div className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 4 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">Computing zero-hallucination physics proof</span>
+                                <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">2.8s</span>
+                              </div>
+                              <span className="text-[#666] text-[9.5px] sm:text-[10px] truncate">Generated physics validity hash #0x4e9b77a2f1 [TensorRT-LLM | CUDA 12.4]</span>
+                            </div>
+                          </div>
+
+                          {/* Step 5 */}
+                          <div className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 5 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">Flagging depth-map distortion & occlusion anomaly</span>
+                                <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">4.1s</span>
+                              </div>
+                              <span className="text-[#666] text-[9.5px] sm:text-[10px] truncate">Detected 0.05% occlusion violation in frame 42 (automatically rejected from dataset)</span>
+                            </div>
+                          </div>
+
+                          {/* Step 6 */}
+                          <div className={`flex items-start gap-2 sm:gap-2.5 transition-all duration-500 transform ${visibleStep >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                            <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                              {visibleStep === 6 ? (
+                                <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                              ) : (
+                                <CheckCircle2 size={12} className="text-[#75bf00]" />
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 gap-0.5 min-w-0">
+                              <div className="flex justify-between items-center w-full gap-2">
+                                <span className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] font-medium truncate">Packaging synthetic multi-modal training data</span>
+                                <span className="text-[#C8C7BA] text-[9.5px] sm:text-[10px] shrink-0 font-mono">6.5s</span>
+                              </div>
+                              <span className="text-[#75bf00] text-[9.5px] sm:text-[10px] truncate">Synthesis verified. Ready for spatial policy & world model training [Sora & Cosmos]</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 7 */}
+                        <div className={`flex gap-2 sm:gap-2.5 mt-1 transition-all duration-500 transform ${visibleStep >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                          <div className="w-5 h-5 rounded-[4px] border border-[#252525] flex items-center justify-center shrink-0">
+                            {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length ? (
+                              <Loader2 size={12} className="text-[#75bf00] animate-spin" />
+                            ) : (
+                              <Sparkles size={12} className="text-[#75bf00]" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 min-w-0">
+                            <span className="text-[9px] font-bold tracking-widest text-[#555] uppercase">Agent</span>
+                            <p className="text-[#C8C7BA] text-[10.5px] sm:text-[11.5px] leading-[16px] sm:leading-[18px]">
+                              {typedMsg2}
+                              {visibleStep === 7 && typedMsg2.length < AGENT_MSG_2.length && (
+                                <span className="inline-block w-1.5 h-3 bg-[#75bf00] ml-0.5 animate-pulse align-middle" />
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Prompt input bar */}
+                      <div className="mt-1.5 shrink-0 mb-1 min-w-0">
+                        <div className="bg-[#151515] border border-[#252525] rounded-[4px] p-1.5 sm:p-2 flex flex-col gap-1.5 min-w-0">
+                          <input
+                            type="text"
+                            placeholder="Synthesize 4D world models with verifiable physics and multi-modal telemetry..."
+                            className="bg-transparent text-[#F0EFE2] text-[10px] sm:text-[11px] border-none outline-none w-full px-1 py-0.5 placeholder:text-[#555]"
+                            readOnly
+                          />
+                          <div className="flex items-center justify-between px-1 gap-1 min-w-0">
+                            <div className="flex items-center gap-1 min-w-0">
+                              <span className="bg-[#202020] border border-[#333] text-[8px] sm:text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap">
+                                @WorldModels
+                              </span>
+                              <span className="bg-[#202020] border border-[#333] text-[8px] sm:text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap">
+                                @PhysicsProofs
+                              </span>
+                              <span className="bg-[#202020] border border-[#333] text-[8px] sm:text-[8.5px] text-[#C8C7BA] font-bold px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap">
+                                @SIM2REAL
+                              </span>
+                            </div>
+                            <button className="w-5 h-5 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm shrink-0">
+                              <ArrowUp size={12} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Files Content */}
+                    <div className="col-start-3 col-end-4 row-start-2 row-end-3 p-3 sm:p-4 flex flex-col items-start gap-2.5 overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
+                      <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-1 w-full min-w-0">
+                        <span className="text-[9.5px] font-bold tracking-widest text-[#C8C7BA] uppercase truncate">
+                          SYNTHETIC REALITY STACK
+                        </span>
+                        <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[8.5px] font-bold px-1 py-0.5 rounded-sm shrink-0">
+                          11
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-0.5 sm:gap-1 text-[11px] sm:text-[12px] font-mono w-full min-w-0">
+                        <button
+                          onClick={() => selectFileManually("README.md")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "README.md" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#aaa] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate min-w-0 flex-1">README.md</span>
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("sensor_ast.py")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "sensor_ast.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate min-w-0 flex-1">sensor_ast.py</span>
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("spatial_verifier.py")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "spatial_verifier.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate min-w-0 flex-1">spatial_verifier.py</span>
+                        </button>
+                        <button
+                          onClick={() => selectFileManually("sensor_auditor.py")}
+                          className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "sensor_auditor.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                        >
+                          <span className="truncate min-w-0 flex-1">sensor_auditor.py</span>
+                        </button>
+
+                        <div className="mt-1 flex flex-col gap-0.5 sm:gap-1 w-full min-w-0">
+                          <div className="flex items-center gap-1 px-1.5 py-0.5 text-[#aaa] font-semibold text-[10px] sm:text-[11px] truncate min-w-0">
+                            <ChevronDown size={12} className="text-[#777] shrink-0" />{" "}
+                            synthetic-world-engine/
+                          </div>
+                          <div className="pl-2.5 flex flex-col gap-0.5 sm:gap-1 border-l border-[#252525] ml-2 mt-0.5 w-full min-w-0">
+                            <button
+                              onClick={() => selectFileManually("run_synthetic_world.py")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "run_synthetic_world.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">run_synthetic_world.py</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("eval_physics.py")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "eval_physics.py" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">eval_physics.py</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("run_batch_synthesis.sh")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "run_batch_synthesis.sh" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">run_batch_synthesis.sh</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("synthetic_pipeline.json")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "synthetic_pipeline.json" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">synthetic_pipeline.json</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("Dockerfile")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">Dockerfile</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("docker-compose.yml")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">docker-compose.yml</span>
+                            </button>
+                            <button
+                              onClick={() => selectFileManually("requirements.txt")}
+                              className={`flex items-center gap-1.5 px-1.5 py-0.5 sm:py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold bg-[#75bf00]/10" : "text-[#666] hover:text-[#C8C7BA]"}`}
+                            >
+                              <span className="truncate min-w-0 flex-1">requirements.txt</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Code Content */}
+                    <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-3 sm:p-4 md:p-5 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0">
+                      <div className="flex border-b border-[#252525] mb-3 pb-1.5 pt-0.5 gap-1 sm:gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                        {[
+                          "run_synthetic_world.py",
+                          "eval_physics.py",
+                          "sensor_ast.py",
+                          "README.md",
+                          ...(activeFile && ![
+                            "run_synthetic_world.py",
+                            "eval_physics.py",
+                            "sensor_ast.py",
+                            "README.md",
+                          ].includes(activeFile)
+                            ? [activeFile]
+                            : []),
+                        ].map((fileName) => {
+                          const isSelected = activeFile === fileName;
+                          return (
+                            <button
+                              key={fileName}
+                              onClick={() => selectFileManually(fileName)}
+                              className={`shrink-0 whitespace-nowrap text-[9.5px] sm:text-[11px] font-mono font-bold px-2 sm:px-2.5 py-1 border-b-2 transition-colors ${isSelected ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                            >
+                              {fileName}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex font-mono text-[11px] sm:text-[11.5px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                        <div className="text-[#444] text-right pr-3 sm:pr-4 border-r border-[#252525] select-none flex flex-col min-w-[28px]">
+                          {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
+                            <div key={i} className="min-h-[20px] leading-[20px]">{i + 1}</div>
+                          ))}
+                        </div>
+
+                        <div className="pl-3 sm:pl-4 flex-1 text-[#C8C7BA] leading-[20px]">
+                          {highlightCode(
+                            typedCodeText,
+                            activeFile.endsWith(".md")
+                              ? "markdown"
+                              : activeFile.endsWith(".py")
+                                ? "python"
+                                : activeFile.endsWith(".sh")
+                                  ? "bash"
+                                  : activeFile.endsWith(".json")
+                                    ? "json"
+                                    : activeFile === "Dockerfile"
+                                      ? "dockerfile"
+                                      : activeFile.endsWith(".yml") || activeFile.endsWith(".yaml")
+                                        ? "bash"
+                                        : "typescript",
+                            !isTypingCode
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <div />
             </div>
           </div>
 
           {/* Features Grid Row */}
-          <div className="w-full relative z-10">
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
-
+          <div className="w-full relative z-10 mb-16 md:mb-20">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
               <div />
-              
 
-              <div className="min-w-0">
+              <div className="min-w-0 border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Camera size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Layers size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Sensor Stream Ingestion</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Multi-camera RTSP, LiDAR point clouds, thermal sensor arrays, and IMU telemetry feeds cross-referenced in real-time 4D spatial graphs.
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      4D Scenario & Environment Synthesis
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Synthesize high-fidelity 3D/4D spatial environments with multi-camera perspective, depth maps, surface normals, and temporal object permanence.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Radio size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Brain size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The Cosmos-1 & World Weights</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Self-host physical world models (NVIDIA Cosmos-1, Meta V-JEPA) in your edge cloud. Complete IP privacy and local weight ownership.
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Generative World Models & Physics
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Self-host frontier generative world models (OpenAI Sora, NVIDIA Cosmos, Runway Gen-3). Validate counterfactual rollouts and continuous physics dynamics with full weight access.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Network size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <ShieldCheck size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">The ROS2 Edge Automation</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Generate zero-drift spatial telemetry proofs and ROS2 robotics actuation commands guaranteeing verified physical operation.
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">
+                      Zero-Drift SIM2REAL Verification
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
+                      Mathematically verify physics consistency against real robot logs. Detect collision anomalies, eliminate visual hallucination, and export verified training datasets.
                     </p>
                   </div>
                 </div>
