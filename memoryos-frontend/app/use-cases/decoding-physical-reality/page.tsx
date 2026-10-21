@@ -619,15 +619,27 @@ const getBorderClasses = (index: number, total: number) => {
 const FAQ_DATA = [
   {
     question: "How does Horos decode physical reality from heterogeneous sensor streams?",
-    answer: "Horos ingests real-time RTSP video, LiDAR point clouds, IMU telemetry, and thermal arrays into a unified 4D spatial representation, continuous prediction engine, and ground-truth observation verifier.",
+    answer: "Horos ingests real-time RTSP video, LiDAR point clouds, IMU telemetry, and thermal arrays into a unified 4D spatial representation, continuous prediction engine, and ground-truth observation verifier. By synchronizing multi-rate sensor frames with sub-millisecond hardware timestamp alignment, Horos constructs dense 3D voxel occupancy grids and continuous spatial state vectors that feed neural world models and robot action policies with zero coordinate drift.",
   },
   {
     question: "Can the physical reality engine run on edge hardware like NVIDIA Jetson Orin or Thor?",
-    answer: "Yes. All perception models, 3D spatial occupancy grids, and observation verifiers compile directly into TensorRT binaries for low-latency edge deployment (sub-10ms) on Jetson nodes, robotic controllers, or local edge gateways.",
+    answer: "Yes. All perception models, 3D spatial occupancy grids, and observation verifiers compile directly into TensorRT binaries for low-latency edge deployment (sub-10ms) on Jetson nodes, robotic controllers, or local edge gateways. The runtime eliminates network round-trip delays, running deterministic perception-to-action control loops completely on-device.",
   },
   {
     question: "How does it eliminate spatial hallucinations and unverified physical claims?",
-    answer: "The Measurement Engine continuously computes prediction error between real-time sensor observations and physical model predictions, generating zero-drift mathematical spatial proofs before taking authorized action.",
+    answer: "The Measurement Engine continuously computes prediction error between real-time sensor observations and physical model predictions, generating zero-drift mathematical spatial proofs before taking authorized action. Candidate joint trajectories and manipulation paths are checked against kinematic boundary envelopes, torque limits, and collision meshes in real time.",
+  },
+  {
+    question: "Which frontier physical AI, world models, and robotics policies are supported?",
+    answer: "Horos natively supports top open-weight physical models from Hugging Face—including NVIDIA Cosmos (Cosmos3-Super 65B, Cosmos Predict 2.5 14B, Cosmos Transfer 2.5 2B, Cosmos Policy 2B), Meta V-JEPA 2 (1B), Physical Intelligence π₀ and π0-FAST (3.1B), NVIDIA Isaac GR00T N1.7 (3B), OpenVLA (7B), SmolVLA, UniAD, and Depth Anything V2. Custom models can be loaded via Hugging Face model IDs or local checkpoint directories.",
+  },
+  {
+    question: "How does Horos close the sim-to-real gap for physical robotics?",
+    answer: "Horos links neural world predictors with high-fidelity physics simulators (MuJoCo, NVIDIA Isaac Gym, Genesis) and recorded robot telemetry. By applying automated domain randomization, camera noise modeling, latency jitter simulation, and counterfactual trajectory rollouts, Horos benchmarks policy robustness and measures out-of-distribution drift before physical hardware deployment.",
+  },
+  {
+    question: "Can I deploy fully air-gapped runtimes with native ROS2 and Zenoh integration?",
+    answer: "Yes. Horos exports standalone, containerized deployment packages equipped with zero-copy shared memory IPC, ROS2 Humble/Iron nodes, and Zenoh middleware bridges. Runtimes operate completely offline with zero telemetry or cloud phone-home requirements, end-to-end encryption, and full SOC 2 Type II compliance.",
   }
 ];
 
@@ -1869,42 +1881,61 @@ export default function DecodingPhysicalRealityPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="w-full relative z-10 py-24 flex flex-col items-center px-4">
-            <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-4 text-center">
-              Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
-            </h2>
-            <p className="text-[#c7c3b7] text-lg font-sans text-center mb-12">
-              Can't find what you're looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mb-12">
-              {FAQ_DATA.map((faq, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveFaq(idx)}
-                  className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                    ? "bg-[#75bf00] text-black"
-                    : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
-                    }`}
-                >
-                  {faq.question}
-                </button>
-              ))}
-            </div>
-
-            <div className="w-full max-w-4xl h-px border-t border-dashed border-[#333] mb-12" />
-
-            <div className="flex items-start gap-4 max-w-4xl w-full text-left">
-              <div className="mt-1 flex-shrink-0 text-[#C8C7BA] bg-[#1f1f1f] p-2 rounded-full flex items-center justify-center h-10 w-10">
-                <HorosLogo size={20} />
+          <div className="w-full relative z-10">
+            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+              {/* Left Column Margin with Inner and Outer dashed lines */}
+              <div className="border-r border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
               </div>
-              <div>
-                <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2">
-                  {FAQ_DATA[activeFaq].question}
-                </h3>
-                <p className="text-[#C8C7BA] text-[16px] leading-relaxed max-w-3xl">
-                  {FAQ_DATA[activeFaq].answer}
+
+              {/* Center Column: FAQ Content */}
+              <div className="py-20 md:py-24 flex flex-col items-center px-4 md:px-8">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#f2efe8] mb-3 text-center">
+                  Common <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm">questions</span>
+                </h2>
+                <p className="text-[#C8C7BA] text-sm sm:text-base font-sans text-center mb-10">
+                  Can&apos;t find what you&apos;re looking for? <a href="#" className="text-[#75bf00] hover:underline">Get in touch</a>
                 </p>
+
+                {/* Vertical Question Buttons */}
+                <div className="flex flex-col items-center gap-2.5 w-full mb-10">
+                  {FAQ_DATA.map((faq, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveFaq(idx)}
+                      className={`px-6 py-2.5 text-[14px] sm:text-[15px] transition-colors text-center ${
+                        activeFaq === idx
+                          ? "bg-[#75bf00] text-black font-medium"
+                          : "bg-[#1c1c1c] text-[#d4cfbf] hover:bg-[#252525] hover:text-[#f2efe8] font-normal"
+                      }`}
+                    >
+                      {faq.question}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Horizontal Dashed Divider */}
+                <div className="w-full max-w-3xl border-t border-dashed border-[#333] mb-10" />
+
+                {/* Active FAQ Item with Icon and Text */}
+                <div className="flex items-start gap-4 max-w-3xl w-full text-left">
+                  <div className="mt-0.5 flex-shrink-0 text-[#f2efe8] bg-[#1c1c1c] border border-[#2a2a2a] rounded-full flex items-center justify-center h-10 w-10">
+                    <HorosLogo size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-[17px] font-semibold text-[#f2efe8] mb-2 leading-snug">
+                      {FAQ_DATA[activeFaq]?.question || FAQ_DATA[0].question}
+                    </h3>
+                    <p className="text-[#C8C7BA] text-[15px] md:text-[16px] leading-relaxed whitespace-pre-line">
+                      {FAQ_DATA[activeFaq]?.answer || FAQ_DATA[0].answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column Margin with Inner and Outer dashed lines */}
+              <div className="border-l border-dashed border-[#333] relative">
+                <div className="hidden md:block absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
               </div>
             </div>
           </div>
