@@ -13,97 +13,73 @@ import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-inp
 import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, TeslaLogo, OneXLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch, Camera, Eye, Radio, Scan } from "lucide-react";
 
-const COMPARISON_ROWS = [
+interface ComparisonRow {
+  num: string;
+  label: string;
+  horos: { title: string; desc: string };
+  closed: { title: string; desc: string };
+  diy: { title: string; desc: string };
+}
+
+const COMPARISON_ROWS: ComparisonRow[] = [
   {
     num: "0 1",
-    label: "Latency & Speed",
-    runInfra: {
-      title: "Sub-10ms edge execution",
-      desc: "Compiled TensorRT-LLM VLA models executing directly on-robot (Jetson Thor/Orin) at 50Hz–100Hz with zero network round-trip delay."
+    label: "System",
+    horos: {
+      title: "Unified robotics intelligence stack",
+      desc: "Connect multi-modal sensor tokens, VLA foundation models, kinematic safety verifiers, and on-robot control policies in one verifiable loop."
     },
     closed: {
-      title: "High-latency cloud APIs",
-      desc: "Sending camera frames to remote cloud APIs incurs 400–800ms latency, causing dropped action steps and robotic stutter."
+      title: "Disconnected visual chat APIs",
+      desc: "Call remote black-box vision APIs lacking action chunking, continuous joint outputs, or deterministic robot control loops."
     },
     diy: {
-      title: "Unoptimized PyTorch nodes",
-      desc: "Running unquantized Python/PyTorch inference nodes inside ROS2, struggling to achieve stable real-time control frequencies."
+      title: "Fragmented ROS2 scripts",
+      desc: "Handcrafted ROS2 glue nodes bridging separate perception packages, uncalibrated kinematic solvers, and custom PyTorch scripts."
     }
   },
   {
     num: "0 2",
-    label: "Model Ownership",
-    runInfra: {
+    label: "Models",
+    horos: {
       title: "Open-weight robotics policies",
-      desc: "Direct weight access to OpenVLA 7B, Physical Intelligence π0, Octo Base, SmolVLA, and LeRobot architectures with 100% adaptation rights."
+      desc: "Train, fine-tune, and deploy OpenVLA 7B, Physical Intelligence π0, Octo Base, SmolVLA, and LeRobot architectures with full policy ownership."
     },
     closed: {
-      title: "Black-box vision endpoints",
-      desc: "Opaque endpoints without action heads, tokenized motor chunking, or custom low-level continuous control policies."
+      title: "Vendor-locked hosted endpoints",
+      desc: "Generic hosted models with zero weight access, high per-call API pricing, rigid filters, and no local edge compilation."
     },
     diy: {
-      title: "Fragmented research ports",
-      desc: "Manually porting research checkpoints across incompatible Hugging Face transformers, JAX, and custom policy repos."
+      title: "Manual checkpoint juggling",
+      desc: "Manually porting research checkpoints across incompatible Hugging Face transformers, JAX, and custom research repos."
     }
   },
   {
     num: "0 3",
-    label: "Kinematic Safety",
-    runInfra: {
-      title: "Formal kinematics verification",
-      desc: "Mathematical safety envelopes enforce joint torque limits, collision boundaries, and velocity constraints before policy execution."
+    label: "Context",
+    horos: {
+      title: "Multi-modal 4D spatial representation",
+      desc: "Synchronous fusion of multi-camera RGB feeds, metric depth, proprioception, and tactile sensor tokens into unified spatial state tokens."
     },
     closed: {
-      title: "Unchecked motor hallucinations",
-      desc: "Cloud LLMs produce physically impossible target trajectories, risking catastrophic actuator overload and collisions."
+      title: "Stateless 2D prompt payloads",
+      desc: "Submit individual flat image frames or text prompts with no persistent metric depth, coordinate frames, or tactile history."
     },
     diy: {
-      title: "Fragile manual heuristics",
-      desc: "Hardcoded C++ clamp scripts that fail to model non-linear dynamics, varying payloads, or contact transitions."
+      title: "Asynchronous topic queues",
+      desc: "Struggling with temporal drift, buffer underruns, and message drops between camera topics and IMU/encoder feeds in unmanaged ROS queues."
     }
   },
   {
     num: "0 4",
-    label: "Perception & Fusion",
-    runInfra: {
-      title: "Synchronous 4D spatial state",
-      desc: "Synchronous fusion of multi-camera RGB feeds, metric depth, proprioception, and tactile telemetry into unified spatial representations."
+    label: "Capabilities",
+    horos: {
+      title: "Visuomotor action chunking & diffusion",
+      desc: "Generate smooth, temporally consistent 16–64 step action chunks via diffusion policy kernels with zero actuator resonance or jitter."
     },
     closed: {
-      title: "Stateless 2D camera feeds",
-      desc: "Single-frame 2D visual summaries lacking 3D metric depth, coordinate frames, force sensing, and fine tactile feedback."
-    },
-    diy: {
-      title: "Asynchronous topic queues",
-      desc: "Struggling with temporal drift, buffer underruns, and message drops between camera topics and IMU/encoder feeds in ROS."
-    }
-  },
-  {
-    num: "0 5",
-    label: "Cross-Embodiment",
-    runInfra: {
-      title: "Universal embodiment adapters",
-      desc: "Transfer learned manipulation skills across single-arm, bimanual, mobile, and humanoid topologies via normalized action tokens."
-    },
-    closed: {
-      title: "Zero topology flexibility",
-      desc: "Generic prompt APIs cannot adapt to custom degrees of freedom, tool center points, or non-standard joint kinematics."
-    },
-    diy: {
-      title: "Siloed per-robot models",
-      desc: "Training bespoke neural policies from scratch for each mechanical design without cross-morphology knowledge transfer."
-    }
-  },
-  {
-    num: "0 6",
-    label: "Action Chunking",
-    runInfra: {
-      title: "Visuomotor diffusion kernels",
-      desc: "Generate temporally consistent action chunks (16–64 steps) with smooth jerk minimization and fast real-time denoising."
-    },
-    closed: {
-      title: "Step-by-step token stutter",
-      desc: "Autoregressive token generation emits jerky point-by-point target poses, inducing severe actuator resonance and vibration."
+      title: "Point-by-point token stutter",
+      desc: "Autoregressive token-by-token generation emits jerky discrete waypoints that induce severe vibration and motor stalling."
     },
     diy: {
       title: "Hand-tuned spline filters",
@@ -111,59 +87,91 @@ const COMPARISON_ROWS = [
     }
   },
   {
-    num: "0 7",
-    label: "Runtime Engine",
-    runInfra: {
-      title: "TensorRT-LLM edge compilation",
-      desc: "FP8/INT8 quantization, FlashAttention-3 kernels, and CUDA graph execution tailored for on-robot Jetson and edge accelerators."
+    num: "0 5",
+    label: "Workload",
+    horos: {
+      title: "Sub-10ms deterministic edge inference",
+      desc: "Execute compiled TensorRT-LLM VLA models directly on Jetson Thor/Orin at 50Hz–100Hz with zero cloud network jitter."
     },
     closed: {
-      title: "Opaque cloud infrastructure",
-      desc: "Zero control over runtime precision, batching, or GPU execution kernels; entirely subject to cloud provider rate limits."
+      title: "High-latency cloud round trips",
+      desc: "Sending high-res camera frames to cloud endpoints adds 400–800ms latency, causing control dropouts and robotic stutter."
     },
     diy: {
-      title: "Manual CUDA debugging",
-      desc: "Weeks spent writing custom C++ inference bindings, troubleshooting memory leaks, and resolving CUDA kernel panics."
+      title: "Unoptimized Python/PyTorch loops",
+      desc: "Running unquantized PyTorch models on raw edge hardware, struggling with host-to-device memory copies and missing real-time deadlines."
+    }
+  },
+  {
+    num: "0 6",
+    label: "Optimization",
+    horos: {
+      title: "End-to-end edge policy compilation",
+      desc: "FP8/INT8 quantization, FlashAttention-3 kernels, and CUDA graph execution optimized for NVIDIA Jetson and edge accelerators."
+    },
+    closed: {
+      title: "Opaque vendor inference dials",
+      desc: "Zero access to runtime precision, batching, or GPU execution kernels; entirely subject to cloud provider rate limits."
+    },
+    diy: {
+      title: "Manual CUDA profiling & patching",
+      desc: "Endless trial-and-error profiling memory leaks, writing custom C++ inference bindings, and debugging CUDA kernel crashes."
+    }
+  },
+  {
+    num: "0 7",
+    label: "Verification",
+    horos: {
+      title: "Formal kinematics verification",
+      desc: "Mathematical safety envelopes continuously verify predicted joint angles, velocity limits, and torques before dispatch to avoid collisions."
+    },
+    closed: {
+      title: "Unchecked motor hallucinations",
+      desc: "Generative models produce physically impossible target trajectories, risking severe mechanical damage to robot actuators."
+    },
+    diy: {
+      title: "Fragile manual heuristics",
+      desc: "Hardcoded C++ clamp scripts that fail to model non-linear dynamics, changing payloads, or multi-limb coordination."
     }
   },
   {
     num: "0 8",
-    label: "Data & Telemetry",
-    runInfra: {
-      title: "Cryptographic policy lineage",
-      desc: "Verifiable audit trails linking every action chunk to camera inputs, model checkpoint weights, safety checks, and telemetry logs."
+    label: "Experience",
+    horos: {
+      title: "Cryptographic policy lineage & audit",
+      desc: "Complete verifiable audit trails linking every action chunk to camera inputs, model weights, safety checks, and telemetry logs."
     },
     closed: {
-      title: "Ephemeral vendor logs",
-      desc: "No verifiable audit trails, missing action seeds, and proprietary provider retention policies that put your IP at risk."
+      title: "Transient vendor request logs",
+      desc: "Ephemeral cloud API logs without action seeds, sensor records, or reproducible execution lineage, compromising safety auditability."
     },
     diy: {
-      title: "Unindexed MCAP/bag files",
-      desc: "Terabytes of unindexed ROS bag files scattered across hard drives with no unified query engine or provenance tracking."
+      title: "Unindexed MCAP/rosbag storage",
+      desc: "Terabytes of unindexed ROS bag files scattered across local hard drives with no unified query engine or provenance tracking."
     }
   },
   {
     num: "0 9",
-    label: "Simulation & Sim2Real",
-    runInfra: {
-      title: "Automated sim-to-real transfer",
-      desc: "Domain randomization, Cosmos world model evaluation, and physical reality gap calibration before edge hardware deployment."
+    label: "Teaching",
+    horos: {
+      title: "Cross-embodiment & DPO fine-tuning",
+      desc: "Adapt foundation policies across single-arm, bimanual, and mobile morphologies via universal adapters and direct preference optimization."
     },
     closed: {
-      title: "Zero simulation grounding",
-      desc: "Black-box models untested against physical dynamics, risking immediate collision and hardware failure on live robots."
+      title: "Prompt-only superficial tuning",
+      desc: "Prompt adjustments with no weight adaptation, zero cross-embodiment transfer, and no custom joint topology support."
     },
     diy: {
-      title: "Manual trial & error",
-      desc: "Slow, risky physical experimentation directly on live robots, risking broken gearboxes, bent linkages, and expensive downtime."
+      title: "Siloed per-robot training",
+      desc: "Training bespoke models from scratch for each mechanical configuration with zero knowledge sharing across robot morphologies."
     }
   },
   {
     num: "1 0",
-    label: "Fleet Sovereignty",
-    runInfra: {
-      title: "100% air-gapped on-robot privacy",
-      desc: "Run entirely locally on disconnected robot hardware. Secure OTA policy rollouts with zero camera feeds or telemetry leaving premises."
+    label: "Authority",
+    horos: {
+      title: "100% air-gapped on-robot sovereignty",
+      desc: "Run entirely locally on disconnected robot hardware. Zero camera feeds, facility layouts, or proprietary trajectories leave your premise."
     },
     closed: {
       title: "Mandatory cloud streaming",
@@ -1098,8 +1106,8 @@ export default function EmbodiedHumanoidsPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.runInfra.desc}</p>
+                        <h4 className="text-[13px] sm:text-[13.5px] font-medium text-[#75bf00] mb-1 leading-snug">{row.horos.title}</h4>
+                        <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] leading-snug">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3 lg:px-5 lg:py-3.5 md:border-r border-dashed border-[#333]">
