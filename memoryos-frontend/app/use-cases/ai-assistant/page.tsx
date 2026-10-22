@@ -1974,20 +1974,20 @@ outlines==0.0.46`;
           </div>
           <div />
         </div>
+        {/* Section End Divider with Brand Logo */}
+        <div className="w-full relative z-20 my-16 md:my-20">
+          <SectionDivider position="top" className="w-full" />
+        </div>
+
         {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-24 pb-16">
-            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <SectionDivider
-            position="top"
-            className="absolute top-0 left-0 w-full"
-          />
+        <div className="w-full relative z-10 pt-4 sm:pt-6 pb-16">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                 Supported HF chat models work
               </h2>
-              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                 Supported chat-capable models on Hugging Face run through the
                 compatible recipe. Search the live catalog above. The examples
                 below are just a starting view.
@@ -2069,12 +2069,13 @@ outlines==0.0.46`;
           </div>
         </div>
 
+        {/* Section End Divider with Brand Logo */}
+        <div className="w-full relative z-20 my-16 md:my-20">
+          <SectionDivider position="top" className="w-full" />
+        </div>
+
         {/* What Horos Infra tunes Section */}
-        <div className="w-full relative z-10 py-24">
-          <SectionDivider
-            position="top"
-            className="absolute top-0 left-0 w-full"
-          />
+        <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
