@@ -101,14 +101,17 @@ export function MetaLogo({ className, size = 13 }: BrandIconProps) {
 // 2. Official vLLM Logo (Amber Left Wing + Blue Right Wing)
 export function VLLMLogo({ className, size = 13 }: BrandIconProps) {
   return (
-    <img
-      src="https://docs.vllm.ai/projects/vllm-omni/en/latest/source/logos/vllm-logo-only-light.ico"
-      alt="vLLM"
+    <svg
       width={size}
       height={size}
-      className={cn("shrink-0 inline-block align-middle object-contain", className)}
-      referrerPolicy="no-referrer"
-    />
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle", className)}
+    >
+      <path d="M9.83 24V5.142H.4Z" fill="#F59E0B" />
+      <path d="M23.6 0L14.879 4.59L9.829 24H17.239L23.6 0Z" fill="#30A2FF" />
+    </svg>
   );
 }
 
@@ -134,14 +137,17 @@ export function QwenLogo({ className, size = 13 }: BrandIconProps) {
 // Official vLLM Omni Logo
 export function VLLMOmniLogo({ className, size = 13 }: BrandIconProps) {
   return (
-    <img
-      src="https://docs.vllm.ai/projects/vllm-omni/en/latest/source/logos/vllm-logo-only-light.ico"
-      alt="vLLM-Omni"
+    <svg
       width={size}
       height={size}
-      className={cn("shrink-0 inline-block align-middle object-contain", className)}
-      referrerPolicy="no-referrer"
-    />
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("shrink-0 inline-block align-middle", className)}
+    >
+      <path d="M9.83 24V5.142H.4Z" fill="#F59E0B" />
+      <path d="M23.6 0L14.879 4.59L9.829 24H17.239L23.6 0Z" fill="#30A2FF" />
+    </svg>
   );
 }
 

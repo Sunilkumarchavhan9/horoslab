@@ -793,8 +793,8 @@ export default function VerifiableLegalAgentsPage() {
           <SectionDivider position="top" className="absolute top-0 left-0 right-0 z-20" />
 
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+          <div className="w-full relative z-10 bg-[#151515]/20 py-12 md:py-16">
+            <div className="w-full relative mx-auto max-w-[1220px] px-3 sm:px-6" style={{ aspectRatio: '1351 / 892' }}>
 
               {/* Panes Backgrounds */}
               <div className="absolute inset-0 grid" style={{

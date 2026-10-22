@@ -95,19 +95,18 @@ const TEST_CODE = `import { test, expect } from 'vitest';\nimport { DBConnection
 
 const DOCKERFILE_CODE = `FROM node:20-alpine AS test-env\n\nWORKDIR /app\nCOPY package.json package-lock.json ./\nRUN npm ci\n\nCOPY . .\n\n# Run test suite and memory profile\nCMD ["npm", "run", "test:memory"]`;
 
-const MEMORY_PY_CODE = `def initialize_memory(agent_id, session_token):
+const AGENT_CORE_PY_CODE = `def initialize_coding_agent(repo_path, model_id="Qwen/Qwen2.5-Coder-32B"):
     """
-    Sets up the persistent memory context for the agent.
-    Connects to the Horos backend to retrieve historical execution paths.
+    Initializes autonomous software synthesis loop with AST parsing
+    and secure sandbox tool execution.
     """
-    import requests
-    response = requests.get(
-        f"http://horos-backend.local/api/v1/memory/{agent_id}",
-        headers={"Authorization": f"Bearer {session_token}"}
-    )
-    if response.status_code == 200:
-        return response.json().get("context", {})
-    raise Exception("Failed to initialize memory")`;
+    from horos_coder import TreeSitterParser, SandboxVerifier, LLMEngine
+    
+    ast_graph = TreeSitterParser.index_repository(repo_path)
+    engine = LLMEngine.connect(model_id, tensor_parallel_size=1)
+    verifier = SandboxVerifier(isolation="gvisor", timeout_sec=30)
+    
+    return {"ast": ast_graph, "engine": engine, "verifier": verifier}`;
 
 const POLICIES_PY_CODE = `def verify_tool_calling_policy(tool_name, arguments, auth_level):
     """
@@ -124,7 +123,7 @@ const POLICIES_PY_CODE = `def verify_tool_calling_policy(tool_name, arguments, a
 const SERVE_SH_CODE = `#!/bin/bash
 set -e
 
-echo "Starting Horos AI Assistant..."
+echo "Starting Horos Coding Agent..."
 echo "Loading Qwen3-Coder model onto L4 GPU..."
 
 # Boot vLLM with Qwen3-Coder
@@ -424,12 +423,12 @@ export default function EmbeddingsPage() {
   const [activeTab, setActiveTab] = useState("Horos");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [activeFile, setActiveFile] = useState<CodingAgentFile>("memory.py");
+  const [activeFile, setActiveFile] = useState<CodingAgentFile>("agent_core.py");
   const [activeMainTab, setActiveMainTab] = useState<"pipeline" | "code" | "optimization" | "deploy">("pipeline");
   const [activeFaq, setActiveFaq] = useState(0);
 
   const FILE_CODE_MAP: Record<string, string> = {
-    "memory.py": MEMORY_PY_CODE,
+    "agent_core.py": AGENT_CORE_PY_CODE,
     "policies.py": POLICIES_PY_CODE,
     "serve.sh": SERVE_SH_CODE,
     "pipeline.py": PIPELINE_PY_CODE,
@@ -922,12 +921,9 @@ export default function EmbeddingsPage() {
           {/* Top Horizontal Border spanning full screen */}
 
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-
-
-
+          <div className="w-full relative z-10 bg-[#151515]/20 py-12 md:py-16">
             {/* Sandbox Content Container (SVG Skeleton Architecture) */}
-            <div className="w-full relative mx-auto max-w-[1351px]" style={{ aspectRatio: '1351 / 892' }}>
+            <div className="w-full relative mx-auto max-w-[1220px] px-3 sm:px-6" style={{ aspectRatio: '1351 / 892' }}>
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
@@ -991,9 +987,9 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Chat Content */}
-                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-6 flex flex-col justify-between overflow-hidden pointer-events-auto min-w-0 min-h-0">
-                  <div className="flex flex-col gap-6 overflow-y-auto chat-scroll pr-2 pb-4">
-                    <div className="bg-[#1a1a1a] border border-[#252525] p-5 rounded-[4px]">
+                <div className="col-start-2 col-end-3 row-start-2 row-end-3 p-4 sm:p-5 flex flex-col justify-between overflow-hidden pointer-events-auto min-w-0 min-h-0">
+                  <div className="flex flex-col gap-5 overflow-y-auto chat-scroll pr-2 pb-4">
+                    <div className="bg-[#1a1a1a] border border-[#252525] p-3.5 sm:p-4 rounded-[4px]">
                       <p className="text-[#C8C7BA] text-[12px] sm:text-[12.5px] font-sans leading-[21px] sm:leading-[22px]">
                         Build a coding agent. <span className="inline-flex items-center gap-1 bg-[#222] border border-[#333] px-1.5 py-0.5 rounded-[4px] mx-0.5"><QwenLogo size={12} /> Qwen3-Coder</span> for repository-level coding with tool calling. Serve with <span className="inline-flex items-center gap-1 bg-[#222] border border-[#333] px-1.5 py-0.5 rounded-[4px] mx-0.5"><VLLMLogo size={12} /> vLLM</span> on a single <span className="inline-flex items-center gap-1 bg-[#222] border border-[#333] px-1.5 py-0.5 rounded-[4px] mx-0.5"><NvidiaLogo size={12} /> L4</span>.
                       </p>
@@ -1175,80 +1171,80 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 py-6 px-4 flex flex-col items-start gap-4 overflow-hidden pointer-events-auto chat-scroll min-w-0 min-h-0">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-3 mb-2 w-full">
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 py-4 sm:py-5 px-3 sm:px-3.5 flex flex-col items-start gap-3 overflow-hidden pointer-events-auto chat-scroll min-w-0 min-h-0">
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-2.5 mb-1 w-full">
                     <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase shrink-0">MISSION ASSETS</span>
                     <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] sm:text-[9.5px] font-bold px-1.5 py-0.2 rounded-sm shrink-0">3</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 text-[13px] font-mono w-full">
+                  <div className="flex flex-col gap-1 text-[12px] font-mono w-full">
                     <div className="flex flex-col gap-0.5 w-full">
-                      <div className="px-2 py-1.5 text-[#75bf00] font-semibold truncate w-full">
+                      <div className="px-1.5 py-1 text-[#75bf00] font-semibold truncate w-full text-[12px]">
                         tool_definitions/
                       </div>
-                      <div className="pl-3 flex flex-col gap-0.5 mt-1 w-full min-w-0">
+                      <div className="pl-2.5 flex flex-col gap-0.5 mt-0.5 w-full min-w-0">
                         <button
-                          onClick={() => selectFileManually("memory.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "memory.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          onClick={() => selectFileManually("agent_core.py")}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "agent_core.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "memory.py" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>} 
-                          <span className="truncate min-w-0 flex-1">memory.py</span>
+                          {activeFile === "agent_core.py" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>} 
+                          <span className="truncate min-w-0 flex-1">agent_core.py</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("policies.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "policies.py" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          {activeFile === "policies.py" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">policies.py</span>
                         </button>
                       </div>
                     </div>
                     
-                    <div className="mt-4 flex flex-col gap-0.5 w-full">
-                      <div className="px-2 py-1.5 text-[#C8C7BA] font-semibold truncate w-full">
-                        horos-ai-assistant/
+                    <div className="mt-2.5 flex flex-col gap-0.5 w-full">
+                      <div className="px-1.5 py-1 text-[#C8C7BA] font-semibold truncate w-full text-[12px]">
+                        horos-coding-agent/
                       </div>
-                      <div className="pl-3 flex flex-col gap-0.5 mt-1 w-full min-w-0">
+                      <div className="pl-2.5 flex flex-col gap-0.5 mt-0.5 w-full min-w-0">
                         <button
                           onClick={() => selectFileManually("serve.sh")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "serve.sh" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          {activeFile === "serve.sh" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">serve.sh</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("pipeline.py")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "pipeline.py" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          {activeFile === "pipeline.py" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">pipeline.py</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "Dockerfile" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          {activeFile === "Dockerfile" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">Dockerfile</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("docker-compose.yml")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "docker-compose.yml" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          {activeFile === "docker-compose.yml" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">docker-compose.yml</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "requirements.txt" ? <ChevronRight size={14} className="text-[#75bf00] shrink-0" /> : <span className="w-[14px] shrink-0"></span>}
+                          {activeFile === "requirements.txt" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">requirements.txt</span>
                         </button>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold w-full min-w-0">
-                          <span className="w-[14px] shrink-0"></span>
+                        <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#777] font-semibold w-full min-w-0">
+                          <span className="w-[13px] shrink-0"></span>
                           <span className="truncate min-w-0 flex-1">models/</span>
                         </div>
-                        <div className="flex items-center gap-2 px-2 py-1.5 text-[#777] font-semibold w-full min-w-0">
-                          <span className="w-[14px] shrink-0"></span>
+                        <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#777] font-semibold w-full min-w-0">
+                          <span className="w-[13px] shrink-0"></span>
                           <span className="truncate min-w-0 flex-1">evals/</span>
                         </div>
                       </div>
