@@ -526,9 +526,9 @@ export default function EmbeddingsPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
                 {/* Left: Content */}
                 <div className="flex flex-col gap-6 max-w-xl">
-                  <h1 className="text-5xl lg:text-[64px] font-bold tracking-tight leading-[1.1] mt-[-1rem]">
-                    Embeddings in.{" "}
-                    <span className="bg-[#75bf00] text-black px-2 py-1 leading-[1.3] box-decoration-clone">
+                  <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
+                    Embeddings in.<br />
+                    <span className="text-[#75bf00]">
                       Reranked results out.
                     </span>
                   </h1>

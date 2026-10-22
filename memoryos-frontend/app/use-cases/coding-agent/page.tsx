@@ -647,8 +647,8 @@ export default function EmbeddingsPage() {
                 {/* Left: Content */}
                 <div className="flex flex-col gap-5 max-w-xl">
                   <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-medium tracking-tight leading-[1.12] text-[#F0EFE2] mt-[-1rem]">
-                    Issues in.{" "}
-                    <span className="bg-[#75bf00] text-black px-2 py-0.5 leading-[1.2] inline-block box-decoration-clone">
+                    Issues in.<br />
+                    <span className="text-[#75bf00]">
                       Verified patches out.
                     </span>
                   </h1>
