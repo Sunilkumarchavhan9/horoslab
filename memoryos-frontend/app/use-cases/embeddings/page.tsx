@@ -10,7 +10,7 @@ import { EmbeddingsGrid } from "@/components/landing/embeddings-grid";
 
 import { SkeletonGrid } from "@/components/ui/skeleton-grid";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
-import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosLogo, MetaLogo, DeepSeekLogo, NvidiaLogo, GoogleLogo, MistralLogo, HuggingFaceLogo, SGLangLogo, OpenAILogo, MicrosoftLogo, K8sFaviconLogo, VLLMLogo, QwenLogo, BAAILogo, AuthorMonogram, KimiLogo, HorosWordmarkLogo, AnthropicLogo, GithubLogo, JinaLogo, MixedbreadLogo, SnowflakeLogo, NomicLogo, ClaudeLogo, GeminiLogo, GrokLogo, PerplexityLogo } from "@/components/horos/primitives/brand-icons";
 import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, ChevronRight, ChevronDown, CheckCircle2, Play, Cloud, Server, Network, ArrowUp, ArrowRight, ArrowUpRight, Sparkles, Search, Brain, Infinity, Activity, Layers, Database, Mic, Workflow, Package, Gauge, Lock, EyeOff, ShieldCheck, Sun, Monitor, Moon, Zap, Loader2, ScanSearch } from "lucide-react";
 
 const COMPARISON_ROWS = [
@@ -1677,15 +1677,56 @@ export default function EmbeddingsPage() {
                   <div className="flex flex-col items-end">
                     <span className="text-[#F0EFE2] font-bold text-[11px] mb-3">Ask AI about Horos</span>
                     <div className="flex items-center gap-4 text-[#C8C7BA]">
-                      <OpenAILogo size={18} className="text-[#00a67e] hover:brightness-125 transition-all cursor-pointer" />
-                      <AnthropicLogo size={18} className="text-[#d97757] hover:brightness-125 transition-all cursor-pointer" />
-                      <GoogleLogo size={18} className="text-[#4285f4] hover:brightness-125 transition-all cursor-pointer" />
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors cursor-pointer">
-                        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-                      </svg>
-                      <div className="w-[18px] h-[18px] border-[1.5px] border-current rounded-full flex items-center justify-center text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors cursor-pointer">
-                        <div className="w-1.5 h-1.5 bg-current rounded-full" />
-                      </div>
+                      <a
+                        href="https://chatgpt.com/?q=What+is+Horos+AI%3F"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors"
+                        aria-label="Ask ChatGPT about HOROS"
+                        title="ChatGPT"
+                      >
+                        <OpenAILogo size={18} className="text-current" />
+                      </a>
+                      <a
+                        href="https://claude.ai/new?q=What+is+Horos+AI%3F"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors"
+                        aria-label="Ask Claude about HOROS"
+                        title="Claude"
+                      >
+                        <ClaudeLogo size={18} className="text-current" />
+                      </a>
+                      <a
+                        href="https://gemini.google.com/app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors"
+                        aria-label="Ask Gemini about HOROS"
+                        title="Gemini"
+                      >
+                        <GeminiLogo size={18} className="text-current" />
+                      </a>
+                      <a
+                        href="https://x.com/i/grok"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors"
+                        aria-label="Ask Grok about HOROS"
+                        title="Grok"
+                      >
+                        <GrokLogo size={18} className="text-current" />
+                      </a>
+                      <a
+                        href="https://www.perplexity.ai/search?q=What+is+Horos+AI%3F"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#C8C7BA] hover:text-[#F0EFE2] transition-colors"
+                        aria-label="Ask Perplexity about HOROS"
+                        title="Perplexity"
+                      >
+                        <PerplexityLogo size={18} className="text-current" />
+                      </a>
                     </div>
                   </div>
                 </div>
