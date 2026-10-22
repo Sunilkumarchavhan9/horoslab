@@ -1430,8 +1430,9 @@ export default function AutonomousSoftwareEngineersPage() {
               <div />
               
 
-              <div className="min-w-0">
-                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-dashed border-[#333]">
+              {/* Added top horizontal line per user request */}
+              <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
+                <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
                   <div className="px-6 py-8 sm:px-8 sm:py-9 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
                     <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
