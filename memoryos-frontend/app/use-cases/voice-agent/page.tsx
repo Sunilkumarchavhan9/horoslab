@@ -1481,34 +1481,34 @@ export default function RagSearchPage() {
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
               <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                 {/* Card 1 */}
-                <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                  <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                    <Cloud size={20} strokeWidth={1.5} />
+                <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                  <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                    <Cloud size={24} strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-xl font-medium text-[#F0EFE2]">Managed Horos</h3>
-                  <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                  <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Managed Horos</h3>
+                  <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                     Our GPUs, per-million-tokens billing from L4 to B200.
                   </p>
                 </div>
 
                 {/* Card 2 */}
-                <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                  <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                    <Server size={20} strokeWidth={1.5} />
+                <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                  <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                    <Server size={24} strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-xl font-medium text-[#F0EFE2]">Your infrastructure</h3>
-                  <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                  <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Your infrastructure</h3>
+                  <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                     AWS, GCP, RunPod, bare metal. Same verifier/, your cluster.
                   </p>
                 </div>
 
                 {/* Card 3 */}
-                <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                  <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                    <Network size={20} strokeWidth={1.5} />
+                <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 items-start">
+                  <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                    <Network size={24} strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-xl font-medium text-[#F0EFE2]">Local workstation</h3>
-                  <p className="text-[#C8C7BA] text-[13px] leading-relaxed">
+                  <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Local workstation</h3>
+                  <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                     docker compose up. Full pipeline on a single GPU.
                   </p>
                 </div>
@@ -1518,19 +1518,24 @@ export default function RagSearchPage() {
           </div>
         </div>
 
-              </div>
-              <div />
-            </div>
+        </div>
+        <div />
+      </div>
+
+        {/* Section End Divider with Brand Logo */}
+        <div className="w-full relative z-20 my-16 md:my-20">
+          <SectionDivider position="top" className="w-full" />
+        </div>
+
         {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-24 pb-16">
-            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+        <div className="w-full relative z-10 pt-4 sm:pt-6 pb-16">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                 Supported HF chat models work
               </h2>
-              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                 Supported chat-capable models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
               </p>
 
@@ -1588,9 +1593,13 @@ export default function RagSearchPage() {
           </div>
         </div>
 
+        {/* Section End Divider with Brand Logo */}
+        <div className="w-full relative z-20 my-16 md:my-20">
+          <SectionDivider position="top" className="w-full" />
+        </div>
+
         {/* What Horos tunes Section */}
-        <div className="w-full relative z-10 pt-24 pb-16">
-          <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+        <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
@@ -1604,63 +1613,63 @@ export default function RagSearchPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3">
 
                   {/* Row 1 */}
-                  <div className="px-8 lg:px-12 py-12 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Mic size={32} strokeWidth={1.5} />
+                      <Mic size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Speech pipeline</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Speech pipeline</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       VAD, STT, LLM, TTS, streaming. Tune chunk size and model handoff. Measure end-to-end latency and voice quality in real-time.
                     </p>
                   </div>
 
-                  <div className="px-8 lg:px-12 py-12 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Cpu size={32} strokeWidth={1.5} />
+                      <Cpu size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Kernel & runtime</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Kernel & runtime</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       FlashAttention, custom kernels, fused operations. Search kernel configurations tailored to your workload. Benchmark throughput beyond default runtimes.
                     </p>
                   </div>
 
-                  <div className="px-8 lg:px-12 py-12 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Layers size={32} strokeWidth={1.5} />
+                      <Layers size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Quantization</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Quantization</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       FP8, INT8, AWQ, GPTQ, NVFP4. Test lower-precision variants against your quality floor to cut memory costs without losing accuracy.
                     </p>
                   </div>
 
                   {/* Row 2 */}
-                  <div className="px-8 lg:px-12 py-12 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Database size={32} strokeWidth={1.5} />
+                      <Database size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">KV cache</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">KV cache</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Paged KV cache, prefix caching, compression. Optimize cache for concurrent sessions. Measure memory usage under real conversational workloads.
                     </p>
                   </div>
 
-                  <div className="px-8 lg:px-12 py-12 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Zap size={32} strokeWidth={1.5} />
+                      <Zap size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">Streaming decode</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Streaming decode</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Continuous batching, chunked prefill, speculative decoding. Tune generation for fluid conversation. Evaluate first-token latency and end-to-end time to response.
                     </p>
                   </div>
 
-                  <div className="px-8 lg:px-12 py-12 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Server size={32} strokeWidth={1.5} />
+                      <Server size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-3xl font-medium text-[#F0EFE2]">GPU & serving</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">GPU & serving</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       L4, L40S, A100, H100, B200. Compare hardware and concurrency. Find the exact configuration that delivers top quality at the lowest cost.
                     </p>
                   </div>

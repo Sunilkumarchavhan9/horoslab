@@ -1362,10 +1362,10 @@ aiohttp==3.10.5`;
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                 Supported HF real-time models work
               </h2>
-              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                 Supported low-latency models on Hugging Face run seamlessly through our pipeline. Search the live catalog above. The examples below are just a starting view.
               </p>
 
@@ -1424,80 +1424,79 @@ aiohttp==3.10.5`;
         </div>
 
         {/* What Horos tunes Section */}
-        <div className="w-full relative z-10 pt-24">
-          <SectionDivider position="top" className="absolute top-0 left-0 w-full" />
+        <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-2xl mx-auto leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
                 What Horos tunes for Real-Time
               </h2>
-              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                 Every stage of the pipeline, retuned per model and GPU.
               </p>
 
               {/* Tunes Grid */}
-              <div className="flex flex-col w-full border-t border-dashed border-[#333]">
+              <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 w-full">
 
                   {/* Row 1 */}
-                  <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Cpu size={32} strokeWidth={1.5} />
+                      <Cpu size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#C8C7BA]">Kernel sweep</h3>
-                    <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Kernel sweep</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       FlashAttention, FlashInfer, Marlin, custom fusion. Correctness + speedup gates on every rewrite.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Layers size={32} strokeWidth={1.5} />
+                      <Layers size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#C8C7BA]">Quantization</h3>
-                    <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Quantization</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       FP8, AWQ, GPTQ, HQQ, INT8 SmoothQuant, NVFP4. Quality scored against your accuracy floor.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Database size={32} strokeWidth={1.5} />
+                      <Database size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#C8C7BA]">KV cache</h3>
-                    <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">KV cache</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       FP8, INT4, and TurboQuant 3-4 bit KV compression. 60 to 75% VRAM savings.
                     </p>
                   </div>
 
                   {/* Row 2 */}
-                  <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Zap size={32} strokeWidth={1.5} />
+                      <Zap size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#C8C7BA]">Speculative decoding</h3>
-                    <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Speculative decoding</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       EAGLE3, MTP, n-gram lookup, draft model. 1.3 to 2x decode speedup, weights untouched.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Sliders size={32} strokeWidth={1.5} />
+                      <Sliders size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#C8C7BA]">Serving config</h3>
-                    <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Serving config</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Continuous batching, chunked prefill, PagedAttention, prefix cache. Tuned across vLLM, SGLang, TensorRT-LLM.
                     </p>
                   </div>
 
-                  <div className="px-12 py-20 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-6 items-start">
+                  <div className="px-6 py-7 sm:px-8 sm:py-8 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-3.5 items-start">
                     <div className="text-[#75bf00]">
-                      <Cloud size={32} strokeWidth={1.5} />
+                      <Cloud size={22} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-4xl font-medium text-[#C8C7BA]">Multi-cloud capacity</h3>
-                    <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Multi-cloud capacity</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Pareto GPU selection across L4 to B200. Managed or exportable.
                     </p>
                   </div>

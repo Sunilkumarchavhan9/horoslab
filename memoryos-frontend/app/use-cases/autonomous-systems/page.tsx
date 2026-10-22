@@ -1405,10 +1405,10 @@ export default function AutonomousSystemsPage() {
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
-                <h2 className="text-2xl sm:text-3xl md:text-[38px] lg:text-[42px] xl:text-[46px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-4xl mx-auto leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-4xl mx-auto leading-tight">
                   Supported HF autonomous systems models work
                 </h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-10">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
                   Deploy open-weight world models, vision-language-action policies, and physical-dynamics predictors. The models below are just a starting view.
                 </p>
 

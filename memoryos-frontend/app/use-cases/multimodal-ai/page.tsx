@@ -1753,10 +1753,10 @@ export default function MultimodalAIPage() {
                 <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
               </div>
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl sm:text-4xl md:text-[40px] lg:text-[46px] xl:text-[50px] font-medium tracking-tight text-[#F0EFE2] mb-3 text-center max-w-none md:whitespace-nowrap leading-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-none md:whitespace-nowrap leading-tight">
                   Supported HF speech models work
                 </h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-10">
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
                   Supported multimodal and omni-modal models on Hugging Face run through the compatible recipe. Search the live catalog above. The examples below are just a starting view.
                 </p>
 
