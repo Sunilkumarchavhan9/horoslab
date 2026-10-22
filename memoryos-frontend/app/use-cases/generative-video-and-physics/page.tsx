@@ -1643,9 +1643,13 @@ export default function GenerativeVideoAndPhysicsPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-20">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Hugging Face Catalog Section */}
-          <div className="w-full relative z-10 pt-10 md:pt-14 pb-16">
-            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          <div className="w-full relative z-10 pt-4 sm:pt-6 pb-16">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div />
               <div className="flex flex-col items-center">
