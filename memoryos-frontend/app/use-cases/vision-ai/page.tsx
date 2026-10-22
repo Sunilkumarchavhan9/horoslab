@@ -1115,28 +1115,28 @@ export default function VisionAIPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-8 lg:p-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[14px] sm:text-[15px] font-bold">0 1</div>
-                    <h3 className="text-xl md:text-2xl lg:text-[26px] font-medium text-[#F0EFE2] leading-snug">Choose and adapt vision models.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Choose and adapt vision models.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Compare open vision models for object detection, scene understanding, spatial relationships, and video analysis. Track model versions and measure which capabilities improve.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-8 lg:p-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[14px] sm:text-[15px] font-bold">0 2</div>
-                    <h3 className="text-xl md:text-2xl lg:text-[26px] font-medium text-[#F0EFE2] leading-snug">Your visual data stays under your control.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Your visual data stays under your control.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Bring your own images, video, labels, and sensor observations. Choose your deployment environment and control how visual data is accessed and used.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-8 lg:p-10 flex flex-col gap-3.5">
-                    <div className="text-[#75bf00] font-mono text-[14px] sm:text-[15px] font-bold">0 3</div>
-                    <h3 className="text-xl md:text-2xl lg:text-[26px] font-medium text-[#F0EFE2] leading-snug">Measure understanding against reality.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Measure understanding against reality.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Evaluate object recognition, spatial relationships, and changes across video frames against your own data. Compare quality, latency, GPU memory, and cost before deploying.
                     </p>
                   </div>

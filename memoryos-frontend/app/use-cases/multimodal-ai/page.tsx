@@ -1127,28 +1127,28 @@ export default function MultimodalAIPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-8 lg:p-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[14px] sm:text-[15px] font-bold">0 1</div>
-                    <h3 className="text-xl md:text-2xl lg:text-[26px] font-medium text-[#F0EFE2] leading-snug">One model, multiple modalities.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">One model, multiple modalities.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Combine text, images, audio, and video with models such as Qwen3.5 and supported multimodal models. Measure which model handles your actual inputs best.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-8 lg:p-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[14px] sm:text-[15px] font-bold">0 2</div>
-                    <h3 className="text-xl md:text-2xl lg:text-[26px] font-medium text-[#F0EFE2] leading-snug">Context across modalities.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Context across modalities.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Preserve relationships between speech, video frames, timestamps, and text. Evaluate whether the model connects what was said with what happened.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-8 lg:p-10 flex flex-col gap-3.5">
-                    <div className="text-[#75bf00] font-mono text-[14px] sm:text-[15px] font-bold">0 3</div>
-                    <h3 className="text-xl md:text-2xl lg:text-[26px] font-medium text-[#F0EFE2] leading-snug">Optimize the complete pipeline.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Optimize the complete pipeline.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Tune input resolution, audio duration, frame sampling, context length, batching, and quantization. Compare quality, latency, memory, and GPU cost before deployment.
                     </p>
                   </div>

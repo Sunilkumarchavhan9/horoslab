@@ -818,28 +818,28 @@ export default function EmbeddingsPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Choose what to improve.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 1</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Choose what to improve.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Start with an open model and a clear goal. Horos benchmarks baseline reasoning, citation accuracy, and retrieval before testing changes.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Experiment and compare.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 2</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Experiment and compare.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Test different training data, prompts, and context lengths. Horos tracks all modifications, compute resources, and experiment outcomes.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-10 flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Prove the improvement.</h3>
-                    <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
+                  <div className="p-6 sm:p-7 md:p-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">0 3</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Prove the improvement.</h3>
+                    <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] leading-relaxed">
                       Compare candidate models with the original. Measure whether they perform better, run faster, or cost less before deployment.
                     </p>
                   </div>
