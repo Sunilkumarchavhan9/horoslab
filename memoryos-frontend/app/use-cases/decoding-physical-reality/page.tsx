@@ -1873,7 +1873,7 @@ export default function DecodingPhysicalRealityPage() {
               </div>
               <div className="border-l border-dashed border-[#333]" />
             </div>
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full" />
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
           </div>
 
           {/* FAQ Section */}

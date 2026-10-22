@@ -2347,7 +2347,7 @@ outlines==0.0.46`;
           {/* Bottom Horizontal Border */}
           <SectionDivider
             position="bottom"
-            className="absolute bottom-0 left-0 w-full"
+            className="absolute bottom-0 left-0 w-full z-20"
           />
         </div>
 

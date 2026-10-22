@@ -1877,11 +1877,11 @@ export default function GenerativeVideoAndPhysicsPage() {
               </div>
               <div className="border-l border-dashed border-[#333]" />
             </div>
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full" />
+            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
           </div>
 
           {/* FAQ Section */}
-          <div className="w-full relative z-10 border-t border-dashed border-[#333]">
+          <div className="w-full relative z-10">
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               {/* Left Column Margin with Inner and Outer dashed lines */}
               <div className="border-r border-dashed border-[#333] relative">

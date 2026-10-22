@@ -1528,7 +1528,7 @@ export default function AutonomousAgentsPage() {
         </div>
 
         {/* Try This Pipeline Section */}
-        <div className="w-full relative z-10 py-24 border-b border-dashed border-[#333]">
+        <div className="w-full relative z-10 py-24">
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
@@ -1543,6 +1543,8 @@ export default function AutonomousAgentsPage() {
             </div>
             <div className="border-l border-dashed border-[#333]" />
           </div>
+          {/* Bottom Horizontal Border with Brand Logo & Crosshairs */}
+          <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
         </div>
 
         {/* FAQ Section */}
