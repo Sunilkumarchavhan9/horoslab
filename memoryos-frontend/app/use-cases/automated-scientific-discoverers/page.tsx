@@ -903,6 +903,8 @@ export default function AutomatedScientificDiscoverersPage() {
               downloads: dl,
               description: description,
               tag: tag,
+              url: `https://huggingface.co/${m.id}`,
+              link: `https://huggingface.co/${m.id}`,
             };
           });
           setModels(mapped);
@@ -1932,15 +1934,12 @@ export default function AutomatedScientificDiscoverersPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div
+                        <a
                           key={model.id}
-                          className={getBorderClasses(index, models.length)}
-                          onClick={() => {
-                            const url =
-                              model.url ||
-                              `https://huggingface.co/${model.id}`;
-                            window.open(url, "_blank", "noopener,noreferrer");
-                          }}
+                          href={model.url || model.link || `https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
                         >
                           <ArrowUpRight
                             size={20}
@@ -1974,7 +1973,7 @@ export default function AutomatedScientificDiscoverersPage() {
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>

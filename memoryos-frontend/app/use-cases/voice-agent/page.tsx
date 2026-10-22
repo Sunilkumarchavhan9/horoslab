@@ -383,15 +383,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-    { id: "nvidia/PhoneLLM-Alpha-1", name: "PhoneLLM Alpha 1", author: "Pipecat", downloads: "32B", tag: "Voice Agent" },
-    { id: "nvidia/Nemotron-3-Nano-Omni", name: "Nemotron 3 Nano Omni", author: "NVIDIA", downloads: "30B", tag: "Omni Agent" },
-    { id: "nvidia/NemotronLabs-VoiceChat", name: "NemotronLabs VoiceChat", author: "NVIDIA", downloads: "11B", tag: "Audio-to-Audio" },
-    { id: "qwen/Qwen3-Omni", name: "Qwen3-Omni", author: "Alibaba", downloads: "30B-A3B", tag: "Multimodal" },
-    { id: "mistral/Voxtral-Realtime", name: "Voxtral Realtime", author: "Mistral", downloads: "Open weights", tag: "Streaming STT" },
-    { id: "qwen/Qwen3-TTS", name: "Qwen3-TTS", author: "Alibaba", downloads: "1.7B", tag: "TTS" },
-    { id: "mistral/Voxtral-TTS", name: "Voxtral TTS", author: "Mistral", downloads: "4B", tag: "Realtime TTS" },
-    { id: "bosonai/Higgs-Audio-V3", name: "Higgs Audio V3", author: "Boson AI", downloads: "4B", tag: "TTS" },
-    { id: "nvidia/Parakeet-TDT-v3", name: "Parakeet TDT v3", author: "NVIDIA", downloads: "0.6B", tag: "Streaming STT" }
+    { id: "pipecat-ai/phonellm-alpha-1", name: "PhoneLLM Alpha 1", author: "Pipecat", downloads: "32B", tag: "Voice Agent", link: "https://huggingface.co/pipecat-ai/phonellm-alpha-1" },
+    { id: "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-BF16", name: "Nemotron 3 Nano Omni", author: "NVIDIA", downloads: "30B", tag: "Omni Agent", link: "https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-BF16" },
+    { id: "nvidia/NVIDIA-NemotronLabs-VoiceChat-11B", name: "NemotronLabs VoiceChat", author: "NVIDIA", downloads: "11B", tag: "Audio-to-Audio", link: "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-VoiceChat-11B" },
+    { id: "Qwen/Qwen3-Omni-30B-A3B-Instruct", name: "Qwen3-Omni", author: "Alibaba", downloads: "30B-A3B", tag: "Multimodal", link: "https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct" },
+    { id: "mistralai/Voxtral-Mini-4B-Realtime-2602", name: "Voxtral Realtime", author: "Mistral", downloads: "Open weights", tag: "Streaming STT", link: "https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602" },
+    { id: "Qwen/Qwen3-TTS-12Hz-1.7B-Base", name: "Qwen3-TTS", author: "Alibaba", downloads: "1.7B", tag: "TTS", link: "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base" },
+    { id: "mistralai/Voxtral-4B-TTS-2603", name: "Voxtral TTS", author: "Mistral", downloads: "4B", tag: "Realtime TTS", link: "https://huggingface.co/mistralai/Voxtral-4B-TTS-2603" },
+    { id: "bosonai/higgs-tts-3-4b", name: "Higgs Audio V3", author: "Boson AI", downloads: "4B", tag: "TTS", link: "https://huggingface.co/bosonai/higgs-tts-3-4b" },
+    { id: "nvidia/parakeet-tdt-0.6b-v3", name: "Parakeet TDT v3", author: "NVIDIA", downloads: "0.6B", tag: "Streaming STT", link: "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3" }
   ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -649,7 +649,8 @@ export default function RagSearchPage() {
               name: name,
               author: author,
               downloads: dl,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -1569,7 +1570,13 @@ export default function RagSearchPage() {
                     </div>
                   ) : (
                     models.map((model, index) => (
-                      <div key={model.id} className={getBorderClasses(index, models.length)}>
+                      <a
+                        key={model.id}
+                        href={model.link || model.url || `https://huggingface.co/${model.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={getBorderClasses(index, models.length) + " block no-underline"}
+                      >
                         <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                           {getLogo(model.author, model.name)}
@@ -1582,7 +1589,7 @@ export default function RagSearchPage() {
                           <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads}</span>
                           <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">{model.tag}</span>
                         </div>
-                      </div>
+                      </a>
                     ))
                   )}
                 </div>

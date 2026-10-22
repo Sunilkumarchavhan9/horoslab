@@ -363,15 +363,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "moonshotai/Kimi-K3", name: "Kimi K3", author: "Moonshot AI", downloads: "2.8T MoE", tag: "Deep Research" },
-  { id: "deepseek-ai/DeepSeek-V3.2", name: "DeepSeek-V3.2", author: "DeepSeek", downloads: "685B MoE", tag: "Tool Reasoning" },
-  { id: "Qwen/Qwen3.5-397B-A17B", name: "Qwen3.5-397B-A17B", author: "Alibaba", downloads: "397B MoE", tag: "Multimodal Research" },
-  { id: "moonshotai/Kimi-K2.5", name: "Kimi K2.5", author: "Moonshot AI", downloads: "1T MoE", tag: "Visual Agent" },
-  { id: "deepseek-ai/DeepSeek-R1-0528", name: "DeepSeek-R1-0528", author: "DeepSeek", downloads: "671B", tag: "Deep Reasoning" },
-  { id: "Qwen/Qwen3.5-35B-A3B", name: "Qwen3.5-35B-A3B", author: "Alibaba", downloads: "35B MoE", tag: "Efficient Reasoning" },
-  { id: "Qwen/Qwen3.5-27B", name: "Qwen3.5-27B", author: "Alibaba", downloads: "27B", tag: "Multimodal Analysis" },
-  { id: "Qwen/QwQ-32B", name: "QwQ-32B", author: "Alibaba", downloads: "32B", tag: "Math Reasoning" },
-  { id: "microsoft/Phi-4-reasoning", name: "Phi-4-reasoning", author: "Microsoft", downloads: "14B", tag: "Scientific Reasoning" }
+  { id: "moonshotai/Kimi-K3", name: "Kimi K3", author: "Moonshot AI", downloads: "2.8T MoE", tag: "Deep Research", link: "https://huggingface.co/moonshotai" },
+  { id: "deepseek-ai/DeepSeek-V3.2", name: "DeepSeek-V3.2", author: "DeepSeek", downloads: "685B MoE", tag: "Tool Reasoning", link: "https://huggingface.co/deepseek-ai/DeepSeek-V3" },
+  { id: "Qwen/Qwen3.5-397B-A17B", name: "Qwen3.5-397B-A17B", author: "Alibaba", downloads: "397B MoE", tag: "Multimodal Research", link: "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct" },
+  { id: "moonshotai/Kimi-K2.5", name: "Kimi K2.5", author: "Moonshot AI", downloads: "1T MoE", tag: "Visual Agent", link: "https://huggingface.co/moonshotai" },
+  { id: "deepseek-ai/DeepSeek-R1-0528", name: "DeepSeek-R1-0528", author: "DeepSeek", downloads: "671B", tag: "Deep Reasoning", link: "https://huggingface.co/deepseek-ai/DeepSeek-R1" },
+  { id: "Qwen/Qwen3.5-35B-A3B", name: "Qwen3.5-35B-A3B", author: "Alibaba", downloads: "35B MoE", tag: "Efficient Reasoning", link: "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct" },
+  { id: "Qwen/Qwen3.5-27B", name: "Qwen3.5-27B", author: "Alibaba", downloads: "27B", tag: "Multimodal Analysis", link: "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct" },
+  { id: "Qwen/QwQ-32B", name: "QwQ-32B", author: "Alibaba", downloads: "32B", tag: "Math Reasoning", link: "https://huggingface.co/Qwen/QwQ-32B" },
+  { id: "microsoft/Phi-4-reasoning", name: "Phi-4-reasoning", author: "Microsoft", downloads: "14B", tag: "Scientific Reasoning", link: "https://huggingface.co/microsoft/phi-4" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -598,7 +598,8 @@ export default function EmbeddingsPage() {
               name: name,
               author: author,
               downloads: dl,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -821,7 +822,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
                     <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Choose what to improve.</h3>
                     <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
-                      Start with an AI model and a clear goal. Improve its coding, reasoning, accuracy, or ability to understand images. Horos records how the original model performs before testing changes.
+                      Start with an open model and a clear goal. Horos benchmarks baseline reasoning, citation accuracy, and retrieval before testing changes.
                     </p>
                   </div>
 
@@ -830,7 +831,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
                     <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Experiment and compare.</h3>
                     <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
-                      Try different training data, learning methods, and model designs. Horos keeps track of what you changed, what resources you used, and what happened in each experiment.
+                      Test different training data, prompts, and context lengths. Horos tracks all modifications, compute resources, and experiment outcomes.
                     </p>
                   </div>
 
@@ -839,7 +840,7 @@ export default function EmbeddingsPage() {
                     <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
                     <h3 className="text-2xl md:text-3xl font-medium text-[#F0EFE2] leading-tight">Prove the improvement.</h3>
                     <p className="text-[#C8C7BA] text-[15px] sm:text-[16px] leading-relaxed">
-                      Compare the new model with the original. Measure whether it performs better, runs faster, or costs less. Keep the results and failures so you know which changes are worth carrying forward.
+                      Compare candidate models with the original. Measure whether they perform better, run faster, or cost less before deployment.
                     </p>
                   </div>
                 </div>
@@ -1476,7 +1477,7 @@ export default function EmbeddingsPage() {
                       models.map((model, index) => (
                         <a
                           key={model.id}
-                          href={`https://huggingface.co/${model.id}`}
+                          href={model.link || model.url || `https://huggingface.co/${model.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={getBorderClasses(index, models.length) + " block no-underline"}

@@ -88,6 +88,22 @@ const HF_MODEL_OVERRIDE_MAP: Record<string, string> = {
   "genesis-embodied/genesis": "https://huggingface.co/models?search=genesis+embodied",
   "materials-project/graphnet-materials-32b": "https://huggingface.co/models?search=materials+project",
   "openfold/openfold-2-cuda": "https://huggingface.co/models?search=openfold",
+  // Voice & Audio
+  "nvidia/phonellm-alpha-1": "https://huggingface.co/pipecat-ai/phonellm-alpha-1",
+  "pipecat/phonellm-alpha-1": "https://huggingface.co/pipecat-ai/phonellm-alpha-1",
+  "pipecat-ai/phonellm-alpha-1": "https://huggingface.co/pipecat-ai/phonellm-alpha-1",
+  "nvidia/nemotron-3-nano-omni": "https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-BF16",
+  "nvidia/nemotronlabs-voicechat": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-VoiceChat-11B",
+  "qwen/qwen3-omni": "https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "mistral/voxtral-realtime": "https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602",
+  "mistralai/voxtral-realtime": "https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602",
+  "mistralai/voxtral-mini-4b-realtime": "https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602",
+  "qwen/qwen3-tts": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+  "mistral/voxtral-tts": "https://huggingface.co/mistralai/Voxtral-4B-TTS-2603",
+  "mistralai/voxtral-tts": "https://huggingface.co/mistralai/Voxtral-4B-TTS-2603",
+  "mistralai/voxtral-4b-tts": "https://huggingface.co/mistralai/Voxtral-4B-TTS-2603",
+  "bosonai/higgs-audio-v3": "https://huggingface.co/bosonai/higgs-tts-3-4b",
+  "nvidia/parakeet-tdt-v3": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3",
 };
 
 export function getModelHfUrl(model: {
@@ -96,7 +112,9 @@ export function getModelHfUrl(model: {
   author?: string;
   url?: string;
   hfUrl?: string;
+  link?: string;
 }): string {
+  if (model.link) return model.link;
   if (model.hfUrl) return model.hfUrl;
   if (model.url) return model.url;
 

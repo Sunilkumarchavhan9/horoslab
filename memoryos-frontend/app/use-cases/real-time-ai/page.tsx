@@ -219,15 +219,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "NousResearch/Hermes-3-Llama-3.1-8B", name: "Hermes 3 (8B)", author: "Nous Research", downloads: "8B", tag: "Agent LLM" },
-  { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B", author: "Meta", downloads: "70B", tag: "Agent LLM" },
-  { id: "Qwen/Qwen2.5-Coder-32B-Instruct", name: "Qwen 2.5 Coder", author: "Alibaba", downloads: "32B", tag: "Agent LLM" },
-  { id: "deepseek-ai/DeepSeek-R1", name: "DeepSeek R1", author: "DeepSeek", downloads: "671B MoE", tag: "Reasoning" },
-  { id: "mistralai/Mistral-Large-Instruct-2407", name: "Mistral Large", author: "Mistral AI", downloads: "123B", tag: "Agent LLM" },
-  { id: "meta-llama/Llama-3.1-8B-Instruct", name: "Llama 3.1 8B", author: "Meta", downloads: "8B", tag: "Agent LLM" },
-  { id: "Qwen/QwQ-32B-Preview", name: "QwQ 32B", author: "Alibaba", downloads: "32B", tag: "Reasoning" },
-  { id: "meta-llama/Llama-3.2-3B-Instruct", name: "Llama 3.2 3B", author: "Meta", downloads: "3B", tag: "Edge Agent" },
-  { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen 2.5 72B", author: "Alibaba", downloads: "72B", tag: "Agent LLM" }
+  { id: "NousResearch/Hermes-3-Llama-3.1-8B", name: "Hermes 3 (8B)", author: "Nous Research", downloads: "8B", tag: "Agent LLM", link: "https://huggingface.co/NousResearch/Hermes-3-Llama-3.1-8B" },
+  { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B", author: "Meta", downloads: "70B", tag: "Agent LLM", link: "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct" },
+  { id: "Qwen/Qwen2.5-Coder-32B-Instruct", name: "Qwen 2.5 Coder", author: "Alibaba", downloads: "32B", tag: "Agent LLM", link: "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct" },
+  { id: "deepseek-ai/DeepSeek-R1", name: "DeepSeek R1", author: "DeepSeek", downloads: "671B MoE", tag: "Reasoning", link: "https://huggingface.co/deepseek-ai/DeepSeek-R1" },
+  { id: "mistralai/Mistral-Large-Instruct-2407", name: "Mistral Large", author: "Mistral AI", downloads: "123B", tag: "Agent LLM", link: "https://huggingface.co/mistralai/Mistral-Large-Instruct-2407" },
+  { id: "meta-llama/Llama-3.1-8B-Instruct", name: "Llama 3.1 8B", author: "Meta", downloads: "8B", tag: "Agent LLM", link: "https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct" },
+  { id: "Qwen/QwQ-32B-Preview", name: "QwQ 32B", author: "Alibaba", downloads: "32B", tag: "Reasoning", link: "https://huggingface.co/Qwen/QwQ-32B-Preview" },
+  { id: "meta-llama/Llama-3.2-3B-Instruct", name: "Llama 3.2 3B", author: "Meta", downloads: "3B", tag: "Edge Agent", link: "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct" },
+  { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen 2.5 72B", author: "Alibaba", downloads: "72B", tag: "Agent LLM", link: "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -687,7 +687,8 @@ aiohttp==3.10.5`;
               name: name,
               author: author,
               downloads: dl,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -1399,7 +1400,7 @@ aiohttp==3.10.5`;
                     </div>
                   ) : (
                     models.map((model, index) => (
-                      <a href={`https://huggingface.co/${model.id}`} target="_blank" rel="noopener noreferrer" key={model.id} className={getBorderClasses(index, models.length) + " block"}>
+                      <a href={model.link || model.url || `https://huggingface.co/${model.id}`} target="_blank" rel="noopener noreferrer" key={model.id} className={getBorderClasses(index, models.length) + " block no-underline"}>
                         <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                           {getLogo(model.author, model.name)}

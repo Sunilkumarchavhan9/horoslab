@@ -439,6 +439,7 @@ const DEFAULT_MODELS = [
     author: "Alibaba",
     downloads: "122B MoE",
     tag: "Tool Use",
+    link: "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct",
   },
   {
     id: "Qwen/Qwen3.5-35B-A3B",
@@ -446,6 +447,7 @@ const DEFAULT_MODELS = [
     author: "Alibaba",
     downloads: "35B MoE",
     tag: "Tool Use",
+    link: "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct",
   },
   {
     id: "NousResearch/Hermes-4.3-36B",
@@ -453,6 +455,7 @@ const DEFAULT_MODELS = [
     author: "Nous Research",
     downloads: "36B",
     tag: "Function Calling",
+    link: "https://huggingface.co/NousResearch/Hermes-3-Llama-3.1-8B",
   },
   {
     id: "Qwen/Qwen3.5-27B",
@@ -460,6 +463,7 @@ const DEFAULT_MODELS = [
     author: "Alibaba",
     downloads: "27B",
     tag: "Vision",
+    link: "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
   },
   {
     id: "NousResearch/Hermes-4-14B",
@@ -467,6 +471,7 @@ const DEFAULT_MODELS = [
     author: "Nous Research",
     downloads: "14B",
     tag: "JSON Output",
+    link: "https://huggingface.co/NousResearch/Hermes-4-14B",
   },
   {
     id: "Qwen/Qwen3.5-9B",
@@ -474,6 +479,7 @@ const DEFAULT_MODELS = [
     author: "Alibaba",
     downloads: "9B",
     tag: "Tool Use",
+    link: "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
   },
   {
     id: "mistralai/Ministral-3-8B-Instruct-2512",
@@ -481,6 +487,7 @@ const DEFAULT_MODELS = [
     author: "Mistral AI",
     downloads: "8B",
     tag: "Function Calling",
+    link: "https://huggingface.co/mistralai/Ministral-8B-Instruct-2410",
   },
   {
     id: "Qwen/Qwen3.5-2B",
@@ -488,6 +495,7 @@ const DEFAULT_MODELS = [
     author: "Alibaba",
     downloads: "2B",
     tag: "Vision",
+    link: "https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct",
   },
   {
     id: "mistralai/Ministral-3-3B-Instruct-2512",
@@ -495,6 +503,7 @@ const DEFAULT_MODELS = [
     author: "Mistral AI",
     downloads: "3B",
     tag: "Multilingual",
+    link: "https://huggingface.co/mistralai/Ministral-3B-Instruct-2410",
   },
 ];
 
@@ -995,6 +1004,7 @@ outlines==0.0.46`;
               author: author,
               downloads: dl,
               tag: tag,
+              link: `https://huggingface.co/${m.id}`,
             };
           });
           setModels(mapped);
@@ -2025,9 +2035,12 @@ outlines==0.0.46`;
                     </div>
                   ) : (
                     models.map((model, index) => (
-                      <div
+                      <a
                         key={model.id}
-                        className={getBorderClasses(index, models.length)}
+                        href={model.link || model.url || `https://huggingface.co/${model.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={getBorderClasses(index, models.length) + " block no-underline"}
                       >
                         <ArrowUpRight
                           size={20}
@@ -2058,7 +2071,7 @@ outlines==0.0.46`;
                             {model.tag}
                           </span>
                         </div>
-                      </div>
+                      </a>
                     ))
                   )}
                 </div>

@@ -208,15 +208,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "BAAI/bge-m3", name: "BGE-M3", author: "BAAI", downloads: "568M", tag: "Embed" },
-  { id: "BAAI/bge-large-en-v1.5", name: "BGE-Large EN v1.5", author: "BAAI", downloads: "335M", tag: "Embed" },
-  { id: "BAAI/bge-reranker-v2-m3", name: "BGE Reranker v2-m3", author: "BAAI", downloads: "568M", tag: "Rerank" },
-  { id: "jinaai/jina-embeddings-v3", name: "Jina Embeddings v3", author: "Jina AI", downloads: "570M", tag: "Embed" },
-  { id: "mixedbread-ai/mxbai-embed-large-v1", name: "Mixedbread Embed Large", author: "Mixedbread AI", downloads: "335M", tag: "Embed" },
-  { id: "Snowflake/snowflake-arctic-embed-l", name: "Arctic Embed L", author: "Snowflake", downloads: "335M", tag: "Embed" },
-  { id: "Alibaba-NLP/gte-Qwen2-1.5B-instruct", name: "GTE-Qwen2 1.5B", author: "Alibaba", downloads: "1.5B", tag: "Embed" },
-  { id: "intfloat/e5-mistral-7b-instruct", name: "E5 Mistral 7B", author: "Intfloat", downloads: "7B", tag: "Embed" },
-  { id: "nomic-ai/nomic-embed-text-v1.5", name: "Nomic Embed v1.5", author: "Nomic AI", downloads: "137M", tag: "Embed" }
+  { id: "BAAI/bge-m3", name: "BGE-M3", author: "BAAI", downloads: "568M", tag: "Embed", link: "https://huggingface.co/BAAI/bge-m3" },
+  { id: "BAAI/bge-large-en-v1.5", name: "BGE-Large EN v1.5", author: "BAAI", downloads: "335M", tag: "Embed", link: "https://huggingface.co/BAAI/bge-large-en-v1.5" },
+  { id: "BAAI/bge-reranker-v2-m3", name: "BGE Reranker v2-m3", author: "BAAI", downloads: "568M", tag: "Rerank", link: "https://huggingface.co/BAAI/bge-reranker-v2-m3" },
+  { id: "jinaai/jina-embeddings-v3", name: "Jina Embeddings v3", author: "Jina AI", downloads: "570M", tag: "Embed", link: "https://huggingface.co/jinaai/jina-embeddings-v3" },
+  { id: "mixedbread-ai/mxbai-embed-large-v1", name: "Mixedbread Embed Large", author: "Mixedbread AI", downloads: "335M", tag: "Embed", link: "https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1" },
+  { id: "Snowflake/snowflake-arctic-embed-l", name: "Arctic Embed L", author: "Snowflake", downloads: "335M", tag: "Embed", link: "https://huggingface.co/Snowflake/snowflake-arctic-embed-l" },
+  { id: "Alibaba-NLP/gte-Qwen2-1.5B-instruct", name: "GTE-Qwen2 1.5B", author: "Alibaba", downloads: "1.5B", tag: "Embed", link: "https://huggingface.co/Alibaba-NLP/gte-Qwen2-1.5B-instruct" },
+  { id: "intfloat/e5-mistral-7b-instruct", name: "E5 Mistral 7B", author: "Intfloat", downloads: "7B", tag: "Embed", link: "https://huggingface.co/intfloat/e5-mistral-7b-instruct" },
+  { id: "nomic-ai/nomic-embed-text-v1.5", name: "Nomic Embed v1.5", author: "Nomic AI", downloads: "137M", tag: "Embed", link: "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -442,7 +442,8 @@ export default function EmbeddingsPage() {
               name: name,
               author: author,
               downloads: dl,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -1272,7 +1273,13 @@ export default function EmbeddingsPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
+                        <a
+                          key={model.id}
+                          href={model.link || model.url || `https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
+                        >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                           <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
                             {getLogo(model.author, model.name)}
@@ -1285,7 +1292,7 @@ export default function EmbeddingsPage() {
                             <span className="text-[#F0EFE2] font-medium text-[14px] sm:text-[15px] shrink-0">{model.downloads}</span>
                             <span className="text-[#75bf00] text-[11px] sm:text-[12px] font-medium border border-[#2a381a] px-2 py-0.5 rounded-sm tracking-wide shrink-0 line-clamp-1">{model.tag}</span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>

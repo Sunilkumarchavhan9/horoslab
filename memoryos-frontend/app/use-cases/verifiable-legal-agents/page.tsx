@@ -230,15 +230,15 @@ function highlightCode(code: string, lang: string, isComplete: boolean = false) 
 }
 
 const DEFAULT_MODELS = [
-  { id: "openai/gpt-4o-legal-verifier", name: "GPT-4o Legal Verifier", author: "OpenAI", description: "Frontier legal reasoning model with zero-knowledge citation proofs.", role: "Legal Agent" },
-  { id: "nvidia/NeMo-Legal-8B", name: "NeMo Legal 8B", author: "NVIDIA", description: "Accelerated statutory verification model compiled for zero-latency audits.", role: "Citation Proofs" },
-  { id: "meta-llama/Llama-3.2-11B-Legal-Instruct", name: "Llama 3.2 Legal", author: "Meta", description: "Open-weights legal compliance agent for contract parsing and risk scoring.", role: "Legal LLM" },
-  { id: "deepseek-ai/DeepSeek-R1-Distill-Legal", name: "DeepSeek R1 Legal", author: "DeepSeek", description: "Deep reasoning engine for complex M&A, patent, and regulatory analysis.", role: "Legal Reasoning" },
-  { id: "harvey-ai/harvey-contract-reasoner", name: "Harvey Contract Reasoner", author: "Harvey", description: "Enterprise legal AI agent fine-tuned on corporate law and contract playbooks.", role: "Contract Audit" },
-  { id: "thomson-reuters/westlaw-reasoner-7b", name: "Westlaw Reasoner", author: "Thomson Reuters", description: "Case law retrieval model integrated with authoritative legal databases.", role: "Case Law Agent" },
-  { id: "mistralai/Mixtral-8x7B-Legal", name: "Mixtral Legal MoE", author: "Mistral", description: "High-throughput mixture-of-experts model for multi-jurisdictional compliance.", role: "Regulatory LLM" },
-  { id: "google/legal-palmyra-32b", name: "Legal Palmyra 32B", author: "Google", description: "Specialized legal model for statutory interpretation and treaty analysis.", role: "Legal Model" },
-  { id: "qwen/Qwen2.5-14B-Legal", name: "Qwen2.5 Legal", author: "Qwen", description: "Multilingual contract verifier and zero-hallucination compliance engine.", role: "Compliance Agent" }
+  { id: "openai/gpt-4o-legal-verifier", name: "GPT-4o Legal Verifier", author: "OpenAI", description: "Frontier legal reasoning model with zero-knowledge citation proofs.", role: "Legal Agent", link: "https://huggingface.co/openai" },
+  { id: "nvidia/NeMo-Legal-8B", name: "NeMo Legal 8B", author: "NVIDIA", description: "Accelerated statutory verification model compiled for zero-latency audits.", role: "Citation Proofs", link: "https://huggingface.co/nvidia" },
+  { id: "meta-llama/Llama-3.2-11B-Legal-Instruct", name: "Llama 3.2 Legal", author: "Meta", description: "Open-weights legal compliance agent for contract parsing and risk scoring.", role: "Legal LLM", link: "https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct" },
+  { id: "deepseek-ai/DeepSeek-R1-Distill-Legal", name: "DeepSeek R1 Legal", author: "DeepSeek", description: "Deep reasoning engine for complex M&A, patent, and regulatory analysis.", role: "Legal Reasoning", link: "https://huggingface.co/deepseek-ai/DeepSeek-R1" },
+  { id: "harvey-ai/harvey-contract-reasoner", name: "Harvey Contract Reasoner", author: "Harvey", description: "Enterprise legal AI agent fine-tuned on corporate law and contract playbooks.", role: "Contract Audit", link: "https://huggingface.co/models?search=legal+contract" },
+  { id: "thomson-reuters/westlaw-reasoner-7b", name: "Westlaw Reasoner", author: "Thomson Reuters", description: "Case law retrieval model integrated with authoritative legal databases.", role: "Case Law Agent", link: "https://huggingface.co/models?search=westlaw" },
+  { id: "mistralai/Mixtral-8x7B-Legal", name: "Mixtral Legal MoE", author: "Mistral", description: "High-throughput mixture-of-experts model for multi-jurisdictional compliance.", role: "Regulatory LLM", link: "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1" },
+  { id: "google/legal-palmyra-32b", name: "Legal Palmyra 32B", author: "Google", description: "Specialized legal model for statutory interpretation and treaty analysis.", role: "Legal Model", link: "https://huggingface.co/models?search=palmyra" },
+  { id: "qwen/Qwen2.5-14B-Legal", name: "Qwen2.5 Legal", author: "Qwen", description: "Multilingual contract verifier and zero-hallucination compliance engine.", role: "Compliance Agent", link: "https://huggingface.co/Qwen/Qwen2.5-14B-Instruct" }
 ];
 
 const AuthorAvatar = ({ author, size = 20 }: { author: string, size?: number }) => {
@@ -444,7 +444,8 @@ export default function VerifiableLegalAgentsPage() {
               author: author,
               downloads: dl,
               description: description,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -1234,7 +1235,13 @@ export default function VerifiableLegalAgentsPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div key={model.id} className={getBorderClasses(index, models.length)}>
+                        <a
+                          key={model.id}
+                          href={model.link || model.url || `https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
+                        >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
                           
                           <div className="w-10 h-10 border border-[#333] border-dashed rounded-sm flex items-center justify-center">
@@ -1256,7 +1263,7 @@ export default function VerifiableLegalAgentsPage() {
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>

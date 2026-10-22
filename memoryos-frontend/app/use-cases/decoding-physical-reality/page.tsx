@@ -775,7 +775,9 @@ export default function DecodingPhysicalRealityPage() {
               author: author,
               downloads: dl,
               description: description,
-              tag: tag
+              tag: tag,
+              url: `https://huggingface.co/${m.id}`,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
@@ -1687,13 +1689,12 @@ export default function DecodingPhysicalRealityPage() {
                       </div>
                     ) : (
                       models.map((model, index) => (
-                        <div
+                        <a
                           key={model.id}
-                          className={getBorderClasses(index, models.length)}
-                          onClick={() => {
-                            const url = model.url || `https://huggingface.co/${model.id}`;
-                            window.open(url, "_blank", "noopener,noreferrer");
-                          }}
+                          href={model.url || model.link || `https://huggingface.co/${model.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={getBorderClasses(index, models.length) + " block no-underline"}
                         >
                           <ArrowUpRight size={20} className="text-[#75bf00] absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -1718,7 +1719,7 @@ export default function DecodingPhysicalRealityPage() {
                               {model.role || model.tag}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>

@@ -883,7 +883,8 @@ export default function VisionAIPage() {
               name: name,
               author: author,
               downloads: dl,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);

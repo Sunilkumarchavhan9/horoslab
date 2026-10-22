@@ -721,7 +721,8 @@ export default function ReasoningAIPage() {
               author: author,
               downloads: dl,
               description: description,
-              tag: tag
+              tag: tag,
+              link: `https://huggingface.co/${m.id}`
             };
           });
           setModels(mapped);
