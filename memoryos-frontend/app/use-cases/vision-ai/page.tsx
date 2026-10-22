@@ -1815,8 +1815,13 @@ export default function VisionAIPage() {
             </div>
           </div>
 
+          {/* Section End Divider with Brand Logo */}
+          <div className="w-full relative z-20 my-16 md:my-20">
+            <SectionDivider position="top" className="w-full" />
+          </div>
+
           {/* Tuning Section */}
-          <div className="w-full relative z-10 mt-20 pb-20 md:pb-28">
+          <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20 md:pb-28">
             {/* Heading */}
             <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
               <div className="border-r border-dashed border-[#333]" />
