@@ -562,9 +562,9 @@ export default function EmbeddingsPage() {
           <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
             <div />
             <div className="min-w-0">
-              <div className="text-center mb-16">
+              <div className="text-center mb-10 sm:mb-12">
                 <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">What you actually own</h2>
-                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-xl mx-auto mb-8 sm:mb-10">
+                <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
                   Your embedding models, rerankers, and retrieval configuration. Horos tests them against your own search workload.
                 </p>
               </div>
@@ -620,28 +620,28 @@ export default function EmbeddingsPage() {
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
                   {/* Card 1 */}
-                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 1</div>
-                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Embedding models</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                  <div className="px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">01</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Embedding models</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       BGE-M3, multilingual-E5-large, GTE-large, Nomic Embed. Convert documents and queries into vectors for retrieval.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="p-10 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 2</div>
-                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Reranking models</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                  <div className="px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-dashed border-[#333]">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">02</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Reranking models</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       BGE-reranker-v2-m3, Jina Reranker v2, Mixedbread Reranker. Re-score retrieved passages to rank the most relevant results first.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="p-10 flex flex-col gap-4">
-                    <div className="text-[#75bf00] font-mono text-[16px] font-bold">0 3</div>
-                    <h3 className="text-3xl md:text-4xl font-medium text-[#F0EFE2] leading-tight">Retrieval optimization</h3>
-                    <p className="text-[#C8C7BA] text-[17px] leading-relaxed">
+                  <div className="px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-3">
+                    <div className="text-[#75bf00] font-mono text-[13px] sm:text-[14px] font-semibold tracking-wider">03</div>
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Retrieval optimization</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Tune batch size, sequence length, precision, and reranking depth. Compare Recall@K, nDCG, latency, and GPU memory before choosing a configuration.
                     </p>
                   </div>
@@ -789,7 +789,7 @@ export default function EmbeddingsPage() {
             <div />
             <div className="min-w-0">
               <div className="text-center">
-                <h2 className="text-5xl lg:text-[52px] font-medium tracking-tight mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight mb-2.5 sm:mb-3 text-center">
                   Code you own. <span className="text-[#75bf00]">Deploy anywhere.</span>
                 </h2>
                 <p className="text-[#A0A098] text-[13.5px] sm:text-[14.5px] md:text-[15px] max-w-2xl mx-auto leading-relaxed text-center">
@@ -1188,34 +1188,34 @@ export default function EmbeddingsPage() {
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3 h-full">
                   {/* Card 1 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Cloud size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Cloud size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Managed Horos</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Managed Horos</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       Our GPUs, per-million-tokens billing from L4 to B200.
                     </p>
                   </div>
 
                   {/* Card 2 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 border-r border-dashed border-[#333] items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Server size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 border-b md:border-b-0 md:border-r border-dashed border-[#333] items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Server size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Your infrastructure</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Your infrastructure</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       AWS, GCP, RunPod, bare metal. Same verifier/, your cluster.
                     </p>
                   </div>
 
                   {/* Card 3 */}
-                  <div className="px-8 py-16 flex flex-col gap-4 items-start">
-                    <div className="w-14 h-14 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
-                      <Network size={28} strokeWidth={1.5} />
+                  <div className="px-6 py-8 sm:px-8 sm:py-10 flex flex-col gap-3.5 items-start">
+                    <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
+                      <Network size={24} strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Local workstation</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                    <h3 className="text-[17px] sm:text-[18px] md:text-[19px] font-medium text-[#F0EFE2] leading-snug">Local workstation</h3>
+                    <p className="text-[#C8C7BA] text-[13px] sm:text-[13.5px] leading-relaxed font-sans">
                       docker compose up. Full pipeline on a single GPU.
                     </p>
                   </div>
