@@ -921,9 +921,9 @@ export default function EmbeddingsPage() {
           {/* Top Horizontal Border spanning full screen */}
 
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-12 md:py-16">
+          <div className="w-full relative z-10 bg-[#151515]/20 py-10 md:py-14">
             {/* Sandbox Content Container (SVG Skeleton Architecture) */}
-            <div className="w-full relative mx-auto max-w-[1220px] px-3 sm:px-6" style={{ aspectRatio: '1351 / 892' }}>
+            <div className="w-full relative mx-auto max-w-[1000px] px-2 sm:px-4" style={{ aspectRatio: '1351 / 892' }}>
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
@@ -953,8 +953,8 @@ export default function EmbeddingsPage() {
               }}>
 
                 {/* Tabs */}
-                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-6 pointer-events-auto">
-                  <div className="flex gap-8 h-full items-end pb-2">
+                <div className="col-start-2 col-end-5 row-start-1 row-end-2 flex items-center justify-between px-4 sm:px-6 pointer-events-auto">
+                  <div className="flex gap-5 sm:gap-7 h-full items-end pb-2">
                     <button
                       onClick={() => setActiveMainTab("pipeline")}
                       className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors pb-1 border-b-2 ${activeMainTab === "pipeline" ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
@@ -1171,80 +1171,80 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Files Content */}
-                <div className="col-start-3 col-end-4 row-start-2 row-end-3 py-4 sm:py-5 px-3 sm:px-3.5 flex flex-col items-start gap-3 overflow-hidden pointer-events-auto chat-scroll min-w-0 min-h-0">
-                  <div className="flex justify-between items-center border-b border-[#252525] pb-2.5 mb-1 w-full">
-                    <span className="text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase shrink-0">MISSION ASSETS</span>
-                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] sm:text-[9.5px] font-bold px-1.5 py-0.2 rounded-sm shrink-0">3</span>
+                <div className="col-start-3 col-end-4 row-start-2 row-end-3 py-3.5 sm:py-4 px-2 sm:px-2.5 flex flex-col items-start gap-2.5 overflow-hidden pointer-events-auto chat-scroll min-w-0 min-h-0">
+                  <div className="flex justify-between items-center border-b border-[#252525] pb-2 mb-1 w-full">
+                    <span className="text-[9.5px] sm:text-[10px] font-bold tracking-widest text-[#C8C7BA] uppercase shrink-0">MISSION ASSETS</span>
+                    <span className="bg-[#1a2310] border border-[#2a381a] text-[#75bf00] text-[9px] font-bold px-1.5 py-0.2 rounded-sm shrink-0">3</span>
                   </div>
-                  <div className="flex flex-col gap-1 text-[12px] font-mono w-full">
+                  <div className="flex flex-col gap-1 text-[11px] sm:text-[11.5px] font-mono w-full">
                     <div className="flex flex-col gap-0.5 w-full">
-                      <div className="px-1.5 py-1 text-[#75bf00] font-semibold truncate w-full text-[12px]">
+                      <div className="px-1 py-0.5 text-[#75bf00] font-semibold truncate w-full text-[11px] sm:text-[11.5px]">
                         tool_definitions/
                       </div>
-                      <div className="pl-2.5 flex flex-col gap-0.5 mt-0.5 w-full min-w-0">
+                      <div className="pl-2 flex flex-col gap-0.5 mt-0.5 w-full min-w-0">
                         <button
                           onClick={() => selectFileManually("agent_core.py")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "agent_core.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "agent_core.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "agent_core.py" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>} 
+                          {activeFile === "agent_core.py" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>} 
                           <span className="truncate min-w-0 flex-1">agent_core.py</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("policies.py")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "policies.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "policies.py" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
+                          {activeFile === "policies.py" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">policies.py</span>
                         </button>
                       </div>
                     </div>
                     
-                    <div className="mt-2.5 flex flex-col gap-0.5 w-full">
-                      <div className="px-1.5 py-1 text-[#C8C7BA] font-semibold truncate w-full text-[12px]">
+                    <div className="mt-2 flex flex-col gap-0.5 w-full">
+                      <div className="px-1 py-0.5 text-[#C8C7BA] font-semibold truncate w-full text-[11px] sm:text-[11.5px]">
                         horos-coding-agent/
                       </div>
-                      <div className="pl-2.5 flex flex-col gap-0.5 mt-0.5 w-full min-w-0">
+                      <div className="pl-2 flex flex-col gap-0.5 mt-0.5 w-full min-w-0">
                         <button
                           onClick={() => selectFileManually("serve.sh")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "serve.sh" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "serve.sh" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
+                          {activeFile === "serve.sh" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">serve.sh</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("pipeline.py")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "pipeline.py" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "pipeline.py" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
+                          {activeFile === "pipeline.py" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">pipeline.py</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("Dockerfile")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "Dockerfile" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "Dockerfile" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
+                          {activeFile === "Dockerfile" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">Dockerfile</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("docker-compose.yml")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "docker-compose.yml" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "docker-compose.yml" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
+                          {activeFile === "docker-compose.yml" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">docker-compose.yml</span>
                         </button>
                         <button
                           onClick={() => selectFileManually("requirements.txt")}
-                          className={`flex items-center gap-1.5 px-1.5 py-1 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
+                          className={`flex items-center gap-1.5 px-1 py-0.5 transition-colors w-full text-left rounded-[4px] min-w-0 ${activeFile === "requirements.txt" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                         >
-                          {activeFile === "requirements.txt" ? <ChevronRight size={13} className="text-[#75bf00] shrink-0" /> : <span className="w-[13px] shrink-0"></span>}
+                          {activeFile === "requirements.txt" ? <ChevronRight size={12} className="text-[#75bf00] shrink-0" /> : <span className="w-[12px] shrink-0"></span>}
                           <span className="truncate min-w-0 flex-1">requirements.txt</span>
                         </button>
-                        <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#777] font-semibold w-full min-w-0">
-                          <span className="w-[13px] shrink-0"></span>
+                        <div className="flex items-center gap-1.5 px-1 py-0.5 text-[#777] font-semibold w-full min-w-0 text-[11px] sm:text-[11.5px]">
+                          <span className="w-[12px] shrink-0"></span>
                           <span className="truncate min-w-0 flex-1">models/</span>
                         </div>
-                        <div className="flex items-center gap-1.5 px-1.5 py-1 text-[#777] font-semibold w-full min-w-0">
-                          <span className="w-[13px] shrink-0"></span>
+                        <div className="flex items-center gap-1.5 px-1 py-0.5 text-[#777] font-semibold w-full min-w-0 text-[11px] sm:text-[11.5px]">
+                          <span className="w-[12px] shrink-0"></span>
                           <span className="truncate min-w-0 flex-1">evals/</span>
                         </div>
                       </div>
@@ -1253,14 +1253,14 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Code Content */}
-                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-8 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0 min-h-0">
+                <div className="col-start-4 col-end-5 row-start-2 row-end-4 p-4 sm:p-6 flex flex-col justify-start overflow-auto pointer-events-auto chat-scroll thin-hover-scrollbar min-w-0 min-h-0">
                   {/* Editor top tabs */}
-                  <div className="flex border-b border-[#252525] mb-6 pb-2 pt-1 gap-2 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
+                  <div className="flex border-b border-[#252525] mb-4 pb-2 pt-1 gap-1.5 overflow-x-auto hide-scrollbar thin-hover-scrollbar">
                     {Object.keys(FILE_CODE_MAP).map(file => (
                       <button
                         key={file}
                         onClick={() => selectFileManually(file as CodingAgentFile)}
-                        className={`shrink-0 whitespace-nowrap text-[12px] font-mono font-bold px-3 py-1.5 border-b-2 transition-colors ${activeFile === file ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
+                        className={`shrink-0 whitespace-nowrap text-[11px] sm:text-[11.5px] font-mono font-bold px-2 sm:px-2.5 py-1 border-b-2 transition-colors ${activeFile === file ? "text-[#75bf00] border-[#75bf00]" : "text-[#666] border-transparent hover:text-[#F0EFE2]"}`}
                       >
                         {file}
                       </button>
@@ -1268,16 +1268,16 @@ export default function EmbeddingsPage() {
                   </div>
 
                   {/* Code Area with Line Numbers */}
-                  <div className="flex font-mono text-[13px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
+                  <div className="flex font-mono text-[12px] sm:text-[12.5px] leading-relaxed overflow-x-auto select-text thin-hover-scrollbar">
                     {/* Line numbers column */}
-                    <div className="text-[#444] text-right pr-5 border-r border-[#252525] select-none flex flex-col min-w-[32px]">
+                    <div className="text-[#444] text-right pr-3 border-r border-[#252525] select-none flex flex-col min-w-[24px]">
                       {Array.from({ length: typedCodeText.split('\n').length }).map((_, i) => (
                         <div key={i} className="min-h-[22px] leading-[22px]">{i + 1}</div>
                       ))}
                     </div>
 
                     {/* Highlighted code column */}
-                    <div className="pl-5 flex-1 text-[#C8C7BA] leading-[22px]">
+                    <div className="pl-3.5 flex-1 text-[#C8C7BA] leading-[22px]">
                       {highlightCode(
                         typedCodeText,
                         activeFile.endsWith(".md") ? "markdown" : activeFile.endsWith(".py") ? "python" : activeFile.endsWith(".sh") ? "bash" : activeFile.endsWith(".json") ? "json" : activeFile.endsWith(".diff") ? "diff" : activeFile === "Dockerfile" ? "dockerfile" : activeFile.endsWith(".yml") ? "yaml" : "typescript",

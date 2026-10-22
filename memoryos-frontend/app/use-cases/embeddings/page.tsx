@@ -803,9 +803,9 @@ export default function EmbeddingsPage() {
           {/* Top Horizontal Border spanning full screen */}
 
           {/* Sandbox Workspace Row */}
-          <div className="w-full relative z-10 bg-[#151515]/20 py-12 md:py-16">
+          <div className="w-full relative z-10 bg-[#151515]/20 py-10 md:py-14">
             {/* Sandbox Content Container (SVG Skeleton Architecture) */}
-            <div className="w-full relative mx-auto max-w-[1220px] px-3 sm:px-6" style={{ aspectRatio: '1351 / 892' }}>
+            <div className="w-full relative mx-auto max-w-[1000px] px-2 sm:px-4" style={{ aspectRatio: '1351 / 892' }}>
 
               {/* Panes Backgrounds (Z-0) */}
               <div className="absolute inset-0 grid" style={{
