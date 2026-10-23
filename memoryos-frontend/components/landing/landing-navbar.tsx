@@ -291,7 +291,7 @@ export function LandingNavbar({
 
 
 
-            <Link href="#pricing" className="transition-colors whitespace-nowrap">
+            <Link href="/pricing" className="transition-colors whitespace-nowrap">
               Pricing
             </Link>
 
@@ -437,7 +437,7 @@ export function LandingNavbar({
             </Link>
 
             <Link
-              href="#pricing"
+              href="/pricing"
               onClick={() => setTimeout(() => setMobileMenuOpen(false), 150)}
               className="py-1 text-[#C8C7BA] hover:text-[#F0EFE2]"
             >

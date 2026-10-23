@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Sun, Monitor, Moon } from "lucide-react";
 import {
   HorosLogo, HorosWordmarkLogo, MetaLogo, DeepSeekLogo, GoogleLogo, NvidiaLogo, MistralLogo,
@@ -74,7 +75,7 @@ export function GlobalFooter() {
               <div className="flex items-center gap-x-6">
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Intelligence Agent</a>
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Capability Fabric</a>
-                <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Pricing</a>
+                <Link href="/pricing" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Pricing</Link>
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Enterprise</a>
               </div>
               <div className="flex items-center gap-x-6">
