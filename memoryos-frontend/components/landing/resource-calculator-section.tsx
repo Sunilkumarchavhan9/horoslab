@@ -299,7 +299,7 @@ export function ResourceCalculatorSection() {
         </div>
       </div>
 
-      <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515]">
+      <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515]">
         
         {/* Main Calculator Area */}
         <div className="px-6 lg:px-8 py-12 md:py-16">

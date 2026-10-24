@@ -12,8 +12,8 @@ import { EvidenceProofStep } from "./evidence-proof-step";
 import { LearningFlywheelStep } from "./learning-flywheel-step";
 import { TokenPromptInput, CYCLING_PROMPTS } from "@/components/horos/primitives/token-prompt-input";
 
-// Master alignment lines: Outer (14%), Inner Margins (pushed inside by 120px)
-export const MARGIN_VERTICAL_POSITIONS = ["14%", "calc(14% + 120px)", "calc(86% - 120px)", "86%"];
+// Master alignment lines: Outer (18%), Inner Margins (pushed inside by 120px)
+export const MARGIN_VERTICAL_POSITIONS = ["18%", "calc(18% + 120px)", "calc(82% - 120px)", "82%"];
 
 
 

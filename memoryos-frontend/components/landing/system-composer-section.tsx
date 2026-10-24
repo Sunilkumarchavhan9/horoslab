@@ -68,7 +68,7 @@ export function SystemComposerSection() {
       </div>
 
       {/* Main Blueprint Container (aligned with the 120px inward margin on both sides) */}
-      <div className="relative z-10 w-[calc(64%_-_240px)] flex flex-col pb-12 lg:pb-16">
+      <div className="relative z-10 w-[92%] sm:w-[88%] lg:w-[calc(64%_-_240px)] flex flex-col pb-12 lg:pb-16">
 
         {/* Absolute Bottom Infinite Horizontal Line */}
         <HorizontalDivider position="bottom" infinite={true} />

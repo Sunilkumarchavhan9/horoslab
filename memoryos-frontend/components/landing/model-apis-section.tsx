@@ -19,21 +19,13 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
       {/* Background Dashed Lines - Global Layout */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-
-        {/* Top Infinite Horizontal Line to separate from previous section */}
-        <SectionDivider />
       </div>
 
       <div className="relative z-10 w-full px-0 pt-0">
         <div className="w-full flex flex-col items-center">
-
-          {/* Small floating logo element exactly centered on the 50% line at top-0 */}
-          <div className="absolute top-0 left-[50%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-10 bg-[#151515] px-2 text-[#75bf00]">
-            <HorosLogo size={18} />
-          </div>
 
           {/* Header Section (Spans the 72% inner area) */}
           <div className="py-20 lg:py-24 text-center z-10 relative px-4">
@@ -241,8 +233,8 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
             </div>
 
             {/* Footer Logos Row */}
-            <div className="w-full grid grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)] relative z-10">
-              <div />
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)] relative z-10">
+              <div className="hidden lg:block" />
               <div className="py-8 border-y border-x border-dashed border-[#333] flex flex-wrap items-center justify-center gap-12 lg:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 px-8 lg:px-12">
                 <div className="text-[11px] font-mono font-bold text-[#444] tracking-widest uppercase">
                   Built and served with
@@ -265,7 +257,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                   </div>
                 </div>
               </div>
-              <div />
+              <div className="hidden lg:block" />
             </div>
 
           </div>

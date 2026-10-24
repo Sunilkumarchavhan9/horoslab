@@ -231,13 +231,13 @@ export function HardwareDeploymentSection() {
       {/* Background Dashed Lines - Global Layout */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
       </div>
 
       {/* Header Section */}
-      <div className="w-full relative px-[calc(18%_+_120px)] mb-32 text-center">
+      <div className="w-full relative px-4 sm:px-6 md:px-8 lg:px-[calc(18%_+_120px)] mb-20 lg:mb-32 text-center">
         <h2 className="text-4xl sm:text-5xl font-medium tracking-tight mb-4 z-10 relative">
           Deploy and <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">verify</span> anywhere
         </h2>

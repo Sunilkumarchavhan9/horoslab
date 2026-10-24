@@ -25,7 +25,7 @@ export function GlobalFooter() {
       </div>
 
       {/* --- FOOTER CONTENT --- */}
-      <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
+      <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
 
         {/* Top Footer Row */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
@@ -152,10 +152,10 @@ export function GlobalFooter() {
       {/* Bottom Legal / Theme Row */}
       <div className="w-full border-t border-dashed border-[#333] relative">
 
-        {/* Tiny HOROS text aligned to the left of the 14% grid line */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
+        {/* Tiny HOROS text aligned to the left of the 18% grid line */}
+        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] lg:right-[82%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
 
-        <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+        <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
 
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
             <span className="flex items-center text-[#F0EFE2] mr-12">

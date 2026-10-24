@@ -38,7 +38,7 @@ export function FooterCtaSection() {
       </div>
 
       {/* --- CTA SECTION --- */}
-      <div className="relative w-[88%] md:w-[calc(64%_-_240px)] mx-auto pt-32 pb-24 flex flex-col items-center">
+      <div className="relative w-[88%] lg:w-[calc(64%_-_240px)] mx-auto pt-32 pb-24 flex flex-col items-center">
 
         {/* Faint Blueprint Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#222_1px,transparent_1px),linear-gradient(to_bottom,#222_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-40 z-0" />
@@ -148,7 +148,7 @@ export function FooterCtaSection() {
       </div>
 
       {/* --- FOOTER CONTENT --- */}
-      <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
+      <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
 
         {/* Top Footer Row */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
@@ -276,10 +276,10 @@ export function FooterCtaSection() {
       {/* Bottom Legal / Theme Row */}
       <div className="w-full border-t border-dashed border-[#333] relative">
 
-        {/* Tiny HOROS text aligned to the left of the 14% grid line */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
+        {/* Tiny HOROS text aligned to the left of the 18% grid line */}
+        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] lg:right-[82%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
 
-        <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+        <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
 
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
             <span className="flex items-center text-[#F0EFE2] mr-12">

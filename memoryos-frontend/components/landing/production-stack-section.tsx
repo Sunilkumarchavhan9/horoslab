@@ -10,8 +10,8 @@ interface ProductionStackSectionProps {
   dark?: boolean;
 }
 
-// Master alignment lines: Outer (14%), Inner (pushed 120px inside)
-export const MARGIN_VERTICAL_POSITIONS = ["14%", "calc(14% + 120px)", "calc(86% - 120px)", "86%"];
+// Master alignment lines: Outer (18%), Inner Margins (pushed inside by 120px)
+export const MARGIN_VERTICAL_POSITIONS = ["18%", "calc(18% + 120px)", "calc(82% - 120px)", "82%"];
 
 const GemmaLogo = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
