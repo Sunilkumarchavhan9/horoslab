@@ -35,29 +35,22 @@ import {
 } from "@/components/horos/primitives/brand-icons";
 const founderEmail = "chavhansunilkumar753@gmail.com";
 
-function ZLogo({ size = 18 }: { size?: number }) {
+function ZLogo({ size = 20 }: { size?: number }) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="text-white shrink-0"
+      viewBox="4 6 22 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0 text-white"
     >
-      <path d="M4 4.5h16v3.2l-9.8 9.5H20V20.5H4v-3.2l9.8-9.5H4V4.5z" />
+      <g fill="currentColor">
+        <path d="M15.47 7.1l-1.3 1.85c-0.2 0.29-0.54 0.47-0.9 0.47h-7.1V7.09C6.16 7.1 15.47 7.1 15.47 7.1z" />
+        <polygon points="24.3 7.1 13.14 22.91 5.7 22.91 16.86 7.1" />
+        <path d="M14.53 22.91l1.31-1.86c0.2-0.29 0.54-0.47 0.9-0.47h7.09v2.33H14.53z" />
+      </g>
     </svg>
-  );
-}
-
-function OrnithAvatar({ size = 26 }: { size?: number }) {
-  return (
-    <img
-      src="https://ornith.ai/assets/webp/header-logo-Bjk6zmTF.webp"
-      alt="Ornith"
-      width={size}
-      height={size}
-      className="w-full h-full object-cover rounded-sm"
-    />
   );
 }
 
@@ -67,7 +60,7 @@ const MODEL_APIS_DATA = [
     id: "ornith-1-5-122b",
     name: "Ornith 1.5 122B",
     developer: "Ornith",
-    icon: OrnithAvatar,
+    icon: OrnithLogo,
     promo: "Free cached input",
     promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
     inputPrice: "$0.20",
@@ -151,7 +144,7 @@ const MODEL_APIS_DATA = [
     id: "ornith-1-5-35b",
     name: "Ornith 1.5 35B",
     developer: "Ornith",
-    icon: OrnithAvatar,
+    icon: OrnithLogo,
     promo: "Free cached input",
     promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
     inputPrice: "$0.10",
@@ -711,20 +704,14 @@ export default function PricingPage() {
                           idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
                         }`}
                       >
-                        {/* Model Icon + Title + Promo Subtext */}
+                        {/* Model Icon + Title (clean row background, no icon border or box) */}
                         <div className="flex items-center gap-3 pr-3">
-                          <div className="w-8 h-8 rounded-md bg-[#1c1c1f] border border-[#333] flex items-center justify-center shrink-0 p-1 group-hover:border-[#76b900] transition-colors overflow-hidden">
-                            <IconComponent size={18} />
+                          <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                            <IconComponent size={20} />
                           </div>
-                          <div className="flex flex-col">
-                            <span className="font-semibold text-[#F0EFE2] text-sm group-hover:text-[#76b900] transition-colors leading-snug">
-                              {model.name}
-                            </span>
-                            <div className="flex items-center gap-1.5 text-[11px] leading-snug mt-0.5">
-                              <span className="text-[#76b900] font-medium">{model.promo}</span>
-                              <span className="text-[#777] font-normal">{model.promoUntil}</span>
-                            </div>
-                          </div>
+                          <span className="font-semibold text-[#F0EFE2] text-sm group-hover:text-[#76b900] transition-colors leading-snug truncate">
+                            {model.name}
+                          </span>
                         </div>
 
                         {/* Input Price */}
