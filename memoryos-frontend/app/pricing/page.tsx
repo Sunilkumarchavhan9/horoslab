@@ -2,7 +2,22 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Check, X, ArrowRight, ChevronRight, Sparkles, ShieldCheck, Zap, Info } from "lucide-react";
+import {
+  Check,
+  X,
+  ArrowRight,
+  ChevronRight,
+  Sparkles,
+  ShieldCheck,
+  ShieldAlert,
+  Zap,
+  Info,
+  Copy,
+  RotateCw,
+  Lock,
+  Cpu,
+  EyeOff,
+} from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { SectionDivider } from "@/components/landing/section-divider";
 import { GlobalFooter } from "@/components/landing/global-footer";
@@ -12,6 +27,9 @@ import {
   NvidiaLogo,
   QwenLogo,
   GLMLogo,
+  AnthropicLogo,
+  MistralLogo,
+  OpenAILogo,
 } from "@/components/horos/primitives/brand-icons";
 const founderEmail = "chavhansunilkumar753@gmail.com";
 
@@ -209,10 +227,102 @@ const COMPARISON_ROWS = [
   },
 ];
 
+const CODING_PLAN_FAQS = [
+  {
+    question: "What happens at a limit?",
+    answer:
+      "If you turned on Keep full speed on credits, credits pay with your choice of a cap per billing period or no limit. When credits cannot pay, free Standby serves chat. Choose at checkout and change it in Coding plan. If neither can serve a request, it stops with the reason, reset time and next step.",
+  },
+  {
+    question: "What does my plan cover?",
+    answer:
+      "Your plan covers all coding models and agent workflows up to your 5-hour and weekly limits. Standby chat remains free when limits are reached, so your workflow is never interrupted.",
+  },
+  {
+    question: "Can I cancel?",
+    answer:
+      "Yes, you can cancel at any time with one click from your developer console. Your plan benefits remain active until the end of your current billing period.",
+  },
+  {
+    question: "When do the limits reset?",
+    answer:
+      "Your 5-hour limit resets continuously on a rolling 5-hour window from your first request, and your weekly limit resets at the start of every calendar week.",
+  },
+  {
+    question: "How is usage counted?",
+    answer:
+      "Usage is calculated per token generated and processed by your connected coding agent, discounted by automated prefix and context caching.",
+  },
+  {
+    question: "What is Standby?",
+    answer:
+      "Standby is our free, guaranteed-fallback chat mode that allows coding sessions to continue at reduced concurrency when primary limits are reached.",
+  },
+  {
+    question: "When am I charged?",
+    answer:
+      "Subscriptions are billed monthly on your signup anniversary. Any extra credits you enable are topped up automatically according to your cap.",
+  },
+  {
+    question: "What can I count on?",
+    answer:
+      "We guarantee 99.9% platform availability, high-throughput model endpoints, sub-second TTFT, and zero downtime across coding sessions.",
+  },
+  {
+    question: "What if a payment fails or is disputed?",
+    answer:
+      "If a payment fails, we retry up to three times over seven days. Your account transitions to Standby mode so your workflows are not abruptly severed.",
+  },
+];
+
+const READY_AGENTS = [
+  { name: "Claude Code", icon: <AnthropicLogo size={14} /> },
+  { name: "Codex", icon: <OpenAILogo size={14} /> },
+  { name: "OpenCode", icon: <div className="w-3.5 h-3.5 border-2 border-[#F0EFE2]" /> },
+  { name: "Pi", icon: <span className="font-serif font-bold text-xs text-white">π</span> },
+  { name: "Aider", icon: <span className="font-mono font-bold text-[11px] text-[#76b900]">ai</span> },
+  { name: "Qwen Code", icon: <QwenLogo size={14} /> },
+  { name: "Kilo Code", icon: <span className="font-mono font-bold text-[10px] text-yellow-400">kilo</span> },
+  { name: "Goose", icon: <span className="text-xs">🪿</span> },
+  { name: "Continue", icon: <div className="w-3.5 h-3.5 rounded-full border border-white flex items-center justify-center"><div className="w-1.5 h-1.5 bg-white rounded-full" /></div> },
+  { name: "Cline", icon: <span className="font-mono font-bold text-[11px] text-sky-400">CL</span> },
+  { name: "Droid", icon: <span className="text-xs text-emerald-400">⚙</span> },
+  { name: "Grok Build", icon: <span className="font-bold text-xs text-white">/</span> },
+  { name: "Hermes Agent", icon: <span className="text-xs">⚡</span> },
+  { name: "OpenClaw", icon: <span className="text-xs">🦀</span> },
+  { name: "Crush", icon: <span className="text-xs text-pink-500">♥</span> },
+  { name: "Kimi CLI", icon: <span className="font-bold text-xs text-white">K</span> },
+  { name: "Mistral Vibe", icon: <MistralLogo size={14} /> },
+  { name: "Forge", icon: <span className="text-xs text-amber-500">{}</span> },
+  { name: "Nanocoder", icon: <span className="font-bold text-[10px] text-white">NC</span> },
+];
+
+const PREVIEW_AGENTS = [
+  { name: "Zed", icon: <span className="font-mono font-bold text-xs text-white">Z</span> },
+  { name: "Oh My Pi", icon: <span className="font-mono font-bold text-xs text-purple-400">π</span> },
+  { name: "gptme", icon: <span className="font-mono text-[10px] text-emerald-400">gpt</span> },
+  { name: "Tabby", icon: <span className="text-xs">🐱</span> },
+  { name: "Octofriend", icon: <span className="font-mono text-[10px] text-white">OC</span> },
+  { name: "Command Code", icon: <span className="font-mono text-xs text-white">⌘</span> },
+  { name: "Junie CLI", icon: <div className="w-2.5 h-2.5 bg-emerald-500 rounded-none" /> },
+  { name: "VS Code Copilot Chat", icon: <span className="font-mono text-[10px] text-sky-400">VC</span> },
+  { name: "Theia AI", icon: <span className="text-xs">👁</span> },
+  { name: "OpenHands CLI", icon: <span className="text-xs">🙌</span> },
+  { name: "Copilot CLI", icon: <span className="font-mono text-[10px] text-white">CP</span> },
+];
+
 export default function PricingPage() {
   const [selectedPlan, setSelectedPlan] = useState<"payg" | "coding">("payg");
   const [creditAmount, setCreditAmount] = useState(20);
   const [faqTab, setFaqTab] = useState<"payg" | "enterprise">("payg");
+  const [codingFaqActive, setCodingFaqActive] = useState(0);
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
+
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText("curl -fsSL https://memoryos.ai/setup.sh | bash");
+    setCopiedPrompt(true);
+    setTimeout(() => setCopiedPrompt(false), 2000);
+  };
 
   return (
     <div className="relative min-h-screen bg-[#151515] text-[#C8C7BA] font-sans overflow-x-hidden selection:bg-[#76b900] selection:text-black">
@@ -257,10 +367,10 @@ export default function PricingPage() {
               <div className="flex justify-between items-start mb-1.5">
                 <h2 className="text-lg font-medium text-[#F0EFE2]">Pay as you go</h2>
                 <div
-                  className={`w-3.5 h-3.5 rounded-none border flex items-center justify-center transition-colors ${selectedPlan === "payg" ? "border-[#76b900]" : "border-[#555]"
+                  className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "payg" ? "border-[#76b900]" : "border-[#555]"
                     }`}
                 >
-                  {selectedPlan === "payg" && <div className="w-1.5 h-1.5 rounded-none bg-[#76b900]" />}
+                  {selectedPlan === "payg" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
               <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For apps, APIs and everything else</p>
@@ -289,10 +399,10 @@ export default function PricingPage() {
               <div className="flex justify-between items-start mb-1.5">
                 <h2 className="text-lg font-medium text-[#F0EFE2]">Coding plan</h2>
                 <div
-                  className={`w-3.5 h-3.5 rounded-none border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
+                  className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
                     }`}
                 >
-                  {selectedPlan === "coding" && <div className="w-1.5 h-1.5 rounded-none bg-[#76b900]" />}
+                  {selectedPlan === "coding" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
               <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For Claude Code, Codex, OpenCode and more</p>
@@ -311,491 +421,923 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* Selected Plan Details & Enterprise Split Box */}
-          <div className="border border-dashed border-[#333] bg-[#181818]/60 flex flex-col md:flex-row">
-            {/* Left Column: Dynamic based on selected plan */}
-            <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7">
-              {selectedPlan === "payg" ? (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Pay as you go</h2>
-                    <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
-                      <span className="text-[#76b900]">#</span> No subscription
-                    </span>
-                  </div>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
-                    Hosted Model APIs, per token, on one prepaid balance.
-                  </p>
-
-                  <div className="mb-6">
-                    <label className="text-[10px] text-[#777] font-semibold uppercase tracking-widest mb-2.5 block">
-                      AMOUNT IN DOLLARS
-                    </label>
-
-                    {/* Quick amount presets */}
-                    <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-                      {[5, 20, 50, 100, 250].map((amt) => (
-                        <button
-                          key={amt}
-                          type="button"
-                          onClick={() => setCreditAmount(amt)}
-                          className={`text-xs px-2.5 py-1 font-mono transition-colors border ${creditAmount === amt
-                              ? "bg-[#76b900] text-black border-[#76b900] font-semibold"
-                              : "bg-[#222] text-[#888] border-[#333] hover:text-white"
-                            }`}
-                        >
-                          ${amt}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base">
-                        $
-                      </span>
-                      <input
-                        type="number"
-                        min="5"
-                        value={creditAmount}
-                        onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-[#121212] border border-dashed border-[#333] rounded-none py-2.5 pl-8 pr-3 text-[#F0EFE2] font-mono text-base focus:outline-none focus:border-[#76b900] transition-colors"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between mt-2 text-[11px] text-[#777]">
-                      <span>$5 minimum top-up. Pay per token.</span>
-                      <span className="text-[#76b900]">~{Math.round((creditAmount / 0.15) * 10) / 10}M tokens estimate</span>
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
-                    <h3 className="font-medium text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
-                    <div className="space-y-2 text-xs text-[#bbb]">
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>OpenAI- and Anthropic-compatible APIs</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>Per-token pricing with cached input discounts</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>Session-aware routing keeps replays warm</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>One prepaid balance, no per-seat fees</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-1">
-                    <p className="text-center text-[11px] text-[#777] mb-3">
-                      New accounts start with $1 free to test the Model APIs.
-                    </p>
-                    <Link
-                      href="/developer-console"
-                      className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
-                    >
-                      Add credits <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Coding plan</h2>
-                    <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
-                      <span className="text-[#76b900]">#</span> Subscription
-                    </span>
-                  </div>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
-                    For Claude Code, Codex, OpenCode, Cursor, and agent terminal workflows.
-                  </p>
-
-                  <div className="mb-6 p-3.5 border border-dashed border-[#333] bg-[#141414]">
-                    <div className="text-[11px] text-[#777] uppercase tracking-wider mb-1">Developer Subscription</div>
-                    <div className="text-2xl sm:text-3xl font-semibold text-[#F0EFE2] font-mono">$10 <span className="text-xs font-normal text-[#888]">/ month</span></div>
-                    <p className="text-[11px] text-[#888] mt-1.5">Includes dedicated throughput and priority coding queues.</p>
-                  </div>
-
-                  <div className="mb-6">
-                    <h3 className="font-medium text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
-                    <div className="space-y-2 text-xs text-[#bbb]">
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>Usage included, resets every 5 hours and every week</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>At a limit, automatic fallback to credits or free Standby</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>Native integration with Cursor, Claude Code, and Windsurf</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                        <span>Zero rate-limit throttling during sprint sessions</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-1">
-                    <Link
-                      href="/developer-console"
-                      className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
-                    >
-                      Subscribe to Coding Plan <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Right Column: Enterprise (Always visible) */}
-            <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7 border-t md:border-t-0 md:border-l border-dashed border-[#333]">
-              <div>
-                <div className="mb-6">
-                  <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Enterprise</h2>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] leading-relaxed">
-                    Dedicated infrastructure, compliance, and custom volume.
-                  </p>
-                </div>
-
-                <div className="mb-6">
-                  <div className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Custom pricing</div>
-                  <p className="text-xs sm:text-sm font-medium text-[#F0EFE2] mt-5 mb-3">
-                    Everything self-serve includes, plus:
-                  </p>
-                  <ul className="space-y-2.5 text-xs text-[#bbb]">
-                    <li className="flex items-start gap-2">
-                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                      <span>Audit logs and role-based access control (RBAC)</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                      <span>Custom volume and contract terms</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                      <span>Custom SLAs up to 99.99%</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                      <span>SOC 2 Type II attestation</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                      <span>Dedicated CSM and private Slack</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <a
-                  href={`mailto:${founderEmail}?subject=HOROS%20Enterprise%20Inquiry`}
-                  className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors"
-                >
-                  Request a demo <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
-                </a>
-              </div>
-            </div>
-          </div>
         </section>
 
-        {/* SECTION 2: Exact Screenshot 1 & 2 Model APIs Token Pricing Table */}
-        <div className="w-screen relative left-1/2 -translate-x-1/2 z-20 mb-12">
-          <SectionDivider position="top" />
-        </div>
+        {selectedPlan === "payg" ? (
+          <>
+            {/* Selected Plan Details & Enterprise Split Box */}
+            <section className="mb-16">
+              <div className="border border-dashed border-[#333] bg-[#181818]/60 flex flex-col md:flex-row">
+                {/* Left Column: Pay as you go */}
+                <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Pay as you go</h2>
+                      <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
+                        <span className="text-[#76b900]">#</span> No subscription
+                      </span>
+                    </div>
+                    <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
+                      Hosted Model APIs, per token, on one prepaid balance.
+                    </p>
 
-        <section id="model-apis-pricing" className="mb-24 scroll-mt-20">
-          {/* Header & Category Badge */}
-          <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-3">
-            MODEL APIS
-          </div>
+                    <div className="mb-6">
+                      <label className="text-[10px] text-[#777] font-semibold uppercase tracking-widest mb-2.5 block">
+                        AMOUNT IN DOLLARS
+                      </label>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
-            <h2 className="text-xl sm:text-2xl md:text-[28px] font-semibold text-[#F0EFE2] tracking-tight flex items-center gap-2 flex-wrap">
-              Pay for model tokens, not idle{" "}
-              <span className="bg-[#76b900] text-[#0e0f12] px-2 py-0.5 rounded-none font-semibold leading-tight inline-block">
-                capacity
-              </span>
-            </h2>
-
-            <div className="shrink-0">
-              <span className="text-[11px] text-[#888] font-mono font-medium border border-dashed border-[#333] bg-[#1a1a1a] px-3 py-1 rounded-none inline-block">
-                Price per 1M tokens
-              </span>
-            </div>
-          </div>
-
-          {/* Table Container */}
-          <div className="w-full border border-dashed border-[#333] bg-[#151515] overflow-x-auto">
-            <div className="min-w-[700px]">
-              {/* Header Row */}
-              <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
-                <div>Model</div>
-                <div>Input</div>
-                <div>Cached input</div>
-                <div>Output</div>
-                <div></div>
-              </div>
-
-              {/* Data Rows */}
-              {MODEL_APIS_DATA.map((model, idx) => {
-                const IconComponent = model.icon;
-                return (
-                  <Link
-                    key={model.id}
-                    href={model.link}
-                    className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${
-                      idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
-                    }`}
-                  >
-                    {/* Model Icon + Title + Promo Subtext */}
-                    <div className="flex items-center gap-3 pr-3">
-                      <div className="w-8 h-8 rounded-md bg-[#1c1c1f] border border-[#333] flex items-center justify-center shrink-0 p-1 group-hover:border-[#76b900] transition-colors overflow-hidden">
-                        <IconComponent size={18} />
+                      {/* Quick amount presets */}
+                      <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+                        {[5, 20, 50, 100, 250].map((amt) => (
+                          <button
+                            key={amt}
+                            type="button"
+                            onClick={() => setCreditAmount(amt)}
+                            className={`text-xs px-2.5 py-1 font-mono transition-colors border ${creditAmount === amt
+                                ? "bg-[#76b900] text-black border-[#76b900] font-semibold"
+                                : "bg-[#222] text-[#888] border-[#333] hover:text-white"
+                              }`}
+                          >
+                            ${amt}
+                          </button>
+                        ))}
                       </div>
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-[#F0EFE2] text-sm group-hover:text-[#76b900] transition-colors leading-snug">
-                          {model.name}
+
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base">
+                          $
                         </span>
-                        <div className="flex items-center gap-1.5 text-[11px] leading-snug mt-0.5">
-                          <span className="text-[#76b900] font-medium">{model.promo}</span>
-                          <span className="text-[#777] font-normal">{model.promoUntil}</span>
+                        <input
+                          type="number"
+                          min="5"
+                          value={creditAmount}
+                          onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
+                          className="w-full bg-[#121212] border border-dashed border-[#333] rounded-none py-2.5 pl-8 pr-3 text-[#F0EFE2] font-mono text-base focus:outline-none focus:border-[#76b900] transition-colors"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between mt-2 text-[11px] text-[#777]">
+                        <span>$5 minimum top-up. Pay per token.</span>
+                        <span className="text-[#76b900]">~{Math.round((creditAmount / 0.15) * 10) / 10}M tokens estimate</span>
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <h3 className="font-medium text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
+                      <div className="space-y-2 text-xs text-[#bbb]">
+                        <div className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>OpenAI- and Anthropic-compatible APIs</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>Per-token pricing with cached input discounts</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>Session-aware routing keeps replays warm</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>One prepaid balance, no per-seat fees</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Input Price */}
-                    <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
-                      {model.inputPrice}
+                    <div className="pt-1">
+                      <p className="text-center text-[11px] text-[#777] mb-3">
+                        New accounts start with $1 free to test the Model APIs.
+                      </p>
+                      <Link
+                        href="/developer-console"
+                        className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
+                      >
+                        Add credits <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: Enterprise */}
+                <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7 border-t md:border-t-0 md:border-l border-dashed border-[#333]">
+                  <div>
+                    <div className="mb-6">
+                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Enterprise</h2>
+                      <p className="text-[#aaa] text-xs sm:text-[13px] leading-relaxed">
+                        Dedicated infrastructure, compliance, and custom volume.
+                      </p>
                     </div>
 
-                    {/* Cached Input (3 separate stacked lines matching Image 2) */}
-                    <div className="flex flex-col justify-center">
-                      <span className="line-through text-[#666] text-[11px] font-mono leading-none mb-0.5">
-                        {model.strikethroughCached}
-                      </span>
-                      <span className="font-bold text-[#F0EFE2] text-sm leading-tight">
-                        {model.cachedPrice}
-                      </span>
-                      <span className="text-[10px] text-[#666] leading-snug mt-0.5 whitespace-pre-line pr-2">
-                        {model.cacheHitRate}
-                      </span>
+                    <div className="mb-6">
+                      <div className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Custom pricing</div>
+                      <p className="text-xs sm:text-sm font-medium text-[#F0EFE2] mt-5 mb-3">
+                        Everything self-serve includes, plus:
+                      </p>
+                      <ul className="space-y-2.5 text-xs text-[#bbb]">
+                        <li className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>Audit logs and role-based access control (RBAC)</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>Custom volume and contract terms</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>Custom SLAs up to 99.99%</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>SOC 2 Type II attestation</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                          <span>Dedicated CSM and private Slack</span>
+                        </li>
+                      </ul>
                     </div>
+                  </div>
 
-                    {/* Output Price */}
-                    <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
-                      {model.outputPrice}
-                    </div>
+                  <div className="pt-2">
+                    <a
+                      href={`mailto:${founderEmail}?subject=HOROS%20Enterprise%20Inquiry`}
+                      className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors"
+                    >
+                      Request a demo <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-                    {/* View Model Link */}
-                    <div className="flex justify-end">
-                      <span className="text-xs text-[#aaa] group-hover:text-[#F0EFE2] flex items-center gap-1 font-medium transition-colors">
-                        View model <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
+            {/* SECTION 2: Exact Screenshot 1 & 2 Model APIs Token Pricing Table */}
+            <div className="w-screen relative left-1/2 -translate-x-1/2 z-20 mb-12">
+              <SectionDivider position="top" />
             </div>
-          </div>
 
-          {/* Subtext below table */}
-          <div className="mt-3 text-xs text-[#777]">
-            Limits and modality-specific capabilities are listed on each model page.
-          </div>
-        </section>
+            <section id="model-apis-pricing" className="mb-24 scroll-mt-20">
+              {/* Header & Category Badge */}
+              <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-3">
+                MODEL APIS
+              </div>
 
-        {/* SECTION 3: Exact Screenshot 2 & 3 Comparison Section */}
-        <section className="mb-20">
-          <div className="w-full border border-dashed border-[#333] bg-[#151515] flex flex-col">
-            {/* Header Description Box */}
-            <div className="p-4 sm:p-6 border-b border-dashed border-[#333]">
-              <h2 className="text-lg sm:text-xl font-semibold text-[#F0EFE2] mb-1.5 tracking-tight">
-                Compare Pay as you go and Enterprise
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
+                <h2 className="text-xl sm:text-2xl md:text-[28px] font-semibold text-[#F0EFE2] tracking-tight flex items-center gap-2 flex-wrap">
+                  Pay for model tokens, not idle{" "}
+                  <span className="bg-[#76b900] text-[#0e0f12] px-2 py-0.5 rounded-none font-semibold leading-tight inline-block">
+                    capacity
+                  </span>
+                </h2>
+
+                <div className="shrink-0">
+                  <span className="text-[11px] text-[#888] font-mono font-medium border border-dashed border-[#333] bg-[#1a1a1a] px-3 py-1 rounded-none inline-block">
+                    Price per 1M tokens
+                  </span>
+                </div>
+              </div>
+
+              {/* Table Container */}
+              <div className="w-full border border-dashed border-[#333] bg-[#151515] overflow-x-auto">
+                <div className="min-w-[700px]">
+                  {/* Header Row */}
+                  <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
+                    <div>Model</div>
+                    <div>Input</div>
+                    <div>Cached input</div>
+                    <div>Output</div>
+                    <div></div>
+                  </div>
+
+                  {/* Data Rows */}
+                  {MODEL_APIS_DATA.map((model, idx) => {
+                    const IconComponent = model.icon;
+                    return (
+                      <Link
+                        key={model.id}
+                        href={model.link}
+                        className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${
+                          idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
+                        }`}
+                      >
+                        {/* Model Icon + Title + Promo Subtext */}
+                        <div className="flex items-center gap-3 pr-3">
+                          <div className="w-8 h-8 rounded-md bg-[#1c1c1f] border border-[#333] flex items-center justify-center shrink-0 p-1 group-hover:border-[#76b900] transition-colors overflow-hidden">
+                            <IconComponent size={18} />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[#F0EFE2] text-sm group-hover:text-[#76b900] transition-colors leading-snug">
+                              {model.name}
+                            </span>
+                            <div className="flex items-center gap-1.5 text-[11px] leading-snug mt-0.5">
+                              <span className="text-[#76b900] font-medium">{model.promo}</span>
+                              <span className="text-[#777] font-normal">{model.promoUntil}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Input Price */}
+                        <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
+                          {model.inputPrice}
+                        </div>
+
+                        {/* Cached Input */}
+                        <div className="flex flex-col justify-center">
+                          <span className="line-through text-[#666] text-[11px] font-mono leading-none mb-0.5">
+                            {model.strikethroughCached}
+                          </span>
+                          <span className="font-bold text-[#F0EFE2] text-sm leading-tight">
+                            {model.cachedPrice}
+                          </span>
+                          <span className="text-[10px] text-[#666] leading-snug mt-0.5 whitespace-pre-line pr-2">
+                            {model.cacheHitRate}
+                          </span>
+                        </div>
+
+                        {/* Output Price */}
+                        <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
+                          {model.outputPrice}
+                        </div>
+
+                        {/* View Model Link */}
+                        <div className="flex justify-end">
+                          <span className="text-xs text-[#aaa] group-hover:text-[#F0EFE2] flex items-center gap-1 font-medium transition-colors">
+                            View model <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Subtext below table */}
+              <div className="mt-3 text-xs text-[#777]">
+                Limits and modality-specific capabilities are listed on each model page.
+              </div>
+            </section>
+
+            {/* SECTION 3: Exact Screenshot 2 & 3 Comparison Section */}
+            <section className="mb-20">
+              <div className="w-full border border-dashed border-[#333] bg-[#151515] flex flex-col">
+                {/* Header Description Box */}
+                <div className="p-4 sm:p-6 border-b border-dashed border-[#333]">
+                  <h2 className="text-lg sm:text-xl font-semibold text-[#F0EFE2] mb-1.5 tracking-tight">
+                    Compare Pay as you go and Enterprise
+                  </h2>
+                  <p className="text-xs sm:text-[13px] text-[#888] max-w-2xl leading-relaxed">
+                    Pay as you go is self-serve, funded by credit top-ups. Enterprise adds private infrastructure, reserved capacity, compliance, and custom terms.
+                  </p>
+                </div>
+
+                {/* Table Matrix Header */}
+                <div className="grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#333] bg-[#181818]/80">
+                  <div className="p-4 sm:p-5 flex items-end">
+                    <span className="text-xs font-medium text-[#777]">Feature</span>
+                  </div>
+                  <div className="p-4 sm:p-5 flex flex-col justify-end">
+                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Pay as you go</span>
+                    <span className="text-[11px] text-[#777] mt-0.5">from a $5 top-up</span>
+                  </div>
+                  <div className="p-4 sm:p-5 flex flex-col justify-end">
+                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Enterprise</span>
+                    <span className="text-[11px] text-[#777] mt-0.5">Custom</span>
+                  </div>
+                </div>
+
+                {/* Comparison Rows */}
+                {COMPARISON_ROWS.map((row, i) => (
+                  <div
+                    key={row.feature}
+                    className={`grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#282828] text-xs sm:text-[13px] ${i % 2 === 1 ? "bg-[#181818]/40" : "bg-transparent"
+                      }`}
+                  >
+                    <div className="p-3.5 sm:p-4 text-[#aaa] font-normal flex items-center">
+                      {row.feature}
+                    </div>
+
+                    <div className="p-3.5 sm:p-4 flex items-center text-[#C8C7BA]">
+                      {row.isText === true ? (
+                        <span>{row.payg as string}</span>
+                      ) : row.isText === "mixed" ? (
+                        <span>{row.payg as string}</span>
+                      ) : row.payg === true ? (
+                        <Check size={16} className="text-[#76b900]" strokeWidth={2.5} />
+                      ) : (
+                        <X size={15} className="text-[#666]" strokeWidth={2} />
+                      )}
+                    </div>
+
+                    <div className="p-3.5 sm:p-4 flex items-center text-[#C8C7BA]">
+                      {row.isText === true ? (
+                        <span>{row.enterprise as string}</span>
+                      ) : row.enterprise === true ? (
+                        <Check size={16} className="text-[#76b900]" strokeWidth={2.5} />
+                      ) : (
+                        <X size={15} className="text-[#666]" strokeWidth={2} />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom Callout */}
+              <div className="mt-6 text-xs sm:text-sm text-[#888]">
+                Compare pay-as-you-go API costs with renting GPUs.{" "}
+                <Link
+                  href="/economics"
+                  className="underline decoration-[#76b900] decoration-1 underline-offset-4 text-[#F0EFE2] hover:text-[#76b900] font-medium transition-colors"
+                >
+                  Compare GPU fit, rental costs, idle time and API costs
+                </Link>{" "}
+                for your model and traffic.
+              </div>
+            </section>
+
+            {/* SECTION 4: Common Questions FAQ */}
+            <section className="max-w-3xl mx-auto flex flex-col items-center">
+              <h2 className="text-2xl sm:text-3xl font-medium text-[#F0EFE2] mb-2 flex items-center gap-2">
+                Common{" "}
+                <span className="bg-[#76b900] text-[#151515] px-2 py-0.5 rounded-none font-semibold">
+                  questions
+                </span>
               </h2>
-              <p className="text-xs sm:text-[13px] text-[#888] max-w-2xl leading-relaxed">
-                Pay as you go is self-serve, funded by credit top-ups. Enterprise adds private infrastructure, reserved capacity, compliance, and custom terms.
+              <p className="text-[#888] text-xs sm:text-sm mb-8 text-center">
+                Need something else?{" "}
+                <a href={`mailto:${founderEmail}`} className="text-[#76b900] hover:underline">
+                  Contact our team
+                </a>
+                .
               </p>
+
+              {/* FAQ Tabs */}
+              <div className="flex gap-2 mb-8 bg-[#181818] p-1 border border-[#333]">
+                <button
+                  onClick={() => setFaqTab("payg")}
+                  className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${faqTab === "payg" ? "bg-[#76b900] text-[#151515]" : "text-[#888] hover:text-[#F0EFE2]"
+                    }`}
+                >
+                  Pay as you go
+                </button>
+                <button
+                  onClick={() => setFaqTab("enterprise")}
+                  className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${faqTab === "enterprise" ? "bg-[#76b900] text-[#151515]" : "text-[#888] hover:text-[#F0EFE2]"
+                    }`}
+                >
+                  Enterprise & Batch
+                </button>
+              </div>
+
+              {/* FAQ Content */}
+              <div className="w-full space-y-3.5">
+                {faqTab === "payg" ? (
+                  <>
+                    <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                      <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                        <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
+                          <div className="w-1.5 h-1.5 bg-[#76b900]" />
+                        </div>
+                        How does cached input pricing work?
+                      </h3>
+                      <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
+                        When you send a prompt with repeated context (like conversation history, code repositories, or documents), supported models detect the cached prefix and discount the input cost by up to 90% or offer it completely free during promotional windows.
+                      </p>
+                    </div>
+
+                    <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                      <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                        <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
+                          <div className="w-1.5 h-1.5 bg-[#76b900]" />
+                        </div>
+                        How do credit top-ups work?
+                      </h3>
+                      <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
+                        You can fund your prepaid balance with any amount starting from $5. You only pay for the tokens generated and executed. Unused credits remain valid for 12 months.
+                      </p>
+                    </div>
+
+                    <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                      <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                        <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
+                          <div className="w-1.5 h-1.5 bg-[#76b900]" />
+                        </div>
+                        Are there per-seat or per-user fees?
+                      </h3>
+                      <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
+                        No. Our pay-as-you-go model APIs are charged strictly by token consumption, allowing your entire team or product application to share one single balance without seat penalties.
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                      <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                        <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
+                          <div className="w-1.5 h-1.5 bg-[#76b900]" />
+                        </div>
+                        What SLA options are available for Enterprise?
+                      </h3>
+                      <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
+                        We offer contractual SLAs up to 99.99% uptime with guaranteed throughput reservations and sub-second failover routing across dedicated clusters.
+                      </p>
+                    </div>
+
+                    <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                      <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                        <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
+                          <div className="w-1.5 h-1.5 bg-[#76b900]" />
+                        </div>
+                        Can we run private dedicated deployments?
+                      </h3>
+                      <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
+                        Yes. Enterprise contracts support private VPC peering, on-prem hardware integration, SOC 2 Type II controls, and custom model weights loaded into isolated nodes.
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
+          </>
+        ) : (
+          <div>
+            {/* SECTION 1: 3-Tier Coding Plan Cards & Models Context (Screenshot 1) */}
+            <section className="mb-14">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                {/* Starter Card */}
+                <div className="border border-dashed border-[#333] bg-[#181818]/70 p-5 sm:p-6 flex flex-col justify-between hover:border-[#555] transition-colors">
+                  <div>
+                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Starter</h3>
+                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-1.5">
+                      $10 <span className="text-xs font-normal text-[#888]">a month</span>
+                    </div>
+                    <p className="text-xs text-[#888] mt-1 mb-6">About $12 of usage a month</p>
+
+                    <div className="space-y-3 text-xs mb-8">
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">5-hour limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$1.11</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">Weekly limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$2.77</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">Free Standby</span>
+                        <span className="font-medium text-[#F0EFE2]">Up to $0.20 of chat a day</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5">
+                        <span className="text-[#888] pr-2">Requests at once per model, when busy</span>
+                        <span className="font-semibold text-[#F0EFE2] shrink-0 font-mono">4 to 48</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    href="/developer-console"
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
+                  >
+                    Choose Starter <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </Link>
+                </div>
+
+                {/* Pro Card */}
+                <div className="border border-dashed border-[#333] bg-[#181818]/70 p-5 sm:p-6 flex flex-col justify-between hover:border-[#555] transition-colors">
+                  <div>
+                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Pro</h3>
+                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-1.5">
+                      $29 <span className="text-xs font-normal text-[#888]">a month</span>
+                    </div>
+                    <p className="text-xs text-[#888] mt-1 mb-6">About $35 of usage a month</p>
+
+                    <div className="space-y-3 text-xs mb-8">
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">5-hour limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$3.23</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">Weekly limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$8.08</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">Free Standby</span>
+                        <span className="font-medium text-[#F0EFE2]">Up to $0.58 of chat a day</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5">
+                        <span className="text-[#888] pr-2">Requests at once per model, when busy</span>
+                        <span className="font-semibold text-[#F0EFE2] shrink-0 font-mono">5 to 48</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    href="/developer-console"
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
+                  >
+                    Choose Pro <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </Link>
+                </div>
+
+                {/* Team Card */}
+                <div className="border border-dashed border-[#333] bg-[#181818]/70 p-5 sm:p-6 flex flex-col justify-between hover:border-[#555] transition-colors">
+                  <div>
+                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Team</h3>
+                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-1.5">
+                      $99 <span className="text-xs font-normal text-[#888]">a month</span>
+                    </div>
+                    <p className="text-xs text-[#888] mt-1 mb-6">About $119 of usage a month</p>
+
+                    <div className="space-y-3 text-xs mb-8">
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">5-hour limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$10.98</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">Weekly limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$27.46</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
+                        <span className="text-[#888]">Free Standby</span>
+                        <span className="font-medium text-[#F0EFE2]">Up to $1.98 of chat a day</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5">
+                        <span className="text-[#888] pr-2">Requests at once per model, when busy</span>
+                        <span className="font-semibold text-[#F0EFE2] shrink-0 font-mono">8 to 48</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    href="/developer-console"
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
+                  >
+                    Choose Team <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Models List */}
+              <div className="mb-6">
+                <div className="text-xs text-[#777] mb-2 font-medium">Models</div>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-semibold text-[#F0EFE2]">
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <OrnithLogo size={14} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">Ornith 1.5 122B</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <DeepSeekLogo size={14} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">DeepSeek V4.1 Flash 1017</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <ZLogo size={12} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">GLM 5.3</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <ZLogo size={12} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">GLM 5.3 Flash</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <NvidiaLogo size={14} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">Nemotron 3.5 Lightning 30B</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <QwenLogo size={14} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">Qwen3.8 27B</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <OrnithLogo size={14} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">Ornith 1.5 35B</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 group cursor-pointer">
+                    <DeepSeekLogo size={14} />
+                    <span className="underline decoration-[#555] group-hover:decoration-[#76b900] transition-colors">DeepSeek V4.1 Flash</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cached Context Box */}
+              <div className="border-t border-dashed border-[#282828] pt-4 mb-4">
+                <div className="text-xs text-[#777] mb-1 font-medium">Cached context</div>
+                <p className="text-xs sm:text-[13px] text-[#aaa]">
+                  Up to <span className="font-bold text-[#F0EFE2]">99.6%</span> cache hit rate, last 24 hours.{" "}
+                  From <span className="font-bold text-[#F0EFE2]">$0.01 per 1M cached input tokens</span>, so your plan goes further.
+                </p>
+              </div>
+
+              <p className="text-xs text-[#777]">
+                Every plan is shared by its workspace, not per member.
+              </p>
+            </section>
+
+            {/* SECTION 2: Limits Section (Screenshot 2) */}
+            <div className="w-screen relative left-1/2 -translate-x-1/2 z-20 my-14">
+              <SectionDivider position="top" />
             </div>
 
-            {/* Table Matrix Header */}
-            <div className="grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#333] bg-[#181818]/80">
-              <div className="p-4 sm:p-5 flex items-end">
-                <span className="text-xs font-medium text-[#777]">Feature</span>
+            <section className="mb-20">
+              <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-2">
+                LIMITS
               </div>
-              <div className="p-4 sm:p-5 flex flex-col justify-end">
-                <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Pay as you go</span>
-                <span className="text-[11px] text-[#777] mt-0.5">from a $5 top-up</span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] tracking-tight mb-8">
+                Limits that reset every 5 hours and every{" "}
+                <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
+                  week
+                </span>
+              </h2>
+
+              <div className="flex flex-col lg:flex-row items-start justify-between gap-8 pt-2">
+                {/* Left Column: Progress bars */}
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full border border-[#333] flex items-center justify-center shrink-0">
+                    <RotateCw size={16} className="text-[#76b900]" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-[#777] mb-3 font-medium">Limits reset</div>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="text-xs font-semibold text-[#F0EFE2] mb-1.5">Every 5 hours</div>
+                        <div className="h-1.5 w-48 sm:w-60 bg-[#262626] rounded-none overflow-hidden">
+                          <div className="h-full bg-[#76b900] w-[60%]" />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-[#F0EFE2] mb-1.5">Every week</div>
+                        <div className="h-1.5 w-48 sm:w-60 bg-[#262626] rounded-none overflow-hidden">
+                          <div className="h-full bg-[#76b900] w-[30%]" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Middle Illustration Label */}
+                <div className="hidden lg:block text-[10px] text-[#666] tracking-widest font-mono uppercase pt-1">
+                  ILLUSTRATION
+                </div>
+
+                {/* Right Column: Flow */}
+                <div className="w-full lg:w-auto">
+                  <div className="text-xs text-[#777] mb-4 font-medium">What happens at a limit</div>
+                  <div className="flex items-start gap-3 sm:gap-4 overflow-x-auto pb-2">
+                    {/* Step: Plan */}
+                    <div className="flex flex-col items-start min-w-[70px]">
+                      <div className="w-2.5 h-2.5 bg-[#76b900] mb-2" />
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Plan</span>
+                    </div>
+
+                    <div className="text-[#555] text-xs pt-0.5">→</div>
+
+                    {/* Step: Credits */}
+                    <div className="flex flex-col items-start max-w-[120px]">
+                      <div className="w-2.5 h-2.5 border border-[#76b900] mb-2" />
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Credits</span>
+                      <span className="text-[11px] text-[#777] leading-tight mt-1">Your choice: a cap, or no limit</span>
+                    </div>
+
+                    <div className="text-[#555] text-xs pt-0.5">→</div>
+
+                    {/* Step: Standby */}
+                    <div className="flex flex-col items-start max-w-[110px]">
+                      <div className="w-2.5 h-2.5 bg-[#76b900] mb-2" />
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Standby</span>
+                      <span className="text-[11px] text-[#777] leading-tight mt-1">Free, slower chat</span>
+                    </div>
+
+                    <div className="text-[#555] text-xs pt-0.5">→</div>
+
+                    {/* Step: Stop */}
+                    <div className="flex flex-col items-start max-w-[90px]">
+                      <div className="w-2.5 h-2.5 border border-[#666] mb-2" />
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Stop</span>
+                      <span className="text-[11px] text-[#777] leading-tight mt-1">Until a reset</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="p-4 sm:p-5 flex flex-col justify-end">
-                <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Enterprise</span>
-                <span className="text-[11px] text-[#777] mt-0.5">Custom</span>
-              </div>
+            </section>
+
+            {/* SECTION 3: Setup Section (Screenshot 3) */}
+            <div className="w-screen relative left-1/2 -translate-x-1/2 z-20 my-14">
+              <SectionDivider position="top" />
             </div>
 
-            {/* Comparison Rows */}
-            {COMPARISON_ROWS.map((row, i) => (
-              <div
-                key={row.feature}
-                className={`grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#282828] text-xs sm:text-[13px] ${i % 2 === 1 ? "bg-[#181818]/40" : "bg-transparent"
-                  }`}
-              >
-                {/* Feature Name */}
-                <div className="p-3.5 sm:p-4 text-[#aaa] font-normal flex items-center">
-                  {row.feature}
+            <section className="mb-20">
+              <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-2">
+                SETUP
+              </div>
+
+              <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
+                <div className="max-w-md">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] tracking-tight mb-3">
+                    Connect your coding{" "}
+                    <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
+                      agents
+                    </span>
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#888]">
+                    Review each connection before it is applied.
+                  </p>
                 </div>
 
-                {/* Pay as you go Value */}
-                <div className="p-3.5 sm:p-4 flex items-center text-[#C8C7BA]">
-                  {row.isText === true ? (
-                    <span>{row.payg as string}</span>
-                  ) : row.isText === "mixed" ? (
-                    <span>{row.payg as string}</span>
-                  ) : row.payg === true ? (
-                    <Check size={16} className="text-[#76b900]" strokeWidth={2.5} />
-                  ) : (
-                    <X size={15} className="text-[#666]" strokeWidth={2} />
-                  )}
-                </div>
+                <div className="w-full lg:max-w-md">
+                  <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs sm:text-sm font-medium text-[#F0EFE2]">
+                        Let your coding agent set it up
+                      </span>
+                      <button
+                        onClick={handleCopyPrompt}
+                        className="text-[11px] text-[#aaa] hover:text-white flex items-center gap-1.5 px-2.5 py-1 border border-[#333] hover:border-[#555] bg-[#141414] transition-colors"
+                      >
+                        <Copy size={12} /> {copiedPrompt ? "Copied!" : "Copy setup prompt"}
+                      </button>
+                    </div>
 
-                {/* Enterprise Value */}
-                <div className="p-3.5 sm:p-4 flex items-center text-[#C8C7BA]">
-                  {row.isText === true ? (
-                    <span>{row.enterprise as string}</span>
-                  ) : row.enterprise === true ? (
-                    <Check size={16} className="text-[#76b900]" strokeWidth={2.5} />
-                  ) : (
-                    <X size={15} className="text-[#666]" strokeWidth={2} />
-                  )}
+                    <div className="space-y-3 relative pl-1">
+                      <div className="absolute left-[13px] top-3 bottom-3 w-[1px] border-l border-dashed border-[#333]" />
+                      <div className="flex items-center gap-3 relative z-10">
+                        <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                          1
+                        </div>
+                        <span className="text-xs text-[#C8C7BA]">Paste the prompt into your coding agent</span>
+                      </div>
+                      <div className="flex items-center gap-3 relative z-10">
+                        <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                          2
+                        </div>
+                        <span className="text-xs text-[#C8C7BA]">Approve the sign-in in your browser</span>
+                      </div>
+                      <div className="flex items-center gap-3 relative z-10">
+                        <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                          3
+                        </div>
+                        <span className="text-xs text-[#C8C7BA]">Say yes to the setup plan</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    href="/developer-console"
+                    className="text-xs sm:text-[13px] text-[#76b900] underline font-medium mt-3 inline-block hover:opacity-80"
+                  >
+                    Set up with your coding agent
+                  </Link>
                 </div>
               </div>
-            ))}
+
+              {/* 19 agents ready */}
+              <div className="mb-6">
+                <div className="text-xs text-[#777] mb-3 font-medium">19 agents ready</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                  {READY_AGENTS.map((agent) => (
+                    <div
+                      key={agent.name}
+                      className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#262626] bg-[#161616] hover:border-[#76b900]/40 transition-colors"
+                    >
+                      <div className="shrink-0">{agent.icon}</div>
+                      <span className="text-xs font-medium text-[#F0EFE2] truncate">{agent.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview agents */}
+              <div>
+                <div className="text-xs text-[#777] mb-3 font-medium">Preview</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-3">
+                  {PREVIEW_AGENTS.map((agent) => (
+                    <div
+                      key={agent.name}
+                      className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#262626] bg-[#161616] hover:border-[#76b900]/40 transition-colors"
+                    >
+                      <div className="shrink-0">{agent.icon}</div>
+                      <span className="text-xs font-medium text-[#bbb] truncate">{agent.name}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-[#777]">
+                  Preview agents may need extra setup. Each connection makes one small test request.
+                </p>
+              </div>
+            </section>
+
+            {/* SECTION 4: Common Questions FAQ & Bottom Choose a Plan (Screenshot 4) */}
+            <div className="w-screen relative left-1/2 -translate-x-1/2 z-20 my-14">
+              <SectionDivider position="top" />
+            </div>
+
+            <section className="mb-14">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] text-center tracking-tight mb-2">
+                Common{" "}
+                <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
+                  questions
+                </span>
+              </h2>
+              <p className="text-xs sm:text-sm text-[#888] text-center mb-6">
+                Can't find what you're looking for?{" "}
+                <a href={`mailto:${founderEmail}`} className="text-[#76b900] hover:underline">
+                  Get in touch
+                </a>
+              </p>
+
+              {/* Interactive Pills */}
+              <div className="flex flex-wrap items-center justify-center gap-2 mb-8 max-w-4xl mx-auto">
+                {CODING_PLAN_FAQS.map((faq, index) => {
+                  const isActive = codingFaqActive === index;
+                  return (
+                    <button
+                      key={faq.question}
+                      onClick={() => setCodingFaqActive(index)}
+                      className={`px-3 py-1.5 text-xs font-medium transition-all ${
+                        isActive
+                          ? "bg-[#76b900] text-black font-semibold shadow-sm"
+                          : "bg-[#181818] text-[#888] hover:text-[#F0EFE2] border border-[#282828] hover:border-[#444]"
+                      }`}
+                    >
+                      {faq.question}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Active Question Box */}
+              <div className="border-t border-b border-dashed border-[#333] py-6 my-8">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-6 h-6 border border-[#76b900] bg-[#1a1a1a] flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-2 h-2 bg-[#76b900]" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold text-[#F0EFE2] mb-2">
+                      {CODING_PLAN_FAQS[codingFaqActive].question}
+                    </h3>
+                    <p className="text-xs sm:text-[13px] text-[#aaa] leading-relaxed max-w-3xl">
+                      {CODING_PLAN_FAQS[codingFaqActive].answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom: Choose a plan */}
+              <div className="mt-12">
+                <h3 className="text-base sm:text-lg font-medium text-[#F0EFE2] mb-3 flex items-center gap-1.5">
+                  Choose a{" "}
+                  <span className="bg-[#76b900] text-black px-1.5 py-0.5 font-semibold inline-block">
+                    plan
+                  </span>
+                </h3>
+
+                {/* 3 Action Buttons */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                  <Link
+                    href="/developer-console"
+                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
+                  >
+                    Choose Starter, $10 a month <ChevronRight size={13} className="text-[#888]" />
+                  </Link>
+                  <Link
+                    href="/developer-console"
+                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
+                  >
+                    Choose Pro, $29 a month <ChevronRight size={13} className="text-[#888]" />
+                  </Link>
+                  <Link
+                    href="/developer-console"
+                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
+                  >
+                    Choose Team, $99 a month <ChevronRight size={13} className="text-[#888]" />
+                  </Link>
+                </div>
+
+                {/* 4 Security Badges */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+                  <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
+                    <Lock size={13} className="text-[#76b900] shrink-0" />
+                    <span className="truncate">TLS in transit, AES-256 at rest</span>
+                  </div>
+                  <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
+                    <Cpu size={13} className="text-[#76b900] shrink-0" />
+                    <span className="truncate">Workspace isolation</span>
+                  </div>
+                  <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
+                    <EyeOff size={13} className="text-[#76b900] shrink-0" />
+                    <span className="truncate">No training on your data</span>
+                  </div>
+                  <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
+                    <ShieldCheck size={13} className="text-[#76b900] shrink-0" />
+                    <span className="truncate">SOC 2 Type II</span>
+                  </div>
+                </div>
+
+                {/* Footer Links */}
+                <div className="flex items-center gap-4 text-xs text-[#777]">
+                  <Link href="/developer-console" className="underline hover:text-[#F0EFE2] transition-colors">
+                    Model library
+                  </Link>
+                  <Link href="/terms" className="underline hover:text-[#F0EFE2] transition-colors">
+                    Terms of Service
+                  </Link>
+                </div>
+              </div>
+            </section>
           </div>
-
-          {/* Screenshot 3 Bottom Callout */}
-          <div className="mt-6 text-xs sm:text-sm text-[#888]">
-            Compare pay-as-you-go API costs with renting GPUs.{" "}
-            <Link
-              href="/economics"
-              className="underline decoration-[#76b900] decoration-1 underline-offset-4 text-[#F0EFE2] hover:text-[#76b900] font-medium transition-colors"
-            >
-              Compare GPU fit, rental costs, idle time and API costs
-            </Link>{" "}
-            for your model and traffic.
-          </div>
-        </section>
-
-
-
-        {/* SECTION 5: Common Questions FAQ */}
-        <section className="max-w-3xl mx-auto flex flex-col items-center">
-          <h2 className="text-2xl sm:text-3xl font-medium text-[#F0EFE2] mb-2 flex items-center gap-2">
-            Common{" "}
-            <span className="bg-[#76b900] text-[#151515] px-2 py-0.5 rounded-none font-semibold">
-              questions
-            </span>
-          </h2>
-          <p className="text-[#888] text-xs sm:text-sm mb-8 text-center">
-            Need something else?{" "}
-            <a href={`mailto:${founderEmail}`} className="text-[#76b900] hover:underline">
-              Contact our team
-            </a>
-            .
-          </p>
-
-          {/* FAQ Tabs */}
-          <div className="flex gap-2 mb-8 bg-[#181818] p-1 border border-[#333]">
-            <button
-              onClick={() => setFaqTab("payg")}
-              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${faqTab === "payg" ? "bg-[#76b900] text-[#151515]" : "text-[#888] hover:text-[#F0EFE2]"
-                }`}
-            >
-              Pay as you go
-            </button>
-            <button
-              onClick={() => setFaqTab("enterprise")}
-              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${faqTab === "enterprise" ? "bg-[#76b900] text-[#151515]" : "text-[#888] hover:text-[#F0EFE2]"
-                }`}
-            >
-              Enterprise & Batch
-            </button>
-          </div>
-
-          {/* FAQ Content */}
-          <div className="w-full space-y-3.5">
-            {faqTab === "payg" ? (
-              <>
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
-                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
-                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
-                      <div className="w-1.5 h-1.5 bg-[#76b900]" />
-                    </div>
-                    How does cached input pricing work?
-                  </h3>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                    When you send a prompt with repeated context (like conversation history, code repositories, or documents), supported models detect the cached prefix and discount the input cost by up to 90% or offer it completely free during promotional windows.
-                  </p>
-                </div>
-
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
-                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
-                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
-                      <div className="w-1.5 h-1.5 bg-[#76b900]" />
-                    </div>
-                    How do credit top-ups work?
-                  </h3>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                    You can fund your prepaid balance with any amount starting from $5. You only pay for the tokens generated and executed. Unused credits remain valid for 12 months.
-                  </p>
-                </div>
-
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
-                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
-                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
-                      <div className="w-1.5 h-1.5 bg-[#76b900]" />
-                    </div>
-                    Are there per-seat or per-user fees?
-                  </h3>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                    No. Our pay-as-you-go model APIs are charged strictly by token consumption, allowing your entire team or product application to share one single balance without seat penalties.
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
-                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
-                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
-                      <div className="w-1.5 h-1.5 bg-[#76b900]" />
-                    </div>
-                    What SLA options are available for Enterprise?
-                  </h3>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                    We offer contractual SLAs up to 99.99% uptime with guaranteed throughput reservations and sub-second failover routing across dedicated clusters.
-                  </p>
-                </div>
-
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
-                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
-                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
-                      <div className="w-1.5 h-1.5 bg-[#76b900]" />
-                    </div>
-                    Can we run private dedicated deployments?
-                  </h3>
-                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                    Yes. Enterprise contracts support private VPC peering, on-prem hardware integration, SOC 2 Type II controls, and custom model weights loaded into isolated nodes.
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-        </section>
+        )}
       </main>
 
       {/* Global Footer */}
