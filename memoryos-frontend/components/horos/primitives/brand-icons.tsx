@@ -1100,3 +1100,96 @@ export function DepthAnythingLogo({ className, size = 20 }: BrandIconProps) {
     />
   );
 }
+
+export function FigureLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F0EFE2]", className)}>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="4" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="12" cy="9" r="2.2" fill="currentColor" />
+      <path d="M7 16.5h10M12 11.5v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function BostonDynamicsLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F0EFE2]", className)}>
+      <path d="M4 17l3-7 4 3 5-7 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="20" cy="10" r="1.5" fill="#75bf00" />
+      <path d="M4 17h4l3-4M16 10l3 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function UnitreeLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#00E5FF]", className)}>
+      <path d="M6 5v8a6 6 0 0012 0V5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="12" cy="18" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function WindsurfLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#00E599]", className)}>
+      <path d="M3 15c4-6 8-8 12-6s5 7 6 7M4 18c3-4 7-6 10-4s5 5 7 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="15" cy="7" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function DevinLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#10B981]", className)}>
+      <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 10l3 2-3 2M13 14h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function CopilotLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={cn("shrink-0 text-[#6E40C9]", className)}>
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" />
+    </svg>
+  );
+}
+
+export function GroqLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F55036]", className)}>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 12h8M14 8l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function CoreWeaveLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#2563EB]", className)}>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function LambdaLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#9333EA]", className)}>
+      <path d="M6 19L14 5h3L9 19H6zM13 13l4 6h-3l-2.5-3.5L13 13z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function CerebrasLogo({ className, size = 20 }: BrandIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F59E0B]", className)}>
+      <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="12" r="3" fill="currentColor" />
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
