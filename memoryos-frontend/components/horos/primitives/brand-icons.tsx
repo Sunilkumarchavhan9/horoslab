@@ -756,7 +756,9 @@ export function RunPodLogo({ className, size = 14 }: BrandIconProps) {
 
 import { HorosLogo as OriginalHorosLogo } from "./horos-logo";
 
-export const HorosLogo = (props: any) => <OriginalHorosLogo {...props} />;
+export function HorosLogo({ className, size = 14, ...props }: any) {
+  return <OriginalHorosLogo size={size} className={cn("text-[#75bf00]", className)} {...props} />;
+}
 export const HorosWordmarkLogo = (props: any) => <OriginalHorosLogo variant="wordmark" {...props} />;
 
 export function K8sFaviconLogo({ className, size = 14 }: BrandIconProps) {

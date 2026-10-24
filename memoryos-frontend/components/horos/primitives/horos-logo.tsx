@@ -3,21 +3,27 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface HorosLogoProps extends React.SVGProps<SVGSVGElement> {
+interface HorosLogoProps extends Omit<React.SVGProps<SVGSVGElement>, "size"> {
   variant?: "full" | "icon" | "wordmark" | "stacked";
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | number | string;
   dark?: boolean;
 }
 
 export function HorosIcon({
   className,
+  width,
+  height,
+  style,
   ...props
 }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 184 160"
-      className={cn("w-auto shrink-0 select-none", className)}
+      width={width}
+      height={height}
+      style={style}
+      className={cn("shrink-0 select-none inline-block align-middle", !width && !height && "w-auto", className)}
       {...props}
     >
       <path
@@ -99,13 +105,12 @@ export function HorosLogo({
   size = "md",
   className,
   dark,
+  width,
+  height,
+  style,
   ...props
 }: HorosLogoProps) {
-  if (variant === "icon") {
-    return <HorosIcon className={className} {...props} />;
-  }
-
-  const heightClasses = {
+  const heightClasses: Record<string, string> = {
     xs: "h-3 text-xs",
     sm: "h-3.5 text-sm",
     md: "h-4 text-base",
@@ -118,10 +123,38 @@ export function HorosLogo({
     "6xl": "h-24 text-6xl",
   };
 
+  const isPresetSize = typeof size === "string" && size in heightClasses;
+  const numericSize = !isPresetSize
+    ? typeof size === "number"
+      ? size
+      : typeof size === "string" && !isNaN(Number(size))
+      ? Number(size)
+      : undefined
+    : undefined;
+
+  const resolvedWidth = width ?? numericSize;
+  const resolvedHeight = height ?? numericSize;
+  const sizeClass = isPresetSize ? heightClasses[size as string] : undefined;
+
+  if (variant === "icon") {
+    return (
+      <HorosIcon
+        width={resolvedWidth}
+        height={resolvedHeight}
+        style={style}
+        className={cn(sizeClass, className)}
+        {...props}
+      />
+    );
+  }
+
   if (variant === "stacked") {
     return (
-      <div className={cn("flex flex-col items-center justify-center gap-1", heightClasses[size], className)}>
-        <HorosIcon className="w-auto h-[1.25em] text-current" />
+      <div
+        style={numericSize ? { height: numericSize * 1.5, ...style } : style}
+        className={cn("flex flex-col items-center justify-center gap-1", sizeClass, className)}
+      >
+        <HorosIcon width={resolvedWidth} height={resolvedHeight} className="w-auto h-[1.25em] text-current" />
         <span className="font-medium tracking-tight leading-none text-current">
           HOROS
         </span>
@@ -130,10 +163,13 @@ export function HorosLogo({
   }
 
   if (variant === "wordmark") {
-    const textSizeClass = heightClasses[size].split(" ").find((c) => c.startsWith("text-"));
+    const textSizeClass = sizeClass?.split(" ").find((c) => c.startsWith("text-"));
     return (
-      <div className={cn("flex items-center gap-0.5", textSizeClass, className)}>
-        <HorosIcon className="w-auto h-[1.6em] text-current" />
+      <div
+        style={numericSize ? { height: numericSize, ...style } : style}
+        className={cn("flex items-center gap-0.5", textSizeClass, className)}
+      >
+        <HorosIcon width={resolvedWidth} height={resolvedHeight} className="w-auto h-[1.6em] text-current" />
         <span className="font-medium tracking-tight text-[0.7em] text-current">
           HOROS
         </span>
@@ -142,7 +178,13 @@ export function HorosLogo({
   }
 
   return (
-    <HorosIcon className={cn(heightClasses[size], className)} {...props} />
+    <HorosIcon
+      width={resolvedWidth}
+      height={resolvedHeight}
+      style={style}
+      className={cn(sizeClass, className)}
+      {...props}
+    />
   );
 }
 

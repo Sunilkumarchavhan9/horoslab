@@ -42,7 +42,7 @@ const ALL_14_WORKLOADS = [
     label: "Decode reality",
     title: "Run",
     target: "Horos Argvis on Edge Mesh",
-    icon: <HorosLogo size={12} />,
+    icon: <HorosLogo size={12} className="text-[#75bf00]" />,
   },
   {
     label: "Optimize workload",
