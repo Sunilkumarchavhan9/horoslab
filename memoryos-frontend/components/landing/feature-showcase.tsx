@@ -172,7 +172,7 @@ function SurfaceScroller() {
 // --- Inner Right-Side Components ---
 function SimulatorConsole({ isSpacer = false }: { isSpacer?: boolean }) {
   return (
-    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-5 lg:p-6 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-4 sm:p-5 lg:p-6 bg-[#151515] rounded-[1px] font-mono text-sm select-none overflow-hidden">
       <div>
         {/* Console Header Bar */}
         <div className="flex items-center justify-start gap-3 py-1 mb-2.5 text-[#aaa]">
@@ -329,7 +329,7 @@ function SimulatorConsole({ isSpacer = false }: { isSpacer?: boolean }) {
 
 function RunbookDashboard() {
   return (
-    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-4 sm:p-5 lg:p-5 bg-[#151515] rounded-[1px] font-mono text-sm select-none overflow-hidden">
       <div>
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-dashed border-[#333333]">
@@ -663,7 +663,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
         </div>
 
         {/* Column 3: Right Container (Sticky UI) */}
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full pb-16 lg:pb-24">
           <div className="sticky top-12 lg:top-16 flex flex-col justify-start p-4 lg:p-6 w-full">
 
             <div className="relative w-full">
@@ -724,7 +724,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
               </div>
 
               {/* Invisible canonical spacer that locks the EXACT width and height for all cards */}
-              <div className="opacity-0 pointer-events-none h-[750px] lg:h-[650px] xl:h-[600px] w-full">
+              <div className="opacity-0 pointer-events-none min-h-[660px] h-[660px] lg:h-[660px] xl:h-[660px] w-full">
               </div>
             </div>
           </div>

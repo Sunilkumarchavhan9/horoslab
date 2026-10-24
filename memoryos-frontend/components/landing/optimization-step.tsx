@@ -50,7 +50,7 @@ export function OptimizationStep() {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-4 sm:p-5 lg:p-5 bg-[#151515] rounded-[1px] font-mono select-none overflow-hidden">
       
       {/* Top Header Title */}
       <div className="flex items-center justify-between pb-0.5">

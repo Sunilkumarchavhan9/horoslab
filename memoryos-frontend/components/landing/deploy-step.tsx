@@ -156,7 +156,7 @@ export function DeployStep() {
   const currentTargets = targetsByCategory[activeCategory];
 
   return (
-    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-6 lg:p-8 bg-[#151515] rounded-[1px] font-mono text-sm select-none">
+    <div className="w-full h-full flex flex-col justify-between border border-dashed border-[#333333] p-4 sm:p-5 lg:p-5 bg-[#151515] rounded-[1px] font-mono text-sm select-none overflow-hidden">
 
       {/* Header Section */}
       <div className="space-y-1">
