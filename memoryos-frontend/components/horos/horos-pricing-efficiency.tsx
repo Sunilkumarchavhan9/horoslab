@@ -3,11 +3,146 @@
 import React, { useState } from "react";
 import { Search, ArrowRight, Zap, Banknote, Activity } from "lucide-react";
 import Link from "next/link";
-import { GLMLogo, NvidiaLogo, QwenLogo, AuthorMonogram, DeepSeekLogo, MetaLogo, MistralLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
+import { GLMLogo, NvidiaLogo, QwenLogo, AuthorMonogram, DeepSeekLogo, MetaLogo, MistralLogo, PhysicalIntelligenceLogo, HorosLogo } from "@/components/horos/primitives/brand-icons";
 import { CAPABILITIES } from "@/lib/capabilities-data";
 
 // Extended Mock data for multi-dimensional optimization
 const MODELS = [
+  {
+    id: "horos-reality-decoder",
+    name: "Horos Reality Decoder",
+    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
+
+    // Cost
+    listPrice: 0.12,
+    effectivePrice: 0.010,
+    multiplier: "12.0x",
+    cacheHit: 99.4,
+    cachedInputPrice: 0.01,
+    outputPrice: 0.24,
+
+    // Latency (TTFT)
+    standardLatency: 420,
+    optimizedLatency: 42,
+    latencyMultiplier: "10.0x",
+
+    // Throughput (tok/s)
+    standardThroughput: 32,
+    optimizedThroughput: 310.0,
+    throughputMultiplier: "9.7x",
+
+    tags: ["Frontier Lab", "Physical Control", "Spatial Reasoning", "Multimodal"],
+    trending: true,
+    frontierLab: true,
+  },
+  {
+    id: "horos-code-intelligence",
+    name: "Horos Code Intelligence",
+    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
+
+    // Cost
+    listPrice: 0.20,
+    effectivePrice: 0.018,
+    multiplier: "11.1x",
+    cacheHit: 98.6,
+    cachedInputPrice: 0.01,
+    outputPrice: 0.40,
+
+    // Latency
+    standardLatency: 580,
+    optimizedLatency: 65,
+    latencyMultiplier: "8.9x",
+
+    // Throughput
+    standardThroughput: 45,
+    optimizedThroughput: 380.0,
+    throughputMultiplier: "8.4x",
+
+    tags: ["Frontier Lab", "Reasoning", "Code", "Tool Use"],
+    trending: true,
+    frontierLab: true,
+  },
+  {
+    id: "horos-voice-intelligence",
+    name: "Horos Voice Intelligence",
+    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
+
+    // Cost
+    listPrice: 0.08,
+    effectivePrice: 0.009,
+    multiplier: "8.9x",
+    cacheHit: 97.8,
+    cachedInputPrice: 0.005,
+    outputPrice: 0.16,
+
+    // Latency
+    standardLatency: 650,
+    optimizedLatency: 78,
+    latencyMultiplier: "8.3x",
+
+    // Throughput
+    standardThroughput: 50,
+    optimizedThroughput: 420.0,
+    throughputMultiplier: "8.4x",
+
+    tags: ["Frontier Lab", "Voice", "Real-Time", "Multimodal"],
+    trending: false,
+    frontierLab: true,
+  },
+  {
+    id: "horos-visual-generation",
+    name: "Horos Visual Generation",
+    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
+
+    // Cost
+    listPrice: 0.35,
+    effectivePrice: 0.038,
+    multiplier: "9.2x",
+    cacheHit: 94.2,
+    cachedInputPrice: 0.02,
+    outputPrice: 0.70,
+
+    // Latency
+    standardLatency: 210,
+    optimizedLatency: 16,
+    latencyMultiplier: "13.1x",
+
+    // Throughput
+    standardThroughput: 15,
+    optimizedThroughput: 125.0,
+    throughputMultiplier: "8.3x",
+
+    tags: ["Frontier Lab", "World Modeling", "Simulation", "Video Understanding"],
+    trending: true,
+    frontierLab: true,
+  },
+  {
+    id: "horos-world-dynamics",
+    name: "Horos World Dynamics",
+    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
+
+    // Cost
+    listPrice: 0.28,
+    effectivePrice: 0.029,
+    multiplier: "9.7x",
+    cacheHit: 99.2,
+    cachedInputPrice: 0.015,
+    outputPrice: 0.60,
+
+    // Latency
+    standardLatency: 460,
+    optimizedLatency: 48,
+    latencyMultiplier: "9.6x",
+
+    // Throughput
+    standardThroughput: 22,
+    optimizedThroughput: 195.0,
+    throughputMultiplier: "8.9x",
+
+    tags: ["Frontier Lab", "World Modeling", "Simulation", "Physical Control"],
+    trending: false,
+    frontierLab: true,
+  },
   {
     id: "glm-5-3-flash",
     name: "GLM-4-9B",
@@ -399,8 +534,8 @@ export function HorosPricingEfficiency() {
               <div key={model.id} className="relative flex items-center w-full py-8 border-b border-dashed border-[#222]">
                 {/* Model Name */}
                 <div className="w-[300px] flex items-center gap-3 font-bold text-[13px] text-[#F0EFE2]">
-                  <span className="text-[#888] flex items-center justify-center w-8 h-8">{model.brand}</span>
-                  <span>{model.name}</span>
+                  <span className="text-[#888] flex items-center justify-center w-8 h-8 shrink-0">{model.brand}</span>
+                  <span className="truncate">{model.name}</span>
                 </div>
 
                 {/* The Bar Line */}
