@@ -227,8 +227,8 @@ export default function PricingPage() {
       {/* Top Navbar */}
       <LandingNavbar />
 
-      {/* Main Container - Perfectly fits between inner dashed grid lines */}
-      <main className="w-[94%] sm:w-[94%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
+      {/* Main Container - Sits cleanly inside inner dashed lines with breathing room */}
+      <main className="w-[92%] sm:w-[90%] md:w-[calc(72%_-_280px)] lg:w-[calc(64%_-_300px)] xl:w-[calc(64%_-_340px)] mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
 
         {/* SECTION 1: Top Product Plans Selection */}
         <section className="mb-16">
@@ -333,7 +333,7 @@ export default function PricingPage() {
                     </label>
 
                     {/* Quick amount presets */}
-                    <div className="flex items-center gap-1.5 mb-2.5">
+                    <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
                       {[5, 20, 50, 100, 250].map((amt) => (
                         <button
                           key={amt}
