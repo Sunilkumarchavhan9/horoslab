@@ -1103,93 +1103,116 @@ export function DepthAnythingLogo({ className, size = 20 }: BrandIconProps) {
 
 export function FigureLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F0EFE2]", className)}>
-      <rect x="2.5" y="2.5" width="19" height="19" rx="4" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="12" cy="9" r="2.2" fill="currentColor" />
-      <path d="M7 16.5h10M12 11.5v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
+    <img
+      src="/brand-logos/figure.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Figure AI"
+    />
   );
 }
 
 export function BostonDynamicsLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F0EFE2]", className)}>
-      <path d="M4 17l3-7 4 3 5-7 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="20" cy="10" r="1.5" fill="#75bf00" />
-      <path d="M4 17h4l3-4M16 10l3 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
+    <img
+      src="/brand-logos/bostondynamics.jpg"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Boston Dynamics"
+    />
   );
 }
 
 export function UnitreeLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#00E5FF]", className)}>
-      <path d="M6 5v8a6 6 0 0012 0V5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-      <circle cx="12" cy="18" r="2" fill="currentColor" />
-    </svg>
+    <img
+      src="/brand-logos/unitree.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Unitree"
+    />
   );
 }
 
 export function WindsurfLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#00E599]", className)}>
-      <path d="M3 15c4-6 8-8 12-6s5 7 6 7M4 18c3-4 7-6 10-4s5 5 7 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="15" cy="7" r="2" fill="currentColor" />
-    </svg>
+    <img
+      src="/brand-logos/windsurf.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Windsurf"
+    />
   );
 }
 
 export function DevinLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#10B981]", className)}>
-      <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
-      <path d="M8 10l3 2-3 2M13 14h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <img
+      src="/brand-logos/devin.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Devin"
+    />
   );
 }
 
 export function CopilotLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={cn("shrink-0 text-[#6E40C9]", className)}>
-      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={cn("shrink-0 inline-block align-middle text-[#F0EFE2]", className)}>
+      <path d="M23.922 16.997C23.061 18.492 18.063 22.02 12 22.02 5.937 22.02.939 18.492.078 16.997A.641.641 0 0 1 0 16.741v-2.869a.883.883 0 0 1 .053-.22c.372-.935 1.347-2.292 2.605-2.656.167-.429.414-1.055.644-1.517a10.098 10.098 0 0 1-.052-1.086c0-1.331.282-2.499 1.132-3.368.397-.406.89-.717 1.474-.952C7.255 2.937 9.248 1.98 11.978 1.98c2.731 0 4.767.957 6.166 2.093.584.235 1.077.546 1.474.952.85.869 1.132 2.037 1.132 3.368 0 .368-.014.733-.052 1.086.23.462.477 1.088.644 1.517 1.258.364 2.233 1.721 2.605 2.656a.841.841 0 0 1 .053.22v2.869a.641.641 0 0 1-.078.256Zm-11.75-5.992h-.344a4.359 4.359 0 0 1-.355.508c-.77.947-1.918 1.492-3.508 1.492-1.725 0-2.989-.359-3.782-1.259a2.137 2.137 0 0 1-.085-.104L4 11.746v6.585c1.435.779 4.514 2.179 8 2.179 3.486 0 6.565-1.4 8-2.179v-6.585l-.098-.104s-.033.045-.085.104c-.793.9-2.057 1.259-3.782 1.259-1.59 0-2.738-.545-3.508-1.492a4.359 4.359 0 0 1-.355-.508Zm2.328 3.25c.549 0 1 .451 1 1v2c0 .549-.451 1-1 1-.549 0-1-.451-1-1v-2c0-.549.451-1 1-1Zm-5 0c.549 0 1 .451 1 1v2c0 .549-.451 1-1 1-.549 0-1-.451-1-1v-2c0-.549.451-1 1-1Zm3.313-6.185c.136 1.057.403 1.913.878 2.497.442.544 1.134.938 2.344.938 1.573 0 2.292-.337 2.657-.751.384-.435.558-1.15.558-2.361 0-1.14-.243-1.847-.705-2.319-.477-.488-1.319-.862-2.824-1.025-1.487-.161-2.192.138-2.533.529-.269.307-.437.808-.438 1.578v.021c0 .265.021.562.063.893Zm-1.626 0c.042-.331.063-.628.063-.894v-.02c-.001-.77-.169-1.271-.438-1.578-.341-.391-1.046-.69-2.533-.529-1.505.163-2.347.537-2.824 1.025-.462.472-.705 1.179-.705 2.319 0 1.211.175 1.926.558 2.361.365.414 1.084.751 2.657.751 1.21 0 1.902-.394 2.344-.938.475-.584.742-1.44.878-2.497Z" />
     </svg>
   );
 }
 
 export function GroqLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F55036]", className)}>
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-      <path d="M8 12h8M14 8l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <img
+      src="/brand-logos/groq.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Groq"
+    />
   );
 }
 
 export function CoreWeaveLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#2563EB]", className)}>
-      <rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" />
-    </svg>
+    <img
+      src="/brand-logos/coreweave.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="CoreWeave"
+    />
   );
 }
 
 export function LambdaLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#9333EA]", className)}>
-      <path d="M6 19L14 5h3L9 19H6zM13 13l4 6h-3l-2.5-3.5L13 13z" fill="currentColor" />
-    </svg>
+    <img
+      src="/brand-logos/lambda.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Lambda Labs"
+    />
   );
 }
 
 export function CerebrasLogo({ className, size = 20 }: BrandIconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn("shrink-0 text-[#F59E0B]", className)}>
-      <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
-      <circle cx="12" cy="12" r="3" fill="currentColor" />
-      <path d="M12 2v2M12 20v2M2 12h2M20 12h2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
+    <img
+      src="/brand-logos/cerebras.png"
+      width={size}
+      height={size}
+      className={cn("rounded-[3px] object-contain shrink-0 inline-block align-middle", className)}
+      alt="Cerebras"
+    />
   );
 }
