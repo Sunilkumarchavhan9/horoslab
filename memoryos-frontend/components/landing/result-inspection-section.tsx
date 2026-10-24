@@ -646,25 +646,25 @@ const PILLARS_ROW_3: PillarCard[] = [
   },
 ];
 
-// Outer Margin Lines (14% and 86%) extend all the way up through the header above top line
-const OUTER_VERTICAL_POSITIONS = ["14%", "86%"];
+// Outer Margin Lines (18% and 82%) extend all the way up through the header above top line
+const OUTER_VERTICAL_POSITIONS = ["18%", "82%"];
 
 // Inner Margin Lines (pushed 120px inside) stop at top monogram line
-const INNER_MARGIN_POSITIONS = ["calc(14% + 120px)", "calc(86% - 120px)"];
+const INNER_MARGIN_POSITIONS = ["calc(18% + 120px)", "calc(82% - 120px)"];
 
 // Header Top Line Dot Marker Positions
-const HEADER_TOP_DOT_POSITIONS = ["14%", "calc(14% + 120px)", "calc(86% - 120px)", "86%"];
+const HEADER_TOP_DOT_POSITIONS = ["18%", "calc(18% + 120px)", "calc(82% - 120px)", "82%"];
 
 // Exact 100% Mathematically Aligned Vertical Grid Positions:
-// Outer (14%) | Inner (14%+120px) | Card 1-2 (32%+60px) | Card 2-3 (50%) | Card 3-4 (68%-60px) | Inner (86%-120px) | Outer (86%)
+// Outer (18%) | Inner (18%+120px) | Card 1-2 (34%+60px) | Card 2-3 (50%) | Card 3-4 (66%-60px) | Inner (82%-120px) | Outer (82%)
 const ALL_VERTICAL_POSITIONS = [
-  "14%", 
-  "calc(14% + 120px)", 
-  "calc(32% + 60px)", 
+  "18%", 
+  "calc(18% + 120px)", 
+  "calc(34% + 60px)", 
   "50%", 
-  "calc(68% - 60px)", 
-  "calc(86% - 120px)", 
-  "86%"
+  "calc(66% - 60px)", 
+  "calc(82% - 120px)", 
+  "82%"
 ];
 
 export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultInspectionSectionProps) {
@@ -753,12 +753,12 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
         </div>
 
         <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
-          <div className="min-h-[220px] hidden lg:block" />
+          <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
 
           {PILLARS_ROW_1.map((item) => (
             <div
               key={item.id}
-              className="p-6 sm:p-8 min-h-[220px] flex flex-col justify-between transition-all duration-300 group/card"
+              className="p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card"
             >
               <div className="mb-6 text-[#F0EFE2]">
                 {item.icon}
@@ -774,7 +774,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             </div>
           ))}
 
-          <div className="min-h-[220px] hidden lg:block" />
+          <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
         </div>
 
         <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
@@ -801,8 +801,8 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
         </div>
 
         <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
-          <div className="relative min-h-[220px] hidden lg:block">
-            <span className="absolute bottom-2 right-2.5 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
+          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block">
+            <span className="absolute bottom-3 right-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
               HOROS
             </span>
           </div>
@@ -810,7 +810,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           {PILLARS_ROW_2.map((item) => (
             <div
               key={item.id}
-              className="p-6 sm:p-8 min-h-[220px] flex flex-col justify-between transition-all duration-300 group/card"
+              className="p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card"
             >
               <div className="mb-6 text-[#F0EFE2]">
                 {item.icon}
@@ -826,7 +826,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             </div>
           ))}
 
-          <div className="min-h-[220px] hidden lg:block" />
+          <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
         </div>
 
         <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
@@ -853,8 +853,8 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
         </div>
 
         <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
-          <div className="relative min-h-[220px] hidden lg:block">
-            <span className="absolute bottom-2 right-2.5 text-[9px] font-mono tracking-[0.25em] text-[#444444] font-semibold select-none pointer-events-none uppercase">
+          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block">
+            <span className="absolute bottom-3 right-3 text-[9px] font-mono tracking-[0.25em] text-[#444444] font-semibold select-none pointer-events-none uppercase">
               DELIVERABLE
             </span>
           </div>
@@ -862,7 +862,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           {PILLARS_ROW_3.map((item) => (
             <div
               key={item.id}
-              className="p-6 sm:p-8 min-h-[220px] flex flex-col justify-between transition-all duration-300 group/card"
+              className="p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card"
             >
               <div className="mb-6 text-[#F0EFE2]">
                 {item.icon}
@@ -878,7 +878,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             </div>
           ))}
 
-          <div className="min-h-[220px] hidden lg:block" />
+          <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
         </div>
 
         <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
