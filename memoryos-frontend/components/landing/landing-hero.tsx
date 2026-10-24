@@ -9,7 +9,7 @@ import { CellularRevealBackground } from "@/components/horos/primitives/cellular
 import { LeftFeedStrip, RightFeedStrip } from "./side-feed-strips";
 import { HeroGlitchImage } from "./hero-glitch-image";
 import { FloatingBrandGrid } from "./floating-brand-grid";
-import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo } from "@/components/horos/primitives/brand-icons";
+import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo, HorosLogo } from "@/components/horos/primitives/brand-icons";
 
 interface LandingHeroProps {
   onLaunchPrompt?: (params: any) => void;
@@ -17,7 +17,7 @@ interface LandingHeroProps {
 }
 
 const HEADLINES = [
-  { prefix: "Frontier Reality ", highlight: "Infrastructure." },
+  { prefix: "Frontier AI Lab & Reality ", highlight: "Infrastructure." },
   { prefix: "Build, Adapt, and ", highlight: "Evaluate." },
   { prefix: "Optimize, Experiment, and ", highlight: "Decide." },
   { prefix: "Deploy, Observe, and ", highlight: "Verify." },
@@ -40,9 +40,9 @@ const ALL_14_WORKLOADS = [
   },
   {
     label: "Decode reality",
-    title: "Teach",
-    target: "Qwen2.5-VL 7B for driving perception",
-    icon: <QwenLogo size={12} />,
+    title: "Run",
+    target: "Horos Reality Decoder on Edge Mesh",
+    icon: <HorosLogo size={12} />,
   },
   {
     label: "Optimize workload",

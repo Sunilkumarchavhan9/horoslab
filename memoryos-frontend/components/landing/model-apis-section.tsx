@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import { ArrowRight, Box, Cloud, Radio, Server } from "lucide-react";
 import { VLLMLogo, NvidiaLogo, DeepSeekLogo, HorosLogo, RunPodLogo, TeslaLogo, OneXLogo, OpenTelemetryLogo, ModalLogo, K8sFaviconLogo, SGLangLogo } from "../horos/primitives/brand-icons";
 import { SectionDivider } from "@/components/landing/section-divider";
@@ -10,6 +11,8 @@ interface ModelApisSectionProps {
 }
 
 export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
+  const [selectedModel, setSelectedModel] = useState<"horos" | "deepseek">("horos");
+
   return (
     <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden pb-16">
 
@@ -33,9 +36,14 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
           </div>
 
           {/* Header Section (Spans the 72% inner area) */}
-          <h2 className="text-4xl sm:text-5xl font-medium tracking-tight text-center py-24 z-10 relative">
-            Teach intelligence to decode your <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">reality</span>
-          </h2>
+          <div className="py-20 lg:py-24 text-center z-10 relative px-4">
+            <div className="text-[11px] font-mono font-bold tracking-[0.2em] text-[#75bf00] uppercase mb-3">
+              FRONTIER AI LAB · REALITY INTELLIGENCE INFRASTRUCTURE
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-medium tracking-tight text-center">
+              Teach intelligence to decode your <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">reality</span>
+            </h2>
+          </div>
 
           {/* Main 2-Column Grid Area */}
           <div className="w-full relative">
@@ -94,39 +102,94 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                   </div>
                 </div>
 
-                <div className="p-6 lg:p-8 xl:p-10 border-b border-dashed border-[#333] flex flex-col justify-center relative group cursor-pointer transition-colors hover:bg-white/[0.02]">
-                  <div className="absolute right-6 lg:right-8 xl:right-10 top-1/2 -translate-y-1/2 text-[#666] group-hover:text-[#F0EFE2] transition-colors">
-                    <ArrowRight size={14} />
+                <div className="p-6 lg:p-8 xl:p-10 border-b border-dashed border-[#333] flex flex-col justify-center relative group transition-colors hover:bg-white/[0.02]">
+                  {/* Model Tab Switcher */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedModel("horos")}
+                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${
+                        selectedModel === "horos"
+                          ? "bg-[#75bf00]/15 text-[#75bf00] border border-[#75bf00]/40 font-semibold"
+                          : "text-[#888] hover:text-[#ccc] border border-transparent"
+                      }`}
+                    >
+                      <HorosLogo size={12} />
+                      Horos Reality Decoder (Lab)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedModel("deepseek")}
+                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${
+                        selectedModel === "deepseek"
+                          ? "bg-white/10 text-[#F0EFE2] border border-white/20 font-semibold"
+                          : "text-[#888] hover:text-[#ccc] border border-transparent"
+                      }`}
+                    >
+                      <DeepSeekLogo size={12} />
+                      DeepSeek V4 Flash (Mesh)
+                    </button>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
-                      <DeepSeekLogo size={20} className="text-[#4d7aff]" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="font-semibold text-[#F0EFE2] text-[17px]">DeepSeek V4 Flash</span>
-                        <span className="text-[#75bf00] text-[10px] font-mono uppercase font-bold tracking-wider mt-0.5">AVAILABLE</span>
+                  {selectedModel === "horos" ? (
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#75bf00]/40 flex items-center justify-center shrink-0 text-[#75bf00]">
+                        <HorosLogo size={20} />
                       </div>
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="font-semibold text-[#F0EFE2] text-[17px]">Horos Reality Decoder</span>
+                          <span className="bg-[#75bf00]/20 text-[#75bf00] border border-[#75bf00]/40 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">FRONTIER LAB</span>
+                        </div>
 
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
-                        <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Intelligence</span>
-                        <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Vision</span>
-                        <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Tool Use</span>
-                        <span className="text-[13px] font-mono bg-transparent border border-[#75bf00]/30 text-[#75bf00] px-1.5 rounded-sm">P99 SLA</span>
-                      </div>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3">
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">128B MoE</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Spatial 3D</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Sensor Fusion</span>
+                          <span className="text-[12px] font-mono bg-[#75bf00]/10 border border-[#75bf00]/30 text-[#75bf00] px-1.5 rounded-sm">&lt;45ms TTFT</span>
+                        </div>
 
-                      <div className="text-[12px] text-[#666] font-mono mb-1">
-                        deepseek-ai/DeepSeek-V4-Flash-0731
-                      </div>
-                      <div className="text-[12px] text-[#C8C7BA] mb-2">
-                        OpenAI-compatible chat completions, Anthropic-compatible Messages
-                      </div>
-                      <div className="text-[12px] text-[#C8C7BA] flex items-center gap-2">
-                        Hosted via <ModalLogo size={14} /> Modal & AWS
+                        <div className="text-[12px] text-[#888] font-mono mb-1">
+                          horos-lab/Reality-Decoder-v1
+                        </div>
+                        <div className="text-[12px] text-[#C8C7BA] mb-2 leading-relaxed">
+                          Multi-camera spatial depth, point clouds & industrial telemetry decoding
+                        </div>
+                        <div className="text-[12px] text-[#888] flex items-center gap-2">
+                          Served natively via Horos Reality Fabric & Edge Mesh
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
+                        <DeepSeekLogo size={20} className="text-[#4d7aff]" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="font-semibold text-[#F0EFE2] text-[17px]">DeepSeek V4 Flash</span>
+                          <span className="text-[#75bf00] text-[10px] font-mono uppercase font-bold tracking-wider mt-0.5">AVAILABLE</span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
+                          <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Intelligence</span>
+                          <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Vision</span>
+                          <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Tool Use</span>
+                          <span className="text-[13px] font-mono bg-transparent border border-[#75bf00]/30 text-[#75bf00] px-1.5 rounded-sm">P99 SLA</span>
+                        </div>
+
+                        <div className="text-[12px] text-[#666] font-mono mb-1">
+                          deepseek-ai/DeepSeek-V4-Flash-0731
+                        </div>
+                        <div className="text-[12px] text-[#C8C7BA] mb-2">
+                          OpenAI-compatible chat completions, Anthropic-compatible Messages
+                        </div>
+                        <div className="text-[12px] text-[#C8C7BA] flex items-center gap-2">
+                          Hosted via <ModalLogo size={14} /> Modal & AWS
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* --- ROW 3 --- */}
@@ -138,11 +201,17 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                 </div>
                 <div className="grid grid-cols-3 divide-x divide-dashed divide-[#333] border-b border-dashed border-[#333]">
                   <div className="p-6 lg:px-8 flex flex-col justify-center">
-                    <div className="text-[#F0EFE2] font-semibold text-[17px]">$0.13</div>
-                    <div className="text-[#C8C7BA] text-[12px] mt-1">per 1M input tokens</div>
+                    <div className="text-[#F0EFE2] font-semibold text-[17px]">
+                      {selectedModel === "horos" ? "$0.01" : "$0.13"}
+                    </div>
+                    <div className="text-[#C8C7BA] text-[12px] mt-1">
+                      {selectedModel === "horos" ? "per 1M cached tokens" : "per 1M input tokens"}
+                    </div>
                   </div>
                   <div className="p-6 lg:px-8 flex flex-col justify-center">
-                    <div className="text-[#F0EFE2] font-semibold text-[17px]">$0.27</div>
+                    <div className="text-[#F0EFE2] font-semibold text-[17px]">
+                      {selectedModel === "horos" ? "$0.24" : "$0.27"}
+                    </div>
                     <div className="text-[#C8C7BA] text-[12px] mt-1">per 1M output tokens</div>
                   </div>
                   <div className="p-6 lg:px-8 flex flex-col justify-center">
@@ -153,16 +222,16 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
                 {/* --- ROW 4 --- */}
                 <div className="flex items-center p-6 lg:px-8 xl:px-[120px]">
-                  <a href="#" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
-                    Start building your stack
+                  <Link href="/horos#horos-model-family" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
+                    Explore Horos Foundation Models
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  </Link>
                 </div>
                 <div className="flex items-center p-6 lg:px-8 xl:px-[120px]">
-                  <a href="#" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
-                    Browse 40+ supported APIs
+                  <Link href="/capabilities" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
+                    Browse 40+ supported APIs & Models
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  </Link>
                 </div>
               </div>
 

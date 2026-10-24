@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { AuthModal } from "@/components/horos/modals/auth-modal";
 import { HorosHero } from "@/components/horos/horos-hero";
+import { HorosModelFamily } from "@/components/horos/horos-model-family";
 import { HorosContextRouting } from "@/components/horos/horos-context-routing";
 import { HorosPricingEfficiency } from "@/components/horos/horos-pricing-efficiency";
 import { HorosDeveloperAPI } from "@/components/horos/horos-developer-api";
@@ -77,6 +78,11 @@ export default function HorosPage() {
           <HorosHero />
         </SectionWrapper>
         
+        <GridDivider />
+        <SectionWrapper>
+          <HorosModelFamily />
+        </SectionWrapper>
+
         <GridDivider />
         <SectionWrapper>
           <HorosContextRouting />
