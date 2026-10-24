@@ -8,7 +8,7 @@ export function HorosContextRouting() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <section className="w-full flex flex-col lg:flex-row items-center justify-between gap-16 py-32 border-t border-[#222]">
+    <section className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 lg:gap-12 py-16">
 
       {/* Left Column: Routing Diagram */}
       <div className="w-full lg:w-1/2 flex flex-col font-mono text-[13px] text-[#A0A0A0]">
@@ -158,10 +158,13 @@ export function HorosContextRouting() {
       </div>
 
       {/* Right Column: Copy */}
-      <div className="w-full lg:w-1/2 flex flex-col lg:pl-16">
+      <div className="w-full lg:w-1/2 flex flex-col lg:pl-6 xl:pl-8">
 
-        <h2 className="text-5xl lg:text-[64px] font-medium tracking-tight leading-[1.1] text-[#F0EFE2] mb-6">
-          Reality Fabric<br />state <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">affinity</span>
+        <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight leading-[1.15] text-[#F0EFE2] mb-6">
+          <span className="block whitespace-nowrap">Reality Fabric</span>
+          <span className="block mt-1 whitespace-nowrap">
+            state <span className="bg-[#75bf00] text-[#151515] px-2 py-0.5 rounded-[2px] inline-block font-semibold">affinity</span>
+          </span>
         </h2>
 
         <p className="text-[18px] text-[#A0A0A0] leading-relaxed mb-10 max-w-xl">
