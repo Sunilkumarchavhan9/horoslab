@@ -216,12 +216,12 @@ export default function PricingPage() {
 
   return (
     <div className="relative min-h-screen bg-[#151515] text-[#C8C7BA] font-sans overflow-x-hidden selection:bg-[#76b900] selection:text-black">
-      {/* Background Vertical Dashed Layout Guidelines */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
-        <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+      {/* Background Vertical Dashed Layout Guidelines - Matching Global Footer Grid */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 border-l border-dashed border-[#333]" />
+        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 border-l border-dashed border-[#333]" />
+        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 border-l border-dashed border-[#333]" />
       </div>
 
       {/* Top Navbar */}
@@ -506,7 +506,7 @@ export default function PricingPage() {
         </section>
 
         {/* SECTION 2: Exact Screenshot 1 & 2 Model APIs Token Pricing Table */}
-        <div className="w-full relative z-20 mb-12">
+        <div className="w-screen relative left-1/2 -translate-x-1/2 z-20 mb-12">
           <SectionDivider position="top" />
         </div>
 
