@@ -170,24 +170,24 @@ const MODEL_APIS_DATA = [
   },
 ];
 
-// Exact comparison matrix from Screenshot 2 & 3
+// Exact comparison matrix for Frontier AI Research Infra & Frontier AI Lab
 const COMPARISON_ROWS = [
   {
     feature: "Pricing model",
-    payg: "Credit top-ups from $5, pay for what you run",
-    enterprise: "Custom volume and terms",
+    payg: "Credit top-ups from $5, pay for compute consumed",
+    enterprise: "Custom volume, dedicated nodes, and contract terms",
     isText: true,
   },
   {
     feature: "Balance",
-    payg: "One balance for Model APIs",
-    enterprise: "One shared balance with custom controls",
+    payg: "One unified balance for Model APIs & reasoning",
+    enterprise: "Shared research balance with custom quota controls",
     isText: true,
   },
   {
     feature: "Seats",
-    payg: "No per-seat fees",
-    enterprise: "No per-seat fees",
+    payg: "Zero per-seat licensing fees",
+    enterprise: "Unlimited researchers & engineers, zero seat fees",
     isText: true,
   },
   {
@@ -210,14 +210,14 @@ const COMPARISON_ROWS = [
   },
   {
     feature: "SLA",
-    payg: "No contractual SLA",
-    enterprise: "Up to 99.99%",
+    payg: "High-availability cloud cluster",
+    enterprise: "Contractual SLA up to 99.99%",
     isText: true,
   },
   {
     feature: "Support",
-    payg: "Priority email",
-    enterprise: "Dedicated CSM and private Slack",
+    payg: "Priority research engineering email",
+    enterprise: "Dedicated AI research engineer and private Slack",
     isText: true,
   },
 ];
@@ -231,7 +231,7 @@ const CODING_PLAN_FAQS = [
   {
     question: "What does my plan cover?",
     answer:
-      "Your plan covers all coding models and agent workflows up to your 5-hour and weekly limits. Standby chat remains free when limits are reached, so your workflow is never interrupted.",
+      "Your plan covers all frontier models, coding agents, and reasoning workflows up to your 5-hour and weekly limits. Standby chat remains free when limits are reached, so your research and development are never interrupted.",
   },
   {
     question: "Can I cancel?",
@@ -246,7 +246,7 @@ const CODING_PLAN_FAQS = [
   {
     question: "How is usage counted?",
     answer:
-      "Usage is calculated per token generated and processed by your connected coding agent, discounted by automated prefix and context caching.",
+      "Usage is calculated per token generated and test-time compute processed by your connected agent, discounted by automated prefix and context caching.",
   },
   {
     question: "What is Standby?",
@@ -430,13 +430,13 @@ export default function PricingPage() {
         <section className="mb-16">
           <div className="mb-6">
             <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-medium tracking-tight flex items-center gap-2 text-[#F0EFE2] leading-tight">
-              Simple pricing for open{" "}
+              Frontier AI Research Infra &{" "}
               <span className="bg-[#76b900] text-[#151515] px-2 py-0.5 rounded-none font-semibold inline-block">
-                models
+                Lab
               </span>
             </h1>
             <p className="text-[#888] text-xs sm:text-sm md:text-base mt-2 font-normal">
-              Pick the way that fits how you work.
+              One unified platform: Frontier AI Research Infrastructure + Frontier AI Lab, delivering high-throughput compute, foundation models, and verified token pricing.
             </p>
           </div>
 
@@ -451,7 +451,7 @@ export default function PricingPage() {
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
-                <h2 className="text-lg font-medium text-[#F0EFE2]">Pay as you go</h2>
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Research Infra (Pay as you go)</h2>
                 <div
                   className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "payg" ? "border-[#76b900]" : "border-[#555]"
                     }`}
@@ -459,16 +459,16 @@ export default function PricingPage() {
                   {selectedPlan === "payg" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For apps, APIs and everything else</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For frontier model APIs, reasoning, and research workloads</p>
 
               <div className="text-xs sm:text-sm">
                 <p className="font-medium mb-2 text-[#F0EFE2]">Any amount from $5</p>
                 <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Pay per token at published prices
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Pay per verified token & test-time compute
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Credits last a year
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Credits last a year across all workspaces
                   </li>
                 </ul>
               </div>
@@ -483,7 +483,7 @@ export default function PricingPage() {
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
-                <h2 className="text-lg font-medium text-[#F0EFE2]">Coding plan</h2>
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Coding & Agent Plan</h2>
                 <div
                   className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
                     }`}
@@ -491,13 +491,13 @@ export default function PricingPage() {
                   {selectedPlan === "coding" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For Claude Code, Codex, OpenCode and more</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For autonomous coding agents, lab assistants & tools</p>
 
               <div className="text-xs sm:text-sm">
                 <p className="font-medium mb-2 text-[#F0EFE2]">From $10 a month</p>
                 <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Usage included, resets every 5 hours and every week
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Included reasoning & coding compute, resets every 5h and weekly
                   </li>
                   <li className="flex items-center gap-2">
                     <Check size={13} className="text-[#76b900] shrink-0" /> At a limit, credits or free Standby
@@ -518,13 +518,13 @@ export default function PricingPage() {
                 <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Pay as you go</h2>
+                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Research Infra (PAYG)</h2>
                       <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
                         <span className="text-[#76b900]">#</span> No subscription
                       </span>
                     </div>
                     <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
-                      Hosted Model APIs, per token, on one prepaid balance.
+                      Frontier research model APIs, per token, on one unified prepaid balance.
                     </p>
 
                     <div className="mb-6">
@@ -572,26 +572,26 @@ export default function PricingPage() {
                       <div className="space-y-2 text-xs text-[#bbb]">
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>OpenAI- and Anthropic-compatible APIs</span>
+                          <span>OpenAI- and Anthropic-compatible research endpoints</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Per-token pricing with cached input discounts</span>
+                          <span>Per-token pricing with verified prefix & KV-cache discounts</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Session-aware routing keeps replays warm</span>
+                          <span>Session-aware routing keeps replays & simulation states warm</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>One prepaid balance, no per-seat fees</span>
+                          <span>One unified research balance, no per-seat licensing fees</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="pt-1">
                       <p className="text-center text-[11px] text-[#777] mb-3">
-                        New accounts start with $1 free to test the Model APIs.
+                        New research accounts start with $1 free compute to test model endpoints.
                       </p>
                       <Link
                         href="/developer-console"
@@ -607,37 +607,37 @@ export default function PricingPage() {
                 <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7 border-t md:border-t-0 md:border-l border-dashed border-[#333]">
                   <div>
                     <div className="mb-6">
-                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Enterprise</h2>
+                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Enterprise & Frontier Lab</h2>
                       <p className="text-[#aaa] text-xs sm:text-[13px] leading-relaxed">
-                        Dedicated infrastructure, compliance, and custom volume.
+                        Dedicated cluster infrastructure, private model weights, and custom research contracts.
                       </p>
                     </div>
 
                     <div className="mb-6">
                       <div className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Custom pricing</div>
                       <p className="text-xs sm:text-sm font-medium text-[#F0EFE2] mt-5 mb-3">
-                        Everything self-serve includes, plus:
+                        Everything in self-serve research infrastructure, plus:
                       </p>
                       <ul className="space-y-2.5 text-xs text-[#bbb]">
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Audit logs and role-based access control (RBAC)</span>
+                          <span>Private cluster nodes, VPC peering, and custom weights isolation</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Custom volume and contract terms</span>
+                          <span>Audit logs, role-based access control (RBAC), and governance</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Custom SLAs up to 99.99%</span>
+                          <span>Contractual high-throughput SLAs up to 99.99% across clusters</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>SOC 2 Type II attestation</span>
+                          <span>SOC 2 Type II attestation and enterprise compliance controls</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Dedicated CSM and private Slack</span>
+                          <span>Dedicated AI research engineer, custom SLA, and direct Slack</span>
                         </li>
                       </ul>
                     </div>
@@ -663,7 +663,7 @@ export default function PricingPage() {
             <section id="model-apis-pricing" className="mb-24 scroll-mt-20">
               {/* Header & Category Badge */}
               <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-3">
-                MODEL APIS
+                FRONTIER MODEL APIS & LAB WEIGHTS
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
@@ -751,7 +751,7 @@ export default function PricingPage() {
 
               {/* Subtext below table */}
               <div className="mt-3 text-xs text-[#777]">
-                Limits and modality-specific capabilities are listed on each model page.
+                Served via Frontier Research Fabric. Context windows, token throughput, and lab evaluation benchmarks are listed on each model page.
               </div>
             </section>
 
@@ -761,10 +761,10 @@ export default function PricingPage() {
                 {/* Header Description Box */}
                 <div className="p-4 sm:p-6 border-b border-dashed border-[#333]">
                   <h2 className="text-lg sm:text-xl font-semibold text-[#F0EFE2] mb-1.5 tracking-tight">
-                    Compare Pay as you go and Enterprise
+                    Compare Research Infra and Frontier Lab Enterprise
                   </h2>
                   <p className="text-xs sm:text-[13px] text-[#888] max-w-2xl leading-relaxed">
-                    Pay as you go is self-serve, funded by credit top-ups. Enterprise adds private infrastructure, reserved capacity, compliance, and custom terms.
+                    Self-serve research infrastructure is funded by flexible credit top-ups. Frontier Lab Enterprise adds private cluster compute, custom fine-tuned weights, compliance, and custom terms.
                   </p>
                 </div>
 
@@ -774,11 +774,11 @@ export default function PricingPage() {
                     <span className="text-xs font-medium text-[#777]">Feature</span>
                   </div>
                   <div className="p-4 sm:p-5 flex flex-col justify-end">
-                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Pay as you go</span>
+                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Research Infra</span>
                     <span className="text-[11px] text-[#777] mt-0.5">from a $5 top-up</span>
                   </div>
                   <div className="p-4 sm:p-5 flex flex-col justify-end">
-                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Enterprise</span>
+                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Frontier Lab Enterprise</span>
                     <span className="text-[11px] text-[#777] mt-0.5">Custom</span>
                   </div>
                 </div>
@@ -878,7 +878,7 @@ export default function PricingPage() {
                         How does cached input pricing work?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        When you send a prompt with repeated context (like conversation history, code repositories, or documents), supported models detect the cached prefix and discount the input cost by up to 90% or offer it completely free during promotional windows.
+                        When you submit prompts with repeated context (such as large codebases, research papers, sensory state, or conversation memory), our infrastructure detects the cached prefix and discounts input tokens by up to 90% or serves it free during promotional windows.
                       </p>
                     </div>
 
@@ -890,7 +890,7 @@ export default function PricingPage() {
                         How do credit top-ups work?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        You can fund your prepaid balance with any amount starting from $5. You only pay for the tokens generated and executed. Unused credits remain valid for 12 months.
+                        You can fund your prepaid balance with any amount starting from $5. You only pay for the tokens generated and test-time compute consumed by your models. Unused credits remain valid for 12 months across all research workspaces.
                       </p>
                     </div>
 
@@ -902,7 +902,7 @@ export default function PricingPage() {
                         Are there per-seat or per-user fees?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        No. Our pay-as-you-go model APIs are charged strictly by token consumption, allowing your entire team or product application to share one single balance without seat penalties.
+                        No. Our frontier AI research infrastructure is charged strictly by token consumption and compute, allowing your entire research team or product application to share one single balance without seat penalties.
                       </p>
                     </div>
                   </>
@@ -916,7 +916,7 @@ export default function PricingPage() {
                         What SLA options are available for Enterprise?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        We offer contractual SLAs up to 99.99% uptime with guaranteed throughput reservations and sub-second failover routing across dedicated clusters.
+                        We offer contractual SLAs up to 99.99% uptime with guaranteed throughput reservations and sub-second failover routing across dedicated frontier cluster hardware.
                       </p>
                     </div>
 
@@ -928,7 +928,7 @@ export default function PricingPage() {
                         Can we run private dedicated deployments?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        Yes. Enterprise contracts support private VPC peering, on-prem hardware integration, SOC 2 Type II controls, and custom model weights loaded into isolated nodes.
+                        Yes. Frontier Lab Enterprise contracts support private VPC peering, on-prem datacenter integration, SOC 2 Type II controls, and custom model weights loaded into isolated GPU/TPU nodes.
                       </p>
                     </div>
                   </>
@@ -1055,7 +1055,7 @@ export default function PricingPage() {
 
               {/* Models List */}
               <div className="mb-6">
-                <div className="text-xs text-[#777] mb-2 font-medium">Models</div>
+                <div className="text-xs text-[#777] mb-2 font-medium">Frontier Models & Lab Weights</div>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-semibold text-[#F0EFE2]">
                   <div className="flex items-center gap-1.5 group cursor-pointer">
                     <OrnithLogo size={14} />
@@ -1206,13 +1206,13 @@ export default function PricingPage() {
               <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
                 <div className="max-w-md">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] tracking-tight mb-3">
-                    Connect your coding{" "}
+                    Connect your coding & research{" "}
                     <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
                       agents
                     </span>
                   </h2>
                   <p className="text-xs sm:text-sm text-[#888]">
-                    Review each connection before it is applied.
+                    Review each connection before it is applied across your research environment.
                   </p>
                 </div>
 
@@ -1220,7 +1220,7 @@ export default function PricingPage() {
                   <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-xs sm:text-sm font-medium text-[#F0EFE2]">
-                        Let your coding agent set it up
+                        Let your coding agent or research CLI set it up
                       </span>
                       <button
                         onClick={handleCopyPrompt}
@@ -1236,7 +1236,7 @@ export default function PricingPage() {
                         <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                           1
                         </div>
-                        <span className="text-xs text-[#C8C7BA]">Paste the prompt into your coding agent</span>
+                        <span className="text-xs text-[#C8C7BA]">Paste the prompt into your coding agent or research terminal</span>
                       </div>
                       <div className="flex items-center gap-3 relative z-10">
                         <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
@@ -1257,14 +1257,14 @@ export default function PricingPage() {
                     href="/developer-console"
                     className="text-xs sm:text-[13px] text-[#76b900] underline font-medium mt-3 inline-block hover:opacity-80"
                   >
-                    Set up with your coding agent
+                    Set up with your coding agent or research CLI
                   </Link>
                 </div>
               </div>
 
               {/* 19 agents ready */}
               <div className="mb-6">
-                <div className="text-xs text-[#777] mb-3 font-medium">19 agents ready</div>
+                <div className="text-xs text-[#777] mb-3 font-medium">19 coding & research agents ready</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
                   {READY_AGENTS.map((agent) => (
                     <div
@@ -1290,7 +1290,7 @@ export default function PricingPage() {
 
               {/* Preview agents */}
               <div>
-                <div className="text-xs text-[#777] mb-3 font-medium">Preview</div>
+                <div className="text-xs text-[#777] mb-3 font-medium">Preview agents</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 mb-3">
                   {PREVIEW_AGENTS.map((agent) => (
                     <div
@@ -1417,15 +1417,15 @@ export default function PricingPage() {
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
                     <Cpu size={13} className="text-[#76b900] shrink-0" />
-                    <span className="truncate">Workspace isolation</span>
+                    <span className="truncate">Workspace & cluster isolation</span>
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
                     <EyeOff size={13} className="text-[#76b900] shrink-0" />
-                    <span className="truncate">No training on your data</span>
+                    <span className="truncate">No training on your research data</span>
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
                     <ShieldCheck size={13} className="text-[#76b900] shrink-0" />
-                    <span className="truncate">SOC 2 Type II</span>
+                    <span className="truncate">SOC 2 Type II attestation</span>
                   </div>
                 </div>
 
