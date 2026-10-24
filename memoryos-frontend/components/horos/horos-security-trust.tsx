@@ -8,9 +8,9 @@ export function HorosSecurityTrust() {
     <section className="w-full flex flex-col pt-20 border-t border-dashed border-[#222]">
       
       {/* Top Half: Security Badges */}
-      <div className="flex flex-col mb-32 w-full">
-        <h2 className="text-5xl lg:text-[64px] font-medium tracking-tight leading-[1.1] text-[#F0EFE2] mb-16">
-          Decision Engine & <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative -ml-1">Governance</span>.
+      <div className="flex flex-col mb-24 w-full">
+        <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight leading-[1.15] text-[#F0EFE2] mb-12">
+          Decision Engine & <span className="bg-[#75bf00] text-[#151515] px-2.5 py-0.5 rounded-[2px] inline-block font-semibold">Governance</span>.
         </h2>
 
         <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-0 text-left">

@@ -306,8 +306,8 @@ export function HorosPricingEfficiency() {
 
       {/* Header */}
       <div className="mb-12">
-        <h2 className="text-5xl lg:text-[64px] font-medium tracking-tight leading-[1.1] text-[#F0EFE2] mb-6">
-          Intelligence <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative -ml-1">Optimization</span>
+        <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight leading-[1.15] text-[#F0EFE2] mb-6">
+          Intelligence <span className="bg-[#75bf00] text-[#151515] px-2.5 py-0.5 rounded-[2px] inline-block font-semibold">Optimization</span>
         </h2>
         <p className="text-[16px] text-[#A0A0A0] max-w-2xl">
           Optimize intelligence across models, compute, tools, runtimes, and execution paths—measured against the verified outcome of each mission.

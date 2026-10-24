@@ -78,15 +78,20 @@ export function HorosIntegrations() {
   const selectedIntegration = INTEGRATIONS.find(i => i.id === selectedId) || INTEGRATIONS[0];
 
   return (
-    <section className="w-full flex flex-col lg:flex-row items-start justify-between gap-16 py-32 border-t border-dashed border-[#222]">
+    <section className="w-full flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-14 py-16">
       
       {/* Left Column: Grid */}
       <div className="w-full lg:w-1/2 flex flex-col">
-        <h2 className="text-5xl lg:text-[64px] font-medium tracking-tight leading-[1.1] text-[#F0EFE2] mb-6">
-          Connect to any<br /><span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative -ml-1">Reality Surface</span>
+        <h2 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[44px] font-medium tracking-tight leading-[1.15] text-[#F0EFE2] mb-6">
+          <span className="block whitespace-nowrap">Connect to any</span>
+          <span className="block mt-1">
+            <span className="bg-[#75bf00] text-[#151515] px-2.5 py-0.5 rounded-[2px] inline-block font-semibold whitespace-nowrap">
+              Reality Surface
+            </span>
+          </span>
         </h2>
         
-        <p className="text-[18px] text-[#A0A0A0] leading-relaxed mb-10 max-w-md">
+        <p className="text-[16px] sm:text-[17px] text-[#A0A0A0] leading-relaxed mb-8 max-w-md">
           HOROS connects intelligence to software, compute, edge, vehicles, robots, and factories. Actuate when authorized. Verify the physical consequences.
         </p>
 
