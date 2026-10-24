@@ -510,11 +510,11 @@ export function HorosPricingEfficiency() {
           </div>
         </div>
 
-        {/* Table Headers */}
-        <div className="flex items-center gap-6 text-[12px] font-medium text-[#A0A0A0] mb-4 overflow-x-auto px-4">
+        {/* Table Headers / Filter Tags */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5 text-[12px] font-medium text-[#A0A0A0] mb-5 px-1">
           <button
             onClick={() => setActiveFilter("all")}
-            className={`whitespace-nowrap font-medium transition-colors ${activeFilter === "all" ? "text-[#F0EFE2]" : "text-[#888] hover:text-[#F0EFE2]"}`}
+            className={`shrink-0 whitespace-nowrap font-medium transition-colors ${activeFilter === "all" ? "text-[#F0EFE2]" : "text-[#888] hover:text-[#F0EFE2]"}`}
           >
             Capabilities
           </button>
@@ -523,7 +523,7 @@ export function HorosPricingEfficiency() {
             <button
               key={tag}
               onClick={() => setActiveFilter(tag)}
-              className={`whitespace-nowrap flex items-center gap-1.5 transition-colors ${activeFilter === tag ? "bg-[#75bf00] text-[#151515] px-2 py-0.5 rounded-[2px]" : "hover:text-[#F0EFE2]"}`}
+              className={`shrink-0 whitespace-nowrap flex items-center gap-1.5 transition-colors ${activeFilter === tag ? "bg-[#75bf00] text-[#151515] px-2.5 py-0.5 rounded-[2px] font-semibold" : "text-[#888] hover:text-[#F0EFE2]"}`}
             >
               {tag} <span className={activeFilter === tag ? "text-[#2a4500] font-bold" : "text-[#555]"}>{count}</span>
             </button>
@@ -532,71 +532,92 @@ export function HorosPricingEfficiency() {
 
         <div className="w-full h-[1px] border-t border-dashed border-[#333]"></div>
 
-        {/* Table Rows (Matching capabilities/page.tsx) */}
+        {/* Table Rows (Clean horizontal alignment without awkward wrapping) */}
         <div className="flex flex-col">
-          {filteredModels.map((model, i) => {
-            const capabilityData = CAPABILITIES.find(c => c.id === model.id);
-            return (
-              <Link href={`/capabilities/${model.id}`} key={model.id} className="group flex flex-col lg:flex-row lg:flex-wrap items-start lg:items-center justify-between gap-y-6 py-8 px-4 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10">
-
-                {/* Left: Identity */}
-                <div className="flex items-start gap-4 flex-1 min-w-[320px]">
-                  <div className="mt-1 w-10 h-10 flex items-center justify-center shrink-0">
-                    {model.brand}
+          {filteredModels.map((model) => (
+            <Link
+              href={`/capabilities/${model.id}`}
+              key={model.id}
+              className="group flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 py-6 px-3 sm:px-4 border-b border-dashed border-[#333] hover:bg-[#1a1a1a] transition-colors cursor-pointer relative z-10"
+            >
+              {/* Left: Identity */}
+              <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                <div className="mt-0.5 w-9 h-9 flex items-center justify-center shrink-0">
+                  {model.brand}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="text-[18px] font-semibold text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors truncate">
+                      {model.name}
+                    </h3>
                   </div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-[20px] font-semibold text-[#F0EFE2] group-hover:text-[#75bf00] transition-colors">{model.name}</h3>
-                    </div>
-                    <div className="text-[13px] text-[#777] mb-2">{model.id}</div>
+                  <div className="text-[12px] text-[#777] mb-1.5 font-mono">{model.id}</div>
 
-                    <div className="flex items-center gap-2 flex-wrap mt-1">
-                      {model.trending && (
-                        <span className="bg-[#2a2a2a] text-[#C8C7BA] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-[2px]">Trending</span>
-                      )}
-                      <span className="text-[12px] text-[#888]">{model.tags.join(" / ")}</span>
-                    </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {model.trending && (
+                      <span className="bg-[#2a2a2a] text-[#C8C7BA] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-[2px]">
+                        Trending
+                      </span>
+                    )}
+                    <span className="text-[11px] text-[#888] leading-relaxed">
+                      {model.tags.join(" / ")}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-
+              {/* Right: Metrics */}
+              <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-6 lg:gap-8 shrink-0 w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-dashed border-[#222]">
+                {/* Execution cost */}
+                <div className="flex flex-col items-start md:items-end w-16 sm:w-20">
+                  <div className="text-[#F0EFE2] font-semibold text-[16px] sm:text-[17px] leading-tight">
+                    <span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>
+                    {model.effectivePrice.toFixed(3)}
+                  </div>
+                  <div className="text-[10px] text-[#777] text-left md:text-right leading-tight mt-1">
+                    execution<br />cost
                   </div>
                 </div>
 
-                {/* Right: Metrics */}
-                <div className="flex items-start lg:items-center justify-between w-full lg:w-auto mt-6 lg:mt-0 gap-6 lg:gap-10 shrink-0">
-
-                  {/* Execution cost */}
-                  <div className="flex flex-col items-start lg:items-end w-20">
-                    <div className="text-[#F0EFE2] font-semibold text-[18px]"><span className="text-[11px] text-[#777] font-normal mr-0.5">$</span>{model.effectivePrice.toFixed(3)}</div>
-                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">execution<br />cost</div>
+                {/* Latency */}
+                <div className="flex flex-col items-start md:items-end w-16 sm:w-20">
+                  <div className="text-[#F0EFE2] font-semibold text-[16px] sm:text-[17px] leading-tight">
+                    {model.optimizedLatency}
+                    <span className="text-[11px] text-[#777] font-normal ml-0.5">ms</span>
                   </div>
-
-                  {/* Latency */}
-                  <div className="flex flex-col items-start lg:items-end w-24">
-                    <div className="text-[#F0EFE2] font-semibold text-[18px]">{model.optimizedLatency}<span className="text-[11px] text-[#777] font-normal ml-0.5">ms</span></div>
-                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">latency<br />(ttft)</div>
-                  </div>
-
-                  {/* Success / verification */}
-                  <div className="flex flex-col items-start lg:items-end w-24 relative">
-                    <div className="text-[#F0EFE2] font-semibold text-[20px]">{model.cacheHit}<span className="text-[12px] text-[#777] font-normal ml-0.5">%</span></div>
-                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1">success /<br />verification</div>
-                  </div>
-
-                  {/* Throughput */}
-                  <div className="flex flex-col items-start lg:items-end w-32 relative">
-                    <div className="text-[#F0EFE2] font-semibold text-[20px]">{model.optimizedThroughput}</div>
-                    <div className="text-[10px] text-[#777] text-left lg:text-right leading-tight mt-1 whitespace-normal max-w-[100px]">throughput<br />(interactions/s)</div>
-                  </div>
-
-                  {/* Arrow */}
-                  <div className="hidden lg:flex items-center justify-center w-6 text-[#555] group-hover:text-[#F0EFE2] transition-colors ml-2">
-                    <ArrowRight size={18} />
+                  <div className="text-[10px] text-[#777] text-left md:text-right leading-tight mt-1">
+                    latency<br />(ttft)
                   </div>
                 </div>
 
-              </Link>
-            );
-          })}
+                {/* Success / verification */}
+                <div className="flex flex-col items-start md:items-end w-18 sm:w-22">
+                  <div className="text-[#F0EFE2] font-semibold text-[16px] sm:text-[17px] leading-tight">
+                    {model.cacheHit}
+                    <span className="text-[11px] text-[#777] font-normal ml-0.5">%</span>
+                  </div>
+                  <div className="text-[10px] text-[#777] text-left md:text-right leading-tight mt-1">
+                    success /<br />verification
+                  </div>
+                </div>
+
+                {/* Throughput */}
+                <div className="flex flex-col items-start md:items-end w-20 sm:w-24">
+                  <div className="text-[#F0EFE2] font-semibold text-[16px] sm:text-[17px] leading-tight">
+                    {model.optimizedThroughput}
+                  </div>
+                  <div className="text-[10px] text-[#777] text-left md:text-right leading-tight mt-1">
+                    throughput<br />(int/s)
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div className="hidden sm:flex items-center justify-center w-5 text-[#555] group-hover:text-[#F0EFE2] transition-colors ml-1">
+                  <ArrowRight size={16} />
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
 
       </div>
