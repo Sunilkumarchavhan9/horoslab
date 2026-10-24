@@ -342,24 +342,30 @@ export function HorosHero() {
   const handlePrev = () => setIndex((prev) => (prev - 1 + HERO_MODELS.length) % HERO_MODELS.length);
 
   return (
-    <section className="w-full grid grid-cols-1 lg:grid-cols-[45%_1fr] gap-16 lg:gap-12">
+    <section className="w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
 
       {/* Left Column: Copy & Actions */}
-      <div className="flex flex-col w-full lg:max-w-xl">
-        <div className="flex items-center gap-2 text-[12px] font-bold text-[#888] mb-8 tracking-widest uppercase">
+      <div className="flex flex-col w-full">
+        <div className="flex items-center gap-2 text-[12px] font-bold text-[#888] mb-6 tracking-widest uppercase">
           <span>The Reality Intelligence Runtime</span>
         </div>
 
-        <h1 className="text-5xl lg:text-[64px] font-medium tracking-tight leading-[1.1] text-[#F0EFE2] mb-6 mt-[-1rem]">
-          Teach intelligent systems to<br />decode <span className="bg-[#75bf00] text-black px-2 py-0 inline-block relative">reality</span>
+        <h1 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-semibold tracking-tight leading-[1.15] text-[#F0EFE2] mb-6">
+          <span className="block whitespace-nowrap">Teach intelligent</span>
+          <span className="block mt-0.5 whitespace-nowrap">systems to decode</span>
+          <span className="block mt-1">
+            <span className="bg-[#75bf00] text-[#151515] px-2.5 py-0.5 rounded-[2px] font-semibold inline-block">
+              reality
+            </span>
+          </span>
         </h1>
 
-        <p className="text-[17px] text-[#A0A0A0] leading-relaxed mb-10 pr-0 sm:pr-12">
+        <p className="text-[15px] sm:text-[16px] text-[#A0A0A0] leading-relaxed mb-8 max-w-lg">
           Build intelligence that understands reality through continuous interaction, experimentation, execution, and verification across software, compute, and the physical world.
         </p>
 
-        <div className="flex items-center gap-6">
-          <button className="bg-[#75bf00] hover:bg-[#86dc00] text-black font-medium text-[14px] px-6 py-3 rounded-[2px] flex items-center gap-2 transition-colors cursor-pointer">
+        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+          <button className="bg-[#75bf00] hover:bg-[#86dc00] text-[#151515] font-semibold text-[14px] px-6 py-3 rounded-[2px] flex items-center gap-2 transition-colors cursor-pointer">
             Initialize Runtime <ChevronRight size={14} strokeWidth={2} />
           </button>
           <button className="text-[#A0A0A0] hover:text-[#F0EFE2] text-[14px] font-medium flex items-center gap-2 transition-colors cursor-pointer">
@@ -596,24 +602,46 @@ export function HorosHero() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-dashed border-[#333]">
-          <div className="flex flex-col transition-opacity duration-300">
-            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Mission throughput</div>
-            <div className="text-[28px] font-bold text-[#F0EFE2] tracking-tight">{model.speed} <span className="text-[13px] font-normal text-[#888]">interactions/s</span></div>
-            <div className="text-[11px] text-[#666] mt-1">Verified execution</div>
-          </div>
-          <div className="flex flex-col transition-opacity duration-300">
-            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Effective mission cost</div>
-            <div className="text-[28px] font-bold text-[#F0EFE2] tracking-tight">{model.cost}</div>
-            <div className="text-[11px] text-[#666] mt-1">Per interaction</div>
-          </div>
-          <div className="flex flex-col transition-opacity duration-300">
-            <div className="text-[12px] text-[#888] font-normal tracking-wide mb-1">Verified state reuse</div>
-            <div className="text-[28px] font-bold text-[#75bf00] tracking-tight flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full border-2 border-[#75bf00] shrink-0 inline-block mr-1"></span>
-              {model.cacheHit}
+        <div className="grid grid-cols-3 gap-3 sm:gap-5 mt-8 pt-6 border-t border-dashed border-[#333]">
+          {/* Throughput */}
+          <div className="flex flex-col justify-between transition-opacity duration-300 min-w-0">
+            <div className="min-h-[30px] flex items-end text-[11px] sm:text-[12px] text-[#888] font-normal tracking-wide leading-tight pb-1">
+              Mission throughput
             </div>
-            <div className="text-[11px] text-[#666] mt-1">Last 24 hours</div>
+            <div className="text-[20px] sm:text-[24px] font-bold text-[#F0EFE2] tracking-tight leading-tight flex items-baseline gap-1 my-1">
+              <span>{model.speed}</span>
+              <span className="text-[11px] sm:text-[12px] font-normal text-[#888]">int/s</span>
+            </div>
+            <div className="text-[10px] sm:text-[11px] text-[#666] leading-tight truncate">
+              Verified execution
+            </div>
+          </div>
+
+          {/* Cost */}
+          <div className="flex flex-col justify-between transition-opacity duration-300 min-w-0">
+            <div className="min-h-[30px] flex items-end text-[11px] sm:text-[12px] text-[#888] font-normal tracking-wide leading-tight pb-1">
+              Effective mission cost
+            </div>
+            <div className="text-[20px] sm:text-[24px] font-bold text-[#F0EFE2] tracking-tight leading-tight my-1">
+              {model.cost}
+            </div>
+            <div className="text-[10px] sm:text-[11px] text-[#666] leading-tight truncate">
+              Per interaction
+            </div>
+          </div>
+
+          {/* Verified state reuse */}
+          <div className="flex flex-col justify-between transition-opacity duration-300 min-w-0">
+            <div className="min-h-[30px] flex items-end text-[11px] sm:text-[12px] text-[#888] font-normal tracking-wide leading-tight pb-1">
+              Verified state reuse
+            </div>
+            <div className="text-[20px] sm:text-[24px] font-bold text-[#75bf00] tracking-tight leading-tight flex items-center gap-1.5 my-1">
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full border-2 border-[#75bf00] shrink-0 inline-block" />
+              <span>{model.cacheHit}</span>
+            </div>
+            <div className="text-[10px] sm:text-[11px] text-[#666] leading-tight truncate">
+              Last 24 hours
+            </div>
           </div>
         </div>
 
